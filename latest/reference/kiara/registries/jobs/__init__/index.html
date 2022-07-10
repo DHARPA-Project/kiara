@@ -4827,7 +4827,7 @@ JobRegistry        </code>
                     <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
                         <span class="n">msg</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Job failed: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">FailedJobException</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve job with id &#39;</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&#39;: no such job.&quot;</span><span class="p">)</span>
 
@@ -5207,7 +5207,7 @@ JobRegistry        </code>
                 <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
                     <span class="n">msg</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Job failed: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">FailedJobException</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve job with id &#39;</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&#39;: no such job.&quot;</span><span class="p">)</span>
 </code></pre></div>

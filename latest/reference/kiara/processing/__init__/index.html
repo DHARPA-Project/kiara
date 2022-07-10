@@ -4284,19 +4284,14 @@ ModuleProcessor            (<span title="abc.ABC">ABC</span>)
             <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="n">job</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="n">msg</span>
-            <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="kn">import</span> <span class="nn">traceback</span>
 
-                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
-                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                    <span class="k">pass</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">KiaraProcessingException</span><span class="p">):</span>
                 <span class="n">e</span><span class="o">.</span><span class="n">_module</span> <span class="o">=</span> <span class="n">module</span>
                 <span class="n">e</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="n">ValueMapReadOnly</span><span class="o">.</span><span class="n">create_from_ids</span><span class="p">(</span>
                     <span class="n">data_registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="p">,</span> <span class="o">**</span><span class="n">job_config</span><span class="o">.</span><span class="n">inputs</span>
                 <span class="p">)</span>
                 <span class="n">job</span><span class="o">.</span><span class="n">_exception</span> <span class="o">=</span> <span class="n">e</span>
+                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="n">e</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">kpe</span> <span class="o">=</span> <span class="n">KiaraProcessingException</span><span class="p">(</span>
@@ -4307,7 +4302,8 @@ ModuleProcessor            (<span title="abc.ABC">ABC</span>)
                     <span class="p">),</span>
                 <span class="p">)</span>
                 <span class="n">job</span><span class="o">.</span><span class="n">_exception</span> <span class="o">=</span> <span class="n">kpe</span>
-                <span class="k">raise</span> <span class="n">kpe</span>
+                <span class="n">log_exception</span><span class="p">(</span><span class="n">kpe</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">e</span>
 
     <span class="k">def</span> <span class="nf">job_status_updated</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobStatus</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">]</span>
@@ -4813,19 +4809,14 @@ ModuleProcessor            (<span title="abc.ABC">ABC</span>)
         <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="n">job</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="n">msg</span>
-        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="kn">import</span> <span class="nn">traceback</span>
 
-                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="k">pass</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">KiaraProcessingException</span><span class="p">):</span>
             <span class="n">e</span><span class="o">.</span><span class="n">_module</span> <span class="o">=</span> <span class="n">module</span>
             <span class="n">e</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="n">ValueMapReadOnly</span><span class="o">.</span><span class="n">create_from_ids</span><span class="p">(</span>
                 <span class="n">data_registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="p">,</span> <span class="o">**</span><span class="n">job_config</span><span class="o">.</span><span class="n">inputs</span>
             <span class="p">)</span>
             <span class="n">job</span><span class="o">.</span><span class="n">_exception</span> <span class="o">=</span> <span class="n">e</span>
+            <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">e</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">kpe</span> <span class="o">=</span> <span class="n">KiaraProcessingException</span><span class="p">(</span>
@@ -4836,7 +4827,8 @@ ModuleProcessor            (<span title="abc.ABC">ABC</span>)
                 <span class="p">),</span>
             <span class="p">)</span>
             <span class="n">job</span><span class="o">.</span><span class="n">_exception</span> <span class="o">=</span> <span class="n">kpe</span>
-            <span class="k">raise</span> <span class="n">kpe</span>
+            <span class="n">log_exception</span><span class="p">(</span><span class="n">kpe</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
 </code></pre></div>
         </details>
     </div>

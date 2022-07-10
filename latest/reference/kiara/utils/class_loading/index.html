@@ -4658,10 +4658,7 @@
                         <span class="n">paths</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                    <span class="kn">import</span> <span class="nn">traceback</span>
-
-                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">skip_errors</span><span class="p">:</span>
                     <span class="n">log_message</span><span class="p">(</span>
                         <span class="s2">&quot;ignore.pipline_entrypoint&quot;</span><span class="p">,</span> <span class="n">entrypoint_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
@@ -5157,10 +5154,7 @@
                     <span class="n">args</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
                 <span class="n">classes</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                    <span class="kn">import</span> <span class="nn">traceback</span>
-
-                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error trying to load plugin &#39;</span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">sub_class</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>

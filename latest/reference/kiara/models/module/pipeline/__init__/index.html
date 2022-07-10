@@ -6042,10 +6042,7 @@ It waits until all inputs are set, after which it executes all pipeline steps in
                         <span class="n">job_ids</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_id</span>
                     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                         <span class="c1"># TODO: cancel running jobs?</span>
-                        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                            <span class="kn">import</span> <span class="nn">traceback</span>
-
-                            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                        <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                             <span class="s2">&quot;error.processing.pipeline&quot;</span><span class="p">,</span>
                             <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
@@ -6150,10 +6147,7 @@ It waits until all inputs are set, after which it executes all pipeline steps in
                     <span class="n">job_ids</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_id</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="c1"># TODO: cancel running jobs?</span>
-                    <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                        <span class="kn">import</span> <span class="nn">traceback</span>
-
-                        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                    <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                         <span class="s2">&quot;error.processing.pipeline&quot;</span><span class="p">,</span>
                         <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
@@ -11049,16 +11043,6 @@ reference the same <code>Value</code> (in most cases)..</p>
     <span class="n">_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">)</span>
     <span class="n">value_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">value_schema</span><span class="p">:</span> <span class="n">ValueSchema</span>
-    <span class="c1"># pipeline_id: str</span>
-
-    <span class="c1"># @validator(&quot;value_schema&quot;)</span>
-    <span class="c1"># def validate_schema(cls, value):</span>
-    <span class="c1">#</span>
-    <span class="c1">#     from kiara.models.documentation import DocumentationMetadataModel</span>
-    <span class="c1">#     import traceback</span>
-    <span class="c1">#     traceback.print_stack()</span>
-    <span class="c1">#     print(cls)</span>
-    <span class="c1">#     assert isinstance(value.doc, DocumentationMetadataModel)</span>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 

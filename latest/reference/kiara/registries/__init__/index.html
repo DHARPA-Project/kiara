@@ -8050,7 +8050,6 @@ DataRegistry        </code>
                 <span class="c1"># )</span>
                 <span class="n">values</span><span class="p">[</span><span class="n">input_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-
                 <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
                 <span class="n">msg</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
@@ -8347,7 +8346,6 @@ DataRegistry        </code>
             <span class="c1"># )</span>
             <span class="n">values</span><span class="p">[</span><span class="n">input_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-
             <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 
             <span class="n">msg</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
@@ -15606,7 +15604,7 @@ JobRegistry        </code>
                     <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
                         <span class="n">msg</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Job failed: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">FailedJobException</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve job with id &#39;</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&#39;: no such job.&quot;</span><span class="p">)</span>
 
@@ -15986,7 +15984,7 @@ JobRegistry        </code>
                 <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
                     <span class="n">msg</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Job failed: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">FailedJobException</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve job with id &#39;</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&#39;: no such job.&quot;</span><span class="p">)</span>
 </code></pre></div>
@@ -18223,10 +18221,7 @@ OperationRegistry        </code>
                     <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">op_type_name</span><span class="o">=</span><span class="n">op_name</span>
                 <span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                    <span class="kn">import</span> <span class="nn">traceback</span>
-
-                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;ignore.operation_type&quot;</span><span class="p">,</span> <span class="n">operation_name</span><span class="o">=</span><span class="n">op_name</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_operation_types</span> <span class="o">=</span> <span class="n">_operation_types</span>
@@ -18365,11 +18360,7 @@ OperationRegistry        </code>
                     <span class="n">msg</span> <span class="o">=</span> <span class="n">e</span>
                 <span class="n">details</span><span class="p">[</span><span class="s2">&quot;details&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;invalid.operation&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">details</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                    <span class="kn">import</span> <span class="nn">traceback</span>
-
-                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
-
+                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">continue</span>
 
         <span class="n">error_details</span> <span class="o">=</span> <span class="p">{}</span>
@@ -18487,10 +18478,8 @@ OperationRegistry        </code>
                         <span class="k">continue</span>
                     <span class="n">details</span> <span class="o">=</span> <span class="n">error_details</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">missing_op_id</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="s2">&quot;-- n/a --&quot;</span><span class="p">})</span>
                     <span class="n">exception</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;exception&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">exception</span> <span class="ow">and</span> <span class="n">is_debug</span><span class="p">():</span>
-                        <span class="kn">import</span> <span class="nn">traceback</span>
-
-                        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exception</span><span class="p">(</span><span class="o">*</span><span class="n">exception</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">exception</span><span class="p">:</span>
+                        <span class="n">log_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">)</span>
 
                     <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;invalid.operation.</span><span class="si">{</span><span class="n">mn</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">operation_id</span><span class="o">=</span><span class="n">mn</span><span class="p">,</span> <span class="o">**</span><span class="n">details</span><span class="p">)</span>
                 <span class="k">break</span>

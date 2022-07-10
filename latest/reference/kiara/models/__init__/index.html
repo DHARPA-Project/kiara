@@ -13377,7 +13377,7 @@ FileBundle            (<a class="autorefs autorefs-internal" title="kiara.models
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Path does not exist: </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">source</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Path is not a file: </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Path is not a folder: </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">):</span>
             <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -14014,7 +14014,7 @@ FileBundle            (<a class="autorefs autorefs-internal" title="kiara.models
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Path does not exist: </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">source</span><span class="p">)):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Path is not a file: </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Path is not a folder: </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">):</span>
         <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -25881,10 +25881,7 @@ It waits until all inputs are set, after which it executes all pipeline steps in
                         <span class="n">job_ids</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_id</span>
                     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                         <span class="c1"># TODO: cancel running jobs?</span>
-                        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                            <span class="kn">import</span> <span class="nn">traceback</span>
-
-                            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                        <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                             <span class="s2">&quot;error.processing.pipeline&quot;</span><span class="p">,</span>
                             <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
@@ -25989,10 +25986,7 @@ It waits until all inputs are set, after which it executes all pipeline steps in
                     <span class="n">job_ids</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_id</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="c1"># TODO: cancel running jobs?</span>
-                    <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                        <span class="kn">import</span> <span class="nn">traceback</span>
-
-                        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                    <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                         <span class="s2">&quot;error.processing.pipeline&quot;</span><span class="p">,</span>
                         <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
@@ -30888,16 +30882,6 @@ reference the same <code>Value</code> (in most cases)..</p>
     <span class="n">_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">)</span>
     <span class="n">value_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">value_schema</span><span class="p">:</span> <span class="n">ValueSchema</span>
-    <span class="c1"># pipeline_id: str</span>
-
-    <span class="c1"># @validator(&quot;value_schema&quot;)</span>
-    <span class="c1"># def validate_schema(cls, value):</span>
-    <span class="c1">#</span>
-    <span class="c1">#     from kiara.models.documentation import DocumentationMetadataModel</span>
-    <span class="c1">#     import traceback</span>
-    <span class="c1">#     traceback.print_stack()</span>
-    <span class="c1">#     print(cls)</span>
-    <span class="c1">#     assert isinstance(value.doc, DocumentationMetadataModel)</span>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 
@@ -35322,11 +35306,7 @@ Config        </code>
             <span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;terminal_renderable&quot;</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-
-        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-            <span class="kn">import</span> <span class="nn">traceback</span>
-
-            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="n">log_message</span><span class="p">(</span><span class="s2">&quot;error.pretty_print&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
         <span class="n">renderable</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">)]</span>
 
@@ -40940,11 +40920,13 @@ ValueMapWritable            (<a class="autorefs autorefs-internal" title="kiara.
 
         <span class="n">invalid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">invalid</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                <span class="kn">import</span> <span class="nn">traceback</span>
-
-                <span class="n">traceback</span><span class="o">.</span><span class="n">print_stack</span><span class="p">()</span>
-            <span class="k">raise</span> <span class="n">InvalidValuesException</span><span class="p">(</span><span class="n">invalid_values</span><span class="o">=</span><span class="n">invalid</span><span class="p">)</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="n">InvalidValuesException</span><span class="p">(</span><span class="n">invalid_values</span><span class="o">=</span><span class="n">invalid</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">e</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="c1"># this is silly, I know</span>
+                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">e</span>
 
     <span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Set the value for the specified field.&quot;&quot;&quot;</span>
@@ -41216,11 +41198,13 @@ cost to assembling it, and it might not be needed ever.</p>
 
     <span class="n">invalid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">invalid</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-            <span class="kn">import</span> <span class="nn">traceback</span>
-
-            <span class="n">traceback</span><span class="o">.</span><span class="n">print_stack</span><span class="p">()</span>
-        <span class="k">raise</span> <span class="n">InvalidValuesException</span><span class="p">(</span><span class="n">invalid_values</span><span class="o">=</span><span class="n">invalid</span><span class="p">)</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">InvalidValuesException</span><span class="p">(</span><span class="n">invalid_values</span><span class="o">=</span><span class="n">invalid</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">e</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="c1"># this is silly, I know</span>
+            <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
 </code></pre></div>
         </details>
     </div>

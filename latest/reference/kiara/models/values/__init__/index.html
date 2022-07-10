@@ -5882,11 +5882,7 @@ Config        </code>
             <span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;terminal_renderable&quot;</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-
-        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-            <span class="kn">import</span> <span class="nn">traceback</span>
-
-            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="n">log_message</span><span class="p">(</span><span class="s2">&quot;error.pretty_print&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
         <span class="n">renderable</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="p">)]</span>
 
@@ -11500,11 +11496,13 @@ ValueMapWritable            (<a class="autorefs autorefs-internal" title="kiara.
 
         <span class="n">invalid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">invalid</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                <span class="kn">import</span> <span class="nn">traceback</span>
-
-                <span class="n">traceback</span><span class="o">.</span><span class="n">print_stack</span><span class="p">()</span>
-            <span class="k">raise</span> <span class="n">InvalidValuesException</span><span class="p">(</span><span class="n">invalid_values</span><span class="o">=</span><span class="n">invalid</span><span class="p">)</span>
+            <span class="n">e</span> <span class="o">=</span> <span class="n">InvalidValuesException</span><span class="p">(</span><span class="n">invalid_values</span><span class="o">=</span><span class="n">invalid</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">e</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="c1"># this is silly, I know</span>
+                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">e</span>
 
     <span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Set the value for the specified field.&quot;&quot;&quot;</span>
@@ -11776,11 +11774,13 @@ cost to assembling it, and it might not be needed ever.</p>
 
     <span class="n">invalid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">invalid</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-            <span class="kn">import</span> <span class="nn">traceback</span>
-
-            <span class="n">traceback</span><span class="o">.</span><span class="n">print_stack</span><span class="p">()</span>
-        <span class="k">raise</span> <span class="n">InvalidValuesException</span><span class="p">(</span><span class="n">invalid_values</span><span class="o">=</span><span class="n">invalid</span><span class="p">)</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">InvalidValuesException</span><span class="p">(</span><span class="n">invalid_values</span><span class="o">=</span><span class="n">invalid</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">e</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="c1"># this is silly, I know</span>
+            <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
 </code></pre></div>
         </details>
     </div>

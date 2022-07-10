@@ -5535,8 +5535,8 @@ when reading <code>config.json</code></p>
         <span class="k">return</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span><span class="p">:</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;[yellow]DEV MESSAGE[/yellow]&quot;</span>
-    <span class="n">panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">title_align</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Develop-mode message&quot;</span>
+    <span class="n">panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span><span class="n">Group</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;[yellow]</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">[/yellow]&quot;</span><span class="p">,</span> <span class="n">title_align</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
 
     <span class="kn">from</span> <span class="nn">kiara.utils.cli</span> <span class="kn">import</span> <span class="n">terminal_print</span>
 

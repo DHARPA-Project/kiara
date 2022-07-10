@@ -4423,10 +4423,7 @@ ExportAsOperationType            (<a class="autorefs autorefs-internal" title="k
                     <span class="p">)</span>
                     <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oc</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                    <span class="kn">import</span> <span class="nn">traceback</span>
-
-                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                     <span class="s2">&quot;ignore.create_operation_instance&quot;</span><span class="p">,</span> <span class="n">module_type</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">e</span>
                 <span class="p">)</span>
@@ -4618,10 +4615,7 @@ ExportAsOperationType            (<a class="autorefs autorefs-internal" title="k
                 <span class="p">)</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oc</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                <span class="kn">import</span> <span class="nn">traceback</span>
-
-                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+            <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="s2">&quot;ignore.create_operation_instance&quot;</span><span class="p">,</span> <span class="n">module_type</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="n">e</span>
             <span class="p">)</span>

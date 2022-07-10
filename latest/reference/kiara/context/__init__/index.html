@@ -4422,10 +4422,7 @@ how something was created, and in which environment.</p>
                 <span class="p">)</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                    <span class="kn">import</span> <span class="nn">traceback</span>
-
-                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="n">stored</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">StoreValueResult</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
                     <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">field_aliases</span><span class="p">),</span> <span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="p">)</span>
@@ -5322,10 +5319,7 @@ how something was created, and in which environment.</p>
             <span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                <span class="kn">import</span> <span class="nn">traceback</span>
-
-                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+            <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="n">stored</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">StoreValueResult</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
                 <span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">field_aliases</span><span class="p">),</span> <span class="n">error</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="p">)</span>

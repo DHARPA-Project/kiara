@@ -4762,7 +4762,25 @@
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">log_exception</span><span class="p">(</span><span class="n">exc</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is_develop</span><span class="p">():</span>
+        <span class="kn">from</span> <span class="nn">kiara.interfaces</span> <span class="kn">import</span> <span class="n">get_console</span>
+        <span class="kn">from</span> <span class="nn">kiara.utils.develop</span> <span class="kn">import</span> <span class="n">log_dev_message</span>
+
+        <span class="n">exc_info</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">exc_info</span><span class="p">:</span>
+            <span class="c1"># TODO: create exc_info from exception?</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_debug</span><span class="p">():</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">console</span> <span class="o">=</span> <span class="n">get_console</span><span class="p">()</span>
+            <span class="n">log_dev_message</span><span class="p">(</span>
+                <span class="n">Traceback</span><span class="o">.</span><span class="n">from_exception</span><span class="p">(</span>
+                    <span class="o">*</span><span class="n">exc_info</span><span class="p">,</span> <span class="n">show_locals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">console</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">4</span>  <span class="c1"># type: ignore</span>
+                <span class="p">),</span>
+                <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Exception details&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -5239,10 +5257,7 @@
                         <span class="n">paths</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                    <span class="kn">import</span> <span class="nn">traceback</span>
-
-                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">skip_errors</span><span class="p">:</span>
                     <span class="n">log_message</span><span class="p">(</span>
                         <span class="s2">&quot;ignore.pipline_entrypoint&quot;</span><span class="p">,</span> <span class="n">entrypoint_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
@@ -5738,10 +5753,7 @@
                     <span class="n">args</span> <span class="o">=</span> <span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
                 <span class="n">classes</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                    <span class="kn">import</span> <span class="nn">traceback</span>
-
-                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error trying to load plugin &#39;</span><span class="si">{</span><span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">sub_class</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
@@ -9025,8 +9037,8 @@ when reading <code>config.json</code></p>
         <span class="k">return</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span><span class="p">:</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;[yellow]DEV MESSAGE[/yellow]&quot;</span>
-    <span class="n">panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">title_align</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Develop-mode message&quot;</span>
+    <span class="n">panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span><span class="n">Group</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">),</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;[yellow]</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">[/yellow]&quot;</span><span class="p">,</span> <span class="n">title_align</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
 
     <span class="kn">from</span> <span class="nn">kiara.utils.cli</span> <span class="kn">import</span> <span class="n">terminal_print</span>
 

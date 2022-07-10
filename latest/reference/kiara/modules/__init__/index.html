@@ -3939,6 +3939,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.modules.log" class="md-nav__link">
+    log
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.modules.yaml" class="md-nav__link">
     yaml
   </a>
@@ -4344,6 +4351,24 @@
 
 
 <a href="#kiara.modules.ValueSetSchema" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="kiara.modules.log" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">log</span></code>
+
+
+<a href="#kiara.modules.log" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
@@ -5113,38 +5138,14 @@ KiaraModule            (<a class="autorefs autorefs-internal" title="kiara.modul
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                    <span class="kn">from</span> <span class="nn">kiara.utils.develop</span> <span class="kn">import</span> <span class="n">log_dev_message</span>
-
-                    <span class="k">try</span><span class="p">:</span>
-                        <span class="kn">import</span> <span class="nn">traceback</span>
-
-                        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
-                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                        <span class="k">pass</span>
-                <span class="k">if</span> <span class="n">is_develop</span><span class="p">():</span>
-                    <span class="n">console</span> <span class="o">=</span> <span class="n">get_console</span><span class="p">()</span>
-                    <span class="n">tb</span> <span class="o">=</span> <span class="n">Traceback</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">console</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">10</span><span class="p">)</span>
-                    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error processing module &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="n">g</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
-                    <span class="n">log_dev_message</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="n">e</span>
-
         <span class="k">else</span><span class="p">:</span>
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">job_log</span><span class="o">=</span><span class="n">job_log</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                    <span class="k">try</span><span class="p">:</span>
-                        <span class="kn">import</span> <span class="nn">traceback</span>
-
-                        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
-                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                        <span class="k">pass</span>
-                <span class="k">if</span> <span class="n">is_develop</span><span class="p">():</span>
-                    <span class="n">tb</span> <span class="o">=</span> <span class="n">Traceback</span><span class="p">()</span>
-                    <span class="n">log_dev_message</span><span class="p">(</span><span class="n">tb</span><span class="p">)</span>
+                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="n">e</span>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -5874,38 +5875,14 @@ as well as wrapping input/output-data related functionality.</p>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                <span class="kn">from</span> <span class="nn">kiara.utils.develop</span> <span class="kn">import</span> <span class="n">log_dev_message</span>
-
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="kn">import</span> <span class="nn">traceback</span>
-
-                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
-                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                    <span class="k">pass</span>
-            <span class="k">if</span> <span class="n">is_develop</span><span class="p">():</span>
-                <span class="n">console</span> <span class="o">=</span> <span class="n">get_console</span><span class="p">()</span>
-                <span class="n">tb</span> <span class="o">=</span> <span class="n">Traceback</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">console</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">10</span><span class="p">)</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error processing module &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="n">g</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
-                <span class="n">log_dev_message</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+            <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">e</span>
-
     <span class="k">else</span><span class="p">:</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">job_log</span><span class="o">=</span><span class="n">job_log</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="kn">import</span> <span class="nn">traceback</span>
-
-                    <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
-                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                    <span class="k">pass</span>
-            <span class="k">if</span> <span class="n">is_develop</span><span class="p">():</span>
-                <span class="n">tb</span> <span class="o">=</span> <span class="n">Traceback</span><span class="p">()</span>
-                <span class="n">log_dev_message</span><span class="p">(</span><span class="n">tb</span><span class="p">)</span>
+            <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">e</span>
 </code></pre></div>
         </details>

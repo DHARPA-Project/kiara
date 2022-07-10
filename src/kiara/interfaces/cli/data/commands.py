@@ -19,8 +19,9 @@ from kiara.models.values.info import RENDER_FIELDS, ValueInfo, ValuesInfo
 from kiara.operations.included_core_operations.render_value import (
     RenderValueOperationType,
 )
-from kiara.utils import StringYAML, is_debug, is_develop, log_message
+from kiara.utils import is_debug, is_develop, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
+from kiara.utils.yaml import StringYAML
 
 logger = structlog.getLogger()
 

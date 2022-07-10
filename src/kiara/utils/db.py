@@ -9,7 +9,7 @@ import orjson
 import os
 from typing import Any, Mapping
 
-from kiara.utils import orjson_dumps
+from kiara.utils.json import orjson_dumps
 
 
 def get_kiara_db_url(base_path: str):

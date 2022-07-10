@@ -17,7 +17,7 @@ from kiara.models.documentation import (
 from kiara.models.info import InfoModelGroup, ItemInfo, TypeInfo, TypeInfoModelGroup
 from kiara.models.python_class import PythonClass
 from kiara.registries import ArchiveDetails, KiaraArchive
-from kiara.utils import orjson_dumps
+from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from kiara.context import Kiara

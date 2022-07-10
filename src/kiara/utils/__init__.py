@@ -5,29 +5,18 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import copy
-import dpath.util
-import importlib
 import inspect
-import json
-import orjson
 import os
 import re
 import structlog
 import sys
 import traceback
-from io import StringIO
-from pathlib import Path
-from pkgutil import iter_modules
-from rich.console import ConsoleRenderable, RichCast
-from ruamel.yaml import YAML
-from slugify import slugify
-from types import ModuleType
-from typing import Any, Dict, Iterable, List, Mapping, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Dict, Iterable, List, Type, TypeVar
 
 from kiara.defaults import INVALID_VALUE_NAMES
 
-yaml = YAML(typ="safe")
+if TYPE_CHECKING:
+    from kiara.utils.develop import KiaraDevSettings
 
 logger = structlog.get_logger()
 
@@ -54,6 +43,13 @@ def is_develop() -> bool:
         return False
 
 
+def get_dev_config() -> "KiaraDevSettings":
+
+    from kiara.utils.develop import KIARA_DEV_SETTINGS
+
+    return KIARA_DEV_SETTINGS
+
+
 def is_jupyter() -> bool:
 
     return "google.colab" in sys.modules or "jupyter_client" in sys.modules
@@ -71,39 +67,6 @@ def log_message(msg: str, **data):
         logger.debug(msg, **data)
     # else:
     #     logger.debug(msg, **data)
-
-
-def is_rich_renderable(item: Any):
-    return isinstance(item, (ConsoleRenderable, RichCast, str))
-
-
-def get_data_from_file(
-    path: Union[str, Path], content_type: Union[str, None] = None
-) -> Any:
-
-    if isinstance(path, str):
-        path = Path(os.path.expanduser(path))
-
-    content = path.read_text()
-
-    if content_type:
-        assert content_type in ["json", "yaml"]
-    else:
-        if path.name.endswith(".json"):
-            content_type = "json"
-        elif path.name.endswith(".yaml") or path.name.endswith(".yml"):
-            content_type = "yaml"
-        else:
-            raise ValueError(
-                "Invalid data format, only 'json' or 'yaml' are supported currently."
-            )
-
-    if content_type == "json":
-        data = json.loads(content)
-    else:
-        data = yaml.load(content)
-
-    return data
 
 
 _AUTO_MODULE_ID: Dict[str, int] = {}
@@ -131,47 +94,6 @@ def get_auto_workflow_alias(module_type: str, use_incremental_ids: bool = False)
     return f"{module_type}_{nr}"
 
 
-def dict_from_cli_args(
-    *args: str, list_keys: Union[Iterable[str], None] = None
-) -> Dict[str, Any]:
-
-    if not args:
-        return {}
-
-    config: Dict[str, Any] = {}
-    for arg in args:
-        if "=" in arg:
-            key, value = arg.split("=", maxsplit=1)
-            try:
-                _v = json.loads(value)
-            except Exception:
-                _v = value
-            part_config = {key: _v}
-        elif os.path.isfile(os.path.realpath(os.path.expanduser(arg))):
-            path = os.path.realpath(os.path.expanduser(arg))
-            part_config = get_data_from_file(path)
-            assert isinstance(part_config, Mapping)
-        else:
-            try:
-                part_config = json.loads(arg)
-                assert isinstance(part_config, Mapping)
-            except Exception:
-                raise Exception(f"Could not parse argument into data: {arg}")
-
-        if list_keys is None:
-            list_keys = []
-
-        for k, v in part_config.items():
-            if k in list_keys:
-                config.setdefault(k, []).append(v)
-            else:
-                if k in config.keys():
-                    logger.warning("duplicate.key", old_value=k, new_value=v)
-                config[k] = v
-
-    return config
-
-
 def camel_case_to_snake_case(camel_text: str, repl: str = "_"):
     return CAMEL_TO_SNAKE_REGEX.sub(repl, camel_text).lower()
 
@@ -180,17 +102,6 @@ def to_camel_case(text: str) -> str:
 
     words = WORD_REGEX_PATTERN.split(text)
     return "".join(w.title() for i, w in enumerate(words))
-
-
-class StringYAML(YAML):
-    def dump(self, data, stream=None, **kw):
-        inefficient = False
-        if stream is None:
-            inefficient = True
-            stream = StringIO()
-        YAML.dump(self, data, stream, **kw)
-        if inefficient:
-            return stream.getvalue()
 
 
 SUBCLASS_TYPE = TypeVar("SUBCLASS_TYPE")
@@ -210,28 +121,6 @@ def _get_all_subclasses(
     return result
 
 
-def _import_modules_recursively(module: ModuleType):
-
-    if not hasattr(module, "__path__"):
-        return
-
-    for submodule in iter_modules(module.__path__):  # type: ignore
-
-        try:
-            submodule_mod = importlib.import_module(
-                f"{module.__name__}.{submodule.name}"
-            )
-            if hasattr(submodule_mod, "__path__"):
-                _import_modules_recursively(submodule_mod)
-        except Exception as e:
-            logger.error(
-                "ignore.python_module",
-                module=f"{module.__name__}.{submodule.name}",
-                reason=str(e),
-                base_module=str(module),
-            )
-
-
 def check_valid_field_names(*field_names) -> List[str]:
     """Check whether the provided field names are all valid.
 
@@ -240,23 +129,6 @@ def check_valid_field_names(*field_names) -> List[str]:
     """
 
     return [x for x in field_names if x in INVALID_VALUE_NAMES or x.startswith("_")]
-
-
-def create_valid_identifier(text: str):
-
-    return slugify(text, separator="_")
-
-
-def merge_dicts(*dicts: Mapping[str, Any]) -> Dict[str, Any]:
-
-    if not dicts:
-        return {}
-
-    current: Dict[str, Any] = {}
-    for d in dicts:
-        dpath.util.merge(current, copy.deepcopy(d))
-
-    return current
 
 
 def find_free_id(
@@ -290,24 +162,6 @@ def find_free_id(
             continue
         break
     return new_name
-
-
-string_types = (type(b""), type(""))
-
-
-def orjson_dumps(v, *, default=None, **args):
-    # orjson.dumps returns bytes, to match standard json.dumps we need to decode
-
-    try:
-        return orjson.dumps(v, default=default, **args).decode()
-    except Exception as e:
-        if is_debug():
-            print(f"Error dumping json data: {e}")
-            from kiara import dbg
-
-            dbg(v)
-
-        raise e
 
 
 def first_line(text: str):

@@ -8,7 +8,8 @@ import orjson
 import uuid
 from pydantic import BaseModel, Field
 
-from kiara.utils import camel_case_to_snake_case, orjson_dumps
+from kiara.utils import camel_case_to_snake_case
+from kiara.utils.json import orjson_dumps
 
 
 class KiaraEvent(BaseModel):

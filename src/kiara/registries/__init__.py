@@ -12,7 +12,7 @@ import uuid
 from pydantic import BaseModel, Field
 from typing import TYPE_CHECKING, ClassVar, Generic, Iterable, Type, TypeVar, Union
 
-from kiara.utils import orjson_dumps
+from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from kiara.context import Kiara

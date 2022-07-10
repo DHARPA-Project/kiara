@@ -16,8 +16,11 @@ from kiara import Kiara
 # from kiara.interfaces.cli.utils import _create_module_instance
 from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
 from kiara.models.module.manifest import Manifest
-from kiara.utils import dict_from_cli_args
-from kiara.utils.cli import output_format_option, terminal_print_model
+from kiara.utils.cli import (
+    dict_from_cli_args,
+    output_format_option,
+    terminal_print_model,
+)
 
 
 @click.group()

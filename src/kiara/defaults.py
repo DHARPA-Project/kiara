@@ -26,8 +26,12 @@ KIARA_RESOURCES_FOLDER = os.path.join(KIARA_MODULE_BASE_FOLDER, "resources")
 """Default resources folder for this package."""
 
 KIARA_CONFIG_FILE_NAME = "kiara.config"
+KIARA_DEV_CONFIG_FILE_NAME = "dev.config"
 KIARA_MAIN_CONFIG_FILE = os.path.join(
     kiara_app_dirs.user_config_dir, KIARA_CONFIG_FILE_NAME
+)
+KIARA_DEV_CONFIG_FILE = os.path.join(
+    kiara_app_dirs.user_config_dir, KIARA_DEV_CONFIG_FILE_NAME
 )
 KIARA_MAIN_CONTEXTS_PATH = os.path.join(kiara_app_dirs.user_config_dir, "contexts")
 

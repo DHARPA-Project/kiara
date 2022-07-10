@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Mapping, MutableMapping, Set,
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
 from kiara.models.events import KiaraEvent
 from kiara.models.module.pipeline import PipelineStep, StepStatus
-from kiara.utils import orjson_dumps
+from kiara.utils.json import orjson_dumps
 
 try:
     from typing import Literal

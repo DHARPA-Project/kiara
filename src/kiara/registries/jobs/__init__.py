@@ -24,9 +24,7 @@ from kiara.models.values.value import ValueMap
 from kiara.processing import ModuleProcessor
 from kiara.processing.synchronous import SynchronousProcessor
 from kiara.registries import BaseArchive
-from kiara.utils import is_develop
-from kiara.utils.cli import terminal_print
-from kiara.utils.debug import create_module_preparation_table
+from kiara.utils import get_dev_config, is_develop
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -205,6 +203,15 @@ class JobRegistry(object):
     def job_matcher(self) -> JobMatcher:
 
         strategy = self._kiara.runtime_config.job_cache
+        if is_develop():
+            dev_config = get_dev_config()
+            if dev_config.disable_job_cache:
+                logger.debug(
+                    "disable.job_cache",
+                    reason="dev mode enabled and 'disable_job_cache' is set.",
+                )
+                strategy = JobCacheStrategy.no_cache
+
         job_matcher = self._job_matcher_cache.get(strategy, None)
         if job_matcher is None:
             if strategy == JobCacheStrategy.no_cache:
@@ -399,7 +406,12 @@ class JobRegistry(object):
 
         self._finished_jobs[inputs_manifest.job_hash] = job_record.job_id
         self._archived_records[job_record.job_id] = job_record
-        log.debug("job.use_cached")
+        log.debug(
+            "job.found_cached_record",
+            job_id=str(job_record.job_id),
+            job_hash=inputs_manifest.job_hash,
+            module_type=inputs_manifest.module_type,
+        )
         return job_record.job_id
 
     def prepare_job_config(
@@ -408,11 +420,6 @@ class JobRegistry(object):
 
         module = self._kiara.create_module(manifest=manifest)
 
-        if is_develop() and not module.characteristics.is_internal:
-            table = create_module_preparation_table(manifest=manifest, inputs=inputs)
-            terminal_print()
-            terminal_print(table, in_panel="Module run preparation data")
-
         job_config = JobConfig.create_from_module(
             data_registry=self._kiara.data_registry, module=module, inputs=inputs
         )
@@ -420,13 +427,22 @@ class JobRegistry(object):
         return job_config
 
     def execute(
-        self, manifest: Manifest, inputs: Mapping[str, Any], wait: bool = False
+        self,
+        manifest: Manifest,
+        inputs: Mapping[str, Any],
+        wait: bool = False,
+        job_metadata: Union[None, Any] = None,
     ) -> uuid.UUID:
 
         job_config = self.prepare_job_config(manifest=manifest, inputs=inputs)
-        return self.execute_job(job_config, wait=wait)
+        return self.execute_job(job_config, wait=wait, job_metadata=job_metadata)
 
-    def execute_job(self, job_config: JobConfig, wait: bool = False) -> uuid.UUID:
+    def execute_job(
+        self,
+        job_config: JobConfig,
+        wait: bool = False,
+        job_metadata: Union[None, Any] = None,
+    ) -> uuid.UUID:
 
         log = logger.bind(
             module_type=job_config.module_type,
@@ -437,11 +453,28 @@ class JobRegistry(object):
 
         stored_job = self.find_matching_job_record(inputs_manifest=job_config)
         if stored_job is not None:
+            log.debug(
+                "job.use_cached",
+                job_id=str(stored_job),
+                module_type=job_config.module_type,
+            )
             return stored_job
 
-        log.debug("job.execute")
+        if job_metadata is None:
+            job_metadata = {}
 
-        job_id = self._processor.create_job(job_config=job_config)
+        is_pipeline_step = job_metadata.get("is_pipeline_step", False)
+        dbg_data = {
+            "module_type": job_config.module_type,
+            "is_pipeline_step": is_pipeline_step,
+        }
+        if is_pipeline_step:
+            dbg_data["step_id"] = job_metadata["step_id"]
+        log.debug("job.execute", **dbg_data)
+
+        job_id = self._processor.create_job(
+            job_config=job_config, job_metadata=job_metadata
+        )
         self._active_jobs[job_config.job_hash] = job_id
 
         try:

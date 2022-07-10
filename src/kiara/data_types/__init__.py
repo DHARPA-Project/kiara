@@ -54,7 +54,7 @@ from kiara.models.values.value_schema import ValueSchema
 #         return obj.__class__.__name__
 #     else:
 #         return f"{obj.__class__.__module__}.{obj.__class__.__name__}"
-from kiara.utils import orjson_dumps
+from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from kiara.models.values.value import SerializedData, Value, ValuePedigree

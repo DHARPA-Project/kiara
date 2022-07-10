@@ -132,7 +132,10 @@ class SinglePipelineController(PipelineController):
 
         job_config = self.pipeline.create_job_config_for_step(step_id)
 
-        job_id = self._job_registry.execute_job(job_config=job_config)
+        job_metadata = {"is_pipeline_step": True, "step_id": step_id}
+        job_id = self._job_registry.execute_job(
+            job_config=job_config, job_metadata=job_metadata
+        )
         # job_id = self._processor.create_job(job_config=job_config)
         # self._processor.queue_job(job_id=job_id)
 

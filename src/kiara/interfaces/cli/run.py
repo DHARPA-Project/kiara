@@ -23,8 +23,8 @@ from kiara.exceptions import (
     NoSuchExecutionTargetException,
 )
 from kiara.interfaces.python_api.operation import KiaraOperation
-from kiara.utils import dict_from_cli_args, is_debug
-from kiara.utils.cli import terminal_print
+from kiara.utils import is_debug
+from kiara.utils.cli import dict_from_cli_args, terminal_print
 from kiara.utils.cli.rich_click import rich_format_operation_help
 from kiara.utils.output import OutputDetails, create_table_from_base_model_cls
 

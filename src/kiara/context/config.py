@@ -32,7 +32,7 @@ from kiara.defaults import (
 )
 from kiara.registries.environment import EnvironmentRegistry
 from kiara.registries.ids import ID_REGISTRY
-from kiara.utils import get_data_from_file
+from kiara.utils.files import get_data_from_file
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -179,7 +179,9 @@ class KiaraConfig(BaseSettings):
         with path.open("rt") as f:
             data = yaml.load(f)
 
-        return KiaraConfig(**data)
+        config = KiaraConfig(**data)
+        config._config_path = path
+        return config
 
     context_search_paths: List[str] = Field(
         description="The base path to look for contexts in.",
@@ -579,6 +581,13 @@ class KiaraConfig(BaseSettings):
             os.unlink(context_config._context_config_path)
 
         return context_summary
+
+    def create_renderable(self, **render_config: Any):
+        from kiara.utils.output import create_recursive_table_from_model_object
+
+        return create_recursive_table_from_model_object(
+            self, render_config=render_config
+        )
 
 
 # class KiaraCurrentContextConfig(KiaraBaseConfig):

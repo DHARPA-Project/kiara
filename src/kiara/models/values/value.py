@@ -51,8 +51,10 @@ from kiara.models.module.manifest import InputsManifest, Manifest
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.value_schema import ValueSchema
-from kiara.utils import StringYAML, is_debug, is_jupyter, orjson_dumps
+from kiara.utils import is_debug, is_jupyter
 from kiara.utils.hashing import create_cid_digest
+from kiara.utils.json import orjson_dumps
+from kiara.utils.yaml import StringYAML
 
 log = logging.getLogger("kiara")
 yaml = StringYAML()

@@ -11,7 +11,7 @@ from typing import Any, Iterable, List, Mapping, Union
 
 from kiara.defaults import MODULE_TYPE_NAME_KEY
 from kiara.models.module.pipeline.value_refs import StepValueAddress
-from kiara.utils import get_data_from_file
+from kiara.utils.files import get_data_from_file
 
 
 def create_step_value_address(

@@ -47,7 +47,7 @@ class ValueSchema(KiaraModel):
     )
 
     doc: DocumentationMetadataModel = Field(
-        default="-- n/a --",
+        default_factory=DocumentationMetadataModel,
         description="A description for the value of this input field.",
     )
 

@@ -10,7 +10,7 @@ import structlog
 import uuid
 from datetime import datetime
 from pydantic import BaseModel
-from typing import Any, Dict, List, Protocol, Union
+from typing import Any, Dict, List, Mapping, Protocol, Union
 
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.module.jobs import ActiveJob, JobConfig, JobLog, JobRecord, JobStatus
@@ -21,7 +21,7 @@ from kiara.models.values.value import (
     ValuePedigree,
 )
 from kiara.registries.ids import ID_REGISTRY
-from kiara.utils import is_debug
+from kiara.utils import get_dev_config, is_debug, is_develop
 
 try:
     from typing import Literal
@@ -56,6 +56,7 @@ class ModuleProcessor(abc.ABC):
 
         self._kiara: Kiara = kiara
         self._created_jobs: Dict[uuid.UUID, Dict[str, Any]] = {}
+        self._running_job_details: Dict[uuid.UUID, Dict[str, Any]] = {}
         self._active_jobs: Dict[uuid.UUID, ActiveJob] = {}
         self._failed_jobs: Dict[uuid.UUID, ActiveJob] = {}
         self._finished_jobs: Dict[uuid.UUID, ActiveJob] = {}
@@ -103,12 +104,17 @@ class ModuleProcessor(abc.ABC):
         else:
             raise Exception(f"No job record for job with id '{job_id}' registered.")
 
-    def create_job(self, job_config: JobConfig) -> uuid.UUID:
+    def create_job(
+        self, job_config: JobConfig, job_metadata: Union[None, Mapping[str, Any]]
+    ) -> uuid.UUID:
 
         environments = {
             env_name: env.instance_id
             for env_name, env in self._kiara.current_environments.items()
         }
+
+        if job_metadata is None:
+            job_metadata = {}
 
         result_pedigree = ValuePedigree(
             kiara_id=self._kiara.id,
@@ -139,6 +145,7 @@ class ModuleProcessor(abc.ABC):
             "job": job,
             "module": module,
             "outputs": outputs,
+            "job_metadata": job_metadata,
         }
         self._created_jobs[job_id] = job_details
 
@@ -146,24 +153,56 @@ class ModuleProcessor(abc.ABC):
             job_id=job_id, old_status=None, new_status=JobStatus.CREATED
         )
 
+        if is_develop():
+
+            dev_settings = get_dev_config()
+
+            if dev_settings.log.log_pre_run and (
+                not module.characteristics.is_internal
+                or dev_settings.log.pre_run.internal_modules
+            ):
+
+                is_pipeline_step = job_metadata.get("is_pipeline_step", False)
+                if is_pipeline_step:
+                    if dev_settings.log.pre_run.pipeline_steps:
+                        step_id = job_metadata.get("step_id", None)
+                        assert step_id is not None
+                        title = (
+                            f"Pre-run information for pipeline step: [i]{step_id}[/i]"
+                        )
+                    else:
+                        title = None
+                else:
+                    title = f"Pre-run information for module: [i]{module.module_type_name}[/i]"
+
+                if title:
+                    from kiara.utils.debug import create_module_preparation_table
+                    from kiara.utils.develop import log_dev_message
+
+                    table = create_module_preparation_table(
+                        kiara=self._kiara, job_config=job_config, job_id=job_id
+                    )
+                    log_dev_message(table, title=title)
+
         return job_id
 
     def queue_job(self, job_id: uuid.UUID) -> ActiveJob:
 
         job_details = self._created_jobs.pop(job_id)
-        job_config = job_details.pop("job_config")
+        self._running_job_details[job_id] = job_details
+        job_config: JobConfig = job_details.get("job_config")  # type: ignore
 
-        job = job_details.pop("job")
-        module = job_details.pop("module")
-        outputs = job_details.pop("outputs")
+        job: ActiveJob = job_details.get("job")  # type: ignore
+        module: KiaraModule = job_details.get("module")  # type: ignore
+        outputs: ValueMapWritable = job_details.get("outputs")  # type: ignore
 
-        self._active_jobs[job_id] = job
-        self._output_refs[job_id] = outputs
+        self._active_jobs[job_id] = job  # type: ignore
+        self._output_refs[job_id] = outputs  # type: ignore
 
         input_values = self._kiara.data_registry.load_values(job_config.inputs)
 
         if module.is_pipeline():
-            module._set_job_registry(self._kiara.job_registry)
+            module._set_job_registry(self._kiara.job_registry)  # type: ignore
 
         try:
             self._add_processing_task(
@@ -262,6 +301,44 @@ class ModuleProcessor(abc.ABC):
             job_id=str(job.job_id),
             module_type=job.job_config.module_type,
         )
+
+        if status in [JobStatus.SUCCESS, JobStatus.FAILED]:
+            if is_develop():
+                dev_config = get_dev_config()
+                if dev_config.log.log_post_run:
+                    details = self._running_job_details[job_id]
+                    module: KiaraModule = details["module"]
+                    skip = False
+                    if (
+                        module.characteristics.is_internal
+                        and not dev_config.log.post_run.internal_modules
+                    ):
+                        skip = True
+                    is_pipeline_step = details["job_metadata"].get(
+                        "is_pipeline_step", False
+                    )
+                    if is_pipeline_step and not dev_config.log.post_run.pipeline_steps:
+                        skip = True
+
+                    if not skip:
+                        if is_pipeline_step:
+                            step_id = details["job_metadata"]["step_id"]
+                            title = f"Post-run information for pipeline step: {step_id}"
+                        else:
+                            title = f"Post-run information for module: {module.module_type_name}"
+
+                        from kiara.utils.debug import create_post_run_table
+                        from kiara.utils.develop import log_dev_message
+
+                        rendered = create_post_run_table(
+                            kiara=self._kiara,
+                            job=job,
+                            module=module,
+                            job_config=details["job_config"],
+                        )
+                        log_dev_message(rendered, title=title)
+
+            self._running_job_details.pop(job_id)
 
         self._send_job_event(
             job_id=job_id, old_status=old_status, new_status=job.status

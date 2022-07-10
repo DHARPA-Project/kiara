@@ -38,13 +38,13 @@ from kiara.models.module.pipeline.structure import PipelineStep, PipelineStructu
 from kiara.models.module.pipeline.value_refs import ValueRef
 from kiara.models.values.value import ORPHAN
 from kiara.models.values.value_schema import ValueSchema
-from kiara.utils import StringYAML
 from kiara.utils.operations import create_operation
 from kiara.utils.output import (
     create_pipeline_steps_tree,
     create_table_from_model_object,
     create_value_map_status_renderable,
 )
+from kiara.utils.yaml import StringYAML
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -580,9 +580,7 @@ class Pipeline(object):
 
     def create_job_config_for_step(self, step_id: str) -> JobConfig:
 
-        step_inputs: Mapping[
-            str, Union[uuid.UUID, None]
-        ] = self.get_current_step_inputs(step_id)
+        step_inputs: Mapping[str, uuid.UUID] = self.get_current_step_inputs(step_id)
         step_details: StepDetails = self.get_step_details(step_id=step_id)
         step: PipelineStep = self.get_step(step_id=step_id)
 
@@ -596,6 +594,7 @@ class Pipeline(object):
         job_config = JobConfig.create_from_module(
             data_registry=self._data_registry, module=step.module, inputs=step_inputs
         )
+
         return job_config
 
     def create_renderable(self, **config: Any) -> RenderableType:

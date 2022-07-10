@@ -1,0 +1,215 @@
+# -*- coding: utf-8 -*-
+import os.path
+from enum import Enum
+from pydantic import BaseModel, BaseSettings, Extra, Field
+from rich.console import RenderableType
+from rich.panel import Panel
+from typing import Any, ClassVar, Dict, Union
+
+from kiara.defaults import KIARA_DEV_CONFIG_FILE
+from kiara.utils import is_develop
+from kiara.utils.files import get_data_from_file
+
+
+def log_dev_message(msg: RenderableType, title: Union[str, None] = None):
+
+    if not is_develop():
+        return
+
+    if not title:
+        title = "[yellow]DEV MESSAGE[/yellow]"
+    panel = Panel(msg, title=title, title_align="left")
+
+    from kiara.utils.cli import terminal_print
+
+    terminal_print(panel)
+
+
+def dev_config_file_settings_source(settings: BaseSettings) -> Dict[str, Any]:
+    """
+    A simple settings source that loads variables from a JSON file
+    at the project's root.
+
+    Here we happen to choose to use the `env_file_encoding` from Config
+    when reading `config.json`
+    """
+
+    if os.path.exists(KIARA_DEV_CONFIG_FILE):
+        dev_config = get_data_from_file(KIARA_DEV_CONFIG_FILE)
+    else:
+        dev_config = {}
+    return dev_config
+
+
+def profile_settings_source(settings: BaseSettings) -> Dict[str, Any]:
+
+    profile_name = os.environ.get("DEV_PROFILE", None)
+    if not profile_name:
+        profile_name = os.environ.get("dev_profile", None)
+
+    result: Dict[str, Any] = {}
+    if not profile_name:
+        return result
+
+    from pydantic.fields import ModelField
+
+    model: ModelField
+
+    for model in KiaraDevSettings.__fields__.values():
+        if not issubclass(model.type_, BaseModel):
+            continue
+
+        profiles = getattr(model.type_, "PROFILES", None)
+        if not profiles:
+            continue
+
+        p = profiles.get(profile_name, None)
+        if not p:
+            continue
+        result[model.name] = p
+
+    return result
+
+
+class DetailLevel(Enum):
+
+    NONE = "none"
+    MINIMAL = "minimal"
+    FULL = "full"
+
+
+class PreRunMsgDetails(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        validate_assignment = True
+        use_enum_values = True
+
+    pipeline_steps: bool = Field(
+        description="Whether to also display information for modules that are run as part of a pipeline.",
+        default=False,
+    )
+    module_info: DetailLevel = Field(
+        description="Whether to display details about the module to be run.",
+        default=DetailLevel.MINIMAL,
+    )
+    internal_modules: bool = Field(
+        description="Whether to also print details about runs of internal modules.",
+        default=False,
+    )
+    inputs_info: DetailLevel = Field(
+        description="Whether to display details about the run inputs.",
+        default=DetailLevel.MINIMAL,
+    )
+
+
+class PostRunMsgDetails(BaseModel):
+    class Config:
+        extra = Extra.forbid
+        validate_assignment = True
+        use_enum_values = True
+
+    pipeline_steps: bool = Field(
+        description="Whether to also display information for modules that are run as part of a pipeline",
+        default=False,
+    )
+    module_info: DetailLevel = Field(
+        description="Whether to display details about the module that was run.",
+        default=DetailLevel.NONE,
+    )
+    internal_modules: bool = Field(
+        description="Whether to also print details about runs of internal module.",
+        default=False,
+    )
+    inputs_info: DetailLevel = Field(
+        description="Whether to display details about the run inputs.",
+        default=DetailLevel.NONE,
+    )
+    outputs_info: DetailLevel = Field(
+        description="Whether to display details about the run outputs.",
+        default=DetailLevel.MINIMAL,
+    )
+
+
+class KiaraDevLogSettings(BaseModel):
+
+    PROFILES: ClassVar[Dict[str, Any]] = {
+        "full": {
+            "log_pre_run": True,
+            "pre_run": {
+                "pipeline_steps": True,
+                "module_info": "full",
+                "inputs_info": "full",
+            },
+            "log_post_run": True,
+            "post_run": {
+                "pipeline_steps": True,
+                "module_info": "minimal",
+                "inputs_info": "minimal",
+                "outputs_info": "full",
+            },
+        }
+    }
+
+    class Config:
+        extra = Extra.forbid
+        validate_assignment = True
+        use_enum_values = True
+
+    log_pre_run: bool = Field(
+        description="Print details about a module and its inputs before running it.",
+        default=True,
+    )
+    pre_run: PreRunMsgDetails = Field(
+        description="Fine-grained settings about what to display in the pre-run message.",
+        default_factory=PreRunMsgDetails,
+    )
+    log_post_run: bool = Field(
+        description="Print details about the results of a module run.", default=True
+    )
+    post_run: PostRunMsgDetails = Field(
+        description="Fine-grained settings aobut what to display in the post-run message.",
+        default_factory=PostRunMsgDetails,
+    )
+
+
+class KiaraDevSettings(BaseSettings):
+    class Config:
+
+        extra = Extra.forbid
+        validate_assignment = True
+        env_prefix = "dev_"
+        use_enum_values = True
+        env_nested_delimiter = "__"
+
+        @classmethod
+        def customise_sources(
+            cls,
+            init_settings,
+            env_settings,
+            file_secret_settings,
+        ):
+            return (
+                init_settings,
+                profile_settings_source,
+                dev_config_file_settings_source,
+                env_settings,
+            )
+
+    log: KiaraDevLogSettings = Field(
+        description="Settings about what messages to print in 'develop' mode, and what details to include.",
+        default_factory=KiaraDevLogSettings,
+    )
+    disable_job_cache: bool = Field(
+        description="Whether to always disable the job cache (ignores the runtime_job_cache setting in the kiara configuration).",
+        default=False,
+    )
+
+    def create_renderable(self, **render_config: Any):
+        from kiara.utils.output import create_recursive_table_from_model_object
+
+        return create_recursive_table_from_model_object(
+            self, render_config=render_config
+        )
+
+
+KIARA_DEV_SETTINGS = KiaraDevSettings()

@@ -22,8 +22,10 @@ from kiara.models.module import KiaraModuleClass, KiaraModuleConfig
 from kiara.models.module.jobs import ExecutionContext
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.pipeline.value_refs import StepValueAddress
-from kiara.utils import get_data_from_file, is_jupyter, orjson_dumps
-from kiara.utils.models import module_config_is_empty
+from kiara.utils import is_jupyter
+from kiara.utils.files import get_data_from_file
+from kiara.utils.json import orjson_dumps
+from kiara.utils.modules import module_config_is_empty
 from kiara.utils.output import (
     create_table_from_field_schemas,
     create_table_from_model_object,

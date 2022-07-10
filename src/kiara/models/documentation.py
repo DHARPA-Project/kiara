@@ -18,7 +18,7 @@ from typing import Any, Callable, Dict, List, Mapping, Tuple, Type, Union
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.models import KiaraModel
-from kiara.utils import merge_dicts
+from kiara.utils.dicts import merge_dicts
 from kiara.utils.global_metadata import get_metadata_for_python_module_or_class
 
 

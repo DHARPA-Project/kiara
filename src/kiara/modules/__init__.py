@@ -11,7 +11,8 @@ import uuid
 from abc import abstractmethod
 from multiformats import CID
 from pydantic import BaseModel, Field, ValidationError
-from rich.console import RenderableType
+from rich.console import Group, RenderableType
+from rich.traceback import Traceback
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -25,16 +26,18 @@ from typing import (
 )
 
 from kiara.exceptions import KiaraModuleConfigException
+from kiara.interfaces import get_console
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.jobs import JobLog
 from kiara.models.values.value_schema import ValueSchema
-from kiara.utils import StringYAML, is_debug
+from kiara.utils import is_debug, is_develop
 from kiara.utils.hashing import compute_cid
 from kiara.utils.values import (
     augment_values,
     create_schema_dict,
     overlay_constants_and_defaults,
 )
+from kiara.utils.yaml import StringYAML
 
 if TYPE_CHECKING:
     from kiara.models.values.value import ValueMap
@@ -426,12 +429,20 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
                 self.process(inputs=inputs, outputs=outputs)  # type: ignore
             except Exception as e:
                 if is_debug():
+                    from kiara.utils.develop import log_dev_message
+
                     try:
                         import traceback
 
                         traceback.print_exc()
                     except Exception:
                         pass
+                if is_develop():
+                    console = get_console()
+                    tb = Traceback(width=console.width - 10)
+                    msg = f"Error processing module '{self.module_type_name}': {e}"
+                    g = Group(msg, tb)
+                    log_dev_message(g)
                 raise e
 
         else:
@@ -446,6 +457,9 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
                         traceback.print_exc()
                     except Exception:
                         pass
+                if is_develop():
+                    tb = Traceback()
+                    log_dev_message(tb)
                 raise e
 
     def __eq__(self, other):

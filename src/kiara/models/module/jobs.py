@@ -10,6 +10,7 @@ import os
 import uuid
 from datetime import datetime
 from enum import Enum
+from pydantic import validator
 from pydantic.fields import Field, PrivateAttr
 from pydantic.main import BaseModel
 from rich import box
@@ -223,9 +224,19 @@ class JobRecord(JobConfig):
     runtime_details: Union[JobRuntimeDetails, None] = Field(
         description="Runtime details for the job."
     )
+    job_metadata: Mapping[str, Any] = Field(
+        description="Optional metadata for this job.", default_factory=dict
+    )
 
     _is_stored: bool = PrivateAttr(default=None)
     _outputs_hash: Union[int, None] = PrivateAttr(default=None)
+
+    @validator("job_metadata", pre=True)
+    def validate_metadata(cls, value):
+
+        if value is None:
+            value = {}
+        return value
 
     def _retrieve_data_to_hash(self) -> Any:
         return {

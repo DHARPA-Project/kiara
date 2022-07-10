@@ -16,8 +16,7 @@ from kiara import Kiara
 from kiara.defaults import KIARA_RESOURCES_FOLDER
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.render.pipeline import JinjaPipelineRenderer
-from kiara.utils import dict_from_cli_args
-from kiara.utils.cli import terminal_print
+from kiara.utils.cli import dict_from_cli_args, terminal_print
 
 
 @click.group()

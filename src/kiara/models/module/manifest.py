@@ -15,8 +15,8 @@ from typing import TYPE_CHECKING, Any, Mapping, Union
 
 from kiara.defaults import INVALID_HASH_MARKER, NONE_VALUE_ID
 from kiara.models import KiaraModel
-from kiara.utils import orjson_dumps
 from kiara.utils.hashing import compute_cid
+from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from kiara.registries.data import DataRegistry

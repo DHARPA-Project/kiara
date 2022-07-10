@@ -12,7 +12,7 @@ from kiara.models.module.jobs import ExecutionContext
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation, OperationGroupInfo, OperationInfo
 from kiara.models.module.pipeline import PipelineConfig
-from kiara.utils import get_data_from_file
+from kiara.utils.files import get_data_from_file
 
 if TYPE_CHECKING:
     from kiara.context import Kiara

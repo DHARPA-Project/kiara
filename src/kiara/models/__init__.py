@@ -22,9 +22,9 @@ from rich.table import Table
 from typing import Any, ClassVar, Dict, Iterable, List, Union
 
 from kiara.defaults import KIARA_HASH_FUNCTION
-from kiara.utils import orjson_dumps
 from kiara.utils.class_loading import _default_id_func
 from kiara.utils.hashing import compute_cid
+from kiara.utils.json import orjson_dumps
 from kiara.utils.models import (
     assemble_subcomponent_tree,
     get_subcomponent_from_model,

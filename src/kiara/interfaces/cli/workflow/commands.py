@@ -13,8 +13,8 @@ from typing import Tuple, Union
 from kiara import Kiara
 from kiara.interfaces.python_api.workflow import Workflow
 from kiara.models.workflow import WorkflowGroupInfo
-from kiara.utils import StringYAML, dict_from_cli_args
-from kiara.utils.cli import terminal_print, terminal_print_model
+from kiara.utils.cli import dict_from_cli_args, terminal_print, terminal_print_model
+from kiara.utils.yaml import StringYAML
 
 logger = structlog.getLogger()
 

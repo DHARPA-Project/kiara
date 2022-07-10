@@ -34,8 +34,8 @@ from kiara.models.documentation import (
     DocumentationMetadataModel,
 )
 from kiara.models.python_class import PythonClass
-from kiara.utils import orjson_dumps
 from kiara.utils.class_loading import find_all_kiara_model_classes
+from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     pass

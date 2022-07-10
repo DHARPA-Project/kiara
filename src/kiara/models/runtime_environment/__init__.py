@@ -15,8 +15,8 @@ from typing import Any, Dict, Mapping, Union, get_args
 
 from kiara.defaults import DEFAULT_ENV_HASH_KEY, ENVIRONMENT_TYPE_CATEGORY_ID
 from kiara.models import KiaraModel
-from kiara.utils import orjson_dumps
 from kiara.utils.hashing import compute_cid
+from kiara.utils.json import orjson_dumps
 from kiara.utils.output import extract_renderable
 
 logger = structlog.get_logger()

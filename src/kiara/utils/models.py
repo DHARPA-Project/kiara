@@ -107,16 +107,3 @@ def assemble_subcomponent_tree(data: "KiaraModel") -> Union[nx.DiGraph, None]:
 
     assemble_tree(data, KIARA_DEFAULT_ROOT_NODE_ID)
     return graph
-
-
-def module_config_is_empty(config: Mapping[str, Any]):
-
-    c = dict(config)
-    d = c.pop("defaults", None)
-    if d:
-        return False
-    constants = c.pop("constants", None)
-    if constants:
-        return False
-
-    return False if c else True

@@ -11,7 +11,7 @@ from pydoc import locate
 from typing import Any, Type, Union
 
 from kiara.context import Kiara, KiaraContextInfo
-from kiara.utils import StringYAML
+from kiara.utils.yaml import StringYAML
 
 yaml = StringYAML()
 kiara_obj = Kiara.instance()

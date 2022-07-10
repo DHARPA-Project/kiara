@@ -9,6 +9,8 @@ import importlib
 import inspect
 import os
 import sys
+from pkgutil import iter_modules
+from rich.markdown import Markdown
 from stevedore import ExtensionManager
 from types import ModuleType
 from typing import (
@@ -27,12 +29,13 @@ from typing import (
 
 from kiara.utils import (
     _get_all_subclasses,
-    _import_modules_recursively,
     camel_case_to_snake_case,
     is_debug,
+    is_develop,
     log_exception,
     log_message,
 )
+from kiara.utils.develop import log_dev_message
 
 if TYPE_CHECKING:
     from kiara.modules import KiaraModule
@@ -146,6 +149,28 @@ def _process_subclass(
     """
     is_abstract = inspect.isabstract(sub_class)
     if ignore_abstract_classes and is_abstract:
+
+        if getattr(sub_class, "_is_abstract", False):
+            return None
+
+        if is_develop():
+            from kiara.modules import KiaraModule
+
+            if base_class == KiaraModule and is_develop():
+                missing = []
+                abs_meth = sub_class.__abstractmethods__
+                if "create_inputs_schema" in abs_meth:
+                    missing.append("create_inputs_schema")
+                if "create_outputs_schema" in abs_meth:
+                    missing.append("create_outputs_schema")
+                if not hasattr(sub_class, "process"):
+                    missing.append("process")
+
+                msg = f"Invalid kiara module: **{sub_class.__module__}.{sub_class.__name__}**\n\nMissing method(s):"
+                for m in missing:
+                    msg = f"{msg}\n- *{m}*"
+                log_dev_message(msg=Markdown(msg))
+
         log_message(
             "ignore.subclass",
             sub_class=sub_class,
@@ -349,8 +374,17 @@ def find_all_kiara_modules() -> Dict[str, Type["KiaraModule"]]:
     for k, cls in modules.items():
 
         if not hasattr(cls, "process"):
+            if is_develop():
+                msg = f"Invalid kiara module: **{cls.__module__}.{cls.__name__}**\n\nMissing method(s):\n- *process*"
+                log_dev_message(msg=Markdown(msg))
+
             # TODO: check signature of process method
-            log_message("ignore.module.class", cls=cls, reason="no 'process' method")
+            log_message(
+                "ignore.subclass",
+                sub_class=cls,
+                base_class=KiaraModule,
+                reason="'process' method is missing",
+            )
             continue
 
         result[k] = cls
@@ -664,3 +698,23 @@ def find_all_cli_subcommands():
 #
 #     # TODO: typecheck?
 #     return _callable_wrapper(func=func)  # type: ignore
+def _import_modules_recursively(module: "ModuleType"):
+
+    if not hasattr(module, "__path__"):
+        return
+
+    for submodule in iter_modules(module.__path__):  # type: ignore
+
+        try:
+            submodule_mod = importlib.import_module(
+                f"{module.__name__}.{submodule.name}"
+            )
+            if hasattr(submodule_mod, "__path__"):
+                _import_modules_recursively(submodule_mod)
+        except Exception as e:
+            logger.error(
+                "ignore.python_module",
+                module=f"{module.__name__}.{submodule.name}",
+                reason=str(e),
+                base_module=str(module),
+            )

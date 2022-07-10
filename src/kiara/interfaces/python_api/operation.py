@@ -14,7 +14,7 @@ from kiara.interfaces.python_api.value import StoreValuesResult
 from kiara.models.module.jobs import JobConfig, JobStatus
 from kiara.models.module.operation import Operation
 from kiara.models.values.value import ValueMap
-from kiara.utils import get_data_from_file
+from kiara.utils.files import get_data_from_file
 from kiara.utils.operations import create_operation
 from kiara.utils.output import (
     create_table_from_field_schemas,

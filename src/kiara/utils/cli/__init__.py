@@ -1,20 +1,24 @@
 # -*- coding: utf-8 -*-
+import json
 import orjson
+import os
 import rich_click as click
 from click import Command, Option, Parameter
 from enum import Enum
 from pydantic import BaseModel
-from rich.console import Group
+from rich.console import ConsoleRenderable, Group, RichCast
 from rich.panel import Panel
 from rich.rule import Rule
 from rich.syntax import Syntax
-from typing import Any, Callable, Mapping, TypeVar, Union
+from typing import Any, Callable, Dict, Iterable, Mapping, TypeVar, Union
 
 from kiara.interfaces import get_console
 
 # ======================================================================================================================
 # click helper methods
-from kiara.utils import orjson_dumps
+from kiara.utils import logger
+from kiara.utils.files import get_data_from_file
+from kiara.utils.json import orjson_dumps
 from kiara.utils.output import extract_renderable
 
 F = TypeVar("F", bound=Callable[..., Any])
@@ -57,6 +61,10 @@ def terminal_print(
         console.print(msg, **rich_config)
     else:
         console.print(msg)
+
+
+def is_rich_renderable(item: Any):
+    return isinstance(item, (ConsoleRenderable, RichCast, str))
 
 
 class OutputFormat(Enum):
@@ -255,3 +263,44 @@ def terminal_print_model(
         terminal_print(
             syntax, empty_line_before=empty_line_before, rich_config={"soft_wrap": True}
         )
+
+
+def dict_from_cli_args(
+    *args: str, list_keys: Union[Iterable[str], None] = None
+) -> Dict[str, Any]:
+
+    if not args:
+        return {}
+
+    config: Dict[str, Any] = {}
+    for arg in args:
+        if "=" in arg:
+            key, value = arg.split("=", maxsplit=1)
+            try:
+                _v = json.loads(value)
+            except Exception:
+                _v = value
+            part_config = {key: _v}
+        elif os.path.isfile(os.path.realpath(os.path.expanduser(arg))):
+            path = os.path.realpath(os.path.expanduser(arg))
+            part_config = get_data_from_file(path)
+            assert isinstance(part_config, Mapping)
+        else:
+            try:
+                part_config = json.loads(arg)
+                assert isinstance(part_config, Mapping)
+            except Exception:
+                raise Exception(f"Could not parse argument into data: {arg}")
+
+        if list_keys is None:
+            list_keys = []
+
+        for k, v in part_config.items():
+            if k in list_keys:
+                config.setdefault(k, []).append(v)
+            else:
+                if k in config.keys():
+                    logger.warning("duplicate.key", old_value=k, new_value=v)
+                config[k] = v
+
+    return config

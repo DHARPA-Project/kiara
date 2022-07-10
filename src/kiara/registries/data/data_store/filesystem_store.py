@@ -24,8 +24,9 @@ from kiara.models.values.value import (
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
 from kiara.registries.data.data_store import BaseDataStore, DataArchive
 from kiara.registries.jobs import JobArchive
-from kiara.utils import log_message, orjson_dumps
+from kiara.utils import log_message
 from kiara.utils.hashfs import HashAddress, HashFS
+from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     pass

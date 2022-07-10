@@ -22,7 +22,7 @@ from kiara.models.documentation import (
 )
 from kiara.models.info import TypeInfo, TypeInfoModelGroup
 from kiara.models.python_class import PythonClass
-from kiara.utils import orjson_dumps
+from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from kiara import Kiara

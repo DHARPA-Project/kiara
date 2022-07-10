@@ -9,6 +9,7 @@ import json
 import orjson
 import structlog
 from abc import ABC, abstractmethod
+from enum import Enum
 from pydantic import BaseModel, Field, root_validator
 from rich import box
 from rich.console import ConsoleRenderable, Group, RenderableType, RichCast
@@ -18,7 +19,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set, Type,
 
 from kiara.defaults import SpecialValue
 from kiara.models.values.value import ORPHAN, Value, ValueMap
-from kiara.utils import dict_from_cli_args, orjson_dumps
+from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from pyarrow import Table as ArrowTable
@@ -48,6 +49,8 @@ class OutputDetails(BaseModel):
                 data = [f"format={data}"]
 
         if isinstance(data, Iterable):
+            from kiara.utils.cli import dict_from_cli_args
+
             data = list(data)
             if len(data) == 1 and isinstance(data[0], str) and "=" not in data[0]:
                 data = [f"format={data[0]}"]
@@ -520,37 +523,6 @@ def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
     return table
 
 
-# def create_table_from_config_class(
-#     config_cls: typing.Type["KiaraModuleConfig"],
-#     remove_pipeline_config: bool = False,
-# ) -> Table:
-#
-#     table = Table(box=box.HORIZONTALS, show_header=False)
-#     table.add_column("Field name", style="i")
-#     table.add_column("Type")
-#     table.add_column("Description")
-#     flat_models = get_flat_models_from_model(config_cls)
-#     model_name_map = get_model_name_map(flat_models)
-#     m_schema, _, _ = model_process_schema(config_cls, model_name_map=model_name_map)
-#     fields = m_schema["properties"]
-#
-#     for alias, details in fields.items():
-#         if remove_pipeline_config and alias in [
-#             "steps",
-#             "input_aliases",
-#             "output_aliases",
-#             "doc",
-#         ]:
-#             continue
-#
-#         type_str = "-- n/a --"
-#         if "type" in details.keys():
-#             type_str = details["type"]
-#         table.add_row(alias, type_str, details.get("description", "-- n/a --"))
-#
-#     return table
-
-
 def create_table_from_field_schemas(
     fields: Mapping[str, "ValueSchema"],
     _add_default: bool = True,
@@ -790,6 +762,8 @@ def extract_renderable(item: Any, render_config: Union[Mapping[str, Any], None] 
             _all.append(extract_renderable(i))
         rg = Group(*_all)
         return rg
+    elif isinstance(item, Enum):
+        return item.value
     else:
         return str(item)
 
@@ -874,3 +848,64 @@ def create_pipeline_steps_tree(
                     invalid_node.add(f"[i]{k}[/i]: {v}")
 
     return steps
+
+
+def create_recursive_table_from_model_object(
+    model: BaseModel,
+    render_config: Union[Mapping[str, Any], None] = None,
+):
+
+    if render_config is None:
+        render_config = {}
+
+    show_lines = render_config.get("show_lines", True)
+    show_header = render_config.get("show_header", True)
+    model_cls = model.__class__
+
+    table = RichTable(box=box.SIMPLE, show_lines=show_lines, show_header=show_header)
+    table.add_column("Field")
+    table.add_column("Value")
+
+    props = model_cls.schema().get("properties", {})
+
+    for field_name in sorted(model_cls.__fields__.keys()):
+
+        data = getattr(model, field_name)
+        p = props.get(field_name, None)
+        p_type = None
+        if p is not None:
+            p_type = p.get("type", None)
+            # TODO: check 'anyOf' keys
+
+        if p_type is not None:
+            p_type = f"[i]{p_type}[/i]"
+
+        desc = p.get("description", None)
+
+        if not isinstance(data, BaseModel):
+            data_renderable = extract_renderable(data, render_config=render_config)
+            sub_model = None
+        else:
+            sub_model = create_recursive_table_from_model_object(
+                data, render_config={"show_lines": True, "show_header": False}
+            )
+            data_renderable = None
+
+        group = []
+
+        if data_renderable:
+            group.append(data_renderable)
+            group.append("")
+        if desc:
+            group.append(f"[i]{desc}[/i]")
+
+        if sub_model:
+            group.append(sub_model)
+
+        if p_type:
+            field_name = f"[b i]{field_name}[/b i] ([i]{p_type}[/i])"
+        else:
+            field_name = f"[b i]{field_name}[/b i]"
+        table.add_row(field_name, Group(*group))
+
+    return table

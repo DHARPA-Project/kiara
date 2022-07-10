@@ -16,7 +16,8 @@ from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
 from kiara.models.values.value import ORPHAN, PersistedData, Value
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries.aliases import AliasRegistry
-from kiara.utils import is_debug, log_message, orjson_dumps
+from kiara.utils import is_debug, log_message
+from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from kiara.context import Kiara

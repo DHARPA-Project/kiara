@@ -150,7 +150,11 @@ class InputOutputObject(abc.ABC):
         return self._constants  # type: ignore
 
     def _create_inputs_schema(self) -> None:
+        """Assemble the inputs schema and assign it to the approriate instance attributes.
 
+        DEV NOTE: if anything in this method is changed, also change the method of the AutoInputsKiaraModule
+        in the kiara_pluginc.core_types package, since it's a carbon copy if this, except for a small change.
+        """
         try:
             _input_schemas_data = self.create_inputs_schema()
 
@@ -424,20 +428,19 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
 
         signature = inspect.signature(self.process)  # type: ignore
 
-        if "job_log" not in signature.parameters.keys():
+        process_inputs: Dict[str, Any] = {
+            "inputs": inputs,
+            "outputs": outputs,
+        }
 
-            try:
-                self.process(inputs=inputs, outputs=outputs)  # type: ignore
-            except Exception as e:
-                log_exception(e)
-                raise e
-        else:
+        if "job_log" in signature.parameters.keys():
+            process_inputs["job_log"] = job_log
 
-            try:
-                self.process(inputs=inputs, outputs=outputs, job_log=job_log)  # type: ignore
-            except Exception as e:
-                log_exception(e)
-                raise e
+        try:
+            self.process(**process_inputs)  # type: ignore
+        except Exception as e:
+            log_exception(e)
+            raise e
 
     def __eq__(self, other):
         if self.__class__ != other.__class__:

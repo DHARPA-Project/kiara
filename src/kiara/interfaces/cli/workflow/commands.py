@@ -28,7 +28,9 @@ def workflow(ctx):
 
 
 @workflow.command()
-@click.option("--all", "-a", help="Also displays workflows without alias.")
+@click.option(
+    "--all", "-a", help="Also displays workflows without alias.", is_flag=True
+)
 @click.pass_context
 def list(ctx, all):
     """List existing workflows."""

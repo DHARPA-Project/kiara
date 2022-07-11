@@ -40,7 +40,11 @@ def is_develop() -> bool:
     if debug.lower() == "true":
         return True
     else:
-        return False
+        profile = os.environ.get("DEV_PROFILE", "")
+        if profile:
+            return True
+        else:
+            return False
 
 
 def get_dev_config() -> "KiaraDevSettings":
@@ -61,19 +65,29 @@ def log_exception(exc: Exception):
         logger.exception(exc)
 
     if is_develop():
+        from kiara.utils.develop import DetailLevel
+
+        config = get_dev_config()
+        if config.log.exc in [DetailLevel.NONE, "none"]:
+            return
+
+        show_locals = config.log.exc in [DetailLevel.FULL, "full"]
+
         from kiara.interfaces import get_console
         from kiara.utils.develop import log_dev_message
 
         exc_info = sys.exc_info()
+
         if not exc_info:
             # TODO: create exc_info from exception?
             if not is_debug():
                 logger.exception(exc)
         else:
             console = get_console()
+
             log_dev_message(
                 Traceback.from_exception(
-                    *exc_info, show_locals=True, width=console.width - 4  # type: ignore
+                    *exc_info, show_locals=show_locals, width=console.width - 4  # type: ignore
                 ),
                 title="Exception details",
             )

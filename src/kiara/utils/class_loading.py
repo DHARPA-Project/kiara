@@ -150,7 +150,7 @@ def _process_subclass(
     is_abstract = inspect.isabstract(sub_class)
     if ignore_abstract_classes and is_abstract:
 
-        if getattr(sub_class, "_is_abstract", False):
+        if sub_class.__dict__.get("_is_abstract", False):
             return None
 
         if is_develop():

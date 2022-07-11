@@ -155,6 +155,9 @@ class KiaraDevLogSettings(BaseModel):
         validate_assignment = True
         use_enum_values = True
 
+    exc: DetailLevel = Field(
+        description="How detailed to print exceptions", default=DetailLevel.MINIMAL
+    )
     log_pre_run: bool = Field(
         description="Print details about a module and its inputs before running it.",
         default=True,

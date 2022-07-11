@@ -58,7 +58,7 @@ jobs:
       - name: install required plugin packages
         run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_plugin.core_types kiara_plugin.tabular
       - name: install kiara
-        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
+        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[dev_testing]
       - name: display installed kiara and module package versions
         run: pip list | grep kiara
       - name: Run coverage
@@ -107,7 +107,7 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}
       - uses: actions/checkout@v2
       - name: install kiara
-        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
+        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[dev_testing]
       - name: Test with flake8
         run: make flake
 
@@ -133,7 +133,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: install kiara
-        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_documentation]
+        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[dev_documentation]
       - run: git config --global user.email "markus@frkl.io"
       - run: git config --global user.name "Markus Binsteiner"
       - name: create latest documentation

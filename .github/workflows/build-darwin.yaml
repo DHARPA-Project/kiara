@@ -28,7 +28,7 @@ jobs:
       - name: install required plugin packages
         run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_plugin.core_types kiara_plugin.tabular
       - name: install kiara
-        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[all,dev_testing]
+        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[dev_testing]
       - name: display installed kiara and module package versions
         run: pip list | grep kiara
       - name: test with pytest

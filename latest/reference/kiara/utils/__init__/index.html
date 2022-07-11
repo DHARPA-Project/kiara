@@ -4709,7 +4709,11 @@
     <span class="k">if</span> <span class="n">debug</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">profile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DEV_PROFILE&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">profile</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
 </code></pre></div>
         </details>
     </div>
@@ -4765,19 +4769,29 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">is_develop</span><span class="p">():</span>
+        <span class="kn">from</span> <span class="nn">kiara.utils.develop</span> <span class="kn">import</span> <span class="n">DetailLevel</span>
+
+        <span class="n">config</span> <span class="o">=</span> <span class="n">get_dev_config</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">exc</span> <span class="ow">in</span> <span class="p">[</span><span class="n">DetailLevel</span><span class="o">.</span><span class="n">NONE</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">]:</span>
+            <span class="k">return</span>
+
+        <span class="n">show_locals</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">exc</span> <span class="ow">in</span> <span class="p">[</span><span class="n">DetailLevel</span><span class="o">.</span><span class="n">FULL</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">]</span>
+
         <span class="kn">from</span> <span class="nn">kiara.interfaces</span> <span class="kn">import</span> <span class="n">get_console</span>
         <span class="kn">from</span> <span class="nn">kiara.utils.develop</span> <span class="kn">import</span> <span class="n">log_dev_message</span>
 
         <span class="n">exc_info</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">exc_info</span><span class="p">:</span>
             <span class="c1"># TODO: create exc_info from exception?</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_debug</span><span class="p">():</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">console</span> <span class="o">=</span> <span class="n">get_console</span><span class="p">()</span>
+
             <span class="n">log_dev_message</span><span class="p">(</span>
                 <span class="n">Traceback</span><span class="o">.</span><span class="n">from_exception</span><span class="p">(</span>
-                    <span class="o">*</span><span class="n">exc_info</span><span class="p">,</span> <span class="n">show_locals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">console</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">4</span>  <span class="c1"># type: ignore</span>
+                    <span class="o">*</span><span class="n">exc_info</span><span class="p">,</span> <span class="n">show_locals</span><span class="o">=</span><span class="n">show_locals</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">console</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">4</span>  <span class="c1"># type: ignore</span>
                 <span class="p">),</span>
                 <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Exception details&quot;</span><span class="p">,</span>
             <span class="p">)</span>
@@ -7841,6 +7855,9 @@ KiaraDevLogSettings            (<span title="pydantic.main.BaseModel">BaseModel<
         <span class="n">validate_assignment</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">use_enum_values</span> <span class="o">=</span> <span class="kc">True</span>
 
+    <span class="n">exc</span><span class="p">:</span> <span class="n">DetailLevel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;How detailed to print exceptions&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">DetailLevel</span><span class="o">.</span><span class="n">MINIMAL</span>
+    <span class="p">)</span>
     <span class="n">log_pre_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Print details about a module and its inputs before running it.&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -7880,6 +7897,28 @@ KiaraDevLogSettings            (<span title="pydantic.main.BaseModel">BaseModel<
 
     <div class="doc doc-contents ">
 
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.utils.develop.KiaraDevLogSettings.exc" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">exc</span><span class="p">:</span> <span class="n">DetailLevel</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.utils.develop.KiaraDevLogSettings.exc" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>How detailed to print exceptions</p>
     </div>
 
   </div>

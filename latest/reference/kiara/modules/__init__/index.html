@@ -4526,7 +4526,11 @@ InputOutputObject            (<span title="abc.ABC">ABC</span>)
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_constants</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">def</span> <span class="nf">_create_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Assemble the inputs schema and assign it to the approriate instance attributes.</span>
 
+<span class="sd">        DEV NOTE: if anything in this method is changed, also change the method of the AutoInputsKiaraModule</span>
+<span class="sd">        in the kiara_pluginc.core_types package, since it&#39;s a carbon copy if this, except for a small change.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">_input_schemas_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_inputs_schema</span><span class="p">()</span>
 
@@ -5133,20 +5137,19 @@ KiaraModule            (<a class="autorefs autorefs-internal" title="kiara.modul
 
         <span class="n">signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
-        <span class="k">if</span> <span class="s2">&quot;job_log&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">process_inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="n">inputs</span><span class="p">,</span>
+            <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="n">outputs</span><span class="p">,</span>
+        <span class="p">}</span>
 
-            <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="n">e</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;job_log&quot;</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">process_inputs</span><span class="p">[</span><span class="s2">&quot;job_log&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_log</span>
 
-            <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">job_log</span><span class="o">=</span><span class="n">job_log</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="n">e</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="o">**</span><span class="n">process_inputs</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="vm">__class__</span><span class="p">:</span>
@@ -5870,20 +5873,19 @@ as well as wrapping input/output-data related functionality.</p>
 
     <span class="n">signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
-    <span class="k">if</span> <span class="s2">&quot;job_log&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="n">process_inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;inputs&quot;</span><span class="p">:</span> <span class="n">inputs</span><span class="p">,</span>
+        <span class="s2">&quot;outputs&quot;</span><span class="p">:</span> <span class="n">outputs</span><span class="p">,</span>
+    <span class="p">}</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">e</span>
-    <span class="k">else</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">&quot;job_log&quot;</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">process_inputs</span><span class="p">[</span><span class="s2">&quot;job_log&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_log</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">job_log</span><span class="o">=</span><span class="n">job_log</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">e</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="o">**</span><span class="n">process_inputs</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">e</span>
 </code></pre></div>
         </details>
     </div>

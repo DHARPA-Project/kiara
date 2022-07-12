@@ -1,0 +1,24 @@
+---
+_doc: |
+  Receives a dict with the id of a text as key, and the text as value, tokenizes the text(s) and then processes the tokenized values according to the provided settings.
+
+  Currently, lowercasing and the removal of stopwords is supported.
+
+modules:
+
+- type: tokenize_corpus
+  input_map:
+    text_map: __workflow_input__.text_map
+
+- type: lowercase_corpus
+  input_map:
+    tokenized_text: tokenize_corpus.tokenized_text
+    enabled: __workflow_input__.make_lowercase
+
+- type: remove_stopwords_from_corpus
+  input_map:
+    tokenized_text: lowercase_corpus.tokenized_text
+    enabled: __workflow_input__.remove_stopwords
+    stopwords_list: __workflow_input__.stopwords
+  workflow_outputs:
+    tokenized_text: processed_text_corpus

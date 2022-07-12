@@ -4,6 +4,7 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
+import abc
 import copy
 import structlog
 import uuid
@@ -39,6 +40,7 @@ from kiara.models.module.operation import Operation
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.info import ValueInfo
+from kiara.models.values.matchers import ValueMatcher
 from kiara.models.values.value import (
     ORPHAN,
     PersistedData,
@@ -73,6 +75,55 @@ NONE_PERSISTED_DATA = PersistedData.construct(
 )
 
 
+class AliasResolver(abc.ABC):
+    def __init__(self, kiara: "Kiara"):
+
+        self._kiara: "Kiara" = kiara
+
+    @abc.abstractmethod
+    def resolve_alias(self, alias: str) -> uuid.UUID:
+        pass
+
+
+class DefaultAliasResolver(AliasResolver):
+    def __init__(self, kiara: "Kiara"):
+
+        super().__init__(kiara=kiara)
+
+    def resolve_alias(self, alias: str) -> uuid.UUID:
+
+        if ":" in alias:
+            ref_type, rest = alias.split(":", maxsplit=1)
+
+            if ref_type == "value":
+                _value_id: Union[uuid.UUID, None] = uuid.UUID(rest)
+            elif ref_type == "alias":
+                _value_id = self._kiara.alias_registry.find_value_id_for_alias(
+                    alias=rest
+                )
+                if _value_id is None:
+                    raise NoSuchValueAliasException(
+                        alias=rest,
+                        msg=f"Can't retrive value for alias '{rest}': no such alias registered.",
+                    )
+            else:
+                raise Exception(
+                    f"Can't retrieve value for '{alias}': invalid reference type '{ref_type}'."
+                )
+        else:
+            _value_id = self._kiara.alias_registry.find_value_id_for_alias(alias)
+            if _value_id is None:
+                raise Exception(
+                    f"Can't retrieve value for alias '{alias}': no such alias registered."
+                )
+
+        if _value_id is None:
+            raise Exception(
+                f"Can't retrieve value for alias '{alias}': no such alias registered."
+            )
+        return _value_id
+
+
 class DataRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
@@ -86,11 +137,14 @@ class DataRegistry(object):
         self._registered_values: Dict[uuid.UUID, Value] = {}
 
         self._value_archive_lookup_map: Dict[uuid.UUID, str] = {}
+        """A cached dict that stores which archives which value ids belong to."""
 
         self._values_by_hash: Dict[str, Set[uuid.UUID]] = {}
 
         self._cached_data: Dict[uuid.UUID, Any] = {}
         self._persisted_value_descs: Dict[uuid.UUID, Union[PersistedData, None]] = {}
+
+        self._alias_resolver: AliasResolver = DefaultAliasResolver(kiara=self._kiara)
 
         # initialize special values
         special_value_cls = PythonClass.from_class(NoneType)
@@ -155,7 +209,8 @@ class DataRegistry(object):
         result: Set[uuid.UUID] = set()
         for store in self._data_archives.values():
             ids = store.value_ids
-            result.update(ids)
+            if ids:
+                result.update(ids)
 
         return result
 
@@ -289,28 +344,7 @@ class DataRegistry(object):
                             f"Can't retrieve value for '{value_id}': invalid type '{type(value_id)}'."
                         )
 
-                    if ":" not in value_id:
-                        raise Exception(
-                            f"Can't retrieve value for '{value_id}': can't determine reference type."
-                        )
-
-                    ref_type, rest = value_id.split(":", maxsplit=1)
-
-                    if ref_type == "value":
-                        _value_id = uuid.UUID(rest)
-                    elif ref_type == "alias":
-                        _value_id = self._kiara.alias_registry.find_value_id_for_alias(
-                            alias=rest
-                        )
-                        if _value_id is None:
-                            raise NoSuchValueAliasException(
-                                alias=rest,
-                                msg=f"Can't retrive value for alias '{rest}': no such alias registered.",
-                            )
-                    else:
-                        raise Exception(
-                            f"Can't retrieve value for '{value_id}': invalid reference type '{ref_type}'."
-                        )
+                    _value_id = self._alias_resolver.resolve_alias(value_id)
         else:
             _value_id = value_id
 
@@ -398,6 +432,51 @@ class DataRegistry(object):
 
         value_info = ValueInfo.create_from_value(kiara=self._kiara, value=value)
         return value_info
+
+    def find_values(self, matcher: ValueMatcher) -> Dict[uuid.UUID, Value]:
+
+        if matcher._kiara is None:
+            matcher._kiara = self._kiara
+        else:
+            assert matcher._kiara.id == self._kiara.id
+
+        matches: Dict[uuid.UUID, Value] = {}
+        for store_id, store in self.data_archives.items():
+            try:
+                _matches = store.find_values(matcher=matcher)
+                for value in _matches:
+                    if value.value_id in matches.keys():
+                        raise Exception(
+                            f"Found value '{value.value_id}' multiple times, this is not supported yet."
+                        )
+                    self._value_archive_lookup_map[value.value_id] = store_id
+                    value._set_registry(self)
+                    value._is_stored = True
+                    self._registered_values[value.value_id] = value
+                    matches[value.value_id] = value
+                    self._values_by_hash.setdefault(value.value_hash, set()).add(
+                        value.value_id
+                    )
+            except NotImplementedError:
+                all_value_ids = store.value_ids
+                if all_value_ids is None:
+                    continue
+                for value_id in all_value_ids:
+                    value = store.retrieve_value(value_id=value_id)
+                    value._set_registry(self)
+                    value._is_stored = True
+
+                    self._registered_values[value.value_id] = value
+
+                    match = matcher.is_match(value)
+                    if match:
+                        if value.value_id in matches.keys():
+                            raise Exception(
+                                f"Found value '{value.value_id}' multiple times, this is not supported yet."
+                            )
+                        matches[value.value_id] = value
+
+        return matches
 
     def find_values_for_hash(
         self, value_hash: str, data_type_name: Union[str, None] = None

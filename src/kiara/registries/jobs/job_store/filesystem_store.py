@@ -4,8 +4,10 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
+import datetime
 import orjson
 import shutil
+import structlog
 import uuid
 from pathlib import Path
 from typing import Any, Dict, Iterable, Union
@@ -13,6 +15,8 @@ from typing import Any, Dict, Iterable, Union
 from kiara.models.module.jobs import JobRecord
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
 from kiara.registries.jobs import MANIFEST_SUB_PATH, JobArchive, JobStore
+
+log = structlog.getLogger()
 
 
 class FileSystemJobArchive(JobArchive):
@@ -158,13 +162,24 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
         job_folder = manifest_folder / inputs_hash
         job_folder.mkdir(parents=True, exist_ok=True)
 
-        job_details_file_name = job_folder / f"{job_record.job_hash}.job_record"
-        if job_details_file_name.exists():
-            raise Exception(
-                f"Job record already exists: {job_details_file_name.as_posix()}"
+        job_details_file = job_folder / f"{job_record.job_hash}.job_record"
+        if job_details_file.exists():
+            # TODO: check details match? or overwrite
+            file_m_time = datetime.datetime.fromtimestamp(
+                job_details_file.stat().st_mtime
+            ).timestamp()
+            archive = job_folder / ".archive"
+            archive.mkdir(parents=True, exist_ok=True)
+            backup = archive / f"{job_details_file.name}.{file_m_time}"
+            log.debug(
+                "overwrite.store_job_record",
+                reason="job record already exists",
+                job_hash=job_record.job_hash,
+                new_path=backup.as_posix(),
             )
+            shutil.move(job_details_file, backup)
 
-        job_details_file_name.write_text(job_record.json())
+        job_details_file.write_text(job_record.json())
 
         for output_name, output_v_id in job_record.outputs.items():
 

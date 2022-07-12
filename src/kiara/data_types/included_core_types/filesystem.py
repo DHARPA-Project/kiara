@@ -136,7 +136,7 @@ class FileValueType(KiaraModelValueType[FileModel, FileTypeConfig]):
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
-        data: Any = value.data
+        data: FileModel = value.data
         max_lines = render_config.get("max_lines", 34)
         try:
             lines = []

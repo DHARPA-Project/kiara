@@ -43,13 +43,23 @@ def dev_config_file_settings_source(settings: BaseSettings) -> Dict[str, Any]:
 
 def profile_settings_source(settings: BaseSettings) -> Dict[str, Any]:
 
-    profile_name = os.environ.get("DEV_PROFILE", None)
+    profile_name = os.environ.get("DEVELOP", None)
+    if not profile_name:
+        profile_name = os.environ.get("develop", None)
+    if not profile_name:
+        profile_name = os.environ.get("DEV", None)
+    if not profile_name:
+        profile_name = os.environ.get("dev", None)
+    if not profile_name:
+        profile_name = os.environ.get("DEV_PROFILE", None)
     if not profile_name:
         profile_name = os.environ.get("dev_profile", None)
 
     result: Dict[str, Any] = {}
     if not profile_name:
         return result
+
+    profile_name = profile_name.lower()
 
     from pydantic.fields import ModelField
 
@@ -147,7 +157,11 @@ class KiaraDevLogSettings(BaseModel):
                 "inputs_info": "minimal",
                 "outputs_info": "full",
             },
-        }
+        },
+        "internal": {
+            "pre_run": {"internal_modules": True},
+            "post_run": {"internal_modules": True},
+        },
     }
 
     class Config:
@@ -202,9 +216,9 @@ class KiaraDevSettings(BaseSettings):
         description="Settings about what messages to print in 'develop' mode, and what details to include.",
         default_factory=KiaraDevLogSettings,
     )
-    disable_job_cache: bool = Field(
+    job_cache: bool = Field(
         description="Whether to always disable the job cache (ignores the runtime_job_cache setting in the kiara configuration).",
-        default=False,
+        default=True,
     )
 
     def create_renderable(self, **render_config: Any):

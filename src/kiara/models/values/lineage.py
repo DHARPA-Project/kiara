@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from rich.console import RenderableType
+from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
+from rich.jupyter import JupyterMixin
 from rich.tree import Tree
 from typing import Any, Union
 
@@ -61,7 +62,7 @@ def fill_lineage_tree(
     return main
 
 
-class ValueLineage(object):
+class ValueLineage(JupyterMixin):
     @classmethod
     def from_value(cls, value: Value) -> "ValueLineage":
 
@@ -79,3 +80,9 @@ class ValueLineage(object):
             kiara=self._kiara, pedigree=self._value.pedigree, include_ids=include_ids
         )
         return tree
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+
+        yield self.create_renderable()

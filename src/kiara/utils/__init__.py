@@ -36,15 +36,14 @@ def is_debug() -> bool:
 
 def is_develop() -> bool:
 
-    debug = os.environ.get("DEVELOP", "")
-    if debug.lower() == "true":
+    develop = os.environ.get("DEVELOP", "")
+    if not develop:
+        develop = os.environ.get("DEV", "")
+
+    if develop and develop.lower() != "false":
         return True
-    else:
-        profile = os.environ.get("DEV_PROFILE", "")
-        if profile:
-            return True
-        else:
-            return False
+
+    return False
 
 
 def get_dev_config() -> "KiaraDevSettings":
@@ -56,7 +55,18 @@ def get_dev_config() -> "KiaraDevSettings":
 
 def is_jupyter() -> bool:
 
-    return "google.colab" in sys.modules or "jupyter_client" in sys.modules
+    try:
+        get_ipython  # type: ignore
+    except NameError:
+        return False
+    ipython = get_ipython()  # type: ignore  # noqa
+    shell = ipython.__class__.__name__
+    if shell == "TerminalInteractiveShell":
+        return False
+    elif "google.colab" in str(ipython.__class__) or shell == "ZMQInteractiveShell":
+        return True
+    else:
+        return False
 
 
 def log_exception(exc: Exception):

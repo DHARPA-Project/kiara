@@ -54,6 +54,7 @@ RENDER_FIELDS: Dict[str, Dict[str, Any]] = {
         "show_default": False,
         "render": {"terminal": lambda p: "-- external data -- " if p == ORPHAN else p},
     },
+    "lineage": {"show_default": False, "render": {"terminal": lambda p: p}},
     "load_config": {"show_default": False},
     "data_type_config": {
         "show_default": False,

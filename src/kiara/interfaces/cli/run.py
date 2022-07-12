@@ -289,10 +289,14 @@ def run(
     #     rich_print(rendered)
 
     if save:
-
-        save_results = kiara_op.save_result(job_id=job_id, aliases=final_aliases)
-        if len(save_results) == 1:
-            title = "[b]Stored result value[/b]"
-        else:
-            title = "[b]Stored result values[/b]"
-        terminal_print(save_results, in_panel=title, empty_line_before=True)
+        try:
+            save_results = kiara_op.save_result(job_id=job_id, aliases=final_aliases)
+            if len(save_results) == 1:
+                title = "[b]Stored result value[/b]"
+            else:
+                title = "[b]Stored result values[/b]"
+            terminal_print(save_results, in_panel=title, empty_line_before=True)
+        except Exception as e:
+            log_exception(e)
+            terminal_print(f"[red]Error saving results[/red]: {e}")
+            sys.exit(1)

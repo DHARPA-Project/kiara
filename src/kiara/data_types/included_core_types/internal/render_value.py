@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
+import orjson.orjson
 from pydantic import Field
-from typing import Any, Mapping, Type, Union
+from rich.syntax import Syntax
+from typing import TYPE_CHECKING, Any, Mapping, Type, Union
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types.internal import InternalType
 from kiara.models.render_value import RenderInstruction, RenderMetadata
 from kiara.utils.class_loading import find_all_kiara_model_classes
+
+if TYPE_CHECKING:
+    from kiara.models.values.value import Value
 
 
 class RenderInstructionTypeConfig(DataTypeConfig):
@@ -70,6 +75,15 @@ class RenderInstructionDataType(
         if not isinstance(value, RenderInstruction):
             raise Exception(f"Invalid type: {type(value)}.")
 
+    def pretty_print_as__terminal_renderable(
+        self, value: "Value", render_config: Mapping[str, Any]
+    ) -> Any:
+
+        data: RenderInstruction = value.data
+
+        ri_json = data.json(option=orjson.orjson.OPT_INDENT_2)
+        return Syntax(ri_json, "json", background_color="default")
+
 
 class RenderMetadataDataType(InternalType[RenderMetadata, DataTypeConfig]):
     """A value type to contain information about how to render a value in a specific render scenario."""
@@ -102,3 +116,12 @@ class RenderMetadataDataType(InternalType[RenderMetadata, DataTypeConfig]):
 
         if not isinstance(value, RenderMetadata):
             raise Exception(f"Invalid type: {type(value)}.")
+
+    def pretty_print_as__terminal_renderable(
+        self, value: "Value", render_config: Mapping[str, Any]
+    ) -> Any:
+
+        data: RenderMetadata = value.data
+
+        ri_json = data.json(option=orjson.orjson.OPT_INDENT_2)
+        return Syntax(ri_json, "json", background_color="default")

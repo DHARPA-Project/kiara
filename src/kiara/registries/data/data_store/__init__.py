@@ -12,6 +12,7 @@ from rich.console import RenderableType
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Set, Union
 
 from kiara.models.runtime_environment import RuntimeEnvironment
+from kiara.models.values.matchers import ValueMatcher
 from kiara.models.values.value import PersistedData, Value, ValuePedigree
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
@@ -101,13 +102,12 @@ class DataArchive(BaseArchive):
         pass
 
     @property
-    def value_ids(self) -> Iterable[uuid.UUID]:
+    def value_ids(self) -> Union[None, Iterable[uuid.UUID]]:
         return self._retrieve_all_value_ids()
 
-    @abc.abstractmethod
     def _retrieve_all_value_ids(
         self, data_type_name: Union[str, None] = None
-    ) -> Iterable[uuid.UUID]:
+    ) -> Union[None, Iterable[uuid.UUID]]:
         pass
 
     def has_value(self, value_id: uuid.UUID) -> bool:
@@ -122,7 +122,10 @@ class DataArchive(BaseArchive):
             whether this data store contains the value with the specified id
         """
 
-        return value_id in self._retrieve_all_value_ids()
+        all_value_ids = self.value_ids
+        if all_value_ids is None:
+            return False
+        return value_id in all_value_ids
 
     def retrieve_environment_details(
         self, env_type: str, env_hash: str
@@ -146,6 +149,9 @@ class DataArchive(BaseArchive):
         self, env_type: str, env_hash: str
     ) -> Mapping[str, Any]:
         pass
+
+    def find_values(self, matcher: ValueMatcher) -> Iterable[Value]:
+        raise NotImplementedError()
 
     def find_values_with_hash(
         self,
@@ -349,13 +355,17 @@ class BaseDataStore(DataStore):
         from kiara.utils.output import create_renderable_from_values
 
         all_values = {}
-        for value_id in self.value_ids:
+        all_value_ids = self.value_ids
+        if all_value_ids:
+            for value_id in all_value_ids:
 
-            value = self.kiara_context.data_registry.get_value(value_id)
-            all_values[str(value_id)] = value
-        table = create_renderable_from_values(values=all_values, config=config)
+                value = self.kiara_context.data_registry.get_value(value_id)
+                all_values[str(value_id)] = value
+            table = create_renderable_from_values(values=all_values, config=config)
 
-        return table
+            return table
+        else:
+            return "Data archive does not support statically determined ids."
 
 
 # class PersistenceMgmt(object):

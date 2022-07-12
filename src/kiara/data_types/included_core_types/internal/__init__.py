@@ -6,13 +6,17 @@
 import orjson
 import structlog
 from pydantic import Field, PrivateAttr
+from rich import box
+from rich.panel import Panel
 from rich.syntax import Syntax
+from rich.table import Table
 from typing import Any, Generic, Mapping, Type, Union
 
 from kiara.data_types import TYPE_CONFIG_CLS, TYPE_PYTHON_CLS, DataType, DataTypeConfig
 from kiara.defaults import NO_SERIALIZATION_MARKER
 from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
+from kiara.models.python_class import PythonClass
 from kiara.models.values.value import SerializedData, Value
 from kiara.registries.models import ModelRegistry
 
@@ -50,6 +54,21 @@ class TerminalRenderable(InternalType[object, DataTypeConfig]):
     @classmethod
     def python_class(cls) -> Type:
         return object
+
+    def pretty_print_as__terminal_renderable(
+        self, value: "Value", render_config: Mapping[str, Any]
+    ) -> Any:
+
+        renderable = value.data
+
+        table = Table(show_header=False, show_lines=False, box=box.SIMPLE)
+        table.add_column("key", style="i")
+        table.add_column("value")
+        cls = PythonClass.from_class(renderable.__class__)
+        table.add_row("python class", cls)
+        table.add_row("preview", Panel(renderable, height=20))
+
+        return table
 
 
 class InternalModelTypeConfig(DataTypeConfig):

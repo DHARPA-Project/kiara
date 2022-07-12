@@ -63,6 +63,7 @@ if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.data_types import DataType
     from kiara.models.values.info import ValueInfo
+    from kiara.models.values.lineage import ValueLineage
     from kiara.registries.data import DataRegistry
 
 
@@ -807,6 +808,7 @@ class Value(ValueDetails):
     _data_type: "DataType" = PrivateAttr(default=None)
     _is_stored: bool = PrivateAttr(default=False)
     _cached_properties: Union["ValueMap", None] = PrivateAttr(default=None)
+    _lineage: Union["ValueLineage", None] = PrivateAttr(default=None)
 
     environment_hashes: Mapping[str, Mapping[str, str]] = Field(
         description="Hashes for the environments this value was created in."
@@ -975,6 +977,16 @@ class Value(ValueDetails):
         return self._data_type
 
     @property
+    def lineage(self) -> "ValueLineage":
+        if self._lineage is not None:
+            return self._lineage
+
+        from kiara.models.values.lineage import ValueLineage
+
+        self._lineage = ValueLineage(kiara=self._data_registry._kiara, value=self)
+        return self._lineage
+
+    @property
     def property_values(self) -> "ValueMap":
 
         if self._cached_properties is not None:
@@ -1111,10 +1123,7 @@ class Value(ValueDetails):
                 table.add_row(*row)
 
         if show_lineage:
-            from kiara.models.values.lineage import ValueLineage
-
-            vl = ValueLineage(kiara=self._data_registry._kiara, value=self)
-            table.add_row("lineage", vl.create_renderable(include_ids=True))
+            table.add_row("lineage", self.lineage.create_renderable(include_ids=True))
 
         if show_serialized:
             serialized = self._data_registry.retrieve_persisted_value_details(

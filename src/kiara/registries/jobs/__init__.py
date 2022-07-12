@@ -206,7 +206,7 @@ class JobRegistry(object):
         strategy = self._kiara.runtime_config.job_cache
         if is_develop():
             dev_config = get_dev_config()
-            if dev_config.disable_job_cache:
+            if not dev_config.job_cache:
                 logger.debug(
                     "disable.job_cache",
                     reason="dev mode enabled and 'disable_job_cache' is set.",

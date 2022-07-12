@@ -341,7 +341,11 @@ class Pipeline(object):
                 alias_map = self._all_values.get_alias("pipeline.inputs")
                 assert alias_map is not None
                 # dbg(alias_map.__dict__)
-                schema = alias_map.values_schema[k]
+                schema = alias_map.values_schema.get(k, None)
+                if schema is None:
+                    raise Exception(
+                        f"Can't set pipeline input for input '{k}': no such input field. Available fields: {', '.join(alias_map.values_schema.keys())}"
+                    )
                 value = self._data_registry.register_data(
                     data=v, schema=schema, pedigree=ORPHAN, reuse_existing=True
                 )

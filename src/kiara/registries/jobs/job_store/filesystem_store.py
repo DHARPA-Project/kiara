@@ -177,7 +177,7 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
                 job_hash=job_record.job_hash,
                 new_path=backup.as_posix(),
             )
-            shutil.move(job_details_file, backup)
+            shutil.move(job_details_file.as_posix(), backup)
 
         job_details_file.write_text(job_record.json())
 

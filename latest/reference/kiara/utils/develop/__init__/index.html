@@ -2313,6 +2313,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../models/values/matchers/" class="md-nav__link">
+        matchers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../models/values/value/" class="md-nav__link">
         value
       </a>
@@ -2330,7 +2344,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_12_5" type="checkbox" id="__nav_3_1_7_12_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_12_6" type="checkbox" id="__nav_3_1_7_12_6" >
       
       
       
@@ -2340,14 +2354,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../../models/values/value_metadata/__init__/">value_metadata</a>
           
-            <label for="__nav_3_1_7_12_5">
+            <label for="__nav_3_1_7_12_6">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="value_metadata" data-md-level="5">
-        <label class="md-nav__title" for="__nav_3_1_7_12_5">
+        <label class="md-nav__title" for="__nav_3_1_7_12_6">
           <span class="md-nav__icon md-icon"></span>
           value_metadata
         </label>
@@ -4331,7 +4345,11 @@ KiaraDevLogSettings            (<span title="pydantic.main.BaseModel">BaseModel<
                 <span class="s2">&quot;inputs_info&quot;</span><span class="p">:</span> <span class="s2">&quot;minimal&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;outputs_info&quot;</span><span class="p">:</span> <span class="s2">&quot;full&quot;</span><span class="p">,</span>
             <span class="p">},</span>
-        <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;internal&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;pre_run&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;internal_modules&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="s2">&quot;post_run&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;internal_modules&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+        <span class="p">},</span>
     <span class="p">}</span>
 
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
@@ -4658,9 +4676,9 @@ KiaraDevSettings            (<span title="pydantic.env_settings.BaseSettings">Ba
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Settings about what messages to print in &#39;develop&#39; mode, and what details to include.&quot;</span><span class="p">,</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="n">KiaraDevLogSettings</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">disable_job_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">job_cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether to always disable the job cache (ignores the runtime_job_cache setting in the kiara configuration).&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
@@ -4685,14 +4703,14 @@ KiaraDevSettings            (<span title="pydantic.env_settings.BaseSettings">Ba
 
 
 
-<h5 id="kiara.utils.develop.KiaraDevSettings.disable_job_cache" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">disable_job_cache</span><span class="p">:</span> <span class="nb">bool</span></code>
+<h5 id="kiara.utils.develop.KiaraDevSettings.job_cache" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">job_cache</span><span class="p">:</span> <span class="nb">bool</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
   </span>
 
-<a href="#kiara.utils.develop.KiaraDevSettings.disable_job_cache" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.utils.develop.KiaraDevSettings.job_cache" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -5591,13 +5609,23 @@ when reading <code>config.json</code></p>
           <summary>Source code in <code>kiara/utils/develop/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">profile_settings_source</span><span class="p">(</span><span class="n">settings</span><span class="p">:</span> <span class="n">BaseSettings</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
-    <span class="n">profile_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DEV_PROFILE&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">profile_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DEVELOP&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">profile_name</span><span class="p">:</span>
+        <span class="n">profile_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;develop&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">profile_name</span><span class="p">:</span>
+        <span class="n">profile_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DEV&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">profile_name</span><span class="p">:</span>
+        <span class="n">profile_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dev&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">profile_name</span><span class="p">:</span>
+        <span class="n">profile_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DEV_PROFILE&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">profile_name</span><span class="p">:</span>
         <span class="n">profile_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dev_profile&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">profile_name</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">result</span>
+
+    <span class="n">profile_name</span> <span class="o">=</span> <span class="n">profile_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
     <span class="kn">from</span> <span class="nn">pydantic.fields</span> <span class="kn">import</span> <span class="n">ModelField</span>
 

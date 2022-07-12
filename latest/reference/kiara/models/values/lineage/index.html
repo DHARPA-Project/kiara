@@ -2381,6 +2381,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../matchers/" class="md-nav__link">
+        matchers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../value/" class="md-nav__link">
         value
       </a>
@@ -2398,7 +2412,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_12_5" type="checkbox" id="__nav_3_1_7_12_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_12_6" type="checkbox" id="__nav_3_1_7_12_6" >
       
       
       
@@ -2408,14 +2422,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../value_metadata/__init__/">value_metadata</a>
           
-            <label for="__nav_3_1_7_12_5">
+            <label for="__nav_3_1_7_12_6">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="value_metadata" data-md-level="5">
-        <label class="md-nav__title" for="__nav_3_1_7_12_5">
+        <label class="md-nav__title" for="__nav_3_1_7_12_6">
           <span class="md-nav__icon md-icon"></span>
           value_metadata
         </label>
@@ -4062,7 +4076,8 @@
 
 <h3 id="kiara.models.values.lineage.ValueLineage" class="doc doc-heading">
         <code>
-ValueLineage        </code>
+ValueLineage            (<span title="rich.jupyter.JupyterMixin">JupyterMixin</span>)
+        </code>
 
 
 
@@ -4073,7 +4088,7 @@ ValueLineage        </code>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/values/lineage.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueLineage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueLineage</span><span class="p">(</span><span class="n">JupyterMixin</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueLineage&quot;</span><span class="p">:</span>
 
@@ -4091,6 +4106,12 @@ ValueLineage        </code>
             <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="o">.</span><span class="n">pedigree</span><span class="p">,</span> <span class="n">include_ids</span><span class="o">=</span><span class="n">include_ids</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">tree</span>
+
+    <span class="k">def</span> <span class="nf">__rich_console__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">console</span><span class="p">:</span> <span class="n">Console</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ConsoleOptions</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderResult</span><span class="p">:</span>
+
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">()</span>
 </code></pre></div>
         </details>
 
@@ -4278,13 +4299,13 @@ ValueLineage        </code>
       
       
         
-        <a href="../value/" class="md-footer__link md-footer__link--next" aria-label="Next: value" rel="next">
+        <a href="../matchers/" class="md-footer__link md-footer__link--next" aria-label="Next: matchers" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              value
+              matchers
             </div>
           </div>
           <div class="md-footer__button md-icon">

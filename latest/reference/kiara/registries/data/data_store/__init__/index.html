@@ -2313,6 +2313,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../../models/values/matchers/" class="md-nav__link">
+        matchers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../../models/values/value/" class="md-nav__link">
         value
       </a>
@@ -2330,7 +2344,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_12_5" type="checkbox" id="__nav_3_1_7_12_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_12_6" type="checkbox" id="__nav_3_1_7_12_6" >
       
       
       
@@ -2340,14 +2354,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../../../models/values/value_metadata/__init__/">value_metadata</a>
           
-            <label for="__nav_3_1_7_12_5">
+            <label for="__nav_3_1_7_12_6">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="value_metadata" data-md-level="5">
-        <label class="md-nav__title" for="__nav_3_1_7_12_5">
+        <label class="md-nav__title" for="__nav_3_1_7_12_6">
           <span class="md-nav__icon md-icon"></span>
           value_metadata
         </label>
@@ -4167,13 +4181,17 @@ BaseDataStore            (<a class="autorefs autorefs-internal" title="kiara.reg
         <span class="kn">from</span> <span class="nn">kiara.utils.output</span> <span class="kn">import</span> <span class="n">create_renderable_from_values</span>
 
         <span class="n">all_values</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_ids</span><span class="p">:</span>
+        <span class="n">all_value_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_ids</span>
+        <span class="k">if</span> <span class="n">all_value_ids</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="n">all_value_ids</span><span class="p">:</span>
 
-            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_context</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value_id</span><span class="p">)</span>
-            <span class="n">all_values</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">value_id</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">create_renderable_from_values</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">all_values</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_context</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value_id</span><span class="p">)</span>
+                <span class="n">all_values</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">value_id</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">create_renderable_from_values</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">all_values</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">table</span>
+            <span class="k">return</span> <span class="n">table</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;Data archive does not support statically determined ids.&quot;</span>
 </code></pre></div>
         </details>
 
@@ -4211,13 +4229,17 @@ BaseDataStore            (<a class="autorefs autorefs-internal" title="kiara.reg
     <span class="kn">from</span> <span class="nn">kiara.utils.output</span> <span class="kn">import</span> <span class="n">create_renderable_from_values</span>
 
     <span class="n">all_values</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_ids</span><span class="p">:</span>
+    <span class="n">all_value_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_ids</span>
+    <span class="k">if</span> <span class="n">all_value_ids</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="n">all_value_ids</span><span class="p">:</span>
 
-        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_context</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value_id</span><span class="p">)</span>
-        <span class="n">all_values</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">value_id</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span>
-    <span class="n">table</span> <span class="o">=</span> <span class="n">create_renderable_from_values</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">all_values</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kiara_context</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value_id</span><span class="p">)</span>
+            <span class="n">all_values</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">value_id</span><span class="p">)]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">create_renderable_from_values</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">all_values</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">table</span>
+        <span class="k">return</span> <span class="n">table</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Data archive does not support statically determined ids.&quot;</span>
 </code></pre></div>
         </details>
     </div>
@@ -4467,13 +4489,12 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
         <span class="k">pass</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">value_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">value_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_all_value_ids</span><span class="p">()</span>
 
-    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">_retrieve_all_value_ids</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]:</span>
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">has_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -4488,7 +4509,10 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
 <span class="sd">            whether this data store contains the value with the specified id</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_all_value_ids</span><span class="p">()</span>
+        <span class="n">all_value_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_ids</span>
+        <span class="k">if</span> <span class="n">all_value_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="n">all_value_ids</span>
 
     <span class="k">def</span> <span class="nf">retrieve_environment_details</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">str</span>
@@ -4512,6 +4536,9 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
         <span class="bp">self</span><span class="p">,</span> <span class="n">env_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env_hash</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">find_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matcher</span><span class="p">:</span> <span class="n">ValueMatcher</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Value</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">find_values_with_hash</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -4598,7 +4625,7 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
 
 
 <h5 id="kiara.registries.data.data_store.DataArchive.value_ids" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">value_ids</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span></code>
+<code class="highlight language-python"><span class="n">value_ids</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-property"><code>property</code></small>
@@ -4640,6 +4667,31 @@ DataArchive            (<a class="autorefs autorefs-internal" title="kiara.regis
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_destinies_for_value</span><span class="p">(</span>
         <span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">,</span> <span class="n">alias_filter</span><span class="o">=</span><span class="n">alias_filter</span>
     <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.registries.data.data_store.DataArchive.find_values" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matcher</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.data.data_store.DataArchive.find_values" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/data/data_store/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matcher</span><span class="p">:</span> <span class="n">ValueMatcher</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Value</span><span class="p">]:</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </code></pre></div>
         </details>
     </div>
@@ -4760,7 +4812,10 @@ way to quickly determine whether a value id is valid for this data store.</p>
 <span class="sd">        whether this data store contains the value with the specified id</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">return</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_retrieve_all_value_ids</span><span class="p">()</span>
+    <span class="n">all_value_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_ids</span>
+    <span class="k">if</span> <span class="n">all_value_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="n">all_value_ids</span>
 </code></pre></div>
         </details>
     </div>

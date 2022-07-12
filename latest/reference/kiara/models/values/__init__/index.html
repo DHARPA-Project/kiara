@@ -2317,6 +2317,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../matchers/" class="md-nav__link">
+        matchers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../value/" class="md-nav__link">
         value
       </a>
@@ -2334,7 +2348,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_12_5" type="checkbox" id="__nav_3_1_7_12_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_12_6" type="checkbox" id="__nav_3_1_7_12_6" >
       
       
       
@@ -2344,14 +2358,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../value_metadata/__init__/">value_metadata</a>
           
-            <label for="__nav_3_1_7_12_5">
+            <label for="__nav_3_1_7_12_6">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="value_metadata" data-md-level="5">
-        <label class="md-nav__title" for="__nav_3_1_7_12_5">
+        <label class="md-nav__title" for="__nav_3_1_7_12_6">
           <span class="md-nav__icon md-icon"></span>
           value_metadata
         </label>
@@ -3956,6 +3970,13 @@
           <li class="md-nav__item">
   <a href="#kiara.models.values.lineage" class="md-nav__link">
     lineage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.models.values.matchers" class="md-nav__link">
+    matchers
   </a>
   
 </li>
@@ -5954,7 +5975,8 @@ Config        </code>
 
 <h5 id="kiara.models.values.lineage.ValueLineage" class="doc doc-heading">
         <code>
-ValueLineage        </code>
+ValueLineage            (<span title="rich.jupyter.JupyterMixin">JupyterMixin</span>)
+        </code>
 
 
 
@@ -5965,7 +5987,7 @@ ValueLineage        </code>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/values/lineage.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueLineage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueLineage</span><span class="p">(</span><span class="n">JupyterMixin</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueLineage&quot;</span><span class="p">:</span>
 
@@ -5983,6 +6005,12 @@ ValueLineage        </code>
             <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="o">.</span><span class="n">pedigree</span><span class="p">,</span> <span class="n">include_ids</span><span class="o">=</span><span class="n">include_ids</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">tree</span>
+
+    <span class="k">def</span> <span class="nf">__rich_console__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">console</span><span class="p">:</span> <span class="n">Console</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">ConsoleOptions</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderResult</span><span class="p">:</span>
+
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">()</span>
 </code></pre></div>
         </details>
 
@@ -6128,6 +6156,377 @@ ValueLineage        </code>
     </div>
 
   </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h3 id="kiara.models.values.matchers" class="doc doc-heading">
+        <code>matchers</code>
+
+
+
+<a href="#kiara.models.values.matchers" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+<h4 id="kiara.models.values.matchers-classes">Classes<a href="#kiara.models.values.matchers-classes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.models.values.matchers.ValueMatcher" class="doc doc-heading">
+        <code>
+ValueMatcher            (<a class="autorefs autorefs-internal" title="kiara.models.KiaraModel" href="../../__init__/#kiara.models.KiaraModel">KiaraModel</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.models.values.matchers.ValueMatcher" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/values/matchers.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueMatcher</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_matcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">match_options</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+
+        <span class="n">m</span> <span class="o">=</span> <span class="n">ValueMatcher</span><span class="p">(</span><span class="o">**</span><span class="n">match_options</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">_kiara</span> <span class="o">=</span> <span class="n">kiara</span>
+        <span class="k">return</span> <span class="n">m</span>
+
+    <span class="n">data_types</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The data type.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">allow_sub_types</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Allow subtypes.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">min_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The minimum size for the dataset.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">max_size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The maximum size for the dataset.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">allow_internal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Allow internal data types.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">has_alias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Value must have at least one alias.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">_kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="p">:</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">allow_sub_types</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">:</span>
+                        <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="n">lineage</span><span class="p">:</span>
+                        <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">break</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">value_size</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">value_size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">allow_internal</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">is_internal_type</span><span class="p">(</span>
+                <span class="n">data_type_name</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
+            <span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_alias</span><span class="p">:</span>
+            <span class="n">aliases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">alias_registry</span><span class="o">.</span><span class="n">find_aliases_for_value_id</span><span class="p">(</span>
+                <span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">aliases</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h6 id="kiara.models.values.matchers.ValueMatcher-attributes">Attributes<a href="#kiara.models.values.matchers.ValueMatcher-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.values.matchers.ValueMatcher.allow_internal" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">allow_internal</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.values.matchers.ValueMatcher.allow_internal" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>Allow internal data types.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.values.matchers.ValueMatcher.allow_sub_types" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">allow_sub_types</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.values.matchers.ValueMatcher.allow_sub_types" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>Allow subtypes.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.values.matchers.ValueMatcher.data_types" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">data_types</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.values.matchers.ValueMatcher.data_types" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The data type.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.values.matchers.ValueMatcher.has_alias" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">has_alias</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.values.matchers.ValueMatcher.has_alias" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>Value must have at least one alias.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.values.matchers.ValueMatcher.max_size" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">max_size</span><span class="p">:</span> <span class="nb">int</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.values.matchers.ValueMatcher.max_size" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The maximum size for the dataset.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.values.matchers.ValueMatcher.min_size" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">min_size</span><span class="p">:</span> <span class="nb">int</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.values.matchers.ValueMatcher.min_size" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The minimum size for the dataset.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.models.values.matchers.ValueMatcher.create_matcher" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_matcher</span><span class="p">(</span><span class="n">kiara</span><span class="p">,</span> <span class="o">**</span><span class="n">match_options</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.models.values.matchers.ValueMatcher.create_matcher" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/values/matchers.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">create_matcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">match_options</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+
+    <span class="n">m</span> <span class="o">=</span> <span class="n">ValueMatcher</span><span class="p">(</span><span class="o">**</span><span class="n">match_options</span><span class="p">)</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">_kiara</span> <span class="o">=</span> <span class="n">kiara</span>
+    <span class="k">return</span> <span class="n">m</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.models.values.matchers.ValueMatcher.is_match" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></code>
+
+
+<a href="#kiara.models.values.matchers.ValueMatcher.is_match" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/values/matchers.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">is_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="p">:</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">allow_sub_types</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">:</span>
+                    <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="n">lineage</span><span class="p">:</span>
+                    <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">value_size</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">value_size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">allow_internal</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">is_internal_type</span><span class="p">(</span>
+            <span class="n">data_type_name</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_alias</span><span class="p">:</span>
+        <span class="n">aliases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">alias_registry</span><span class="o">.</span><span class="n">find_aliases_for_value_id</span><span class="p">(</span>
+            <span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">aliases</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
 
 
 
@@ -9036,6 +9435,7 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
     <span class="n">_data_type</span><span class="p">:</span> <span class="s2">&quot;DataType&quot;</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">_is_stored</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">_cached_properties</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;ValueMap&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_lineage</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;ValueLineage&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="n">environment_hashes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Hashes for the environments this value was created in.&quot;</span>
@@ -9204,6 +9604,16 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_type</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lineage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueLineage&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineage</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineage</span>
+
+        <span class="kn">from</span> <span class="nn">kiara.models.values.lineage</span> <span class="kn">import</span> <span class="n">ValueLineage</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lineage</span> <span class="o">=</span> <span class="n">ValueLineage</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lineage</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">property_values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueMap&quot;</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_properties</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -9340,10 +9750,7 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
                 <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">show_lineage</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">kiara.models.values.lineage</span> <span class="kn">import</span> <span class="n">ValueLineage</span>
-
-            <span class="n">vl</span> <span class="o">=</span> <span class="n">ValueLineage</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;lineage&quot;</span><span class="p">,</span> <span class="n">vl</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="n">include_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;lineage&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="n">include_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">show_serialized</span><span class="p">:</span>
             <span class="n">serialized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">retrieve_persisted_value_details</span><span class="p">(</span>
@@ -9583,6 +9990,28 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
   </span>
 
 <a href="#kiara.models.values.value.Value.is_stored" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.values.value.Value.lineage" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">lineage</span><span class="p">:</span> <span class="n">ValueLineage</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.models.values.value.Value.lineage" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
@@ -9923,10 +10352,7 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">show_lineage</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">kiara.models.values.lineage</span> <span class="kn">import</span> <span class="n">ValueLineage</span>
-
-        <span class="n">vl</span> <span class="o">=</span> <span class="n">ValueLineage</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;lineage&quot;</span><span class="p">,</span> <span class="n">vl</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="n">include_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;lineage&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lineage</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="n">include_ids</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">show_serialized</span><span class="p">:</span>
         <span class="n">serialized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">retrieve_persisted_value_details</span><span class="p">(</span>

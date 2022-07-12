@@ -2313,6 +2313,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../models/values/matchers/" class="md-nav__link">
+        matchers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../models/values/value/" class="md-nav__link">
         value
       </a>
@@ -2330,7 +2344,7 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_12_5" type="checkbox" id="__nav_3_1_7_12_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_7_12_6" type="checkbox" id="__nav_3_1_7_12_6" >
       
       
       
@@ -2340,14 +2354,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../../models/values/value_metadata/__init__/">value_metadata</a>
           
-            <label for="__nav_3_1_7_12_5">
+            <label for="__nav_3_1_7_12_6">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="value_metadata" data-md-level="5">
-        <label class="md-nav__title" for="__nav_3_1_7_12_5">
+        <label class="md-nav__title" for="__nav_3_1_7_12_6">
           <span class="md-nav__icon md-icon"></span>
           value_metadata
         </label>
@@ -4528,7 +4542,7 @@ JobRegistry        </code>
         <span class="n">strategy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">runtime_config</span><span class="o">.</span><span class="n">job_cache</span>
         <span class="k">if</span> <span class="n">is_develop</span><span class="p">():</span>
             <span class="n">dev_config</span> <span class="o">=</span> <span class="n">get_dev_config</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">dev_config</span><span class="o">.</span><span class="n">disable_job_cache</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">dev_config</span><span class="o">.</span><span class="n">job_cache</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                     <span class="s2">&quot;disable.job_cache&quot;</span><span class="p">,</span>
                     <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;dev mode enabled and &#39;disable_job_cache&#39; is set.&quot;</span><span class="p">,</span>
@@ -5995,6 +6009,24 @@ ValueIdJobMatcher            (<a class="autorefs autorefs-internal" title="kiara
 
 
 
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.registries.jobs.job_store.filesystem_store.log" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">log</span></code>
+
+
+<a href="#kiara.registries.jobs.job_store.filesystem_store.log" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
 <h6 id="kiara.registries.jobs.job_store.filesystem_store-classes">Classes<a href="#kiara.registries.jobs.job_store.filesystem_store-classes" class="headerlink" title="Permanent link">&para;</a></h6>
 
   <div class="doc doc-object doc-class">
@@ -6431,13 +6463,24 @@ FileSystemJobStore            (<a class="autorefs autorefs-internal" title="kiar
         <span class="n">job_folder</span> <span class="o">=</span> <span class="n">manifest_folder</span> <span class="o">/</span> <span class="n">inputs_hash</span>
         <span class="n">job_folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="n">job_details_file_name</span> <span class="o">=</span> <span class="n">job_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">job_record</span><span class="o">.</span><span class="n">job_hash</span><span class="si">}</span><span class="s2">.job_record&quot;</span>
-        <span class="k">if</span> <span class="n">job_details_file_name</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Job record already exists: </span><span class="si">{</span><span class="n">job_details_file_name</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">job_details_file</span> <span class="o">=</span> <span class="n">job_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">job_record</span><span class="o">.</span><span class="n">job_hash</span><span class="si">}</span><span class="s2">.job_record&quot;</span>
+        <span class="k">if</span> <span class="n">job_details_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="c1"># TODO: check details match? or overwrite</span>
+            <span class="n">file_m_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span>
+                <span class="n">job_details_file</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_mtime</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span>
+            <span class="n">archive</span> <span class="o">=</span> <span class="n">job_folder</span> <span class="o">/</span> <span class="s2">&quot;.archive&quot;</span>
+            <span class="n">archive</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">backup</span> <span class="o">=</span> <span class="n">archive</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">job_details_file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">file_m_time</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;overwrite.store_job_record&quot;</span><span class="p">,</span>
+                <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;job record already exists&quot;</span><span class="p">,</span>
+                <span class="n">job_hash</span><span class="o">=</span><span class="n">job_record</span><span class="o">.</span><span class="n">job_hash</span><span class="p">,</span>
+                <span class="n">new_path</span><span class="o">=</span><span class="n">backup</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
             <span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">job_details_file</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span> <span class="n">backup</span><span class="p">)</span>
 
-        <span class="n">job_details_file_name</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">job_record</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+        <span class="n">job_details_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">job_record</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
 
         <span class="k">for</span> <span class="n">output_name</span><span class="p">,</span> <span class="n">output_v_id</span> <span class="ow">in</span> <span class="n">job_record</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
@@ -6528,13 +6571,24 @@ FileSystemJobStore            (<a class="autorefs autorefs-internal" title="kiar
     <span class="n">job_folder</span> <span class="o">=</span> <span class="n">manifest_folder</span> <span class="o">/</span> <span class="n">inputs_hash</span>
     <span class="n">job_folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="n">job_details_file_name</span> <span class="o">=</span> <span class="n">job_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">job_record</span><span class="o">.</span><span class="n">job_hash</span><span class="si">}</span><span class="s2">.job_record&quot;</span>
-    <span class="k">if</span> <span class="n">job_details_file_name</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Job record already exists: </span><span class="si">{</span><span class="n">job_details_file_name</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">job_details_file</span> <span class="o">=</span> <span class="n">job_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">job_record</span><span class="o">.</span><span class="n">job_hash</span><span class="si">}</span><span class="s2">.job_record&quot;</span>
+    <span class="k">if</span> <span class="n">job_details_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="c1"># TODO: check details match? or overwrite</span>
+        <span class="n">file_m_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span>
+            <span class="n">job_details_file</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_mtime</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span>
+        <span class="n">archive</span> <span class="o">=</span> <span class="n">job_folder</span> <span class="o">/</span> <span class="s2">&quot;.archive&quot;</span>
+        <span class="n">archive</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">backup</span> <span class="o">=</span> <span class="n">archive</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">job_details_file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">file_m_time</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;overwrite.store_job_record&quot;</span><span class="p">,</span>
+            <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;job record already exists&quot;</span><span class="p">,</span>
+            <span class="n">job_hash</span><span class="o">=</span><span class="n">job_record</span><span class="o">.</span><span class="n">job_hash</span><span class="p">,</span>
+            <span class="n">new_path</span><span class="o">=</span><span class="n">backup</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span>
         <span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">job_details_file</span><span class="o">.</span><span class="n">as_posix</span><span class="p">(),</span> <span class="n">backup</span><span class="p">)</span>
 
-    <span class="n">job_details_file_name</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">job_record</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+    <span class="n">job_details_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">job_record</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
 
     <span class="k">for</span> <span class="n">output_name</span><span class="p">,</span> <span class="n">output_v_id</span> <span class="ow">in</span> <span class="n">job_record</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 

@@ -1431,7 +1431,9 @@ class ValueMapWritable(ValueMap):  # type: ignore
     ) -> "ValueMapWritable":
 
         v = ValueMapWritable(
-            values_schema=schema, pedigree=pedigree, unique_value_ids=unique_value_ids
+            values_schema=dict(schema),
+            pedigree=pedigree,
+            unique_value_ids=unique_value_ids,
         )
         v._kiara = kiara
         v._data_registry = kiara.data_registry

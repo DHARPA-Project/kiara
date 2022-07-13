@@ -49,6 +49,7 @@ RENDER_FIELDS: Dict[str, Dict[str, Any]] = {
         "show_default": False,
         "render": {"terminal": lambda x: "yes" if x else "no"},
     },
+    "hash": {"show_default": False, "render": {"terminal": lambda p: p.value_hash}},
     "data": {"show_default": False, "render": {"terminal": render_value_data}},
     "pedigree": {
         "show_default": False,

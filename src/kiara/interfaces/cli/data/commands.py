@@ -63,6 +63,9 @@ def data(ctx):
     is_flag=True,
 )
 @click.option(
+    "--hash", "-H", help="Display the value hash.", default=False, is_flag=True
+)
+@click.option(
     "--lineage",
     "-l",
     help="Display lineage information for each value.",
@@ -103,6 +106,7 @@ def list_values(
     ctx,
     format,
     all_values,
+    hash,
     include_internal,
     value_id,
     pedigree,
@@ -152,6 +156,8 @@ def list_values(
         render_fields.remove("value_id")
     if type_config:
         render_fields.append("data_type_config")
+    if hash:
+        render_fields.append("hash")
     if data:
         render_fields.append("data")
     if properties:

@@ -4,12 +4,14 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
+import atexit
 import os
 import shutil
 import structlog
+import tempfile
 from deepdiff import DeepHash
 from multiformats import CID
+from pathlib import Path
 from pydantic import BaseModel, Field, PrivateAttr
 from rich import box
 from rich.console import RenderableType
@@ -209,6 +211,19 @@ class FileBundle(KiaraModel):
     """Describes properties for the 'file_bundle' value type."""
 
     _kiara_model_id = "instance.data.file_bundle"
+
+    @classmethod
+    def create_tmp_dir(self) -> Path:
+        """Utility method to create a temp folder that gets deleted when kiara exits."""
+
+        temp_f = tempfile.mkdtemp()
+
+        def cleanup():
+            shutil.rmtree(temp_f, ignore_errors=True)
+
+        atexit.register(cleanup)
+
+        return Path(temp_f)
 
     @classmethod
     def import_folder(

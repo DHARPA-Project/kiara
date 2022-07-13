@@ -163,7 +163,9 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
         job_folder.mkdir(parents=True, exist_ok=True)
 
         job_details_file = job_folder / f"{job_record.job_hash}.job_record"
+        exists = False
         if job_details_file.exists():
+            exists = True
             # TODO: check details match? or overwrite
             file_m_time = datetime.datetime.fromtimestamp(
                 job_details_file.stat().st_mtime
@@ -187,7 +189,7 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
                 job_folder / f"output__{output_name}__value_id__{output_v_id}.json"
             )
 
-            if outputs_file_name.exists():
+            if outputs_file_name.exists() and not exists:
                 # if value.pedigree_output_name == "__void__":
                 #     return
                 # else:

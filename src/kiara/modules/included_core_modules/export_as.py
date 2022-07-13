@@ -39,7 +39,7 @@ class DataExportModuleConfig(KiaraModuleConfig):
 class DataExportModule(KiaraModule):
 
     _config_cls = DataExportModuleConfig
-    _module_type_name = None
+    _module_type_name: Union[str, None] = None
 
     @classmethod
     def retrieve_supported_export_combinations(cls) -> Iterable[Mapping[str, str]]:

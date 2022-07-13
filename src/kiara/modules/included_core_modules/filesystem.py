@@ -5,12 +5,20 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import orjson
+import os
+import shutil
 from typing import Any, Mapping, Type
 
 from kiara import KiaraModule
+from kiara.exceptions import KiaraProcessingException
 from kiara.models.filesystem import FileBundle, FileModel
 from kiara.models.values.value import SerializedData, ValueMap
-from kiara.modules import ModuleCharacteristics, ValueSetSchema
+from kiara.modules import (
+    DEFAULT_NO_IDEMPOTENT_MODULE_CHARACTERISTICS,
+    ModuleCharacteristics,
+    ValueSetSchema,
+)
+from kiara.modules.included_core_modules.export_as import DataExportModule
 from kiara.modules.included_core_modules.serialization import DeserializeValueModule
 
 
@@ -108,7 +116,7 @@ class ImportFileBundleModule(KiaraModule):
         }
 
     def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
-        return ModuleCharacteristics(is_idempotent=False)
+        return DEFAULT_NO_IDEMPOTENT_MODULE_CHARACTERISTICS
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
 
@@ -176,91 +184,50 @@ class DeserializeFileBundleModule(DeserializeValueModule):
         return fb
 
 
-# class LoadFileBundleFromStoreModule(KiaraModule):
-#
-#     _module_type_name = "load.file_bundle.from_data_store"
-#
-#     def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
-#         return ModuleCharacteristics(is_internal=True)
-#
-#     def create_inputs_schema(
-#         self,
-#     ) -> ValueSetSchema:
-#
-#         return {
-#             "inline_data": {"type": "any", "doc": "The file bundle metadata."},
-#             "path": {
-#                 "type": "string",
-#                 "doc": "The path to the provisioned file bundle.",
-#             },
-#         }
-#
-#     def create_outputs_schema(
-#         self,
-#     ) -> ValueSetSchema:
-#
-#         return {
-#             "file_bundle": {
-#                 "type": "file_bundle",
-#                 "doc": "The loaded file_bundle value.",
-#             }
-#         }
-#
-#     def process(self, inputs: ValueMap, outputs: ValueMap):
-#
-#         path = inputs.get_value_data("path")
-#
-#         # bundle_name = inputs.get_value_data("bundle_name")
-#         # import_time_str = inputs.get_value_data("import_time")
-#         # import_time = parser.parse(import_time_str)
-#         bundle_data = inputs.get_value_data("inline_data")
-#
-#         file_bundle = FileBundle(**bundle_data)
-#
-#         file_bundle._path = path
-#         for rel_path, model in file_bundle.included_files.items():
-#             model._path = os.path.join(path, rel_path)
-#
-#         outputs.set_value("file_bundle", file_bundle)
+class ExportFileModule(DataExportModule):
+    """Export files."""
+
+    _module_type_name = "export.file"
+
+    def export__file__as__file(self, value: FileModel, base_path: str, name: str):
+
+        target_path = os.path.join(base_path, value.file_name)
+
+        shutil.copy2(value.path, target_path)
+
+        return {"files": target_path}
 
 
-# class SaveFileBundleToStoreModule(PersistValueModule):
-#
-#     _module_type_name = "file_bundle.save_to_data_store"
-#
-#     def get_persistence_target_name(self) -> str:
-#         return "data_store"
-#
-#     def get_persistence_format_name(self) -> str:
-#         return "file_bundle"
-#
-#     def data_type__file_bundle(
-#         self, value: Value, persistence_config: Mapping[str, Any]
-#     ) -> Tuple[LoadConfig, BytesStructure]:
-#         """Persist single files into a local kiara data store."""
-#
-#         file_bundle: FileBundle = value.data
-#
-#         bytes_structure_data: Dict[str, List[Union[str, bytes]]] = {}
-#
-#         for rel_path, file_model in file_bundle.included_files.items():
-#             bytes_structure_data[rel_path] = [file_model.path]
-#
-#         bytes_structure = BytesStructure.construct(
-#             data_type="file_bundle", data_type_config={}, chunk_map=bytes_structure_data
-#         )
-#
-#         load_config_data = {
-#             "provisioning_strategy": ByteProvisioningStrategy.LINK_FOLDER,
-#             "module_type": "load.file_bundle.from_data_store",
-#             "inputs": {
-#                 "inline_data": LOAD_CONFIG_PLACEHOLDER,
-#                 "path": LOAD_CONFIG_PLACEHOLDER,
-#                 "bytes_structure": LOAD_CONFIG_PLACEHOLDER,
-#             },
-#             "inline_data": file_bundle.dict(),
-#             "output_name": "file_bundle",
-#         }
-#
-#         load_config = LoadConfig(**load_config_data)
-#         return load_config, bytes_structure
+class PickFileModule(KiaraModule):
+    """Pick a single file from a file_bundle value."""
+
+    _module_type_name = "file_bundle.pick_file"
+
+    def create_inputs_schema(
+        self,
+    ) -> ValueSetSchema:
+
+        return {
+            "file_bundle": {"type": "file_bundle", "doc": "The file bundle."},
+            "path": {"type": "string", "doc": "The relative path of the file to pick."},
+        }
+
+    def create_outputs_schema(
+        self,
+    ) -> ValueSetSchema:
+
+        return {"file": {"type": "file", "doc": "The file."}}
+
+    def process(self, inputs: ValueMap, outputs: ValueMap):
+
+        file_bundle: FileBundle = inputs.get_value_data("file_bundle")
+        path: str = inputs.get_value_data("path")
+
+        if path not in file_bundle.included_files.keys():
+            raise KiaraProcessingException(
+                f"Can't pick file '{path}' from file bundle: file not available."
+            )
+
+        file: FileModel = file_bundle.included_files[path]
+
+        outputs.set_value("file", file)

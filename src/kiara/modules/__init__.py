@@ -255,7 +255,7 @@ class ModuleCharacteristics(BaseModel):
 
     is_idempotent: bool = Field(
         description="Whether this module is idempotent (aka always produces the same output with the same inputs.",
-        default=False,
+        default=True,
     )
     is_internal: bool = Field(
         description="Hint for frontends whether this module is used predominantly internally, and users won't need to know of its existence.",
@@ -268,6 +268,9 @@ class ModuleCharacteristics(BaseModel):
 
 
 DEFAULT_IDEMPOTENT_MODULE_CHARACTERISTICS = ModuleCharacteristics()
+DEFAULT_NO_IDEMPOTENT_MODULE_CHARACTERISTICS = ModuleCharacteristics(
+    is_idempotent=False
+)
 DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS = ModuleCharacteristics(
     is_internal=True
 )

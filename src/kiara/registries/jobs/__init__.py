@@ -401,6 +401,15 @@ class JobRegistry(object):
             job_id = self._finished_jobs[inputs_manifest.job_hash]
             return job_id
 
+        module = self._kiara.module_registry.create_module(manifest=inputs_manifest)
+        if not module.characteristics.is_idempotent:
+            log.debug(
+                "skip.job_matching",
+                reason="module is not idempotent",
+                module_type=inputs_manifest.module_type,
+            )
+            return None
+
         job_record = self.job_matcher.find_existing_job(inputs_manifest=inputs_manifest)
         if job_record is None:
             return None

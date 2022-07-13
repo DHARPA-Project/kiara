@@ -5199,6 +5199,7 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_column_names</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_force_single_line</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -5238,8 +5239,13 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
         <span class="n">rich_table</span> <span class="o">=</span> <span class="n">RichTable</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="n">show_table_header</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">max_row_height</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">overflow</span> <span class="o">=</span> <span class="s2">&quot;ignore&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">overflow</span> <span class="o">=</span> <span class="s2">&quot;ellipsis&quot;</span>
+
         <span class="k">for</span> <span class="n">cn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_column_names</span><span class="p">():</span>
-            <span class="n">rich_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">cn</span><span class="p">)</span>
+            <span class="n">rich_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="n">overflow</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
         <span class="n">num_split_rows</span> <span class="o">=</span> <span class="mi">2</span>
 
@@ -5430,8 +5436,13 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="n">rich_table</span> <span class="o">=</span> <span class="n">RichTable</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="n">show_table_header</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">max_row_height</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">overflow</span> <span class="o">=</span> <span class="s2">&quot;ignore&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">overflow</span> <span class="o">=</span> <span class="s2">&quot;ellipsis&quot;</span>
+
     <span class="k">for</span> <span class="n">cn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_column_names</span><span class="p">():</span>
-        <span class="n">rich_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">cn</span><span class="p">)</span>
+        <span class="n">rich_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="n">overflow</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="n">num_split_rows</span> <span class="o">=</span> <span class="mi">2</span>
 

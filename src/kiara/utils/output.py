@@ -214,6 +214,7 @@ class TabularWrap(ABC):
     def __init__(self):
         self._num_rows: Union[int, None] = None
         self._column_names: Union[Iterable[str], None] = None
+        self._force_single_line: bool = True
 
     @property
     def num_rows(self) -> int:
@@ -253,8 +254,13 @@ class TabularWrap(ABC):
     ) -> RenderableType:
 
         rich_table = RichTable(box=box.SIMPLE, show_header=show_table_header)
+        if max_row_height == 1:
+            overflow = "ignore"
+        else:
+            overflow = "ellipsis"
+
         for cn in self.retrieve_column_names():
-            rich_table.add_column(cn)
+            rich_table.add_column(cn, overflow=overflow)  # type: ignore
 
         num_split_rows = 2
 

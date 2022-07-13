@@ -4533,7 +4533,9 @@ FileSystemJobStore            (<a class="autorefs autorefs-internal" title="kiar
         <span class="n">job_folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">job_details_file</span> <span class="o">=</span> <span class="n">job_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">job_record</span><span class="o">.</span><span class="n">job_hash</span><span class="si">}</span><span class="s2">.job_record&quot;</span>
+        <span class="n">exists</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">job_details_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">exists</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="c1"># TODO: check details match? or overwrite</span>
             <span class="n">file_m_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span>
                 <span class="n">job_details_file</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_mtime</span>
@@ -4557,7 +4559,7 @@ FileSystemJobStore            (<a class="autorefs autorefs-internal" title="kiar
                 <span class="n">job_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;output__</span><span class="si">{</span><span class="n">output_name</span><span class="si">}</span><span class="s2">__value_id__</span><span class="si">{</span><span class="n">output_v_id</span><span class="si">}</span><span class="s2">.json&quot;</span>
             <span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">outputs_file_name</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">outputs_file_name</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">:</span>
                 <span class="c1"># if value.pedigree_output_name == &quot;__void__&quot;:</span>
                 <span class="c1">#     return</span>
                 <span class="c1"># else:</span>
@@ -4641,7 +4643,9 @@ FileSystemJobStore            (<a class="autorefs autorefs-internal" title="kiar
     <span class="n">job_folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">job_details_file</span> <span class="o">=</span> <span class="n">job_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">job_record</span><span class="o">.</span><span class="n">job_hash</span><span class="si">}</span><span class="s2">.job_record&quot;</span>
+    <span class="n">exists</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="n">job_details_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">exists</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="c1"># TODO: check details match? or overwrite</span>
         <span class="n">file_m_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span>
             <span class="n">job_details_file</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_mtime</span>
@@ -4665,7 +4669,7 @@ FileSystemJobStore            (<a class="autorefs autorefs-internal" title="kiar
             <span class="n">job_folder</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;output__</span><span class="si">{</span><span class="n">output_name</span><span class="si">}</span><span class="s2">__value_id__</span><span class="si">{</span><span class="n">output_v_id</span><span class="si">}</span><span class="s2">.json&quot;</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">outputs_file_name</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">outputs_file_name</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">:</span>
             <span class="c1"># if value.pedigree_output_name == &quot;__void__&quot;:</span>
             <span class="c1">#     return</span>
             <span class="c1"># else:</span>

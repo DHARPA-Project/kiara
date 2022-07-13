@@ -4168,6 +4168,19 @@ FileBundle            (<a class="autorefs autorefs-internal" title="kiara.models
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.data.file_bundle&quot;</span>
 
     <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_tmp_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Utility method to create a temp folder that gets deleted when kiara exits.&quot;&quot;&quot;</span>
+
+        <span class="n">temp_f</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">cleanup</span><span class="p">():</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">temp_f</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">cleanup</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">temp_f</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">import_folder</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -4608,7 +4621,7 @@ FileBundle            (<a class="autorefs autorefs-internal" title="kiara.models
 
 
 
-
+<h4 id="kiara.models.filesystem.FileBundle-methods">Methods<a href="#kiara.models.filesystem.FileBundle-methods" class="headerlink" title="Permanent link">&para;</a></h4>
 
   <div class="doc doc-object doc-method">
 
@@ -4753,6 +4766,45 @@ FileBundle            (<a class="autorefs autorefs-internal" title="kiara.models
     <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;included files&quot;</span><span class="p">,</span> <span class="n">content</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.models.filesystem.FileBundle.create_tmp_dir" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_tmp_dir</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.models.filesystem.FileBundle.create_tmp_dir" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Utility method to create a temp folder that gets deleted when kiara exits.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">create_tmp_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Utility method to create a temp folder that gets deleted when kiara exits.&quot;&quot;&quot;</span>
+
+    <span class="n">temp_f</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">cleanup</span><span class="p">():</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">temp_f</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">cleanup</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Path</span><span class="p">(</span><span class="n">temp_f</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

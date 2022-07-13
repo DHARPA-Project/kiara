@@ -4087,7 +4087,7 @@ DataExportModule            (<a class="autorefs autorefs-internal" title="kiara.
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">DataExportModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
 
     <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">DataExportModuleConfig</span>
-    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">_module_type_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">retrieve_supported_export_combinations</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>

@@ -9648,7 +9648,9 @@ ValueMapWritable            (<a class="autorefs autorefs-internal" title="kiara.
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueMapWritable&quot;</span><span class="p">:</span>
 
         <span class="n">v</span> <span class="o">=</span> <span class="n">ValueMapWritable</span><span class="p">(</span>
-            <span class="n">values_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="n">pedigree</span><span class="p">,</span> <span class="n">unique_value_ids</span><span class="o">=</span><span class="n">unique_value_ids</span>
+            <span class="n">values_schema</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">schema</span><span class="p">),</span>
+            <span class="n">pedigree</span><span class="o">=</span><span class="n">pedigree</span><span class="p">,</span>
+            <span class="n">unique_value_ids</span><span class="o">=</span><span class="n">unique_value_ids</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">v</span><span class="o">.</span><span class="n">_kiara</span> <span class="o">=</span> <span class="n">kiara</span>
         <span class="n">v</span><span class="o">.</span><span class="n">_data_registry</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span>
@@ -9852,7 +9854,9 @@ ValueMapWritable            (<a class="autorefs autorefs-internal" title="kiara.
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueMapWritable&quot;</span><span class="p">:</span>
 
     <span class="n">v</span> <span class="o">=</span> <span class="n">ValueMapWritable</span><span class="p">(</span>
-        <span class="n">values_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span> <span class="n">pedigree</span><span class="o">=</span><span class="n">pedigree</span><span class="p">,</span> <span class="n">unique_value_ids</span><span class="o">=</span><span class="n">unique_value_ids</span>
+        <span class="n">values_schema</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">schema</span><span class="p">),</span>
+        <span class="n">pedigree</span><span class="o">=</span><span class="n">pedigree</span><span class="p">,</span>
+        <span class="n">unique_value_ids</span><span class="o">=</span><span class="n">unique_value_ids</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">v</span><span class="o">.</span><span class="n">_kiara</span> <span class="o">=</span> <span class="n">kiara</span>
     <span class="n">v</span><span class="o">.</span><span class="n">_data_registry</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span>

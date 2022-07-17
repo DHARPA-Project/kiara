@@ -66,8 +66,9 @@ class PagerControl(Widget):
 
         if key in self._instruction_keys.keys():
             command = self._instruction_keys[key]
-            new_ri = self.render_metadata.related_instructions[command].dict()
-            self._pager.update_render_instruction(new_ri)
+            new_ri = self.render_metadata.related_instructions[command]
+            if new_ri:
+                self._pager.update_render_instruction(new_ri.dict())
 
     def render(self) -> RenderableType:
 

@@ -18,6 +18,7 @@ from kiara.models.module.operation import (
     OperationSchema,
     PipelineOperationConfig,
 )
+from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
@@ -49,6 +50,7 @@ class PipelineOperationDetails(OperationDetails):
     pipeline_outputs_schema: Mapping[str, ValueSchema] = Field(
         description="The output schema for the pipeline."
     )
+    pipeline_config: PipelineConfig = Field(description="The pipeline config.")
     _op_schema: OperationSchema = PrivateAttr(default=None)
 
     def get_operation_schema(self) -> OperationSchema:
@@ -198,6 +200,7 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
                 operation_id=module.config.pipeline_name,
                 pipeline_inputs_schema=module.inputs_schema,
                 pipeline_outputs_schema=module.outputs_schema,
+                pipeline_config=module.config,
             )
             return op_details
         else:

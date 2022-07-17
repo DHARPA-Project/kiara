@@ -17,7 +17,7 @@ class RenderInstructionTypeConfig(DataTypeConfig):
 
     kiara_model_id: str = Field(
         description="The id of the model backing this render (Python class must sub-class 'RenderInstruction').",
-        default="instance.render_instruction.table",
+        # default="instance.render_instruction.table",
     )
 
 

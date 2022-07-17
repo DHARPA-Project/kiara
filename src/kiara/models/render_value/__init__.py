@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import abc
 from pydantic import Field
-from typing import Any, Dict, Iterable, NamedTuple
+from typing import Any, Dict, Iterable, NamedTuple, Union
 
 from kiara.models import KiaraModel
 
@@ -29,7 +29,7 @@ class RenderInstruction(KiaraModel):
 
 class RenderMetadata(KiaraModel):
 
-    related_instructions: Dict[str, RenderInstruction] = Field(
+    related_instructions: Dict[str, Union[RenderInstruction, None]] = Field(
         description="Related instructions, to be used by implementing frontends as hints.",
         default_factory=dict,
     )

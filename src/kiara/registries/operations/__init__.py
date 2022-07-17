@@ -51,10 +51,31 @@ class OperationRegistry(object):
         self._operations: Union[Dict[str, Operation], None] = None
         self._operations_by_type: Union[Dict[str, Iterable[str]], None] = None
 
+        self._module_map: Union[Dict[str, Dict[str, Any]], None] = None
+
     @property
     def is_initialized(self) -> bool:
 
         return self._operations is not None
+
+    def get_module_map(self) -> Mapping[str, Mapping[str, Any]]:
+
+        if not self.is_initialized:
+            raise Exception(
+                "Can't retrieve module map: operations not initialized yet."
+            )
+
+        if self._module_map is not None:
+            return self._module_map
+
+        module_map = {}
+        for k, v in self.operations.items():
+            module_map[k] = {
+                "module_type": v.module_type,
+                "module_config": v.module_config,
+            }
+        self._module_map = module_map
+        return self._module_map
 
     @property
     def operation_types(self) -> Mapping[str, OperationType]:

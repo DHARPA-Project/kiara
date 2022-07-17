@@ -66,6 +66,9 @@ class RenderValueModule(KiaraModule):
             },
             "render_instruction": {
                 "type": "render_instruction",
+                "type_config": {
+                    "kiara_model_id": self.get_config_value("render_instruction_type"),
+                },
                 "doc": "Instructions/config on how (or what) to render the provided value.",
                 "optional": False,
                 "default": {"number_of_rows": 20, "row_offset": 0, "columns": None},
@@ -100,9 +103,10 @@ class RenderValueModule(KiaraModule):
         render_instruction: RenderInstruction = inputs.get_value_data(
             "render_instruction"
         )
+
         if not issubclass(render_instruction.__class__, instr_model):
             raise KiaraProcessingException(
-                f"Invalid type for 'render_instruction': must be a subclass of '{instr_model.__name__}'."
+                f"Invalid type '{type(instr_model)}' for 'render_instruction': must be a subclass of '{instr_model.__name__}'."
             )
 
         result_model_type: str = self.get_config_value("target_type")

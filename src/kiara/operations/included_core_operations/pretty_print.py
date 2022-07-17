@@ -54,7 +54,6 @@ class PrettyPrintDetails(BaseOperationDetails):
         }
 
     def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
-
         return {"rendered_value": outputs.get_value_obj("rendered_value")}
 
 

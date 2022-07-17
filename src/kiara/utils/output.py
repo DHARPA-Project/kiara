@@ -15,7 +15,18 @@ from rich import box
 from rich.console import ConsoleRenderable, Group, RenderableType, RichCast
 from rich.table import Table as RichTable
 from rich.tree import Tree
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set, Type, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Mapping,
+    Set,
+    Type,
+    Union,
+)
 
 from kiara.defaults import SpecialValue
 from kiara.models.values.value import ORPHAN, Value, ValueMap
@@ -91,125 +102,6 @@ class OutputDetails(BaseModel):
         return result
 
 
-# def pretty_print_table(
-#     table: "Table",
-#     rows_head: typing.Optional[int] = None,
-#     rows_tail: typing.Optional[int] = None,
-#     max_row_height: typing.Optional[int] = None,
-#     max_cell_length: typing.Optional[int] = None,
-# ) -> RenderableType:
-#
-#     rich_table = RichTable(box=box.SIMPLE)
-#     for cn in table.column_names:
-#         rich_table.add_column(cn)
-#
-#     num_split_rows = 2
-#
-#     if rows_head is not None:
-#
-#         if rows_head < 0:
-#             rows_head = 0
-#
-#         if rows_head > table.num_rows:
-#             rows_head = table.num_rows
-#             rows_tail = None
-#             num_split_rows = 0
-#
-#         if rows_tail is not None:
-#             if rows_head + rows_tail >= table.num_rows:  # type: ignore
-#                 rows_head = table.num_rows
-#                 rows_tail = None
-#                 num_split_rows = 0
-#     else:
-#         num_split_rows = 0
-#
-#     if rows_head is not None:
-#         head = table.slice(0, rows_head)
-#         num_rows = rows_head
-#     else:
-#         head = table
-#         num_rows = table.num_rows
-#
-#     table_dict = head.to_pydict()
-#     for i in range(0, num_rows):
-#         row = []
-#         for cn in table.column_names:
-#             cell = table_dict[cn][i]
-#             cell_str = str(cell)
-#             if max_row_height and max_row_height > 0 and "\n" in cell_str:
-#                 lines = cell_str.split("\n")
-#                 if len(lines) > max_row_height:
-#                     if max_row_height == 1:
-#                         lines = lines[0:1]
-#                     else:
-#                         half = int(max_row_height / 2)
-#                         lines = lines[0:half] + [".."] + lines[-half:]
-#                 cell_str = "\n".join(lines)
-#
-#             if max_cell_length and max_cell_length > 0:
-#                 lines = []
-#                 for line in cell_str.split("\n"):
-#                     if len(line) > max_cell_length:
-#                         line = line[0:max_cell_length] + " ..."
-#                     else:
-#                         line = line
-#                     lines.append(line)
-#                 cell_str = "\n".join(lines)
-#
-#             row.append(cell_str)
-#
-#         rich_table.add_row(*row)
-#
-#     if num_split_rows:
-#         for i in range(0, num_split_rows):
-#             row = []
-#             for _ in table.column_names:
-#                 row.append("...")
-#             rich_table.add_row(*row)
-#
-#     if rows_head:
-#         if rows_tail is not None:
-#             if rows_tail < 0:
-#                 rows_tail = 0
-#
-#             tail = table.slice(table.num_rows - rows_tail)
-#             table_dict = tail.to_pydict()
-#             for i in range(0, num_rows):
-#
-#                 row = []
-#                 for cn in table.column_names:
-#
-#                     cell = table_dict[cn][i]
-#                     cell_str = str(cell)
-#
-#                     if max_row_height and max_row_height > 0 and "\n" in cell_str:
-#                         lines = cell_str.split("\n")
-#                         if len(lines) > max_row_height:
-#                             if max_row_height == 1:
-#                                 lines = lines[0:1]
-#                             else:
-#                                 half = int(len(lines) / 2)
-#                                 lines = lines[0:half] + [".."] + lines[-half:]
-#                         cell_str = "\n".join(lines)
-#
-#                     if max_cell_length and max_cell_length > 0:
-#                         lines = []
-#                         for line in cell_str.split("\n"):
-#
-#                             if len(line) > max_cell_length:
-#                                 line = line[0:(max_cell_length)] + " ..."
-#                             else:
-#                                 line = line
-#                             lines.append(line)
-#                         cell_str = "\n".join(lines)
-#
-#                     row.append(cell_str)
-#
-#                 rich_table.add_row(*row)
-#
-#     return rich_table
-
-
 class TabularWrap(ABC):
     def __init__(self):
         self._num_rows: Union[int, None] = None
@@ -244,16 +136,43 @@ class TabularWrap(ABC):
     def to_pydict(self) -> Mapping:
         pass
 
-    def pretty_print(
+    def as_html(
+        self,
+        rows_head: Union[int, None] = None,
+        rows_tail: Union[int, None] = None,
+        max_row_height: Union[int, None] = None,
+        max_cell_length: Union[int, None] = None,
+    ) -> str:
+
+        table_str = "<table><tr>"
+        for cn in self.retrieve_column_names():
+            table_str = f"{table_str}<th>{cn}</th>"
+        table_str = f"{table_str}</tr>"
+
+        for data in self.prepare_table_data(
+            return_column_names=False,
+            rows_head=rows_head,
+            rows_tail=rows_tail,
+            max_row_height=max_row_height,
+            max_cell_length=max_cell_length,
+        ):
+            table_str = f"{table_str}<tr>"
+            for cell in data:
+                table_str = f"{table_str}<td>{cell}</td>"
+            table_str = f"{table_str}</tr>"
+        table_str = f"{table_str}</table>"
+        return table_str
+
+    def as_terminal_renderable(
         self,
         rows_head: Union[int, None] = None,
         rows_tail: Union[int, None] = None,
         max_row_height: Union[int, None] = None,
         max_cell_length: Union[int, None] = None,
         show_table_header: bool = True,
-    ) -> RenderableType:
+    ) -> RichTable:
 
-        rich_table = RichTable(box=box.SIMPLE, show_header=show_table_header)
+        rich_table = RichTable(show_header=show_table_header, box=box.SIMPLE)
         if max_row_height == 1:
             overflow = "ignore"
         else:
@@ -261,6 +180,31 @@ class TabularWrap(ABC):
 
         for cn in self.retrieve_column_names():
             rich_table.add_column(cn, overflow=overflow)  # type: ignore
+
+        data = self.prepare_table_data(
+            return_column_names=False,
+            rows_head=rows_head,
+            rows_tail=rows_tail,
+            max_row_height=max_row_height,
+            max_cell_length=max_cell_length,
+        )
+
+        for row in data:
+            rich_table.add_row(*row)
+
+        return rich_table
+
+    def prepare_table_data(
+        self,
+        return_column_names: bool = False,
+        rows_head: Union[int, None] = None,
+        rows_tail: Union[int, None] = None,
+        max_row_height: Union[int, None] = None,
+        max_cell_length: Union[int, None] = None,
+    ) -> Iterator[Iterable[Any]]:
+
+        if return_column_names:
+            yield self.retrieve_column_names()
 
         num_split_rows = 2
 
@@ -317,14 +261,14 @@ class TabularWrap(ABC):
 
                 row.append(cell_str)
 
-            rich_table.add_row(*row)
+            yield row
 
         if num_split_rows:
             for i in range(0, num_split_rows):
                 row = []
                 for _ in self.retrieve_column_names():
                     row.append("...")
-                rich_table.add_row(*row)
+                yield row
 
         if rows_head:
             if rows_tail is not None:
@@ -364,9 +308,9 @@ class TabularWrap(ABC):
 
                         row.append(cell_str)
 
-                    rich_table.add_row(*row)
+                    yield row
 
-        return rich_table
+        return
 
 
 class ArrowTabularWrap(TabularWrap):

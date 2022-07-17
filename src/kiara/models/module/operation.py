@@ -85,6 +85,9 @@ class OperationDetails(KiaraModel):
 
     _kiara_model_id = "instance.operation_details"
 
+    # inputs_map: Dict[str, str] = Field(description="A map with the operations input fields as keys, and the underlying modules input fields as values, used to translate input value maps.")
+    # outputs_map: Dict[str, str] = Field(description="A map with the operations input fields as keys, and the underlying modules input fields as values, used to translate input value maps.")
+
     @classmethod
     def create_operation_details(cls, **details: Any):
 
@@ -193,7 +196,7 @@ class PipelineOperationConfig(OperationConfig):
     pipeline_name: str = Field(description="The pipeline id.")
     pipeline_config: Mapping[str, Any] = Field(description="The pipeline config data.")
     module_map: Dict[str, Any] = Field(
-        description="A lookup map to resolves module names to operations.",
+        description="A lookup map to resolves operation ids to module names/configs.",
         default_factory=dict,
     )
     metadata: Mapping[str, Any] = Field(

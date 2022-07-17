@@ -22,7 +22,7 @@ from kiara.models.module import KiaraModuleClass, KiaraModuleConfig
 from kiara.models.module.jobs import ExecutionContext
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.pipeline.value_refs import StepValueAddress
-from kiara.utils import is_jupyter
+from kiara.utils import find_free_id, is_jupyter
 from kiara.utils.files import get_data_from_file
 from kiara.utils.json import orjson_dumps
 from kiara.utils.modules import module_config_is_empty
@@ -62,6 +62,7 @@ class PipelineStep(Manifest):
         *steps: Union["PipelineStep", Mapping[str, Any]],
         kiara: "Kiara",
         module_map: Union[Mapping[str, Any], None] = None,
+        auto_step_ids: bool = False,
     ) -> List["PipelineStep"]:
 
         if module_map is None:
@@ -69,15 +70,12 @@ class PipelineStep(Manifest):
         else:
             module_map = dict(module_map)
 
-        if kiara.operation_registry.is_initialized:
-            for op_id, op in kiara.operation_registry.operations.items():
-                module_map[op_id] = {
-                    "module_type": op.module_type,
-                    "module_config": op.module_config,
-                }
+        # if kiara.operation_registry.is_initialized:
+        #     module_map.update(kiara.operation_registry.get_module_map())
 
         result: List[PipelineStep] = []
 
+        step_ids: List[str] = []
         for step in steps:
 
             if not isinstance(step, PipelineStep):
@@ -89,11 +87,23 @@ class PipelineStep(Manifest):
                 module_config = step.get("module_config", {})
 
                 if module_type not in kiara.module_type_names:
+
                     if module_type in module_map.keys():
                         resolved_module_type = module_map[module_type]["module_type"]
                         resolved_module_config = module_map[module_type][
                             "module_config"
                         ]
+                        manifest = kiara.create_manifest(
+                            module_or_operation=resolved_module_type,
+                            config=resolved_module_config,
+                        )
+                    elif (
+                        kiara.operation_registry.is_initialized
+                        and module_type in kiara.operation_registry.operation_ids
+                    ):
+                        op = kiara.operation_registry.operations[module_type]
+                        resolved_module_type = op.module_type
+                        resolved_module_config = op.module_config
                         manifest = kiara.create_manifest(
                             module_or_operation=resolved_module_type,
                             config=resolved_module_config,
@@ -111,7 +121,20 @@ class PipelineStep(Manifest):
 
                 step_id = step.get("step_id", None)
                 if not step_id:
-                    raise ValueError("Can't create step, no 'step_id' specified.")
+                    if not auto_step_ids:
+                        raise ValueError("Can't create step, no 'step_id' specified.")
+                    else:
+                        step_id = find_free_id(
+                            slugify(manifest.module_type, separator="_"),
+                            current_ids=step_ids,
+                        )
+
+                if step_id in step_ids:
+                    raise ValueError(
+                        f"Can't create step: duplicate step id '{step_id}'."
+                    )
+
+                step_ids.append(step_id)
 
                 input_links = {}
                 for input_field, sources in step.get("input_links", {}).items():
@@ -419,7 +442,9 @@ class PipelineConfig(KiaraModuleConfig):
         pipeline_name: str,
         data: Mapping[str, Any],
         kiara: Union["Kiara", None] = None,
+        module_map: Union[Mapping[str, Any], None] = None,
         execution_context: Union[ExecutionContext, None] = None,
+        auto_step_ids: bool = False,
     ):
 
         if kiara is None:
@@ -437,7 +462,9 @@ class PipelineConfig(KiaraModuleConfig):
             pipeline_name=pipeline_name,
             data=data,
             kiara=kiara,
+            module_map=module_map,
             execution_context=execution_context,
+            auto_step_ids=auto_step_ids,
         )
         return config
 
@@ -449,6 +476,7 @@ class PipelineConfig(KiaraModuleConfig):
         kiara: "Kiara",
         module_map: Union[Mapping[str, Any], None] = None,
         execution_context: Union[ExecutionContext, None] = None,
+        auto_step_ids: bool = False,
     ):
 
         if execution_context is None:
@@ -458,7 +486,9 @@ class PipelineConfig(KiaraModuleConfig):
 
         data = dict(data)
         steps = data.pop("steps")
-        steps = PipelineStep.create_steps(*steps, kiara=kiara, module_map=module_map)
+        steps = PipelineStep.create_steps(
+            *steps, kiara=kiara, module_map=module_map, auto_step_ids=auto_step_ids
+        )
         data["steps"] = steps
         if not data.get("input_aliases"):
             data["input_aliases"] = create_input_alias_map(steps)

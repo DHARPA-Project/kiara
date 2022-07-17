@@ -31,6 +31,9 @@ class RenderValueDetails(BaseOperationDetails):
     rendered_type: str = Field(description="The type of the render output.")
     input_field_name: str = Field(description="The input field name.")
     rendered_field_name: str = Field(description="The result field name.")
+    render_instruction_type: str = Field(
+        description="The id of the render instruction model class."
+    )
 
     def retrieve_inputs_schema(self) -> ValueSetSchema:
         return {
@@ -40,6 +43,7 @@ class RenderValueDetails(BaseOperationDetails):
             },
             "render_instruction": {
                 "type": "render_instruction",
+                "type_config": {"kiara_model_id": self.render_instruction_type},
                 "doc": "Configuration how to render the value.",
                 "default": {},
             },
@@ -168,6 +172,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
             input_field_name=source_type,
             rendered_field_name=target_type,
             is_internal_operation=True,
+            render_instruction_type=module.config.get("render_instruction_type"),
         )
 
         return details

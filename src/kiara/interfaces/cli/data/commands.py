@@ -9,7 +9,7 @@
 import rich_click as click
 import structlog
 import sys
-from typing import Tuple, Union
+from typing import Iterable, Tuple, Union
 
 from kiara import Kiara
 from kiara.interfaces.tui.pager import PagerApp
@@ -17,12 +17,19 @@ from kiara.models.module.operation import Operation
 from kiara.models.values.info import RENDER_FIELDS, ValueInfo, ValuesInfo
 from kiara.models.values.matchers import ValueMatcher
 from kiara.operations.included_core_operations.filter import FilterOperationType
-from kiara.operations.included_core_operations.pipeline import PipelineOperationDetails
 from kiara.operations.included_core_operations.render_value import (
     RenderValueOperationType,
 )
 from kiara.utils import log_exception, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
+from kiara.utils.cli.run import (
+    _validate_save_option,
+    calculate_aliases,
+    execute_job,
+    set_and_validate_inputs,
+    validate_operation_in_terminal,
+)
+from kiara.utils.output import OutputDetails
 from kiara.utils.yaml import StringYAML
 
 logger = structlog.getLogger()
@@ -341,9 +348,43 @@ def load_value(ctx, value: str, single_page: bool):
 
 @data.command("filter")
 @click.argument("value", nargs=1, required=True)
-@click.argument("filter", nargs=-1)
+@click.argument("filters", nargs=1)
+@click.argument("inputs", nargs=-1, required=False)
+@click.option(
+    "--explain",
+    "-e",
+    help="Display information about the selected operation and exit.",
+    is_flag=True,
+)
+@click.option(
+    "--output", "-o", help="The output format and configuration.", multiple=True
+)
+@click.option(
+    "--save",
+    "-s",
+    help="Save one or several of the outputs of this run. If the argument contains a '=', the format is [output_name]=[alias], if not, the values will be saved as '[alias]-[output_name]'.",
+    required=False,
+    multiple=True,
+)
+@click.option("--help", "-h", help="Show this message and exit.", is_flag=True)
 @click.pass_context
-def filter_value(ctx, value: str, filter: Tuple[str, ...]):
+def filter_value(
+    ctx,
+    value: str,
+    filters: str,
+    inputs: Iterable[str],
+    explain: bool,
+    output: Iterable[str],
+    save: Iterable[str],
+    help: bool,
+):
+
+    save_results = _validate_save_option(save)
+
+    output_details = OutputDetails.from_data(output)
+    silent = False
+    if output_details.format == "silent":
+        silent = True
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -359,12 +400,34 @@ def filter_value(ctx, value: str, filter: Tuple[str, ...]):
 
     filter_op_type: FilterOperationType = kiara_obj.operation_registry.get_operation_type("filter")  # type: ignore
 
-    filters = ["select_columns", "drop_columns"]
+    _filter_names = filters.split(",")
+    filter_names = []
+    for fn in _filter_names:
+        filter_names.extend(fn.split(":"))
     op = filter_op_type.create_filter_operation(
-        data_type=_value.data_type_name, filters=filters
+        data_type=_value.data_type_name, filters=filter_names
     )
 
-    details: PipelineOperationDetails = op.operation_details  # type: ignore
-    pc = details.pipeline_config
-    print(pc)
-    # dbg(pc.structure.pipeline_inputs_schema)
+    all_inputs = [f"value={value}"]
+    all_inputs.extend(inputs)
+
+    cmd_help = "[yellow bold]Usage: [/yellow bold][bold]kiara data filter VALUE FILTER_1:FILTER_2 [FILTER ARGS...][/bold]"
+
+    kiara_op = validate_operation_in_terminal(
+        kiara=kiara_obj, module_or_operation="pipeline", module_config=op.module_config
+    )
+    final_aliases = calculate_aliases(kiara_op=kiara_op, alias_tokens=save)
+    set_and_validate_inputs(
+        kiara_op=kiara_op,
+        inputs=all_inputs,
+        explain=explain,
+        print_help=help,
+        click_context=ctx,
+        cmd_help=cmd_help,
+    )
+    execute_job(
+        kiara_op=kiara_op,
+        silent=silent,
+        save_results=save_results,
+        aliases=final_aliases,
+    )

@@ -11,22 +11,18 @@ import os.path
 import rich_click as click
 import sys
 from pathlib import Path
-from pydantic import ValidationError
-from rich.console import Group
-from rich.rule import Rule
-from typing import Dict, Iterable, List
+from typing import Iterable
 
 from kiara import Kiara
-from kiara.exceptions import (
-    FailedJobException,
-    InvalidValuesException,
-    NoSuchExecutionTargetException,
+from kiara.utils.cli import dict_from_cli_args
+from kiara.utils.cli.run import (
+    _validate_save_option,
+    calculate_aliases,
+    execute_job,
+    set_and_validate_inputs,
+    validate_operation_in_terminal,
 )
-from kiara.interfaces.python_api.operation import KiaraOperation
-from kiara.utils import log_exception
-from kiara.utils.cli import dict_from_cli_args, terminal_print
-from kiara.utils.cli.rich_click import rich_format_operation_help
-from kiara.utils.output import OutputDetails, create_table_from_base_model_cls
+from kiara.utils.output import OutputDetails
 
 
 @click.command()
@@ -77,23 +73,7 @@ def run(
     else:
         module_config = {}
 
-    if not save:
-        aliases: Dict[str, List[str]] = {}
-        full_aliases: List[str] = []
-    else:
-        aliases = {}
-        full_aliases = []
-        for a in save:
-            if "=" not in a:
-                full_aliases.append(a)
-            else:
-                tokens = a.split("=")
-                if len(tokens) != 2:
-                    print()
-                    print(f"Invalid alias format, can only contain a single '=': {a}")
-                    sys.exit(1)
-
-                aliases.setdefault(tokens[0], []).append(tokens[1])
+    save_results = _validate_save_option(save)
 
     output_details = OutputDetails.from_data(output)
     silent = False
@@ -120,183 +100,26 @@ def run(
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    kiara_op = KiaraOperation(
+    cmd_arg = ctx.params["module_or_operation"]
+    cmd_help = f"[yellow bold]Usage: [/yellow bold][bold]kiara run [OPTIONS] [i]{cmd_arg}[/i] [INPUTS][/bold]"
+
+    kiara_op = validate_operation_in_terminal(
         kiara=kiara_obj,
-        operation_name=module_or_operation,
-        operation_config=module_config,
+        module_or_operation=module_or_operation,
+        module_config=module_config,
     )
-    try:
-        # validate that operation config is valid, ignoring inputs for now
-        operation = kiara_op.operation
-    except NoSuchExecutionTargetException as nset:
-        print()
-        terminal_print(nset)
-        print()
-        print("Existing operations:")
-        print()
-        for n in nset.avaliable_targets:
-            terminal_print(f"  - [i]{n}[/i]")
-        sys.exit(1)
-    except ValidationError as ve:
-
-        renderables = [""]
-        renderables.append("Invalid module configuration:")
-        renderables.append("")
-        for error in ve.errors():
-            loc = ", ".join(error["loc"])  # type: ignore
-            renderables.append(f"  [b]{loc}[/b]: [red]{error['msg']}[/red]")
-
-        try:
-            m = kiara_obj.module_registry.get_module_class(kiara_op.operation_name)
-            schema = create_table_from_base_model_cls(m._config_cls)
-            renderables.append("")
-            renderables.append(f"Module configuration schema for '[b i]{m._module_type_name}[/b i]':")  # type: ignore
-            renderables.append("")
-            renderables.append(schema)
-        except Exception:
-            pass
-
-        msg = Group(*renderables)
-        terminal_print()
-        terminal_print(msg, in_panel="[b red]Module configuration error[/b red]")
-        sys.exit(1)
-    except Exception as e:
-        log_exception(e)
-        terminal_print()
-        terminal_print(
-            f"Error when trying to validate the operation [i]'{kiara_op.operation_name}'[/i]:\n"
-        )
-        terminal_print(f"    [red]{e}[/red]")
-        sys.exit(1)
-
-    # =========================================================================
-    # check save user input
-    final_aliases = {}
-    if save:
-        op_output_names = operation.outputs_schema.keys()
-        invalid_fields = []
-        for field_name, alias in aliases.items():
-            if field_name not in op_output_names:
-                invalid_fields.append(field_name)
-            else:
-                final_aliases[field_name] = alias
-
-        for _alias in full_aliases:
-            for field_name in op_output_names:
-                final_aliases.setdefault(field_name, []).append(
-                    f"{_alias}.{field_name}"
-                )
-
-        if invalid_fields:
-            print()
-            print(
-                f"Can't run workflow, invalid field name(s) when specifying aliases: {', '.join(invalid_fields)}. Valid field names: {', '.join(op_output_names)}"
-            )
-            sys.exit(1)
-
-    # =========================================================================
-    # prepare inputs
-    list_keys = []
-    for name, value_schema in operation.operation_details.inputs_schema.items():
-        if value_schema.type in ["list"]:
-            list_keys.append(name)
-
-    inputs_dict = dict_from_cli_args(*inputs, list_keys=list_keys)
-
-    kiara_op.set_inputs(**inputs_dict)
-
-    if help:
-        rich_format_operation_help(obj=ctx.command, ctx=ctx, operation=kiara_op)
-        sys.exit(0)
-
-    if explain:
-        terminal_print()
-        rg = Group(
-            "",
-            kiara_op.create_renderable(
-                show_operation_name=True, show_inputs=True, show_outputs_schema=True
-            ),
-        )
-        terminal_print(rg, in_panel=f"Operation info: [b]{kiara_op.operation_name}[/b]")
-        sys.exit(0)
-
-    try:
-        operation_inputs = kiara_op.operation_inputs
-    except InvalidValuesException as ive:
-
-        terminal_print()
-        rg = Group(
-            "",
-            f"Can't run operation: {ive}",
-            "",
-            Rule(),
-            "",
-            kiara_op.create_renderable(
-                show_operation_name=True, show_inputs=True, show_outputs_schema=True
-            ),
-        )
-        terminal_print(rg, in_panel=f"Run info: [b]{kiara_op.operation_name}[/b]")
-        sys.exit(1)
-
-    invalid = operation_inputs.check_invalid()
-    if invalid:
-
-        terminal_print()
-        rg = Group(
-            "",
-            "Can't run operation, invalid or insufficient inputs.",
-            "",
-            Rule(),
-            "",
-            kiara_op.create_renderable(
-                show_operation_name=True, show_inputs=True, show_outputs_schema=True
-            ),
-        )
-        terminal_print(rg, in_panel=f"Run info: [b]{kiara_op.operation_name}[/b]")
-        sys.exit(1)
-
-    # =========================================================================
-    # execute job
-    job_id = kiara_op.queue_job()
-
-    try:
-        outputs = kiara_op.retrieve_result(job_id=job_id)
-    except FailedJobException as fje:
-        print()
-        terminal_print(fje, in_panel="Processing error")
-        sys.exit(1)
-    except Exception as e:
-        print()
-        terminal_print(e)
-
-    if not silent:
-        if len(outputs) > 1:
-            title = "[b]Results[/b]"
-        else:
-            title = "[b]Result[/b]"
-
-        # for field_name, value in outputs.items():
-        #     results.append("")
-        #     results.append(f"* [b i]{field_name}[/b i]")
-        #     results.append(kiara_obj.data_registry.render_data(value.value_id))
-
-        terminal_print(
-            outputs, in_panel=title, empty_line_before=True, show_data_type=True
-        )
-
-    # for k, v in outputs.items():
-    #     rendered = kiara_obj.data_registry.render_data(v)
-    #     rich_print(rendered)
-
-    if save:
-        try:
-            save_results = kiara_op.save_result(job_id=job_id, aliases=final_aliases)
-            if len(save_results) == 1:
-                title = "[b]Stored result value[/b]"
-            else:
-                title = "[b]Stored result values[/b]"
-            terminal_print(save_results, in_panel=title, empty_line_before=True)
-        except Exception as e:
-            log_exception(e)
-            terminal_print(f"[red]Error saving results[/red]: {e}")
-            sys.exit(1)
+    final_aliases = calculate_aliases(kiara_op=kiara_op, alias_tokens=save)
+    set_and_validate_inputs(
+        kiara_op=kiara_op,
+        inputs=inputs,
+        explain=explain,
+        print_help=help,
+        click_context=ctx,
+        cmd_help=cmd_help,
+    )
+    execute_job(
+        kiara_op=kiara_op,
+        silent=silent,
+        save_results=save_results,
+        aliases=final_aliases,
+    )

@@ -40,6 +40,11 @@ class ValueMatcher(KiaraModel):
                         match = True
                         break
             else:
+                if (
+                    value.data_type_name
+                    not in self._kiara.type_registry.data_type_names
+                ):
+                    return False
                 lineage = self._kiara.type_registry.get_type_lineage(
                     value.data_type_name
                 )

@@ -73,6 +73,7 @@ def rich_format_operation_help(
     obj: Union[click.Command, click.Group],
     ctx: click.Context,
     operation: KiaraOperation,
+    cmd_help: str,
 ) -> None:
     """Print nicely formatted help text using rich.
 
@@ -96,8 +97,8 @@ def rich_format_operation_help(
         )
 
     # Print usage
-    cmd_arg = ctx.params["module_or_operation"]
-    _cmd = f"[yellow bold]Usage: [/yellow bold][bold]kiara run [OPTIONS] [i]{cmd_arg}[/i] [INPUTS][/bold]"
+
+    _cmd = cmd_help
     renderables.append(Padding(_cmd, 1))
     # renderables.append(obj.get_usage(ctx))
     # renderables.append(Panel(Padding(highlighter(obj.get_usage(ctx)), 1), style=STYLE_USAGE_COMMAND, box=box.MINIMAL))

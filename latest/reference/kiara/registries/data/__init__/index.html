@@ -2542,6 +2542,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../modules/included_core_modules/filter/" class="md-nav__link">
+        filter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../modules/included_core_modules/metadata/" class="md-nav__link">
         metadata
       </a>
@@ -2706,6 +2720,20 @@
     <li class="md-nav__item">
       <a href="../../../operations/included_core_operations/export_as/" class="md-nav__link">
         export_as
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/included_core_operations/filter/" class="md-nav__link">
+        filter
       </a>
     </li>
   
@@ -4912,17 +4940,25 @@ DataRegistry        </code>
         <span class="n">op</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
 
         <span class="n">input_field_match</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">input_field_match</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: multiple input fields with type &#39;</span><span class="si">{</span><span class="n">input_field_match</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-                        <span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">input_field_match</span> <span class="o">=</span> <span class="n">input_field</span>
+                <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
+                <span class="p">):</span>
+                    <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">dt</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: multiple input fields with type &#39;</span><span class="si">{</span><span class="n">input_field_match</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                            <span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">input_field_match</span> <span class="o">=</span> <span class="n">input_field</span>
+                            <span class="k">break</span>
+                <span class="k">if</span> <span class="n">input_field_match</span><span class="p">:</span>
+                    <span class="k">break</span>
+
         <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
@@ -6134,17 +6170,25 @@ DataRegistry        </code>
     <span class="n">op</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
 
     <span class="n">input_field_match</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">input_field_match</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: multiple input fields with type &#39;</span><span class="si">{</span><span class="n">input_field_match</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-                    <span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">input_field_match</span> <span class="o">=</span> <span class="n">input_field</span>
+            <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
+            <span class="p">):</span>
+                <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">dt</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;: multiple input fields with type &#39;</span><span class="si">{</span><span class="n">input_field_match</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">input_field_match</span> <span class="o">=</span> <span class="n">input_field</span>
+                        <span class="k">break</span>
+            <span class="k">if</span> <span class="n">input_field_match</span><span class="p">:</span>
+                <span class="k">break</span>
+
     <span class="k">if</span> <span class="n">input_field_match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Can&#39;t determine input field for deserialization operation &#39;</span><span class="si">{</span><span class="n">module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>

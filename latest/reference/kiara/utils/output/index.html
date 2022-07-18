@@ -2542,6 +2542,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../modules/included_core_modules/filter/" class="md-nav__link">
+        filter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../modules/included_core_modules/metadata/" class="md-nav__link">
         metadata
       </a>
@@ -2706,6 +2720,20 @@
     <li class="md-nav__item">
       <a href="../../operations/included_core_operations/export_as/" class="md-nav__link">
         export_as
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/included_core_operations/filter/" class="md-nav__link">
+        filter
       </a>
     </li>
   
@@ -5229,16 +5257,43 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
     <span class="k">def</span> <span class="nf">to_pydict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">:</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">pretty_print</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">as_html</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">rows_head</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rows_tail</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_row_height</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_cell_length</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+        <span class="n">table_str</span> <span class="o">=</span> <span class="s2">&quot;&lt;table&gt;&lt;tr&gt;&quot;</span>
+        <span class="k">for</span> <span class="n">cn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_column_names</span><span class="p">():</span>
+            <span class="n">table_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_str</span><span class="si">}</span><span class="s2">&lt;th&gt;</span><span class="si">{</span><span class="n">cn</span><span class="si">}</span><span class="s2">&lt;/th&gt;&quot;</span>
+        <span class="n">table_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_str</span><span class="si">}</span><span class="s2">&lt;/tr&gt;&quot;</span>
+
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_table_data</span><span class="p">(</span>
+            <span class="n">return_column_names</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">rows_head</span><span class="o">=</span><span class="n">rows_head</span><span class="p">,</span>
+            <span class="n">rows_tail</span><span class="o">=</span><span class="n">rows_tail</span><span class="p">,</span>
+            <span class="n">max_row_height</span><span class="o">=</span><span class="n">max_row_height</span><span class="p">,</span>
+            <span class="n">max_cell_length</span><span class="o">=</span><span class="n">max_cell_length</span><span class="p">,</span>
+        <span class="p">):</span>
+            <span class="n">table_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_str</span><span class="si">}</span><span class="s2">&lt;tr&gt;&quot;</span>
+            <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="n">table_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_str</span><span class="si">}</span><span class="s2">&lt;td&gt;</span><span class="si">{</span><span class="n">cell</span><span class="si">}</span><span class="s2">&lt;/td&gt;&quot;</span>
+            <span class="n">table_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_str</span><span class="si">}</span><span class="s2">&lt;/tr&gt;&quot;</span>
+        <span class="n">table_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_str</span><span class="si">}</span><span class="s2">&lt;/table&gt;&quot;</span>
+        <span class="k">return</span> <span class="n">table_str</span>
+
+    <span class="k">def</span> <span class="nf">as_terminal_renderable</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">rows_head</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">rows_tail</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_row_height</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">max_cell_length</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">show_table_header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RichTable</span><span class="p">:</span>
 
-        <span class="n">rich_table</span> <span class="o">=</span> <span class="n">RichTable</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="n">show_table_header</span><span class="p">)</span>
+        <span class="n">rich_table</span> <span class="o">=</span> <span class="n">RichTable</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="n">show_table_header</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">max_row_height</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">overflow</span> <span class="o">=</span> <span class="s2">&quot;ignore&quot;</span>
         <span class="k">else</span><span class="p">:</span>
@@ -5246,6 +5301,31 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 
         <span class="k">for</span> <span class="n">cn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_column_names</span><span class="p">():</span>
             <span class="n">rich_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="n">overflow</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_table_data</span><span class="p">(</span>
+            <span class="n">return_column_names</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">rows_head</span><span class="o">=</span><span class="n">rows_head</span><span class="p">,</span>
+            <span class="n">rows_tail</span><span class="o">=</span><span class="n">rows_tail</span><span class="p">,</span>
+            <span class="n">max_row_height</span><span class="o">=</span><span class="n">max_row_height</span><span class="p">,</span>
+            <span class="n">max_cell_length</span><span class="o">=</span><span class="n">max_cell_length</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">rich_table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">rich_table</span>
+
+    <span class="k">def</span> <span class="nf">prepare_table_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">return_column_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">rows_head</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rows_tail</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_row_height</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_cell_length</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+
+        <span class="k">if</span> <span class="n">return_column_names</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_column_names</span><span class="p">()</span>
 
         <span class="n">num_split_rows</span> <span class="o">=</span> <span class="mi">2</span>
 
@@ -5302,14 +5382,14 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 
                 <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell_str</span><span class="p">)</span>
 
-            <span class="n">rich_table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">row</span>
 
         <span class="k">if</span> <span class="n">num_split_rows</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_split_rows</span><span class="p">):</span>
                 <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
                 <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_column_names</span><span class="p">():</span>
                     <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;...&quot;</span><span class="p">)</span>
-                <span class="n">rich_table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">row</span>
 
         <span class="k">if</span> <span class="n">rows_head</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">rows_tail</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -5349,9 +5429,9 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 
                         <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell_str</span><span class="p">)</span>
 
-                    <span class="n">rich_table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+                    <span class="k">yield</span> <span class="n">row</span>
 
-        <span class="k">return</span> <span class="n">rich_table</span>
+        <span class="k">return</span>
 </code></pre></div>
         </details>
 
@@ -5415,27 +5495,76 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 
 
 
-<h5 id="kiara.utils.output.TabularWrap.pretty_print" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">pretty_print</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows_head</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rows_tail</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_row_height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_cell_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_table_header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+<h5 id="kiara.utils.output.TabularWrap.as_html" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">as_html</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows_head</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rows_tail</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_row_height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_cell_length</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
-<a href="#kiara.utils.output.TabularWrap.pretty_print" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.utils.output.TabularWrap.as_html" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/utils/output.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">pretty_print</span><span class="p">(</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">as_html</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">rows_head</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">rows_tail</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_row_height</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_cell_length</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+    <span class="n">table_str</span> <span class="o">=</span> <span class="s2">&quot;&lt;table&gt;&lt;tr&gt;&quot;</span>
+    <span class="k">for</span> <span class="n">cn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_column_names</span><span class="p">():</span>
+        <span class="n">table_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_str</span><span class="si">}</span><span class="s2">&lt;th&gt;</span><span class="si">{</span><span class="n">cn</span><span class="si">}</span><span class="s2">&lt;/th&gt;&quot;</span>
+    <span class="n">table_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_str</span><span class="si">}</span><span class="s2">&lt;/tr&gt;&quot;</span>
+
+    <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_table_data</span><span class="p">(</span>
+        <span class="n">return_column_names</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">rows_head</span><span class="o">=</span><span class="n">rows_head</span><span class="p">,</span>
+        <span class="n">rows_tail</span><span class="o">=</span><span class="n">rows_tail</span><span class="p">,</span>
+        <span class="n">max_row_height</span><span class="o">=</span><span class="n">max_row_height</span><span class="p">,</span>
+        <span class="n">max_cell_length</span><span class="o">=</span><span class="n">max_cell_length</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">table_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_str</span><span class="si">}</span><span class="s2">&lt;tr&gt;&quot;</span>
+        <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">table_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_str</span><span class="si">}</span><span class="s2">&lt;td&gt;</span><span class="si">{</span><span class="n">cell</span><span class="si">}</span><span class="s2">&lt;/td&gt;&quot;</span>
+        <span class="n">table_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_str</span><span class="si">}</span><span class="s2">&lt;/tr&gt;&quot;</span>
+    <span class="n">table_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">table_str</span><span class="si">}</span><span class="s2">&lt;/table&gt;&quot;</span>
+    <span class="k">return</span> <span class="n">table_str</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.utils.output.TabularWrap.as_terminal_renderable" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">as_terminal_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rows_head</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rows_tail</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_row_height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_cell_length</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_table_header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.output.TabularWrap.as_terminal_renderable" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/output.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">as_terminal_renderable</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">rows_head</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">rows_tail</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_row_height</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_cell_length</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">show_table_header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RichTable</span><span class="p">:</span>
 
-    <span class="n">rich_table</span> <span class="o">=</span> <span class="n">RichTable</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="n">show_table_header</span><span class="p">)</span>
+    <span class="n">rich_table</span> <span class="o">=</span> <span class="n">RichTable</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="n">show_table_header</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">max_row_height</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">overflow</span> <span class="o">=</span> <span class="s2">&quot;ignore&quot;</span>
     <span class="k">else</span><span class="p">:</span>
@@ -5443,6 +5572,53 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 
     <span class="k">for</span> <span class="n">cn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_column_names</span><span class="p">():</span>
         <span class="n">rich_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span> <span class="n">overflow</span><span class="o">=</span><span class="n">overflow</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare_table_data</span><span class="p">(</span>
+        <span class="n">return_column_names</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">rows_head</span><span class="o">=</span><span class="n">rows_head</span><span class="p">,</span>
+        <span class="n">rows_tail</span><span class="o">=</span><span class="n">rows_tail</span><span class="p">,</span>
+        <span class="n">max_row_height</span><span class="o">=</span><span class="n">max_row_height</span><span class="p">,</span>
+        <span class="n">max_cell_length</span><span class="o">=</span><span class="n">max_cell_length</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="n">rich_table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rich_table</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.utils.output.TabularWrap.prepare_table_data" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">prepare_table_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">return_column_names</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rows_head</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rows_tail</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_row_height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_cell_length</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.output.TabularWrap.prepare_table_data" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/output.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">prepare_table_data</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">return_column_names</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">rows_head</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">rows_tail</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_row_height</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_cell_length</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+
+    <span class="k">if</span> <span class="n">return_column_names</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_column_names</span><span class="p">()</span>
 
     <span class="n">num_split_rows</span> <span class="o">=</span> <span class="mi">2</span>
 
@@ -5499,14 +5675,14 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 
             <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell_str</span><span class="p">)</span>
 
-        <span class="n">rich_table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">row</span>
 
     <span class="k">if</span> <span class="n">num_split_rows</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_split_rows</span><span class="p">):</span>
             <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_column_names</span><span class="p">():</span>
                 <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;...&quot;</span><span class="p">)</span>
-            <span class="n">rich_table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">row</span>
 
     <span class="k">if</span> <span class="n">rows_head</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">rows_tail</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -5546,9 +5722,9 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 
                     <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cell_str</span><span class="p">)</span>
 
-                <span class="n">rich_table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">row</span>
 
-    <span class="k">return</span> <span class="n">rich_table</span>
+    <span class="k">return</span>
 </code></pre></div>
         </details>
     </div>

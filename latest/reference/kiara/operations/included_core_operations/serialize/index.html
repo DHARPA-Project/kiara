@@ -2542,6 +2542,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../modules/included_core_modules/filter/" class="md-nav__link">
+        filter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../modules/included_core_modules/metadata/" class="md-nav__link">
         metadata
       </a>
@@ -2710,6 +2724,20 @@
     <li class="md-nav__item">
       <a href="../export_as/" class="md-nav__link">
         export_as
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../filter/" class="md-nav__link">
+        filter
       </a>
     </li>
   
@@ -4092,27 +4120,27 @@ DeSerializeDetails            (<a class="autorefs autorefs-internal" title="kiar
     <span class="c1">#     description=&quot;The python class of the result object.&quot;</span>
     <span class="c1"># )</span>
 
-    <span class="k">def</span> <span class="nf">retrieve_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
-
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to de-serialize.&quot;</span><span class="p">}}</span>
-
-    <span class="k">def</span> <span class="nf">retrieve_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
-
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;python_object&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The de-serialized python object instance.&quot;</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-
-    <span class="k">def</span> <span class="nf">create_module_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_input_field</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]}</span>
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">def</span> <span class="nf">create_operation_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
-
-        <span class="k">return</span> <span class="n">outputs</span>
+    <span class="c1"># def retrieve_inputs_schema(self) -&gt; ValueSetSchema:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     return {&quot;value&quot;: {&quot;type&quot;: self.value_type, &quot;doc&quot;: &quot;The value to de-serialize.&quot;}}</span>
+    <span class="c1">#</span>
+    <span class="c1"># def retrieve_outputs_schema(self) -&gt; ValueSetSchema:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     return {</span>
+    <span class="c1">#         &quot;python_object&quot;: {</span>
+    <span class="c1">#             &quot;type&quot;: &quot;python_object&quot;,</span>
+    <span class="c1">#             &quot;doc&quot;: &quot;The de-serialized python object instance.&quot;,</span>
+    <span class="c1">#         }</span>
+    <span class="c1">#     }</span>
+    <span class="c1">#</span>
+    <span class="c1"># def create_module_inputs(self, inputs: Mapping[str, Any]) -&gt; Mapping[str, Any]:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     result = {self.value_input_field: inputs[&quot;value&quot;]}</span>
+    <span class="c1">#     return result</span>
+    <span class="c1">#</span>
+    <span class="c1"># def create_operation_outputs(self, outputs: ValueMap) -&gt; Mapping[str, Value]:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     return outputs</span>
 </code></pre></div>
         </details>
 
@@ -4236,116 +4264,6 @@ DeSerializeDetails            (<a class="autorefs autorefs-internal" title="kiar
 
 
 
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.operations.included_core_operations.serialize.DeSerializeDetails.create_module_inputs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_module_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.included_core_operations.serialize.DeSerializeDetails.create_module_inputs" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_module_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-
-    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_input_field</span><span class="p">:</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]}</span>
-    <span class="k">return</span> <span class="n">result</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.operations.included_core_operations.serialize.DeSerializeDetails.create_operation_outputs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_operation_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.included_core_operations.serialize.DeSerializeDetails.create_operation_outputs" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_operation_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
-
-    <span class="k">return</span> <span class="n">outputs</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.operations.included_core_operations.serialize.DeSerializeDetails.retrieve_inputs_schema" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">retrieve_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.included_core_operations.serialize.DeSerializeDetails.retrieve_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_inputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
-
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to de-serialize.&quot;</span><span class="p">}}</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.operations.included_core_operations.serialize.DeSerializeDetails.retrieve_outputs_schema" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">retrieve_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.included_core_operations.serialize.DeSerializeDetails.retrieve_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/serialize.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
-
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;python_object&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The de-serialized python object instance.&quot;</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
 
 
 
@@ -4522,6 +4440,8 @@ DeSerializeOperationType            (<a class="autorefs autorefs-internal" title
             <span class="n">operation_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;deserialize.</span><span class="si">{</span><span class="n">input_field_name</span><span class="si">}</span><span class="s2">.as.</span><span class="si">{</span><span class="n">target_profile</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="n">details</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;module_inputs_schema&quot;</span><span class="p">:</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">,</span>
+            <span class="s2">&quot;module_outputs_schema&quot;</span><span class="p">:</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span>
             <span class="s2">&quot;operation_id&quot;</span><span class="p">:</span> <span class="n">operation_id</span><span class="p">,</span>
             <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="n">input_field_name</span><span class="p">,</span>
             <span class="s2">&quot;value_input_field&quot;</span><span class="p">:</span> <span class="n">input_field_name</span><span class="p">,</span>
@@ -4706,6 +4626,8 @@ DeSerializeOperationType            (<a class="autorefs autorefs-internal" title
         <span class="n">operation_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;deserialize.</span><span class="si">{</span><span class="n">input_field_name</span><span class="si">}</span><span class="s2">.as.</span><span class="si">{</span><span class="n">target_profile</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="n">details</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;module_inputs_schema&quot;</span><span class="p">:</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">,</span>
+        <span class="s2">&quot;module_outputs_schema&quot;</span><span class="p">:</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span>
         <span class="s2">&quot;operation_id&quot;</span><span class="p">:</span> <span class="n">operation_id</span><span class="p">,</span>
         <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="n">input_field_name</span><span class="p">,</span>
         <span class="s2">&quot;value_input_field&quot;</span><span class="p">:</span> <span class="n">input_field_name</span><span class="p">,</span>

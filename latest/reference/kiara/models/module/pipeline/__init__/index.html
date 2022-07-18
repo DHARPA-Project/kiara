@@ -2548,6 +2548,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../../modules/included_core_modules/filter/" class="md-nav__link">
+        filter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../../modules/included_core_modules/metadata/" class="md-nav__link">
         metadata
       </a>
@@ -2712,6 +2726,20 @@
     <li class="md-nav__item">
       <a href="../../../../operations/included_core_operations/export_as/" class="md-nav__link">
         export_as
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../operations/included_core_operations/filter/" class="md-nav__link">
+        filter
       </a>
     </li>
   
@@ -4231,7 +4259,9 @@ to the shortest possible names for each case.</p>
         <span class="n">pipeline_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
         <span class="n">kiara</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">module_map</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">execution_context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ExecutionContext</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">auto_step_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -4249,7 +4279,9 @@ to the shortest possible names for each case.</p>
             <span class="n">pipeline_name</span><span class="o">=</span><span class="n">pipeline_name</span><span class="p">,</span>
             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
             <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
+            <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">,</span>
             <span class="n">execution_context</span><span class="o">=</span><span class="n">execution_context</span><span class="p">,</span>
+            <span class="n">auto_step_ids</span><span class="o">=</span><span class="n">auto_step_ids</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">config</span>
 
@@ -4261,6 +4293,7 @@ to the shortest possible names for each case.</p>
         <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
         <span class="n">module_map</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">execution_context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ExecutionContext</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">auto_step_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="k">if</span> <span class="n">execution_context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -4270,7 +4303,9 @@ to the shortest possible names for each case.</p>
 
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">steps</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">)</span>
-        <span class="n">steps</span> <span class="o">=</span> <span class="n">PipelineStep</span><span class="o">.</span><span class="n">create_steps</span><span class="p">(</span><span class="o">*</span><span class="n">steps</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">)</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="n">PipelineStep</span><span class="o">.</span><span class="n">create_steps</span><span class="p">(</span>
+            <span class="o">*</span><span class="n">steps</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">,</span> <span class="n">auto_step_ids</span><span class="o">=</span><span class="n">auto_step_ids</span>
+        <span class="p">)</span>
         <span class="n">data</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">steps</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_aliases&quot;</span><span class="p">):</span>
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;input_aliases&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_input_alias_map</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
@@ -4691,7 +4726,7 @@ Config        </code>
 
 
 <h5 id="kiara.models.module.pipeline.PipelineConfig.from_config" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">from_config</span><span class="p">(</span><span class="n">pipeline_name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">execution_context</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">from_config</span><span class="p">(</span><span class="n">pipeline_name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">execution_context</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto_step_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
@@ -4710,7 +4745,9 @@ Config        </code>
     <span class="n">pipeline_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
     <span class="n">kiara</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">module_map</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">execution_context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ExecutionContext</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">auto_step_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -4728,7 +4765,9 @@ Config        </code>
         <span class="n">pipeline_name</span><span class="o">=</span><span class="n">pipeline_name</span><span class="p">,</span>
         <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
         <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
+        <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">,</span>
         <span class="n">execution_context</span><span class="o">=</span><span class="n">execution_context</span><span class="p">,</span>
+        <span class="n">auto_step_ids</span><span class="o">=</span><span class="n">auto_step_ids</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">config</span>
 </code></pre></div>
@@ -4863,6 +4902,7 @@ PipelineStep            (<a class="autorefs autorefs-internal" title="kiara.mode
         <span class="o">*</span><span class="n">steps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;PipelineStep&quot;</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
         <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
         <span class="n">module_map</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">auto_step_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;PipelineStep&quot;</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">module_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -4870,15 +4910,12 @@ PipelineStep            (<a class="autorefs autorefs-internal" title="kiara.mode
         <span class="k">else</span><span class="p">:</span>
             <span class="n">module_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">module_map</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">module_map</span><span class="p">[</span><span class="n">op_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="n">op</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
-                    <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
-                <span class="p">}</span>
+        <span class="c1"># if kiara.operation_registry.is_initialized:</span>
+        <span class="c1">#     module_map.update(kiara.operation_registry.get_module_map())</span>
 
         <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
+        <span class="n">step_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">):</span>
@@ -4890,11 +4927,23 @@ PipelineStep            (<a class="autorefs autorefs-internal" title="kiara.mode
                 <span class="n">module_config</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_config&quot;</span><span class="p">,</span> <span class="p">{})</span>
 
                 <span class="k">if</span> <span class="n">module_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
+
                     <span class="k">if</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">module_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                         <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span><span class="s2">&quot;module_type&quot;</span><span class="p">]</span>
                         <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span>
                             <span class="s2">&quot;module_config&quot;</span>
                         <span class="p">]</span>
+                        <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
+                            <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
+                            <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="k">elif</span> <span class="p">(</span>
+                        <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">is_initialized</span>
+                        <span class="ow">and</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span>
+                    <span class="p">):</span>
+                        <span class="n">op</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span><span class="p">[</span><span class="n">module_type</span><span class="p">]</span>
+                        <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_type</span>
+                        <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span>
                         <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
                             <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
                             <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
@@ -4912,7 +4961,20 @@ PipelineStep            (<a class="autorefs autorefs-internal" title="kiara.mode
 
                 <span class="n">step_id</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;step_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">step_id</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;step_id&#39; specified.&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">auto_step_ids</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;step_id&#39; specified.&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span>
+                            <span class="n">slugify</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">),</span>
+                            <span class="n">current_ids</span><span class="o">=</span><span class="n">step_ids</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">step_ids</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t create step: duplicate step id &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="n">step_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
 
                 <span class="n">input_links</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_links&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -5417,7 +5479,7 @@ Config        </code>
 
 
 <h5 id="kiara.models.module.pipeline.PipelineStep.create_steps" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_steps</span><span class="p">(</span><span class="o">*</span><span class="n">steps</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_steps</span><span class="p">(</span><span class="o">*</span><span class="n">steps</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto_step_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
@@ -5436,6 +5498,7 @@ Config        </code>
     <span class="o">*</span><span class="n">steps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;PipelineStep&quot;</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
     <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
     <span class="n">module_map</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">auto_step_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;PipelineStep&quot;</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="n">module_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -5443,15 +5506,12 @@ Config        </code>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">module_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">module_map</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">module_map</span><span class="p">[</span><span class="n">op_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="n">op</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
-                <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
-            <span class="p">}</span>
+    <span class="c1"># if kiara.operation_registry.is_initialized:</span>
+    <span class="c1">#     module_map.update(kiara.operation_registry.get_module_map())</span>
 
     <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
+    <span class="n">step_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">):</span>
@@ -5463,11 +5523,23 @@ Config        </code>
             <span class="n">module_config</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_config&quot;</span><span class="p">,</span> <span class="p">{})</span>
 
             <span class="k">if</span> <span class="n">module_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
+
                 <span class="k">if</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">module_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                     <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span><span class="s2">&quot;module_type&quot;</span><span class="p">]</span>
                     <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span>
                         <span class="s2">&quot;module_config&quot;</span>
                     <span class="p">]</span>
+                    <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
+                        <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
+                        <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span>
+                    <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">is_initialized</span>
+                    <span class="ow">and</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span>
+                <span class="p">):</span>
+                    <span class="n">op</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span><span class="p">[</span><span class="n">module_type</span><span class="p">]</span>
+                    <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_type</span>
+                    <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span>
                     <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
                         <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
                         <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
@@ -5485,7 +5557,20 @@ Config        </code>
 
             <span class="n">step_id</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;step_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">step_id</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;step_id&#39; specified.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">auto_step_ids</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;step_id&#39; specified.&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span>
+                        <span class="n">slugify</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">),</span>
+                        <span class="n">current_ids</span><span class="o">=</span><span class="n">step_ids</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">step_ids</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t create step: duplicate step id &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">step_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
 
             <span class="n">input_links</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_links&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>

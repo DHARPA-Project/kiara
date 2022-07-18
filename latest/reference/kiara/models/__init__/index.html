@@ -2544,6 +2544,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../modules/included_core_modules/filter/" class="md-nav__link">
+        filter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../modules/included_core_modules/metadata/" class="md-nav__link">
         metadata
       </a>
@@ -2708,6 +2722,20 @@
     <li class="md-nav__item">
       <a href="../../operations/included_core_operations/export_as/" class="md-nav__link">
         export_as
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/included_core_operations/filter/" class="md-nav__link">
+        filter
       </a>
     </li>
   
@@ -20743,13 +20771,13 @@ BaseOperationDetails            (<a class="autorefs autorefs-internal" title="ki
 
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.operation_details.base&quot;</span>
 
+    <span class="n">module_inputs_schema</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The input schemas of the module.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">module_outputs_schema</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The output schemas of the module.&quot;</span>
+    <span class="p">)</span>
     <span class="n">_op_schema</span><span class="p">:</span> <span class="n">OperationSchema</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">retrieve_inputs_schema</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">retrieve_outputs_schema</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">get_operation_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationSchema</span><span class="p">:</span>
 
@@ -20757,9 +20785,9 @@ BaseOperationDetails            (<a class="autorefs autorefs-internal" title="ki
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_op_schema</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_op_schema</span> <span class="o">=</span> <span class="n">OperationSchema</span><span class="p">(</span>
-            <span class="n">alias</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-            <span class="n">inputs_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">retrieve_inputs_schema</span><span class="p">(),</span>
-            <span class="n">outputs_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">retrieve_outputs_schema</span><span class="p">(),</span>
+            <span class="n">alias</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_id</span><span class="p">,</span>
+            <span class="n">inputs_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_inputs_schema</span><span class="p">,</span>
+            <span class="n">outputs_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_outputs_schema</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_op_schema</span>
 </code></pre></div>
@@ -20771,6 +20799,52 @@ BaseOperationDetails            (<a class="autorefs autorefs-internal" title="ki
 
 
 
+
+<h8 id="kiara.models.module.operation.BaseOperationDetails-attributes">Attributes<a href="#kiara.models.module.operation.BaseOperationDetails-attributes" class="headerlink" title="Permanent link">&para;</a></h8>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.models.module.operation.BaseOperationDetails.module_inputs_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">module_inputs_schema</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">ValueSchema</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.module.operation.BaseOperationDetails.module_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>The input schemas of the module.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.models.module.operation.BaseOperationDetails.module_outputs_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">module_outputs_schema</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">ValueSchema</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.module.operation.BaseOperationDetails.module_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>The output schemas of the module.</p>
+    </div>
+
+  </div>
 
 
 
@@ -20798,61 +20872,11 @@ BaseOperationDetails            (<a class="autorefs autorefs-internal" title="ki
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_op_schema</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_op_schema</span> <span class="o">=</span> <span class="n">OperationSchema</span><span class="p">(</span>
-        <span class="n">alias</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-        <span class="n">inputs_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">retrieve_inputs_schema</span><span class="p">(),</span>
-        <span class="n">outputs_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">retrieve_outputs_schema</span><span class="p">(),</span>
+        <span class="n">alias</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">operation_id</span><span class="p">,</span>
+        <span class="n">inputs_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_inputs_schema</span><span class="p">,</span>
+        <span class="n">outputs_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_outputs_schema</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_op_schema</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.models.module.operation.BaseOperationDetails.retrieve_inputs_schema" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">retrieve_inputs_schema</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span></code>
-
-
-<a href="#kiara.models.module.operation.BaseOperationDetails.retrieve_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_inputs_schema</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.models.module.operation.BaseOperationDetails.retrieve_outputs_schema" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">retrieve_outputs_schema</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span></code>
-
-
-<a href="#kiara.models.module.operation.BaseOperationDetails.retrieve_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_outputs_schema</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </code></pre></div>
         </details>
     </div>
@@ -21123,12 +21147,12 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
             <span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="n">module_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">create_module_inputs</span><span class="p">(</span>
-            <span class="n">inputs</span><span class="o">=</span><span class="n">augmented_inputs</span>
-        <span class="p">)</span>
+        <span class="c1"># module_inputs = self.operation_details.create_module_inputs(</span>
+        <span class="c1">#     inputs=augmented_inputs</span>
+        <span class="c1"># )</span>
 
         <span class="n">job_config</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">prepare_job_config</span><span class="p">(</span>
-            <span class="n">manifest</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">module_inputs</span>
+            <span class="n">manifest</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">augmented_inputs</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">job_config</span>
 
@@ -21146,9 +21170,9 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
 
     <span class="k">def</span> <span class="nf">process_job_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
 
-        <span class="n">op_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">create_operation_outputs</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">)</span>
+        <span class="c1"># op_outputs = self.operation_details.create_operation_outputs(outputs=outputs)</span>
 
-        <span class="n">value_set</span> <span class="o">=</span> <span class="n">ValueMapReadOnly</span><span class="p">(</span><span class="n">value_items</span><span class="o">=</span><span class="n">op_outputs</span><span class="p">,</span> <span class="n">values_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">value_set</span> <span class="o">=</span> <span class="n">ValueMapReadOnly</span><span class="p">(</span><span class="n">value_items</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">values_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="n">value_set</span>
 
     <span class="c1"># def run(self, _attach_lineage: bool = True, **inputs: Any) -&gt; ValueMap:</span>
@@ -21596,12 +21620,12 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
         <span class="p">)</span>
     <span class="p">)</span>
 
-    <span class="n">module_inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">create_module_inputs</span><span class="p">(</span>
-        <span class="n">inputs</span><span class="o">=</span><span class="n">augmented_inputs</span>
-    <span class="p">)</span>
+    <span class="c1"># module_inputs = self.operation_details.create_module_inputs(</span>
+    <span class="c1">#     inputs=augmented_inputs</span>
+    <span class="c1"># )</span>
 
     <span class="n">job_config</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">prepare_job_config</span><span class="p">(</span>
-        <span class="n">manifest</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">module_inputs</span>
+        <span class="n">manifest</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="n">augmented_inputs</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">job_config</span>
 </code></pre></div>
@@ -21629,9 +21653,9 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
           <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process_job_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
 
-    <span class="n">op_outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">create_operation_outputs</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">)</span>
+    <span class="c1"># op_outputs = self.operation_details.create_operation_outputs(outputs=outputs)</span>
 
-    <span class="n">value_set</span> <span class="o">=</span> <span class="n">ValueMapReadOnly</span><span class="p">(</span><span class="n">value_items</span><span class="o">=</span><span class="n">op_outputs</span><span class="p">,</span> <span class="n">values_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">value_set</span> <span class="o">=</span> <span class="n">ValueMapReadOnly</span><span class="p">(</span><span class="n">value_items</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">values_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
     <span class="k">return</span> <span class="n">value_set</span>
 </code></pre></div>
         </details>
@@ -21877,6 +21901,9 @@ OperationDetails            (<a class="autorefs autorefs-internal" title="kiara.
 
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.operation_details&quot;</span>
 
+    <span class="c1"># inputs_map: Dict[str, str] = Field(description=&quot;A map with the operations input fields as keys, and the underlying modules input fields as values, used to translate input value maps.&quot;)</span>
+    <span class="c1"># outputs_map: Dict[str, str] = Field(description=&quot;A map with the operations input fields as keys, and the underlying modules input fields as values, used to translate input value maps.&quot;)</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_operation_details</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">details</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 
@@ -21909,12 +21936,6 @@ OperationDetails            (<a class="autorefs autorefs-internal" title="kiara.
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_operation_schema</span><span class="p">()</span><span class="o">.</span><span class="n">outputs_schema</span>
 
     <span class="k">def</span> <span class="nf">get_operation_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationSchema</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">create_module_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">create_operation_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </code></pre></div>
         </details>
@@ -22026,31 +22047,6 @@ OperationDetails            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
-<h9 id="kiara.models.module.operation.OperationDetails.create_module_inputs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_module_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span></code>
-
-
-<a href="#kiara.models.module.operation.OperationDetails.create_module_inputs" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_module_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
 <h9 id="kiara.models.module.operation.OperationDetails.create_operation_details" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_operation_details</span><span class="p">(</span><span class="o">**</span><span class="n">details</span><span class="p">)</span></code>
 
@@ -22074,31 +22070,6 @@ OperationDetails            (<a class="autorefs autorefs-internal" title="kiara.
         <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">details</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">result</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.models.module.operation.OperationDetails.create_operation_outputs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_operation_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span></code>
-
-
-<a href="#kiara.models.module.operation.OperationDetails.create_operation_outputs" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_operation_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </code></pre></div>
         </details>
     </div>
@@ -23195,7 +23166,7 @@ PipelineOperationConfig            (<a class="autorefs autorefs-internal" title=
     <span class="n">pipeline_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The pipeline id.&quot;</span><span class="p">)</span>
     <span class="n">pipeline_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The pipeline config data.&quot;</span><span class="p">)</span>
     <span class="n">module_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A lookup map to resolves module names to operations.&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A lookup map to resolves operation ids to module names/configs.&quot;</span><span class="p">,</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">metadata</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -23281,7 +23252,7 @@ PipelineOperationConfig            (<a class="autorefs autorefs-internal" title=
 
     <div class="doc doc-contents ">
 
-      <p>A lookup map to resolves module names to operations.</p>
+      <p>A lookup map to resolves operation ids to module names/configs.</p>
     </div>
 
   </div>
@@ -24122,7 +24093,9 @@ to the shortest possible names for each case.</p>
         <span class="n">pipeline_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
         <span class="n">kiara</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">module_map</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">execution_context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ExecutionContext</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">auto_step_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -24140,7 +24113,9 @@ to the shortest possible names for each case.</p>
             <span class="n">pipeline_name</span><span class="o">=</span><span class="n">pipeline_name</span><span class="p">,</span>
             <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
             <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
+            <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">,</span>
             <span class="n">execution_context</span><span class="o">=</span><span class="n">execution_context</span><span class="p">,</span>
+            <span class="n">auto_step_ids</span><span class="o">=</span><span class="n">auto_step_ids</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">config</span>
 
@@ -24152,6 +24127,7 @@ to the shortest possible names for each case.</p>
         <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
         <span class="n">module_map</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">execution_context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ExecutionContext</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">auto_step_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="k">if</span> <span class="n">execution_context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -24161,7 +24137,9 @@ to the shortest possible names for each case.</p>
 
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="n">steps</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">)</span>
-        <span class="n">steps</span> <span class="o">=</span> <span class="n">PipelineStep</span><span class="o">.</span><span class="n">create_steps</span><span class="p">(</span><span class="o">*</span><span class="n">steps</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">)</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="n">PipelineStep</span><span class="o">.</span><span class="n">create_steps</span><span class="p">(</span>
+            <span class="o">*</span><span class="n">steps</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">,</span> <span class="n">auto_step_ids</span><span class="o">=</span><span class="n">auto_step_ids</span>
+        <span class="p">)</span>
         <span class="n">data</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">steps</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_aliases&quot;</span><span class="p">):</span>
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;input_aliases&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_input_alias_map</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
@@ -24582,7 +24560,7 @@ Config        </code>
 
 
 <h9 id="kiara.models.module.pipeline.PipelineConfig.from_config" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">from_config</span><span class="p">(</span><span class="n">pipeline_name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">execution_context</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">from_config</span><span class="p">(</span><span class="n">pipeline_name</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">execution_context</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto_step_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
@@ -24601,7 +24579,9 @@ Config        </code>
     <span class="n">pipeline_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
     <span class="n">kiara</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">module_map</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">execution_context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ExecutionContext</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">auto_step_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -24619,7 +24599,9 @@ Config        </code>
         <span class="n">pipeline_name</span><span class="o">=</span><span class="n">pipeline_name</span><span class="p">,</span>
         <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
         <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
+        <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">,</span>
         <span class="n">execution_context</span><span class="o">=</span><span class="n">execution_context</span><span class="p">,</span>
+        <span class="n">auto_step_ids</span><span class="o">=</span><span class="n">auto_step_ids</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">config</span>
 </code></pre></div>
@@ -24754,6 +24736,7 @@ PipelineStep            (<a class="autorefs autorefs-internal" title="kiara.mode
         <span class="o">*</span><span class="n">steps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;PipelineStep&quot;</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
         <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
         <span class="n">module_map</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">auto_step_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;PipelineStep&quot;</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">module_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -24761,15 +24744,12 @@ PipelineStep            (<a class="autorefs autorefs-internal" title="kiara.mode
         <span class="k">else</span><span class="p">:</span>
             <span class="n">module_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">module_map</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">module_map</span><span class="p">[</span><span class="n">op_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="n">op</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
-                    <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
-                <span class="p">}</span>
+        <span class="c1"># if kiara.operation_registry.is_initialized:</span>
+        <span class="c1">#     module_map.update(kiara.operation_registry.get_module_map())</span>
 
         <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
+        <span class="n">step_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">):</span>
@@ -24781,11 +24761,23 @@ PipelineStep            (<a class="autorefs autorefs-internal" title="kiara.mode
                 <span class="n">module_config</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_config&quot;</span><span class="p">,</span> <span class="p">{})</span>
 
                 <span class="k">if</span> <span class="n">module_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
+
                     <span class="k">if</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">module_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                         <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span><span class="s2">&quot;module_type&quot;</span><span class="p">]</span>
                         <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span>
                             <span class="s2">&quot;module_config&quot;</span>
                         <span class="p">]</span>
+                        <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
+                            <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
+                            <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="k">elif</span> <span class="p">(</span>
+                        <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">is_initialized</span>
+                        <span class="ow">and</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span>
+                    <span class="p">):</span>
+                        <span class="n">op</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span><span class="p">[</span><span class="n">module_type</span><span class="p">]</span>
+                        <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_type</span>
+                        <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span>
                         <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
                             <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
                             <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
@@ -24803,7 +24795,20 @@ PipelineStep            (<a class="autorefs autorefs-internal" title="kiara.mode
 
                 <span class="n">step_id</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;step_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">step_id</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;step_id&#39; specified.&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">auto_step_ids</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;step_id&#39; specified.&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span>
+                            <span class="n">slugify</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">),</span>
+                            <span class="n">current_ids</span><span class="o">=</span><span class="n">step_ids</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">step_ids</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t create step: duplicate step id &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="n">step_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
 
                 <span class="n">input_links</span> <span class="o">=</span> <span class="p">{}</span>
                 <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_links&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -25308,7 +25313,7 @@ Config        </code>
 
 
 <h9 id="kiara.models.module.pipeline.PipelineStep.create_steps" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_steps</span><span class="p">(</span><span class="o">*</span><span class="n">steps</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_steps</span><span class="p">(</span><span class="o">*</span><span class="n">steps</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto_step_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
@@ -25327,6 +25332,7 @@ Config        </code>
     <span class="o">*</span><span class="n">steps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;PipelineStep&quot;</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
     <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
     <span class="n">module_map</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">auto_step_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;PipelineStep&quot;</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="n">module_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -25334,15 +25340,12 @@ Config        </code>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">module_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">module_map</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">module_map</span><span class="p">[</span><span class="n">op_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="n">op</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
-                <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
-            <span class="p">}</span>
+    <span class="c1"># if kiara.operation_registry.is_initialized:</span>
+    <span class="c1">#     module_map.update(kiara.operation_registry.get_module_map())</span>
 
     <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
+    <span class="n">step_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">):</span>
@@ -25354,11 +25357,23 @@ Config        </code>
             <span class="n">module_config</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_config&quot;</span><span class="p">,</span> <span class="p">{})</span>
 
             <span class="k">if</span> <span class="n">module_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
+
                 <span class="k">if</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">module_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                     <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span><span class="s2">&quot;module_type&quot;</span><span class="p">]</span>
                     <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span>
                         <span class="s2">&quot;module_config&quot;</span>
                     <span class="p">]</span>
+                    <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
+                        <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
+                        <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span>
+                    <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">is_initialized</span>
+                    <span class="ow">and</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span>
+                <span class="p">):</span>
+                    <span class="n">op</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span><span class="p">[</span><span class="n">module_type</span><span class="p">]</span>
+                    <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_type</span>
+                    <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span>
                     <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
                         <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
                         <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
@@ -25376,7 +25391,20 @@ Config        </code>
 
             <span class="n">step_id</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;step_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">step_id</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;step_id&#39; specified.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">auto_step_ids</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;step_id&#39; specified.&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span>
+                        <span class="n">slugify</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">),</span>
+                        <span class="n">current_ids</span><span class="o">=</span><span class="n">step_ids</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">step_ids</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t create step: duplicate step id &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">step_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
 
             <span class="n">input_links</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_links&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -31685,7 +31713,7 @@ RenderMetadata            (<a class="autorefs autorefs-internal" title="kiara.mo
           <summary>Source code in <code>kiara/models/render_value/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RenderMetadata</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
 
-    <span class="n">related_instructions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">RenderInstruction</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">related_instructions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderInstruction</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Related instructions, to be used by implementing frontends as hints.&quot;</span><span class="p">,</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
     <span class="p">)</span>
@@ -31706,7 +31734,7 @@ RenderMetadata            (<a class="autorefs autorefs-internal" title="kiara.mo
 
 
 <h7 id="kiara.models.render_value.RenderMetadata.related_instructions" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">related_instructions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">render_value</span><span class="o">.</span><span class="n">RenderInstruction</span><span class="p">]</span></code>
+<code class="highlight language-python"><span class="n">related_instructions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">render_value</span><span class="o">.</span><span class="n">RenderInstruction</span><span class="p">]]</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>

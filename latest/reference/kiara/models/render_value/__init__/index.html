@@ -2615,6 +2615,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../modules/included_core_modules/filter/" class="md-nav__link">
+        filter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../modules/included_core_modules/metadata/" class="md-nav__link">
         metadata
       </a>
@@ -2779,6 +2793,20 @@
     <li class="md-nav__item">
       <a href="../../../operations/included_core_operations/export_as/" class="md-nav__link">
         export_as
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/included_core_operations/filter/" class="md-nav__link">
+        filter
       </a>
     </li>
   
@@ -4221,7 +4249,7 @@ RenderMetadata            (<a class="autorefs autorefs-internal" title="kiara.mo
           <summary>Source code in <code>kiara/models/render_value/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RenderMetadata</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
 
-    <span class="n">related_instructions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">RenderInstruction</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">related_instructions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderInstruction</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Related instructions, to be used by implementing frontends as hints.&quot;</span><span class="p">,</span>
         <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
     <span class="p">)</span>
@@ -4242,7 +4270,7 @@ RenderMetadata            (<a class="autorefs autorefs-internal" title="kiara.mo
 
 
 <h5 id="kiara.models.render_value.RenderMetadata.related_instructions" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">related_instructions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">render_value</span><span class="o">.</span><span class="n">RenderInstruction</span><span class="p">]</span></code>
+<code class="highlight language-python"><span class="n">related_instructions</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">render_value</span><span class="o">.</span><span class="n">RenderInstruction</span><span class="p">]]</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>

@@ -2544,6 +2544,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../modules/included_core_modules/filter/" class="md-nav__link">
+        filter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../modules/included_core_modules/metadata/" class="md-nav__link">
         metadata
       </a>
@@ -2708,6 +2722,20 @@
     <li class="md-nav__item">
       <a href="../../operations/included_core_operations/export_as/" class="md-nav__link">
         export_as
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/included_core_operations/filter/" class="md-nav__link">
+        filter
       </a>
     </li>
   
@@ -9581,8 +9609,9 @@ PagerControl            (<span title="textual.widget.Widget">Widget</span>)
 
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instruction_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instruction_keys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-            <span class="n">new_ri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_metadata</span><span class="o">.</span><span class="n">related_instructions</span><span class="p">[</span><span class="n">command</span><span class="p">]</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">update_render_instruction</span><span class="p">(</span><span class="n">new_ri</span><span class="p">)</span>
+            <span class="n">new_ri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_metadata</span><span class="o">.</span><span class="n">related_instructions</span><span class="p">[</span><span class="n">command</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">new_ri</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">update_render_instruction</span><span class="p">(</span><span class="n">new_ri</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
@@ -9667,8 +9696,9 @@ PagerControl            (<span title="textual.widget.Widget">Widget</span>)
 
     <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instruction_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="n">command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instruction_keys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="n">new_ri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_metadata</span><span class="o">.</span><span class="n">related_instructions</span><span class="p">[</span><span class="n">command</span><span class="p">]</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">update_render_instruction</span><span class="p">(</span><span class="n">new_ri</span><span class="p">)</span>
+        <span class="n">new_ri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_metadata</span><span class="o">.</span><span class="n">related_instructions</span><span class="p">[</span><span class="n">command</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">new_ri</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">update_render_instruction</span><span class="p">(</span><span class="n">new_ri</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
 </code></pre></div>
         </details>
     </div>

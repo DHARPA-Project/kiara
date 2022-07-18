@@ -2542,6 +2542,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../modules/included_core_modules/filter/" class="md-nav__link">
+        filter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../modules/included_core_modules/metadata/" class="md-nav__link">
         metadata
       </a>
@@ -2710,6 +2724,20 @@
     <li class="md-nav__item">
       <a href="../export_as/" class="md-nav__link">
         export_as
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../filter/" class="md-nav__link">
+        filter
       </a>
     </li>
   
@@ -4133,6 +4161,7 @@ PipelineOperationDetails            (<a class="autorefs autorefs-internal" title
     <span class="n">pipeline_outputs_schema</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The output schema for the pipeline.&quot;</span>
     <span class="p">)</span>
+    <span class="n">pipeline_config</span><span class="p">:</span> <span class="n">PipelineConfig</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The pipeline config.&quot;</span><span class="p">)</span>
     <span class="n">_op_schema</span><span class="p">:</span> <span class="n">OperationSchema</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_operation_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationSchema</span><span class="p">:</span>
@@ -4147,11 +4176,11 @@ PipelineOperationDetails            (<a class="autorefs autorefs-internal" title
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_op_schema</span>
 
-    <span class="k">def</span> <span class="nf">create_module_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="n">inputs</span>
-
-    <span class="k">def</span> <span class="nf">create_operation_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="n">outputs</span>
+    <span class="c1"># def create_module_inputs(self, inputs: Mapping[str, Any]) -&gt; Mapping[str, Any]:</span>
+    <span class="c1">#     return inputs</span>
+    <span class="c1">#</span>
+    <span class="c1"># def create_operation_outputs(self, outputs: ValueMap) -&gt; Mapping[str, Value]:</span>
+    <span class="c1">#     return outputs</span>
 </code></pre></div>
         </details>
 
@@ -4163,6 +4192,29 @@ PipelineOperationDetails            (<a class="autorefs autorefs-internal" title
 
 
 <h4 id="kiara.operations.included_core_operations.pipeline.PipelineOperationDetails-attributes">Attributes<a href="#kiara.operations.included_core_operations.pipeline.PipelineOperationDetails-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.operations.included_core_operations.pipeline.PipelineOperationDetails.pipeline_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_config</span><span class="p">:</span> <span class="n">PipelineConfig</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.operations.included_core_operations.pipeline.PipelineOperationDetails.pipeline_config" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The pipeline config.</p>
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-attribute">
 
@@ -4210,56 +4262,6 @@ PipelineOperationDetails            (<a class="autorefs autorefs-internal" title
 
 
 
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.operations.included_core_operations.pipeline.PipelineOperationDetails.create_module_inputs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_module_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.included_core_operations.pipeline.PipelineOperationDetails.create_module_inputs" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/pipeline.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_module_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="n">inputs</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.operations.included_core_operations.pipeline.PipelineOperationDetails.create_operation_outputs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_operation_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.included_core_operations.pipeline.PipelineOperationDetails.create_operation_outputs" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/pipeline.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_operation_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="n">outputs</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
 
 
 
@@ -4453,6 +4455,7 @@ PipelineOperationType            (<a class="autorefs autorefs-internal" title="k
                 <span class="n">operation_id</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">pipeline_name</span><span class="p">,</span>
                 <span class="n">pipeline_inputs_schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">,</span>
                 <span class="n">pipeline_outputs_schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span>
+                <span class="n">pipeline_config</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="n">op_details</span>
         <span class="k">else</span><span class="p">:</span>
@@ -4520,6 +4523,7 @@ PipelineOperationType            (<a class="autorefs autorefs-internal" title="k
             <span class="n">operation_id</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">pipeline_name</span><span class="p">,</span>
             <span class="n">pipeline_inputs_schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">,</span>
             <span class="n">pipeline_outputs_schema</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span><span class="p">,</span>
+            <span class="n">pipeline_config</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">op_details</span>
     <span class="k">else</span><span class="p">:</span>

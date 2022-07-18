@@ -523,10 +523,10 @@ class PipelineConfig(KiaraModuleConfig):
         description="A list of steps/modules of this pipeline, and their connections.",
     )
     input_aliases: Dict[str, str] = Field(
-        description="A map of input aliases, with the calculated (<step_id>__<input_name> -- double underscore!) name as key, and a string (the resulting workflow input alias) as value. Check the documentation for the config class for which marker strings can be used to automatically create this map if possible.",
+        description="A map of input aliases, with the location of the input (in the format '[step_id].[input_field]') as key, and the pipeline input field name as value.",
     )
     output_aliases: Dict[str, str] = Field(
-        description="A map of output aliases, with the calculated (<step_id>__<output_name> -- double underscore!) name as key, and a string (the resulting workflow output alias) as value.  Check the documentation for the config class for which marker strings can be used to automatically create this map if possible.",
+        description="A map of output aliases, with the location of the output (in the format '[step_id].[output_field]') as key, and the pipeline output field name as value.",
     )
     doc: DocumentationMetadataModel = Field(
         default="-- n/a --", description="Documentation about what the pipeline does."

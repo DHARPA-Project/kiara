@@ -2,7 +2,7 @@
 
 import structlog
 from pydantic import Field
-from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module import KiaraModuleClass
@@ -192,7 +192,10 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
         steps: List[Mapping[str, Any]] = []
         last_filter = None
         step_ids: List[str] = []
+        input_aliases: Dict[str, str] = {}
         for filter_name in filters:
+            if not input_aliases:
+                input_aliases[f"{filter_name}.value"] = "value"
             op = self.get_filter(data_type=data_type, filter_name=filter_name)
             step_id = find_free_id(stem=filter_name, current_ids=step_ids)
             step_ids.append(step_id)
@@ -202,13 +205,16 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
             last_filter = step_id
             steps.append(step_data)
 
+        output_aliases = {f"{last_filter}.value": "value"}
+
         pipeline_config = PipelineConfig.from_config(
-            pipeline_name="_filter_pipeline", data={"steps": steps}
+            pipeline_name="_filter_pipeline",
+            data={
+                "steps": steps,
+                "input_aliases": input_aliases,
+                "output_aliases": output_aliases,
+            },
         )
-
-        from kiara.utils.graphs import print_ascii_graph
-
-        print_ascii_graph(pipeline_config.structure.execution_graph)
 
         manifest = Manifest(
             module_type="pipeline", module_config=pipeline_config.dict()
@@ -220,8 +226,6 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
         )
 
         op_details = PipelineOperationDetails.create_operation_details(
-            module_inputs_schema=module.inputs_schema,
-            module_outputs_schema=module.outputs_schema,
             operation_id=module.config.pipeline_name,
             pipeline_inputs_schema=module.inputs_schema,
             pipeline_outputs_schema=module.outputs_schema,

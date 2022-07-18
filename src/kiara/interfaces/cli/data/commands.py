@@ -16,6 +16,8 @@ from kiara.interfaces.tui.pager import PagerApp
 from kiara.models.module.operation import Operation
 from kiara.models.values.info import RENDER_FIELDS, ValueInfo, ValuesInfo
 from kiara.models.values.matchers import ValueMatcher
+from kiara.operations.included_core_operations.filter import FilterOperationType
+from kiara.operations.included_core_operations.pipeline import PipelineOperationDetails
 from kiara.operations.included_core_operations.render_value import (
     RenderValueOperationType,
 )
@@ -337,31 +339,32 @@ def load_value(ctx, value: str, single_page: bool):
     PagerApp.run(kiara=kiara_obj, value=_value, operation=render_op)
 
 
-# @data.command("filter")
-# @click.argument("value", nargs=1, required=True)
-# @click.argument("filter", nargs=-1)
-# @click.pass_context
-# def filter_value(ctx, value: str, filter: Tuple[str, ...]):
-#
-#     kiara_obj: Kiara = ctx.obj["kiara"]
-#
-#     try:
-#         _value = kiara_obj.data_registry.get_value(value_id=value)
-#     except Exception as e:
-#         terminal_print()
-#         terminal_print(f"[red]Error[/red]: {e}")
-#         sys.exit(1)
-#     if not _value:
-#         terminal_print(f"[red]Error[/red]: No value found for: {value}")
-#         sys.exit(1)
-#
-#     filter_op_type: FilterOperationType = (
-#         kiara_obj.operation_registry.get_operation_type("filter")
-#     )
-#     filters = ["select_columns", "drop_columns"]
-#     op = filter_op_type.create_filter_operation(
-#         data_type=_value.data_type_name, filters=filters
-#     )
-#
-#     details: PipelineOperationDetails = op.operation_details
-#     pc = details.pipeline_config
+@data.command("filter")
+@click.argument("value", nargs=1, required=True)
+@click.argument("filter", nargs=-1)
+@click.pass_context
+def filter_value(ctx, value: str, filter: Tuple[str, ...]):
+
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    try:
+        _value = kiara_obj.data_registry.get_value(value_id=value)
+    except Exception as e:
+        terminal_print()
+        terminal_print(f"[red]Error[/red]: {e}")
+        sys.exit(1)
+    if not _value:
+        terminal_print(f"[red]Error[/red]: No value found for: {value}")
+        sys.exit(1)
+
+    filter_op_type: FilterOperationType = kiara_obj.operation_registry.get_operation_type("filter")  # type: ignore
+
+    filters = ["select_columns", "drop_columns"]
+    op = filter_op_type.create_filter_operation(
+        data_type=_value.data_type_name, filters=filters
+    )
+
+    details: PipelineOperationDetails = op.operation_details  # type: ignore
+    pc = details.pipeline_config
+    print(pc)
+    # dbg(pc.structure.pipeline_inputs_schema)

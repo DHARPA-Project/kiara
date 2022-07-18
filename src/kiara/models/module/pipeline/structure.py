@@ -502,14 +502,19 @@ class PipelineStructure(KiaraModel):
                     # pipeline_input_name = generate_pipeline_endpoint_name(
                     #     step_id=step.step_id, value_name=input_name
                     # )
-                    pipeline_input_name = f"{step.step_id}.{input_name}"
+                    pipeline_input_ref = f"{step.step_id}.{input_name}"
+
                     # check whether this input has an alias associated with it
                     if not self.input_aliases:
                         raise NotImplementedError()
 
-                    if pipeline_input_name in self.input_aliases.keys():
+                    if pipeline_input_ref in self.input_aliases.keys():
                         # this means we use the pipeline alias
-                        pipeline_input_name = self.input_aliases[pipeline_input_name]
+                        pipeline_input_name = self.input_aliases[pipeline_input_ref]
+                    else:
+                        pipeline_input_name = generate_pipeline_endpoint_name(
+                            step_id=step.step_id, value_name=input_name
+                        )
 
                     if pipeline_input_name in existing_pipeline_input_points.keys():
                         # we already created a pipeline input with this name

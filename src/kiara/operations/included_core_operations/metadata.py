@@ -6,16 +6,15 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 from pydantic import Field
-from typing import Any, Iterable, Mapping, Type, Union
+from typing import Iterable, Mapping, Type, Union
 
 from kiara.models.module.operation import (
     BaseOperationDetails,
     Operation,
     OperationConfig,
 )
-from kiara.models.values.value import ValueMap
 from kiara.models.values.value_metadata import ValueMetadata
-from kiara.modules import KiaraModule, ValueSetSchema
+from kiara.modules import KiaraModule
 from kiara.operations import OperationType
 from kiara.registries.models import ModelRegistry
 
@@ -30,24 +29,24 @@ class ExtractMetadataDetails(BaseOperationDetails):
     input_field_name: str = Field(description="The input field name.")
     result_field_name: str = Field(description="The result field name.")
 
-    def retrieve_inputs_schema(self) -> ValueSetSchema:
-        return {
-            "value": {
-                "type": self.data_type,
-                "doc": f"The {self.data_type} value to extract metadata from.",
-            }
-        }
-
-    def retrieve_outputs_schema(self) -> ValueSetSchema:
-
-        return {"value_metadata": {"type": "value_metadata", "doc": "The metadata."}}
-
-    def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
-        return {self.input_field_name: inputs["value"]}
-
-    def create_operation_outputs(self, outputs: ValueMap) -> ValueMap:
-
-        return outputs
+    # def retrieve_inputs_schema(self) -> ValueSetSchema:
+    #     return {
+    #         "value": {
+    #             "type": self.data_type,
+    #             "doc": f"The {self.data_type} value to extract metadata from.",
+    #         }
+    #     }
+    #
+    # def retrieve_outputs_schema(self) -> ValueSetSchema:
+    #
+    #     return {"value_metadata": {"type": "value_metadata", "doc": "The metadata."}}
+    #
+    # def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
+    #     return {self.input_field_name: inputs["value"]}
+    #
+    # def create_operation_outputs(self, outputs: ValueMap) -> ValueMap:
+    #
+    #     return outputs
 
 
 class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
@@ -125,6 +124,8 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
             op_id = f"extract.{metadata_key}.metadata.from.{data_type_name}"
 
         details = ExtractMetadataDetails.create_operation_details(
+            module_inputs_schema=module.inputs_schema,
+            module_outputs_schema=module.outputs_schema,
             operation_id=op_id,
             data_type=data_type_name,
             metadata_key=metadata_key,

@@ -7,7 +7,7 @@
 
 import structlog
 from pydantic import Field
-from typing import Any, Dict, Iterable, Mapping, Type, Union
+from typing import Dict, Iterable, Mapping, Type, Union
 
 from kiara.models.module.operation import (
     BaseOperationDetails,
@@ -15,11 +15,9 @@ from kiara.models.module.operation import (
     OperationConfig,
 )
 from kiara.models.render_value import RenderInstruction
-from kiara.models.values.value import Value, ValueMap
-from kiara.modules import KiaraModule, ValueSetSchema
+from kiara.modules import KiaraModule
 from kiara.operations import OperationType
 from kiara.registries.models import ModelRegistry
-from kiara.utils import log_message
 
 logger = structlog.getLogger()
 
@@ -35,41 +33,41 @@ class RenderValueDetails(BaseOperationDetails):
         description="The id of the render instruction model class."
     )
 
-    def retrieve_inputs_schema(self) -> ValueSetSchema:
-        return {
-            "value": {
-                "type": self.source_data_type,
-                "doc": f"The {self.source_data_type} value to extract metadata from.",
-            },
-            "render_instruction": {
-                "type": "render_instruction",
-                "type_config": {"kiara_model_id": self.render_instruction_type},
-                "doc": "Configuration how to render the value.",
-                "default": {},
-            },
-        }
-
-    def retrieve_outputs_schema(self) -> ValueSetSchema:
-
-        return {
-            "rendered_value": {"type": "value_metadata", "doc": "The rendered data."},
-            "render_metadata": {
-                "type": "render_metadata",
-                "doc": "Metadata associated with this render process.",
-            },
-        }
-
-    def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
-        return {
-            self.input_field_name: inputs["value"],
-            "render_instruction": inputs["render_instruction"],
-        }
-
-    def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
-        return {
-            "rendered_value": outputs[self.rendered_type],
-            "render_metadata": outputs["render_metadata"],
-        }
+    # def retrieve_inputs_schema(self) -> ValueSetSchema:
+    #     return {
+    #         "value": {
+    #             "type": self.source_data_type,
+    #             "doc": f"The {self.source_data_type} value to extract metadata from.",
+    #         },
+    #         "render_instruction": {
+    #             "type": "render_instruction",
+    #             "type_config": {"kiara_model_id": self.render_instruction_type},
+    #             "doc": "Configuration how to render the value.",
+    #             "default": {},
+    #         },
+    #     }
+    #
+    # def retrieve_outputs_schema(self) -> ValueSetSchema:
+    #
+    #     return {
+    #         "rendered_value": {"type": "value_metadata", "doc": "The rendered data."},
+    #         "render_metadata": {
+    #             "type": "render_metadata",
+    #             "doc": "Metadata associated with this render process.",
+    #         },
+    #     }
+    #
+    # def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
+    #     return {
+    #         self.input_field_name: inputs["value"],
+    #         "render_instruction": inputs["render_instruction"],
+    #     }
+    #
+    # def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
+    #     return {
+    #         "rendered_value": outputs[self.rendered_type],
+    #         "render_metadata": outputs["render_metadata"],
+    #     }
 
 
 class RenderValueOperationType(OperationType[RenderValueDetails]):
@@ -126,39 +124,14 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
         ):
             return None
 
-        source_type = None
-        for field, schema in module.inputs_schema.items():
-            if field == "render_instruction":
-                continue
-            if field == schema.type:
-                if source_type:
-                    log_message(
-                        "operation.ignore",
-                        module=module.module_type_name,
-                        reason=f"more than one potential source types: {schema.type} - {source_type}",
-                    )
-                    return None
-                source_type = field
-
-        if not source_type:
+        if "rendered_value" not in module.outputs_schema.keys():
             return None
 
-        target_type = None
-        for field, schema in module.outputs_schema.items():
-            if field == "render_metadata":
-                continue
-            if field == schema.type:
-                if target_type:
-                    log_message(
-                        "operation.ignore",
-                        module=module.module_type_name,
-                        reason=f"more than one potential target types: {schema.type} - {target_type}",
-                    )
-                    return None
-                target_type = field
-
-        if not target_type:
+        if "value" not in module.inputs_schema.keys():
             return None
+
+        source_type = module.inputs_schema["value"].type
+        target_type = module.outputs_schema["rendered_value"].type
 
         if source_type == "any":
             op_id = f"render.value.as.{target_type}"
@@ -166,6 +139,8 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
             op_id = f"render.{source_type}.as.{target_type}"
 
         details = RenderValueDetails.create_operation_details(
+            module_inputs_schema=module.inputs_schema,
+            module_outputs_schema=module.outputs_schema,
             operation_id=op_id,
             source_data_type=source_type,
             rendered_type=target_type,

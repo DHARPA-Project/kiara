@@ -84,7 +84,7 @@ class FilterModule(KiaraModule):
         data_type_config = data_type_data["type_config"]
 
         inputs: Dict[str, Any] = {
-            data_type: {
+            "value": {
                 "type": data_type,
                 "type_config": data_type_config,
                 "doc": f"A value of type '{data_type}'.",
@@ -121,7 +121,7 @@ class FilterModule(KiaraModule):
         data_type_config = data_type_data["type_config"]
 
         outputs = {
-            data_type: {
+            "value": {
                 "type": data_type,
                 "type_config": data_type_config,
                 "doc": "The filtered value.",
@@ -137,7 +137,7 @@ class FilterModule(KiaraModule):
         # data_type_config = data_type_data["type_config"]
         # TODO: ensure value is of the right type?
 
-        source_obj = inputs.get_value_obj(data_type)
+        source_obj = inputs.get_value_obj("value")
 
         func_name = f"filter__{filter_name}"
         if not hasattr(self, func_name):
@@ -157,9 +157,9 @@ class FilterModule(KiaraModule):
         result = func(value=source_obj, filter_inputs=filter_inputs)
 
         if result is None:
-            outputs.set_value(data_type, source_obj)
+            outputs.set_value("value", source_obj)
         else:
-            outputs.set_value(data_type, result)
+            outputs.set_value("value", result)
 
 
 class StringFiltersModule(FilterModule):

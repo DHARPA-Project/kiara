@@ -6,7 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 from pydantic import Field
-from typing import Any, Dict, Iterable, Mapping, Union
+from typing import Dict, Iterable, Mapping, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (
@@ -15,8 +15,7 @@ from kiara.models.module.operation import (
     Operation,
     OperationConfig,
 )
-from kiara.models.values.value import Value, ValueMap
-from kiara.modules import KiaraModule, ValueSetSchema
+from kiara.modules import KiaraModule
 from kiara.modules.included_core_modules.pretty_print import PrettyPrintModule
 from kiara.operations import OperationType
 from kiara.utils import log_message
@@ -27,34 +26,34 @@ class PrettyPrintDetails(BaseOperationDetails):
     source_type: str = Field(description="The type of the value to be rendered.")
     target_type: str = Field(description="The type of the render result.")
 
-    def retrieve_inputs_schema(self) -> ValueSetSchema:
-
-        return {
-            "value": {"type": "any", "doc": "The value to persist."},
-            "render_type": {
-                "type": "string",
-                "doc": "The render target/type of render output.",
-            },
-            "render_config": {
-                "type": "dict",
-                "doc": "A value type specific configuration for how to render the data.",
-                "optional": True,
-            },
-        }
-
-    def retrieve_outputs_schema(self) -> ValueSetSchema:
-
-        return {"rendered_value": {"type": "any", "doc": "The rendered value."}}
-
-    def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
-
-        return {
-            self.source_type: inputs["value"],
-            "render_config": inputs.get("render_config", None),
-        }
-
-    def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
-        return {"rendered_value": outputs.get_value_obj("rendered_value")}
+    # def retrieve_inputs_schema(self) -> ValueSetSchema:
+    #
+    #     return {
+    #         "value": {"type": "any", "doc": "The value to persist."},
+    #         "render_type": {
+    #             "type": "string",
+    #             "doc": "The render target/type of render output.",
+    #         },
+    #         "render_config": {
+    #             "type": "dict",
+    #             "doc": "A value type specific configuration for how to render the data.",
+    #             "optional": True,
+    #         },
+    #     }
+    #
+    # def retrieve_outputs_schema(self) -> ValueSetSchema:
+    #
+    #     return {"rendered_value": {"type": "any", "doc": "The rendered value."}}
+    #
+    # def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
+    #
+    #     return {
+    #         self.source_type: inputs["value"],
+    #         "render_config": inputs.get("render_config", None),
+    #     }
+    #
+    # def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
+    #     return {"rendered_value": outputs.get_value_obj("rendered_value")}
 
 
 class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
@@ -170,30 +169,12 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
         if target_type is None:
             raise Exception("No target type available.")
 
-        input_field_match = None
-        render_config_match = None
-
-        for field_name, schema in module.inputs_schema.items():
-            if field_name == schema.type:
-                if input_field_match is not None:
-                    # we can't deal (yet) with multiple fields
-                    log_message(
-                        "operation.ignore",
-                        module=module.module_type_name,
-                        reason=f"more than one input fields of type '{schema.type}'",
-                    )
-                    input_field_match = None
-                    break
-                else:
-                    input_field_match = field_name
-            elif field_name == "render_config":
-                render_config_match = field_name
-
-        if input_field_match is None:
+        if "value" not in module.inputs_schema.keys():
+            return None
+        if "render_config" not in module.inputs_schema.keys():
             return None
 
-        if render_config_match is None:
-            return None
+        input_field_match = "value"
 
         input_field_type = module.inputs_schema[input_field_match].type
 
@@ -202,6 +183,8 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
         )
 
         details = {
+            "module_inputs_schema": module.inputs_schema,
+            "module_outputs_schema": module.outputs_schema,
             "operation_id": operation_id,
             "source_type": input_field_type,
             "target_type": target_type,

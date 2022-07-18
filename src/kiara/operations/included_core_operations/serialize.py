@@ -15,8 +15,6 @@ from kiara.models.module.operation import (
     Operation,
     OperationConfig,
 )
-from kiara.models.values.value import Value, ValueMap
-from kiara.modules import ValueSetSchema
 from kiara.operations import OperationType
 from kiara.utils import log_message
 
@@ -43,27 +41,27 @@ class DeSerializeDetails(BaseOperationDetails):
     #     description="The python class of the result object."
     # )
 
-    def retrieve_inputs_schema(self) -> ValueSetSchema:
-
-        return {"value": {"type": self.value_type, "doc": "The value to de-serialize."}}
-
-    def retrieve_outputs_schema(self) -> ValueSetSchema:
-
-        return {
-            "python_object": {
-                "type": "python_object",
-                "doc": "The de-serialized python object instance.",
-            }
-        }
-
-    def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
-
-        result = {self.value_input_field: inputs["value"]}
-        return result
-
-    def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
-
-        return outputs
+    # def retrieve_inputs_schema(self) -> ValueSetSchema:
+    #
+    #     return {"value": {"type": self.value_type, "doc": "The value to de-serialize."}}
+    #
+    # def retrieve_outputs_schema(self) -> ValueSetSchema:
+    #
+    #     return {
+    #         "python_object": {
+    #             "type": "python_object",
+    #             "doc": "The de-serialized python object instance.",
+    #         }
+    #     }
+    #
+    # def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
+    #
+    #     result = {self.value_input_field: inputs["value"]}
+    #     return result
+    #
+    # def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
+    #
+    #     return outputs
 
 
 class DeSerializeOperationType(OperationType[DeSerializeDetails]):
@@ -204,6 +202,8 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
             operation_id = f"deserialize.{input_field_name}.as.{target_profile}"
 
         details: Dict[str, Any] = {
+            "module_inputs_schema": module.inputs_schema,
+            "module_outputs_schema": module.outputs_schema,
             "operation_id": operation_id,
             "value_type": input_field_name,
             "value_input_field": input_field_name,

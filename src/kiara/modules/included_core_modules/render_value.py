@@ -59,7 +59,7 @@ class RenderValueModule(KiaraModule):
         assert data_type_name
 
         inputs = {
-            data_type_name: {
+            "value": {
                 "type": data_type_name,
                 "doc": f"A value of type '{data_type_name}'",
                 "optional": True,
@@ -83,7 +83,7 @@ class RenderValueModule(KiaraModule):
         result_model_type: str = self.get_config_value("target_type")
 
         outputs = {
-            result_model_type: {"type": result_model_type, "doc": "The rendered data."},
+            "rendered_value": {"type": result_model_type, "doc": "The rendered data."},
             "render_metadata": {
                 "type": "render_metadata",
             },
@@ -98,7 +98,7 @@ class RenderValueModule(KiaraModule):
         instr_info: TypeInfo = model_registry.all_models.get(instruction_type)  # type: ignore
         instr_model: Type[RenderInstruction] = instr_info.python_class.get_class()  # type: ignore
 
-        data_type_name = instr_model.retrieve_source_type()
+        # data_type_name = instr_model.retrieve_source_type()
 
         render_instruction: RenderInstruction = inputs.get_value_data(
             "render_instruction"
@@ -111,7 +111,7 @@ class RenderValueModule(KiaraModule):
 
         result_model_type: str = self.get_config_value("target_type")
 
-        value: Value = inputs.get_value_obj(data_type_name)
+        value: Value = inputs.get_value_obj("value")
 
         func_name = f"render_as__{result_model_type}"
 
@@ -128,5 +128,5 @@ class RenderValueModule(KiaraModule):
             metadata = RenderMetadata()
 
         outputs.set_values(
-            **{result_model_type: rendered_value, "render_metadata": metadata}
+            **{"rendered_value": rendered_value, "render_metadata": metadata}
         )

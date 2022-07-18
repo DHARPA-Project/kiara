@@ -2,7 +2,7 @@
 
 import structlog
 from pydantic import Field
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
+from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module import KiaraModuleClass
@@ -14,9 +14,7 @@ from kiara.models.module.operation import (
     OperationConfig,
 )
 from kiara.models.module.pipeline import PipelineConfig
-from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
-from kiara.modules import ValueSetSchema
 from kiara.modules.included_core_modules.filter import FilterModule
 from kiara.operations import OperationType
 from kiara.operations.included_core_operations.pipeline import PipelineOperationDetails
@@ -38,48 +36,48 @@ class FilterOperationDetails(BaseOperationDetails):
     filter_name: str = Field(description="The filter operation name.")
     optional_args: Mapping[str, ValueSchema] = Field(description="Optional arguments.")
 
-    def retrieve_inputs_schema(self) -> ValueSetSchema:
+    # def retrieve_inputs_schema(self) -> ValueSetSchema:
+    #
+    #     result: Dict[str, Union[ValueSchema, Dict[str, Any]]] = {
+    #         self.data_type: {
+    #             "type": self.data_type,
+    #             "type_config": self.data_type_config,
+    #             "doc": "The value.",
+    #         },
+    #     }
+    #     for field, schema in self.optional_args.items():
+    #         if field in result.keys():
+    #             raise Exception(
+    #                 f"Can't create 'filter' operation '{self.filter_name}': duplicate input field '{field}'."
+    #             )
+    #         result[field] = schema
+    #     return result
+    #
+    # def retrieve_outputs_schema(self) -> ValueSetSchema:
+    #
+    #     return {
+    #         self.data_type: {
+    #             "type": self.data_type,
+    #             "type_config": self.data_type_config,
+    #             "doc": "Details about the exported data/files.",
+    #         },
+    #     }
 
-        result: Dict[str, Union[ValueSchema, Dict[str, Any]]] = {
-            "value": {
-                "type": self.data_type,
-                "type_config": self.data_type_config,
-                "doc": "The value.",
-            },
-        }
-        for field, schema in self.optional_args.items():
-            if field in result.keys():
-                raise Exception(
-                    f"Can't create 'filter' operation '{self.filter_name}': duplicate input field '{field}'."
-                )
-            result[field] = schema
-        return result
-
-    def retrieve_outputs_schema(self) -> ValueSetSchema:
-
-        return {
-            "value": {
-                "type": self.data_type,
-                "type_config": self.data_type_config,
-                "doc": "Details about the exported data/files.",
-            },
-        }
-
-    def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
-
-        _inputs = dict(inputs)
-        v = _inputs.pop("value")
-        assert self.data_type not in _inputs.keys()
-        _inputs[self.data_type] = v
-        return _inputs
-
-    def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
-
-        _outputs = dict(outputs)
-        v = _outputs.pop(self.data_type)
-        assert "value" not in _outputs.keys()
-        _outputs["value"] = v
-        return _outputs
+    # def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
+    #
+    #     _inputs = dict(inputs)
+    #     v = _inputs.pop("value")
+    #     assert self.data_type not in _inputs.keys()
+    #     _inputs[self.data_type] = v
+    #     return _inputs
+    #
+    # def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
+    #
+    #     _outputs = dict(outputs)
+    #     v = _outputs.pop(self.data_type)
+    #     assert "value" not in _outputs.keys()
+    #     _outputs["value"] = v
+    #     return _outputs
 
 
 class FilterOperationType(OperationType[FilterOperationDetails]):
@@ -163,6 +161,8 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
             optional[field] = schema
 
         details = {
+            "module_inputs_schema": module.inputs_schema,
+            "module_outputs_schema": module.outputs_schema,
             "operation_id": op_id,
             "data_type": data_type,
             "data_type_config": data_type_config,
@@ -220,6 +220,8 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
         )
 
         op_details = PipelineOperationDetails.create_operation_details(
+            module_inputs_schema=module.inputs_schema,
+            module_outputs_schema=module.outputs_schema,
             operation_id=module.config.pipeline_name,
             pipeline_inputs_schema=module.inputs_schema,
             pipeline_outputs_schema=module.outputs_schema,

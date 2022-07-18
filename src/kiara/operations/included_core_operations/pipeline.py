@@ -19,7 +19,6 @@ from kiara.models.module.operation import (
     PipelineOperationConfig,
 )
 from kiara.models.module.pipeline import PipelineConfig
-from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
 from kiara.modules.included_core_modules.pipeline import PipelineModule
@@ -65,11 +64,11 @@ class PipelineOperationDetails(OperationDetails):
         )
         return self._op_schema
 
-    def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
-        return inputs
-
-    def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
-        return outputs
+    # def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
+    #     return inputs
+    #
+    # def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
+    #     return outputs
 
 
 class PipelineOperationType(OperationType[PipelineOperationDetails]):

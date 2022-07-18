@@ -40,7 +40,7 @@ from kiara.models.module.jobs import JobConfig
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.python_class import PythonClass
-from kiara.models.values.value import Value, ValueMap, ValueMapReadOnly
+from kiara.models.values.value import ValueMap, ValueMapReadOnly
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import InputOutputObject, KiaraModule, ValueSetSchema
 from kiara.utils.output import create_table_from_field_schemas
@@ -122,24 +122,18 @@ class OperationDetails(KiaraModel):
     def get_operation_schema(self) -> OperationSchema:
         raise NotImplementedError()
 
-    def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
-        raise NotImplementedError()
-
-    def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
-        raise NotImplementedError()
-
 
 class BaseOperationDetails(OperationDetails):
 
     _kiara_model_id = "instance.operation_details.base"
 
+    module_inputs_schema: Mapping[str, ValueSchema] = Field(
+        description="The input schemas of the module."
+    )
+    module_outputs_schema: Mapping[str, ValueSchema] = Field(
+        description="The output schemas of the module."
+    )
     _op_schema: OperationSchema = PrivateAttr(default=None)
-
-    def retrieve_inputs_schema(cls) -> ValueSetSchema:
-        raise NotImplementedError()
-
-    def retrieve_outputs_schema(cls) -> ValueSetSchema:
-        raise NotImplementedError()
 
     def get_operation_schema(self) -> OperationSchema:
 
@@ -147,9 +141,9 @@ class BaseOperationDetails(OperationDetails):
             return self._op_schema
 
         self._op_schema = OperationSchema(
-            alias=self.__class__.__name__,
-            inputs_schema=self.retrieve_inputs_schema(),
-            outputs_schema=self.retrieve_outputs_schema(),
+            alias=self.operation_id,
+            inputs_schema=self.module_inputs_schema,
+            outputs_schema=self.module_outputs_schema,
         )
         return self._op_schema
 
@@ -311,12 +305,12 @@ class Operation(Manifest):
             )
         )
 
-        module_inputs = self.operation_details.create_module_inputs(
-            inputs=augmented_inputs
-        )
+        # module_inputs = self.operation_details.create_module_inputs(
+        #     inputs=augmented_inputs
+        # )
 
         job_config = kiara.job_registry.prepare_job_config(
-            manifest=self, inputs=module_inputs
+            manifest=self, inputs=augmented_inputs
         )
         return job_config
 
@@ -334,9 +328,9 @@ class Operation(Manifest):
 
     def process_job_outputs(self, outputs: ValueMap) -> ValueMap:
 
-        op_outputs = self.operation_details.create_operation_outputs(outputs=outputs)
+        # op_outputs = self.operation_details.create_operation_outputs(outputs=outputs)
 
-        value_set = ValueMapReadOnly(value_items=op_outputs, values_schema=self.outputs_schema)  # type: ignore
+        value_set = ValueMapReadOnly(value_items=outputs, values_schema=self.outputs_schema)  # type: ignore
         return value_set
 
     # def run(self, _attach_lineage: bool = True, **inputs: Any) -> ValueMap:

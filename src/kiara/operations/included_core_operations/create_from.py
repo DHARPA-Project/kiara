@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import structlog
 from pydantic import Field
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Union
+from typing import TYPE_CHECKING, Iterable, Mapping, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (
@@ -9,9 +9,7 @@ from kiara.models.module.operation import (
     ManifestOperationConfig,
     OperationConfig,
 )
-from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
-from kiara.modules import ValueSetSchema
 from kiara.modules.included_core_modules.create_from import CreateFromModule
 from kiara.operations import OperationType
 from kiara.utils import log_exception
@@ -28,32 +26,24 @@ class CreateValueFromDetails(BaseOperationDetails):
     target_type: str = Field(description="The result type.")
     optional_args: Mapping[str, ValueSchema] = Field(description="Optional arguments.")
 
-    def retrieve_inputs_schema(self) -> ValueSetSchema:
-
-        result: Dict[str, Union[ValueSchema, Dict[str, Any]]] = {
-            self.source_type: {"type": self.source_type, "doc": "The source value."},
-        }
-        for field, schema in self.optional_args.items():
-            if field in result.keys():
-                raise Exception(
-                    f"Can't create 'create_from' operation '{self.source_type}' -> '{self.target_type}': duplicate input field '{field}'."
-                )
-            result[field] = schema
-        return result
-
-    def retrieve_outputs_schema(self) -> ValueSetSchema:
-
-        return {
-            self.target_type: {"type": self.target_type, "doc": "The result value."}
-        }
-
-    def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
-
-        return inputs
-
-    def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
-
-        return outputs
+    # def retrieve_inputs_schema(self) -> ValueSetSchema:
+    #
+    #     result: Dict[str, Union[ValueSchema, Dict[str, Any]]] = {
+    #         self.source_type: {"type": self.source_type, "doc": "The source value."},
+    #     }
+    #     for field, schema in self.optional_args.items():
+    #         if field in result.keys():
+    #             raise Exception(
+    #                 f"Can't create 'create_from' operation '{self.source_type}' -> '{self.target_type}': duplicate input field '{field}'."
+    #             )
+    #         result[field] = schema
+    #     return result
+    #
+    # def retrieve_outputs_schema(self) -> ValueSetSchema:
+    #
+    #     return {
+    #         self.target_type: {"type": self.target_type, "doc": "The result value."}
+    #     }
 
 
 class CreateFromOperationType(OperationType[CreateValueFromDetails]):
@@ -182,6 +172,8 @@ class CreateFromOperationType(OperationType[CreateValueFromDetails]):
             optional[field] = schema
 
         details = {
+            "module_inputs_schema": module.inputs_schema,
+            "module_outputs_schema": module.outputs_schema,
             "operation_id": op_id,
             "source_type": source_type,
             "target_type": target_type,

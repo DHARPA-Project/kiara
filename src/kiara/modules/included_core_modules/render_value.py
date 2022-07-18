@@ -98,8 +98,6 @@ class RenderValueModule(KiaraModule):
         instr_info: TypeInfo = model_registry.all_models.get(instruction_type)  # type: ignore
         instr_model: Type[RenderInstruction] = instr_info.python_class.get_class()  # type: ignore
 
-        # data_type_name = instr_model.retrieve_source_type()
-
         render_instruction: RenderInstruction = inputs.get_value_data(
             "render_instruction"
         )

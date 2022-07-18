@@ -3639,6 +3639,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../utils/cli/run/" class="md-nav__link">
+        run
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -4509,14 +4523,19 @@ PipelineStructure            (<a class="autorefs autorefs-internal" title="kiara
                     <span class="c1"># pipeline_input_name = generate_pipeline_endpoint_name(</span>
                     <span class="c1">#     step_id=step.step_id, value_name=input_name</span>
                     <span class="c1"># )</span>
-                    <span class="n">pipeline_input_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">pipeline_input_ref</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
                     <span class="c1"># check whether this input has an alias associated with it</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-                    <span class="k">if</span> <span class="n">pipeline_input_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">pipeline_input_ref</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                         <span class="c1"># this means we use the pipeline alias</span>
-                        <span class="n">pipeline_input_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">[</span><span class="n">pipeline_input_name</span><span class="p">]</span>
+                        <span class="n">pipeline_input_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">[</span><span class="n">pipeline_input_ref</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">pipeline_input_name</span> <span class="o">=</span> <span class="n">generate_pipeline_endpoint_name</span><span class="p">(</span>
+                            <span class="n">step_id</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">input_name</span>
+                        <span class="p">)</span>
 
                     <span class="k">if</span> <span class="n">pipeline_input_name</span> <span class="ow">in</span> <span class="n">existing_pipeline_input_points</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                         <span class="c1"># we already created a pipeline input with this name</span>

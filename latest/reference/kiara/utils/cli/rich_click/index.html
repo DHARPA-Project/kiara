@@ -3630,6 +3630,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../run/" class="md-nav__link">
+        run
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -4072,7 +4086,7 @@
 
 
 <h3 id="kiara.utils.cli.rich_click.rich_format_operation_help" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">rich_format_operation_help</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">rich_format_operation_help</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">operation</span><span class="p">,</span> <span class="n">cmd_help</span><span class="p">)</span></code>
 
 
 <a href="#kiara.utils.cli.rich_click.rich_format_operation_help" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -4122,6 +4136,7 @@ Takes a command or group and builds the help text output.</p>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">click</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">click</span><span class="o">.</span><span class="n">Group</span><span class="p">],</span>
     <span class="n">ctx</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span>
     <span class="n">operation</span><span class="p">:</span> <span class="n">KiaraOperation</span><span class="p">,</span>
+    <span class="n">cmd_help</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Print nicely formatted help text using rich.</span>
 
@@ -4145,8 +4160,8 @@ Takes a command or group and builds the help text output.</p>
         <span class="p">)</span>
 
     <span class="c1"># Print usage</span>
-    <span class="n">cmd_arg</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;module_or_operation&quot;</span><span class="p">]</span>
-    <span class="n">_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[yellow bold]Usage: [/yellow bold][bold]kiara run [OPTIONS] [i]</span><span class="si">{</span><span class="n">cmd_arg</span><span class="si">}</span><span class="s2">[/i] [INPUTS][/bold]&quot;</span>
+
+    <span class="n">_cmd</span> <span class="o">=</span> <span class="n">cmd_help</span>
     <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Padding</span><span class="p">(</span><span class="n">_cmd</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
     <span class="c1"># renderables.append(obj.get_usage(ctx))</span>
     <span class="c1"># renderables.append(Panel(Padding(highlighter(obj.get_usage(ctx)), 1), style=STYLE_USAGE_COMMAND, box=box.MINIMAL))</span>
@@ -4473,13 +4488,13 @@ Takes a command or group and builds the help text output.</p>
       
       
         
-        <a href="../../concurrency/" class="md-footer__link md-footer__link--next" aria-label="Next: concurrency" rel="next">
+        <a href="../run/" class="md-footer__link md-footer__link--next" aria-label="Next: run" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              concurrency
+              run
             </div>
           </div>
           <div class="md-footer__button md-icon">

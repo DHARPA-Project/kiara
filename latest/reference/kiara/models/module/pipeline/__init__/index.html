@@ -3575,6 +3575,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../utils/cli/run/" class="md-nav__link">
+        run
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -4340,10 +4354,10 @@ to the shortest possible names for each case.</p>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A list of steps/modules of this pipeline, and their connections.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">input_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A map of input aliases, with the calculated (&lt;step_id&gt;__&lt;input_name&gt; -- double underscore!) name as key, and a string (the resulting workflow input alias) as value. Check the documentation for the config class for which marker strings can be used to automatically create this map if possible.&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A map of input aliases, with the location of the input (in the format &#39;[step_id].[input_field]&#39;) as key, and the pipeline input field name as value.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">output_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A map of output aliases, with the calculated (&lt;step_id&gt;__&lt;output_name&gt; -- double underscore!) name as key, and a string (the resulting workflow output alias) as value.  Check the documentation for the config class for which marker strings can be used to automatically create this map if possible.&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A map of output aliases, with the location of the output (in the format &#39;[step_id].[output_field]&#39;) as key, and the pipeline output field name as value.&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">doc</span><span class="p">:</span> <span class="n">DocumentationMetadataModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;-- n/a --&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Documentation about what the pipeline does.&quot;</span>
@@ -4503,7 +4517,7 @@ to the shortest possible names for each case.</p>
 
     <div class="doc doc-contents ">
 
-      <p>A map of input aliases, with the calculated (<step_id>__<input_name> -- double underscore!) name as key, and a string (the resulting workflow input alias) as value. Check the documentation for the config class for which marker strings can be used to automatically create this map if possible.</p>
+      <p>A map of input aliases, with the location of the input (in the format '[step_id].[input_field]') as key, and the pipeline input field name as value.</p>
     </div>
 
   </div>
@@ -4526,7 +4540,7 @@ to the shortest possible names for each case.</p>
 
     <div class="doc doc-contents ">
 
-      <p>A map of output aliases, with the calculated (<step_id>__<output_name> -- double underscore!) name as key, and a string (the resulting workflow output alias) as value.  Check the documentation for the config class for which marker strings can be used to automatically create this map if possible.</p>
+      <p>A map of output aliases, with the location of the output (in the format '[step_id].[output_field]') as key, and the pipeline output field name as value.</p>
     </div>
 
   </div>
@@ -9258,14 +9272,19 @@ PipelineStructure            (<a class="autorefs autorefs-internal" title="kiara
                     <span class="c1"># pipeline_input_name = generate_pipeline_endpoint_name(</span>
                     <span class="c1">#     step_id=step.step_id, value_name=input_name</span>
                     <span class="c1"># )</span>
-                    <span class="n">pipeline_input_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">pipeline_input_ref</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">input_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
                     <span class="c1"># check whether this input has an alias associated with it</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-                    <span class="k">if</span> <span class="n">pipeline_input_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">pipeline_input_ref</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                         <span class="c1"># this means we use the pipeline alias</span>
-                        <span class="n">pipeline_input_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">[</span><span class="n">pipeline_input_name</span><span class="p">]</span>
+                        <span class="n">pipeline_input_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">[</span><span class="n">pipeline_input_ref</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">pipeline_input_name</span> <span class="o">=</span> <span class="n">generate_pipeline_endpoint_name</span><span class="p">(</span>
+                            <span class="n">step_id</span><span class="o">=</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span> <span class="n">value_name</span><span class="o">=</span><span class="n">input_name</span>
+                        <span class="p">)</span>
 
                     <span class="k">if</span> <span class="n">pipeline_input_name</span> <span class="ow">in</span> <span class="n">existing_pipeline_input_points</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                         <span class="c1"># we already created a pipeline input with this name</span>

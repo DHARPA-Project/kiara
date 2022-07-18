@@ -3716,6 +3716,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/cli/run/" class="md-nav__link">
+        run
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -4772,21 +4786,13 @@
  <span style="font-style: italic">                      </span>                                                                                                                     
  <span style="font-style: italic">                      </span>   doc              -- check source --   Documentation about what the pipeline does.        no         "-- n/a --"   
  <span style="font-style: italic">                      </span>                                                                                                                     
- <span style="font-style: italic">                      </span>   input_aliases    object               A map of input aliases, with the calculated        yes                      
- <span style="font-style: italic">                      </span>                                         (&lt;step_id&gt;__&lt;input_name&gt; -- double underscore!)                             
- <span style="font-style: italic">                      </span>                                         name as key, and a string (the resulting                                    
- <span style="font-style: italic">                      </span>                                         workflow input alias) as value. Check the                                   
- <span style="font-style: italic">                      </span>                                         documentation for the config class for which                                
- <span style="font-style: italic">                      </span>                                         marker strings can be used to automatically                                 
- <span style="font-style: italic">                      </span>                                         create this map if possible.                                                
+ <span style="font-style: italic">                      </span>   input_aliases    object               A map of input aliases, with the location of the   yes                      
+ <span style="font-style: italic">                      </span>                                         input (in the format '.') as key, and the                                   
+ <span style="font-style: italic">                      </span>                                         pipeline input field name as value.                                         
  <span style="font-style: italic">                      </span>                                                                                                                     
- <span style="font-style: italic">                      </span>   output_aliases   object               A map of output aliases, with the calculated       yes                      
- <span style="font-style: italic">                      </span>                                         (&lt;step_id&gt;__&lt;output_name&gt; -- double underscore!)                            
- <span style="font-style: italic">                      </span>                                         name as key, and a string (the resulting                                    
- <span style="font-style: italic">                      </span>                                         workflow output alias) as value.  Check the                                 
- <span style="font-style: italic">                      </span>                                         documentation for the config class for which                                
- <span style="font-style: italic">                      </span>                                         marker strings can be used to automatically                                 
- <span style="font-style: italic">                      </span>                                         create this map if possible.                                                
+ <span style="font-style: italic">                      </span>   output_aliases   object               A map of output aliases, with the location of      yes                      
+ <span style="font-style: italic">                      </span>                                         the output (in the format '.') as key, and the                              
+ <span style="font-style: italic">                      </span>                                         pipeline output field name as value.                                        
  <span style="font-style: italic">                      </span>                                                                                                                     
  <span style="font-style: italic">                      </span>   pipeline_name    string               The name of this pipeline.                         yes                      
  <span style="font-style: italic">                      </span>                                                                                                                     

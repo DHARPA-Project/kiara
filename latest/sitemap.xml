@@ -961,6 +961,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/cli/run/</loc>
+         <lastmod>2022-07-18</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/develop/__init__/</loc>
          <lastmod>2022-07-18</lastmod>
          <changefreq>daily</changefreq>

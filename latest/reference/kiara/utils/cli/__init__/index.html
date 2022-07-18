@@ -3573,6 +3573,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../run/" class="md-nav__link">
+        run
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -4066,6 +4080,13 @@
           <li class="md-nav__item">
   <a href="#kiara.utils.cli.rich_click" class="md-nav__link">
     rich_click
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.cli.run" class="md-nav__link">
+    run
   </a>
   
 </li>
@@ -4736,7 +4757,7 @@ and attaching it to the :attr:<code>Command.params</code> list.</p>
 
 
 <h5 id="kiara.utils.cli.rich_click.rich_format_operation_help" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">rich_format_operation_help</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">rich_format_operation_help</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">ctx</span><span class="p">,</span> <span class="n">operation</span><span class="p">,</span> <span class="n">cmd_help</span><span class="p">)</span></code>
 
 
 <a href="#kiara.utils.cli.rich_click.rich_format_operation_help" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -4786,6 +4807,7 @@ Takes a command or group and builds the help text output.</p>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">click</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">click</span><span class="o">.</span><span class="n">Group</span><span class="p">],</span>
     <span class="n">ctx</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span>
     <span class="n">operation</span><span class="p">:</span> <span class="n">KiaraOperation</span><span class="p">,</span>
+    <span class="n">cmd_help</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Print nicely formatted help text using rich.</span>
 
@@ -4809,8 +4831,8 @@ Takes a command or group and builds the help text output.</p>
         <span class="p">)</span>
 
     <span class="c1"># Print usage</span>
-    <span class="n">cmd_arg</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;module_or_operation&quot;</span><span class="p">]</span>
-    <span class="n">_cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[yellow bold]Usage: [/yellow bold][bold]kiara run [OPTIONS] [i]</span><span class="si">{</span><span class="n">cmd_arg</span><span class="si">}</span><span class="s2">[/i] [INPUTS][/bold]&quot;</span>
+
+    <span class="n">_cmd</span> <span class="o">=</span> <span class="n">cmd_help</span>
     <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Padding</span><span class="p">(</span><span class="n">_cmd</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
     <span class="c1"># renderables.append(obj.get_usage(ctx))</span>
     <span class="c1"># renderables.append(Panel(Padding(highlighter(obj.get_usage(ctx)), 1), style=STYLE_USAGE_COMMAND, box=box.MINIMAL))</span>
@@ -5090,6 +5112,368 @@ Takes a command or group and builds the help text output.</p>
 
     <span class="n">group</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="o">*</span><span class="n">renderables</span><span class="p">)</span>
     <span class="n">terminal_print</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-module">
+
+
+
+<h3 id="kiara.utils.cli.run" class="doc doc-heading">
+        <code>run</code>
+
+
+
+<a href="#kiara.utils.cli.run" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+<h4 id="kiara.utils.cli.run-functions">Functions<a href="#kiara.utils.cli.run-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.utils.cli.run.calculate_aliases" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">calculate_aliases</span><span class="p">(</span><span class="n">kiara_op</span><span class="p">,</span> <span class="n">alias_tokens</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.cli.run.calculate_aliases" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/cli/run.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_aliases</span><span class="p">(</span>
+    <span class="n">kiara_op</span><span class="p">:</span> <span class="n">KiaraOperation</span><span class="p">,</span> <span class="n">alias_tokens</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">alias_tokens</span><span class="p">:</span>
+        <span class="n">aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">full_aliases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">aliases</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">full_aliases</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">alias_tokens</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;=&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">a</span><span class="p">:</span>
+                <span class="n">full_aliases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tokens</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">()</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid alias format, can only contain a single &#39;=&#39;: </span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="n">aliases</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1"># =========================================================================</span>
+    <span class="c1"># check save user input</span>
+    <span class="n">final_aliases</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">alias_tokens</span><span class="p">:</span>
+        <span class="n">op_output_names</span> <span class="o">=</span> <span class="n">kiara_op</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">invalid_fields</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">aliases</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">field_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">op_output_names</span><span class="p">:</span>
+                <span class="n">invalid_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">final_aliases</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias</span>
+
+        <span class="k">for</span> <span class="n">_alias</span> <span class="ow">in</span> <span class="n">full_aliases</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">op_output_names</span><span class="p">:</span>
+                <span class="n">final_aliases</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_alias</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">invalid_fields</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t run workflow, invalid field name(s) when specifying aliases: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">invalid_fields</span><span class="p">)</span><span class="si">}</span><span class="s2">. Valid field names: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">op_output_names</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">final_aliases</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.utils.cli.run.execute_job" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">execute_job</span><span class="p">(</span><span class="n">kiara_op</span><span class="p">,</span> <span class="n">silent</span><span class="p">,</span> <span class="n">save_results</span><span class="p">,</span> <span class="n">aliases</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.cli.run.execute_job" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Execute the job</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/cli/run.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">execute_job</span><span class="p">(</span>
+    <span class="n">kiara_op</span><span class="p">:</span> <span class="n">KiaraOperation</span><span class="p">,</span>
+    <span class="n">silent</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">save_results</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Execute the job&quot;&quot;&quot;</span>
+
+    <span class="n">job_id</span> <span class="o">=</span> <span class="n">kiara_op</span><span class="o">.</span><span class="n">queue_job</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">kiara_op</span><span class="o">.</span><span class="n">retrieve_result</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">FailedJobException</span> <span class="k">as</span> <span class="n">fje</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="n">terminal_print</span><span class="p">(</span><span class="n">fje</span><span class="p">,</span> <span class="n">in_panel</span><span class="o">=</span><span class="s2">&quot;Processing error&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="n">terminal_print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;[b]Results[/b]&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;[b]Result[/b]&quot;</span>
+
+        <span class="c1"># for field_name, value in outputs.items():</span>
+        <span class="c1">#     results.append(&quot;&quot;)</span>
+        <span class="c1">#     results.append(f&quot;* [b i]{field_name}[/b i]&quot;)</span>
+        <span class="c1">#     results.append(kiara_obj.data_registry.render_data(value.value_id))</span>
+
+        <span class="n">terminal_print</span><span class="p">(</span>
+            <span class="n">outputs</span><span class="p">,</span> <span class="n">in_panel</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">empty_line_before</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_data_type</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+    <span class="c1"># for k, v in outputs.items():</span>
+    <span class="c1">#     rendered = kiara_obj.data_registry.render_data(v)</span>
+    <span class="c1">#     rich_print(rendered)</span>
+
+    <span class="k">if</span> <span class="n">save_results</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">saved_results</span> <span class="o">=</span> <span class="n">kiara_op</span><span class="o">.</span><span class="n">save_result</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="n">aliases</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">saved_results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;[b]Stored result value[/b]&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;[b]Stored result values[/b]&quot;</span>
+            <span class="n">terminal_print</span><span class="p">(</span><span class="n">saved_results</span><span class="p">,</span> <span class="n">in_panel</span><span class="o">=</span><span class="n">title</span><span class="p">,</span> <span class="n">empty_line_before</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">terminal_print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[red]Error saving results[/red]: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">outputs</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.utils.cli.run.set_and_validate_inputs" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">set_and_validate_inputs</span><span class="p">(</span><span class="n">kiara_op</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">explain</span><span class="p">,</span> <span class="n">print_help</span><span class="p">,</span> <span class="n">click_context</span><span class="p">,</span> <span class="n">cmd_help</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.cli.run.set_and_validate_inputs" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/cli/run.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_and_validate_inputs</span><span class="p">(</span>
+    <span class="n">kiara_op</span><span class="p">:</span> <span class="n">KiaraOperation</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">explain</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">print_help</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">click_context</span><span class="p">:</span> <span class="n">ClickContext</span><span class="p">,</span>
+    <span class="n">cmd_help</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">):</span>
+
+    <span class="c1"># =========================================================================</span>
+    <span class="c1"># prepare inputs</span>
+    <span class="n">list_keys</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="p">(</span>
+        <span class="n">name</span><span class="p">,</span>
+        <span class="n">value_schema</span><span class="p">,</span>
+    <span class="p">)</span> <span class="ow">in</span> <span class="n">kiara_op</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">value_schema</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;list&quot;</span><span class="p">]:</span>
+            <span class="n">list_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="n">inputs_dict</span> <span class="o">=</span> <span class="n">dict_from_cli_args</span><span class="p">(</span><span class="o">*</span><span class="n">inputs</span><span class="p">,</span> <span class="n">list_keys</span><span class="o">=</span><span class="n">list_keys</span><span class="p">)</span>
+
+    <span class="n">kiara_op</span><span class="o">.</span><span class="n">set_inputs</span><span class="p">(</span><span class="o">**</span><span class="n">inputs_dict</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">print_help</span><span class="p">:</span>
+        <span class="n">rich_format_operation_help</span><span class="p">(</span>
+            <span class="n">obj</span><span class="o">=</span><span class="n">click_context</span><span class="o">.</span><span class="n">command</span><span class="p">,</span>
+            <span class="n">ctx</span><span class="o">=</span><span class="n">click_context</span><span class="p">,</span>
+            <span class="n">operation</span><span class="o">=</span><span class="n">kiara_op</span><span class="p">,</span>
+            <span class="n">cmd_help</span><span class="o">=</span><span class="n">cmd_help</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">explain</span><span class="p">:</span>
+        <span class="n">terminal_print</span><span class="p">()</span>
+        <span class="n">rg</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">kiara_op</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span>
+                <span class="n">show_operation_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_inputs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_outputs_schema</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">terminal_print</span><span class="p">(</span><span class="n">rg</span><span class="p">,</span> <span class="n">in_panel</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Operation info: [b]</span><span class="si">{</span><span class="n">kiara_op</span><span class="o">.</span><span class="n">operation_name</span><span class="si">}</span><span class="s2">[/b]&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">operation_inputs</span> <span class="o">=</span> <span class="n">kiara_op</span><span class="o">.</span><span class="n">operation_inputs</span>
+    <span class="k">except</span> <span class="n">InvalidValuesException</span> <span class="k">as</span> <span class="n">ive</span><span class="p">:</span>
+
+        <span class="n">terminal_print</span><span class="p">()</span>
+        <span class="n">rg</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t run operation: </span><span class="si">{</span><span class="n">ive</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">Rule</span><span class="p">(),</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">kiara_op</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span>
+                <span class="n">show_operation_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_inputs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_outputs_schema</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">terminal_print</span><span class="p">(</span><span class="n">rg</span><span class="p">,</span> <span class="n">in_panel</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Run info: [b]</span><span class="si">{</span><span class="n">kiara_op</span><span class="o">.</span><span class="n">operation_name</span><span class="si">}</span><span class="s2">[/b]&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">invalid</span> <span class="o">=</span> <span class="n">operation_inputs</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">invalid</span><span class="p">:</span>
+
+        <span class="n">terminal_print</span><span class="p">()</span>
+        <span class="n">rg</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Can&#39;t run operation, invalid or insufficient inputs.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">Rule</span><span class="p">(),</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">kiara_op</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span>
+                <span class="n">show_operation_name</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_inputs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">show_outputs_schema</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">terminal_print</span><span class="p">(</span><span class="n">rg</span><span class="p">,</span> <span class="n">in_panel</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Run info: [b]</span><span class="si">{</span><span class="n">kiara_op</span><span class="o">.</span><span class="n">operation_name</span><span class="si">}</span><span class="s2">[/b]&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.utils.cli.run.validate_operation_in_terminal" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">validate_operation_in_terminal</span><span class="p">(</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_or_operation</span><span class="p">,</span> <span class="n">module_config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.cli.run.validate_operation_in_terminal" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/cli/run.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">validate_operation_in_terminal</span><span class="p">(</span>
+    <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">module_or_operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">module_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraOperation</span><span class="p">:</span>
+
+    <span class="n">kiara_op</span> <span class="o">=</span> <span class="n">KiaraOperation</span><span class="p">(</span>
+        <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
+        <span class="n">operation_name</span><span class="o">=</span><span class="n">module_or_operation</span><span class="p">,</span>
+        <span class="n">operation_config</span><span class="o">=</span><span class="n">module_config</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># validate that operation config is valid, ignoring inputs for now</span>
+        <span class="n">kiara_op</span><span class="o">.</span><span class="n">operation</span>  <span class="c1"># noqa</span>
+    <span class="k">except</span> <span class="n">NoSuchExecutionTargetException</span> <span class="k">as</span> <span class="n">nset</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="n">terminal_print</span><span class="p">(</span><span class="n">nset</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Existing operations:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nset</span><span class="o">.</span><span class="n">avaliable_targets</span><span class="p">:</span>
+            <span class="n">terminal_print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - [i]</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">[/i]&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">ve</span><span class="p">:</span>
+
+        <span class="n">renderables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+        <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Invalid module configuration:&quot;</span><span class="p">)</span>
+        <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">ve</span><span class="o">.</span><span class="n">errors</span><span class="p">():</span>
+            <span class="n">loc</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">error</span><span class="p">[</span><span class="s2">&quot;loc&quot;</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
+            <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  [b]</span><span class="si">{</span><span class="n">loc</span><span class="si">}</span><span class="s2">[/b]: [red]</span><span class="si">{</span><span class="n">error</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">[/red]&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">module_registry</span><span class="o">.</span><span class="n">get_module_class</span><span class="p">(</span><span class="n">kiara_op</span><span class="o">.</span><span class="n">operation_name</span><span class="p">)</span>
+            <span class="n">schema</span> <span class="o">=</span> <span class="n">create_table_from_base_model_cls</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">_config_cls</span><span class="p">)</span>
+            <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Module configuration schema for &#39;[b i]</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">_module_type_name</span><span class="si">}</span><span class="s2">[/b i]&#39;:&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="o">*</span><span class="n">renderables</span><span class="p">)</span>
+        <span class="n">terminal_print</span><span class="p">()</span>
+        <span class="n">terminal_print</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">in_panel</span><span class="o">=</span><span class="s2">&quot;[b red]Module configuration error[/b red]&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">terminal_print</span><span class="p">()</span>
+        <span class="n">terminal_print</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Error when trying to validate the operation [i]&#39;</span><span class="si">{</span><span class="n">kiara_op</span><span class="o">.</span><span class="n">operation_name</span><span class="si">}</span><span class="s2">&#39;[/i]:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">terminal_print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    [red]</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red]&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">kiara_op</span>
 </code></pre></div>
         </details>
     </div>

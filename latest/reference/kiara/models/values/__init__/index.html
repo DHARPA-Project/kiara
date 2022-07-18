@@ -3573,6 +3573,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../utils/cli/run/" class="md-nav__link">
+        run
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -6274,6 +6288,11 @@ ValueMatcher            (<a class="autorefs autorefs-internal" title="kiara.mode
                         <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
                         <span class="k">break</span>
             <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
+                    <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">data_type_names</span>
+                <span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
                 <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
                     <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
                 <span class="p">)</span>
@@ -6508,6 +6527,11 @@ ValueMatcher            (<a class="autorefs autorefs-internal" title="kiara.mode
                     <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
+                <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">data_type_names</span>
+            <span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
             <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span>
                 <span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span>
             <span class="p">)</span>

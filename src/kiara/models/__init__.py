@@ -22,6 +22,7 @@ from rich.table import Table
 from typing import Any, ClassVar, Dict, Iterable, List, Union
 
 from kiara.defaults import KIARA_HASH_FUNCTION
+from kiara.utils import to_camel_case
 from kiara.utils.class_loading import _default_id_func
 from kiara.utils.hashing import compute_cid
 from kiara.utils.json import orjson_dumps
@@ -41,12 +42,15 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
 
     __slots__ = ["__weakref__"]
 
-    class Config:
+    class Config(object):
         json_loads = orjson.loads
         json_dumps = orjson_dumps
         extra = Extra.forbid
 
-        # allow_mutation = False
+    @classmethod
+    def get_model_title(cls):
+
+        return to_camel_case(cls._kiara_model_name)
 
     @classmethod
     def get_schema_hash(cls) -> int:
@@ -256,6 +260,9 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
 
     def __str__(self):
         return self.__repr__()
+
+    def _repr_html_(self):
+        return self.create_html()
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions

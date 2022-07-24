@@ -5,21 +5,17 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import orjson
-import pprint
-from pydantic import BaseModel, Field, validator
-from typing import Any, Dict, Iterable, Mapping, Tuple, Union
+from pydantic import Field, validator
+from typing import Any, Iterable, Mapping, Tuple, Union
 
-from kiara.models import KiaraModel
 from kiara.models.module import KiaraModuleConfig
-from kiara.models.values.value import Value, ValueMap
+from kiara.models.values.value import ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import (
     DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS,
     KiaraModule,
     ModuleCharacteristics,
 )
-from kiara.utils.output import create_table_from_model_object
 
 
 class PrettyPrintConfig(KiaraModuleConfig):
@@ -72,7 +68,7 @@ class PrettyPrintModule(KiaraModule):
         assert source_type not in ["target", "base_name"]
 
         schema = {
-            source_type: {"type": source_type, "doc": "The value to render."},
+            "value": {"type": source_type, "doc": "The value to render."},
             "render_config": {
                 "type": "any",
                 "doc": "Value type dependent render configuration.",
@@ -98,13 +94,17 @@ class PrettyPrintModule(KiaraModule):
         source_type = self.get_config_value("source_type")
         target_type = self.get_config_value("target_type")
 
-        value = inputs.get_value_obj(source_type)
+        value = inputs.get_value_obj("value")
         render_config = inputs.get_value_data("render_config")
 
         func_name = f"pretty_print__{source_type}__as__{target_type}"
 
         func = getattr(self, func_name)
         # TODO: check function signature is valid
+
+        if render_config is None:
+            render_config = {}
+
         result = func(value=value, render_config=render_config)
 
         outputs.set_value("rendered_value", result)
@@ -182,26 +182,10 @@ class PrettyPrintAnyValueModule(PrettyPrintModule):
 
     _module_type_name = "pretty_print.any.value"
 
-    def render__any__as__string(self, value: Value, render_config: Dict[str, Any]):
-
-        data = value.data
-        if isinstance(data, KiaraModel):
-            return data.json(option=orjson.OPT_INDENT_2)
-        else:
-            return str(data)
-
-    def render__any__as__terminal_renderable(
-        self, value: Value, render_config: Dict[str, Any]
-    ):
-
-        data = value.data
-
-        if isinstance(data, BaseModel):
-            rendered = create_table_from_model_object(
-                model=data, render_config=render_config
-            )
-        elif isinstance(data, Iterable):
-            rendered = pprint.pformat(data)
-        else:
-            rendered = str(data)
-        return rendered
+    # def pretty_print__any__as__string(self, value: Value, render_config: Dict[str, Any]):
+    #
+    #     data = value.data
+    #     if isinstance(data, KiaraModel):
+    #         return data.json(option=orjson.OPT_INDENT_2)
+    #     else:
+    #         return str(data)

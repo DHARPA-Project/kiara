@@ -23,6 +23,10 @@ from kiara.utils.global_metadata import get_metadata_for_python_module_or_class
 
 
 class AuthorModel(BaseModel):
+    """Details about an author of a resource."""
+
+    class Config:
+        title = "Author"
 
     name: str = Field(description="The full name of the author.")
     email: Union[EmailStr, None] = Field(
@@ -31,6 +35,10 @@ class AuthorModel(BaseModel):
 
 
 class LinkModel(BaseModel):
+    """A description and url for a reference of any kind."""
+
+    class Config:
+        title = "Link"
 
     url: AnyUrl = Field(description="The url.")
     desc: Union[str, None] = Field(
@@ -40,11 +48,13 @@ class LinkModel(BaseModel):
 
 
 class AuthorsMetadataModel(KiaraModel):
+    """Information about all authors of a resource."""
 
     _kiara_model_id = "metadata.authors"
 
     class Config:
         extra = Extra.ignore
+        title = "Authors"
 
     _metadata_key = "origin"
 
@@ -76,11 +86,13 @@ class AuthorsMetadataModel(KiaraModel):
 
 
 class ContextMetadataModel(KiaraModel):
+    """Information about the context of a resource."""
 
     _kiara_model_id = "metadata.context"
 
     class Config:
         extra = Extra.ignore
+        title = "Context"
 
     @classmethod
     def from_class(cls, item_cls: Type):
@@ -147,6 +159,10 @@ class ContextMetadataModel(KiaraModel):
 
 
 class DocumentationMetadataModel(KiaraModel):
+    """Documentation about a resource."""
+
+    class Config:
+        title = "Documentation"
 
     _kiara_model_id = "metadata.documentation"
 

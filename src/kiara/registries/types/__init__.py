@@ -19,18 +19,6 @@ if TYPE_CHECKING:
     from kiara.context import Kiara
 
 
-TYPE_PROFILE_MAP = {
-    "csv_file": "file",
-    "text_file_bundle": "file_bundle",
-    "csv_file_bundle": "file_bundle",
-    "table": "table",
-    "graphml_file": "file",
-    "gexf_file": "file",
-    "gml_file": "file",
-    "shp_file": "file",
-}
-
-
 class TypeRegistry(object):
     def __init__(self, kiara: "Kiara"):
 
@@ -200,6 +188,21 @@ class TypeRegistry(object):
 
         desc = nx.descendants(self.data_type_hierarchy, data_type_name)
         return desc
+
+    def is_profile(self, data_type_name: str) -> bool:
+
+        type_config = self.data_type_profiles.get(data_type_name, {}).get(
+            "type_config", None
+        )
+        return True if type_config else False
+
+    def get_profile_parent(self, data_type_name: str) -> Union[None, bool]:
+        """Return the parent data type of the specified data type (if that is indeed a profile name).
+
+        If the specified data type is not a profile name, 'None' will be returned.
+        """
+
+        return self.data_type_profiles.get(data_type_name, {}).get("type_name", None)
 
     def get_associated_profiles(
         self, data_type_name: str

@@ -160,14 +160,9 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
         if len(module.inputs_schema) != 2 or len(module.outputs_schema) != 1:
             return None
 
-        target_type = None
-        for field_name, schema in module.outputs_schema.items():
-            if field_name != "rendered_value":
-                return None
-            target_type = schema.type
-
-        if target_type is None:
-            raise Exception("No target type available.")
+        if "rendered_value" not in module.outputs_schema.keys():
+            return None
+        target_type = module.outputs_schema["rendered_value"].type
 
         if "value" not in module.inputs_schema.keys():
             return None

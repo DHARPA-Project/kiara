@@ -6,7 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
-from typing import TYPE_CHECKING, Any, Generic, Mapping, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, Iterable, Mapping, Type, TypeVar
 
 from kiara.data_types import (
     TYPE_CONFIG_CLS,
@@ -54,6 +54,12 @@ class NoneType(DataType[SpecialValue, DataTypeConfig]):
         data = value.data
         return str(data.value)
 
+    def pretty_print_as__terminal_renderable(
+        self, value: "Value", render_config: Mapping[str, Any]
+    ):
+
+        return str(value.data.value)
+
 
 class AnyType(
     DataType[TYPE_PYTHON_CLS, DataTypeConfig], Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]
@@ -79,6 +85,28 @@ class AnyType(
 
         data = value.data
         return str(data)
+
+    def pretty_print_as__terminal_renderable(
+        self, value: "Value", render_config: Mapping[str, Any]
+    ):
+
+        data = value.data
+
+        from pydantic import BaseModel
+
+        if isinstance(data, BaseModel):
+            from kiara.utils.output import create_table_from_model_object
+
+            rendered = create_table_from_model_object(
+                model=data, render_config=render_config
+            )
+        elif isinstance(data, Iterable):
+            import pprint
+
+            rendered = pprint.pformat(data)
+        else:
+            rendered = str(data)
+        return rendered
 
 
 class BytesType(AnyType[bytes, DataTypeConfig]):

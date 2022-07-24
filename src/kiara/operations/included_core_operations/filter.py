@@ -174,6 +174,18 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
         result = FilterOperationDetails.create_operation_details(**details)
         return result
 
+    def find_filter_operations_for_data_type(
+        self, data_type: str
+    ) -> Dict[str, Operation]:
+
+        result = {}
+        for op in self.operations.values():
+            details: FilterOperationDetails = op.operation_details  # type: ignore
+            if details.data_type == data_type:
+                result[details.filter_name] = op
+
+        return result
+
     def get_filter(self, data_type: str, filter_name: str) -> Operation:
 
         op_id = f"{data_type}_filter.{filter_name}"
@@ -186,19 +198,30 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
         return op
 
     def create_filter_operation(
-        self, data_type: str, filters: Iterable[str]
+        self, data_type: str, filters: Union[Iterable[str], Mapping[str, str]]
     ) -> Operation:
+        """Create a filter pipeline operation object for a specific data type.
+
+        Arguments:
+            filters: a list of filter names, or a map of step_id/filter name
+        """
 
         steps: List[Mapping[str, Any]] = []
         last_filter = None
-        step_ids: List[str] = []
         input_aliases: Dict[str, str] = {}
-        for filter_name in filters:
+
+        if not isinstance(filters, Mapping):
+            _filters = {}
+            step_ids: List[str] = []
+            for filter_name in filters:
+                step_id = find_free_id(stem=filter_name, current_ids=step_ids)
+                _filters[step_id] = filter_name
+            filters = _filters
+
+        for filter_name, step_id in filters.items():
             if not input_aliases:
                 input_aliases[f"{filter_name}.value"] = "value"
             op = self.get_filter(data_type=data_type, filter_name=filter_name)
-            step_id = find_free_id(stem=filter_name, current_ids=step_ids)
-            step_ids.append(step_id)
             step_data = {"module_type": op.operation_id, "step_id": step_id}
             if last_filter:
                 step_data["input_links"] = {"value": f"{last_filter}.value"}

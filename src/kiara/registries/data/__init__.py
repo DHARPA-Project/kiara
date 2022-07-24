@@ -478,6 +478,21 @@ class DataRegistry(object):
 
         return matches
 
+    def find_values_with_aliases(self, matcher: ValueMatcher) -> Dict[str, Value]:
+
+        matcher = matcher.copy(update={"has_aliases": True})
+        all_values = self.find_values(matcher)
+        result = {}
+        for value in all_values.values():
+            aliases = self._kiara.alias_registry.find_aliases_for_value_id(
+                value_id=value.value_id
+            )
+            for a in aliases:
+                assert a not in result  # this is a bug
+                result[a] = value
+
+        return result
+
     def find_values_for_hash(
         self, value_hash: str, data_type_name: Union[str, None] = None
     ) -> Set[Value]:

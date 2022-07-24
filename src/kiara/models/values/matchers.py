@@ -10,6 +10,8 @@ if TYPE_CHECKING:
 
 
 class ValueMatcher(KiaraModel):
+    """An object describing requirements values should satisfy in order to be included in a query result."""
+
     @classmethod
     def create_matcher(self, kiara: "Kiara", **match_options: Any):
 

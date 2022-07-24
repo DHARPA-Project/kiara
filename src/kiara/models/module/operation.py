@@ -337,6 +337,13 @@ class Operation(Manifest):
     #
     #     return self.module.run(_attach_lineage=_attach_lineage, **inputs)
 
+    # def create_html(self, **config) -> str:
+    #
+    #     r = self.create_renderable(**config)
+    #     p = Panel(r, title=f"Operation: {self.operation_id}", title_align="left")
+    #     mime_bundle = p._repr_mimebundle_(include=[], exclude=[])  # type: ignore
+    #     return mime_bundle["text/html"]
+
     def create_renderable(self, **config: Any) -> RenderableType:
         """Create a printable overview of this operations details.
 

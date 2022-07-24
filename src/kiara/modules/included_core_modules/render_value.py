@@ -71,7 +71,7 @@ class RenderValueModule(KiaraModule):
                 },
                 "doc": "Instructions/config on how (or what) to render the provided value.",
                 "optional": False,
-                "default": {"number_of_rows": 20, "row_offset": 0, "columns": None},
+                "default": dict,
             },
         }
         return inputs

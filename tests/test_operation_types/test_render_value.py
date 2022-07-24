@@ -13,7 +13,7 @@ def test_render_string(kiara: Kiara):
     value = kiara.data_registry.register_data("xxx", schema="string")
     pp_result = kiara.data_registry.pretty_print_data(value_id=value.value_id)
 
-    assert pp_result == "xxx"
+    assert pp_result == "'xxx'"
 
 
 def test_render_integer(kiara: Kiara):

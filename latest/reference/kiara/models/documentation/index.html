@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/models/documentation/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.9">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.3.9">
     
     
       
@@ -4152,10 +4152,15 @@ AuthorModel            (<span title="pydantic.main.BaseModel">BaseModel</span>)
 
     <div class="doc doc-contents ">
 
+      <p>Details about an author of a resource.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/documentation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AuthorModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Details about an author of a resource.&quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Author&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The full name of the author.&quot;</span><span class="p">)</span>
     <span class="n">email</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">EmailStr</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -4219,6 +4224,35 @@ AuthorModel            (<span title="pydantic.main.BaseModel">BaseModel</span>)
 
 
 
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.models.documentation.AuthorModel.Config" class="doc doc-heading">
+        <code>
+Config        </code>
+
+
+
+<a href="#kiara.models.documentation.AuthorModel.Config" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/documentation.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Author&quot;</span>
+</code></pre></div>
+        </details>
+
+
+    </div>
+
+  </div>
+
+
+
 
 
 
@@ -4249,15 +4283,18 @@ AuthorsMetadataModel            (<a class="autorefs autorefs-internal" title="ki
 
     <div class="doc doc-contents ">
 
+      <p>Information about all authors of a resource.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/documentation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AuthorsMetadataModel</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Information about all authors of a resource.&quot;&quot;&quot;</span>
 
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;metadata.authors&quot;</span>
 
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
         <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">ignore</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Authors&quot;</span>
 
     <span class="n">_metadata_key</span> <span class="o">=</span> <span class="s2">&quot;origin&quot;</span>
 
@@ -4340,9 +4377,61 @@ Config        </code>
           <summary>Source code in <code>kiara/models/documentation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">ignore</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Authors&quot;</span>
 </code></pre></div>
         </details>
 
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.documentation.AuthorsMetadataModel.Config.extra" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">extra</span></code>
+
+
+<a href="#kiara.models.documentation.AuthorsMetadataModel.Config.extra" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.documentation.AuthorsMetadataModel.Config.title" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">title</span></code>
+
+
+<a href="#kiara.models.documentation.AuthorsMetadataModel.Config.title" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
 
     </div>
 
@@ -4449,15 +4538,18 @@ ContextMetadataModel            (<a class="autorefs autorefs-internal" title="ki
 
     <div class="doc doc-contents ">
 
+      <p>Information about the context of a resource.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/documentation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ContextMetadataModel</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Information about the context of a resource.&quot;&quot;&quot;</span>
 
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;metadata.context&quot;</span>
 
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
         <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">ignore</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Context&quot;</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">item_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">):</span>
@@ -4619,9 +4711,61 @@ Config        </code>
           <summary>Source code in <code>kiara/models/documentation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">ignore</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Context&quot;</span>
 </code></pre></div>
         </details>
 
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.documentation.ContextMetadataModel.Config.extra" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">extra</span></code>
+
+
+<a href="#kiara.models.documentation.ContextMetadataModel.Config.extra" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.documentation.ContextMetadataModel.Config.title" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">title</span></code>
+
+
+<a href="#kiara.models.documentation.ContextMetadataModel.Config.title" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
 
     </div>
 
@@ -4801,10 +4945,15 @@ DocumentationMetadataModel            (<a class="autorefs autorefs-internal" tit
 
     <div class="doc doc-contents ">
 
+      <p>Documentation about a resource.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/documentation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">DocumentationMetadataModel</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Documentation about a resource.&quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Documentation&quot;</span>
 
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;metadata.documentation&quot;</span>
 
@@ -5008,6 +5157,35 @@ DocumentationMetadataModel            (<a class="autorefs autorefs-internal" tit
 
   </div>
 
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.models.documentation.DocumentationMetadataModel.Config" class="doc doc-heading">
+        <code>
+Config        </code>
+
+
+
+<a href="#kiara.models.documentation.DocumentationMetadataModel.Config" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/documentation.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Documentation&quot;</span>
+</code></pre></div>
+        </details>
+
+
+    </div>
+
+  </div>
 
 
 
@@ -5264,10 +5442,15 @@ LinkModel            (<span title="pydantic.main.BaseModel">BaseModel</span>)
 
     <div class="doc doc-contents ">
 
+      <p>A description and url for a reference of any kind.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/documentation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LinkModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A description and url for a reference of any kind.&quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Link&quot;</span>
 
     <span class="n">url</span><span class="p">:</span> <span class="n">AnyUrl</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The url.&quot;</span><span class="p">)</span>
     <span class="n">desc</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -5329,6 +5512,35 @@ LinkModel            (<span title="pydantic.main.BaseModel">BaseModel</span>)
 
   </div>
 
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.models.documentation.LinkModel.Config" class="doc doc-heading">
+        <code>
+Config        </code>
+
+
+
+<a href="#kiara.models.documentation.LinkModel.Config" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/documentation.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Link&quot;</span>
+</code></pre></div>
+        </details>
+
+
+    </div>
+
+  </div>
 
 
 

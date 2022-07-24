@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/registries/types/__init__/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.9">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.3.9">
     
     
       
@@ -3392,19 +3392,6 @@
     kiara.registries.types
   </a>
   
-    <nav class="md-nav" aria-label="kiara.registries.types">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kiara.registries.types.TYPE_PROFILE_MAP" class="md-nav__link">
-    TYPE_PROFILE_MAP
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -4033,19 +4020,6 @@
     kiara.registries.types
   </a>
   
-    <nav class="md-nav" aria-label="kiara.registries.types">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#kiara.registries.types.TYPE_PROFILE_MAP" class="md-nav__link">
-    TYPE_PROFILE_MAP
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -4100,24 +4074,6 @@
 
 
 
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h3 id="kiara.registries.types.TYPE_PROFILE_MAP" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">TYPE_PROFILE_MAP</span></code>
-
-
-<a href="#kiara.registries.types.TYPE_PROFILE_MAP" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-    </div>
-
-  </div>
 
 
 <h2 id="kiara.registries.types-classes">Classes<a href="#kiara.registries.types-classes" class="headerlink" title="Permanent link">&para;</a></h2>
@@ -4308,6 +4264,21 @@ TypeRegistry        </code>
 
         <span class="n">desc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">descendants</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_type_hierarchy</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">desc</span>
+
+    <span class="k">def</span> <span class="nf">is_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+        <span class="n">type_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type_profiles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data_type_name</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;type_config&quot;</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">type_config</span> <span class="k">else</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">get_profile_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return the parent data type of the specified data type (if that is indeed a profile name).</span>
+
+<span class="sd">        If the specified data type is not a profile name, &#39;None&#39; will be returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type_profiles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data_type_name</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_associated_profiles</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span>
@@ -4605,6 +4576,38 @@ TypeRegistry        </code>
 
 
 
+<h5 id="kiara.registries.types.TypeRegistry.get_profile_parent" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_profile_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.types.TypeRegistry.get_profile_parent" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Return the parent data type of the specified data type (if that is indeed a profile name).</p>
+<p>If the specified data type is not a profile name, 'None' will be returned.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/types/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_profile_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Return the parent data type of the specified data type (if that is indeed a profile name).</span>
+
+<span class="sd">    If the specified data type is not a profile name, &#39;None&#39; will be returned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type_profiles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data_type_name</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h5 id="kiara.registries.types.TypeRegistry.get_sub_hierarchy" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_sub_hierarchy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">)</span></code>
 
@@ -4788,6 +4791,35 @@ TypeRegistry        </code>
 
     <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">data_type_name</span><span class="o">=</span><span class="n">data_type_name</span><span class="p">)</span>
     <span class="k">return</span> <span class="s2">&quot;any&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lineage</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.registries.types.TypeRegistry.is_profile" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.types.TypeRegistry.is_profile" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/types/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">is_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+    <span class="n">type_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type_profiles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data_type_name</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">&quot;type_config&quot;</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">type_config</span> <span class="k">else</span> <span class="kc">False</span>
 </code></pre></div>
         </details>
     </div>

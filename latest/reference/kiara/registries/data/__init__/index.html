@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/registries/data/__init__/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.9">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.3.9">
     
     
       
@@ -4566,6 +4566,21 @@ DataRegistry        </code>
 
         <span class="k">return</span> <span class="n">matches</span>
 
+    <span class="k">def</span> <span class="nf">find_values_with_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matcher</span><span class="p">:</span> <span class="n">ValueMatcher</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
+
+        <span class="n">matcher</span> <span class="o">=</span> <span class="n">matcher</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;has_aliases&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+        <span class="n">all_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_values</span><span class="p">(</span><span class="n">matcher</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">all_values</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">aliases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">alias_registry</span><span class="o">.</span><span class="n">find_aliases_for_value_id</span><span class="p">(</span>
+                <span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span>  <span class="c1"># this is a bug</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
     <span class="k">def</span> <span class="nf">find_values_for_hash</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Value</span><span class="p">]:</span>
@@ -5596,6 +5611,43 @@ DataRegistry        </code>
             <span class="bp">self</span><span class="o">.</span><span class="n">_values_by_hash</span><span class="p">[</span><span class="n">value_hash</span><span class="p">]</span> <span class="o">=</span> <span class="n">stored</span>
 
     <span class="k">return</span> <span class="nb">set</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">v_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">v_id</span> <span class="ow">in</span> <span class="n">stored</span><span class="p">))</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.registries.data.DataRegistry.find_values_with_aliases" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_values_with_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matcher</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.data.DataRegistry.find_values_with_aliases" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/data/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_values_with_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matcher</span><span class="p">:</span> <span class="n">ValueMatcher</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
+
+    <span class="n">matcher</span> <span class="o">=</span> <span class="n">matcher</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;has_aliases&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+    <span class="n">all_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_values</span><span class="p">(</span><span class="n">matcher</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">all_values</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">aliases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">alias_registry</span><span class="o">.</span><span class="n">find_aliases_for_value_id</span><span class="p">(</span>
+            <span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span>  <span class="c1"># this is a bug</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
     </div>

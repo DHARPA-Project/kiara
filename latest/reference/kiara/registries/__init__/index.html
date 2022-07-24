@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/registries/__init__/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.9">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.3.9">
     
     
       
@@ -7713,6 +7713,21 @@ DataRegistry        </code>
 
         <span class="k">return</span> <span class="n">matches</span>
 
+    <span class="k">def</span> <span class="nf">find_values_with_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matcher</span><span class="p">:</span> <span class="n">ValueMatcher</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
+
+        <span class="n">matcher</span> <span class="o">=</span> <span class="n">matcher</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;has_aliases&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+        <span class="n">all_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_values</span><span class="p">(</span><span class="n">matcher</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">all_values</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">aliases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">alias_registry</span><span class="o">.</span><span class="n">find_aliases_for_value_id</span><span class="p">(</span>
+                <span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">:</span>
+                <span class="k">assert</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span>  <span class="c1"># this is a bug</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
     <span class="k">def</span> <span class="nf">find_values_for_hash</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">value_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">Value</span><span class="p">]:</span>
@@ -8743,6 +8758,43 @@ DataRegistry        </code>
             <span class="bp">self</span><span class="o">.</span><span class="n">_values_by_hash</span><span class="p">[</span><span class="n">value_hash</span><span class="p">]</span> <span class="o">=</span> <span class="n">stored</span>
 
     <span class="k">return</span> <span class="nb">set</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">v_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">v_id</span> <span class="ow">in</span> <span class="n">stored</span><span class="p">))</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.registries.data.DataRegistry.find_values_with_aliases" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_values_with_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matcher</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.data.DataRegistry.find_values_with_aliases" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/data/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_values_with_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matcher</span><span class="p">:</span> <span class="n">ValueMatcher</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
+
+    <span class="n">matcher</span> <span class="o">=</span> <span class="n">matcher</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">update</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;has_aliases&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+    <span class="n">all_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_values</span><span class="p">(</span><span class="n">matcher</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">all_values</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">aliases</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">alias_registry</span><span class="o">.</span><span class="n">find_aliases_for_value_id</span><span class="p">(</span>
+            <span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result</span>  <span class="c1"># this is a bug</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
     </div>
@@ -19432,24 +19484,6 @@ OperationRegistry        </code>
 
 
 
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.registries.types.TYPE_PROFILE_MAP" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">TYPE_PROFILE_MAP</span></code>
-
-
-<a href="#kiara.registries.types.TYPE_PROFILE_MAP" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-    </div>
-
-  </div>
-
-
 <h4 id="kiara.registries.types-classes">Classes<a href="#kiara.registries.types-classes" class="headerlink" title="Permanent link">&para;</a></h4>
 
   <div class="doc doc-object doc-class">
@@ -19638,6 +19672,21 @@ TypeRegistry        </code>
 
         <span class="n">desc</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">descendants</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_type_hierarchy</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">desc</span>
+
+    <span class="k">def</span> <span class="nf">is_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+        <span class="n">type_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type_profiles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data_type_name</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;type_config&quot;</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">type_config</span> <span class="k">else</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">get_profile_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return the parent data type of the specified data type (if that is indeed a profile name).</span>
+
+<span class="sd">        If the specified data type is not a profile name, &#39;None&#39; will be returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type_profiles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data_type_name</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_associated_profiles</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span>
@@ -19935,6 +19984,38 @@ TypeRegistry        </code>
 
 
 
+<h7 id="kiara.registries.types.TypeRegistry.get_profile_parent" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_profile_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.types.TypeRegistry.get_profile_parent" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>Return the parent data type of the specified data type (if that is indeed a profile name).</p>
+<p>If the specified data type is not a profile name, 'None' will be returned.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/types/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_profile_parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Return the parent data type of the specified data type (if that is indeed a profile name).</span>
+
+<span class="sd">    If the specified data type is not a profile name, &#39;None&#39; will be returned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type_profiles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data_type_name</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type_name&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
 <h7 id="kiara.registries.types.TypeRegistry.get_sub_hierarchy" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_sub_hierarchy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">)</span></code>
 
@@ -20118,6 +20199,35 @@ TypeRegistry        </code>
 
     <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">data_type_name</span><span class="o">=</span><span class="n">data_type_name</span><span class="p">)</span>
     <span class="k">return</span> <span class="s2">&quot;any&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lineage</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.registries.types.TypeRegistry.is_profile" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">)</span></code>
+
+
+<a href="#kiara.registries.types.TypeRegistry.is_profile" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/registries/types/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">is_profile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+    <span class="n">type_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type_profiles</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">data_type_name</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+        <span class="s2">&quot;type_config&quot;</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">type_config</span> <span class="k">else</span> <span class="kc">False</span>
 </code></pre></div>
         </details>
     </div>

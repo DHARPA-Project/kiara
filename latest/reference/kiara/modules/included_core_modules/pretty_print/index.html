@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/modules/included_core_modules/pretty_print/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.9">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.3.9">
     
     
       
@@ -4144,115 +4144,16 @@ PrettyPrintAnyValueModule            (<a class="autorefs autorefs-internal" titl
 
     <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;pretty_print.any.value&quot;</span>
 
-    <span class="k">def</span> <span class="nf">render__any__as__string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-
-        <span class="n">data</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">KiaraModel</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">render__any__as__terminal_renderable</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
-    <span class="p">):</span>
-
-        <span class="n">data</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-            <span class="n">rendered</span> <span class="o">=</span> <span class="n">create_table_from_model_object</span><span class="p">(</span>
-                <span class="n">model</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="n">render_config</span>
-            <span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
-            <span class="n">rendered</span> <span class="o">=</span> <span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">rendered</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">rendered</span>
+    <span class="c1"># def pretty_print__any__as__string(self, value: Value, render_config: Dict[str, Any]):</span>
+    <span class="c1">#</span>
+    <span class="c1">#     data = value.data</span>
+    <span class="c1">#     if isinstance(data, KiaraModel):</span>
+    <span class="c1">#         return data.json(option=orjson.OPT_INDENT_2)</span>
+    <span class="c1">#     else:</span>
+    <span class="c1">#         return str(data)</span>
 </code></pre></div>
         </details>
 
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintAnyValueModule.render__any__as__string" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">render__any__as__string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="p">)</span></code>
-
-
-<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintAnyValueModule.render__any__as__string" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render__any__as__string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-
-    <span class="n">data</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">KiaraModel</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.modules.included_core_modules.pretty_print.PrettyPrintAnyValueModule.render__any__as__terminal_renderable" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">render__any__as__terminal_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="p">)</span></code>
-
-
-<a href="#kiara.modules.included_core_modules.pretty_print.PrettyPrintAnyValueModule.render__any__as__terminal_renderable" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render__any__as__terminal_renderable</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
-<span class="p">):</span>
-
-    <span class="n">data</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">BaseModel</span><span class="p">):</span>
-        <span class="n">rendered</span> <span class="o">=</span> <span class="n">create_table_from_model_object</span><span class="p">(</span>
-            <span class="n">model</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="n">render_config</span>
-        <span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
-        <span class="n">rendered</span> <span class="o">=</span> <span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">rendered</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">rendered</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
 
     </div>
 
@@ -4449,7 +4350,7 @@ PrettyPrintModule            (<a class="autorefs autorefs-internal" title="kiara
         <span class="k">assert</span> <span class="n">source_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;base_name&quot;</span><span class="p">]</span>
 
         <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">source_type</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to render.&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to render.&quot;</span><span class="p">},</span>
             <span class="s2">&quot;render_config&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;Value type dependent render configuration.&quot;</span><span class="p">,</span>
@@ -4475,13 +4376,17 @@ PrettyPrintModule            (<a class="autorefs autorefs-internal" title="kiara
         <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
         <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
 
-        <span class="n">value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">source_type</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
         <span class="n">render_config</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;render_config&quot;</span><span class="p">)</span>
 
         <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;pretty_print__</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">__as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
         <span class="c1"># TODO: check function signature is valid</span>
+
+        <span class="k">if</span> <span class="n">render_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">render_config</span> <span class="o">=</span> <span class="p">{}</span>
+
         <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="n">render_config</span><span class="p">)</span>
 
         <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;rendered_value&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
@@ -4658,7 +4563,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
     <span class="k">assert</span> <span class="n">source_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;base_name&quot;</span><span class="p">]</span>
 
     <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">source_type</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to render.&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">source_type</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The value to render.&quot;</span><span class="p">},</span>
         <span class="s2">&quot;render_config&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;any&quot;</span><span class="p">,</span>
             <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;Value type dependent render configuration.&quot;</span><span class="p">,</span>
@@ -4729,13 +4634,17 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
     <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
     <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
 
-    <span class="n">value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">source_type</span><span class="p">)</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
     <span class="n">render_config</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;render_config&quot;</span><span class="p">)</span>
 
     <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;pretty_print__</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">__as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
     <span class="c1"># TODO: check function signature is valid</span>
+
+    <span class="k">if</span> <span class="n">render_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">render_config</span> <span class="o">=</span> <span class="p">{}</span>
+
     <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="n">render_config</span><span class="p">)</span>
 
     <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;rendered_value&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>

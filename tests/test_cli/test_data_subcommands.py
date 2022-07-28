@@ -42,7 +42,7 @@ def test_data_list_subcommand(presseeded_data_store_minimal: Kiara):
 
 def test_data_load_subcommand(presseeded_data_store_minimal: Kiara):
 
-    cmd = "data load alias:preseed_minimal.import_file__file"
+    cmd = "data load -s alias:preseed_minimal.import_file__file"
     result = _run_command(kiara_ctx=presseeded_data_store_minimal, cmd=cmd)
 
     assert "Psychiatrische en neurologische bladen" in result.stdout

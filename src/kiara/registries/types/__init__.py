@@ -6,7 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 from bidict import bidict
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Set, Type, Union
 
 from kiara.data_types import DataType
 from kiara.defaults import KIARA_ROOT_TYPE_NAME
@@ -161,7 +161,7 @@ class TypeRegistry(object):
         sub_graph = graph.subgraph(desc)
         return sub_graph
 
-    def get_type_lineage(self, data_type_name: str) -> Iterable[str]:
+    def get_type_lineage(self, data_type_name: str) -> List[str]:
         """Returns the shortest path between the specified type and the root, in reverse direction starting from the specified type."""
 
         if data_type_name not in self.data_type_profiles.keys():

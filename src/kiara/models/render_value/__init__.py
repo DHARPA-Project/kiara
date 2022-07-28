@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 import abc
-from pydantic import Field
-from typing import Any, Dict, Iterable, Mapping, NamedTuple, Union
+from pydantic import BaseModel, Extra, Field
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Union
 
 from kiara.models import KiaraModel
 
+if TYPE_CHECKING:
+    from kiara.models.values.value import Value
+
 
 class RenderScene(KiaraModel):
+    class Config:
+        extra = Extra.ignore
 
     parent_scene: Union[None, "RenderScene"] = Field(
         description="The parent of this scene (if applicable).", default=None
@@ -56,36 +61,66 @@ class RenderScene(KiaraModel):
             return self.dict(exclude={"scene_name", "scenes"})
 
 
-class RenderInstruction(KiaraModel):
-    @classmethod
-    @abc.abstractmethod
-    def retrieve_source_type(cls) -> str:
-        pass
-
-    @classmethod
-    def retrieve_supported_target_types(cls) -> Iterable[str]:
-
-        result = []
-        for attr in dir(cls):
-            if len(attr) <= 11 or not attr.startswith("render_as__"):
-                continue
-
-            attr = attr[11:]
-            target_type = attr[0:]
-            result.append(target_type)
-
-        return result
+# class RenderScene(KiaraModel):
+#     @classmethod
+#     @abc.abstractmethod
+#     def retrieve_source_type(cls) -> str:
+#         pass
+#
+#     @classmethod
+#     def retrieve_supported_target_types(cls) -> Iterable[str]:
+#
+#         result = []
+#         for attr in dir(cls):
+#             if len(attr) <= 11 or not attr.startswith("render_as__"):
+#                 continue
+#
+#             attr = attr[11:]
+#             target_type = attr[0:]
+#             result.append(target_type)
+#
+#         return result
 
 
 class RenderMetadata(KiaraModel):
 
-    related_instructions: Dict[str, Union[RenderInstruction, None]] = Field(
+    this_scene: RenderScene = Field(
+        description="The render instruction for the current scene."
+    )
+    related_scenes: Dict[str, Union[RenderScene, None]] = Field(
         description="Related instructions, to be used by implementing frontends as hints.",
         default_factory=dict,
     )
 
 
-class RenderValueResult(NamedTuple):
+class RenderValueResult(BaseModel):
 
     rendered: Any
     metadata: RenderMetadata
+
+
+class RenderAnyValueScene(RenderScene):
+    @classmethod
+    def retrieve_source_type(cls) -> str:
+        return "any"
+
+    def render_as__terminal_renderable(self, value: "Value"):
+        render_config = {
+            "show_pedigree": False,
+            "show_serialized": False,
+            "show_data_preview": False,
+            "show_properties": True,
+            "show_destinies": True,
+            "show_destiny_backlinks": True,
+            "show_lineage": True,
+            "show_environment_hashes": False,
+            "show_environment_data": False,
+        }
+        value_info = value.create_info()
+        rend = value_info.create_renderable(**render_config)
+        return RenderValueResult(
+            rendered=rend, metadata=RenderMetadata(this_scene=self)
+        )
+
+    # def render_as__string(self, value: "Value"):
+    #     return RenderValueResult(rendered="xxx", metadata=RenderMetadata(this_scene=self))

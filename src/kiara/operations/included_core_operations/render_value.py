@@ -14,7 +14,7 @@ from kiara.models.module.operation import (
     Operation,
     OperationConfig,
 )
-from kiara.models.render_value import RenderInstruction
+from kiara.models.render_value import RenderScene
 from kiara.modules import KiaraModule
 from kiara.operations import OperationType
 from kiara.registries.models import ModelRegistry
@@ -80,11 +80,11 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
     ) -> Iterable[Union[Mapping, OperationConfig]]:
 
         model_registry = ModelRegistry.instance()
-        all_models = model_registry.get_models_of_type(RenderInstruction)
+        all_models = model_registry.get_models_of_type(RenderScene)
 
         result = []
         for model_id, model_cls_info in all_models.items():
-            model_cls: Type[RenderInstruction] = model_cls_info.python_class.get_class()  # type: ignore
+            model_cls: Type[RenderScene] = model_cls_info.python_class.get_class()  # type: ignore
             source_type = model_cls.retrieve_source_type()
             supported_target_types = model_cls.retrieve_supported_target_types()
 
@@ -164,9 +164,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
             a mapping with the target type as key, and the operation as value
         """
 
-        lineage = set(
-            self._kiara.type_registry.get_type_lineage(data_type_name=source_type)
-        )
+        lineage = self._kiara.type_registry.get_type_lineage(data_type_name=source_type)
 
         result: Dict[str, Operation] = {}
 

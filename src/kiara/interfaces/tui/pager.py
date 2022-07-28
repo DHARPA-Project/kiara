@@ -18,12 +18,12 @@ class ValuePager(Widget):
     _value: Value = None  # type: ignore
     _control_widget = None  # type: ignore
 
-    render_instruction: Union[Mapping[str, Any], None] = Reactive(None)  # type: ignore
+    render_scene: Union[Mapping[str, Any], None] = Reactive(None)  # type: ignore
 
     current_rendered_value: Union[RenderableType, None] = None  # type: ignore
     current_render_metadata: Union[RenderMetadata, None] = None  # type: ignore
 
-    def update_render_instruction(self, render_metadata: Mapping[str, Any]):
+    def update_render_scene(self, render_metadata: Mapping[str, Any]):
 
         rows = self.size.height - 4
         if rows <= 0:
@@ -32,18 +32,18 @@ class ValuePager(Widget):
         new_ri = dict(render_metadata)
         new_ri["number_of_rows"] = rows
 
-        self.render_instruction = new_ri
+        self.render_scene = new_ri
 
     def render(self) -> RenderableType:
 
-        if self.render_instruction is None:
-            self.update_render_instruction({})
+        if self.render_scene is None:
+            self.update_render_scene({})
 
         result = self._render_op.run(
             kiara=self._kiara,
             inputs={
                 "value": self._value,
-                "render_instruction": self.render_instruction,
+                "render_instruction": self.render_scene,
             },
         )
 
@@ -58,29 +58,29 @@ class ValuePager(Widget):
 class PagerControl(Widget):
 
     _pager: ValuePager = None  # type: ignore
-    _instruction_keys: Dict[str, str] = None  # type: ignore
+    _scene_keys: Dict[str, str] = None  # type: ignore
 
     render_metadata: RenderMetadata = Reactive(None)  # type: ignore
 
     def key_pressed(self, key: str):
 
-        if key in self._instruction_keys.keys():
-            command = self._instruction_keys[key]
-            new_ri = self.render_metadata.related_instructions[command]
+        if key in self._scene_keys.keys():
+            command = self._scene_keys[key]
+            new_ri = self.render_metadata.related_scenes[command]
             if new_ri:
-                self._pager.update_render_instruction(new_ri.dict())
+                self._pager.update_render_scene(new_ri.dict())
 
     def render(self) -> RenderableType:
 
-        instruction_keys: Dict[str, str] = {}
+        scene_keys: Dict[str, str] = {}
         output = []
-        for key in self.render_metadata.related_instructions.keys():
-            instruction_keys[key[0:1]] = key
+        for key in self.render_metadata.related_scenes.keys():
+            scene_keys[key[0:1]] = key
             output.append(f"\[{key[0:1]}]{key[1:]}")  # noqa: W605
 
         output.append("\[q]uit")  # noqa: W605
 
-        self._instruction_keys = instruction_keys
+        self._scene_keys = scene_keys
 
         return "\n".join(output)
 

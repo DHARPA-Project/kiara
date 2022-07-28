@@ -222,7 +222,6 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         return table
 
     def create_html(self, **config) -> str:
-
         r = self.create_renderable(**config)
         mime_bundle = r._repr_mimebundle_(include=[], exclude=[])  # type: ignore
         return mime_bundle["text/html"]
@@ -276,6 +275,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     #     exclude: Sequence[str],
     #     **kwargs: Any,
     # ) -> Dict[str, str]:
+    #
     #     console = get_console()
     #     segments = list(console.render(self, console.options))
     #     html = _render_segments(segments)

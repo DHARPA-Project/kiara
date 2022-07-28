@@ -7,10 +7,10 @@
 
 import structlog
 import uuid
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Union
 
 from kiara.models.module.operation import Operation
-from kiara.models.render_value import RenderInstruction, RenderValueResult
+from kiara.models.render_value import RenderScene, RenderValueResult
 from kiara.operations.included_core_operations.pretty_print import (
     PrettyPrintOperationType,
 )
@@ -20,6 +20,7 @@ from kiara.operations.included_core_operations.render_value import (
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+    from kiara.models.values.value import Value
 
 logger = structlog.getLogger()
 
@@ -69,16 +70,26 @@ def pretty_print_data(
 
 def render_value(
     kiara: "Kiara",
-    value_id: uuid.UUID,
-    target_type="terminal_renderable",
-    render_instruction: Union[RenderInstruction, None] = None,
+    value: Union[str, uuid.UUID, "Value"],
+    target_type: Union[str, Iterable[str]] = "terminal_renderable",
+    render_instruction: Union[Mapping[str, Any], RenderScene, None] = None,
 ) -> RenderValueResult:
 
-    value = kiara.data_registry.get_value(value_id=value_id)
+    value = kiara.data_registry.get_value(value_id=value)
     op_type: RenderValueOperationType = kiara.operation_registry.get_operation_type("render_value")  # type: ignore
 
     ops = op_type.get_render_operations_for_source_type(value.data_type_name)
-    if target_type not in ops.keys():
+
+    if isinstance(target_type, str):
+        target_type = [target_type]
+    match = None
+    for _target_type in target_type:
+        if _target_type not in ops.keys():
+            continue
+        match = ops[_target_type]
+        break
+
+    if not match:
         if not ops:
             msg = f"No render operations registered for source type '{value.data_type_name}'."
         else:
@@ -87,7 +98,7 @@ def render_value(
             f"No render operation for source type '{value.data_type_name}' to target type '{target_type}' registered. {msg}"
         )
 
-    op = ops[target_type]
+    op = match
     result = op.run(
         kiara=kiara, inputs={"value": value, "render_instruction": render_instruction}
     )

@@ -11,11 +11,7 @@ from typing import Any, Mapping, Type, Union
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.info import TypeInfo
 from kiara.models.module import KiaraModuleConfig
-from kiara.models.render_value import (
-    RenderInstruction,
-    RenderMetadata,
-    RenderValueResult,
-)
+from kiara.models.render_value import RenderMetadata, RenderScene, RenderValueResult
 from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
@@ -53,7 +49,7 @@ class RenderValueModule(KiaraModule):
 
         instruction = self.get_config_value("render_instruction_type")
         model_registry = ModelRegistry.instance()
-        instr_model_cls: Type[RenderInstruction] = model_registry.get_model_cls(instruction, required_subclass=RenderInstruction)  # type: ignore
+        instr_model_cls: Type[RenderScene] = model_registry.get_model_cls(instruction, required_subclass=RenderScene)  # type: ignore
 
         data_type_name = instr_model_cls.retrieve_source_type()
         assert data_type_name
@@ -96,11 +92,9 @@ class RenderValueModule(KiaraModule):
         instruction_type = self.get_config_value("render_instruction_type")
         model_registry = ModelRegistry.instance()
         instr_info: TypeInfo = model_registry.all_models.get(instruction_type)  # type: ignore
-        instr_model: Type[RenderInstruction] = instr_info.python_class.get_class()  # type: ignore
+        instr_model: Type[RenderScene] = instr_info.python_class.get_class()  # type: ignore
 
-        render_instruction: RenderInstruction = inputs.get_value_data(
-            "render_instruction"
-        )
+        render_instruction: RenderScene = inputs.get_value_data("render_instruction")
 
         if not issubclass(render_instruction.__class__, instr_model):
             raise KiaraProcessingException(

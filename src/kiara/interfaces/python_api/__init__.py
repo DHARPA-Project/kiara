@@ -7,9 +7,23 @@ import structlog
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    pass
+    from kiara.context import Kiara
 
 logger = structlog.getLogger()
+
+
+class KiaraAPI(object):
+    """Public API for clients
+
+    This class wraps a [Kiara][kiara.context.kiara.Kiara] instance, and allows easy a access to tasks that are
+    typically done by a frontend. The return types of each method are json seriable in most cases.
+
+    Can be extended for special scenarios and augmented with scenario-specific methdos (Jupyter, web-frontend, ...)
+    ."""
+
+    def __init__(self, kiara: "Kiara"):
+
+        self._kiara: Kiara = kiara
 
 
 # class ValueResolver(object):

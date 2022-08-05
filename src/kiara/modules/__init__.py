@@ -456,7 +456,8 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
     def __repr__(self):
         return f"{self.__class__.__name__}(id={self.module_id} module_type={self.module_type_name} input_names={list(self.input_names)} output_names={list(self.output_names)})"
 
-    def create_renderable(self, **config) -> RenderableType:
+    @property
+    def operation(self) -> "Operation":
 
         if self._operation is not None:
             return self._operation
@@ -465,3 +466,7 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
 
         self._operation = Operation.create_from_module(self)
         return self._operation
+
+    def create_renderable(self, **config) -> RenderableType:
+
+        return self.operation.create_renderable(**config)

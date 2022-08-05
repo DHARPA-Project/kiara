@@ -43,7 +43,7 @@ class KiaraRenderer(abc.ABC, Generic[RENDER_SOURCE_TYPE, RENDER_CONFIG]):
     ):
 
         if kiara is None:
-            from kiara import Kiara
+            from kiara.context import Kiara
 
             kiara = Kiara.instance()
         self._kiara: "Kiara" = kiara

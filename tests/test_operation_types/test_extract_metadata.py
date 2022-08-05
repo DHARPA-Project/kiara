@@ -5,7 +5,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 
-from kiara import Kiara
+from kiara.context import Kiara
 from kiara.models.values.value_metadata import ValueMetadata
 from kiara.operations.included_core_operations.metadata import (
     ExtractMetadataOperationType,

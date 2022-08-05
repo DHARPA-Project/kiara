@@ -83,7 +83,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
         all_models = model_registry.get_models_of_type(RenderScene)
 
         result = []
-        for model_id, model_cls_info in all_models.items():
+        for model_id, model_cls_info in all_models.item_infos.items():
             model_cls: Type[RenderScene] = model_cls_info.python_class.get_class()  # type: ignore
             source_type = model_cls.retrieve_source_type()
             supported_target_types = model_cls.retrieve_supported_target_types()

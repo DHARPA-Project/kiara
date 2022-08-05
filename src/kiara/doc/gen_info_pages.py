@@ -3,13 +3,13 @@
 #  Copyright (c) 2022, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
 import mkdocs_gen_files
 import os
+from typing import Mapping
 
 from kiara.context import KiaraContextInfo
 from kiara.defaults import KIARA_RESOURCES_FOLDER
-from kiara.models.info import InfoModelGroup
+from kiara.interfaces.python_api.models.info import ItemInfo
 
 _jinja_env = None
 
@@ -29,11 +29,13 @@ def get_jina_env():
     return _jinja_env
 
 
-def render_item_listing(item_type: str, items: InfoModelGroup, sub_path: str = "info"):
+def render_item_listing(
+    item_type: str, items: Mapping[str, ItemInfo], sub_path: str = "info"
+):
 
     list_template = get_jina_env().get_template("info_listing.j2")
 
-    render_args = {"items": items.get_item_infos(), "item_type": item_type}
+    render_args = {"items": items, "item_type": item_type}
     rendered = list_template.render(**render_args)
 
     path = f"{sub_path}/{item_type}.md"
@@ -57,7 +59,7 @@ def generate_detail_pages(
     for item_type, items_info in all_info.items():
         summary.append(f"* [{item_type}]({item_type}.md)")
         path = render_item_listing(
-            item_type=item_type, items=items_info, sub_path=sub_path
+            item_type=item_type, items=items_info.item_infos, sub_path=sub_path
         )
         pages[item_type] = path
 

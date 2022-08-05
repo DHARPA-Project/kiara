@@ -68,7 +68,7 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
         all_models = model_registry.get_models_of_type(ValueMetadata)
 
         result = []
-        for model_id, model_cls_info in all_models.items():
+        for model_id, model_cls_info in all_models.item_infos.items():
             model_cls: Type[ValueMetadata] = model_cls_info.python_class.get_class()  # type: ignore
             metadata_key = model_cls._metadata_key  # type: ignore
             data_types = model_cls.retrieve_supported_data_types()

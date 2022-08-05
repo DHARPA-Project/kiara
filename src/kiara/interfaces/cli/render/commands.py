@@ -12,7 +12,7 @@ import rich_click as click
 import sys
 from typing import Tuple
 
-from kiara import Kiara
+from kiara.context import Kiara
 from kiara.defaults import KIARA_RESOURCES_FOLDER
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.render.pipeline import JinjaPipelineRenderer

@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-from typing import Dict, Type, Union
+from typing import TYPE_CHECKING, Dict, Type, Union
 
+from kiara.interfaces.python_api.models.info import KiaraModelClassesInfo
 from kiara.models import KiaraModel
-from kiara.models.info import KiaraModelClassesInfo, find_kiara_models
+
+if TYPE_CHECKING:
+    pass
 
 
 class ModelRegistry(object):
@@ -29,7 +32,7 @@ class ModelRegistry(object):
         if self._all_models is not None:
             return self._all_models
 
-        self._all_models = find_kiara_models()
+        self._all_models = KiaraModelClassesInfo.find_kiara_models()
         return self._all_models
 
     def get_model_cls(
@@ -38,7 +41,7 @@ class ModelRegistry(object):
         required_subclass: Union[Type[KiaraModel], None] = None,
     ) -> Type[KiaraModel]:
 
-        model_info = self.all_models.get(kiara_model_id, None)
+        model_info = self.all_models.item_infos.get(kiara_model_id, None)
         if model_info is None:
             raise Exception(
                 f"Can't retrieve model class for id '{kiara_model_id}': id not registered."
@@ -59,7 +62,7 @@ class ModelRegistry(object):
             return self._models_per_package[package_name]
 
         temp = {}
-        for key, info in self.all_models.items():
+        for key, info in self.all_models.item_infos.items():
             if info.context.labels.get("package") == package_name:
                 temp[key] = info
 
@@ -83,7 +86,7 @@ class ModelRegistry(object):
                 sub_classes[model_id] = type_info
 
         classes = KiaraModelClassesInfo(
-            group_alias=f"{model_type.__name__}-submodels", item_infos=sub_classes
+            group_title=f"{model_type.__name__}-submodels", item_infos=sub_classes
         )
         self._sub_models[model_type] = classes
         return classes

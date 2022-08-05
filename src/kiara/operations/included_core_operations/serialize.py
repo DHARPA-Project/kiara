@@ -19,7 +19,7 @@ from kiara.operations import OperationType
 from kiara.utils import log_message
 
 if TYPE_CHECKING:
-    from kiara import KiaraModule
+    from kiara.modules import KiaraModule
 
 
 class DeSerializeDetails(BaseOperationDetails):

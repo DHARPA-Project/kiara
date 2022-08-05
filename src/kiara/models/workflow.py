@@ -9,13 +9,13 @@ from rich.panel import Panel
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Type, Union
 
+from kiara.interfaces.python_api.models.info import InfoItemGroup, ItemInfo
 from kiara.models import KiaraModel
 from kiara.models.documentation import (
     AuthorsMetadataModel,
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.info import InfoModelGroup, ItemInfo
 from kiara.models.module.pipeline import PipelineConfig, PipelineStep
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineInfo
 from kiara.models.module.pipeline.structure import PipelineStructure
@@ -224,7 +224,7 @@ class WorkflowInfo(ItemInfo):
             return table
 
 
-class WorkflowGroupInfo(InfoModelGroup):
+class WorkflowGroupInfo(InfoItemGroup):
 
     _kiara_model_id = "info.workflows"
 
@@ -236,7 +236,7 @@ class WorkflowGroupInfo(InfoModelGroup):
     def create_from_workflows(
         cls,
         *items: "Workflow",
-        group_alias: Union[str, None] = None,
+        group_title: Union[str, None] = None,
         alias_map: Union[None, Mapping[str, uuid.UUID]] = None
     ) -> "WorkflowGroupInfo":
 
@@ -247,7 +247,7 @@ class WorkflowGroupInfo(InfoModelGroup):
         if alias_map is None:
             alias_map = {}
         workflow_group_info = cls.construct(
-            group_alias=group_alias, item_infos=workflow_infos, aliases=alias_map
+            group_title=group_title, item_infos=workflow_infos, aliases=alias_map
         )
         return workflow_group_info
 

@@ -5,7 +5,7 @@ from rich.console import Group, RenderableType
 from rich.markdown import Markdown
 from typing import Any, Dict, List, Mapping, Union
 
-from kiara import Kiara
+from kiara.context import Kiara
 from kiara.exceptions import FailedJobException, InvalidValuesException
 from kiara.interfaces.python_api.utils import create_save_config
 

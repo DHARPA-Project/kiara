@@ -846,7 +846,7 @@ class Value(ValueDetails):
 
         if add_origin_to_property_value:
             if value is None:
-                value = self._data_registry.get_value(value_id=value_id)  # type: ignore
+                value = self._data_registry.get_value(value=value_id)  # type: ignore
 
             if value._is_stored:
                 raise Exception(
@@ -1012,6 +1012,10 @@ class Value(ValueDetails):
 
         return self.get_property_value(property_key=property_key).data
 
+    def get_all_property_data(self) -> Mapping[str, Any]:
+
+        return {k: self.get_property_data(k) for k in self.property_names}
+
     def lookup_self_aliases(self) -> Set[str]:
 
         if not self._data_registry:
@@ -1084,7 +1088,7 @@ class Value(ValueDetails):
                 continue
 
             elif k == "value_status":
-                v = f"[i]-- {attr.value} --[/i]"
+                v: RenderableType = f"[i]-- {attr.value} --[/i]"
             elif k == "value_size":
                 v = format_size(attr)
             else:

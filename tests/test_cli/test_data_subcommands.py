@@ -7,7 +7,7 @@
 
 from click.testing import CliRunner
 
-from kiara import Kiara
+from kiara.context import Kiara
 from kiara.interfaces.cli import cli
 
 

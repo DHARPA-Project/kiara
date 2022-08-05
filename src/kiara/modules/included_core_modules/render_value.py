@@ -30,9 +30,9 @@ class RenderValueModuleConfig(KiaraModuleConfig):
 
         registry = ModelRegistry.instance()
 
-        if value not in registry.all_models.keys():
+        if value not in registry.all_models.item_infos.keys():
             raise ValueError(
-                f"Invalid model type '{value}'. Value model ids: {', '.join(registry.all_models.keys())}."
+                f"Invalid model type '{value}'. Value model ids: {', '.join(registry.all_models.item_infos.keys())}."
             )
 
         return value
@@ -67,7 +67,7 @@ class RenderValueModule(KiaraModule):
                 },
                 "doc": "Instructions/config on how (or what) to render the provided value.",
                 "optional": False,
-                "default": dict,
+                "default": {},
             },
         }
         return inputs

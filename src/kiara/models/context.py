@@ -82,7 +82,7 @@ class ContextSummary(KiaraModel):
         no_of_values = len(self.value_ids)
 
         for value_id in self.value_ids:
-            value = self.kiara_context.data_registry.get_value(value_id=value_id)
+            value = self.kiara_context.data_registry.get_value(value=value_id)
             sum_size = sum_size + value.value_size
             if self.kiara_context.type_registry.is_internal_type(value.data_type_name):
                 if value.data_type_name not in internal_types.keys():
@@ -112,7 +112,7 @@ class ContextSummary(KiaraModel):
         no_of_values = len(self.value_ids)
 
         for alias, value_id in self.aliases.items():
-            value = self.kiara_context.data_registry.get_value(value_id=value_id)
+            value = self.kiara_context.data_registry.get_value(value=value_id)
             sum_size = sum_size + value.value_size
             if self.kiara_context.type_registry.is_internal_type(value.data_type_name):
                 if value.data_type_name not in internal_types.keys():

@@ -8,14 +8,6 @@
 # isort: skip_file
 
 __all__ = [
-    "Kiara",
-    "explain",
-    "KiaraModule",
-    # "Pipeline",
-    # "PipelineStructure",
-    # "PipelineController",
-    # "PipelineModule",
-    # "DataRegistry",
     "get_version",
 ]
 import logging
@@ -25,8 +17,6 @@ import sys
 import structlog
 import typing
 
-from .context import Kiara, explain  # noqa
-from .modules import KiaraModule  # noqa
 from .utils.class_loading import KiaraEntryPointItem, find_kiara_model_classes_under
 
 try:

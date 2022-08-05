@@ -9,12 +9,12 @@ import os
 import shutil
 from typing import Any, Mapping, Type
 
-from kiara import KiaraModule
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.filesystem import FileBundle, FileModel
 from kiara.models.values.value import SerializedData, ValueMap
 from kiara.modules import (
     DEFAULT_NO_IDEMPOTENT_MODULE_CHARACTERISTICS,
+    KiaraModule,
     ModuleCharacteristics,
     ValueSetSchema,
 )

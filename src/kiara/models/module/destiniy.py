@@ -10,8 +10,8 @@ from pydantic import Field, PrivateAttr
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
 from kiara.defaults import SpecialValue
-from kiara.models.module import KiaraModuleClass
 from kiara.models.module.manifest import Manifest
+from kiara.models.python_class import KiaraModuleClass
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries.ids import ID_REGISTRY
 

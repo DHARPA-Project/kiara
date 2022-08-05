@@ -9,7 +9,6 @@ from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.events.pipeline import ChangedValue, PipelineEvent
-from kiara.models.module import KiaraModuleClass
 from kiara.models.module.jobs import ExecutionContext, JobConfig
 from kiara.models.module.pipeline import (
     PipelineConfig,
@@ -21,6 +20,7 @@ from kiara.models.module.pipeline import (
 )
 from kiara.models.module.pipeline.controller import SinglePipelineController
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineInfo
+from kiara.models.python_class import KiaraModuleClass
 from kiara.models.values.value import ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.models.workflow import WorkflowDetails, WorkflowInfo, WorkflowState

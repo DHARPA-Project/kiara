@@ -9,16 +9,18 @@ import structlog
 import sys
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set, Type, Union
 
-from kiara.models.module import KiaraModuleClass
+from kiara.interfaces.python_api.models.info import (
+    OperationTypeClassesInfo,
+    OperationTypeInfo,
+)
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import (
     ManifestOperationConfig,
     Operation,
     OperationConfig,
-    OperationTypeClassesInfo,
-    OperationTypeInfo,
     PipelineOperationConfig,
 )
+from kiara.models.python_class import KiaraModuleClass
 from kiara.operations import OperationType
 from kiara.utils import log_exception
 
@@ -111,7 +113,7 @@ class OperationRegistry(object):
         md = self._operation_type_metadata.get(type_name, None)
         if md is None:
             md = OperationTypeInfo.create_from_type_class(
-                type_cls=self.operation_type_classes[type_name]
+                kiara=self._kiara, type_cls=self.operation_type_classes[type_name]
             )
             self._operation_type_metadata[type_name] = md
         return self._operation_type_metadata[type_name]

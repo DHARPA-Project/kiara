@@ -18,10 +18,11 @@ from slugify import slugify
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
-from kiara.models.module import KiaraModuleClass, KiaraModuleConfig
+from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.jobs import ExecutionContext
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.pipeline.value_refs import StepValueAddress
+from kiara.models.python_class import KiaraModuleClass
 from kiara.utils import find_free_id, is_jupyter
 from kiara.utils.files import get_data_from_file
 from kiara.utils.json import orjson_dumps

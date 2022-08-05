@@ -4,11 +4,10 @@ from pathlib import Path
 from pydantic import BaseModel, Field, validator
 from typing import Any, Dict, Iterable, List, Mapping, Union
 
-from kiara import KiaraModule
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.values.value import ValueMap
-from kiara.modules import ValueSetSchema
+from kiara.modules import KiaraModule, ValueSetSchema
 
 
 class DataExportResult(BaseModel):

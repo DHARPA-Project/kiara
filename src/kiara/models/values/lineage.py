@@ -2,10 +2,12 @@
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.jupyter import JupyterMixin
 from rich.tree import Tree
-from typing import Any, Union
+from typing import TYPE_CHECKING, Any, Union
 
-from kiara.context import Kiara
 from kiara.models.values.value import ORPHAN, Value, ValuePedigree
+
+if TYPE_CHECKING:
+    from kiara.context import Kiara
 
 COLOR_LIST = [
     "green",
@@ -22,7 +24,7 @@ COLOR_LIST = [
 
 
 def fill_lineage_tree(
-    kiara: Kiara,
+    kiara: "Kiara",
     pedigree: ValuePedigree,
     node: Union[Tree, None] = None,
     include_ids: bool = False,
@@ -68,7 +70,7 @@ class ValueLineage(JupyterMixin):
 
         pass
 
-    def __init__(self, kiara: Kiara, value: Value):
+    def __init__(self, kiara: "Kiara", value: Value):
 
         self._value: Value = value
         self._kiara: Kiara = kiara

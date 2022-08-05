@@ -20,7 +20,7 @@ import tempfile
 import uuid
 from pathlib import Path
 
-from kiara import Kiara
+from kiara.context import Kiara
 from kiara.context.config import KiaraConfig
 from kiara.interfaces.python_api.batch import BatchOperation
 

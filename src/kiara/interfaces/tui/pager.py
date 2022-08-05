@@ -5,7 +5,7 @@ from textual.reactive import Reactive
 from textual.widget import Widget
 from typing import Any, Dict, Mapping, Union
 
-from kiara import Kiara
+from kiara.context import Kiara
 from kiara.models.module.operation import Operation
 from kiara.models.render_value import RenderMetadata
 from kiara.models.values.value import Value

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # import rich_click as click
 
-# from kiara import Kiara
+# from kiara.context import Kiara
 # from kiara.service.rest import KiaraAPI
 
 

@@ -5,15 +5,16 @@ from pydantic import Field
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
-from kiara.models.module import KiaraModuleClass
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import (
     BaseOperationDetails,
+    Filter,
     ManifestOperationConfig,
     Operation,
     OperationConfig,
 )
 from kiara.models.module.pipeline import PipelineConfig
+from kiara.models.python_class import KiaraModuleClass
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules.included_core_modules.filter import FilterModule
 from kiara.operations import OperationType
@@ -174,61 +175,196 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
         result = FilterOperationDetails.create_operation_details(**details)
         return result
 
-    def find_filter_operations_for_data_type(
-        self, data_type: str
-    ) -> Dict[str, Operation]:
+    # def find_filter_operations_for_data_type(
+    #     self, data_type: str
+    # ) -> Dict[str, Operation]:
+    #
+    #     result = {}
+    #     for op in self.operations.values():
+    #         details: FilterOperationDetails = op.operation_details  # type: ignore
+    #         if details.data_type == data_type:
+    #             result[details.filter_name] = op
+    #
+    #     return result
 
-        result = {}
-        for op in self.operations.values():
-            details: FilterOperationDetails = op.operation_details  # type: ignore
-            if details.data_type == data_type:
-                result[details.filter_name] = op
+    def get_filter(self, data_type: str, filter_name: str) -> Filter:
 
-        return result
+        try:
+            op = self._kiara.operation_registry.get_operation(operation_id=filter_name)
+        except Exception:
+            op_id = f"{data_type}_filter.{filter_name}"
+            op = self.operations.get(op_id, None)  # type: ignore
+            if op is None:
+                raise Exception(
+                    f"No filter operation '{filter_name}' available for type '{data_type}'."
+                )
 
-    def get_filter(self, data_type: str, filter_name: str) -> Operation:
+        inp_match = []
+        for input_name, schema in op.inputs_schema.items():
+            # TODO: check lineage/profiles
+            if schema.type == data_type:
+                inp_match.append(input_name)
 
-        op_id = f"{data_type}_filter.{filter_name}"
-        op = self.operations.get(op_id, None)
-        if op is None:
+        if not inp_match:
             raise Exception(
-                f"No filter operation '{filter_name}' available for type '{data_type}'."
+                f"Can't retrieve filter with name '{filter_name}' for data type: '{data_type}': input fields for operation '{op.operation_id}' don't match."
             )
+        if len(inp_match) > 1:
+            if "value" in inp_match:
+                inp_match = ["value"]
+            elif data_type in inp_match:
+                inp_match = [data_type]
+            else:
+                raise Exception(
+                    f"Can't retrieve filter with name '{filter_name}' for data type: '{data_type}', operation '{op.operation_id}' has multiple potential input fields: {', '.join(inp_match)}."
+                )
 
-        return op
+        input_field = inp_match[0]
 
-    def create_filter_operation(
-        self, data_type: str, filters: Union[Iterable[str], Mapping[str, str]]
-    ) -> Operation:
-        """Create a filter pipeline operation object for a specific data type.
+        outp_match = []
+        for output_name, schema in op.outputs_schema.items():
+            # TODO: check lineage/profiles
+            if schema.type == data_type:
+                outp_match.append(output_name)
+
+        if not outp_match:
+            raise Exception(
+                f"Can't retrieve filter with name '{filter_name}' for data type: '{data_type}': output fields for operation '{op.operation_id}' don't match."
+            )
+        if len(outp_match) > 1:
+            if "value" in outp_match:
+                outp_match = ["value"]
+            elif data_type in outp_match:
+                outp_match = [data_type]
+            else:
+                raise Exception(
+                    f"Can't retrieve filter with name '{filter_name}' for data type: '{data_type}', operation '{op.operation_id}' has multiple potential output fields: {', '.join(outp_match)}."
+                )
+
+        output_field = outp_match[0]
+        filter = Filter.construct(
+            operation=op,
+            input_name=input_field,
+            output_name=output_field,
+            data_type=data_type,
+        )
+        return filter
+
+    def assemble_filter_pipeline_config(
+        self,
+        data_type: str,
+        filters: Union[str, Iterable[str], Mapping[str, str]],
+        endpoint: Union[None, Manifest, str] = None,
+        endpoint_input_field: Union[str, None] = None,
+        endpoint_step_id: Union[str, None] = None,
+        extra_input_aliases: Union[None, Mapping[str, str]] = None,
+        extra_output_aliases: Union[None, Mapping[str, str]] = None,
+    ) -> PipelineConfig:
+        """Assemble a (pipeline) module config to filter values of a specific data type.
+
+        Optionally, a module that uses the filtered dataset as input can be specified.
+
+        # TODO: document filter names
+        For the 'filters' argument, the accepted inputs are:
+        - a string, in which case a single-step pipeline will be created, with the string referencing the operation id or filter
+        - a list of strings: in which case a multi-step pipeline will be created, the step_ids will be calculated automatically
+        - a map of string pairs: the keys are step ids, the values operation ids or filter names
 
         Arguments:
-            filters: a list of filter names, or a map of step_id/filter name
+            data_type: the type of the data to filter
+            filters: a list of operation ids or filter names (and potentiall step_ids if type is a mapping)
+            endpoint: optional module to put as last step in the created pipeline
+            endpoing_input_field: field name of the input that will receive the filtered value
+            endpoint_step_id: id to use for the endpoint step (module type name will be used if not provided)
+            extra_output_aliases: extra output aliases to add to the pipeline config
+
+        Returns:
+            the (pipeline) module configuration of the filter pipeline
         """
 
+        if extra_input_aliases:
+            raise NotImplementedError("Extra input aliases not supported yet.")
+
         steps: List[Mapping[str, Any]] = []
-        last_filter = None
+        last_filter_id: Union[str, None] = None
+        last_filter_output_name: Union[str, None] = None
         input_aliases: Dict[str, str] = {}
+        output_aliases: Dict[str, str] = {}
+
+        doc = f"Auto generated filter operation for type '{data_type}'"
+
+        if isinstance(filters, str):
+            filters = {filters: filters}
 
         if not isinstance(filters, Mapping):
             _filters = {}
-            step_ids: List[str] = []
+            _step_ids: List[str] = []
             for filter_name in filters:
-                step_id = find_free_id(stem=filter_name, current_ids=step_ids)
+                step_id = find_free_id(stem=filter_name, current_ids=_step_ids)
                 _filters[step_id] = filter_name
             filters = _filters
 
         for filter_name, step_id in filters.items():
             if not input_aliases:
                 input_aliases[f"{filter_name}.value"] = "value"
-            op = self.get_filter(data_type=data_type, filter_name=filter_name)
-            step_data = {"module_type": op.operation_id, "step_id": step_id}
-            if last_filter:
-                step_data["input_links"] = {"value": f"{last_filter}.value"}
-            last_filter = step_id
+            filter = self.get_filter(data_type=data_type, filter_name=filter_name)
+            step_data = {
+                "module_type": filter.operation.operation_id,
+                "step_id": step_id,
+            }
+            if last_filter_id:
+                step_data["input_links"] = {
+                    filter.input_name: f"{last_filter_id}.{last_filter_output_name}"
+                }
+            last_filter_id = step_id
+            last_filter_output_name = filter.output_name
             steps.append(step_data)
+            output_aliases[f"{step_id}.value"] = f"{step_id}__filtered"
 
-        output_aliases = {f"{last_filter}.value": "value"}
+        output_aliases[f"{last_filter_id}.{last_filter_output_name}"] = "filtered_value"
+
+        if endpoint:
+            endpoint_module = self._kiara.module_registry.create_module(
+                manifest=endpoint
+            )
+            if endpoint_input_field is None:
+                matches = []
+                for field_name, schema in endpoint_module.inputs_schema.items():
+                    # TODO: check profiles/lineage
+                    if schema.type == data_type:
+                        matches.append(field_name)
+                if not matches:
+                    raise Exception(
+                        f"Can't assemble filter operation: no potential input field of type {data_type} for endpoint module found."
+                    )
+                elif len(matches) > 1:
+                    raise Exception(
+                        f"Can't assemble filter operation: multiple potential input fields of type {data_type} for endpoint module found: {', '.join(matches)}"
+                    )
+                endpoint_input_field = matches[0]
+
+            if not endpoint_step_id:
+                endpoint_step_id = find_free_id(
+                    stem=endpoint_module.module_type_name, current_ids=filters.values()
+                )
+            step_data = {
+                "module_type": endpoint_module.module_type_name,
+                "module_config": endpoint_module.config.dict(),
+                "step_id": endpoint_step_id,
+            }
+            step_data["input_links"] = {
+                endpoint_input_field: {f"{last_filter_id}.{last_filter_output_name}"}
+            }
+            # for field_name in endpoint_module.output_names:
+            #     output_aliases[f"{endpoint_step_id}.{field_name}"] = f"endpoint__{field_name}"
+            doc = f"{doc} and endpoint module '{endpoint_module.module_type_name}'."
+            steps.append(step_data)
+        else:
+            doc = f"{doc}."
+
+        if extra_output_aliases:
+            for k, v in extra_output_aliases.items():
+                output_aliases[k] = v
 
         pipeline_config = PipelineConfig.from_config(
             pipeline_name="_filter_pipeline",
@@ -236,17 +372,32 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
                 "steps": steps,
                 "input_aliases": input_aliases,
                 "output_aliases": output_aliases,
+                "doc": doc,
             },
+        )
+        return pipeline_config
+
+    def create_filter_operation(
+        self,
+        data_type: str,
+        filters: Union[Iterable[str], Mapping[str, str]],
+        endpoint: Union[None, Manifest, str] = None,
+        endpoint_input_field: Union[str, None] = None,
+        endpoint_step_id: Union[str, None] = None,
+    ) -> Operation:
+
+        pipeline_config = self.assemble_filter_pipeline_config(
+            data_type=data_type,
+            filters=filters,
+            endpoint=endpoint,
+            endpoint_input_field=endpoint_input_field,
+            endpoint_step_id=endpoint_step_id,
         )
 
         manifest = Manifest(
             module_type="pipeline", module_config=pipeline_config.dict()
         )
         module = self._kiara.create_module(manifest=manifest)
-
-        doc = DocumentationMetadataModel.create(
-            f"Auto generated filter operation for type '{data_type}'."
-        )
 
         op_details = PipelineOperationDetails.create_operation_details(
             operation_id=module.config.pipeline_name,
@@ -261,6 +412,6 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
             operation_details=op_details,
             module_details=KiaraModuleClass.from_module(module),
             metadata={},
-            doc=doc,
+            doc=pipeline_config.doc,
         )
         return operation

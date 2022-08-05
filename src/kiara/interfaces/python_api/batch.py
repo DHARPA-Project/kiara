@@ -8,7 +8,7 @@ import uuid
 from pydantic import BaseModel, Field, PrivateAttr, root_validator, validator
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
 
-from kiara import Kiara
+from kiara.context import Kiara
 from kiara.interfaces.python_api.utils import create_save_config
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.module.pipeline.controller import SinglePipelineBatchController

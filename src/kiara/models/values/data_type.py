@@ -25,7 +25,7 @@ from kiara.models.python_class import PythonClass
 from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
-    from kiara import Kiara
+    from kiara.context import Kiara
 
 
 class DataTypeClassInfo(TypeInfo[DataType]):
@@ -147,14 +147,14 @@ class DataTypeClassesInfo(TypeInfoModelGroup):
     @classmethod
     def create_from_type_items(
         cls,
-        group_alias: Union[str, None] = None,
+        group_title: Union[str, None] = None,
         **items: Type,
     ) -> "TypeInfoModelGroup":
 
         type_infos = {
             k: cls.base_info_class().create_from_type_class(v) for k, v in items.items()  # type: ignore
         }
-        data_types_info = cls.construct(group_alias=group_alias, item_infos=type_infos)  # type: ignore
+        data_types_info = cls.construct(group_alias=group_title, item_infos=type_infos)  # type: ignore
         return data_types_info
 
     @classmethod

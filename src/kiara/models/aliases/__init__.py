@@ -105,7 +105,7 @@ class AliasValueMap(ValueMap):
         if item.assoc_value is None:
             raise Exception(f"No value associated for field '{field_name}'.")
 
-        return self._data_registry.get_value(value_id=item.assoc_value)
+        return self._data_registry.get_value(value=item.assoc_value)
 
     def get_value_id(self, field_name: str) -> uuid.UUID:
 
@@ -305,7 +305,7 @@ class AliasValueMap(ValueMap):
 
         value: Union[Value, None] = None
         if value_id is not None:
-            value = self._data_registry.get_value(value_id=value_id)
+            value = self._data_registry.get_value(value=value_id)
             assert value is not None
             assert value.value_id == value_id
 

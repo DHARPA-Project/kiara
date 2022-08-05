@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
 
-from kiara import Kiara
+from kiara.context import Kiara
 
 kiara = Kiara.instance()
 

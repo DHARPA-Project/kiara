@@ -11,11 +11,11 @@ import structlog
 import sys
 from typing import Iterable, Tuple, Union
 
-from kiara import Kiara
+from kiara.context import Kiara
+from kiara.interfaces.python_api import KiaraAPI
+from kiara.interfaces.python_api.models.info import RENDER_FIELDS, ValueInfo, ValuesInfo
 from kiara.interfaces.tui.pager import PagerApp
 from kiara.models.module.operation import Operation
-from kiara.models.values.info import RENDER_FIELDS, ValueInfo, ValuesInfo
-from kiara.models.values.matchers import ValueMatcher
 from kiara.operations.included_core_operations.filter import FilterOperationType
 from kiara.operations.included_core_operations.render_value import (
     RenderValueOperationType,
@@ -128,7 +128,7 @@ def list_values(
 ):
     """List all data items that are stored in kiara."""
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
 
     if include_internal:
         all_values = True
@@ -137,22 +137,9 @@ def list_values(
     if data_type:
         matcher_config["data_types"] = data_type
 
-    matcher = ValueMatcher.create_matcher(
-        kiara=kiara_obj,
-        allow_internal=include_internal,
-        data_types=data_type,
-        has_alias=not all_values,
+    values = kiara_api.list_values(
+        allow_internal=include_internal, data_types=data_type, has_alias=not all_values
     )
-
-    # if not all_values:
-    #     alias_registry = kiara_obj.alias_registry
-    #     value_ids = [v.value_id for v in alias_registry.aliases.values()]
-    # else:
-    #     data_registry = kiara_obj.data_registry
-    #     data_registry.retrieve_all_available_value_ids()
-    #     value_ids = kiara_obj.data_registry.retrieve_all_available_value_ids()
-
-    values = kiara_obj.data_registry.find_values(matcher=matcher)
 
     list_by_alias = True
 
@@ -178,7 +165,9 @@ def list_values(
     if serialized:
         render_fields.append("serialize_details")
 
-    values_info_model = ValuesInfo.create_from_values(kiara_obj, *values.values())
+    values_info_model = ValuesInfo.create_from_instances(
+        kiara=kiara_api.context, instances={str(k): v for k, v in values.items()}
+    )
 
     render_config = {
         "render_type": "terminal",
@@ -286,7 +275,7 @@ def explain_value(
         title = "Value details"
 
     v_infos = (
-        ValueInfo.create_from_value(kiara=kiara_obj, value=v) for v in all_values
+        ValueInfo.create_from_instance(kiara=kiara_obj, instance=v) for v in all_values
     )
 
     terminal_print_model(*v_infos, format=format, in_panel=title, **render_config)
@@ -307,7 +296,7 @@ def load_value(ctx, value: str, single_page: bool):
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     try:
-        _value = kiara_obj.data_registry.get_value(value_id=value)
+        _value = kiara_obj.data_registry.get_value(value=value)
     except Exception as e:
         terminal_print()
         terminal_print(f"[red]Error[/red]: {e}")
@@ -378,6 +367,7 @@ def filter_value(
     save: Iterable[str],
     help: bool,
 ):
+    """Load a value, fiter it, then display."""
 
     save_results = _validate_save_option(save)
 
@@ -389,7 +379,7 @@ def filter_value(
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     try:
-        _value = kiara_obj.data_registry.get_value(value_id=value)
+        _value = kiara_obj.data_registry.get_value(value=value)
     except Exception as e:
         terminal_print()
         terminal_print(f"[red]Error[/red]: {e}")

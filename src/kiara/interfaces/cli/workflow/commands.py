@@ -10,7 +10,7 @@ import rich_click as click
 import structlog
 from typing import Tuple, Union
 
-from kiara import Kiara
+from kiara.context import Kiara
 from kiara.interfaces.python_api.workflow import Workflow
 from kiara.models.workflow import WorkflowGroupInfo
 from kiara.utils.cli import dict_from_cli_args, terminal_print, terminal_print_model

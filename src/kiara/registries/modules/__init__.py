@@ -11,17 +11,20 @@ import structlog
 from multiformats import CID
 from typing import TYPE_CHECKING, Dict, Iterable, Mapping, Type, Union
 
-from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
+from kiara.interfaces.python_api.models.info import ModuleTypeInfo, ModuleTypesInfo
 from kiara.models.module.manifest import Manifest
 
 if TYPE_CHECKING:
+    from kiara.context import Kiara
     from kiara.modules import KiaraModule
 
 logget = structlog.getLogger()
 
 
 class ModuleRegistry(object):
-    def __init__(self):
+    def __init__(self, kiara: "Kiara"):
+
+        self._kiara: Kiara = kiara
 
         self._cached_modules: Dict[str, Dict[CID, KiaraModule]] = {}
 
@@ -30,7 +33,7 @@ class ModuleRegistry(object):
         module_classes = find_all_kiara_modules()
 
         self._module_classes: Mapping[str, Type[KiaraModule]] = {}
-        self._module_class_metadata: Dict[str, KiaraModuleTypeInfo] = {}
+        self._module_class_metadata: Dict[str, ModuleTypeInfo] = {}
 
         for k, v in module_classes.items():
             self._module_classes[k] = v
@@ -49,19 +52,19 @@ class ModuleRegistry(object):
     def get_module_type_names(self) -> Iterable[str]:
         return self._module_classes.keys()
 
-    def get_module_type_metadata(self, type_name: str) -> KiaraModuleTypeInfo:
+    def get_module_type_metadata(self, type_name: str) -> ModuleTypeInfo:
 
         md = self._module_class_metadata.get(type_name, None)
         if md is None:
-            md = KiaraModuleTypeInfo.create_from_type_class(
-                self.get_module_class(module_type=type_name)
+            md = ModuleTypeInfo.create_from_type_class(
+                type_cls=self.get_module_class(module_type=type_name), kiara=self._kiara
             )
             self._module_class_metadata[type_name] = md
         return self._module_class_metadata[type_name]
 
     def get_context_metadata(
         self, alias: Union[str, None] = None, only_for_package: Union[str, None] = None
-    ) -> ModuleTypeClassesInfo:
+    ) -> ModuleTypesInfo:
 
         result = {}
         for type_name in self.module_types.keys():
@@ -72,7 +75,7 @@ class ModuleRegistry(object):
             else:
                 result[type_name] = md
 
-        return ModuleTypeClassesInfo.construct(group_alias=alias, item_infos=result)  # type: ignore
+        return ModuleTypesInfo.construct(group_alias=alias, item_infos=result)  # type: ignore
 
     def create_module(self, manifest: Union[Manifest, str]) -> "KiaraModule":
         """Create a [KiaraModule][kiara.module.KiaraModule] object from a module configuration.

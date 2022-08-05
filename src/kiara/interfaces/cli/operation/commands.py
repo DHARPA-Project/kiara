@@ -10,9 +10,12 @@ import rich_click as click
 import sys
 import typing
 
-from kiara import Kiara
+from kiara.context import Kiara
+from kiara.interfaces.python_api.models.info import (
+    OperationGroupInfo,
+    OperationTypeClassesInfo,
+)
 from kiara.interfaces.python_api.operation import KiaraOperation
-from kiara.models.module.operation import OperationGroupInfo, OperationTypeClassesInfo
 from kiara.utils.cli import output_format_option, terminal_print_model
 
 
@@ -55,7 +58,7 @@ def list_types(ctx, full_doc, format: str, filter: typing.Iterable[str]):
         op_types = temp
 
     operation_types_info = OperationTypeClassesInfo.create_from_type_items(
-        group_alias="all_items", **op_types
+        kiara=kiara_obj, group_title="all_items", **op_types
     )
 
     terminal_print_model(operation_types_info, format=format, in_panel=title)
@@ -118,7 +121,7 @@ def list_operations(
         operations = temp
 
     ops_info = OperationGroupInfo.create_from_operations(
-        kiara=kiara_obj, group_alias=title, **operations
+        kiara=kiara_obj, group_title=title, **operations
     )
 
     terminal_print_model(

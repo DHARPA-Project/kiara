@@ -7,7 +7,7 @@
 
 import pytest
 
-from kiara import Kiara
+from kiara.context import Kiara
 from kiara.exceptions import InvalidValuesException
 
 

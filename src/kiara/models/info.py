@@ -34,7 +34,6 @@ from kiara.models.documentation import (
     DocumentationMetadataModel,
 )
 from kiara.models.python_class import PythonClass
-from kiara.utils.class_loading import find_all_kiara_model_classes
 from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
@@ -174,13 +173,13 @@ class TypeInfoModelGroup(InfoModelGroup, Mapping[str, TypeInfo]):
 
     @classmethod
     def create_from_type_items(
-        cls, group_alias: Union[str, None] = None, **items: Type
+        cls, group_title: Union[str, None] = None, **items: Type
     ) -> "TypeInfoModelGroup":
 
         type_infos = {
             k: cls.base_info_class().create_from_type_class(v) for k, v in items.items()
         }
-        data_types_info = cls.construct(group_alias=group_alias, item_infos=type_infos)  # type: ignore
+        data_types_info = cls.construct(group_title=group_title, item_infos=type_infos)  # type: ignore
         return data_types_info
 
     def get_item_infos(self) -> Mapping[str, TypeInfo]:
@@ -277,24 +276,3 @@ class KiaraModelClassesInfo(TypeInfoModelGroup):
     item_infos: Mapping[str, KiaraModelTypeInfo] = Field(
         description="The value metadata info instances for each type."
     )
-
-
-def find_kiara_models(
-    alias: Union[str, None] = None, only_for_package: Union[str, None] = None
-) -> KiaraModelClassesInfo:
-
-    models = find_all_kiara_model_classes()
-
-    group: KiaraModelClassesInfo = KiaraModelClassesInfo.create_from_type_items(group_alias=alias, **models)  # type: ignore
-
-    if only_for_package:
-        temp = {}
-        for key, info in group.items():
-            if info.context.labels.get("package") == only_for_package:
-                temp[key] = info
-
-        group = KiaraModelClassesInfo.construct(
-            group_id=group.instance_id, group_alias=group.group_alias, item_infos=temp  # type: ignore
-        )
-
-    return group

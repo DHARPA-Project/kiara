@@ -10,11 +10,11 @@ from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Type, Union
 if TYPE_CHECKING:
     from rich.table import Table
 
-    from kiara import KiaraModule
     from kiara.data_types import DataType
     from kiara.models.module.jobs import ActiveJob
     from kiara.models.module.manifest import Manifest
     from kiara.models.values.value import Value
+    from kiara.modules import KiaraModule
 
 
 class KiaraException(Exception):

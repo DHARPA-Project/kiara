@@ -16,15 +16,21 @@ from kiara.context.config import KiaraConfig, KiaraContextConfig, KiaraRuntimeCo
 from kiara.data_types import DataType
 from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
 from kiara.interfaces import get_console
+from kiara.interfaces.python_api.models.info import (
+    DataTypeClassesInfo,
+    InfoItemGroup,
+    ItemInfo,
+    KiaraModelClassesInfo,
+    ModuleTypeInfo,
+    ModuleTypesInfo,
+    OperationGroupInfo,
+    OperationTypeClassesInfo,
+)
 from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
 from kiara.models import KiaraModel
 from kiara.models.context import ContextSummary
-from kiara.models.info import InfoModelGroup, ItemInfo, KiaraModelClassesInfo
-from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
 from kiara.models.module.manifest import Manifest
-from kiara.models.module.operation import OperationGroupInfo, OperationTypeClassesInfo
 from kiara.models.runtime_environment import RuntimeEnvironment
-from kiara.models.values.data_type import DataTypeClassesInfo
 from kiara.models.values.value import ValueMap
 from kiara.registries import KiaraArchive
 from kiara.registries.aliases import AliasRegistry
@@ -51,14 +57,16 @@ if TYPE_CHECKING:
 logger = structlog.getLogger()
 
 
-def explain(item: Any):
+def explain(item: Any, kiara: Union[None, "Kiara"] = None):
     """Pretty print information about an item on the terminal."""
 
     if isinstance(item, type):
         from kiara.modules import KiaraModule
 
         if issubclass(item, KiaraModule):
-            item = KiaraModuleTypeInfo.create_from_type_class(type_cls=item)
+            if kiara is None:
+                kiara = Kiara.instance()
+            item = ModuleTypeInfo.create_from_type_class(type_cls=item, kiara=kiara)
 
     console = get_console()
     console.print(item)
@@ -146,7 +154,7 @@ class Kiara(object):
         self._type_registry: TypeRegistry = TypeRegistry(self)
         self._data_registry: DataRegistry = DataRegistry(kiara=self)
         self._job_registry: JobRegistry = JobRegistry(kiara=self)
-        self._module_registry: ModuleRegistry = ModuleRegistry()
+        self._module_registry: ModuleRegistry = ModuleRegistry(kiara=self)
         self._operation_registry: OperationRegistry = OperationRegistry(kiara=self)
 
         self._kiara_model_registry: ModelRegistry = ModelRegistry.instance()
@@ -476,7 +484,7 @@ class KiaraContextInfo(KiaraModel):
         description="Whether this context is filtered to only include information included in a specific Python package."
     )
     data_types: DataTypeClassesInfo = Field(description="The included data types.")
-    module_types: ModuleTypeClassesInfo = Field(
+    module_types: ModuleTypesInfo = Field(
         description="The included kiara module types."
     )
     kiara_model_types: KiaraModelClassesInfo = Field(
@@ -502,7 +510,7 @@ class KiaraContextInfo(KiaraModel):
     def get_info(self, item_type: str, item_id: str) -> ItemInfo:
 
         if "data_type" == item_type or "data_types" == item_type:
-            group_info: InfoModelGroup = self.data_types
+            group_info: InfoItemGroup = self.data_types
         elif "module" in item_type:
             group_info = self.module_types
         # elif "metadata" in item_type:
@@ -526,9 +534,9 @@ class KiaraContextInfo(KiaraModel):
             )
         return group_info[item_id]
 
-    def get_all_info(self, skip_empty_types: bool = True) -> Dict[str, InfoModelGroup]:
+    def get_all_info(self, skip_empty_types: bool = True) -> Dict[str, InfoItemGroup]:
 
-        result: Dict[str, InfoModelGroup] = {}
+        result: Dict[str, InfoItemGroup] = {}
         if self.data_types or not skip_empty_types:
             result["data_types"] = self.data_types
         if self.module_types or not skip_empty_types:

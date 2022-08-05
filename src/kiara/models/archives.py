@@ -9,12 +9,17 @@ from rich.syntax import Syntax
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Iterable, List, Literal, Mapping, Type, Union
 
+from kiara.interfaces.python_api.models.info import (
+    InfoItemGroup,
+    ItemInfo,
+    TypeInfo,
+    TypeInfoItemGroup,
+)
 from kiara.models.documentation import (
     AuthorsMetadataModel,
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.info import InfoModelGroup, ItemInfo, TypeInfo, TypeInfoModelGroup
 from kiara.models.python_class import PythonClass
 from kiara.registries import ArchiveDetails, KiaraArchive
 from kiara.utils.json import orjson_dumps
@@ -28,7 +33,9 @@ class ArchiveTypeInfo(TypeInfo):
     _kiara_model_id = "info.archive_type"
 
     @classmethod
-    def create_from_type_class(self, type_cls: Type[KiaraArchive]) -> "ArchiveTypeInfo":
+    def create_from_type_class(
+        self, type_cls: Type[KiaraArchive], kiara: "Kiara"
+    ) -> "ArchiveTypeInfo":
 
         authors_md = AuthorsMetadataModel.from_class(type_cls)
         doc = DocumentationMetadataModel.from_class_doc(type_cls)
@@ -86,7 +93,7 @@ class ArchiveTypeInfo(TypeInfo):
         return table
 
 
-class ArchiveTypeClassesInfo(TypeInfoModelGroup):
+class ArchiveTypeClassesInfo(TypeInfoItemGroup):
 
     _kiara_model_id = "info.archive_types"
 
@@ -95,12 +102,21 @@ class ArchiveTypeClassesInfo(TypeInfoModelGroup):
         return ArchiveTypeInfo
 
     type_name: Literal["archive_type"] = "archive_type"
-    item_infos: Mapping[str, ArchiveTypeInfo] = Field(
+    item_infos: Mapping[str, ArchiveTypeInfo] = Field(  # type: ignore
         description="The archive info instances for each type."
     )
 
 
 class ArchiveInfo(ItemInfo):
+    @classmethod
+    def base_instance_class(cls) -> Type[KiaraArchive]:
+        return KiaraArchive
+
+    @classmethod
+    def create_from_instance(cls, kiara: "Kiara", instance: KiaraArchive, **kwargs):
+
+        return cls.create_from_archive(kiara=kiara, archive=instance, **kwargs)
+
     @classmethod
     def create_from_archive(
         cls,
@@ -109,7 +125,9 @@ class ArchiveInfo(ItemInfo):
         archive_aliases: Union[Iterable[str], None] = None,
     ):
 
-        archive_type_info = ArchiveTypeInfo.create_from_type_class(archive.__class__)
+        archive_type_info = ArchiveTypeInfo.create_from_type_class(
+            archive.__class__, kiara=kiara
+        )
         if archive_aliases is None:
             archive_aliases = []
         else:
@@ -143,7 +161,7 @@ class ArchiveInfo(ItemInfo):
     )
 
 
-class ArchiveGroupInfo(InfoModelGroup):
+class ArchiveGroupInfo(InfoItemGroup):
 
     _kiara_model_id = "info.archives"
 
@@ -153,7 +171,7 @@ class ArchiveGroupInfo(InfoModelGroup):
 
     @classmethod
     def create_from_context(
-        cls, kiara: "Kiara", group_alias: Union[str, None] = None
+        cls, kiara: "Kiara", group_title: Union[str, None] = None
     ) -> "ArchiveGroupInfo":
 
         archives = {}
@@ -162,7 +180,7 @@ class ArchiveGroupInfo(InfoModelGroup):
                 kiara=kiara, archive=archive, archive_aliases=aliases
             )
 
-        info = cls(group_alias=group_alias, item_infos=archives)
+        info = cls(group_title=group_title, item_infos=archives)
         return info
 
     item_infos: Mapping[str, ArchiveInfo] = Field(

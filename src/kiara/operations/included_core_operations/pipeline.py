@@ -28,7 +28,7 @@ from kiara.utils.class_loading import find_all_kiara_pipeline_paths
 from kiara.utils.pipelines import check_doc_sidecar, get_pipeline_details_from_path
 
 if TYPE_CHECKING:
-    from kiara import Kiara
+    from kiara.context import Kiara
 
 logger = structlog.getLogger()
 

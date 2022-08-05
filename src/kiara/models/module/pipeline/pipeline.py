@@ -16,7 +16,6 @@ from rich.panel import Panel
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
 
-from kiara.context import DataRegistry
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID, SpecialValue
 from kiara.exceptions import InvalidValuesException
 from kiara.models.aliases import AliasValueMap
@@ -38,6 +37,7 @@ from kiara.models.module.pipeline.structure import PipelineStep, PipelineStructu
 from kiara.models.module.pipeline.value_refs import ValueRef
 from kiara.models.values.value import ORPHAN
 from kiara.models.values.value_schema import ValueSchema
+from kiara.registries.data import DataRegistry
 from kiara.utils.operations import create_operation
 from kiara.utils.output import (
     create_pipeline_steps_tree,

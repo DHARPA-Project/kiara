@@ -7,20 +7,15 @@
 
 import structlog
 import uuid
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Union
+from typing import TYPE_CHECKING, Any, Union
 
 from kiara.models.module.operation import Operation
-from kiara.models.render_value import RenderScene, RenderValueResult
 from kiara.operations.included_core_operations.pretty_print import (
     PrettyPrintOperationType,
-)
-from kiara.operations.included_core_operations.render_value import (
-    RenderValueOperationType,
 )
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
-    from kiara.models.values.value import Value
 
 logger = structlog.getLogger()
 
@@ -32,7 +27,7 @@ def pretty_print_data(
     **render_config: Any,
 ) -> Any:
 
-    value = kiara.data_registry.get_value(value_id=value_id)
+    value = kiara.data_registry.get_value(value=value_id)
 
     op_type: PrettyPrintOperationType = kiara.operation_registry.get_operation_type("pretty_print")  # type: ignore
 
@@ -66,44 +61,3 @@ def pretty_print_data(
     result = op.run(kiara=kiara, inputs={"value": value})
     rendered = result.get_value_data("rendered_value")
     return rendered
-
-
-def render_value(
-    kiara: "Kiara",
-    value: Union[str, uuid.UUID, "Value"],
-    target_type: Union[str, Iterable[str]] = "terminal_renderable",
-    render_instruction: Union[Mapping[str, Any], RenderScene, None] = None,
-) -> RenderValueResult:
-
-    value = kiara.data_registry.get_value(value_id=value)
-    op_type: RenderValueOperationType = kiara.operation_registry.get_operation_type("render_value")  # type: ignore
-
-    ops = op_type.get_render_operations_for_source_type(value.data_type_name)
-
-    if isinstance(target_type, str):
-        target_type = [target_type]
-    match = None
-    for _target_type in target_type:
-        if _target_type not in ops.keys():
-            continue
-        match = ops[_target_type]
-        break
-
-    if not match:
-        if not ops:
-            msg = f"No render operations registered for source type '{value.data_type_name}'."
-        else:
-            msg = f"Registered target types for source type '{value.data}': {', '.join(ops.keys())}."
-        raise Exception(
-            f"No render operation for source type '{value.data_type_name}' to target type '{target_type}' registered. {msg}"
-        )
-
-    op = match
-    result = op.run(
-        kiara=kiara, inputs={"value": value, "render_instruction": render_instruction}
-    )
-
-    return RenderValueResult(
-        rendered=result.get_value_data("rendered_value"),
-        metadata=result.get_value_data("render_metadata"),
-    )

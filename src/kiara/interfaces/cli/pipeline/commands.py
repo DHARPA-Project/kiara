@@ -14,8 +14,9 @@ import typing
 from rich import box
 from rich.table import Table
 
-from kiara import Kiara
-from kiara.models.module.operation import Operation, OperationGroupInfo
+from kiara.context import Kiara
+from kiara.interfaces.python_api.models.info import OperationGroupInfo
+from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.modules.included_core_modules.pipeline import PipelineModule
 from kiara.utils.cli import output_format_option, terminal_print_model
@@ -94,7 +95,7 @@ def list_pipelines(ctx, full_doc: bool, filter: typing.Iterable[str], format: st
         }
 
     ops_info = OperationGroupInfo.create_from_operations(
-        kiara=kiara_obj, group_alias=title, **operations
+        kiara=kiara_obj, group_title=title, **operations
     )
     terminal_print_model(ops_info, format=format, in_panel=title, full_doc=full_doc)
 

@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 from typing import Iterable
 
-from kiara import Kiara
+from kiara.context import Kiara
 from kiara.utils.cli import dict_from_cli_args
 from kiara.utils.cli.run import (
     _validate_save_option,

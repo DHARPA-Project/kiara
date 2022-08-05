@@ -11,7 +11,8 @@ from typing import TYPE_CHECKING, Generic, Iterable, Mapping, TypeVar, Union
 from kiara.models.module.operation import Operation, OperationConfig, OperationDetails
 
 if TYPE_CHECKING:
-    from kiara import Kiara, KiaraModule
+    from kiara.context import Kiara
+    from kiara.modules import KiaraModule
 
 
 OPERATION_TYPE_DETAILS = TypeVar("OPERATION_TYPE_DETAILS", bound=OperationDetails)

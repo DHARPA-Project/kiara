@@ -7,15 +7,11 @@
 
 """Module related subcommands for the cli."""
 
-import os.path
 import rich_click as click
-from typing import Any, Iterable, List
-
-from kiara import Kiara
+from typing import Any, Iterable
 
 # from kiara.interfaces.cli.utils import _create_module_instance
-from kiara.models.module import KiaraModuleTypeInfo, ModuleTypeClassesInfo
-from kiara.models.module.manifest import Manifest
+from kiara.interfaces.python_api import KiaraAPI
 from kiara.utils.cli import (
     dict_from_cli_args,
     output_format_option,
@@ -42,36 +38,17 @@ def module(ctx):
 def list_modules(ctx, full_doc: bool, filter: Iterable[str], format: str):
     """List available module data_types."""
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+    module_types_info = kiara_api.retrieve_module_types_info(filter=filter)
 
     if filter:
         title = f"Filtered modules: {filter}"
-        module_types_names: List[str] = []
-
-        for m in kiara_obj.module_type_names:
-            match = True
-
-            for f in filter:
-
-                if f.lower() not in m.lower():
-                    match = False
-                    break
-
-            if match:
-                module_types_names.append(m)
     else:
         title = "All modules"
-        module_types_names = list(kiara_obj.module_type_names)
 
-    module_types = {
-        n: kiara_obj.module_registry.get_module_class(n) for n in module_types_names
-    }
-
-    module_types_info = ModuleTypeClassesInfo.create_from_type_items(
-        group_alias=title, **module_types
+    terminal_print_model(
+        module_types_info, format=format, in_panel=title, full_doc=full_doc
     )
-
-    terminal_print_model(module_types_info, format=format, in_panel=title)
 
 
 @module.command(name="explain")
@@ -86,17 +63,8 @@ def explain_module_type(ctx, module_type: str, format: str):
     input/output data_types).
     """
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
-
-    if os.path.isfile(module_type):
-        _module_type: str = kiara_obj.register_pipeline_description(  # type: ignore
-            module_type, raise_exception=True
-        )  # type: ignore
-    else:
-        _module_type = module_type
-
-    m_cls = kiara_obj.module_registry.get_module_class(_module_type)
-    info = KiaraModuleTypeInfo.create_from_type_class(m_cls)
+    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+    info = kiara_api.retrieve_module_type_info(module_type=module_type)
 
     terminal_print_model(
         info, format=format, in_panel=f"Module type: [b i]{module_type}[/b i]"
@@ -122,13 +90,14 @@ def explain_module(ctx, module_type: str, module_config: Iterable[Any], format: 
     else:
         module_config = {}
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
 
-    mc = Manifest(module_type=module_type, module_config=module_config)
-    module_obj = kiara_obj.create_module(mc)
+    operation = kiara_api.create_operation(
+        module_type=module_type, module_config=module_config
+    )
 
     terminal_print_model(
-        module_obj.create_renderable(),  # type: ignore
+        operation.create_renderable(),  # type: ignore
         format=format,
         in_panel=f"Module instance of type: [b i]{module_type}[/b i]",
     )

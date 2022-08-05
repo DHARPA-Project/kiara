@@ -10,7 +10,7 @@
 import rich_click as click
 from typing import Dict, Iterable, Type
 
-from kiara import Kiara
+from kiara.context import Kiara
 from kiara.data_types import DataType
 from kiara.models.values.data_type import DataTypeClassesInfo, DataTypeClassInfo
 from kiara.utils.cli import output_format_option, terminal_print_model

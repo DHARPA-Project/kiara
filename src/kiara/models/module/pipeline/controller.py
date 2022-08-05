@@ -9,9 +9,9 @@ import structlog
 import uuid
 from typing import Dict, Mapping, Union
 
-from kiara.context import JobRegistry
 from kiara.models.events.pipeline import PipelineDetails, PipelineEvent
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineListener
+from kiara.registries.jobs import JobRegistry
 from kiara.utils import log_exception
 
 logger = structlog.getLogger()

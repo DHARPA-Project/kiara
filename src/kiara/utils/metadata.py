@@ -19,16 +19,16 @@ def find_metadata_models(
     _group = model_registry.get_models_of_type(ValueMetadata)  # type: ignore
 
     classes: Dict[str, Type[ValueMetadata]] = {}
-    for model_id, info in _group.items():
+    for model_id, info in _group.item_infos.items():
         classes[model_id] = info.python_class.get_class()  # type: ignore
 
-    group: MetadataTypeClassesInfo = MetadataTypeClassesInfo.create_from_type_items(group_alias=alias, **classes)  # type: ignore
+    group: MetadataTypeClassesInfo = MetadataTypeClassesInfo.create_from_type_items(group_title=alias, **classes)  # type: ignore
 
     if only_for_package:
         temp = {}
-        for key, info in group.items():
+        for key, _info in group.items():
             if info.context.labels.get("package") == only_for_package:
-                temp[key] = info
+                temp[key] = _info
 
         group = MetadataTypeClassesInfo.construct(
             group_id=group.instance_id, group_alias=group.group_alias, item_infos=temp  # type: ignore

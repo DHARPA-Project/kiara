@@ -10,7 +10,6 @@ import uuid
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE, INVALID_VALUE_NAMES, SpecialValue
-from kiara.models.values.value import ORPHAN
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import check_valid_field_names
 
@@ -154,7 +153,11 @@ def extract_raw_values(kiara: "Kiara", **value_ids: uuid.UUID) -> Dict[str, Any]
 
 
 def extract_raw_value(kiara: "Kiara", value_id: uuid.UUID):
-    value = kiara.data_registry.get_value(value_id=value_id)
+    value = kiara.data_registry.get_value(value=value_id)
+
+    # TODO: check without import
+    from kiara.models.values.value import ORPHAN
+
     if value.pedigree != ORPHAN:
         # TODO: find alias?
         return f'"value:{value_id}"'

@@ -6,7 +6,7 @@
 
 import os
 
-from kiara import Kiara
+from kiara.context import Kiara
 from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.models.values.value import Value
 

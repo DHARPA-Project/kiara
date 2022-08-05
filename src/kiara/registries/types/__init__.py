@@ -10,7 +10,10 @@ from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Set, Type, Union
 
 from kiara.data_types import DataType
 from kiara.defaults import KIARA_ROOT_TYPE_NAME
-from kiara.models.values.data_type import DataTypeClassesInfo, DataTypeClassInfo
+from kiara.interfaces.python_api.models.info import (
+    DataTypeClassesInfo,
+    DataTypeClassInfo,
+)
 from kiara.utils.class_loading import find_all_data_types
 
 if TYPE_CHECKING:

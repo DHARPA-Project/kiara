@@ -5,7 +5,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import os
 
-from kiara import Kiara
+from kiara.context import Kiara
 from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.models.filesystem import FileBundle, FileModel
 

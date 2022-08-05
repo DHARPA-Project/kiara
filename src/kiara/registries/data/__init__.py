@@ -9,7 +9,18 @@ import copy
 import structlog
 import uuid
 from rich.console import RenderableType
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Mapping, Set, Tuple, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    List,
+    Mapping,
+    Protocol,
+    Set,
+    Tuple,
+    Union,
+)
 
 from kiara.data_types import DataType
 from kiara.data_types.included_core_types import NoneType
@@ -62,6 +73,11 @@ if TYPE_CHECKING:
     from kiara.context import Kiara
 
 logger = structlog.getLogger()
+
+
+class ValueLink(Protocol):
+
+    value_id: Union[str, uuid.UUID]
 
 
 NONE_PERSISTED_DATA = PersistedData.construct(
@@ -321,38 +337,40 @@ class DataRegistry(object):
         self._value_archive_lookup_map[value_id] = matches[0]
         return matches[0]
 
-    def get_value(self, value_id: Union[uuid.UUID, Value, str]) -> Value:
+    def get_value(self, value: Union[uuid.UUID, ValueLink, str]) -> Value:
         _value_id = None
 
-        if not isinstance(value_id, uuid.UUID):
+        if not isinstance(value, uuid.UUID):
             # fallbacks for common mistakes, this should error out if not a Value or string.
-            if hasattr(value_id, "value_id"):
-                _value_id: Union[uuid.UUID, None] = value_id.value_id  # type: ignore
+            if hasattr(value, "value_id"):
+                _value_id: Union[uuid.UUID, str, None] = value.value_id  # type: ignore
+                if isinstance(_value_id, str):
+                    _value_id = uuid.UUID(_value_id)
             else:
 
                 try:
                     _value_id = uuid.UUID(
-                        value_id  # type: ignore
+                        value  # type: ignore
                     )  # this should fail if not string or wrong string format
                 except ValueError:
                     _value_id = None
 
                 if _value_id is None:
 
-                    if not isinstance(value_id, str):
+                    if not isinstance(value, str):
                         raise Exception(
-                            f"Can't retrieve value for '{value_id}': invalid type '{type(value_id)}'."
+                            f"Can't retrieve value for '{value}': invalid type '{type(value)}'."
                         )
 
-                    _value_id = self._alias_resolver.resolve_alias(value_id)
+                    _value_id = self._alias_resolver.resolve_alias(value)
         else:
-            _value_id = value_id
+            _value_id = value
 
         assert _value_id is not None
 
         if _value_id in self._registered_values.keys():
-            value = self._registered_values[_value_id]
-            return value
+            _value = self._registered_values[_value_id]
+            return _value
 
         matches = []
         for store_id, store in self.data_archives.items():
@@ -362,12 +380,12 @@ class DataRegistry(object):
 
         if len(matches) == 0:
             raise NoSuchValueIdException(
-                value_id=_value_id, msg=f"No value registered with id: {value_id}"
+                value_id=_value_id, msg=f"No value registered with id: {value}"
             )
         elif len(matches) > 1:
             raise NoSuchValueIdException(
                 value_id=_value_id,
-                msg=f"Found value with id '{value_id}' in multiple archives, this is not supported (yet): {matches}",
+                msg=f"Found value with id '{value}' in multiple archives, this is not supported (yet): {matches}",
             )
 
         self._value_archive_lookup_map[_value_id] = matches[0]
@@ -428,7 +446,7 @@ class DataRegistry(object):
     def create_value_info(self, value: Union[Value, uuid.UUID]) -> ValueInfo:
 
         if isinstance(value, uuid.UUID):
-            value = self.get_value(value_id=value)
+            value = self.get_value(value=value)
 
         value_info = ValueInfo.create_from_value(kiara=self._kiara, value=value)
         return value_info
@@ -522,7 +540,7 @@ class DataRegistry(object):
             if stored:
                 self._values_by_hash[value_hash] = stored
 
-        return set((self.get_value(value_id=v_id) for v_id in stored))
+        return set((self.get_value(value=v_id) for v_id in stored))
 
     def find_destinies_for_value(
         self, value_id: uuid.UUID, alias_filter: str = None
@@ -612,7 +630,7 @@ class DataRegistry(object):
             # return data
 
         try:
-            value = self.get_value(value_id=data)
+            value = self.get_value(value=data)
             if value.is_serializable:
                 serialized = value.serialized_data
             else:
@@ -853,7 +871,7 @@ class DataRegistry(object):
     ) -> Any:
 
         if isinstance(value, uuid.UUID):
-            value = self.get_value(value_id=value)
+            value = self.get_value(value=value)
 
         if value.value_id in self._cached_data.keys():
             return self._cached_data[value.value_id]
@@ -940,7 +958,7 @@ class DataRegistry(object):
             if value_id is None:
                 value_id = NONE_VALUE_ID
 
-            value = self.get_value(value_id=value_id)
+            value = self.get_value(value=value_id)
             value_items[field_name] = value
             schemas[field_name] = value.value_schema
 

@@ -8,9 +8,10 @@ import os
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
 from kiara.exceptions import NoSuchExecutionTargetException
+from kiara.interfaces.python_api.models.info import OperationGroupInfo, OperationInfo
 from kiara.models.module.jobs import ExecutionContext
 from kiara.models.module.manifest import Manifest
-from kiara.models.module.operation import Operation, OperationGroupInfo, OperationInfo
+from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.utils.files import get_data_from_file
 
@@ -30,7 +31,7 @@ def filter_operations(
     for op_id, op in operations.items():
 
         if op.module.module_type_name != "pipeline":
-            if op.module.module_type_name in modules.keys():
+            if op.module.module_type_name in modules.item_infos.keys():
                 result[op_id] = OperationInfo.create_from_operation(
                     kiara=kiara, operation=op
                 )

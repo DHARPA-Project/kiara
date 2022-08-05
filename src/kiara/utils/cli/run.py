@@ -6,7 +6,7 @@ from rich.console import Group
 from rich.rule import Rule
 from typing import Any, Dict, Iterable, List, Mapping, Union
 
-from kiara import Kiara
+from kiara.context import Kiara
 from kiara.exceptions import (
     FailedJobException,
     InvalidValuesException,

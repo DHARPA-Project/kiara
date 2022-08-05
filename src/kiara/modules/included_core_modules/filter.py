@@ -3,10 +3,9 @@ from abc import abstractmethod
 from pydantic import Field
 from typing import Any, Dict, List, Mapping, Union
 
-from kiara import KiaraModule
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.values.value import Value, ValueMap
-from kiara.modules import ValueSetSchema
+from kiara.modules import KiaraModule, ValueSetSchema
 from kiara.utils import is_develop
 from kiara.utils.develop import log_dev_message
 

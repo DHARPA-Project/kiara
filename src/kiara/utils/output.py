@@ -650,7 +650,7 @@ def create_table_from_model_object(
     for field_name, field in sorted(model_cls.__fields__.items()):
         if exclude_fields and field_name in exclude_fields:
             continue
-        row = [field_name]
+        row: List[RenderableType] = [field_name]
 
         p = props.get(field_name, None)
         p_type = None
@@ -672,7 +672,9 @@ def create_table_from_model_object(
     return table
 
 
-def extract_renderable(item: Any, render_config: Union[Mapping[str, Any], None] = None):
+def extract_renderable(
+    item: Any, render_config: Union[Mapping[str, Any], None] = None
+) -> RenderableType:
     """Try to automatically find and extract or create an object that is renderable by the 'rich' library."""
 
     if render_config is None:

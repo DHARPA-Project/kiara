@@ -6320,9 +6320,7 @@ typically done by a frontend. The return types of each method are json seriable 
             <span class="n">endpoint</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
                 <span class="n">module_type</span><span class="o">=</span><span class="n">match</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">match</span><span class="o">.</span><span class="n">module_config</span>
             <span class="p">)</span>
-            <span class="n">extra_input_aliases</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="s2">&quot;render_value.render_instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;render_instruction&quot;</span>
-            <span class="p">}</span>
+            <span class="n">extra_input_aliases</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;render_value.render_scene&quot;</span><span class="p">:</span> <span class="s2">&quot;render_scene&quot;</span><span class="p">}</span>
             <span class="n">extra_output_aliases</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">&quot;render_value.rendered_value&quot;</span><span class="p">:</span> <span class="s2">&quot;rendered_value&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;render_value.render_metadata&quot;</span><span class="p">:</span> <span class="s2">&quot;render_metadata&quot;</span><span class="p">,</span>
@@ -6373,11 +6371,11 @@ typically done by a frontend. The return types of each method are json seriable 
             <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">render_instruction</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">render_scene</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="n">render_operation</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
             <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
-            <span class="n">inputs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">_value</span><span class="p">,</span> <span class="s2">&quot;render_instruction&quot;</span><span class="p">:</span> <span class="n">render_instruction</span><span class="p">},</span>
+            <span class="n">inputs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">_value</span><span class="p">,</span> <span class="s2">&quot;render_scene&quot;</span><span class="p">:</span> <span class="n">render_scene</span><span class="p">},</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">RenderValueResult</span><span class="p">(</span>
@@ -6672,9 +6670,7 @@ the value type of the source value, and the provided target format.</p>
         <span class="n">endpoint</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
             <span class="n">module_type</span><span class="o">=</span><span class="n">match</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">match</span><span class="o">.</span><span class="n">module_config</span>
         <span class="p">)</span>
-        <span class="n">extra_input_aliases</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;render_value.render_instruction&quot;</span><span class="p">:</span> <span class="s2">&quot;render_instruction&quot;</span>
-        <span class="p">}</span>
+        <span class="n">extra_input_aliases</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;render_value.render_scene&quot;</span><span class="p">:</span> <span class="s2">&quot;render_scene&quot;</span><span class="p">}</span>
         <span class="n">extra_output_aliases</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;render_value.rendered_value&quot;</span><span class="p">:</span> <span class="s2">&quot;rendered_value&quot;</span><span class="p">,</span>
             <span class="s2">&quot;render_value.render_metadata&quot;</span><span class="p">:</span> <span class="s2">&quot;render_metadata&quot;</span><span class="p">,</span>
@@ -7542,11 +7538,11 @@ the value type of the source value, and the provided target format.</p>
         <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">render_instruction</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">render_scene</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="n">render_operation</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
         <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
-        <span class="n">inputs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">_value</span><span class="p">,</span> <span class="s2">&quot;render_instruction&quot;</span><span class="p">:</span> <span class="n">render_instruction</span><span class="p">},</span>
+        <span class="n">inputs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">_value</span><span class="p">,</span> <span class="s2">&quot;render_scene&quot;</span><span class="p">:</span> <span class="n">render_scene</span><span class="p">},</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">RenderValueResult</span><span class="p">(</span>
@@ -18110,7 +18106,7 @@ ValuePager            (<span title="textual.widget.Widget">Widget</span>)
             <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
             <span class="n">inputs</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span>
-                <span class="s2">&quot;render_instruction&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_scene</span><span class="p">,</span>
+                <span class="s2">&quot;render_scene&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_scene</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">)</span>
 
@@ -18247,7 +18243,7 @@ ValuePager            (<span title="textual.widget.Widget">Widget</span>)
         <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
         <span class="n">inputs</span><span class="o">=</span><span class="p">{</span>
             <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span>
-            <span class="s2">&quot;render_instruction&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_scene</span><span class="p">,</span>
+            <span class="s2">&quot;render_scene&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_scene</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">)</span>
 

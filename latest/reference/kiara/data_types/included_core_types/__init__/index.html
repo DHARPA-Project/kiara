@@ -7258,369 +7258,6 @@ TerminalRenderable            (<a class="autorefs autorefs-internal" title="kiar
 
 
 
-<h7 id="kiara.data_types.included_core_types.internal.render_value.RenderInstructionDataType" class="doc doc-heading">
-        <code>
-RenderInstructionDataType            (<a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.internal.InternalType" href="../internal/__init__/#kiara.data_types.included_core_types.internal.InternalType">InternalType</a>)
-        </code>
-
-
-
-<a href="#kiara.data_types.included_core_types.internal.render_value.RenderInstructionDataType" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>A value type to contain information about how to render a value in a specific render scenario.</p>
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RenderInstructionDataType</span><span class="p">(</span><span class="n">InternalType</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">,</span> <span class="n">RenderInstructionTypeConfig</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;A value type to contain information about how to render a value in a specific render scenario.&quot;&quot;&quot;</span>
-
-    <span class="n">_data_type_name</span> <span class="o">=</span> <span class="s2">&quot;render_instruction&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">type_config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cls_cache</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">type_config</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">python_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">RenderScene</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderInstructionTypeConfig</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="n">RenderInstructionTypeConfig</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">model_cls</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">]:</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls_cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls_cache</span>
-
-        <span class="n">all_models</span> <span class="o">=</span> <span class="n">find_all_kiara_model_classes</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">kiara_model_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid model id: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">kiara_model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-        <span class="n">model_cls</span> <span class="o">=</span> <span class="n">all_models</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">kiara_model_id</span><span class="p">]</span>
-
-        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">model_cls</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cls_cache</span> <span class="o">=</span> <span class="n">model_cls</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls_cache</span>
-
-    <span class="k">def</span> <span class="nf">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderScene</span><span class="p">:</span>
-
-        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_cls</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">data</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_cls</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Can&#39;t parse data, invalid type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;: must be subclass of &#39;KiaraModel&#39; or Mapping.&quot;</span>
-            <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">RenderScene</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">pretty_print_as__terminal_renderable</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-
-        <span class="n">data</span><span class="p">:</span> <span class="n">RenderScene</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
-
-        <span class="n">ri_json</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">Syntax</span><span class="p">(</span><span class="n">ri_json</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h9 id="kiara.data_types.included_core_types.internal.render_value.RenderInstructionDataType.model_cls" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">model_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">render_value</span><span class="o">.</span><span class="n">RenderScene</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-property"><code>property</code></small>
-      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
-  </span>
-
-<a href="#kiara.data_types.included_core_types.internal.render_value.RenderInstructionDataType.model_cls" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-    </div>
-
-  </div>
-
-
-
-
-<h8 id="kiara.data_types.included_core_types.internal.render_value.RenderInstructionDataType-methods">Methods<a href="#kiara.data_types.included_core_types.internal.render_value.RenderInstructionDataType-methods" class="headerlink" title="Permanent link">&para;</a></h8>
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.data_types.included_core_types.internal.render_value.RenderInstructionDataType.data_type_config_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">data_type_config_class</span><span class="p">()</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.data_types.included_core_types.internal.render_value.RenderInstructionDataType.data_type_config_class" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderInstructionTypeConfig</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="n">RenderInstructionTypeConfig</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.data_types.included_core_types.internal.render_value.RenderInstructionDataType.parse_python_obj" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></code>
-
-
-<a href="#kiara.data_types.included_core_types.internal.render_value.RenderInstructionDataType.parse_python_obj" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-      <p>Parse a value into a supported python type.</p>
-<p>This exists to make it easier to do trivial conversions (e.g. from a date string to a datetime object).
-If you choose to overwrite this method, make 100% sure that you don't change the meaning of the value, and try to
-avoid adding or removing information from the data (e.g. by changing the resolution of a date).</p>
-
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>v</code></td>
-        <td></td>
-        <td><p>the value</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>RenderScene</code></td>
-      <td><p>'None', if no parsing was done and the original value should be used, otherwise return the parsed Python object</p></td>
-    </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderScene</span><span class="p">:</span>
-
-    <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_cls</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">data</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_cls</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Can&#39;t parse data, invalid type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;: must be subclass of &#39;KiaraModel&#39; or Mapping.&quot;</span>
-        <span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.data_types.included_core_types.internal.render_value.RenderInstructionDataType.pretty_print_as__terminal_renderable" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">pretty_print_as__terminal_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="p">)</span></code>
-
-
-<a href="#kiara.data_types.included_core_types.internal.render_value.RenderInstructionDataType.pretty_print_as__terminal_renderable" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">pretty_print_as__terminal_renderable</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-
-    <span class="n">data</span><span class="p">:</span> <span class="n">RenderScene</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
-
-    <span class="n">ri_json</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">Syntax</span><span class="p">(</span><span class="n">ri_json</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.data_types.included_core_types.internal.render_value.RenderInstructionDataType.python_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">python_class</span><span class="p">()</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.data_types.included_core_types.internal.render_value.RenderInstructionDataType.python_class" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">python_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">RenderScene</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h7 id="kiara.data_types.included_core_types.internal.render_value.RenderInstructionTypeConfig" class="doc doc-heading">
-        <code>
-RenderInstructionTypeConfig            (<a class="autorefs autorefs-internal" title="kiara.data_types.DataTypeConfig" href="../../__init__/#kiara.data_types.DataTypeConfig">DataTypeConfig</a>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.data_types.included_core_types.internal.render_value.RenderInstructionTypeConfig" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RenderInstructionTypeConfig</span><span class="p">(</span><span class="n">DataTypeConfig</span><span class="p">):</span>
-
-    <span class="n">kiara_model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the model backing this render (Python class must sub-class &#39;RenderInstruction&#39;).&quot;</span><span class="p">,</span>
-        <span class="c1"># default=&quot;instance.render_instruction.table&quot;,</span>
-    <span class="p">)</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h8 id="kiara.data_types.included_core_types.internal.render_value.RenderInstructionTypeConfig-attributes">Attributes<a href="#kiara.data_types.included_core_types.internal.render_value.RenderInstructionTypeConfig-attributes" class="headerlink" title="Permanent link">&para;</a></h8>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h9 id="kiara.data_types.included_core_types.internal.render_value.RenderInstructionTypeConfig.kiara_model_id" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">kiara_model_id</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.data_types.included_core_types.internal.render_value.RenderInstructionTypeConfig.kiara_model_id" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-      <p>The id of the model backing this render (Python class must sub-class 'RenderInstruction').</p>
-    </div>
-
-  </div>
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
 <h7 id="kiara.data_types.included_core_types.internal.render_value.RenderMetadataDataType" class="doc doc-heading">
         <code>
 RenderMetadataDataType            (<a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.internal.InternalType" href="../internal/__init__/#kiara.data_types.included_core_types.internal.InternalType">InternalType</a>)
@@ -7821,6 +7458,368 @@ avoid adding or removing information from the data (e.g. by changing the resolut
     </div>
 
   </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.data_types.included_core_types.internal.render_value.RenderSceneDataType" class="doc doc-heading">
+        <code>
+RenderSceneDataType            (<a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.internal.InternalType" href="../internal/__init__/#kiara.data_types.included_core_types.internal.InternalType">InternalType</a>)
+        </code>
+
+
+
+<a href="#kiara.data_types.included_core_types.internal.render_value.RenderSceneDataType" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>A value type to contain information about how to render a value in a specific render scenario.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RenderSceneDataType</span><span class="p">(</span><span class="n">InternalType</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">,</span> <span class="n">RenderSceneTypeConfig</span><span class="p">]):</span>
+    <span class="sd">&quot;&quot;&quot;A value type to contain information about how to render a value in a specific render scenario.&quot;&quot;&quot;</span>
+
+    <span class="n">_data_type_name</span> <span class="o">=</span> <span class="s2">&quot;render_scene&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">type_config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cls_cache</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">type_config</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">python_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">RenderScene</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderSceneTypeConfig</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">RenderSceneTypeConfig</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">model_cls</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls_cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls_cache</span>
+
+        <span class="n">all_models</span> <span class="o">=</span> <span class="n">find_all_kiara_model_classes</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">kiara_model_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid model id: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">kiara_model_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">model_cls</span> <span class="o">=</span> <span class="n">all_models</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">type_config</span><span class="o">.</span><span class="n">kiara_model_id</span><span class="p">]</span>
+
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">model_cls</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cls_cache</span> <span class="o">=</span> <span class="n">model_cls</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls_cache</span>
+
+    <span class="k">def</span> <span class="nf">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderScene</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_cls</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_cls</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t parse data, invalid type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;: must be subclass of &#39;KiaraModel&#39; or Mapping.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">RenderScene</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">pretty_print_as__terminal_renderable</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+
+        <span class="n">data</span><span class="p">:</span> <span class="n">RenderScene</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="n">ri_json</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Syntax</span><span class="p">(</span><span class="n">ri_json</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.data_types.included_core_types.internal.render_value.RenderSceneDataType.model_cls" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">model_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">render_value</span><span class="o">.</span><span class="n">RenderScene</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.data_types.included_core_types.internal.render_value.RenderSceneDataType.model_cls" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+<h8 id="kiara.data_types.included_core_types.internal.render_value.RenderSceneDataType-methods">Methods<a href="#kiara.data_types.included_core_types.internal.render_value.RenderSceneDataType-methods" class="headerlink" title="Permanent link">&para;</a></h8>
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.data_types.included_core_types.internal.render_value.RenderSceneDataType.data_type_config_class" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">data_type_config_class</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.data_types.included_core_types.internal.render_value.RenderSceneDataType.data_type_config_class" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderSceneTypeConfig</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">RenderSceneTypeConfig</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.data_types.included_core_types.internal.render_value.RenderSceneDataType.parse_python_obj" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data_types.included_core_types.internal.render_value.RenderSceneDataType.parse_python_obj" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Parse a value into a supported python type.</p>
+<p>This exists to make it easier to do trivial conversions (e.g. from a date string to a datetime object).
+If you choose to overwrite this method, make 100% sure that you don't change the meaning of the value, and try to
+avoid adding or removing information from the data (e.g. by changing the resolution of a date).</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>v</code></td>
+        <td></td>
+        <td><p>the value</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>RenderScene</code></td>
+      <td><p>'None', if no parsing was done and the original value should be used, otherwise return the parsed Python object</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderScene</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_cls</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">data</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_cls</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t parse data, invalid type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;: must be subclass of &#39;KiaraModel&#39; or Mapping.&quot;</span>
+        <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.data_types.included_core_types.internal.render_value.RenderSceneDataType.pretty_print_as__terminal_renderable" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pretty_print_as__terminal_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.data_types.included_core_types.internal.render_value.RenderSceneDataType.pretty_print_as__terminal_renderable" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">pretty_print_as__terminal_renderable</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+
+    <span class="n">data</span><span class="p">:</span> <span class="n">RenderScene</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="n">ri_json</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Syntax</span><span class="p">(</span><span class="n">ri_json</span><span class="p">,</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.data_types.included_core_types.internal.render_value.RenderSceneDataType.python_class" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">python_class</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.data_types.included_core_types.internal.render_value.RenderSceneDataType.python_class" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">python_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">RenderScene</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.data_types.included_core_types.internal.render_value.RenderSceneTypeConfig" class="doc doc-heading">
+        <code>
+RenderSceneTypeConfig            (<a class="autorefs autorefs-internal" title="kiara.data_types.DataTypeConfig" href="../../__init__/#kiara.data_types.DataTypeConfig">DataTypeConfig</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.data_types.included_core_types.internal.render_value.RenderSceneTypeConfig" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">RenderSceneTypeConfig</span><span class="p">(</span><span class="n">DataTypeConfig</span><span class="p">):</span>
+
+    <span class="n">kiara_model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the model backing this render (Python class must sub-class &#39;RenderScene&#39;).&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h8 id="kiara.data_types.included_core_types.internal.render_value.RenderSceneTypeConfig-attributes">Attributes<a href="#kiara.data_types.included_core_types.internal.render_value.RenderSceneTypeConfig-attributes" class="headerlink" title="Permanent link">&para;</a></h8>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.data_types.included_core_types.internal.render_value.RenderSceneTypeConfig.kiara_model_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">kiara_model_id</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.data_types.included_core_types.internal.render_value.RenderSceneTypeConfig.kiara_model_id" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>The id of the model backing this render (Python class must sub-class 'RenderScene').</p>
+    </div>
+
+  </div>
+
+
+
 
 
 

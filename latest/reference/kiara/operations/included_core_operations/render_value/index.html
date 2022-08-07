@@ -4234,45 +4234,9 @@ RenderValueDetails            (<a class="autorefs autorefs-internal" title="kiar
     <span class="n">rendered_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The type of the render output.&quot;</span><span class="p">)</span>
     <span class="n">input_field_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The input field name.&quot;</span><span class="p">)</span>
     <span class="n">rendered_field_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The result field name.&quot;</span><span class="p">)</span>
-    <span class="n">render_instruction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">render_scene_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the render instruction model class.&quot;</span>
     <span class="p">)</span>
-
-    <span class="c1"># def retrieve_inputs_schema(self) -&gt; ValueSetSchema:</span>
-    <span class="c1">#     return {</span>
-    <span class="c1">#         &quot;value&quot;: {</span>
-    <span class="c1">#             &quot;type&quot;: self.source_data_type,</span>
-    <span class="c1">#             &quot;doc&quot;: f&quot;The {self.source_data_type} value to extract metadata from.&quot;,</span>
-    <span class="c1">#         },</span>
-    <span class="c1">#         &quot;render_instruction&quot;: {</span>
-    <span class="c1">#             &quot;type&quot;: &quot;render_instruction&quot;,</span>
-    <span class="c1">#             &quot;type_config&quot;: {&quot;kiara_model_id&quot;: self.render_instruction_type},</span>
-    <span class="c1">#             &quot;doc&quot;: &quot;Configuration how to render the value.&quot;,</span>
-    <span class="c1">#             &quot;default&quot;: {},</span>
-    <span class="c1">#         },</span>
-    <span class="c1">#     }</span>
-    <span class="c1">#</span>
-    <span class="c1"># def retrieve_outputs_schema(self) -&gt; ValueSetSchema:</span>
-    <span class="c1">#</span>
-    <span class="c1">#     return {</span>
-    <span class="c1">#         &quot;rendered_value&quot;: {&quot;type&quot;: &quot;value_metadata&quot;, &quot;doc&quot;: &quot;The rendered data.&quot;},</span>
-    <span class="c1">#         &quot;render_metadata&quot;: {</span>
-    <span class="c1">#             &quot;type&quot;: &quot;render_metadata&quot;,</span>
-    <span class="c1">#             &quot;doc&quot;: &quot;Metadata associated with this render process.&quot;,</span>
-    <span class="c1">#         },</span>
-    <span class="c1">#     }</span>
-    <span class="c1">#</span>
-    <span class="c1"># def create_module_inputs(self, inputs: Mapping[str, Any]) -&gt; Mapping[str, Any]:</span>
-    <span class="c1">#     return {</span>
-    <span class="c1">#         self.input_field_name: inputs[&quot;value&quot;],</span>
-    <span class="c1">#         &quot;render_instruction&quot;: inputs[&quot;render_instruction&quot;],</span>
-    <span class="c1">#     }</span>
-    <span class="c1">#</span>
-    <span class="c1"># def create_operation_outputs(self, outputs: ValueMap) -&gt; Mapping[str, Value]:</span>
-    <span class="c1">#     return {</span>
-    <span class="c1">#         &quot;rendered_value&quot;: outputs[self.rendered_type],</span>
-    <span class="c1">#         &quot;render_metadata&quot;: outputs[&quot;render_metadata&quot;],</span>
-    <span class="c1">#     }</span>
 </code></pre></div>
         </details>
 
@@ -4312,15 +4276,15 @@ RenderValueDetails            (<a class="autorefs autorefs-internal" title="kiar
 
 
 
-<h5 id="kiara.operations.included_core_operations.render_value.RenderValueDetails.render_instruction_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">render_instruction_type</span><span class="p">:</span> <span class="nb">str</span></code>
+<h5 id="kiara.operations.included_core_operations.render_value.RenderValueDetails.render_scene_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">render_scene_type</span><span class="p">:</span> <span class="nb">str</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
       <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.operations.included_core_operations.render_value.RenderValueDetails.render_instruction_type" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.operations.included_core_operations.render_value.RenderValueDetails.render_scene_type" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4455,7 +4419,7 @@ RenderValueOperationType            (<a class="autorefs autorefs-internal" title
                 <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
                     <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;render.value&quot;</span><span class="p">,</span>
                     <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="s2">&quot;render_instruction_type&quot;</span><span class="p">:</span> <span class="n">model_id</span><span class="p">,</span>
+                        <span class="s2">&quot;render_scene_type&quot;</span><span class="p">:</span> <span class="n">model_id</span><span class="p">,</span>
                         <span class="s2">&quot;target_type&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">,</span>
                     <span class="p">},</span>
                     <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Render a &#39;</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">&#39; value as &#39;</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>
@@ -4475,8 +4439,8 @@ RenderValueOperationType            (<a class="autorefs autorefs-internal" title
             <span class="k">return</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="p">(</span>
-            <span class="s2">&quot;render_instruction&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-            <span class="ow">or</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">[</span><span class="s2">&quot;render_instruction&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;render_instruction&quot;</span>
+            <span class="s2">&quot;render_scene&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="ow">or</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">[</span><span class="s2">&quot;render_scene&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;render_scene&quot;</span>
         <span class="p">):</span>
             <span class="k">return</span> <span class="kc">None</span>
 
@@ -4509,7 +4473,7 @@ RenderValueOperationType            (<a class="autorefs autorefs-internal" title
             <span class="n">input_field_name</span><span class="o">=</span><span class="n">source_type</span><span class="p">,</span>
             <span class="n">rendered_field_name</span><span class="o">=</span><span class="n">target_type</span><span class="p">,</span>
             <span class="n">is_internal_operation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">render_instruction_type</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;render_instruction_type&quot;</span><span class="p">),</span>
+            <span class="n">render_scene_type</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;render_scene_type&quot;</span><span class="p">),</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">details</span>
@@ -4592,8 +4556,8 @@ RenderValueOperationType            (<a class="autorefs autorefs-internal" title
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="p">(</span>
-        <span class="s2">&quot;render_instruction&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="ow">or</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">[</span><span class="s2">&quot;render_instruction&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;render_instruction&quot;</span>
+        <span class="s2">&quot;render_scene&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="ow">or</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="p">[</span><span class="s2">&quot;render_scene&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;render_scene&quot;</span>
     <span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span>
 
@@ -4626,7 +4590,7 @@ RenderValueOperationType            (<a class="autorefs autorefs-internal" title
         <span class="n">input_field_name</span><span class="o">=</span><span class="n">source_type</span><span class="p">,</span>
         <span class="n">rendered_field_name</span><span class="o">=</span><span class="n">target_type</span><span class="p">,</span>
         <span class="n">is_internal_operation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">render_instruction_type</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;render_instruction_type&quot;</span><span class="p">),</span>
+        <span class="n">render_scene_type</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;render_scene_type&quot;</span><span class="p">),</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">details</span>
@@ -4787,7 +4751,7 @@ RenderValueOperationType            (<a class="autorefs autorefs-internal" title
             <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="s2">&quot;render.value&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s2">&quot;render_instruction_type&quot;</span><span class="p">:</span> <span class="n">model_id</span><span class="p">,</span>
+                    <span class="s2">&quot;render_scene_type&quot;</span><span class="p">:</span> <span class="n">model_id</span><span class="p">,</span>
                     <span class="s2">&quot;target_type&quot;</span><span class="p">:</span> <span class="n">target</span><span class="p">,</span>
                 <span class="p">},</span>
                 <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Render a &#39;</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">&#39; value as &#39;</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">,</span>

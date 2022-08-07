@@ -325,7 +325,7 @@ class KiaraConfig(BaseSettings):
         changed = False
         if DEFAULT_DATA_STORE_MARKER not in context_config.archives.keys():
             data_store_type = "filesystem_data_store"
-            assert data_store_type in available_archives.keys()
+            assert data_store_type in available_archives.item_infos.keys()
 
             data_store_id = ID_REGISTRY.generate(comment="default data store id")
             data_archive_config = {
@@ -346,7 +346,7 @@ class KiaraConfig(BaseSettings):
 
         if DEFAULT_JOB_STORE_MARKER not in context_config.archives.keys():
             job_store_type = "filesystem_job_store"
-            assert job_store_type in available_archives.keys()
+            assert job_store_type in available_archives.item_infos.keys()
 
             job_store_id = ID_REGISTRY.generate(comment="default job store id")
             job_archive_config = {
@@ -368,7 +368,7 @@ class KiaraConfig(BaseSettings):
         if DEFAULT_ALIAS_STORE_MARKER not in context_config.archives.keys():
 
             alias_store_type = "filesystem_alias_store"
-            assert alias_store_type in available_archives.keys()
+            assert alias_store_type in available_archives.item_infos.keys()
             alias_store_id = ID_REGISTRY.generate(comment="default alias store id")
             alias_store_config = {
                 "archive_path": os.path.abspath(
@@ -389,7 +389,7 @@ class KiaraConfig(BaseSettings):
         if DEFAULT_WORKFLOW_STORE_MARKER not in context_config.archives.keys():
 
             workflow_store_type = "filesystem_workflow_store"
-            assert workflow_store_type in available_archives.keys()
+            assert workflow_store_type in available_archives.item_infos.keys()
             workflow_store_id = ID_REGISTRY.generate(
                 comment="default workflow store id"
             )
@@ -413,7 +413,7 @@ class KiaraConfig(BaseSettings):
 
         if METADATA_DESTINY_STORE_MARKER not in context_config.archives.keys():
             destiny_store_type = "filesystem_destiny_store"
-            assert destiny_store_type in available_archives.keys()
+            assert destiny_store_type in available_archives.item_infos.keys()
             destiny_store_id = ID_REGISTRY.generate(comment="default destiny store id")
             destiny_store_config = {
                 "archive_path": os.path.abspath(

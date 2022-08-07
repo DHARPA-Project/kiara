@@ -4186,7 +4186,7 @@ PipelineModule            (<a class="autorefs autorefs-internal" title="kiara.mo
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="n">pipeline_structure</span><span class="p">:</span> <span class="n">PipelineStructure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">structure</span>
         <span class="n">inputs_schema</span> <span class="o">=</span> <span class="n">pipeline_structure</span><span class="o">.</span><span class="n">pipeline_inputs_schema</span>
@@ -4194,7 +4194,7 @@ PipelineModule            (<a class="autorefs autorefs-internal" title="kiara.mo
 
     <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
         <span class="n">pipeline_structure</span><span class="p">:</span> <span class="n">PipelineStructure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">structure</span>
         <span class="k">return</span> <span class="n">pipeline_structure</span><span class="o">.</span><span class="n">pipeline_outputs_schema</span>
 
@@ -5027,7 +5027,7 @@ Config        </code>
           <summary>Source code in <code>kiara/modules/included_core_modules/pipeline.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="n">pipeline_structure</span><span class="p">:</span> <span class="n">PipelineStructure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">structure</span>
     <span class="n">inputs_schema</span> <span class="o">=</span> <span class="n">pipeline_structure</span><span class="o">.</span><span class="n">pipeline_inputs_schema</span>
@@ -5058,7 +5058,7 @@ Config        </code>
           <summary>Source code in <code>kiara/modules/included_core_modules/pipeline.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
     <span class="n">pipeline_structure</span><span class="p">:</span> <span class="n">PipelineStructure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">structure</span>
     <span class="k">return</span> <span class="n">pipeline_structure</span><span class="o">.</span><span class="n">pipeline_outputs_schema</span>
 </code></pre></div>

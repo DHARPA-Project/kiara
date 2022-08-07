@@ -8983,14 +8983,14 @@ OperationSchema            (<a class="autorefs autorefs-internal" title="kiara.m
           <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperationSchema</span><span class="p">(</span><span class="n">InputOutputObject</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inputs_schema</span><span class="p">:</span> <span class="n">ValueSetSchema</span><span class="p">,</span> <span class="n">outputs_schema</span><span class="p">:</span> <span class="n">ValueSetSchema</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inputs_schema</span><span class="p">:</span> <span class="n">ValueMapSchema</span><span class="p">,</span> <span class="n">outputs_schema</span><span class="p">:</span> <span class="n">ValueMapSchema</span>
     <span class="p">):</span>
 
         <span class="n">allow_empty_inputs</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">allow_empty_outputs</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_schema_static</span><span class="p">:</span> <span class="n">ValueSetSchema</span> <span class="o">=</span> <span class="n">inputs_schema</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_outputs_schema_static</span><span class="p">:</span> <span class="n">ValueSetSchema</span> <span class="o">=</span> <span class="n">outputs_schema</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inputs_schema_static</span><span class="p">:</span> <span class="n">ValueMapSchema</span> <span class="o">=</span> <span class="n">inputs_schema</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_outputs_schema_static</span><span class="p">:</span> <span class="n">ValueMapSchema</span> <span class="o">=</span> <span class="n">outputs_schema</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">alias</span><span class="o">=</span><span class="n">alias</span><span class="p">,</span>
             <span class="n">allow_empty_inputs_schema</span><span class="o">=</span><span class="n">allow_empty_inputs</span><span class="p">,</span>

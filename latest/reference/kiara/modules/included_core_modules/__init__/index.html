@@ -4855,7 +4855,7 @@ DataExportModule            (<a class="autorefs autorefs-internal" title="kiara.
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
         <span class="n">target_profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_profile&quot;</span><span class="p">)</span>
@@ -4909,7 +4909,7 @@ DataExportModule            (<a class="autorefs autorefs-internal" title="kiara.
 
     <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="n">outputs</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;export_details&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -5111,7 +5111,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
           <summary>Source code in <code>kiara/modules/included_core_modules/export_as.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
     <span class="n">target_profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_profile&quot;</span><span class="p">)</span>
@@ -5215,7 +5215,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
           <summary>Source code in <code>kiara/modules/included_core_modules/export_as.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;export_details&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -6210,7 +6210,7 @@ ImportFileBundleModule            (<a class="autorefs autorefs-internal" title="
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The local path of the folder to import.&quot;</span><span class="p">}</span>
@@ -6218,7 +6218,7 @@ ImportFileBundleModule            (<a class="autorefs autorefs-internal" title="
 
     <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The imported file bundle.&quot;</span><span class="p">}</span>
@@ -6266,7 +6266,7 @@ ImportFileBundleModule            (<a class="autorefs autorefs-internal" title="
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The local path of the folder to import.&quot;</span><span class="p">}</span>
@@ -6297,7 +6297,7 @@ ImportFileBundleModule            (<a class="autorefs autorefs-internal" title="
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The imported file bundle.&quot;</span><span class="p">}</span>
@@ -6375,13 +6375,13 @@ ImportFileModule            (<a class="autorefs autorefs-internal" title="kiara.
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The local path to the file.&quot;</span><span class="p">}}</span>
 
     <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The loaded files.&quot;</span><span class="p">}}</span>
 
@@ -6427,7 +6427,7 @@ ImportFileModule            (<a class="autorefs autorefs-internal" title="kiara.
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The local path to the file.&quot;</span><span class="p">}}</span>
 </code></pre></div>
@@ -6456,7 +6456,7 @@ ImportFileModule            (<a class="autorefs autorefs-internal" title="kiara.
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The loaded files.&quot;</span><span class="p">}}</span>
 </code></pre></div>
@@ -6532,7 +6532,7 @@ PickFileModule            (<a class="autorefs autorefs-internal" title="kiara.mo
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The file bundle.&quot;</span><span class="p">},</span>
@@ -6541,7 +6541,7 @@ PickFileModule            (<a class="autorefs autorefs-internal" title="kiara.mo
 
     <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The file.&quot;</span><span class="p">}}</span>
 
@@ -6591,7 +6591,7 @@ PickFileModule            (<a class="autorefs autorefs-internal" title="kiara.mo
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The file bundle.&quot;</span><span class="p">},</span>
@@ -6623,7 +6623,7 @@ PickFileModule            (<a class="autorefs autorefs-internal" title="kiara.mo
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The file.&quot;</span><span class="p">}}</span>
 </code></pre></div>
@@ -6788,12 +6788,12 @@ FilterModule            (<a class="autorefs autorefs-internal" title="kiara.modu
 
     <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">FilterModuleConfig</span>
 
-    <span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueSetSchema</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueMapSchema</span><span class="p">]:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="n">filter_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;filter_name&quot;</span><span class="p">)</span>
 
@@ -6832,7 +6832,7 @@ FilterModule            (<a class="autorefs autorefs-internal" title="kiara.modu
 
     <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="n">data_type_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_supported_type</span><span class="p">()</span>
         <span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type_data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
@@ -6981,7 +6981,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/filter.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueSetSchema</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueMapSchema</span><span class="p">]:</span>
     <span class="k">return</span> <span class="kc">None</span>
 </code></pre></div>
         </details>
@@ -7009,7 +7009,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
           <summary>Source code in <code>kiara/modules/included_core_modules/filter.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="n">filter_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;filter_name&quot;</span><span class="p">)</span>
 
@@ -7071,7 +7071,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
           <summary>Source code in <code>kiara/modules/included_core_modules/filter.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="n">data_type_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_supported_type</span><span class="p">()</span>
     <span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type_data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
@@ -7379,7 +7379,7 @@ StringFiltersModule            (<a class="autorefs autorefs-internal" title="kia
 
         <span class="k">return</span> <span class="s2">&quot;string&quot;</span>
 
-    <span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueSetSchema</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueMapSchema</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">filter_name</span> <span class="o">==</span> <span class="s2">&quot;tokens&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span>
@@ -7440,7 +7440,7 @@ StringFiltersModule            (<a class="autorefs autorefs-internal" title="kia
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/filter.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueSetSchema</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueMapSchema</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="n">filter_name</span> <span class="o">==</span> <span class="s2">&quot;tokens&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>
@@ -8072,7 +8072,7 @@ PipelineModule            (<a class="autorefs autorefs-internal" title="kiara.mo
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="n">pipeline_structure</span><span class="p">:</span> <span class="n">PipelineStructure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">structure</span>
         <span class="n">inputs_schema</span> <span class="o">=</span> <span class="n">pipeline_structure</span><span class="o">.</span><span class="n">pipeline_inputs_schema</span>
@@ -8080,7 +8080,7 @@ PipelineModule            (<a class="autorefs autorefs-internal" title="kiara.mo
 
     <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
         <span class="n">pipeline_structure</span><span class="p">:</span> <span class="n">PipelineStructure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">structure</span>
         <span class="k">return</span> <span class="n">pipeline_structure</span><span class="o">.</span><span class="n">pipeline_outputs_schema</span>
 
@@ -8913,7 +8913,7 @@ Config        </code>
           <summary>Source code in <code>kiara/modules/included_core_modules/pipeline.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="n">pipeline_structure</span><span class="p">:</span> <span class="n">PipelineStructure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">structure</span>
     <span class="n">inputs_schema</span> <span class="o">=</span> <span class="n">pipeline_structure</span><span class="o">.</span><span class="n">pipeline_inputs_schema</span>
@@ -8944,7 +8944,7 @@ Config        </code>
           <summary>Source code in <code>kiara/modules/included_core_modules/pipeline.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
     <span class="n">pipeline_structure</span><span class="p">:</span> <span class="n">PipelineStructure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">structure</span>
     <span class="k">return</span> <span class="n">pipeline_structure</span><span class="o">.</span><span class="n">pipeline_outputs_schema</span>
 </code></pre></div>
@@ -10705,7 +10705,7 @@ DeserializeFromJsonModule            (<a class="autorefs autorefs-internal" titl
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -10716,7 +10716,7 @@ DeserializeFromJsonModule            (<a class="autorefs autorefs-internal" titl
 
     <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -10846,7 +10846,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
           <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -10880,7 +10880,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
           <summary>Source code in <code>kiara/modules/included_core_modules/serialization.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;python_object&quot;</span><span class="p">:</span> <span class="p">{</span>

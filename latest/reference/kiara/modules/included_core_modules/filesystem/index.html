@@ -4799,7 +4799,7 @@ ImportFileBundleModule            (<a class="autorefs autorefs-internal" title="
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The local path of the folder to import.&quot;</span><span class="p">}</span>
@@ -4807,7 +4807,7 @@ ImportFileBundleModule            (<a class="autorefs autorefs-internal" title="
 
     <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The imported file bundle.&quot;</span><span class="p">}</span>
@@ -4855,7 +4855,7 @@ ImportFileBundleModule            (<a class="autorefs autorefs-internal" title="
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The local path of the folder to import.&quot;</span><span class="p">}</span>
@@ -4886,7 +4886,7 @@ ImportFileBundleModule            (<a class="autorefs autorefs-internal" title="
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The imported file bundle.&quot;</span><span class="p">}</span>
@@ -4964,13 +4964,13 @@ ImportFileModule            (<a class="autorefs autorefs-internal" title="kiara.
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The local path to the file.&quot;</span><span class="p">}}</span>
 
     <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The loaded files.&quot;</span><span class="p">}}</span>
 
@@ -5016,7 +5016,7 @@ ImportFileModule            (<a class="autorefs autorefs-internal" title="kiara.
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The local path to the file.&quot;</span><span class="p">}}</span>
 </code></pre></div>
@@ -5045,7 +5045,7 @@ ImportFileModule            (<a class="autorefs autorefs-internal" title="kiara.
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The loaded files.&quot;</span><span class="p">}}</span>
 </code></pre></div>
@@ -5121,7 +5121,7 @@ PickFileModule            (<a class="autorefs autorefs-internal" title="kiara.mo
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The file bundle.&quot;</span><span class="p">},</span>
@@ -5130,7 +5130,7 @@ PickFileModule            (<a class="autorefs autorefs-internal" title="kiara.mo
 
     <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The file.&quot;</span><span class="p">}}</span>
 
@@ -5180,7 +5180,7 @@ PickFileModule            (<a class="autorefs autorefs-internal" title="kiara.mo
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The file bundle.&quot;</span><span class="p">},</span>
@@ -5212,7 +5212,7 @@ PickFileModule            (<a class="autorefs autorefs-internal" title="kiara.mo
           <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;file&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The file.&quot;</span><span class="p">}}</span>
 </code></pre></div>

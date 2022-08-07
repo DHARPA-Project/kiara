@@ -4232,7 +4232,7 @@ DataExportModule            (<a class="autorefs autorefs-internal" title="kiara.
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
         <span class="n">target_profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_profile&quot;</span><span class="p">)</span>
@@ -4286,7 +4286,7 @@ DataExportModule            (<a class="autorefs autorefs-internal" title="kiara.
 
     <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="n">outputs</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;export_details&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -4488,7 +4488,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
           <summary>Source code in <code>kiara/modules/included_core_modules/export_as.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
     <span class="n">target_profile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_profile&quot;</span><span class="p">)</span>
@@ -4592,7 +4592,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
           <summary>Source code in <code>kiara/modules/included_core_modules/export_as.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;export_details&quot;</span><span class="p">:</span> <span class="p">{</span>

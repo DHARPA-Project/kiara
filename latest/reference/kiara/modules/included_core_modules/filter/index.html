@@ -4247,12 +4247,12 @@ FilterModule            (<a class="autorefs autorefs-internal" title="kiara.modu
 
     <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">FilterModuleConfig</span>
 
-    <span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueSetSchema</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueMapSchema</span><span class="p">]:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="n">filter_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;filter_name&quot;</span><span class="p">)</span>
 
@@ -4291,7 +4291,7 @@ FilterModule            (<a class="autorefs autorefs-internal" title="kiara.modu
 
     <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
         <span class="n">data_type_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_supported_type</span><span class="p">()</span>
         <span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type_data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
@@ -4440,7 +4440,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/filter.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueSetSchema</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueMapSchema</span><span class="p">]:</span>
     <span class="k">return</span> <span class="kc">None</span>
 </code></pre></div>
         </details>
@@ -4468,7 +4468,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
           <summary>Source code in <code>kiara/modules/included_core_modules/filter.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="n">filter_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;filter_name&quot;</span><span class="p">)</span>
 
@@ -4530,7 +4530,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
           <summary>Source code in <code>kiara/modules/included_core_modules/filter.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueSetSchema</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
 
     <span class="n">data_type_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_supported_type</span><span class="p">()</span>
     <span class="n">data_type</span> <span class="o">=</span> <span class="n">data_type_data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
@@ -4838,7 +4838,7 @@ StringFiltersModule            (<a class="autorefs autorefs-internal" title="kia
 
         <span class="k">return</span> <span class="s2">&quot;string&quot;</span>
 
-    <span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueSetSchema</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueMapSchema</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="n">filter_name</span> <span class="o">==</span> <span class="s2">&quot;tokens&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span>
@@ -4899,7 +4899,7 @@ StringFiltersModule            (<a class="autorefs autorefs-internal" title="kia
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/filter.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueSetSchema</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_filter_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">ValueMapSchema</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="n">filter_name</span> <span class="o">==</span> <span class="s2">&quot;tokens&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span>

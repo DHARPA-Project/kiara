@@ -1563,6 +1563,73 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2_2" type="checkbox" id="__nav_3_1_6_2_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../interfaces/python_api/models/__init__/">models</a>
+          
+            <label for="__nav_3_1_6_2_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="models" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/models/info/" class="md-nav__link">
+        info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/models/job/" class="md-nav__link">
+        job
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../../interfaces/python_api/operation/" class="md-nav__link">
         operation
@@ -5250,7 +5317,8 @@ KiaraModule            (<a class="autorefs autorefs-internal" title="kiara.modul
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(id=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module_id</span><span class="si">}</span><span class="s2"> module_type=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2"> input_names=</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_names</span><span class="p">)</span><span class="si">}</span><span class="s2"> output_names=</span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_names</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
 
-    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">operation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Operation&quot;</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation</span>
@@ -5259,6 +5327,10 @@ KiaraModule            (<a class="autorefs autorefs-internal" title="kiara.modul
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_operation</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -5389,6 +5461,28 @@ KiaraModule            (<a class="autorefs autorefs-internal" title="kiara.modul
   </span>
 
 <a href="#kiara.modules.KiaraModule.module_type_name" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.modules.KiaraModule.operation" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.modules.KiaraModule.operation" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -5783,13 +5877,7 @@ Config        </code>
           <summary>Source code in <code>kiara/modules/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation</span>
-
-    <span class="kn">from</span> <span class="nn">kiara.models.module.operation</span> <span class="kn">import</span> <span class="n">Operation</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">_operation</span> <span class="o">=</span> <span class="n">Operation</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_operation</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -12109,7 +12197,7 @@ RenderValueModule            (<a class="autorefs autorefs-internal" title="kiara
 
         <span class="n">instruction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;render_instruction_type&quot;</span><span class="p">)</span>
         <span class="n">model_registry</span> <span class="o">=</span> <span class="n">ModelRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
-        <span class="n">instr_model_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderInstruction</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_registry</span><span class="o">.</span><span class="n">get_model_cls</span><span class="p">(</span><span class="n">instruction</span><span class="p">,</span> <span class="n">required_subclass</span><span class="o">=</span><span class="n">RenderInstruction</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">instr_model_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_registry</span><span class="o">.</span><span class="n">get_model_cls</span><span class="p">(</span><span class="n">instruction</span><span class="p">,</span> <span class="n">required_subclass</span><span class="o">=</span><span class="n">RenderScene</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
         <span class="n">data_type_name</span> <span class="o">=</span> <span class="n">instr_model_cls</span><span class="o">.</span><span class="n">retrieve_source_type</span><span class="p">()</span>
         <span class="k">assert</span> <span class="n">data_type_name</span>
@@ -12127,7 +12215,7 @@ RenderValueModule            (<a class="autorefs autorefs-internal" title="kiara
                 <span class="p">},</span>
                 <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;Instructions/config on how (or what) to render the provided value.&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+                <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="p">{},</span>
             <span class="p">},</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">inputs</span>
@@ -12152,11 +12240,9 @@ RenderValueModule            (<a class="autorefs autorefs-internal" title="kiara
         <span class="n">instruction_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;render_instruction_type&quot;</span><span class="p">)</span>
         <span class="n">model_registry</span> <span class="o">=</span> <span class="n">ModelRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
         <span class="n">instr_info</span><span class="p">:</span> <span class="n">TypeInfo</span> <span class="o">=</span> <span class="n">model_registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">instruction_type</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-        <span class="n">instr_model</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderInstruction</span><span class="p">]</span> <span class="o">=</span> <span class="n">instr_info</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="n">instr_model</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">]</span> <span class="o">=</span> <span class="n">instr_info</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
 
-        <span class="n">render_instruction</span><span class="p">:</span> <span class="n">RenderInstruction</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span>
-            <span class="s2">&quot;render_instruction&quot;</span>
-        <span class="p">)</span>
+        <span class="n">render_instruction</span><span class="p">:</span> <span class="n">RenderScene</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;render_instruction&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">render_instruction</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">instr_model</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">KiaraProcessingException</span><span class="p">(</span>
@@ -12231,9 +12317,9 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
         <span class="n">registry</span> <span class="o">=</span> <span class="n">ModelRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Invalid model type &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;. Value model ids: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid model type &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;. Value model ids: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">value</span>
@@ -12321,9 +12407,9 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
     <span class="n">registry</span> <span class="o">=</span> <span class="n">ModelRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Invalid model type &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;. Value model ids: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid model type &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;. Value model ids: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">value</span>
@@ -12369,7 +12455,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
     <span class="n">instruction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;render_instruction_type&quot;</span><span class="p">)</span>
     <span class="n">model_registry</span> <span class="o">=</span> <span class="n">ModelRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
-    <span class="n">instr_model_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderInstruction</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_registry</span><span class="o">.</span><span class="n">get_model_cls</span><span class="p">(</span><span class="n">instruction</span><span class="p">,</span> <span class="n">required_subclass</span><span class="o">=</span><span class="n">RenderInstruction</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">instr_model_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_registry</span><span class="o">.</span><span class="n">get_model_cls</span><span class="p">(</span><span class="n">instruction</span><span class="p">,</span> <span class="n">required_subclass</span><span class="o">=</span><span class="n">RenderScene</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="n">data_type_name</span> <span class="o">=</span> <span class="n">instr_model_cls</span><span class="o">.</span><span class="n">retrieve_source_type</span><span class="p">()</span>
     <span class="k">assert</span> <span class="n">data_type_name</span>
@@ -12387,7 +12473,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
             <span class="p">},</span>
             <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;Instructions/config on how (or what) to render the provided value.&quot;</span><span class="p">,</span>
             <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+            <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="p">{},</span>
         <span class="p">},</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">inputs</span>
@@ -12457,11 +12543,9 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
     <span class="n">instruction_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;render_instruction_type&quot;</span><span class="p">)</span>
     <span class="n">model_registry</span> <span class="o">=</span> <span class="n">ModelRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
     <span class="n">instr_info</span><span class="p">:</span> <span class="n">TypeInfo</span> <span class="o">=</span> <span class="n">model_registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">instruction_type</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-    <span class="n">instr_model</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderInstruction</span><span class="p">]</span> <span class="o">=</span> <span class="n">instr_info</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="n">instr_model</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">]</span> <span class="o">=</span> <span class="n">instr_info</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
 
-    <span class="n">render_instruction</span><span class="p">:</span> <span class="n">RenderInstruction</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span>
-        <span class="s2">&quot;render_instruction&quot;</span>
-    <span class="p">)</span>
+    <span class="n">render_instruction</span><span class="p">:</span> <span class="n">RenderScene</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;render_instruction&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">render_instruction</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">instr_model</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">KiaraProcessingException</span><span class="p">(</span>
@@ -12540,9 +12624,9 @@ RenderValueModuleConfig            (<a class="autorefs autorefs-internal" title=
 
         <span class="n">registry</span> <span class="o">=</span> <span class="n">ModelRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Invalid model type &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;. Value model ids: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid model type &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;. Value model ids: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">value</span>
@@ -12630,9 +12714,9 @@ RenderValueModuleConfig            (<a class="autorefs autorefs-internal" title=
 
     <span class="n">registry</span> <span class="o">=</span> <span class="n">ModelRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Invalid model type &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;. Value model ids: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Invalid model type &#39;</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39;. Value model ids: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">registry</span><span class="o">.</span><span class="n">all_models</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">value</span>

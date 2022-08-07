@@ -1563,6 +1563,73 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2_2" type="checkbox" id="__nav_3_1_6_2_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../interfaces/python_api/models/__init__/">models</a>
+          
+            <label for="__nav_3_1_6_2_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="models" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/models/info/" class="md-nav__link">
+        info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/models/job/" class="md-nav__link">
+        job
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../../../interfaces/python_api/operation/" class="md-nav__link">
         operation
@@ -3976,57 +4043,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.models.module.KiaraModuleClass" class="md-nav__link">
-    KiaraModuleClass
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#kiara.models.module.KiaraModuleConfig" class="md-nav__link">
     KiaraModuleConfig
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.models.module.KiaraModuleConfigMetadata" class="md-nav__link">
-    KiaraModuleConfigMetadata
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.models.module.KiaraModuleTypeInfo" class="md-nav__link">
-    KiaraModuleTypeInfo
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.models.module.ModuleTypeClassesInfo" class="md-nav__link">
-    ModuleTypeClassesInfo
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.models.module.ValueTypeAndDescription" class="md-nav__link">
-    ValueTypeAndDescription
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.models.module.calculate_class_doc_url" class="md-nav__link">
-    calculate_class_doc_url()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.models.module.calculate_class_source_url" class="md-nav__link">
-    calculate_class_source_url()
   </a>
   
 </li>
@@ -4138,253 +4156,6 @@
 
 
 <h2 id="kiara.models.module-classes">Classes<a href="#kiara.models.module-classes" class="headerlink" title="Permanent link">&para;</a></h2>
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h3 id="kiara.models.module.KiaraModuleClass" class="doc doc-heading">
-        <code>
-KiaraModuleClass            (<a class="autorefs autorefs-internal" title="kiara.models.python_class.PythonClass" href="../../python_class/#kiara.models.python_class.PythonClass">PythonClass</a>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.models.module.KiaraModuleClass" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraModuleClass</span><span class="p">(</span><span class="n">PythonClass</span><span class="p">):</span>
-
-    <span class="n">_kiara_model_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;metadata.kiara_module_class&quot;</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_module</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">):</span>
-
-        <span class="n">item_cls</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="vm">__class__</span>
-
-        <span class="n">cls_name</span> <span class="o">=</span> <span class="n">item_cls</span><span class="o">.</span><span class="vm">__name__</span>
-        <span class="n">module_name</span> <span class="o">=</span> <span class="n">item_cls</span><span class="o">.</span><span class="vm">__module__</span>
-        <span class="k">if</span> <span class="n">module_name</span> <span class="o">==</span> <span class="s2">&quot;builtins&quot;</span><span class="p">:</span>
-            <span class="n">full_name</span> <span class="o">=</span> <span class="n">cls_name</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">full_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">item_cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">item_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
-
-        <span class="n">conf</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;python_class_name&quot;</span><span class="p">:</span> <span class="n">cls_name</span><span class="p">,</span>
-            <span class="s2">&quot;python_module_name&quot;</span><span class="p">:</span> <span class="n">module_name</span><span class="p">,</span>
-            <span class="s2">&quot;full_name&quot;</span><span class="p">:</span> <span class="n">full_name</span><span class="p">,</span>
-        <span class="p">}</span>
-
-        <span class="n">conf</span><span class="p">[</span><span class="s2">&quot;module_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">config</span>
-        <span class="n">conf</span><span class="p">[</span><span class="s2">&quot;inputs_schema&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span>
-        <span class="n">conf</span><span class="p">[</span><span class="s2">&quot;outputs_schema&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="n">KiaraModuleClass</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="o">**</span><span class="n">conf</span><span class="p">)</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">_cls_cache</span> <span class="o">=</span> <span class="n">item_cls</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">_module_instance_cache</span> <span class="o">=</span> <span class="n">module</span>
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="n">module_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The module config.&quot;</span><span class="p">)</span>
-    <span class="n">inputs_schema</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The schema for the module input(s).&quot;</span>
-    <span class="p">)</span>
-    <span class="n">outputs_schema</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The schema for the module output(s).&quot;</span>
-    <span class="p">)</span>
-
-    <span class="n">_module_instance_cache</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">get_kiara_module_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">:</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_instance_cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_instance_cache</span>
-
-        <span class="n">m_cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_module_instance_cache</span> <span class="o">=</span> <span class="n">m_cls</span><span class="p">(</span><span class="n">module_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_config</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_instance_cache</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h4 id="kiara.models.module.KiaraModuleClass-attributes">Attributes<a href="#kiara.models.module.KiaraModuleClass-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.module.KiaraModuleClass.inputs_schema" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">inputs_schema</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">ValueSchema</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.KiaraModuleClass.inputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>The schema for the module input(s).</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.module.KiaraModuleClass.module_config" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">module_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.KiaraModuleClass.module_config" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>The module config.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.module.KiaraModuleClass.outputs_schema" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">outputs_schema</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">ValueSchema</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.KiaraModuleClass.outputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>The schema for the module output(s).</p>
-    </div>
-
-  </div>
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.models.module.KiaraModuleClass.from_module" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">from_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.models.module.KiaraModuleClass.from_module" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">from_module</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">):</span>
-
-    <span class="n">item_cls</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="vm">__class__</span>
-
-    <span class="n">cls_name</span> <span class="o">=</span> <span class="n">item_cls</span><span class="o">.</span><span class="vm">__name__</span>
-    <span class="n">module_name</span> <span class="o">=</span> <span class="n">item_cls</span><span class="o">.</span><span class="vm">__module__</span>
-    <span class="k">if</span> <span class="n">module_name</span> <span class="o">==</span> <span class="s2">&quot;builtins&quot;</span><span class="p">:</span>
-        <span class="n">full_name</span> <span class="o">=</span> <span class="n">cls_name</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">full_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">item_cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">item_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
-
-    <span class="n">conf</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;python_class_name&quot;</span><span class="p">:</span> <span class="n">cls_name</span><span class="p">,</span>
-        <span class="s2">&quot;python_module_name&quot;</span><span class="p">:</span> <span class="n">module_name</span><span class="p">,</span>
-        <span class="s2">&quot;full_name&quot;</span><span class="p">:</span> <span class="n">full_name</span><span class="p">,</span>
-    <span class="p">}</span>
-
-    <span class="n">conf</span><span class="p">[</span><span class="s2">&quot;module_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">config</span>
-    <span class="n">conf</span><span class="p">[</span><span class="s2">&quot;inputs_schema&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">inputs_schema</span>
-    <span class="n">conf</span><span class="p">[</span><span class="s2">&quot;outputs_schema&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">outputs_schema</span>
-
-    <span class="n">result</span> <span class="o">=</span> <span class="n">KiaraModuleClass</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="o">**</span><span class="n">conf</span><span class="p">)</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">_cls_cache</span> <span class="o">=</span> <span class="n">item_cls</span>
-    <span class="n">result</span><span class="o">.</span><span class="n">_module_instance_cache</span> <span class="o">=</span> <span class="n">module</span>
-    <span class="k">return</span> <span class="n">result</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.models.module.KiaraModuleClass.get_kiara_module_instance" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_kiara_module_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-
-<a href="#kiara.models.module.KiaraModuleClass.get_kiara_module_instance" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_kiara_module_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">:</span>
-
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_instance_cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_instance_cache</span>
-
-    <span class="n">m_cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_module_instance_cache</span> <span class="o">=</span> <span class="n">m_cls</span><span class="p">(</span><span class="n">module_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_config</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_instance_cache</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
 
   <div class="doc doc-object doc-class">
 
@@ -4748,909 +4519,6 @@ Config        </code>
 
   </div>
 
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h3 id="kiara.models.module.KiaraModuleConfigMetadata" class="doc doc-heading">
-        <code>
-KiaraModuleConfigMetadata            (<a class="autorefs autorefs-internal" title="kiara.models.KiaraModel" href="../../__init__/#kiara.models.KiaraModel">KiaraModel</a>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.models.module.KiaraModuleConfigMetadata" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraModuleConfigMetadata</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
-
-    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;metadata.module_config&quot;</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_config_class</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span>
-        <span class="n">config_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">KiaraModuleConfig</span><span class="p">],</span>
-    <span class="p">):</span>
-
-        <span class="n">flat_models</span> <span class="o">=</span> <span class="n">get_flat_models_from_model</span><span class="p">(</span><span class="n">config_cls</span><span class="p">)</span>
-        <span class="n">model_name_map</span> <span class="o">=</span> <span class="n">get_model_name_map</span><span class="p">(</span><span class="n">flat_models</span><span class="p">)</span>
-        <span class="n">m_schema</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">model_process_schema</span><span class="p">(</span><span class="n">config_cls</span><span class="p">,</span> <span class="n">model_name_map</span><span class="o">=</span><span class="n">model_name_map</span><span class="p">)</span>
-        <span class="n">fields</span> <span class="o">=</span> <span class="n">m_schema</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span>
-
-        <span class="n">config_values</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">details</span> <span class="ow">in</span> <span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
-            <span class="n">type_str</span> <span class="o">=</span> <span class="s2">&quot;-- n/a --&quot;</span>
-            <span class="k">if</span> <span class="s2">&quot;type&quot;</span> <span class="ow">in</span> <span class="n">details</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">type_str</span> <span class="o">=</span> <span class="n">details</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
-
-            <span class="n">desc</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="n">DEFAULT_NO_DESC_VALUE</span><span class="p">)</span>
-            <span class="n">default</span> <span class="o">=</span> <span class="n">config_cls</span><span class="o">.</span><span class="n">__fields__</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">default</span>
-            <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">config_cls</span><span class="o">.</span><span class="n">__fields__</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">default_factory</span><span class="p">):</span>
-                    <span class="n">default</span> <span class="o">=</span> <span class="n">config_cls</span><span class="o">.</span><span class="n">__fields__</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">default_factory</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
-
-            <span class="n">req</span> <span class="o">=</span> <span class="n">config_cls</span><span class="o">.</span><span class="n">__fields__</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">required</span>
-
-            <span class="n">config_values</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ValueTypeAndDescription</span><span class="p">(</span>
-                <span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">type_str</span><span class="p">,</span> <span class="n">value_default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="n">req</span>
-            <span class="p">)</span>
-
-        <span class="n">python_cls</span> <span class="o">=</span> <span class="n">PythonClass</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">config_cls</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">KiaraModuleConfigMetadata</span><span class="p">(</span>
-            <span class="n">python_class</span><span class="o">=</span><span class="n">python_cls</span><span class="p">,</span> <span class="n">config_values</span><span class="o">=</span><span class="n">config_values</span>
-        <span class="p">)</span>
-
-    <span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClass</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The config model python class.&quot;</span><span class="p">)</span>
-    <span class="n">config_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueTypeAndDescription</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The available configuration values.&quot;</span>
-    <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">full_name</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">full_name</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h4 id="kiara.models.module.KiaraModuleConfigMetadata-attributes">Attributes<a href="#kiara.models.module.KiaraModuleConfigMetadata-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.module.KiaraModuleConfigMetadata.config_values" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">config_values</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">ValueTypeAndDescription</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.KiaraModuleConfigMetadata.config_values" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>The available configuration values.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.module.KiaraModuleConfigMetadata.python_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClass</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.KiaraModuleConfigMetadata.python_class" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>The config model python class.</p>
-    </div>
-
-  </div>
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.models.module.KiaraModuleConfigMetadata.from_config_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">from_config_class</span><span class="p">(</span><span class="n">config_cls</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.models.module.KiaraModuleConfigMetadata.from_config_class" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">from_config_class</span><span class="p">(</span>
-    <span class="bp">cls</span><span class="p">,</span>
-    <span class="n">config_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">KiaraModuleConfig</span><span class="p">],</span>
-<span class="p">):</span>
-
-    <span class="n">flat_models</span> <span class="o">=</span> <span class="n">get_flat_models_from_model</span><span class="p">(</span><span class="n">config_cls</span><span class="p">)</span>
-    <span class="n">model_name_map</span> <span class="o">=</span> <span class="n">get_model_name_map</span><span class="p">(</span><span class="n">flat_models</span><span class="p">)</span>
-    <span class="n">m_schema</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">model_process_schema</span><span class="p">(</span><span class="n">config_cls</span><span class="p">,</span> <span class="n">model_name_map</span><span class="o">=</span><span class="n">model_name_map</span><span class="p">)</span>
-    <span class="n">fields</span> <span class="o">=</span> <span class="n">m_schema</span><span class="p">[</span><span class="s2">&quot;properties&quot;</span><span class="p">]</span>
-
-    <span class="n">config_values</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">details</span> <span class="ow">in</span> <span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
-        <span class="n">type_str</span> <span class="o">=</span> <span class="s2">&quot;-- n/a --&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;type&quot;</span> <span class="ow">in</span> <span class="n">details</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">type_str</span> <span class="o">=</span> <span class="n">details</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span>
-
-        <span class="n">desc</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="n">DEFAULT_NO_DESC_VALUE</span><span class="p">)</span>
-        <span class="n">default</span> <span class="o">=</span> <span class="n">config_cls</span><span class="o">.</span><span class="n">__fields__</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">default</span>
-        <span class="k">if</span> <span class="n">default</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">config_cls</span><span class="o">.</span><span class="n">__fields__</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">default_factory</span><span class="p">):</span>
-                <span class="n">default</span> <span class="o">=</span> <span class="n">config_cls</span><span class="o">.</span><span class="n">__fields__</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">default_factory</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
-
-        <span class="n">req</span> <span class="o">=</span> <span class="n">config_cls</span><span class="o">.</span><span class="n">__fields__</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">required</span>
-
-        <span class="n">config_values</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ValueTypeAndDescription</span><span class="p">(</span>
-            <span class="n">description</span><span class="o">=</span><span class="n">desc</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">type_str</span><span class="p">,</span> <span class="n">value_default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="n">req</span>
-        <span class="p">)</span>
-
-    <span class="n">python_cls</span> <span class="o">=</span> <span class="n">PythonClass</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">config_cls</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">KiaraModuleConfigMetadata</span><span class="p">(</span>
-        <span class="n">python_class</span><span class="o">=</span><span class="n">python_cls</span><span class="p">,</span> <span class="n">config_values</span><span class="o">=</span><span class="n">config_values</span>
-    <span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h3 id="kiara.models.module.KiaraModuleTypeInfo" class="doc doc-heading">
-        <code>
-KiaraModuleTypeInfo            (<a class="autorefs autorefs-internal" title="kiara.models.info.TypeInfo" href="../../info/#kiara.models.info.TypeInfo">TypeInfo</a>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.models.module.KiaraModuleTypeInfo" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraModuleTypeInfo</span><span class="p">(</span><span class="n">TypeInfo</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]):</span>
-
-    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;info.kiara_module_type&quot;</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_from_type_class</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">type_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraModuleTypeInfo&quot;</span><span class="p">:</span>
-
-        <span class="n">module_attrs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">extract_module_attributes</span><span class="p">(</span><span class="n">module_cls</span><span class="o">=</span><span class="n">type_cls</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="o">**</span><span class="n">module_attrs</span><span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">base_class</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]:</span>
-
-        <span class="kn">from</span> <span class="nn">kiara.modules</span> <span class="kn">import</span> <span class="n">KiaraModule</span>
-
-        <span class="k">return</span> <span class="n">KiaraModule</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">category_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;module&quot;</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">extract_module_attributes</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">module_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="s2">&quot;process&quot;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Module class &#39;</span><span class="si">{</span><span class="n">module_cls</span><span class="si">}</span><span class="s2">&#39; misses &#39;process&#39; method.&quot;</span><span class="p">)</span>
-        <span class="n">proc_src</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">module_cls</span><span class="o">.</span><span class="n">process</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
-
-        <span class="n">authors_md</span> <span class="o">=</span> <span class="n">AuthorsMetadataModel</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">module_cls</span><span class="p">)</span>
-        <span class="n">doc</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">from_class_doc</span><span class="p">(</span><span class="n">module_cls</span><span class="p">)</span>
-        <span class="n">python_class</span> <span class="o">=</span> <span class="n">PythonClass</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">module_cls</span><span class="p">)</span>
-        <span class="n">properties_md</span> <span class="o">=</span> <span class="n">ContextMetadataModel</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">module_cls</span><span class="p">)</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="n">KiaraModuleConfigMetadata</span><span class="o">.</span><span class="n">from_config_class</span><span class="p">(</span><span class="n">module_cls</span><span class="o">.</span><span class="n">_config_cls</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;type_name&quot;</span><span class="p">:</span> <span class="n">module_cls</span><span class="o">.</span><span class="n">_module_type_name</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
-            <span class="s2">&quot;documentation&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="p">,</span>
-            <span class="s2">&quot;authors&quot;</span><span class="p">:</span> <span class="n">authors_md</span><span class="p">,</span>
-            <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="n">properties_md</span><span class="p">,</span>
-            <span class="s2">&quot;python_class&quot;</span><span class="p">:</span> <span class="n">python_class</span><span class="p">,</span>
-            <span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="n">config</span><span class="p">,</span>
-            <span class="s2">&quot;process_src&quot;</span><span class="p">:</span> <span class="n">proc_src</span><span class="p">,</span>
-        <span class="p">}</span>
-
-    <span class="n">process_src</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The source code of the process method of the module.&quot;</span>
-    <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-
-        <span class="n">include_config_schema</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_config_schema&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">include_src</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_src&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">include_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_doc&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-
-        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;property&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">include_doc</span><span class="p">:</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
-                <span class="s2">&quot;Documentation&quot;</span><span class="p">,</span>
-                <span class="n">Panel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(),</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">),</span>
-            <span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Author(s)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">authors</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">())</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Context&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">())</span>
-
-        <span class="k">if</span> <span class="n">include_config_schema</span><span class="p">:</span>
-            <span class="n">config_cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span><span class="o">.</span><span class="n">_config_cls</span>  <span class="c1"># type: ignore</span>
-            <span class="kn">from</span> <span class="nn">kiara.utils.output</span> <span class="kn">import</span> <span class="n">create_table_from_base_model_cls</span>
-
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
-                <span class="s2">&quot;Module config schema&quot;</span><span class="p">,</span> <span class="n">create_table_from_base_model_cls</span><span class="p">(</span><span class="n">config_cls</span><span class="p">)</span>
-            <span class="p">)</span>
-
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Python class&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">())</span>
-
-        <span class="k">if</span> <span class="n">include_src</span><span class="p">:</span>
-            <span class="n">_config</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process_src</span><span class="p">,</span> <span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Processing source code&quot;</span><span class="p">,</span> <span class="n">Panel</span><span class="p">(</span><span class="n">_config</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">HORIZONTALS</span><span class="p">))</span>
-
-        <span class="k">return</span> <span class="n">table</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h4 id="kiara.models.module.KiaraModuleTypeInfo-attributes">Attributes<a href="#kiara.models.module.KiaraModuleTypeInfo-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.module.KiaraModuleTypeInfo.process_src" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">process_src</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.KiaraModuleTypeInfo.process_src" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>The source code of the process method of the module.</p>
-    </div>
-
-  </div>
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.models.module.KiaraModuleTypeInfo.base_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">base_class</span><span class="p">()</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.models.module.KiaraModuleTypeInfo.base_class" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">base_class</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]:</span>
-
-    <span class="kn">from</span> <span class="nn">kiara.modules</span> <span class="kn">import</span> <span class="n">KiaraModule</span>
-
-    <span class="k">return</span> <span class="n">KiaraModule</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.models.module.KiaraModuleTypeInfo.category_name" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">category_name</span><span class="p">()</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.models.module.KiaraModuleTypeInfo.category_name" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">category_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="k">return</span> <span class="s2">&quot;module&quot;</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.models.module.KiaraModuleTypeInfo.create_from_type_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_from_type_class</span><span class="p">(</span><span class="n">type_cls</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.models.module.KiaraModuleTypeInfo.create_from_type_class" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">create_from_type_class</span><span class="p">(</span>
-    <span class="bp">cls</span><span class="p">,</span> <span class="n">type_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraModuleTypeInfo&quot;</span><span class="p">:</span>
-
-    <span class="n">module_attrs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">extract_module_attributes</span><span class="p">(</span><span class="n">module_cls</span><span class="o">=</span><span class="n">type_cls</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="o">**</span><span class="n">module_attrs</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.models.module.KiaraModuleTypeInfo.create_renderable" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
-
-
-<a href="#kiara.models.module.KiaraModuleTypeInfo.create_renderable" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-
-    <span class="n">include_config_schema</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_config_schema&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">include_src</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_src&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-    <span class="n">include_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_doc&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-
-    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;property&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">include_doc</span><span class="p">:</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
-            <span class="s2">&quot;Documentation&quot;</span><span class="p">,</span>
-            <span class="n">Panel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(),</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">),</span>
-        <span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Author(s)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">authors</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">())</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Context&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">())</span>
-
-    <span class="k">if</span> <span class="n">include_config_schema</span><span class="p">:</span>
-        <span class="n">config_cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span><span class="o">.</span><span class="n">_config_cls</span>  <span class="c1"># type: ignore</span>
-        <span class="kn">from</span> <span class="nn">kiara.utils.output</span> <span class="kn">import</span> <span class="n">create_table_from_base_model_cls</span>
-
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
-            <span class="s2">&quot;Module config schema&quot;</span><span class="p">,</span> <span class="n">create_table_from_base_model_cls</span><span class="p">(</span><span class="n">config_cls</span><span class="p">)</span>
-        <span class="p">)</span>
-
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Python class&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">())</span>
-
-    <span class="k">if</span> <span class="n">include_src</span><span class="p">:</span>
-        <span class="n">_config</span> <span class="o">=</span> <span class="n">Syntax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process_src</span><span class="p">,</span> <span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Processing source code&quot;</span><span class="p">,</span> <span class="n">Panel</span><span class="p">(</span><span class="n">_config</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">HORIZONTALS</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">table</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.models.module.KiaraModuleTypeInfo.extract_module_attributes" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">extract_module_attributes</span><span class="p">(</span><span class="n">module_cls</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.models.module.KiaraModuleTypeInfo.extract_module_attributes" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">extract_module_attributes</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">module_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module_cls</span><span class="p">,</span> <span class="s2">&quot;process&quot;</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Module class &#39;</span><span class="si">{</span><span class="n">module_cls</span><span class="si">}</span><span class="s2">&#39; misses &#39;process&#39; method.&quot;</span><span class="p">)</span>
-    <span class="n">proc_src</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">module_cls</span><span class="o">.</span><span class="n">process</span><span class="p">))</span>  <span class="c1"># type: ignore</span>
-
-    <span class="n">authors_md</span> <span class="o">=</span> <span class="n">AuthorsMetadataModel</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">module_cls</span><span class="p">)</span>
-    <span class="n">doc</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">from_class_doc</span><span class="p">(</span><span class="n">module_cls</span><span class="p">)</span>
-    <span class="n">python_class</span> <span class="o">=</span> <span class="n">PythonClass</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">module_cls</span><span class="p">)</span>
-    <span class="n">properties_md</span> <span class="o">=</span> <span class="n">ContextMetadataModel</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">module_cls</span><span class="p">)</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">KiaraModuleConfigMetadata</span><span class="o">.</span><span class="n">from_config_class</span><span class="p">(</span><span class="n">module_cls</span><span class="o">.</span><span class="n">_config_cls</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;type_name&quot;</span><span class="p">:</span> <span class="n">module_cls</span><span class="o">.</span><span class="n">_module_type_name</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
-        <span class="s2">&quot;documentation&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="p">,</span>
-        <span class="s2">&quot;authors&quot;</span><span class="p">:</span> <span class="n">authors_md</span><span class="p">,</span>
-        <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="n">properties_md</span><span class="p">,</span>
-        <span class="s2">&quot;python_class&quot;</span><span class="p">:</span> <span class="n">python_class</span><span class="p">,</span>
-        <span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="n">config</span><span class="p">,</span>
-        <span class="s2">&quot;process_src&quot;</span><span class="p">:</span> <span class="n">proc_src</span><span class="p">,</span>
-    <span class="p">}</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h3 id="kiara.models.module.ModuleTypeClassesInfo" class="doc doc-heading">
-        <code>
-ModuleTypeClassesInfo            (<a class="autorefs autorefs-internal" title="kiara.models.info.TypeInfoModelGroup" href="../../info/#kiara.models.info.TypeInfoModelGroup">TypeInfoModelGroup</a>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.models.module.ModuleTypeClassesInfo" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ModuleTypeClassesInfo</span><span class="p">(</span><span class="n">TypeInfoModelGroup</span><span class="p">):</span>
-
-    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;info.module_types&quot;</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">base_info_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">TypeInfo</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="n">KiaraModuleTypeInfo</span>
-
-    <span class="n">type_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;module_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;module_type&quot;</span>
-    <span class="n">item_infos</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraModuleTypeInfo</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The module type info instances for each type.&quot;</span>
-    <span class="p">)</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h4 id="kiara.models.module.ModuleTypeClassesInfo-attributes">Attributes<a href="#kiara.models.module.ModuleTypeClassesInfo-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.module.ModuleTypeClassesInfo.item_infos" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">item_infos</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">KiaraModuleTypeInfo</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.ModuleTypeClassesInfo.item_infos" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>The module type info instances for each type.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.module.ModuleTypeClassesInfo.type_name" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">type_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;module_type&#39;</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.models.module.ModuleTypeClassesInfo.type_name" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-    </div>
-
-  </div>
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.models.module.ModuleTypeClassesInfo.base_info_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">base_info_class</span><span class="p">()</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.models.module.ModuleTypeClassesInfo.base_info_class" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">base_info_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">TypeInfo</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="n">KiaraModuleTypeInfo</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h3 id="kiara.models.module.ValueTypeAndDescription" class="doc doc-heading">
-        <code>
-ValueTypeAndDescription            (<span title="pydantic.main.BaseModel">BaseModel</span>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.models.module.ValueTypeAndDescription" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueTypeAndDescription</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-
-    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The description for the value.&quot;</span><span class="p">)</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type.&quot;</span><span class="p">)</span>
-    <span class="n">value_default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Default for the value.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    <span class="n">required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether this value is required&quot;</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h4 id="kiara.models.module.ValueTypeAndDescription-attributes">Attributes<a href="#kiara.models.module.ValueTypeAndDescription-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.module.ValueTypeAndDescription.description" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">description</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.ValueTypeAndDescription.description" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>The description for the value.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.module.ValueTypeAndDescription.required" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">required</span><span class="p">:</span> <span class="nb">bool</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.ValueTypeAndDescription.required" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>Whether this value is required</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.module.ValueTypeAndDescription.type" class="doc doc-heading">
-<code class="highlight language-python"><span class="nb">type</span><span class="p">:</span> <span class="nb">str</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.ValueTypeAndDescription.type" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>The value type.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.module.ValueTypeAndDescription.value_default" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">value_default</span><span class="p">:</span> <span class="n">Any</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.models.module.ValueTypeAndDescription.value_default" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-      <p>Default for the value.</p>
-    </div>
-
-  </div>
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-
-  <div class="doc doc-object doc-function">
-
-
-
-<h3 id="kiara.models.module.calculate_class_doc_url" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">calculate_class_doc_url</span><span class="p">(</span><span class="n">base_url</span><span class="p">,</span> <span class="n">module_type_name</span><span class="p">)</span></code>
-
-
-<a href="#kiara.models.module.calculate_class_doc_url" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_class_doc_url</span><span class="p">(</span><span class="n">base_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">module_type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-
-    <span class="k">if</span> <span class="n">base_url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
-        <span class="n">base_url</span> <span class="o">=</span> <span class="n">base_url</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-    <span class="n">module_type_name</span> <span class="o">=</span> <span class="n">module_type_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/latest/modules_list/#</span><span class="si">{</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&quot;</span>
-
-    <span class="k">return</span> <span class="n">url</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-function">
-
-
-
-<h3 id="kiara.models.module.calculate_class_source_url" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">calculate_class_source_url</span><span class="p">(</span><span class="n">base_url</span><span class="p">,</span> <span class="n">python_class_info</span><span class="p">,</span> <span class="n">branch</span><span class="o">=</span><span class="s1">&#39;main&#39;</span><span class="p">)</span></code>
-
-
-<a href="#kiara.models.module.calculate_class_source_url" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_class_source_url</span><span class="p">(</span>
-    <span class="n">base_url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">python_class_info</span><span class="p">:</span> <span class="n">PythonClass</span><span class="p">,</span> <span class="n">branch</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;main&quot;</span>
-<span class="p">):</span>
-
-    <span class="k">if</span> <span class="n">base_url</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">):</span>
-        <span class="n">base_url</span> <span class="o">=</span> <span class="n">base_url</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-    <span class="n">m</span> <span class="o">=</span> <span class="n">python_class_info</span><span class="o">.</span><span class="n">get_python_module</span><span class="p">()</span>
-    <span class="n">m_file</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="vm">__file__</span>
-    <span class="k">assert</span> <span class="n">m_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-
-    <span class="n">base_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/blob/</span><span class="si">{</span><span class="n">branch</span><span class="si">}</span><span class="s2">/src/</span><span class="si">{</span><span class="n">python_class_info</span><span class="o">.</span><span class="n">python_module_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-
-    <span class="k">if</span> <span class="n">m_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;__init__.py&quot;</span><span class="p">):</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">/__init__.py&quot;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">.py&quot;</span>
-
-    <span class="k">return</span> <span class="n">url</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
 
 
 
@@ -8720,6 +7588,156 @@ BaseOperationDetails            (<a class="autorefs autorefs-internal" title="ki
 
 
 
+<h5 id="kiara.models.module.operation.Filter" class="doc doc-heading">
+        <code>
+Filter            (<a class="autorefs autorefs-internal" title="kiara.models.KiaraModel" href="../../__init__/#kiara.models.KiaraModel">KiaraModel</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.models.module.operation.Filter" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Filter</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+
+    <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The underlying operation providing which does the filtering.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">input_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The input name to use for the dataset to filter.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The output name to use for the dataset to filter.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The type of the dataset that gets filtered.&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h6 id="kiara.models.module.operation.Filter-attributes">Attributes<a href="#kiara.models.module.operation.Filter-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.module.operation.Filter.data_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.module.operation.Filter.data_type" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The type of the dataset that gets filtered.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.module.operation.Filter.input_name" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">input_name</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.module.operation.Filter.input_name" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The input name to use for the dataset to filter.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.module.operation.Filter.operation" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.module.operation.Filter.operation" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The underlying operation providing which does the filtering.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.module.operation.Filter.output_name" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.module.operation.Filter.output_name" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The output name to use for the dataset to filter.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
 <h5 id="kiara.models.module.operation.ManifestOperationConfig" class="doc doc-heading">
         <code>
 ManifestOperationConfig            (<a class="autorefs autorefs-internal" title="kiara.models.module.operation.OperationConfig" href="../operation/#kiara.models.module.operation.OperationConfig">OperationConfig</a>)
@@ -9063,7 +8081,9 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
             <span class="p">)</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module config&quot;</span><span class="p">,</span> <span class="n">conf</span><span class="p">)</span>
 
-            <span class="n">module_type_md</span> <span class="o">=</span> <span class="n">KiaraModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
+            <span class="kn">from</span> <span class="nn">kiara.interfaces.python_api</span> <span class="kn">import</span> <span class="n">ModuleTypeInfo</span>
+
+            <span class="n">module_type_md</span> <span class="o">=</span> <span class="n">ModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">module_details</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
             <span class="p">)</span>
 
@@ -9400,7 +8420,9 @@ Operation            (<a class="autorefs autorefs-internal" title="kiara.models.
         <span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module config&quot;</span><span class="p">,</span> <span class="n">conf</span><span class="p">)</span>
 
-        <span class="n">module_type_md</span> <span class="o">=</span> <span class="n">KiaraModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
+        <span class="kn">from</span> <span class="nn">kiara.interfaces.python_api</span> <span class="kn">import</span> <span class="n">ModuleTypeInfo</span>
+
+        <span class="n">module_type_md</span> <span class="o">=</span> <span class="n">ModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">module_details</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
         <span class="p">)</span>
 
@@ -9945,584 +8967,6 @@ OperationDetails            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
-<h5 id="kiara.models.module.operation.OperationGroupInfo" class="doc doc-heading">
-        <code>
-OperationGroupInfo            (<a class="autorefs autorefs-internal" title="kiara.models.info.InfoModelGroup" href="../../info/#kiara.models.info.InfoModelGroup">InfoModelGroup</a>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationGroupInfo" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperationGroupInfo</span><span class="p">(</span><span class="n">InfoModelGroup</span><span class="p">):</span>
-
-    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;info.operations&quot;</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">base_info_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">ItemInfo</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="n">OperationInfo</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_from_operations</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">group_alias</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">items</span><span class="p">:</span> <span class="n">Operation</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OperationGroupInfo&quot;</span><span class="p">:</span>
-
-        <span class="n">op_infos</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">k</span><span class="p">:</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-        <span class="p">}</span>
-        <span class="n">op_group_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">group_alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">op_infos</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">op_group_info</span>
-
-    <span class="c1"># type_name: Literal[&quot;operation_type&quot;] = &quot;operation_type&quot;</span>
-    <span class="n">item_infos</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperationInfo</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The operation info instances for each type.&quot;</span>
-    <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-
-        <span class="n">by_type</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;by_type&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">by_type</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_renderable_by_type</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_renderable_list</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_create_renderable_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">):</span>
-
-        <span class="n">include_internal_operations</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_internal_operations&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">full_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;full_doc&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="nb">filter</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filter&quot;</span><span class="p">,</span> <span class="p">[])</span>
-
-        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Id&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Type(s)&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Description&quot;</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="ow">not</span> <span class="n">include_internal_operations</span>
-                <span class="ow">and</span> <span class="n">op_info</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">is_internal_operation</span>
-            <span class="p">):</span>
-                <span class="k">continue</span>
-
-            <span class="n">types</span> <span class="o">=</span> <span class="n">op_info</span><span class="o">.</span><span class="n">operation_types</span>
-
-            <span class="k">if</span> <span class="s2">&quot;custom_module&quot;</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
-                <span class="n">types</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s2">&quot;custom_module&quot;</span><span class="p">)</span>
-
-            <span class="n">desc_str</span> <span class="o">=</span> <span class="n">op_info</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span>
-            <span class="k">if</span> <span class="n">full_doc</span><span class="p">:</span>
-                <span class="n">desc</span> <span class="o">=</span> <span class="n">Markdown</span><span class="p">(</span><span class="n">op_info</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">full_doc</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">desc</span> <span class="o">=</span> <span class="n">Markdown</span><span class="p">(</span><span class="n">op_info</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="nb">filter</span><span class="p">:</span>
-                <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="p">(</span>
-                        <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">op_id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-                        <span class="ow">and</span> <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">desc_str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-                    <span class="p">):</span>
-                        <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
-                        <span class="k">break</span>
-                <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-                    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">op_id</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">types</span><span class="p">),</span> <span class="n">desc</span><span class="p">)</span>
-
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">op_id</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">types</span><span class="p">),</span> <span class="n">desc</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">table</span>
-
-    <span class="k">def</span> <span class="nf">_create_renderable_by_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">):</span>
-
-        <span class="n">include_internal_operations</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_internal_operations&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">full_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;full_doc&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="nb">filter</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;filter&quot;</span><span class="p">,</span> <span class="p">[])</span>
-
-        <span class="n">by_type</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">filter</span><span class="p">:</span>
-                <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="p">(</span>
-                        <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">op_id</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-                        <span class="ow">and</span> <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-                    <span class="p">):</span>
-                        <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
-                        <span class="k">break</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
-                    <span class="k">continue</span>
-            <span class="k">for</span> <span class="n">op_type</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">operation_types</span><span class="p">:</span>
-                <span class="n">by_type</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">op_type</span><span class="p">,</span> <span class="p">{})[</span><span class="n">op_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">op</span>
-
-        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Type&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;b green&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Id&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">full_doc</span><span class="p">:</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Documentation&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Description&quot;</span><span class="p">,</span> <span class="n">no_wrap</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">operation_name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">by_type</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-
-            <span class="c1"># if operation_name == &quot;custom_module&quot;:</span>
-            <span class="c1">#     continue</span>
-
-            <span class="n">first_line_value</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="n">op_infos</span> <span class="o">=</span> <span class="n">by_type</span><span class="p">[</span><span class="n">operation_name</span><span class="p">]</span>
-
-            <span class="k">for</span> <span class="n">op_id</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">op_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-                <span class="n">op_info</span><span class="p">:</span> <span class="n">OperationInfo</span> <span class="o">=</span> <span class="n">op_infos</span><span class="p">[</span><span class="n">op_id</span><span class="p">]</span>
-
-                <span class="k">if</span> <span class="p">(</span>
-                    <span class="ow">not</span> <span class="n">include_internal_operations</span>
-                    <span class="ow">and</span> <span class="n">op_info</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">is_internal_operation</span>
-                <span class="p">):</span>
-                    <span class="k">continue</span>
-
-                <span class="k">if</span> <span class="n">full_doc</span><span class="p">:</span>
-                    <span class="n">desc</span> <span class="o">=</span> <span class="n">Markdown</span><span class="p">(</span><span class="n">op_info</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">full_doc</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">desc</span> <span class="o">=</span> <span class="n">Markdown</span><span class="p">(</span><span class="n">op_info</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
-
-                <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">if</span> <span class="n">first_line_value</span><span class="p">:</span>
-                    <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">operation_name</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-
-                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op_id</span><span class="p">)</span>
-                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span>
-
-                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
-                <span class="n">first_line_value</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="k">return</span> <span class="n">table</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h6 id="kiara.models.module.operation.OperationGroupInfo-attributes">Attributes<a href="#kiara.models.module.operation.OperationGroupInfo-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.module.operation.OperationGroupInfo.item_infos" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">item_infos</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">OperationInfo</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationGroupInfo.item_infos" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The operation info instances for each type.</p>
-    </div>
-
-  </div>
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h7 id="kiara.models.module.operation.OperationGroupInfo.base_info_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">base_info_class</span><span class="p">()</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationGroupInfo.base_info_class" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">base_info_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">ItemInfo</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="n">OperationInfo</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h7 id="kiara.models.module.operation.OperationGroupInfo.create_from_operations" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_from_operations</span><span class="p">(</span><span class="n">kiara</span><span class="p">,</span> <span class="n">group_alias</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">items</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationGroupInfo.create_from_operations" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">create_from_operations</span><span class="p">(</span>
-    <span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">group_alias</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">items</span><span class="p">:</span> <span class="n">Operation</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OperationGroupInfo&quot;</span><span class="p">:</span>
-
-    <span class="n">op_infos</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">k</span><span class="p">:</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-    <span class="p">}</span>
-    <span class="n">op_group_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">group_alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">op_infos</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">op_group_info</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h7 id="kiara.models.module.operation.OperationGroupInfo.create_renderable" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
-
-
-<a href="#kiara.models.module.operation.OperationGroupInfo.create_renderable" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-
-    <span class="n">by_type</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;by_type&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">by_type</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_renderable_by_type</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_renderable_list</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h5 id="kiara.models.module.operation.OperationInfo" class="doc doc-heading">
-        <code>
-OperationInfo            (<a class="autorefs autorefs-internal" title="kiara.models.info.ItemInfo" href="../../info/#kiara.models.info.ItemInfo">ItemInfo</a>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationInfo" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperationInfo</span><span class="p">(</span><span class="n">ItemInfo</span><span class="p">):</span>
-
-    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;info.operation&quot;</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_from_operation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">):</span>
-
-        <span class="n">module</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">module</span>
-        <span class="n">module_cls</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="vm">__class__</span>
-
-        <span class="n">authors_md</span> <span class="o">=</span> <span class="n">AuthorsMetadataModel</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">module_cls</span><span class="p">)</span>
-        <span class="n">properties_md</span> <span class="o">=</span> <span class="n">ContextMetadataModel</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">module_cls</span><span class="p">)</span>
-
-        <span class="n">op_types</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">find_all_operation_types</span><span class="p">(</span>
-            <span class="n">operation_id</span><span class="o">=</span><span class="n">operation</span><span class="o">.</span><span class="n">operation_id</span>
-        <span class="p">)</span>
-
-        <span class="n">op_info</span> <span class="o">=</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-            <span class="n">type_name</span><span class="o">=</span><span class="n">operation</span><span class="o">.</span><span class="n">operation_id</span><span class="p">,</span>
-            <span class="n">operation_types</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">op_types</span><span class="p">),</span>
-            <span class="n">operation</span><span class="o">=</span><span class="n">operation</span><span class="p">,</span>
-            <span class="n">documentation</span><span class="o">=</span><span class="n">operation</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
-            <span class="n">authors</span><span class="o">=</span><span class="n">authors_md</span><span class="p">,</span>
-            <span class="n">context</span><span class="o">=</span><span class="n">properties_md</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">op_info</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">category_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;operation&quot;</span>
-
-    <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The operation instance.&quot;</span><span class="p">)</span>
-    <span class="n">operation_types</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The operation types this operation belongs to.&quot;</span>
-    <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-
-        <span class="n">include_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_doc&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-
-        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;property&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">include_doc</span><span class="p">:</span>
-            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
-                <span class="s2">&quot;Documentation&quot;</span><span class="p">,</span>
-                <span class="n">Panel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(),</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">),</span>
-            <span class="p">)</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Author(s)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">authors</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">))</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Context&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">))</span>
-
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Operation details&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">table</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h6 id="kiara.models.module.operation.OperationInfo-attributes">Attributes<a href="#kiara.models.module.operation.OperationInfo-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.module.operation.OperationInfo.operation" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationInfo.operation" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The operation instance.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.module.operation.OperationInfo.operation_types" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">operation_types</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationInfo.operation_types" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The operation types this operation belongs to.</p>
-    </div>
-
-  </div>
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h7 id="kiara.models.module.operation.OperationInfo.category_name" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">category_name</span><span class="p">()</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationInfo.category_name" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">category_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="k">return</span> <span class="s2">&quot;operation&quot;</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h7 id="kiara.models.module.operation.OperationInfo.create_from_operation" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_from_operation</span><span class="p">(</span><span class="n">kiara</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationInfo.create_from_operation" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">create_from_operation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">):</span>
-
-    <span class="n">module</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">module</span>
-    <span class="n">module_cls</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="vm">__class__</span>
-
-    <span class="n">authors_md</span> <span class="o">=</span> <span class="n">AuthorsMetadataModel</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">module_cls</span><span class="p">)</span>
-    <span class="n">properties_md</span> <span class="o">=</span> <span class="n">ContextMetadataModel</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">module_cls</span><span class="p">)</span>
-
-    <span class="n">op_types</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">find_all_operation_types</span><span class="p">(</span>
-        <span class="n">operation_id</span><span class="o">=</span><span class="n">operation</span><span class="o">.</span><span class="n">operation_id</span>
-    <span class="p">)</span>
-
-    <span class="n">op_info</span> <span class="o">=</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-        <span class="n">type_name</span><span class="o">=</span><span class="n">operation</span><span class="o">.</span><span class="n">operation_id</span><span class="p">,</span>
-        <span class="n">operation_types</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">op_types</span><span class="p">),</span>
-        <span class="n">operation</span><span class="o">=</span><span class="n">operation</span><span class="p">,</span>
-        <span class="n">documentation</span><span class="o">=</span><span class="n">operation</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
-        <span class="n">authors</span><span class="o">=</span><span class="n">authors_md</span><span class="p">,</span>
-        <span class="n">context</span><span class="o">=</span><span class="n">properties_md</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">op_info</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h7 id="kiara.models.module.operation.OperationInfo.create_renderable" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
-
-
-<a href="#kiara.models.module.operation.OperationInfo.create_renderable" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-
-    <span class="n">include_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_doc&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-
-    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;property&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">include_doc</span><span class="p">:</span>
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
-            <span class="s2">&quot;Documentation&quot;</span><span class="p">,</span>
-            <span class="n">Panel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">documentation</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(),</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">),</span>
-        <span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Author(s)&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">authors</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">))</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Context&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">))</span>
-
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Operation details&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">table</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
 <h5 id="kiara.models.module.operation.OperationSchema" class="doc doc-heading">
         <code>
 OperationSchema            (<a class="autorefs autorefs-internal" title="kiara.modules.InputOutputObject" href="../../../modules/__init__/#kiara.modules.InputOutputObject">InputOutputObject</a>)
@@ -10627,327 +9071,6 @@ OperationSchema            (<a class="autorefs autorefs-internal" title="kiara.m
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outputs_schema_static</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h5 id="kiara.models.module.operation.OperationTypeClassesInfo" class="doc doc-heading">
-        <code>
-OperationTypeClassesInfo            (<a class="autorefs autorefs-internal" title="kiara.models.info.TypeInfoModelGroup" href="../../info/#kiara.models.info.TypeInfoModelGroup">TypeInfoModelGroup</a>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationTypeClassesInfo" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperationTypeClassesInfo</span><span class="p">(</span><span class="n">TypeInfoModelGroup</span><span class="p">):</span>
-
-    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;info.operation_types&quot;</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">base_info_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">TypeInfo</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="n">OperationTypeInfo</span>
-
-    <span class="n">type_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;operation_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;operation_type&quot;</span>
-    <span class="n">item_infos</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OperationTypeInfo</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The operation info instances for each type.&quot;</span>
-    <span class="p">)</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h6 id="kiara.models.module.operation.OperationTypeClassesInfo-attributes">Attributes<a href="#kiara.models.module.operation.OperationTypeClassesInfo-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.module.operation.OperationTypeClassesInfo.item_infos" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">item_infos</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">OperationTypeInfo</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationTypeClassesInfo.item_infos" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The operation info instances for each type.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.module.operation.OperationTypeClassesInfo.type_name" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">type_name</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;operation_type&#39;</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationTypeClassesInfo.type_name" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-    </div>
-
-  </div>
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h7 id="kiara.models.module.operation.OperationTypeClassesInfo.base_info_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">base_info_class</span><span class="p">()</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationTypeClassesInfo.base_info_class" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">base_info_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">TypeInfo</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="n">OperationTypeInfo</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h5 id="kiara.models.module.operation.OperationTypeInfo" class="doc doc-heading">
-        <code>
-OperationTypeInfo            (<a class="autorefs autorefs-internal" title="kiara.models.info.TypeInfo" href="../../info/#kiara.models.info.TypeInfo">TypeInfo</a>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationTypeInfo" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">OperationTypeInfo</span><span class="p">(</span><span class="n">TypeInfo</span><span class="p">):</span>
-
-    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;info.operation_type&quot;</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_from_type_class</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">type_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;OperationType&quot;</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OperationTypeInfo&quot;</span><span class="p">:</span>
-
-        <span class="n">authors_md</span> <span class="o">=</span> <span class="n">AuthorsMetadataModel</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">type_cls</span><span class="p">)</span>
-        <span class="n">doc</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">from_class_doc</span><span class="p">(</span><span class="n">type_cls</span><span class="p">)</span>
-        <span class="n">python_class</span> <span class="o">=</span> <span class="n">PythonClass</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">type_cls</span><span class="p">)</span>
-        <span class="n">properties_md</span> <span class="o">=</span> <span class="n">ContextMetadataModel</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">type_cls</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">OperationTypeInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-            <span class="o">**</span><span class="p">{</span>
-                <span class="s2">&quot;type_name&quot;</span><span class="p">:</span> <span class="n">type_cls</span><span class="o">.</span><span class="n">_operation_type_name</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
-                <span class="s2">&quot;documentation&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="p">,</span>
-                <span class="s2">&quot;authors&quot;</span><span class="p">:</span> <span class="n">authors_md</span><span class="p">,</span>
-                <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="n">properties_md</span><span class="p">,</span>
-                <span class="s2">&quot;python_class&quot;</span><span class="p">:</span> <span class="n">python_class</span><span class="p">,</span>
-            <span class="p">}</span>
-        <span class="p">)</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">base_class</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;OperationType&quot;</span><span class="p">]:</span>
-        <span class="kn">from</span> <span class="nn">kiara.operations</span> <span class="kn">import</span> <span class="n">OperationType</span>
-
-        <span class="k">return</span> <span class="n">OperationType</span>
-
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">category_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;operation_type&quot;</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span>
-
-    <span class="k">def</span> <span class="nf">_retrieve_data_to_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h7 id="kiara.models.module.operation.OperationTypeInfo.base_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">base_class</span><span class="p">()</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationTypeInfo.base_class" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">base_class</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;OperationType&quot;</span><span class="p">]:</span>
-    <span class="kn">from</span> <span class="nn">kiara.operations</span> <span class="kn">import</span> <span class="n">OperationType</span>
-
-    <span class="k">return</span> <span class="n">OperationType</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h7 id="kiara.models.module.operation.OperationTypeInfo.category_name" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">category_name</span><span class="p">()</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationTypeInfo.category_name" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">category_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="k">return</span> <span class="s2">&quot;operation_type&quot;</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h7 id="kiara.models.module.operation.OperationTypeInfo.create_from_type_class" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_from_type_class</span><span class="p">(</span><span class="n">type_cls</span><span class="p">)</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
-  </span>
-
-<a href="#kiara.models.module.operation.OperationTypeInfo.create_from_type_class" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">create_from_type_class</span><span class="p">(</span>
-    <span class="bp">cls</span><span class="p">,</span> <span class="n">type_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;OperationType&quot;</span><span class="p">]</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OperationTypeInfo&quot;</span><span class="p">:</span>
-
-    <span class="n">authors_md</span> <span class="o">=</span> <span class="n">AuthorsMetadataModel</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">type_cls</span><span class="p">)</span>
-    <span class="n">doc</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">from_class_doc</span><span class="p">(</span><span class="n">type_cls</span><span class="p">)</span>
-    <span class="n">python_class</span> <span class="o">=</span> <span class="n">PythonClass</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">type_cls</span><span class="p">)</span>
-    <span class="n">properties_md</span> <span class="o">=</span> <span class="n">ContextMetadataModel</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="n">type_cls</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">OperationTypeInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-        <span class="o">**</span><span class="p">{</span>
-            <span class="s2">&quot;type_name&quot;</span><span class="p">:</span> <span class="n">type_cls</span><span class="o">.</span><span class="n">_operation_type_name</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
-            <span class="s2">&quot;documentation&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="p">,</span>
-            <span class="s2">&quot;authors&quot;</span><span class="p">:</span> <span class="n">authors_md</span><span class="p">,</span>
-            <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="n">properties_md</span><span class="p">,</span>
-            <span class="s2">&quot;python_class&quot;</span><span class="p">:</span> <span class="n">python_class</span><span class="p">,</span>
-        <span class="p">}</span>
-    <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

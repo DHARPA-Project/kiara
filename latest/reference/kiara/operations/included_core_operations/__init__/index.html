@@ -1563,6 +1563,73 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2_2" type="checkbox" id="__nav_3_1_6_2_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../interfaces/python_api/models/__init__/">models</a>
+          
+            <label for="__nav_3_1_6_2_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="models" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/models/info/" class="md-nav__link">
+        info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/models/job/" class="md-nav__link">
+        job
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../../../interfaces/python_api/operation/" class="md-nav__link">
         operation
@@ -5871,61 +5938,196 @@ FilterOperationType            (<a class="autorefs autorefs-internal" title="kia
         <span class="n">result</span> <span class="o">=</span> <span class="n">FilterOperationDetails</span><span class="o">.</span><span class="n">create_operation_details</span><span class="p">(</span><span class="o">**</span><span class="n">details</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">find_filter_operations_for_data_type</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]:</span>
+    <span class="c1"># def find_filter_operations_for_data_type(</span>
+    <span class="c1">#     self, data_type: str</span>
+    <span class="c1"># ) -&gt; Dict[str, Operation]:</span>
+    <span class="c1">#</span>
+    <span class="c1">#     result = {}</span>
+    <span class="c1">#     for op in self.operations.values():</span>
+    <span class="c1">#         details: FilterOperationDetails = op.operation_details  # type: ignore</span>
+    <span class="c1">#         if details.data_type == data_type:</span>
+    <span class="c1">#             result[details.filter_name] = op</span>
+    <span class="c1">#</span>
+    <span class="c1">#     return result</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">details</span><span class="p">:</span> <span class="n">FilterOperationDetails</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">operation_details</span>  <span class="c1"># type: ignore</span>
-            <span class="k">if</span> <span class="n">details</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
-                <span class="n">result</span><span class="p">[</span><span class="n">details</span><span class="o">.</span><span class="n">filter_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">op</span>
+    <span class="k">def</span> <span class="nf">get_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Filter</span><span class="p">:</span>
 
-        <span class="k">return</span> <span class="n">result</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="n">filter_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">op_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">_filter.</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">op_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">if</span> <span class="n">op</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;No filter operation &#39;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&#39; available for type &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+        <span class="n">inp_match</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">input_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># TODO: check lineage/profiles</span>
+            <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
+                <span class="n">inp_match</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_name</span><span class="p">)</span>
 
-        <span class="n">op_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">_filter.</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">op_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">op</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">inp_match</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;No filter operation &#39;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&#39; available for type &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve filter with name &#39;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&#39; for data type: &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;: input fields for operation &#39;</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">&#39; don&#39;t match.&quot;</span>
             <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inp_match</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;value&quot;</span> <span class="ow">in</span> <span class="n">inp_match</span><span class="p">:</span>
+                <span class="n">inp_match</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="n">inp_match</span><span class="p">:</span>
+                <span class="n">inp_match</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_type</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve filter with name &#39;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&#39; for data type: &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;, operation &#39;</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">&#39; has multiple potential input fields: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inp_match</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">op</span>
+        <span class="n">input_field</span> <span class="o">=</span> <span class="n">inp_match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">create_filter_operation</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create a filter pipeline operation object for a specific data type.</span>
+        <span class="n">outp_match</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">output_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># TODO: check lineage/profiles</span>
+            <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
+                <span class="n">outp_match</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">outp_match</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve filter with name &#39;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&#39; for data type: &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;: output fields for operation &#39;</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">&#39; don&#39;t match.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outp_match</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;value&quot;</span> <span class="ow">in</span> <span class="n">outp_match</span><span class="p">:</span>
+                <span class="n">outp_match</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="n">outp_match</span><span class="p">:</span>
+                <span class="n">outp_match</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_type</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve filter with name &#39;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&#39; for data type: &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;, operation &#39;</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">&#39; has multiple potential output fields: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outp_match</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">output_field</span> <span class="o">=</span> <span class="n">outp_match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="nb">filter</span> <span class="o">=</span> <span class="n">Filter</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+            <span class="n">operation</span><span class="o">=</span><span class="n">op</span><span class="p">,</span>
+            <span class="n">input_name</span><span class="o">=</span><span class="n">input_field</span><span class="p">,</span>
+            <span class="n">output_name</span><span class="o">=</span><span class="n">output_field</span><span class="p">,</span>
+            <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">filter</span>
+
+    <span class="k">def</span> <span class="nf">assemble_filter_pipeline_config</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">filters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="n">endpoint</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">endpoint_input_field</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">endpoint_step_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">extra_input_aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">extra_output_aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineConfig</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Assemble a (pipeline) module config to filter values of a specific data type.</span>
+
+<span class="sd">        Optionally, a module that uses the filtered dataset as input can be specified.</span>
+
+<span class="sd">        # TODO: document filter names</span>
+<span class="sd">        For the &#39;filters&#39; argument, the accepted inputs are:</span>
+<span class="sd">        - a string, in which case a single-step pipeline will be created, with the string referencing the operation id or filter</span>
+<span class="sd">        - a list of strings: in which case a multi-step pipeline will be created, the step_ids will be calculated automatically</span>
+<span class="sd">        - a map of string pairs: the keys are step ids, the values operation ids or filter names</span>
 
 <span class="sd">        Arguments:</span>
-<span class="sd">            filters: a list of filter names, or a map of step_id/filter name</span>
+<span class="sd">            data_type: the type of the data to filter</span>
+<span class="sd">            filters: a list of operation ids or filter names (and potentiall step_ids if type is a mapping)</span>
+<span class="sd">            endpoint: optional module to put as last step in the created pipeline</span>
+<span class="sd">            endpoing_input_field: field name of the input that will receive the filtered value</span>
+<span class="sd">            endpoint_step_id: id to use for the endpoint step (module type name will be used if not provided)</span>
+<span class="sd">            extra_output_aliases: extra output aliases to add to the pipeline config</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            the (pipeline) module configuration of the filter pipeline</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="k">if</span> <span class="n">extra_input_aliases</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Extra input aliases not supported yet.&quot;</span><span class="p">)</span>
+
         <span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">last_filter</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">last_filter_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">last_filter_output_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">input_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">output_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">doc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Auto generated filter operation for type &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">filters</span> <span class="o">=</span> <span class="p">{</span><span class="n">filters</span><span class="p">:</span> <span class="n">filters</span><span class="p">}</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
             <span class="n">_filters</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="n">step_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">_step_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">filter_name</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
-                <span class="n">step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span><span class="n">stem</span><span class="o">=</span><span class="n">filter_name</span><span class="p">,</span> <span class="n">current_ids</span><span class="o">=</span><span class="n">step_ids</span><span class="p">)</span>
+                <span class="n">step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span><span class="n">stem</span><span class="o">=</span><span class="n">filter_name</span><span class="p">,</span> <span class="n">current_ids</span><span class="o">=</span><span class="n">_step_ids</span><span class="p">)</span>
                 <span class="n">_filters</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">filter_name</span>
             <span class="n">filters</span> <span class="o">=</span> <span class="n">_filters</span>
 
         <span class="k">for</span> <span class="n">filter_name</span><span class="p">,</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">filters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">input_aliases</span><span class="p">:</span>
                 <span class="n">input_aliases</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">.value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span>
-            <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_filter</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">filter_name</span><span class="o">=</span><span class="n">filter_name</span><span class="p">)</span>
-            <span class="n">step_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="n">op</span><span class="o">.</span><span class="n">operation_id</span><span class="p">,</span> <span class="s2">&quot;step_id&quot;</span><span class="p">:</span> <span class="n">step_id</span><span class="p">}</span>
-            <span class="k">if</span> <span class="n">last_filter</span><span class="p">:</span>
-                <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;input_links&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">last_filter</span><span class="si">}</span><span class="s2">.value&quot;</span><span class="p">}</span>
-            <span class="n">last_filter</span> <span class="o">=</span> <span class="n">step_id</span>
+            <span class="nb">filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_filter</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">filter_name</span><span class="o">=</span><span class="n">filter_name</span><span class="p">)</span>
+            <span class="n">step_data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="nb">filter</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">operation_id</span><span class="p">,</span>
+                <span class="s2">&quot;step_id&quot;</span><span class="p">:</span> <span class="n">step_id</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="n">last_filter_id</span><span class="p">:</span>
+                <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;input_links&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="nb">filter</span><span class="o">.</span><span class="n">input_name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">last_filter_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">last_filter_output_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">}</span>
+            <span class="n">last_filter_id</span> <span class="o">=</span> <span class="n">step_id</span>
+            <span class="n">last_filter_output_name</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">output_name</span>
             <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_data</span><span class="p">)</span>
+            <span class="n">output_aliases</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">__filtered&quot;</span>
 
-        <span class="n">output_aliases</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">last_filter</span><span class="si">}</span><span class="s2">.value&quot;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span><span class="p">}</span>
+        <span class="n">output_aliases</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">last_filter_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">last_filter_output_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;filtered_value&quot;</span>
+
+        <span class="k">if</span> <span class="n">endpoint</span><span class="p">:</span>
+            <span class="n">endpoint_module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_registry</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span>
+                <span class="n">manifest</span><span class="o">=</span><span class="n">endpoint</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">endpoint_input_field</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">endpoint_module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="c1"># TODO: check profiles/lineage</span>
+                    <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
+                        <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">matches</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t assemble filter operation: no potential input field of type </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2"> for endpoint module found.&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t assemble filter operation: multiple potential input fields of type </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2"> for endpoint module found: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                <span class="n">endpoint_input_field</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">endpoint_step_id</span><span class="p">:</span>
+                <span class="n">endpoint_step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span>
+                    <span class="n">stem</span><span class="o">=</span><span class="n">endpoint_module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span> <span class="n">current_ids</span><span class="o">=</span><span class="n">filters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                <span class="p">)</span>
+            <span class="n">step_data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="n">endpoint_module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span>
+                <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="n">endpoint_module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
+                <span class="s2">&quot;step_id&quot;</span><span class="p">:</span> <span class="n">endpoint_step_id</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;input_links&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">endpoint_input_field</span><span class="p">:</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">last_filter_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">last_filter_output_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+            <span class="p">}</span>
+            <span class="c1"># for field_name in endpoint_module.output_names:</span>
+            <span class="c1">#     output_aliases[f&quot;{endpoint_step_id}.{field_name}&quot;] = f&quot;endpoint__{field_name}&quot;</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">doc</span><span class="si">}</span><span class="s2"> and endpoint module &#39;</span><span class="si">{</span><span class="n">endpoint_module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">doc</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+        <span class="k">if</span> <span class="n">extra_output_aliases</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">extra_output_aliases</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">output_aliases</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
 
         <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
             <span class="n">pipeline_name</span><span class="o">=</span><span class="s2">&quot;_filter_pipeline&quot;</span><span class="p">,</span>
@@ -5933,17 +6135,32 @@ FilterOperationType            (<a class="autorefs autorefs-internal" title="kia
                 <span class="s2">&quot;steps&quot;</span><span class="p">:</span> <span class="n">steps</span><span class="p">,</span>
                 <span class="s2">&quot;input_aliases&quot;</span><span class="p">:</span> <span class="n">input_aliases</span><span class="p">,</span>
                 <span class="s2">&quot;output_aliases&quot;</span><span class="p">:</span> <span class="n">output_aliases</span><span class="p">,</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="p">,</span>
             <span class="p">},</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">pipeline_config</span>
+
+    <span class="k">def</span> <span class="nf">create_filter_operation</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">filters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="n">endpoint</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">endpoint_input_field</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">endpoint_step_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+
+        <span class="n">pipeline_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assemble_filter_pipeline_config</span><span class="p">(</span>
+            <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
+            <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">,</span>
+            <span class="n">endpoint</span><span class="o">=</span><span class="n">endpoint</span><span class="p">,</span>
+            <span class="n">endpoint_input_field</span><span class="o">=</span><span class="n">endpoint_input_field</span><span class="p">,</span>
+            <span class="n">endpoint_step_id</span><span class="o">=</span><span class="n">endpoint_step_id</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
             <span class="n">module_type</span><span class="o">=</span><span class="s2">&quot;pipeline&quot;</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
         <span class="p">)</span>
         <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
-
-        <span class="n">doc</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Auto generated filter operation for type &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-        <span class="p">)</span>
 
         <span class="n">op_details</span> <span class="o">=</span> <span class="n">PipelineOperationDetails</span><span class="o">.</span><span class="n">create_operation_details</span><span class="p">(</span>
             <span class="n">operation_id</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">pipeline_name</span><span class="p">,</span>
@@ -5958,7 +6175,7 @@ FilterOperationType            (<a class="autorefs autorefs-internal" title="kia
             <span class="n">operation_details</span><span class="o">=</span><span class="n">op_details</span><span class="p">,</span>
             <span class="n">module_details</span><span class="o">=</span><span class="n">KiaraModuleClass</span><span class="o">.</span><span class="n">from_module</span><span class="p">(</span><span class="n">module</span><span class="p">),</span>
             <span class="n">metadata</span><span class="o">=</span><span class="p">{},</span>
-            <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span>
+            <span class="n">doc</span><span class="o">=</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">operation</span>
 </code></pre></div>
@@ -5975,6 +6192,226 @@ FilterOperationType            (<a class="autorefs autorefs-internal" title="kia
 
 
 <h6 id="kiara.operations.included_core_operations.filter.FilterOperationType-methods">Methods<a href="#kiara.operations.included_core_operations.filter.FilterOperationType-methods" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.operations.included_core_operations.filter.FilterOperationType.assemble_filter_pipeline_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">assemble_filter_pipeline_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">filters</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">endpoint_input_field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">endpoint_step_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_input_aliases</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_output_aliases</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+<a href="#kiara.operations.included_core_operations.filter.FilterOperationType.assemble_filter_pipeline_config" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>Assemble a (pipeline) module config to filter values of a specific data type.</p>
+<p>Optionally, a module that uses the filtered dataset as input can be specified.</p>
+<h6 id="kiara.operations.included_core_operations.filter.FilterOperationType.assemble_filter_pipeline_config--todo-document-filter-names">TODO: document filter names<a class="headerlink" href="#kiara.operations.included_core_operations.filter.FilterOperationType.assemble_filter_pipeline_config--todo-document-filter-names" title="Permanent link">&para;</a></h6>
+<p>For the 'filters' argument, the accepted inputs are:
+- a string, in which case a single-step pipeline will be created, with the string referencing the operation id or filter
+- a list of strings: in which case a multi-step pipeline will be created, the step_ids will be calculated automatically
+- a map of string pairs: the keys are step ids, the values operation ids or filter names</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>data_type</code></td>
+        <td><code>str</code></td>
+        <td><p>the type of the data to filter</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>filters</code></td>
+        <td><code>Union[str, Iterable[str], Mapping[str, str]]</code></td>
+        <td><p>a list of operation ids or filter names (and potentiall step_ids if type is a mapping)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>endpoint</code></td>
+        <td><code>Union[NoneType, kiara.models.module.manifest.Manifest, str]</code></td>
+        <td><p>optional module to put as last step in the created pipeline</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>endpoing_input_field</code></td>
+        <td></td>
+        <td><p>field name of the input that will receive the filtered value</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>endpoint_step_id</code></td>
+        <td><code>Optional[str]</code></td>
+        <td><p>id to use for the endpoint step (module type name will be used if not provided)</p></td>
+        <td><code>None</code></td>
+      </tr>
+      <tr>
+        <td><code>extra_output_aliases</code></td>
+        <td><code>Optional[Mapping[str, str]]</code></td>
+        <td><p>extra output aliases to add to the pipeline config</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>PipelineConfig</code></td>
+      <td><p>the (pipeline) module configuration of the filter pipeline</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/operations/included_core_operations/filter.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">assemble_filter_pipeline_config</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">filters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+    <span class="n">endpoint</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">endpoint_input_field</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">endpoint_step_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">extra_input_aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">extra_output_aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineConfig</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Assemble a (pipeline) module config to filter values of a specific data type.</span>
+
+<span class="sd">    Optionally, a module that uses the filtered dataset as input can be specified.</span>
+
+<span class="sd">    # TODO: document filter names</span>
+<span class="sd">    For the &#39;filters&#39; argument, the accepted inputs are:</span>
+<span class="sd">    - a string, in which case a single-step pipeline will be created, with the string referencing the operation id or filter</span>
+<span class="sd">    - a list of strings: in which case a multi-step pipeline will be created, the step_ids will be calculated automatically</span>
+<span class="sd">    - a map of string pairs: the keys are step ids, the values operation ids or filter names</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        data_type: the type of the data to filter</span>
+<span class="sd">        filters: a list of operation ids or filter names (and potentiall step_ids if type is a mapping)</span>
+<span class="sd">        endpoint: optional module to put as last step in the created pipeline</span>
+<span class="sd">        endpoing_input_field: field name of the input that will receive the filtered value</span>
+<span class="sd">        endpoint_step_id: id to use for the endpoint step (module type name will be used if not provided)</span>
+<span class="sd">        extra_output_aliases: extra output aliases to add to the pipeline config</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        the (pipeline) module configuration of the filter pipeline</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">extra_input_aliases</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Extra input aliases not supported yet.&quot;</span><span class="p">)</span>
+
+    <span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">last_filter_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">last_filter_output_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">input_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">output_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">doc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Auto generated filter operation for type &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="p">{</span><span class="n">filters</span><span class="p">:</span> <span class="n">filters</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+        <span class="n">_filters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">_step_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">filter_name</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
+            <span class="n">step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span><span class="n">stem</span><span class="o">=</span><span class="n">filter_name</span><span class="p">,</span> <span class="n">current_ids</span><span class="o">=</span><span class="n">_step_ids</span><span class="p">)</span>
+            <span class="n">_filters</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">filter_name</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="n">_filters</span>
+
+    <span class="k">for</span> <span class="n">filter_name</span><span class="p">,</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">filters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">input_aliases</span><span class="p">:</span>
+            <span class="n">input_aliases</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">.value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span>
+        <span class="nb">filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_filter</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">filter_name</span><span class="o">=</span><span class="n">filter_name</span><span class="p">)</span>
+        <span class="n">step_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="nb">filter</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">operation_id</span><span class="p">,</span>
+            <span class="s2">&quot;step_id&quot;</span><span class="p">:</span> <span class="n">step_id</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">last_filter_id</span><span class="p">:</span>
+            <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;input_links&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="nb">filter</span><span class="o">.</span><span class="n">input_name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">last_filter_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">last_filter_output_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">}</span>
+        <span class="n">last_filter_id</span> <span class="o">=</span> <span class="n">step_id</span>
+        <span class="n">last_filter_output_name</span> <span class="o">=</span> <span class="nb">filter</span><span class="o">.</span><span class="n">output_name</span>
+        <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_data</span><span class="p">)</span>
+        <span class="n">output_aliases</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">__filtered&quot;</span>
+
+    <span class="n">output_aliases</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">last_filter_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">last_filter_output_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;filtered_value&quot;</span>
+
+    <span class="k">if</span> <span class="n">endpoint</span><span class="p">:</span>
+        <span class="n">endpoint_module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_registry</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span>
+            <span class="n">manifest</span><span class="o">=</span><span class="n">endpoint</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">endpoint_input_field</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">endpoint_module</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># TODO: check profiles/lineage</span>
+                <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
+                    <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">matches</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t assemble filter operation: no potential input field of type </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2"> for endpoint module found.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t assemble filter operation: multiple potential input fields of type </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2"> for endpoint module found: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="n">endpoint_input_field</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">endpoint_step_id</span><span class="p">:</span>
+            <span class="n">endpoint_step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span>
+                <span class="n">stem</span><span class="o">=</span><span class="n">endpoint_module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span> <span class="n">current_ids</span><span class="o">=</span><span class="n">filters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="n">step_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="n">endpoint_module</span><span class="o">.</span><span class="n">module_type_name</span><span class="p">,</span>
+            <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="n">endpoint_module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
+            <span class="s2">&quot;step_id&quot;</span><span class="p">:</span> <span class="n">endpoint_step_id</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;input_links&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">endpoint_input_field</span><span class="p">:</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">last_filter_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">last_filter_output_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1"># for field_name in endpoint_module.output_names:</span>
+        <span class="c1">#     output_aliases[f&quot;{endpoint_step_id}.{field_name}&quot;] = f&quot;endpoint__{field_name}&quot;</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">doc</span><span class="si">}</span><span class="s2"> and endpoint module &#39;</span><span class="si">{</span><span class="n">endpoint_module</span><span class="o">.</span><span class="n">module_type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">doc</span><span class="si">}</span><span class="s2">.&quot;</span>
+
+    <span class="k">if</span> <span class="n">extra_output_aliases</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">extra_output_aliases</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">output_aliases</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+    <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
+        <span class="n">pipeline_name</span><span class="o">=</span><span class="s2">&quot;_filter_pipeline&quot;</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;steps&quot;</span><span class="p">:</span> <span class="n">steps</span><span class="p">,</span>
+            <span class="s2">&quot;input_aliases&quot;</span><span class="p">:</span> <span class="n">input_aliases</span><span class="p">,</span>
+            <span class="s2">&quot;output_aliases&quot;</span><span class="p">:</span> <span class="n">output_aliases</span><span class="p">,</span>
+            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">pipeline_config</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-method">
 
@@ -6039,86 +6476,37 @@ FilterOperationType            (<a class="autorefs autorefs-internal" title="kia
 
 
 <h7 id="kiara.operations.included_core_operations.filter.FilterOperationType.create_filter_operation" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_filter_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">filters</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_filter_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">filters</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">endpoint_input_field</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">endpoint_step_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 <a href="#kiara.operations.included_core_operations.filter.FilterOperationType.create_filter_operation" class="headerlink" title="Permanent link">&para;</a></h7>
 
     <div class="doc doc-contents ">
 
-      <p>Create a filter pipeline operation object for a specific data type.</p>
 
-<p><strong>Parameters:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Default</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td><code>filters</code></td>
-        <td><code>Union[Iterable[str], Mapping[str, str]]</code></td>
-        <td><p>a list of filter names, or a map of step_id/filter name</p></td>
-        <td><em>required</em></td>
-      </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>kiara/operations/included_core_operations/filter.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_filter_operation</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">filters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+    <span class="n">endpoint</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">endpoint_input_field</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">endpoint_step_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Create a filter pipeline operation object for a specific data type.</span>
 
-<span class="sd">    Arguments:</span>
-<span class="sd">        filters: a list of filter names, or a map of step_id/filter name</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">last_filter</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">input_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filters</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
-        <span class="n">_filters</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">step_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">filter_name</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
-            <span class="n">step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span><span class="n">stem</span><span class="o">=</span><span class="n">filter_name</span><span class="p">,</span> <span class="n">current_ids</span><span class="o">=</span><span class="n">step_ids</span><span class="p">)</span>
-            <span class="n">_filters</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">filter_name</span>
-        <span class="n">filters</span> <span class="o">=</span> <span class="n">_filters</span>
-
-    <span class="k">for</span> <span class="n">filter_name</span><span class="p">,</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">filters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">input_aliases</span><span class="p">:</span>
-            <span class="n">input_aliases</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">.value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;value&quot;</span>
-        <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_filter</span><span class="p">(</span><span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span> <span class="n">filter_name</span><span class="o">=</span><span class="n">filter_name</span><span class="p">)</span>
-        <span class="n">step_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="n">op</span><span class="o">.</span><span class="n">operation_id</span><span class="p">,</span> <span class="s2">&quot;step_id&quot;</span><span class="p">:</span> <span class="n">step_id</span><span class="p">}</span>
-        <span class="k">if</span> <span class="n">last_filter</span><span class="p">:</span>
-            <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;input_links&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">last_filter</span><span class="si">}</span><span class="s2">.value&quot;</span><span class="p">}</span>
-        <span class="n">last_filter</span> <span class="o">=</span> <span class="n">step_id</span>
-        <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_data</span><span class="p">)</span>
-
-    <span class="n">output_aliases</span> <span class="o">=</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">last_filter</span><span class="si">}</span><span class="s2">.value&quot;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span><span class="p">}</span>
-
-    <span class="n">pipeline_config</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span>
-        <span class="n">pipeline_name</span><span class="o">=</span><span class="s2">&quot;_filter_pipeline&quot;</span><span class="p">,</span>
-        <span class="n">data</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;steps&quot;</span><span class="p">:</span> <span class="n">steps</span><span class="p">,</span>
-            <span class="s2">&quot;input_aliases&quot;</span><span class="p">:</span> <span class="n">input_aliases</span><span class="p">,</span>
-            <span class="s2">&quot;output_aliases&quot;</span><span class="p">:</span> <span class="n">output_aliases</span><span class="p">,</span>
-        <span class="p">},</span>
+    <span class="n">pipeline_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assemble_filter_pipeline_config</span><span class="p">(</span>
+        <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
+        <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">,</span>
+        <span class="n">endpoint</span><span class="o">=</span><span class="n">endpoint</span><span class="p">,</span>
+        <span class="n">endpoint_input_field</span><span class="o">=</span><span class="n">endpoint_input_field</span><span class="p">,</span>
+        <span class="n">endpoint_step_id</span><span class="o">=</span><span class="n">endpoint_step_id</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
         <span class="n">module_type</span><span class="o">=</span><span class="s2">&quot;pipeline&quot;</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
     <span class="p">)</span>
     <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
-
-    <span class="n">doc</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">&quot;Auto generated filter operation for type &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-    <span class="p">)</span>
 
     <span class="n">op_details</span> <span class="o">=</span> <span class="n">PipelineOperationDetails</span><span class="o">.</span><span class="n">create_operation_details</span><span class="p">(</span>
         <span class="n">operation_id</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">pipeline_name</span><span class="p">,</span>
@@ -6133,43 +6521,9 @@ FilterOperationType            (<a class="autorefs autorefs-internal" title="kia
         <span class="n">operation_details</span><span class="o">=</span><span class="n">op_details</span><span class="p">,</span>
         <span class="n">module_details</span><span class="o">=</span><span class="n">KiaraModuleClass</span><span class="o">.</span><span class="n">from_module</span><span class="p">(</span><span class="n">module</span><span class="p">),</span>
         <span class="n">metadata</span><span class="o">=</span><span class="p">{},</span>
-        <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span>
+        <span class="n">doc</span><span class="o">=</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">operation</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h7 id="kiara.operations.included_core_operations.filter.FilterOperationType.find_filter_operations_for_data_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">find_filter_operations_for_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">)</span></code>
-
-
-<a href="#kiara.operations.included_core_operations.filter.FilterOperationType.find_filter_operations_for_data_type" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/operations/included_core_operations/filter.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_filter_operations_for_data_type</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]:</span>
-
-    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="n">details</span><span class="p">:</span> <span class="n">FilterOperationDetails</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">operation_details</span>  <span class="c1"># type: ignore</span>
-        <span class="k">if</span> <span class="n">details</span><span class="o">.</span><span class="n">data_type</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
-            <span class="n">result</span><span class="p">[</span><span class="n">details</span><span class="o">.</span><span class="n">filter_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">op</span>
-
-    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
     </div>
@@ -6193,16 +6547,68 @@ FilterOperationType            (<a class="autorefs autorefs-internal" title="kia
 
         <details class="quote">
           <summary>Source code in <code>kiara/operations/included_core_operations/filter.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Filter</span><span class="p">:</span>
 
-    <span class="n">op_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">_filter.</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">op_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">op</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="n">filter_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="n">op_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">_filter.</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">op_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="n">op</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No filter operation &#39;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&#39; available for type &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="n">inp_match</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">input_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># TODO: check lineage/profiles</span>
+        <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
+            <span class="n">inp_match</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">inp_match</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;No filter operation &#39;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&#39; available for type &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve filter with name &#39;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&#39; for data type: &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;: input fields for operation &#39;</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">&#39; don&#39;t match.&quot;</span>
         <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inp_match</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;value&quot;</span> <span class="ow">in</span> <span class="n">inp_match</span><span class="p">:</span>
+            <span class="n">inp_match</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="n">inp_match</span><span class="p">:</span>
+            <span class="n">inp_match</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_type</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve filter with name &#39;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&#39; for data type: &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;, operation &#39;</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">&#39; has multiple potential input fields: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inp_match</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">op</span>
+    <span class="n">input_field</span> <span class="o">=</span> <span class="n">inp_match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">outp_match</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">output_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># TODO: check lineage/profiles</span>
+        <span class="k">if</span> <span class="n">schema</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
+            <span class="n">outp_match</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">outp_match</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve filter with name &#39;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&#39; for data type: &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;: output fields for operation &#39;</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">&#39; don&#39;t match.&quot;</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outp_match</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;value&quot;</span> <span class="ow">in</span> <span class="n">outp_match</span><span class="p">:</span>
+            <span class="n">outp_match</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="n">outp_match</span><span class="p">:</span>
+            <span class="n">outp_match</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_type</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve filter with name &#39;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">&#39; for data type: &#39;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&#39;, operation &#39;</span><span class="si">{</span><span class="n">op</span><span class="o">.</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">&#39; has multiple potential output fields: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outp_match</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="n">output_field</span> <span class="o">=</span> <span class="n">outp_match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">filter</span> <span class="o">=</span> <span class="n">Filter</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+        <span class="n">operation</span><span class="o">=</span><span class="n">op</span><span class="p">,</span>
+        <span class="n">input_name</span><span class="o">=</span><span class="n">input_field</span><span class="p">,</span>
+        <span class="n">output_name</span><span class="o">=</span><span class="n">output_field</span><span class="p">,</span>
+        <span class="n">data_type</span><span class="o">=</span><span class="n">data_type</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="nb">filter</span>
 </code></pre></div>
         </details>
     </div>
@@ -6543,7 +6949,7 @@ ExtractMetadataOperationType            (<a class="autorefs autorefs-internal" t
         <span class="n">all_models</span> <span class="o">=</span> <span class="n">model_registry</span><span class="o">.</span><span class="n">get_models_of_type</span><span class="p">(</span><span class="n">ValueMetadata</span><span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">model_cls_info</span> <span class="ow">in</span> <span class="n">all_models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">model_cls_info</span> <span class="ow">in</span> <span class="n">all_models</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">model_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">ValueMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_cls_info</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
             <span class="n">metadata_key</span> <span class="o">=</span> <span class="n">model_cls</span><span class="o">.</span><span class="n">_metadata_key</span>  <span class="c1"># type: ignore</span>
             <span class="n">data_types</span> <span class="o">=</span> <span class="n">model_cls</span><span class="o">.</span><span class="n">retrieve_supported_data_types</span><span class="p">()</span>
@@ -6838,7 +7244,7 @@ ExtractMetadataOperationType            (<a class="autorefs autorefs-internal" t
     <span class="n">all_models</span> <span class="o">=</span> <span class="n">model_registry</span><span class="o">.</span><span class="n">get_models_of_type</span><span class="p">(</span><span class="n">ValueMetadata</span><span class="p">)</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">model_cls_info</span> <span class="ow">in</span> <span class="n">all_models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">model_cls_info</span> <span class="ow">in</span> <span class="n">all_models</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">model_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">ValueMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_cls_info</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
         <span class="n">metadata_key</span> <span class="o">=</span> <span class="n">model_cls</span><span class="o">.</span><span class="n">_metadata_key</span>  <span class="c1"># type: ignore</span>
         <span class="n">data_types</span> <span class="o">=</span> <span class="n">model_cls</span><span class="o">.</span><span class="n">retrieve_supported_data_types</span><span class="p">()</span>
@@ -8325,11 +8731,11 @@ RenderValueOperationType            (<a class="autorefs autorefs-internal" title
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">OperationConfig</span><span class="p">]]:</span>
 
         <span class="n">model_registry</span> <span class="o">=</span> <span class="n">ModelRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
-        <span class="n">all_models</span> <span class="o">=</span> <span class="n">model_registry</span><span class="o">.</span><span class="n">get_models_of_type</span><span class="p">(</span><span class="n">RenderInstruction</span><span class="p">)</span>
+        <span class="n">all_models</span> <span class="o">=</span> <span class="n">model_registry</span><span class="o">.</span><span class="n">get_models_of_type</span><span class="p">(</span><span class="n">RenderScene</span><span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">model_cls_info</span> <span class="ow">in</span> <span class="n">all_models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">model_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderInstruction</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_cls_info</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+        <span class="k">for</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">model_cls_info</span> <span class="ow">in</span> <span class="n">all_models</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">model_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_cls_info</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
             <span class="n">source_type</span> <span class="o">=</span> <span class="n">model_cls</span><span class="o">.</span><span class="n">retrieve_source_type</span><span class="p">()</span>
             <span class="n">supported_target_types</span> <span class="o">=</span> <span class="n">model_cls</span><span class="o">.</span><span class="n">retrieve_supported_target_types</span><span class="p">()</span>
 
@@ -8409,9 +8815,7 @@ RenderValueOperationType            (<a class="autorefs autorefs-internal" title
 <span class="sd">            a mapping with the target type as key, and the operation as value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">lineage</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">data_type_name</span><span class="o">=</span><span class="n">source_type</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">data_type_name</span><span class="o">=</span><span class="n">source_type</span><span class="p">)</span>
 
         <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -8614,9 +9018,7 @@ RenderValueOperationType            (<a class="autorefs autorefs-internal" title
 <span class="sd">        a mapping with the target type as key, and the operation as value</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">lineage</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">data_type_name</span><span class="o">=</span><span class="n">source_type</span><span class="p">)</span>
-    <span class="p">)</span>
+    <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">data_type_name</span><span class="o">=</span><span class="n">source_type</span><span class="p">)</span>
 
     <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -8661,11 +9063,11 @@ RenderValueOperationType            (<a class="autorefs autorefs-internal" title
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">,</span> <span class="n">OperationConfig</span><span class="p">]]:</span>
 
     <span class="n">model_registry</span> <span class="o">=</span> <span class="n">ModelRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
-    <span class="n">all_models</span> <span class="o">=</span> <span class="n">model_registry</span><span class="o">.</span><span class="n">get_models_of_type</span><span class="p">(</span><span class="n">RenderInstruction</span><span class="p">)</span>
+    <span class="n">all_models</span> <span class="o">=</span> <span class="n">model_registry</span><span class="o">.</span><span class="n">get_models_of_type</span><span class="p">(</span><span class="n">RenderScene</span><span class="p">)</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">model_cls_info</span> <span class="ow">in</span> <span class="n">all_models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">model_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderInstruction</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_cls_info</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+    <span class="k">for</span> <span class="n">model_id</span><span class="p">,</span> <span class="n">model_cls_info</span> <span class="ow">in</span> <span class="n">all_models</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">model_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_cls_info</span><span class="o">.</span><span class="n">python_class</span><span class="o">.</span><span class="n">get_class</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
         <span class="n">source_type</span> <span class="o">=</span> <span class="n">model_cls</span><span class="o">.</span><span class="n">retrieve_source_type</span><span class="p">()</span>
         <span class="n">supported_target_types</span> <span class="o">=</span> <span class="n">model_cls</span><span class="o">.</span><span class="n">retrieve_supported_target_types</span><span class="p">()</span>
 

@@ -1710,6 +1710,73 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2_2" type="checkbox" id="__nav_3_1_6_2_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/python_api/models/__init__/">models</a>
+          
+            <label for="__nav_3_1_6_2_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="models" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/python_api/models/info/" class="md-nav__link">
+        info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/python_api/models/job/" class="md-nav__link">
+        job
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../../reference/kiara/interfaces/python_api/operation/" class="md-nav__link">
         operation
@@ -4974,11 +5041,9 @@
  <span style="font-style: italic">                      </span>   <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    instruction_type </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> self</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get_config_value(</span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #ffffff">"render_instruction_type"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">)</span>                                           
  <span style="font-style: italic">                      </span>   <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    model_registry </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> ModelRegistry</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">instance()</span>                                                                     
  <span style="font-style: italic">                      </span>   <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    instr_info: TypeInfo </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> model_registry</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">all_models</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get(instruction_type)  </span><span style="color: #75715e; text-decoration-color: #75715e; background-color: #ffffff"># type: ignore</span>                        
- <span style="font-style: italic">                      </span>   <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    instr_model: Type[RenderInstruction] </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> instr_info</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">python_class</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get_class()  </span><span style="color: #75715e; text-decoration-color: #75715e; background-color: #ffffff"># type: ignore</span>                    
+ <span style="font-style: italic">                      </span>   <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    instr_model: Type[RenderScene] </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> instr_info</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">python_class</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get_class()  </span><span style="color: #75715e; text-decoration-color: #75715e; background-color: #ffffff"># type: ignore</span>                          
  <span style="font-style: italic">                      </span>                                                                                                                     
- <span style="font-style: italic">                      </span>   <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    render_instruction: RenderInstruction </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> inputs</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get_value_data(</span>                                                
- <span style="font-style: italic">                      </span>   <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">        </span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #ffffff">"render_instruction"</span>                                                                                      
- <span style="font-style: italic">                      </span>   <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    )</span>                                                                                                             
+ <span style="font-style: italic">                      </span>   <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    render_instruction: RenderScene </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">=</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> inputs</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">get_value_data(</span><span style="color: #e6db74; text-decoration-color: #e6db74; background-color: #ffffff">"render_instruction"</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">)</span>                                 
  <span style="font-style: italic">                      </span>                                                                                                                     
  <span style="font-style: italic">                      </span>   <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">    </span><span style="color: #66d9ef; text-decoration-color: #66d9ef; background-color: #ffffff">if</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> </span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">not</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> issubclass(render_instruction</span><span style="color: #f92672; text-decoration-color: #f92672; background-color: #ffffff">.</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">__class__, instr_model):</span>                                                 
  <span style="font-style: italic">                      </span>   <span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff">        </span><span style="color: #66d9ef; text-decoration-color: #66d9ef; background-color: #ffffff">raise</span><span style="color: #f8f8f2; text-decoration-color: #f8f8f2; background-color: #ffffff"> KiaraProcessingException(</span>                                                                           

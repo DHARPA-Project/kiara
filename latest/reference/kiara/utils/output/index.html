@@ -1563,6 +1563,73 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2_2" type="checkbox" id="__nav_3_1_6_2_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../interfaces/python_api/models/__init__/">models</a>
+          
+            <label for="__nav_3_1_6_2_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="models" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/models/info/" class="md-nav__link">
+        info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/models/job/" class="md-nav__link">
+        job
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../../interfaces/python_api/operation/" class="md-nav__link">
         operation
@@ -6245,7 +6312,7 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
     <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">model_cls</span><span class="o">.</span><span class="n">__fields__</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
         <span class="k">if</span> <span class="n">exclude_fields</span> <span class="ow">and</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">exclude_fields</span><span class="p">:</span>
             <span class="k">continue</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
+        <span class="n">row</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
 
         <span class="n">p</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">p_type</span> <span class="o">=</span> <span class="kc">None</span>
@@ -6410,7 +6477,9 @@ TabularWrap            (<span title="abc.ABC">ABC</span>)
 
         <details class="quote">
           <summary>Source code in <code>kiara/utils/output.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">extract_renderable</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">extract_renderable</span><span class="p">(</span>
+    <span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Try to automatically find and extract or create an object that is renderable by the &#39;rich&#39; library.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">render_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

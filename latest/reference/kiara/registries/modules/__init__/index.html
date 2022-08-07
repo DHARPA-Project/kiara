@@ -1563,6 +1563,73 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2_2" type="checkbox" id="__nav_3_1_6_2_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../interfaces/python_api/models/__init__/">models</a>
+          
+            <label for="__nav_3_1_6_2_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="models" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/models/info/" class="md-nav__link">
+        info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/models/job/" class="md-nav__link">
+        job
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../../../interfaces/python_api/operation/" class="md-nav__link">
         operation
@@ -4141,7 +4208,9 @@ ModuleRegistry        </code>
         <details class="quote">
           <summary>Source code in <code>kiara/registries/modules/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ModuleRegistry</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">kiara</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_modules</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">CID</span><span class="p">,</span> <span class="n">KiaraModule</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -4150,7 +4219,7 @@ ModuleRegistry        </code>
         <span class="n">module_classes</span> <span class="o">=</span> <span class="n">find_all_kiara_modules</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_module_classes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">KiaraModule</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_module_class_metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraModuleTypeInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_module_class_metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModuleTypeInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">module_classes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_module_classes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
@@ -4169,19 +4238,19 @@ ModuleRegistry        </code>
     <span class="k">def</span> <span class="nf">get_module_type_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_classes</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">get_module_type_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraModuleTypeInfo</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_module_type_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleTypeInfo</span><span class="p">:</span>
 
         <span class="n">md</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_class_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">type_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">md</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">md</span> <span class="o">=</span> <span class="n">KiaraModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">get_module_class</span><span class="p">(</span><span class="n">module_type</span><span class="o">=</span><span class="n">type_name</span><span class="p">)</span>
+            <span class="n">md</span> <span class="o">=</span> <span class="n">ModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
+                <span class="n">type_cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_module_class</span><span class="p">(</span><span class="n">module_type</span><span class="o">=</span><span class="n">type_name</span><span class="p">),</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_module_class_metadata</span><span class="p">[</span><span class="n">type_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">md</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_class_metadata</span><span class="p">[</span><span class="n">type_name</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">get_context_metadata</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">only_for_package</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleTypeClassesInfo</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleTypesInfo</span><span class="p">:</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">type_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_types</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -4192,7 +4261,7 @@ ModuleRegistry        </code>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">result</span><span class="p">[</span><span class="n">type_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">md</span>
 
-        <span class="k">return</span> <span class="n">ModuleTypeClassesInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="k">return</span> <span class="n">ModuleTypesInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">def</span> <span class="nf">create_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Manifest</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraModule&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a [KiaraModule][kiara.module.KiaraModule] object from a module configuration.</span>
@@ -4351,7 +4420,7 @@ ModuleRegistry        </code>
           <summary>Source code in <code>kiara/registries/modules/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_context_metadata</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">only_for_package</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleTypeClassesInfo</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleTypesInfo</span><span class="p">:</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">type_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_types</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -4362,7 +4431,7 @@ ModuleRegistry        </code>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">result</span><span class="p">[</span><span class="n">type_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">md</span>
 
-    <span class="k">return</span> <span class="n">ModuleTypeClassesInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="k">return</span> <span class="n">ModuleTypesInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 </code></pre></div>
         </details>
     </div>
@@ -4415,12 +4484,12 @@ ModuleRegistry        </code>
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/modules/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_module_type_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraModuleTypeInfo</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_module_type_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleTypeInfo</span><span class="p">:</span>
 
     <span class="n">md</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_class_metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">type_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">md</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">md</span> <span class="o">=</span> <span class="n">KiaraModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">get_module_class</span><span class="p">(</span><span class="n">module_type</span><span class="o">=</span><span class="n">type_name</span><span class="p">)</span>
+        <span class="n">md</span> <span class="o">=</span> <span class="n">ModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
+            <span class="n">type_cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_module_class</span><span class="p">(</span><span class="n">module_type</span><span class="o">=</span><span class="n">type_name</span><span class="p">),</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_module_class_metadata</span><span class="p">[</span><span class="n">type_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">md</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_class_metadata</span><span class="p">[</span><span class="n">type_name</span><span class="p">]</span>

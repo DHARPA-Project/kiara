@@ -1565,6 +1565,73 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2_2" type="checkbox" id="__nav_3_1_6_2_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../interfaces/python_api/models/__init__/">models</a>
+          
+            <label for="__nav_3_1_6_2_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="models" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/models/info/" class="md-nav__link">
+        info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/models/job/" class="md-nav__link">
+        job
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../../interfaces/python_api/operation/" class="md-nav__link">
         operation
@@ -4222,7 +4289,7 @@ how something was created, and in which environment.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_type_registry</span><span class="p">:</span> <span class="n">TypeRegistry</span> <span class="o">=</span> <span class="n">TypeRegistry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="p">:</span> <span class="n">DataRegistry</span> <span class="o">=</span> <span class="n">DataRegistry</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_job_registry</span><span class="p">:</span> <span class="n">JobRegistry</span> <span class="o">=</span> <span class="n">JobRegistry</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_module_registry</span><span class="p">:</span> <span class="n">ModuleRegistry</span> <span class="o">=</span> <span class="n">ModuleRegistry</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_module_registry</span><span class="p">:</span> <span class="n">ModuleRegistry</span> <span class="o">=</span> <span class="n">ModuleRegistry</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_operation_registry</span><span class="p">:</span> <span class="n">OperationRegistry</span> <span class="o">=</span> <span class="n">OperationRegistry</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_kiara_model_registry</span><span class="p">:</span> <span class="n">ModelRegistry</span> <span class="o">=</span> <span class="n">ModelRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
@@ -5494,7 +5561,7 @@ KiaraContextInfo            (<a class="autorefs autorefs-internal" title="kiara.
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether this context is filtered to only include information included in a specific Python package.&quot;</span>
     <span class="p">)</span>
     <span class="n">data_types</span><span class="p">:</span> <span class="n">DataTypeClassesInfo</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The included data types.&quot;</span><span class="p">)</span>
-    <span class="n">module_types</span><span class="p">:</span> <span class="n">ModuleTypeClassesInfo</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+    <span class="n">module_types</span><span class="p">:</span> <span class="n">ModuleTypesInfo</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The included kiara module types.&quot;</span>
     <span class="p">)</span>
     <span class="n">kiara_model_types</span><span class="p">:</span> <span class="n">KiaraModelClassesInfo</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -5520,7 +5587,7 @@ KiaraContextInfo            (<a class="autorefs autorefs-internal" title="kiara.
     <span class="k">def</span> <span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ItemInfo</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="s2">&quot;data_type&quot;</span> <span class="o">==</span> <span class="n">item_type</span> <span class="ow">or</span> <span class="s2">&quot;data_types&quot;</span> <span class="o">==</span> <span class="n">item_type</span><span class="p">:</span>
-            <span class="n">group_info</span><span class="p">:</span> <span class="n">InfoModelGroup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span>
+            <span class="n">group_info</span><span class="p">:</span> <span class="n">InfoItemGroup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span>
         <span class="k">elif</span> <span class="s2">&quot;module&quot;</span> <span class="ow">in</span> <span class="n">item_type</span><span class="p">:</span>
             <span class="n">group_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_types</span>
         <span class="c1"># elif &quot;metadata&quot; in item_type:</span>
@@ -5544,9 +5611,9 @@ KiaraContextInfo            (<a class="autorefs autorefs-internal" title="kiara.
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">group_info</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">get_all_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_empty_types</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InfoModelGroup</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">get_all_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_empty_types</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InfoItemGroup</span><span class="p">]:</span>
 
-        <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InfoModelGroup</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InfoItemGroup</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">skip_empty_types</span><span class="p">:</span>
             <span class="n">result</span><span class="p">[</span><span class="s2">&quot;data_types&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_types</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">skip_empty_types</span><span class="p">:</span>
@@ -5647,7 +5714,7 @@ KiaraContextInfo            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 <h5 id="kiara.context.KiaraContextInfo.module_types" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">module_types</span><span class="p">:</span> <span class="n">ModuleTypeClassesInfo</span></code>
+<code class="highlight language-python"><span class="n">module_types</span><span class="p">:</span> <span class="n">ModuleTypesInfo</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
@@ -5815,9 +5882,9 @@ KiaraContextInfo            (<a class="autorefs autorefs-internal" title="kiara.
 
         <details class="quote">
           <summary>Source code in <code>kiara/context/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_all_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_empty_types</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InfoModelGroup</span><span class="p">]:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_all_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skip_empty_types</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InfoItemGroup</span><span class="p">]:</span>
 
-    <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InfoModelGroup</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InfoItemGroup</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">skip_empty_types</span><span class="p">:</span>
         <span class="n">result</span><span class="p">[</span><span class="s2">&quot;data_types&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_types</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">skip_empty_types</span><span class="p">:</span>
@@ -5858,7 +5925,7 @@ KiaraContextInfo            (<a class="autorefs autorefs-internal" title="kiara.
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ItemInfo</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="s2">&quot;data_type&quot;</span> <span class="o">==</span> <span class="n">item_type</span> <span class="ow">or</span> <span class="s2">&quot;data_types&quot;</span> <span class="o">==</span> <span class="n">item_type</span><span class="p">:</span>
-        <span class="n">group_info</span><span class="p">:</span> <span class="n">InfoModelGroup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span>
+        <span class="n">group_info</span><span class="p">:</span> <span class="n">InfoItemGroup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_types</span>
     <span class="k">elif</span> <span class="s2">&quot;module&quot;</span> <span class="ow">in</span> <span class="n">item_type</span><span class="p">:</span>
         <span class="n">group_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_types</span>
     <span class="c1"># elif &quot;metadata&quot; in item_type:</span>
@@ -5905,7 +5972,7 @@ KiaraContextInfo            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 <h3 id="kiara.context.explain" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">explain</span><span class="p">(</span><span class="n">item</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">explain</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 
 <a href="#kiara.context.explain" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -5916,14 +5983,16 @@ KiaraContextInfo            (<a class="autorefs autorefs-internal" title="kiara.
 
         <details class="quote">
           <summary>Source code in <code>kiara/context/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">explain</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">explain</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Pretty print information about an item on the terminal.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">kiara.modules</span> <span class="kn">import</span> <span class="n">KiaraModule</span>
 
         <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">KiaraModule</span><span class="p">):</span>
-            <span class="n">item</span> <span class="o">=</span> <span class="n">KiaraModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span><span class="n">type_cls</span><span class="o">=</span><span class="n">item</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="n">ModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span><span class="n">type_cls</span><span class="o">=</span><span class="n">item</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
 
     <span class="n">console</span> <span class="o">=</span> <span class="n">get_console</span><span class="p">()</span>
     <span class="n">console</span><span class="o">.</span><span class="n">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
@@ -6467,7 +6536,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
         <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">DEFAULT_DATA_STORE_MARKER</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context_config</span><span class="o">.</span><span class="n">archives</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">data_store_type</span> <span class="o">=</span> <span class="s2">&quot;filesystem_data_store&quot;</span>
-            <span class="k">assert</span> <span class="n">data_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">data_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
             <span class="n">data_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default data store id&quot;</span><span class="p">)</span>
             <span class="n">data_archive_config</span> <span class="o">=</span> <span class="p">{</span>
@@ -6488,7 +6557,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
 
         <span class="k">if</span> <span class="n">DEFAULT_JOB_STORE_MARKER</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context_config</span><span class="o">.</span><span class="n">archives</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">job_store_type</span> <span class="o">=</span> <span class="s2">&quot;filesystem_job_store&quot;</span>
-            <span class="k">assert</span> <span class="n">job_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">job_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
             <span class="n">job_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default job store id&quot;</span><span class="p">)</span>
             <span class="n">job_archive_config</span> <span class="o">=</span> <span class="p">{</span>
@@ -6510,7 +6579,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
         <span class="k">if</span> <span class="n">DEFAULT_ALIAS_STORE_MARKER</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context_config</span><span class="o">.</span><span class="n">archives</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 
             <span class="n">alias_store_type</span> <span class="o">=</span> <span class="s2">&quot;filesystem_alias_store&quot;</span>
-            <span class="k">assert</span> <span class="n">alias_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">alias_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="n">alias_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default alias store id&quot;</span><span class="p">)</span>
             <span class="n">alias_store_config</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">&quot;archive_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
@@ -6531,7 +6600,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
         <span class="k">if</span> <span class="n">DEFAULT_WORKFLOW_STORE_MARKER</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context_config</span><span class="o">.</span><span class="n">archives</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 
             <span class="n">workflow_store_type</span> <span class="o">=</span> <span class="s2">&quot;filesystem_workflow_store&quot;</span>
-            <span class="k">assert</span> <span class="n">workflow_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">workflow_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="n">workflow_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
                 <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default workflow store id&quot;</span>
             <span class="p">)</span>
@@ -6555,7 +6624,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
 
         <span class="k">if</span> <span class="n">METADATA_DESTINY_STORE_MARKER</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context_config</span><span class="o">.</span><span class="n">archives</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">destiny_store_type</span> <span class="o">=</span> <span class="s2">&quot;filesystem_destiny_store&quot;</span>
-            <span class="k">assert</span> <span class="n">destiny_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">destiny_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="n">destiny_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default destiny store id&quot;</span><span class="p">)</span>
             <span class="n">destiny_store_config</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">&quot;archive_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>

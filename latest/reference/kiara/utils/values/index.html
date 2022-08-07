@@ -1563,6 +1563,73 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2_2" type="checkbox" id="__nav_3_1_6_2_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../interfaces/python_api/models/__init__/">models</a>
+          
+            <label for="__nav_3_1_6_2_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="models" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/models/info/" class="md-nav__link">
+        info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/models/job/" class="md-nav__link">
+        job
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../../interfaces/python_api/operation/" class="md-nav__link">
         operation
@@ -4261,7 +4328,11 @@
         <details class="quote">
           <summary>Source code in <code>kiara/utils/values.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">extract_raw_value</span><span class="p">(</span><span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
-    <span class="n">value</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
+
+    <span class="c1"># TODO: check without import</span>
+    <span class="kn">from</span> <span class="nn">kiara.models.values.value</span> <span class="kn">import</span> <span class="n">ORPHAN</span>
+
     <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">pedigree</span> <span class="o">!=</span> <span class="n">ORPHAN</span><span class="p">:</span>
         <span class="c1"># TODO: find alias?</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&quot;value:</span><span class="si">{</span><span class="n">value_id</span><span class="si">}</span><span class="s1">&quot;&#39;</span>

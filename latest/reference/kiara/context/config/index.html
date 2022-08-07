@@ -1677,6 +1677,73 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2_2" type="checkbox" id="__nav_3_1_6_2_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../interfaces/python_api/models/__init__/">models</a>
+          
+            <label for="__nav_3_1_6_2_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="models" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/models/info/" class="md-nav__link">
+        info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/models/job/" class="md-nav__link">
+        job
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../../interfaces/python_api/operation/" class="md-nav__link">
         operation
@@ -4694,7 +4761,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
         <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">DEFAULT_DATA_STORE_MARKER</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context_config</span><span class="o">.</span><span class="n">archives</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">data_store_type</span> <span class="o">=</span> <span class="s2">&quot;filesystem_data_store&quot;</span>
-            <span class="k">assert</span> <span class="n">data_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">data_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
             <span class="n">data_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default data store id&quot;</span><span class="p">)</span>
             <span class="n">data_archive_config</span> <span class="o">=</span> <span class="p">{</span>
@@ -4715,7 +4782,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
 
         <span class="k">if</span> <span class="n">DEFAULT_JOB_STORE_MARKER</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context_config</span><span class="o">.</span><span class="n">archives</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">job_store_type</span> <span class="o">=</span> <span class="s2">&quot;filesystem_job_store&quot;</span>
-            <span class="k">assert</span> <span class="n">job_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">job_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
             <span class="n">job_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default job store id&quot;</span><span class="p">)</span>
             <span class="n">job_archive_config</span> <span class="o">=</span> <span class="p">{</span>
@@ -4737,7 +4804,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
         <span class="k">if</span> <span class="n">DEFAULT_ALIAS_STORE_MARKER</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context_config</span><span class="o">.</span><span class="n">archives</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 
             <span class="n">alias_store_type</span> <span class="o">=</span> <span class="s2">&quot;filesystem_alias_store&quot;</span>
-            <span class="k">assert</span> <span class="n">alias_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">alias_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="n">alias_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default alias store id&quot;</span><span class="p">)</span>
             <span class="n">alias_store_config</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">&quot;archive_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>
@@ -4758,7 +4825,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
         <span class="k">if</span> <span class="n">DEFAULT_WORKFLOW_STORE_MARKER</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context_config</span><span class="o">.</span><span class="n">archives</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 
             <span class="n">workflow_store_type</span> <span class="o">=</span> <span class="s2">&quot;filesystem_workflow_store&quot;</span>
-            <span class="k">assert</span> <span class="n">workflow_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">workflow_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="n">workflow_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
                 <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default workflow store id&quot;</span>
             <span class="p">)</span>
@@ -4782,7 +4849,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
 
         <span class="k">if</span> <span class="n">METADATA_DESTINY_STORE_MARKER</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context_config</span><span class="o">.</span><span class="n">archives</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">destiny_store_type</span> <span class="o">=</span> <span class="s2">&quot;filesystem_destiny_store&quot;</span>
-            <span class="k">assert</span> <span class="n">destiny_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">destiny_store_type</span> <span class="ow">in</span> <span class="n">available_archives</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="n">destiny_store_id</span> <span class="o">=</span> <span class="n">ID_REGISTRY</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="s2">&quot;default destiny store id&quot;</span><span class="p">)</span>
             <span class="n">destiny_store_config</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">&quot;archive_path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span>

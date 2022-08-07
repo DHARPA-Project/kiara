@@ -1563,6 +1563,73 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2_2" type="checkbox" id="__nav_3_1_6_2_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../interfaces/python_api/models/__init__/">models</a>
+          
+            <label for="__nav_3_1_6_2_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="models" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/models/info/" class="md-nav__link">
+        info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../interfaces/python_api/models/job/" class="md-nav__link">
+        job
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../../interfaces/python_api/operation/" class="md-nav__link">
         operation
@@ -3663,13 +3730,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#kiara.utils.data.render_value" class="md-nav__link">
-    render_value()
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -4044,13 +4104,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#kiara.utils.data.render_value" class="md-nav__link">
-    render_value()
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -4133,7 +4186,7 @@
     <span class="o">**</span><span class="n">render_config</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 
-    <span class="n">value</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
 
     <span class="n">op_type</span><span class="p">:</span> <span class="n">PrettyPrintOperationType</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation_type</span><span class="p">(</span><span class="s2">&quot;pretty_print&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
@@ -4167,58 +4220,6 @@
     <span class="n">result</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">})</span>
     <span class="n">rendered</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;rendered_value&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">rendered</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-function">
-
-
-
-<h3 id="kiara.utils.data.render_value" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">render_value</span><span class="p">(</span><span class="n">kiara</span><span class="p">,</span> <span class="n">value_id</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s1">&#39;terminal_renderable&#39;</span><span class="p">,</span> <span class="n">render_instruction</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
-
-
-<a href="#kiara.utils.data.render_value" class="headerlink" title="Permanent link">&para;</a></h3>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/utils/data.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render_value</span><span class="p">(</span>
-    <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
-    <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
-    <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;terminal_renderable&quot;</span><span class="p">,</span>
-    <span class="n">render_instruction</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderInstruction</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderValueResult</span><span class="p">:</span>
-
-    <span class="n">value</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
-    <span class="n">op_type</span><span class="p">:</span> <span class="n">RenderValueOperationType</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation_type</span><span class="p">(</span><span class="s2">&quot;render_value&quot;</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
-
-    <span class="n">ops</span> <span class="o">=</span> <span class="n">op_type</span><span class="o">.</span><span class="n">get_render_operations_for_source_type</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">target_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ops</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">ops</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;No render operations registered for source type &#39;</span><span class="si">{</span><span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Registered target types for source type &#39;</span><span class="si">{</span><span class="n">value</span><span class="o">.</span><span class="n">data</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">.&quot;</span>
-        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;No render operation for source type &#39;</span><span class="si">{</span><span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="si">}</span><span class="s2">&#39; to target type &#39;</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&#39; registered. </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
-
-    <span class="n">op</span> <span class="o">=</span> <span class="n">ops</span><span class="p">[</span><span class="n">target_type</span><span class="p">]</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-        <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span> <span class="s2">&quot;render_instruction&quot;</span><span class="p">:</span> <span class="n">render_instruction</span><span class="p">}</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">RenderValueResult</span><span class="p">(</span>
-        <span class="n">rendered</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;rendered_value&quot;</span><span class="p">),</span>
-        <span class="n">metadata</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;render_metadata&quot;</span><span class="p">),</span>
-    <span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

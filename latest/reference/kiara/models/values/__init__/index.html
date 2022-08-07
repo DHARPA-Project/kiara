@@ -1563,6 +1563,73 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_6_2_2" type="checkbox" id="__nav_3_1_6_2_2" >
+      
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../interfaces/python_api/models/__init__/">models</a>
+          
+            <label for="__nav_3_1_6_2_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="models" data-md-level="5">
+        <label class="md-nav__title" for="__nav_3_1_6_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/models/info/" class="md-nav__link">
+        info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../interfaces/python_api/models/job/" class="md-nav__link">
+        job
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../../../interfaces/python_api/operation/" class="md-nav__link">
         operation
@@ -4715,14 +4782,14 @@ DataTypeClassesInfo            (<a class="autorefs autorefs-internal" title="kia
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_type_items</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
-        <span class="n">group_alias</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">group_title</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">items</span><span class="p">:</span> <span class="n">Type</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TypeInfoModelGroup&quot;</span><span class="p">:</span>
 
         <span class="n">type_infos</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">base_info_class</span><span class="p">()</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
         <span class="p">}</span>
-        <span class="n">data_types_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">group_alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">type_infos</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">data_types_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">group_title</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">type_infos</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="n">data_types_info</span>
 
     <span class="nd">@classmethod</span>
@@ -4942,7 +5009,7 @@ DataTypeClassesInfo            (<a class="autorefs autorefs-internal" title="kia
 
 
 <h7 id="kiara.models.values.data_type.DataTypeClassesInfo.create_from_type_items" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_from_type_items</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">items</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_from_type_items</span><span class="p">(</span><span class="n">group_title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">items</span><span class="p">)</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
@@ -4958,14 +5025,14 @@ DataTypeClassesInfo            (<a class="autorefs autorefs-internal" title="kia
           <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_from_type_items</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
-    <span class="n">group_alias</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">group_title</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">items</span><span class="p">:</span> <span class="n">Type</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;TypeInfoModelGroup&quot;</span><span class="p">:</span>
 
     <span class="n">type_infos</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">k</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">base_info_class</span><span class="p">()</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
     <span class="p">}</span>
-    <span class="n">data_types_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">group_alias</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">type_infos</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="n">data_types_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_alias</span><span class="o">=</span><span class="n">group_title</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">type_infos</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
     <span class="k">return</span> <span class="n">data_types_info</span>
 </code></pre></div>
         </details>
@@ -6035,7 +6102,7 @@ ValueLineage            (<span title="rich.jupyter.JupyterMixin">JupyterMixin</s
 
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">kiara</span>
@@ -6155,7 +6222,7 @@ ValueLineage            (<span title="rich.jupyter.JupyterMixin">JupyterMixin</s
         <details class="quote">
           <summary>Source code in <code>kiara/models/values/lineage.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">fill_lineage_tree</span><span class="p">(</span>
-    <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span>
+    <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
     <span class="n">pedigree</span><span class="p">:</span> <span class="n">ValuePedigree</span><span class="p">,</span>
     <span class="n">node</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tree</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">include_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -9528,7 +9595,7 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
 
         <span class="k">if</span> <span class="n">add_origin_to_property_value</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
             <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">_is_stored</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
@@ -9694,6 +9761,10 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_property_value</span><span class="p">(</span><span class="n">property_key</span><span class="o">=</span><span class="n">property_key</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
 
+    <span class="k">def</span> <span class="nf">get_all_property_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_property_data</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_names</span><span class="p">}</span>
+
     <span class="k">def</span> <span class="nf">lookup_self_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="p">:</span>
@@ -9766,7 +9837,7 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
                 <span class="k">continue</span>
 
             <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;value_status&quot;</span><span class="p">:</span>
-                <span class="n">v</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[i]-- </span><span class="si">{</span><span class="n">attr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> --[/i]&quot;</span>
+                <span class="n">v</span><span class="p">:</span> <span class="n">RenderableType</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[i]-- </span><span class="si">{</span><span class="n">attr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> --[/i]&quot;</span>
             <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;value_size&quot;</span><span class="p">:</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="n">format_size</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -10233,7 +10304,7 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
 
     <span class="k">if</span> <span class="n">add_origin_to_property_value</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value_id</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
         <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">_is_stored</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
@@ -10368,7 +10439,7 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
             <span class="k">continue</span>
 
         <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;value_status&quot;</span><span class="p">:</span>
-            <span class="n">v</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[i]-- </span><span class="si">{</span><span class="n">attr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> --[/i]&quot;</span>
+            <span class="n">v</span><span class="p">:</span> <span class="n">RenderableType</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[i]-- </span><span class="si">{</span><span class="n">attr</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> --[/i]&quot;</span>
         <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;value_size&quot;</span><span class="p">:</span>
             <span class="n">v</span> <span class="o">=</span> <span class="n">format_size</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -10467,6 +10538,32 @@ Value            (<a class="autorefs autorefs-internal" title="kiara.models.valu
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;data preview&quot;</span><span class="p">,</span> <span class="n">rendered</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.models.values.value.Value.get_all_property_data" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_all_property_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.models.values.value.Value.get_all_property_data" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/values/value.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_all_property_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_property_data</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_names</span><span class="p">}</span>
 </code></pre></div>
         </details>
     </div>

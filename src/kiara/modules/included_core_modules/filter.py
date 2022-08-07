@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Mapping, Union
 
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.values.value import Value, ValueMap
-from kiara.modules import KiaraModule, ValueSetSchema
+from kiara.modules import KiaraModule, ValueMapSchema
 from kiara.utils import is_develop
 from kiara.utils.develop import log_dev_message
 
@@ -69,12 +69,12 @@ class FilterModule(KiaraModule):
 
     _config_cls = FilterModuleConfig
 
-    def create_filter_inputs(self, filter_name: str) -> Union[None, ValueSetSchema]:
+    def create_filter_inputs(self, filter_name: str) -> Union[None, ValueMapSchema]:
         return None
 
     def create_inputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
 
         filter_name = self.get_config_value("filter_name")
 
@@ -113,7 +113,7 @@ class FilterModule(KiaraModule):
 
     def create_outputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
 
         data_type_data = self.get_supported_type()
         data_type = data_type_data["type"]
@@ -170,7 +170,7 @@ class StringFiltersModule(FilterModule):
 
         return "string"
 
-    def create_filter_inputs(self, filter_name: str) -> Union[None, ValueSetSchema]:
+    def create_filter_inputs(self, filter_name: str) -> Union[None, ValueMapSchema]:
 
         if filter_name == "tokens":
             return {

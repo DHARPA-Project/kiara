@@ -24,7 +24,7 @@ from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.python_class import KiaraModuleClass
 from kiara.models.values.value import ValueMap, ValueMapReadOnly
 from kiara.models.values.value_schema import ValueSchema
-from kiara.modules import InputOutputObject, KiaraModule, ValueSetSchema
+from kiara.modules import InputOutputObject, KiaraModule, ValueMapSchema
 from kiara.utils.output import create_table_from_field_schemas
 
 if TYPE_CHECKING:
@@ -36,14 +36,14 @@ logger = structlog.getLogger()
 
 class OperationSchema(InputOutputObject):
     def __init__(
-        self, alias: str, inputs_schema: ValueSetSchema, outputs_schema: ValueSetSchema
+        self, alias: str, inputs_schema: ValueMapSchema, outputs_schema: ValueMapSchema
     ):
 
         allow_empty_inputs = True
         allow_empty_outputs = True
 
-        self._inputs_schema_static: ValueSetSchema = inputs_schema
-        self._outputs_schema_static: ValueSetSchema = outputs_schema
+        self._inputs_schema_static: ValueMapSchema = inputs_schema
+        self._outputs_schema_static: ValueMapSchema = outputs_schema
         super().__init__(
             alias=alias,
             allow_empty_inputs_schema=allow_empty_inputs,

@@ -18,7 +18,7 @@ from kiara.modules import (
     DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS,
     KiaraModule,
     ModuleCharacteristics,
-    ValueSetSchema,
+    ValueMapSchema,
 )
 from kiara.registries.models import ModelRegistry
 
@@ -249,7 +249,7 @@ class DeserializeFromJsonModule(KiaraModule):
 
     def create_inputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
 
         return {
             "value": {
@@ -260,7 +260,7 @@ class DeserializeFromJsonModule(KiaraModule):
 
     def create_outputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
 
         return {
             "python_object": {

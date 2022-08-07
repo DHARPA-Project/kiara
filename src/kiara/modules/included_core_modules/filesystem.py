@@ -16,7 +16,7 @@ from kiara.modules import (
     DEFAULT_NO_IDEMPOTENT_MODULE_CHARACTERISTICS,
     KiaraModule,
     ModuleCharacteristics,
-    ValueSetSchema,
+    ValueMapSchema,
 )
 from kiara.modules.included_core_modules.export_as import DataExportModule
 from kiara.modules.included_core_modules.serialization import DeserializeValueModule
@@ -29,13 +29,13 @@ class ImportFileModule(KiaraModule):
 
     def create_inputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
 
         return {"path": {"type": "string", "doc": "The local path to the file."}}
 
     def create_outputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
 
         return {"file": {"type": "file", "doc": "The loaded files."}}
 
@@ -101,7 +101,7 @@ class ImportFileBundleModule(KiaraModule):
 
     def create_inputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
 
         return {
             "path": {"type": "string", "doc": "The local path of the folder to import."}
@@ -109,7 +109,7 @@ class ImportFileBundleModule(KiaraModule):
 
     def create_outputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
 
         return {
             "file_bundle": {"type": "file_bundle", "doc": "The imported file bundle."}
@@ -205,7 +205,7 @@ class PickFileModule(KiaraModule):
 
     def create_inputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
 
         return {
             "file_bundle": {"type": "file_bundle", "doc": "The file bundle."},
@@ -214,7 +214,7 @@ class PickFileModule(KiaraModule):
 
     def create_outputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
 
         return {"file": {"type": "file", "doc": "The file."}}
 

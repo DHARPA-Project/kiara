@@ -7,7 +7,7 @@ from typing import Any, Dict, Iterable, List, Mapping, Union
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.values.value import ValueMap
-from kiara.modules import KiaraModule, ValueSetSchema
+from kiara.modules import KiaraModule, ValueMapSchema
 
 
 class DataExportResult(BaseModel):
@@ -74,7 +74,7 @@ class DataExportModule(KiaraModule):
 
     def create_inputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
 
         source_type = self.get_config_value("source_type")
         target_profile = self.get_config_value("target_profile")
@@ -128,7 +128,7 @@ class DataExportModule(KiaraModule):
 
     def create_outputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
 
         outputs = {
             "export_details": {

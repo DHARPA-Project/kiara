@@ -46,7 +46,10 @@ yaml = StringYAML()
 
 KIARA_CONFIG = TypeVar("KIARA_CONFIG", bound=KiaraModuleConfig)
 
-ValueSetSchema = Mapping[str, Union[ValueSchema, Mapping[str, Any]]]
+ValueMapSchema = Mapping[str, Union[ValueSchema, Mapping[str, Any]]]
+ValueSetSchema = Mapping[
+    str, Union[ValueSchema, Mapping[str, Any]]
+]  # TODO: remove once all references to this are gone (legacy)
 
 log = structlog.getLogger()
 
@@ -114,13 +117,13 @@ class InputOutputObject(abc.ABC):
     @abstractmethod
     def create_inputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
         """Return the schema for this types' inputs."""
 
     @abstractmethod
     def create_outputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
         """Return the schema for this types' outputs."""
 
     @property

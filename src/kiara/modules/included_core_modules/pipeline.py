@@ -13,7 +13,7 @@ from kiara.models.module.pipeline.controller import SinglePipelineBatchControlle
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.models.module.pipeline.structure import PipelineStructure
 from kiara.models.values.value import ValueMap, ValueMapWritable
-from kiara.modules import KIARA_CONFIG, KiaraModule, ValueSetSchema
+from kiara.modules import KIARA_CONFIG, KiaraModule, ValueMapSchema
 
 if TYPE_CHECKING:
     from kiara.registries.jobs import JobRegistry
@@ -40,7 +40,7 @@ class PipelineModule(KiaraModule):
 
     def create_inputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
 
         pipeline_structure: PipelineStructure = self.config.structure
         inputs_schema = pipeline_structure.pipeline_inputs_schema
@@ -48,7 +48,7 @@ class PipelineModule(KiaraModule):
 
     def create_outputs_schema(
         self,
-    ) -> ValueSetSchema:
+    ) -> ValueMapSchema:
         pipeline_structure: PipelineStructure = self.config.structure
         return pipeline_structure.pipeline_outputs_schema
 

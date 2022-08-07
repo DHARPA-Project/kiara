@@ -9,7 +9,7 @@ env:
 jobs:
   test-darwin:
     name: pytest on darwin
-    runs-on: macos-10.15
+    runs-on: macos-11
     strategy:
       matrix:
         python_version: ["3.8", "3.9", "3.10"]

@@ -43,7 +43,7 @@ class ValuePager(Widget):
             kiara=self._kiara,
             inputs={
                 "value": self._value,
-                "render_instruction": self.render_scene,
+                "render_scene": self.render_scene,
             },
         )
 

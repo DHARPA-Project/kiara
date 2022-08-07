@@ -29,45 +29,9 @@ class RenderValueDetails(BaseOperationDetails):
     rendered_type: str = Field(description="The type of the render output.")
     input_field_name: str = Field(description="The input field name.")
     rendered_field_name: str = Field(description="The result field name.")
-    render_instruction_type: str = Field(
+    render_scene_type: str = Field(
         description="The id of the render instruction model class."
     )
-
-    # def retrieve_inputs_schema(self) -> ValueSetSchema:
-    #     return {
-    #         "value": {
-    #             "type": self.source_data_type,
-    #             "doc": f"The {self.source_data_type} value to extract metadata from.",
-    #         },
-    #         "render_instruction": {
-    #             "type": "render_instruction",
-    #             "type_config": {"kiara_model_id": self.render_instruction_type},
-    #             "doc": "Configuration how to render the value.",
-    #             "default": {},
-    #         },
-    #     }
-    #
-    # def retrieve_outputs_schema(self) -> ValueSetSchema:
-    #
-    #     return {
-    #         "rendered_value": {"type": "value_metadata", "doc": "The rendered data."},
-    #         "render_metadata": {
-    #             "type": "render_metadata",
-    #             "doc": "Metadata associated with this render process.",
-    #         },
-    #     }
-    #
-    # def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
-    #     return {
-    #         self.input_field_name: inputs["value"],
-    #         "render_instruction": inputs["render_instruction"],
-    #     }
-    #
-    # def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
-    #     return {
-    #         "rendered_value": outputs[self.rendered_type],
-    #         "render_metadata": outputs["render_metadata"],
-    #     }
 
 
 class RenderValueOperationType(OperationType[RenderValueDetails]):
@@ -93,7 +57,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
                 config = {
                     "module_type": "render.value",
                     "module_config": {
-                        "render_instruction_type": model_id,
+                        "render_scene_type": model_id,
                         "target_type": target,
                     },
                     "doc": f"Render a '{source_type}' value as '{target}'.",
@@ -113,8 +77,8 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
             return None
 
         if (
-            "render_instruction" not in module.inputs_schema.keys()
-            or module.inputs_schema["render_instruction"].type != "render_instruction"
+            "render_scene" not in module.inputs_schema.keys()
+            or module.inputs_schema["render_scene"].type != "render_scene"
         ):
             return None
 
@@ -147,7 +111,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
             input_field_name=source_type,
             rendered_field_name=target_type,
             is_internal_operation=True,
-            render_instruction_type=module.config.get("render_instruction_type"),
+            render_scene_type=module.config.get("render_scene_type"),
         )
 
         return details

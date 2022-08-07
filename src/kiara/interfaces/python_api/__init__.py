@@ -408,9 +408,7 @@ class KiaraAPI(object):
             endpoint = Manifest(
                 module_type=match.module_type, module_config=match.module_config
             )
-            extra_input_aliases = {
-                "render_value.render_instruction": "render_instruction"
-            }
+            extra_input_aliases = {"render_value.render_scene": "render_scene"}
             extra_output_aliases = {
                 "render_value.rendered_value": "rendered_value",
                 "render_value.render_metadata": "render_metadata",
@@ -461,11 +459,11 @@ class KiaraAPI(object):
             filters=filters,
         )
 
-        render_instruction = None
+        render_scene = None
 
         result = render_operation.run(
             kiara=self.context,
-            inputs={"value": _value, "render_instruction": render_instruction},
+            inputs={"value": _value, "render_scene": render_scene},
         )
 
         return RenderValueResult(

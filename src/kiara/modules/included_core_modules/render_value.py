@@ -20,13 +20,15 @@ from kiara.registries.models import ModelRegistry
 
 class RenderValueModuleConfig(KiaraModuleConfig):
 
-    render_instruction_type: str = Field(
+    render_scene_type: str = Field(
         description="The id of the model that describes (and handles) the actual rendering."
     )
-    target_type: str = Field(description="The type of the rendered result.")
+    target_type: str = Field(
+        description="The (kiara) data type of the rendered result."
+    )
 
-    @validator("render_instruction_type")
-    def validate_render_instruction(cls, value: Any):
+    @validator("render_scene_type")
+    def validate_render_scene(cls, value: Any):
 
         registry = ModelRegistry.instance()
 
@@ -47,7 +49,7 @@ class RenderValueModule(KiaraModule):
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
 
-        instruction = self.get_config_value("render_instruction_type")
+        instruction = self.get_config_value("render_scene_type")
         model_registry = ModelRegistry.instance()
         instr_model_cls: Type[RenderScene] = model_registry.get_model_cls(instruction, required_subclass=RenderScene)  # type: ignore
 
@@ -60,14 +62,13 @@ class RenderValueModule(KiaraModule):
                 "doc": f"A value of type '{data_type_name}'",
                 "optional": True,
             },
-            "render_instruction": {
-                "type": "render_instruction",
+            "render_scene": {
+                "type": "render_scene",
                 "type_config": {
-                    "kiara_model_id": self.get_config_value("render_instruction_type"),
+                    "kiara_model_id": self.get_config_value("render_scene_type"),
                 },
                 "doc": "Instructions/config on how (or what) to render the provided value.",
-                "optional": False,
-                "default": {},
+                "optional": True,
             },
         }
         return inputs
@@ -89,16 +90,18 @@ class RenderValueModule(KiaraModule):
 
     def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
 
-        instruction_type = self.get_config_value("render_instruction_type")
+        instruction_type = self.get_config_value("render_scene_type")
         model_registry = ModelRegistry.instance()
-        instr_info: TypeInfo = model_registry.all_models.get(instruction_type)  # type: ignore
+        instr_info: TypeInfo = model_registry.all_models.item_infos.get(instruction_type)  # type: ignore
         instr_model: Type[RenderScene] = instr_info.python_class.get_class()  # type: ignore
 
-        render_instruction: RenderScene = inputs.get_value_data("render_instruction")
+        render_scene: RenderScene = inputs.get_value_data("render_scene")
+        if not render_scene:
+            render_scene = instr_model()
 
-        if not issubclass(render_instruction.__class__, instr_model):
+        if not issubclass(render_scene.__class__, instr_model):
             raise KiaraProcessingException(
-                f"Invalid type '{type(instr_model)}' for 'render_instruction': must be a subclass of '{instr_model.__name__}'."
+                f"Invalid type '{type(instr_model)}' for 'render_scene': must be a subclass of '{instr_model.__name__}'."
             )
 
         result_model_type: str = self.get_config_value("target_type")
@@ -107,7 +110,7 @@ class RenderValueModule(KiaraModule):
 
         func_name = f"render_as__{result_model_type}"
 
-        func = getattr(render_instruction, func_name)
+        func = getattr(render_scene, func_name)
         rendered: Union[RenderValueResult, Any] = func(value=value)
         try:
             rendered_value = rendered.rendered

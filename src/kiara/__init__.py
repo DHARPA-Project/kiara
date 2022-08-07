@@ -7,9 +7,7 @@
 
 # isort: skip_file
 
-__all__ = [
-    "get_version",
-]
+__all__ = ["get_version", "Kiara", "KiaraAPI", "KiaraModule"]
 import logging
 import os
 import sys
@@ -18,6 +16,9 @@ import structlog
 import typing
 
 from .utils.class_loading import KiaraEntryPointItem, find_kiara_model_classes_under
+from .context import Kiara
+from .interfaces.python_api import KiaraAPI
+from .modules import KiaraModule
 
 try:
     builtins = __import__("__builtin__")

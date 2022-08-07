@@ -13,18 +13,17 @@ if TYPE_CHECKING:
     from kiara.models.values.value import Value
 
 
-class RenderInstructionTypeConfig(DataTypeConfig):
+class RenderSceneTypeConfig(DataTypeConfig):
 
     kiara_model_id: str = Field(
-        description="The id of the model backing this render (Python class must sub-class 'RenderInstruction').",
-        # default="instance.render_instruction.table",
+        description="The id of the model backing this render (Python class must sub-class 'RenderScene').",
     )
 
 
-class RenderInstructionDataType(InternalType[RenderScene, RenderInstructionTypeConfig]):
+class RenderSceneDataType(InternalType[RenderScene, RenderSceneTypeConfig]):
     """A value type to contain information about how to render a value in a specific render scenario."""
 
-    _data_type_name = "render_instruction"
+    _data_type_name = "render_scene"
 
     def __init__(self, **type_config: Any):
 
@@ -36,8 +35,8 @@ class RenderInstructionDataType(InternalType[RenderScene, RenderInstructionTypeC
         return RenderScene
 
     @classmethod
-    def data_type_config_class(cls) -> Type[RenderInstructionTypeConfig]:
-        return RenderInstructionTypeConfig
+    def data_type_config_class(cls) -> Type[RenderSceneTypeConfig]:
+        return RenderSceneTypeConfig
 
     @property
     def model_cls(self) -> Type[RenderScene]:

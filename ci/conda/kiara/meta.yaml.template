@@ -37,6 +37,7 @@ requirements:
     - jinja2>=3.0.1
     - jupytext>=1.14.0
     - importlib_metadata>=3.0
+    - mistune>=2.0.3,<3
     - mkdocstrings>=0.18.0
     - mmh3>=3.0.0
     - multiformats>=0.1.4.post2

@@ -1176,11 +1176,13 @@ class Value(ValueDetails):
         if "value_id" not in ignore_fields:
             table.add_row("value_id", str(info_data["value_id"]))
         if "aliases" not in ignore_fields:
-            if not info_data["aliases"]:
-                aliases_str = "-- n/a --"
-            else:
+            if info_data.get("aliases", None):
                 aliases_str = ", ".join(info_data["aliases"])  # type: ignore
                 table.add_row("aliases", aliases_str)
+            # else:
+            #     aliases_str = "-- n/a --"
+            #     table.add_row("aliases", aliases_str)
+
         if "kiara_id" not in ignore_fields:
             table.add_row("kiara_id", str(info_data["kiara_id"]))
 

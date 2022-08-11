@@ -1034,6 +1034,123 @@ class Value(ValueDetails):
 
         return self._data_registry.create_value_info(value=self.value_id)
 
+    def create_info_data(self, **config: Any) -> Mapping[str, Any]:
+
+        show_pedigree = config.get("show_pedigree", False)
+        show_lineage = config.get("show_lineage", False)
+        show_properties = config.get("show_properties", False)
+        # show_destinies = config.get("show_destinies", False)
+        # show_destiny_backlinks = config.get("show_destiny_backlinks", False)
+        # show_data = config.get("show_data_preview", False)
+        show_serialized = config.get("show_serialized", False)
+        show_env_data_hashes = config.get("show_environment_hashes", False)
+        show_env_data = config.get("show_environment_data", False)
+
+        ignore_fields = config.get("ignore_fields", [])
+
+        table: Dict[str, Any] = {}
+
+        if "value_id" not in ignore_fields:
+            table["value_id"] = self.value_id
+        if "aliases" not in ignore_fields:
+            if hasattr(self, "aliases"):
+                table["aliases"] = self.aliases  # type: ignore
+
+        if "kiara_id" not in ignore_fields:
+            table["kiara_id"] = self.kiara_id
+
+        for k in sorted(self.__fields__.keys()):
+
+            if (
+                k
+                in [
+                    "serialized",
+                    "value_id",
+                    "aliases",
+                    "kiara_id",
+                    "environments",
+                    "environment_hashes",
+                ]
+                or k in ignore_fields
+            ):
+                continue
+
+            attr = getattr(self, k)
+            if k in ["pedigree_output_name", "pedigree"]:
+                continue
+            else:
+                v = attr
+
+            table[k] = v
+
+        if show_pedigree:
+            pedigree = getattr(self, "pedigree")
+
+            table["pedigree"] = pedigree
+            if pedigree == ORPHAN:
+                pedigree_output_name: Union[Any, None] = None
+            else:
+                pedigree_output_name = getattr(self, "pedigree_output_name")
+
+            table["pedigree_output_name"] = pedigree_output_name
+
+        if show_lineage:
+            table["lineage"] = self.lineage
+
+        if show_serialized:
+            serialized = self._data_registry.retrieve_persisted_value_details(
+                self.value_id
+            )
+            table["serialized"] = serialized
+
+        if show_env_data_hashes:
+            env_hashes = Syntax(
+                orjson_dumps(self.environment_hashes, option=orjson.OPT_INDENT_2),
+                "json",
+                background_color="default",
+            )
+            table["environment_hashes"] = env_hashes
+
+        if show_env_data:
+            raise NotImplementedError()
+
+        if show_properties:
+            if not self.property_links:
+                table["properties"] = {}
+            else:
+                properties = self._data_registry.load_values(self.property_links)
+                table["properties"] = properties
+
+        # if hasattr(self, "destiny_links") and show_destinies:
+        #     if not self.destiny_links:  # type: ignore
+        #         table["destinies"] = {}
+        #     else:
+        #         destinies = self._data_registry.load_values(self.destiny_links)  # type: ignore
+        #         table["destinies"] = destinies
+        #
+        # if show_destiny_backlinks:
+        #     if not self.destiny_backlinks:
+        #         table["destiny backlinks"] = {}
+        #     else:
+        #         destiny_items: List[Any] = []
+        #         for v_id, alias in self.destiny_backlinks.items():
+        #             destiny_items.append(
+        #                 f"[b]Value: [i]{v_id}[/i] (destiny alias: {alias})[/b]"
+        #             )
+        #             rendered = self._data_registry.pretty_print_data(
+        #                 value_id=v_id, **config
+        #             )
+        #             destiny_items.append(rendered)
+        #         table["destiny backlinks"] = destiny_items
+        #
+        # if show_data:
+        #     rendered = self._data_registry.pretty_print_data(
+        #         self.value_id, target_type="terminal_renderable"
+        #     )
+        #     table["data preview"] = rendered
+
+        return table
+
     def create_renderable(self, **render_config: Any) -> RenderableType:
 
         from kiara.utils.output import extract_renderable
@@ -1054,20 +1171,22 @@ class Value(ValueDetails):
         table.add_column("Key", style="i")
         table.add_column("Value")
 
+        info_data = self.create_info_data(**render_config)
+
         if "value_id" not in ignore_fields:
-            table.add_row("value_id", str(self.value_id))
+            table.add_row("value_id", str(info_data["value_id"]))
         if "aliases" not in ignore_fields:
-            if hasattr(self, "aliases"):
-                if not self.aliases:  # type: ignore
-                    aliases_str = "-- n/a --"
-                else:
-                    aliases_str = ", ".join(self.aliases)  # type: ignore
+            if not info_data["aliases"]:
+                aliases_str = "-- n/a --"
+            else:
+                aliases_str = ", ".join(info_data["aliases"])  # type: ignore
                 table.add_row("aliases", aliases_str)
         if "kiara_id" not in ignore_fields:
-            table.add_row("kiara_id", str(self.kiara_id))
+            table.add_row("kiara_id", str(info_data["kiara_id"]))
+
         table.add_row("", "")
         table.add_row("", Rule())
-        for k in sorted(self.__fields__.keys()):
+        for k in sorted(info_data.keys()):
 
             if (
                 k
@@ -1083,7 +1202,7 @@ class Value(ValueDetails):
             ):
                 continue
 
-            attr = getattr(self, k)
+            attr = info_data[k]
             if k in ["pedigree_output_name", "pedigree"]:
                 continue
 
@@ -1111,14 +1230,14 @@ class Value(ValueDetails):
             table.add_row("", "")
 
         if show_pedigree:
-            pedigree = getattr(self, "pedigree")
+            pedigree = info_data["pedigree"]
 
             if pedigree == ORPHAN:
                 v = "[i]-- external data --[/i]"
                 pedigree_output_name: Union[Any, None] = None
             else:
                 v = extract_renderable(pedigree)
-                pedigree_output_name = getattr(self, "pedigree_output_name")
+                pedigree_output_name = info_data["pedigree_output_name"]
 
             row = ["pedigree", v]
             table.add_row(*row)
@@ -1127,17 +1246,19 @@ class Value(ValueDetails):
                 table.add_row(*row)
 
         if show_lineage:
-            table.add_row("lineage", self.lineage.create_renderable(include_ids=True))
+            table.add_row(
+                "lineage", info_data["lineage"].create_renderable(include_ids=True)
+            )
 
         if show_serialized:
-            serialized = self._data_registry.retrieve_persisted_value_details(
-                self.value_id
-            )
+            serialized = info_data["serialized"]
             table.add_row("serialized", serialized.create_renderable())
 
         if show_env_data_hashes:
             env_hashes = Syntax(
-                orjson_dumps(self.environment_hashes, option=orjson.OPT_INDENT_2),
+                orjson_dumps(
+                    info_data["environment_hashes"], option=orjson.OPT_INDENT_2
+                ),
                 "json",
                 background_color="default",
             )
@@ -1147,10 +1268,10 @@ class Value(ValueDetails):
             raise NotImplementedError()
 
         if show_properties:
-            if not self.property_links:
+            if not info_data["properties"]:
                 table.add_row("properties", "{}")
             else:
-                properties = self._data_registry.load_values(self.property_links)
+                properties = info_data["properties"]
                 pr = properties.create_renderable(show_header=False)
                 table.add_row("properties", pr)
 

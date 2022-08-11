@@ -29,7 +29,11 @@ DEFAULT_VALUE_MAP_RENDER_CONFIG = {
 
 
 def create_module_preparation_table(
-    kiara: "Kiara", job_config: JobConfig, job_id: uuid.UUID, **render_config: Any
+    kiara: "Kiara",
+    job_config: JobConfig,
+    job_id: uuid.UUID,
+    module: "KiaraModule",
+    **render_config: Any
 ) -> Table:
 
     dev_config = get_dev_config()
@@ -43,19 +47,23 @@ def create_module_preparation_table(
     if module_details not in [DetailLevel.NONE.value, DetailLevel.NONE]:
         if module_details in [DetailLevel.MINIMAL.value, DetailLevel.MINIMAL]:
             table.add_row("module", job_config.module_type)
+            doc = module.operation.doc
             table.add_row(
                 "module desc",
-                kiara.context_info.module_types.item_infos[
-                    job_config.module_type
-                ].documentation.description,
+                doc.description
+                # kiara.context_info.module_types.item_infos[
+                #     job_config.module_type
+                # ].documentation.description,
             )
         elif module_details in [DetailLevel.FULL.value, DetailLevel.FULL]:
             table.add_row("module", job_config.module_type)
+            doc = module.operation.doc
             table.add_row(
                 "module doc",
-                kiara.context_info.module_types.item_infos[
-                    job_config.module_type
-                ].documentation.full_doc,
+                doc.full_doc
+                # kiara.context_info.module_types.item_infos[
+                #     job_config.module_type
+                # ].documentation.full_doc,
             )
             if module_config_is_empty(job_config.module_config):
                 table.add_row("module_config", "-- no config --")

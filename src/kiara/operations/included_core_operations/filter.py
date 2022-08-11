@@ -282,16 +282,11 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
             the (pipeline) module configuration of the filter pipeline
         """
 
-        if extra_input_aliases:
-            raise NotImplementedError("Extra input aliases not supported yet.")
-
         steps: List[Mapping[str, Any]] = []
         last_filter_id: Union[str, None] = None
         last_filter_output_name: Union[str, None] = None
         input_aliases: Dict[str, str] = {}
         output_aliases: Dict[str, str] = {}
-
-        doc = f"Auto generated filter operation for type '{data_type}'"
 
         if isinstance(filters, str):
             filters = {filters: filters}
@@ -322,6 +317,8 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
             output_aliases[f"{step_id}.value"] = f"{step_id}__filtered"
 
         output_aliases[f"{last_filter_id}.{last_filter_output_name}"] = "filtered_value"
+
+        doc = f"Auto generated filter operation ({'->'.join(filters.keys())}) for type '{data_type}'"
 
         if endpoint:
             endpoint_module = self._kiara.module_registry.create_module(
@@ -357,7 +354,7 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
             }
             # for field_name in endpoint_module.output_names:
             #     output_aliases[f"{endpoint_step_id}.{field_name}"] = f"endpoint__{field_name}"
-            doc = f"{doc} and endpoint module '{endpoint_module.module_type_name}'."
+            doc = f"{doc}, feeding into endpoing module '{endpoint_module.module_type_name}'."
             steps.append(step_data)
         else:
             doc = f"{doc}."
@@ -365,6 +362,10 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
         if extra_output_aliases:
             for k, v in extra_output_aliases.items():
                 output_aliases[k] = v
+
+        if extra_input_aliases:
+            input_aliases.update(extra_input_aliases)
+            # raise NotImplementedError("Extra input aliases not supported yet.")
 
         pipeline_config = PipelineConfig.from_config(
             pipeline_name="_filter_pipeline",
@@ -375,6 +376,7 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
                 "doc": doc,
             },
         )
+
         return pipeline_config
 
     def create_filter_operation(

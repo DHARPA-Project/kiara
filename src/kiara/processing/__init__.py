@@ -180,7 +180,10 @@ class ModuleProcessor(abc.ABC):
                     from kiara.utils.develop import log_dev_message
 
                     table = create_module_preparation_table(
-                        kiara=self._kiara, job_config=job_config, job_id=job_id
+                        kiara=self._kiara,
+                        job_config=job_config,
+                        job_id=job_id,
+                        module=module,
                     )
                     log_dev_message(table, title=title)
 

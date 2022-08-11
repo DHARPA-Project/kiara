@@ -1,0 +1,16 @@
+{% import 'kiara/render/models/macros.html' as model_macros %}
+
+<table>
+    <tr>
+        <td>Documentation</td>
+        <td>{{ instance.documentation.full_doc | markdown | safe }}</td>
+    </tr>
+    <tr>
+        <td>Inputs</td>
+        <td>{{ model_macros.values_schema(values_schema=instance.inputs_schema) }}</td>
+    </tr>
+    <tr>
+        <td>Outputs</td>
+        <td>{{ model_macros.values_schema(values_schema=instance.outputs_schema) }}</td>
+    </tr>
+</table>

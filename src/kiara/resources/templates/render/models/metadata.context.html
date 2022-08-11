@@ -1,0 +1,28 @@
+<table xmlns="http://www.w3.org/1999/html">
+    <tbody>
+    <tr>
+    <td>tags</td>
+    <td>{{ instance.tags | join(',') }}</td>
+    </tr>
+    <tr>
+        <td>labels</td>
+        <td>
+            <ul>
+        {% for k, v in instance.labels.items() %}
+        <li>{{ k }}: {{ v }}</li>
+        {% endfor %}
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>references</td>
+        <td>
+        <ul>
+            {% for k, v in instance.references.items() %}
+            <li><a href="{{ v.url }}">{{ k }}</a>{% if v.desc %}: {{ v.desc }}{% endif %}</li>
+            {% endfor %}
+        </ul>
+        </td>
+    </tr>
+    </tbody>
+</table>

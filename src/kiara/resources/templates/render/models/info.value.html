@@ -1,0 +1,15 @@
+<table>
+    <thead>
+        <tr>
+            <th colspan="2">Metadata for value: <i>{{ instance.value_id }}</i></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for k, v in instance.create_info_data().items() %}
+        <tr>
+            <td>{{ k }}</td>
+            <td>{{ v }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

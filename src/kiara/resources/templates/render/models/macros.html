@@ -1,0 +1,24 @@
+{% macro values_schema(values_schema) %}
+<table>
+    <thead>
+    <tr>
+        <th>field name</th>
+        <th>type</th>
+        <th>description</th>
+        <th>required</th>
+        <th>default</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+{% for field_name, schema in values_schema.items() %}
+<td>{{ field_name }}</td>
+<td>{{ schema.type }}</td>
+<td>{{ schema.doc.description }}</td>
+<td>{{ schema.is_required() | render_bool }}</td>
+<td>{{ schema.default | render_default }}</td>
+    </tr>
+{% endfor %}
+    </tbody>
+</table>
+{% endmacro %}

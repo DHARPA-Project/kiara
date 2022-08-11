@@ -6,6 +6,8 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import networkx as nx
 from pydantic.main import BaseModel
+from rich.panel import Panel
+from rich.tree import Tree
 from typing import TYPE_CHECKING, Any, Iterable, Mapping, Type, Union
 
 from kiara.defaults import KIARA_DEFAULT_ROOT_NODE_ID, PYDANTIC_USE_CONSTRUCT
@@ -40,11 +42,7 @@ def retrieve_data_subcomponent_keys(data: Any) -> Iterable[str]:
         else:
             return []
     elif isinstance(data, BaseModel):
-        matches = []
-        for x in data.__fields__.keys():
-            _type = data.__fields__[x].type_
-            if isinstance(_type, type) and issubclass(_type, BaseModel):
-                matches.append(x)
+        matches = sorted(data.__fields__.keys())
         return matches
     else:
         log_message(
@@ -90,11 +88,13 @@ def get_subcomponent_from_model(data: "KiaraModel", path: str) -> "KiaraModel":
             )
 
 
-def assemble_subcomponent_tree(data: "KiaraModel") -> Union[nx.DiGraph, None]:
+def assemble_subcomponent_graph(data: "KiaraModel") -> Union[nx.DiGraph, None]:
+
+    from kiara.models import KiaraModel
 
     graph = nx.DiGraph()
 
-    def assemble_tree(info_model: KiaraModel, current_node_id, level: int = 0):
+    def assemble_graph(info_model: KiaraModel, current_node_id, level: int = 0):
         graph.add_node(current_node_id, obj=info_model, level=level)
         scn = info_model.subcomponent_keys
         if not scn:
@@ -103,7 +103,57 @@ def assemble_subcomponent_tree(data: "KiaraModel") -> Union[nx.DiGraph, None]:
             child_obj = info_model.get_subcomponent(child_path)
             new_node_id = f"{current_node_id}.{child_path}"
             graph.add_edge(current_node_id, new_node_id)
-            assemble_tree(child_obj, new_node_id, level + 1)
+            if isinstance(child_obj, KiaraModel):
+                assemble_graph(child_obj, new_node_id, level + 1)
 
-    assemble_tree(data, KIARA_DEFAULT_ROOT_NODE_ID)
+    assemble_graph(data, KIARA_DEFAULT_ROOT_NODE_ID)
     return graph
+
+
+def create_subcomponent_tree_renderable(
+    data: "KiaraModel", show_data: bool = False
+) -> Tree:
+
+    from kiara.models import KiaraModel
+    from kiara.utils.output import extract_renderable
+
+    def extract_type_string(obj: Any) -> str:
+
+        if isinstance(obj, KiaraModel):
+            return f"model: {obj.model_type_id}"
+        elif isinstance(obj, Mapping):
+            return "dict"
+        else:
+            return type(obj).__name__
+
+    def assemble_tree(node: Tree, model: Any, level: int):
+
+        if isinstance(model, Mapping) and model:
+            for k, v in model.items():
+                child_tree = node.add(f"[b i]{k}[/b i] ({extract_type_string(v)})")
+                assemble_tree(node=child_tree, model=v, level=level + 1)
+            return
+
+        if not isinstance(model, KiaraModel):
+            if show_data:
+                renderable = extract_renderable(model)
+                panel = Panel(
+                    renderable, title="[i]data[/i]", title_align="left", expand=False
+                )
+                node.add(panel)
+            return
+
+        scn = model.subcomponent_keys
+        if not scn:
+            return
+        for child_path in scn:
+            child_obj = model.get_subcomponent(child_path)
+            child_tree = node.add(
+                f"[b i]{child_path}[/b i] ({extract_type_string(child_obj)})"
+            )
+            assemble_tree(node=child_tree, model=child_obj, level=level + 1)
+
+    tree = Tree(f"[b]{data.model_type_id}[/b]: [b]{data.instance_id}[/b]")
+    assemble_tree(node=tree, model=data, level=0)
+
+    return tree

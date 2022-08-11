@@ -261,6 +261,9 @@ class Operation(Manifest):
     def _retrieve_data_to_hash(self) -> Any:
         return {"operation_id": self.operation_id, "manifest": self.manifest_cid}
 
+    def _retrieve_id(self) -> str:
+        return self.operation_id
+
     @property
     def module(self) -> "KiaraModule":
         if self._module is None:

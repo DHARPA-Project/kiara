@@ -1,0 +1,5 @@
+<ul>
+{% for author in instance.authors %}
+    <li>{{ author.name }}{% if author.email %} ( <a href="mailto:{{ author.email }}">{{ author.email }}</a> ){% endif %}</li>
+{% endfor %}
+</ul>

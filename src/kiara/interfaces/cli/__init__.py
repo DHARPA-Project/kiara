@@ -19,7 +19,7 @@ from typing import Tuple, Union
 from kiara.context.config import KiaraConfig
 from kiara.defaults import KIARA_CONFIG_FILE_NAME, KIARA_MAIN_CONFIG_FILE
 from kiara.interfaces.python_api import KiaraAPI
-from kiara.utils import is_debug, is_develop
+from kiara.utils import is_debug
 from kiara.utils.class_loading import find_all_cli_subcommands
 from kiara.utils.cli import terminal_print
 
@@ -126,8 +126,6 @@ def cli(
 
 
 for plugin in find_all_cli_subcommands():
-    if plugin.name == "dev" and not is_develop():
-        continue
     cli.add_command(plugin)
 
 if __name__ == "__main__":

@@ -10,6 +10,8 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
 from kiara.interfaces.python_api.models.info import (
     ModuleTypeInfo,
     ModuleTypesInfo,
+    OperationGroupInfo,
+    OperationInfo,
     ValueInfo,
     ValuesInfo,
 )
@@ -126,6 +128,102 @@ class KiaraAPI(object):
 
         return module_obj.operation
 
+    @property
+    def operation_ids(self) -> List[str]:
+        return self.get_operation_ids()
+
+    def get_operation_ids(
+        self, *filters: str, include_internal: bool = False
+    ) -> List[str]:
+
+        if not filters and include_internal:
+            return sorted(self.context.operation_registry.operation_ids)
+
+        else:
+            return sorted(
+                self.list_operations(*filters, include_internal=include_internal).keys()
+            )
+
+    def get_operation(self, operation_id: str) -> Operation:
+        """Return the operation instance with the specified id."""
+
+        return self.context.operation_registry.get_operation(operation_id=operation_id)
+
+    def get_operation_info(self, operation_id: str) -> OperationInfo:
+
+        op = self.context.operation_registry.get_operation(operation_id=operation_id)
+        op_info = OperationInfo.create_from_operation(kiara=self.context, operation=op)
+        return op_info
+
+    def list_operations(
+        self, *filters: str, include_internal: bool = False
+    ) -> Mapping[str, Operation]:
+        """List all available values, optionally filter.
+
+        Arguments:
+            filters: the (optional) filter strings, an operation must match all of them to be included in the result
+            include_internal: whether to include operations that are predominantly used internally in kiara.
+
+        Returns:
+            a dictionary with the operation id as key, and a [kiara.models.module.operation.Operation] instance as value
+        """
+
+        operations = self.context.operation_registry.operations
+
+        if filters:
+            temp = {}
+            for op_id, op in operations.items():
+                match = True
+                for f in filters:
+                    if f.lower() not in op_id.lower():
+                        match = False
+                        break
+                if match:
+                    temp[op_id] = op
+            operations = temp
+
+        if not include_internal:
+            temp = {}
+            for op_id, op in operations.items():
+                if not op.operation_details.is_internal_operation:
+                    temp[op_id] = op
+
+            operations = temp
+
+        return operations
+
+    def get_operations_info(
+        self, *filters, include_internal: bool = False
+    ) -> OperationGroupInfo:
+        """Retrieve information about the matching operations.
+
+        This retrieves the same list of operations as [list_operations][kiara.interfaces.python_api.KiaraAPI.list_operations],
+        but augments each result instance with additional information that might be useful in frontends.
+
+        'OperationInfo' objects contains augmented information on top of what 'normal' [Operation][kiara.models.module.operation.Operation] objects
+        hold, but they can take longer to create/resolve. If you don't need any
+        of the augmented information, just use the [list_operations][kiara.interfaces.python_api.KiaraAPI.list_operations] method
+        instead.
+
+        Arguments:
+            filters: the (optional) filter strings, an operation must match all of them to be included in the result
+            include_internal: whether to include operations that are predominantly used internally in kiara.
+
+        Returns:
+            a wrapper object containing a dictionary of items with value_id as key, and [kiara.interfaces.python_api.models.info.OperationInfo] as value
+        """
+
+        title = "Available operations"
+        if filters:
+            title = "Filtered operations"
+
+        operations = self.list_operations(*filters, include_internal=include_internal)
+
+        ops_info = OperationGroupInfo.create_from_operations(
+            kiara=self.context, group_title=title, **operations
+        )
+        return ops_info
+
     # ==================================================================================================================
     # methods relating to values and data
 
@@ -216,14 +314,14 @@ class KiaraAPI(object):
 
         'ValueInfo' objects contains augmented information on top of what 'normal' [Value][kiara.models.values.value.Value] objects
         hold (like resolved properties for example), but they can take longer to create/resolve. If you don't need any
-        of the augmented information, just use the [get_value][kiara.interfaces.python_api.KiaraAPI.list_values] method
+        of the augmented information, just use the [list_values][kiara.interfaces.python_api.KiaraAPI.list_values] method
         instead.
 
         Arguments:
             matcher_params: the (optional) filter parameters, check the [ValueMatcher][kiara.models.values.matchers.ValueMatcher] class for available parameters
 
         Returns:
-            a dictionary with value_id as key, and [kiara.interfaces.python_api.models.values.ValueInfo] as value
+            a wrapper object containing the items as dictionary with value_id as key, and [kiara.interfaces.python_api.models.values.ValueInfo] as value
         """
 
         values = self.list_values(**matcher_params)
@@ -267,7 +365,7 @@ class KiaraAPI(object):
         """
 
         if matcher_params:
-            matcher_params["has_aliases"] = True
+            matcher_params["has_alias"] = True
             all_values = self.list_values(**matcher_params)
             result: Dict[str, Value] = {}
             for value in all_values.values():
@@ -459,11 +557,9 @@ class KiaraAPI(object):
             filters=filters,
         )
 
-        render_scene = None
-
         result = render_operation.run(
             kiara=self.context,
-            inputs={"value": _value, "render_scene": render_scene},
+            inputs={"value": _value, "render_scene": scene_config},
         )
 
         return RenderValueResult(

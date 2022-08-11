@@ -16,10 +16,12 @@ from kiara.models.values.value import ValueMap, ValueMapWritable
 from kiara.modules import KIARA_CONFIG, KiaraModule, ValueMapSchema
 
 if TYPE_CHECKING:
+    from kiara.models.module.operation import Operation
     from kiara.registries.jobs import JobRegistry
 
 
 class PipelineModule(KiaraModule):
+    """A utility module to run multiple connected inner-modules and present it as its own entity."""
 
     _config_cls = PipelineConfig
     _module_type_name = "pipeline"
@@ -37,6 +39,17 @@ class PipelineModule(KiaraModule):
 
     def _set_job_registry(self, job_registry: "JobRegistry"):
         self._job_registry = job_registry
+
+    @property
+    def operation(self) -> "Operation":
+
+        if self._operation is not None:
+            return self._operation
+
+        from kiara.models.module.operation import Operation
+
+        self._operation = Operation.create_from_module(self, doc=self.config.doc)
+        return self._operation
 
     def create_inputs_schema(
         self,

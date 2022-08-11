@@ -14,7 +14,10 @@ class ModelRegistry(object):
 
     @classmethod
     def instance(cls) -> "ModelRegistry":
-        """The default *kiara* context. In most cases, it's recommended you create and manage your own, though."""
+        """The default ModelRegistry instance.
+
+        Can be a simgleton because it only contains data that is determined by the current Python environment.
+        """
 
         if cls._instance is None:
             cls._instance = ModelRegistry()

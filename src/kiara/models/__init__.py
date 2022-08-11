@@ -19,15 +19,19 @@ from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.jupyter import JupyterMixin
 from rich.panel import Panel
 from rich.table import Table
-from typing import Any, ClassVar, Dict, Iterable, List, Union
+from rich.tree import Tree
+from typing import Any, ClassVar, Dict, Iterable, List, Mapping, Union
 
 from kiara.defaults import KIARA_HASH_FUNCTION
-from kiara.utils import to_camel_case
+from kiara.registries.templates import TemplateRegistry
 from kiara.utils.class_loading import _default_id_func
+from kiara.utils.develop import log_dev_message
 from kiara.utils.hashing import compute_cid
+from kiara.utils.html import generate_html
 from kiara.utils.json import orjson_dumps
 from kiara.utils.models import (
-    assemble_subcomponent_tree,
+    assemble_subcomponent_graph,
+    create_subcomponent_tree_renderable,
     get_subcomponent_from_model,
     retrieve_data_subcomponent_keys,
 )
@@ -47,10 +51,10 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         json_dumps = orjson_dumps
         extra = Extra.forbid
 
-    @classmethod
-    def get_model_title(cls):
-
-        return to_camel_case(cls._kiara_model_name)
+    # @classmethod
+    # def get_model_title(cls):
+    #
+    #     return to_camel_case(cls._kiara_model_name)
 
     @classmethod
     def get_schema_hash(cls) -> int:
@@ -152,7 +156,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
             return None
 
         if self._graph_cache is None:
-            self._graph_cache = assemble_subcomponent_tree(self)
+            self._graph_cache = assemble_subcomponent_graph(self)
         return self._graph_cache
 
     def get_subcomponent(self, path: str) -> "KiaraModel":
@@ -204,6 +208,36 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         rend = self.create_renderable(**config)
         return Panel(rend, box=box.ROUNDED, title=title, title_align="left")
 
+    def create_html(self, **config) -> str:
+
+        template_registry = TemplateRegistry.instance()
+        template = template_registry.get_template_for_model_type(
+            model_type=self.model_type_id, template_format="html"
+        )
+
+        if template:
+            try:
+                result = template.render(instance=self)
+                return result
+            except Exception as e:
+                log_dev_message(
+                    title="html-rendering error",
+                    msg=f"Failed to render html for model '{self.instance_id}' type '{self.model_type_id}': {e}",
+                )
+
+        try:
+            html = generate_html(item=self, add_header=False)
+            return html
+        except Exception as e:
+            log_dev_message(
+                title="html-generation error",
+                msg=f"Failed to generate html for model '{self.instance_id}' type '{self.model_type_id}': {e}",
+            )
+
+        r = self.create_renderable(**config)
+        mime_bundle = r._repr_mimebundle_(include=[], exclude=[])  # type: ignore
+        return mime_bundle["text/html"]
+
     def create_renderable(self, **config: Any) -> RenderableType:
 
         from kiara.utils.output import extract_renderable
@@ -221,10 +255,24 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
             table.add_row(k, v)
         return table
 
-    def create_html(self, **config) -> str:
-        r = self.create_renderable(**config)
-        mime_bundle = r._repr_mimebundle_(include=[], exclude=[])  # type: ignore
-        return mime_bundle["text/html"]
+    def create_renderable_tree(self, **config: Any) -> Tree:
+
+        show_data = config.get("show_data", False)
+        tree = create_subcomponent_tree_renderable(data=self, show_data=show_data)
+        return tree
+
+    def create_info_data(self, **config) -> Mapping[str, Any]:
+
+        include = config.get("include", None)
+
+        result = {}
+        for k in self.__fields__.keys():
+            if include is not None and k not in include:
+                continue
+            attr = getattr(self, k)
+            v = attr
+            result[k] = v
+        return result
 
     def as_dict_with_schema(self) -> Dict[str, Dict[str, Any]]:
         return {"data": self.dict(), "schema": self.schema()}

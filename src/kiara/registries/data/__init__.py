@@ -77,7 +77,7 @@ logger = structlog.getLogger()
 
 class ValueLink(Protocol):
 
-    value_id: Union[str, uuid.UUID]
+    value_id: uuid.UUID
 
 
 NONE_PERSISTED_DATA = PersistedData.construct(
@@ -398,40 +398,39 @@ class DataRegistry(object):
 
     def store_value(
         self,
-        value: Union[Value, uuid.UUID],
+        value: Union[ValueLink, uuid.UUID, str],
         store_id: Union[str, None] = None,
     ) -> Union[PersistedData, None]:
 
         if store_id is None:
             store_id = self.default_data_store
 
-        if isinstance(value, uuid.UUID):
-            value = self.get_value(value)
+        _value = self.get_value(value)
 
         store: DataStore = self.get_archive(archive_id=store_id)  # type: ignore
         if not isinstance(store, DataStore):
             raise Exception(f"Can't store value into store '{store_id}': not writable.")
 
         # make sure all property values are available
-        if value.pedigree != ORPHAN:
-            for value_id in value.pedigree.inputs.values():
+        if _value.pedigree != ORPHAN:
+            for value_id in _value.pedigree.inputs.values():
                 self.store_value(value=value_id, store_id=store_id)
 
-        if not store.has_value(value.value_id):
-            event = ValuePreStoreEvent.construct(kiara_id=self._kiara.id, value=value)
+        if not store.has_value(_value.value_id):
+            event = ValuePreStoreEvent.construct(kiara_id=self._kiara.id, value=_value)
             self._event_callback(event)
-            persisted_value = store.store_value(value)
-            value._is_stored = True
-            self._value_archive_lookup_map[value.value_id] = store_id
-            self._persisted_value_descs[value.value_id] = persisted_value
-            property_values = value.property_values
+            persisted_value = store.store_value(_value)
+            _value._is_stored = True
+            self._value_archive_lookup_map[_value.value_id] = store_id
+            self._persisted_value_descs[_value.value_id] = persisted_value
+            property_values = _value.property_values
 
             for property, property_value in property_values.items():
                 self.store_value(value=property_value, store_id=store_id)
         else:
             persisted_value = None
 
-        store_event = ValueStoredEvent.construct(kiara_id=self._kiara.id, value=value)
+        store_event = ValueStoredEvent.construct(kiara_id=self._kiara.id, value=_value)
         self._event_callback(store_event)
 
         return persisted_value
@@ -1022,6 +1021,7 @@ class DataRegistry(object):
                 msg: Any = str(e)
                 if not msg:
                     msg = e
+
                 log_message("invalid.valueset", error_reason=msg, input_name=input_name)
                 failed[input_name] = e
 

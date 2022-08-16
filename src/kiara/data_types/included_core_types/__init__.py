@@ -19,7 +19,9 @@ from kiara.defaults import INVALID_HASH_MARKER, SpecialValue
 from kiara.models import KiaraModel
 
 if TYPE_CHECKING:
+    from kiara.models.module.manifest import Manifest
     from kiara.models.values.value import SerializedData, Value
+
 
 SCALAR_CHARACTERISTICS = DataTypeCharacteristics(
     is_scalar=True, is_json_serializable=True
@@ -51,14 +53,13 @@ class NoneType(DataType[SpecialValue, DataTypeConfig]):
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
-        data = value.data
-        return str(data.value)
+        return "None"
 
     def pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ):
 
-        return str(value.data.value)
+        return "None"
 
 
 class AnyType(
@@ -83,12 +84,17 @@ class AnyType(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
-        data = value.data
-        return str(data)
+        if hasattr(self, "_pretty_print_as__string"):
+            return self._pretty_print_as_string(value=value, render_config=render_config)  # type: ignore
+
+        return str(value.data)
 
     def pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ):
+
+        if hasattr(self, "_pretty_print_as__terminal_renderable"):
+            return self._pretty_print_as__terminal_renderable(value=value, render_config=render_config)  # type: ignore
 
         data = value.data
 
@@ -107,6 +113,25 @@ class AnyType(
         else:
             rendered = str(data)
         return rendered
+
+    def render_as__string(
+        self, value: "Value", render_config: Mapping[str, Any], manifest: "Manifest"
+    ):
+
+        if hasattr(self, "_render_as__string"):
+            return self._render_as__string(value=value, render_scene=render_config, manifest=manifest)  # type: ignore
+        else:
+            return self.pretty_print_as__string(value=value, render_config={})
+
+    def render_as__terminal_renderable(
+        self, value: "Value", render_config: Mapping[str, Any], manifest: "Manifest"
+    ):
+
+        if hasattr(self, "_render_as__terminal_renderable"):
+            return self._render_as__terminal(value=value, render_config=render_config, manifest=manifest)  # type: ignore
+        return self.render_as__string(
+            value=value, render_config=render_config, manifest=manifest
+        )
 
 
 class BytesType(AnyType[bytes, DataTypeConfig]):
@@ -146,7 +171,7 @@ class BytesType(AnyType[bytes, DataTypeConfig]):
         serialized = SerializationResult(**serialized_data)
         return serialized
 
-    def pretty_print_as__string(
+    def _pretty_print_as__string(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 

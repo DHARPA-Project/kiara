@@ -136,6 +136,32 @@ class TabularWrap(ABC):
     def to_pydict(self) -> Mapping:
         pass
 
+    def as_string(
+        self,
+        rows_head: Union[int, None] = None,
+        rows_tail: Union[int, None] = None,
+        max_row_height: Union[int, None] = None,
+        max_cell_length: Union[int, None] = None,
+    ):
+
+        table_str = ""
+        for cn in self.retrieve_column_names():
+            table_str = f"{table_str}{cn}\t"
+        table_str = f"{table_str}\n"
+
+        for data in self.prepare_table_data(
+            return_column_names=False,
+            rows_head=rows_head,
+            rows_tail=rows_tail,
+            max_row_height=max_row_height,
+            max_cell_length=max_cell_length,
+        ):
+            for cell in data:
+                table_str = f"{table_str}{cell}\t"
+            table_str = f"{table_str}\n"
+
+        return table_str
+
     def as_html(
         self,
         rows_head: Union[int, None] = None,

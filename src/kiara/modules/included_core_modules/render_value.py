@@ -5,70 +5,89 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from pydantic import Field, validator
-from typing import Any, Mapping, Type, Union
+from pydantic import Field
+from typing import Any, Iterable, Mapping, Tuple, Union
 
 from kiara.exceptions import KiaraProcessingException
-from kiara.models.info import TypeInfo
 from kiara.models.module import KiaraModuleConfig
-from kiara.models.render_value import RenderMetadata, RenderScene, RenderValueResult
+from kiara.models.rendering import RenderValueResult
 from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
-from kiara.modules import KiaraModule
-from kiara.registries.models import ModelRegistry
+from kiara.modules import (
+    DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS,
+    KiaraModule,
+    ModuleCharacteristics,
+)
 
 
 class RenderValueModuleConfig(KiaraModuleConfig):
 
-    render_scene_type: str = Field(
-        description="The id of the model that describes (and handles) the actual rendering."
-    )
+    # render_scene_type: str = Field(
+    #     description="The id of the model that describes (and handles) the actual rendering."
+    # )
+    source_type: str = Field(description="The (kiara) data type to be rendered.")
     target_type: str = Field(
         description="The (kiara) data type of the rendered result."
     )
 
-    @validator("render_scene_type")
-    def validate_render_scene(cls, value: Any):
-
-        registry = ModelRegistry.instance()
-
-        if value not in registry.all_models.item_infos.keys():
-            raise ValueError(
-                f"Invalid model type '{value}'. Value model ids: {', '.join(registry.all_models.item_infos.keys())}."
-            )
-
-        return value
+    # @validator("render_scene_type")
+    # def validate_render_scene(cls, value: Any):
+    #
+    #     registry = ModelRegistry.instance()
+    #
+    #     if value not in registry.all_models.item_infos.keys():
+    #         raise ValueError(
+    #             f"Invalid model type '{value}'. Value model ids: {', '.join(registry.all_models.item_infos.keys())}."
+    #         )
+    #
+    #     return value
 
 
 class RenderValueModule(KiaraModule):
+    @classmethod
+    def retrieve_supported_render_combinations(cls) -> Iterable[Tuple[str, str]]:
+
+        result = []
+        for attr in dir(cls):
+            if (
+                len(attr) <= 16
+                or not attr.startswith("render__")
+                or "__as__" not in attr
+            ):
+                continue
+
+            attr = attr[8:]
+            end_start_type = attr.find("__as__")
+            source_type = attr[0:end_start_type]
+            target_type = attr[end_start_type + 6 :]  # noqa
+            result.append((source_type, target_type))
+        return result
 
     _config_cls = RenderValueModuleConfig
-    _module_type_name: str = "render.value"
+    _module_type_name: str = None  # type: ignore
 
     def create_inputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
 
-        instruction = self.get_config_value("render_scene_type")
-        model_registry = ModelRegistry.instance()
-        instr_model_cls: Type[RenderScene] = model_registry.get_model_cls(instruction, required_subclass=RenderScene)  # type: ignore
+        # instruction = self.get_config_value("render_scene_type")
+        # model_registry = ModelRegistry.instance()
+        # instr_model_cls: Type[RenderScene] = model_registry.get_model_cls(instruction, required_subclass=RenderScene)  # type: ignore
 
-        data_type_name = instr_model_cls.retrieve_source_type()
-        assert data_type_name
+        # data_type_name = instr_model_cls.retrieve_source_type()
+        # assert data_type_name
 
+        source_type = self.get_config_value("source_type")
         inputs = {
             "value": {
-                "type": data_type_name,
-                "doc": f"A value of type '{data_type_name}'",
-                "optional": True,
+                "type": source_type,
+                "doc": f"A value of type '{source_type}'",
+                "optional": False,
             },
-            "render_scene": {
-                "type": "render_scene",
-                "type_config": {
-                    "kiara_model_id": self.get_config_value("render_scene_type"),
-                },
+            "render_config": {
+                "type": "dict",
                 "doc": "Instructions/config on how (or what) to render the provided value.",
-                "optional": True,
+                "default": {},
             },
         }
         return inputs
@@ -77,12 +96,10 @@ class RenderValueModule(KiaraModule):
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
 
-        result_model_type: str = self.get_config_value("target_type")
-
         outputs = {
-            "rendered_value": {"type": result_model_type, "doc": "The rendered data."},
-            "render_metadata": {
-                "type": "render_metadata",
+            "render_value_result": {
+                "type": "render_value_result",
+                "doc": "The rendered value, incl. some metadata.",
             },
         }
 
@@ -90,38 +107,99 @@ class RenderValueModule(KiaraModule):
 
     def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
 
-        instruction_type = self.get_config_value("render_scene_type")
-        model_registry = ModelRegistry.instance()
-        instr_info: TypeInfo = model_registry.all_models.item_infos.get(instruction_type)  # type: ignore
-        instr_model: Type[RenderScene] = instr_info.python_class.get_class()  # type: ignore
-
-        render_scene: RenderScene = inputs.get_value_data("render_scene")
-        if not render_scene:
-            render_scene = instr_model()
-
-        if not issubclass(render_scene.__class__, instr_model):
-            raise KiaraProcessingException(
-                f"Invalid type '{type(instr_model)}' for 'render_scene': must be a subclass of '{instr_model.__name__}'."
-            )
-
-        result_model_type: str = self.get_config_value("target_type")
+        source_type = self.get_config_value("source_type")
+        target_type = self.get_config_value("target_type")
 
         value: Value = inputs.get_value_obj("value")
+        render_scene: Mapping[str, Any] = inputs.get_value_data("render_config")
 
-        func_name = f"render_as__{result_model_type}"
+        func_name = f"render__{source_type}__as__{target_type}"
 
-        func = getattr(render_scene, func_name)
-        rendered: Union[RenderValueResult, Any] = func(value=value)
-        try:
-            rendered_value = rendered.rendered
-            metadata = rendered.metadata
-        except Exception:
-            rendered_value = rendered
-            metadata = None
+        func = getattr(self, func_name)
+        result = func(value=value, render_config=render_scene)
+        if isinstance(result, RenderValueResult):
+            render_scene_result: RenderValueResult = result
+        else:
+            render_scene_result = RenderValueResult(rendered=result, related_scenes={})
+        render_scene_result.manifest_lookup[self.manifest.manifest_hash] = self.manifest
 
-        if not metadata:
-            metadata = RenderMetadata()
+        outputs.set_value("render_value_result", render_scene_result)
 
-        outputs.set_values(
-            **{"rendered_value": rendered_value, "render_metadata": metadata}
+
+class ValueTypeRenderModule(KiaraModule):
+    """A module that uses render methods attached to DataType classes."""
+
+    _module_type_name = "render.value"
+    _config_cls = RenderValueModuleConfig
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+        return DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS
+
+    def create_inputs_schema(
+        self,
+    ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
+
+        source_type = self.get_config_value("source_type")
+        assert source_type not in ["target", "base_name"]
+
+        schema = {
+            "value": {
+                "type": source_type,
+                "doc": "The value to render.",
+                "optional": False,
+            },
+            "render_config": {
+                "type": "dict",
+                "doc": "Instructions/config on how (or what) to render the provided value.",
+                "default": {},
+            },
+        }
+
+        return schema
+
+    def create_outputs_schema(
+        self,
+    ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
+
+        outputs = {
+            "render_value_result": {
+                "type": "render_value_result",
+                "doc": "The rendered value, incl. some metadata.",
+            },
+        }
+
+        return outputs
+
+    def process(self, inputs: ValueMap, outputs: ValueMap):
+
+        source_value = inputs.get_value_obj("value")
+        if not source_value.is_set:
+            raise KiaraProcessingException(
+                f"Can't render value '{source_value.value_id}': value not set."
+            )
+
+        # source_type = self.get_config_value("source_type")
+        target_type = self.get_config_value("target_type")
+
+        render_scene = inputs.get_value_obj("render_config")
+
+        data_type_cls = source_value.data_type_class.get_class()
+        data_type = data_type_cls(**source_value.value_schema.type_config)
+
+        func_name = f"render_as__{target_type}"
+        func = getattr(data_type, func_name)
+
+        result = func(
+            value=source_value, render_config=render_scene, manifest=self.manifest
         )
+
+        if isinstance(result, RenderValueResult):
+            render_scene_result = result
+        else:
+            render_scene_result = RenderValueResult(
+                rendered=result,
+                related_scenes={},
+                manifest_lookup={self.manifest.instance_id: self.manifest},
+            )
+
+        outputs.set_value("render_value_result", render_scene_result)

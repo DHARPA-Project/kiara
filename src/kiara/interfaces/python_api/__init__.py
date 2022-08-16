@@ -5,7 +5,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import structlog
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
 from kiara.interfaces.python_api.models.info import (
     ModuleTypeInfo,
@@ -15,17 +15,20 @@ from kiara.interfaces.python_api.models.info import (
     ValueInfo,
     ValuesInfo,
 )
+from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig
-from kiara.models.render_value import RenderValueResult
+from kiara.models.rendering import RenderValueResult
 from kiara.models.values.matchers import ValueMatcher
-from kiara.models.values.value import Value
+from kiara.models.values.value import PersistedData, Value, ValueMap
 from kiara.operations.included_core_operations.filter import FilterOperationType
 from kiara.operations.included_core_operations.render_value import (
     RenderValueOperationType,
 )
 from kiara.registries.data import ValueLink
+from kiara.registries.operations import OP_TYPE
+from kiara.utils import log_exception
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -412,6 +415,66 @@ class KiaraAPI(object):
         )
         return infos  # type: ignore
 
+    def store_value(
+        self,
+        value: Union[str, uuid.UUID, ValueLink],
+        aliases: Union[str, Iterable[str], None],
+    ):
+
+        if isinstance(aliases, str):
+            aliases = [aliases]
+
+        value_obj = self.get_value(value)
+        persisted_data: Union[None, PersistedData] = None
+        try:
+            persisted_data = self.context.data_registry.store_value(value=value_obj)
+            if aliases:
+                self.context.alias_registry.register_aliases(
+                    value_obj.value_id, *aliases
+                )
+            result = StoreValueResult.construct(
+                value=value_obj,
+                aliases=sorted(aliases) if aliases else [],
+                error=None,
+                persisted_data=persisted_data,
+            )
+        except Exception as e:
+            log_exception(e)
+            result = StoreValueResult.construct(
+                value=value_obj,
+                aliases=sorted(aliases) if aliases else [],
+                error=str(e),
+                persisted_data=persisted_data,
+            )
+
+        return result
+
+    def store_values(
+        self,
+        values: Mapping[str, Union[str, uuid.UUID, ValueLink]],
+        alias_map: Mapping[str, Iterable[str]],
+    ) -> StoreValuesResult:
+
+        result = {}
+        for field_name, value in values.items():
+            aliases = alias_map.get(field_name)
+            value_obj = self.get_value(value)
+            store_result = self.store_value(value=value_obj, aliases=aliases)
+            result[field_name] = store_result
+
+        return StoreValuesResult.construct(__root__=result)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # operation-related methods
+
+    def get_operation_type(self, op_type: Union[str, Type[OP_TYPE]]):
+        """Get the management object for the specified operation type."""
+
+        return self.context.operation_registry.get_operation_type(op_type=op_type)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # pipeline-related methods
+
     def assemble_filter_pipeline_config(
         self,
         data_type: str,
@@ -508,8 +571,7 @@ class KiaraAPI(object):
             )
             extra_input_aliases = {"render_value.render_scene": "render_scene"}
             extra_output_aliases = {
-                "render_value.rendered_value": "rendered_value",
-                "render_value.render_metadata": "render_metadata",
+                "render_value.render_scene_result": "render_scene_result"
             }
             pipeline_config = self.assemble_filter_pipeline_config(
                 data_type=data_type,
@@ -530,13 +592,37 @@ class KiaraAPI(object):
 
         return operation
 
+    # ------------------------------------------------------------------------------------------------------------------
+    # job-related methods
+    def run_manifest(
+        self, manifest: Manifest, inputs: Union[None, Mapping[str, Any]] = None
+    ) -> ValueMap:
+        """Run a job using the provided manifest to describe the module and config that should be executed.
+
+        Arguments:
+            manifest: the manifest
+            inputs: the job inputs (can be either references to values, or raw inputs
+
+        Returns:
+            a result value map instance
+        """
+
+        if inputs is None:
+            inputs = {}
+        job_config = self.context.job_registry.prepare_job_config(
+            manifest=manifest, inputs=inputs
+        )
+
+        job_id = self.context.job_registry.execute_job(job_config=job_config, wait=True)
+        return self.context.job_registry.retrieve_result(job_id=job_id)
+
     def render_value(
         self,
         value: Union[str, uuid.UUID, ValueLink],
         target_format: Union[str, Iterable[str]] = "string",
         filters: Union[None, Iterable[str], Mapping[str, str]] = None,
-        scene_config: Union[Mapping[str, str], None] = None,
-    ) -> Any:
+        render_config: Union[Mapping[str, str], None] = None,
+    ) -> RenderValueResult:
         """Render a value in the specified target format.
 
         If a list is provided as value for 'target_format', all items are tried until a 'render_value' operation is found that matches
@@ -545,6 +631,8 @@ class KiaraAPI(object):
         Arguments:
             value: the value (or value id)
             target_format: the format into which to render the value
+            filters: an (optional) list of filters
+            render_config: manifest specific render configuration
 
         Returns:
             the rendered value data
@@ -559,10 +647,13 @@ class KiaraAPI(object):
 
         result = render_operation.run(
             kiara=self.context,
-            inputs={"value": _value, "render_scene": scene_config},
+            inputs={"value": _value, "render_config": render_config},
         )
 
-        return RenderValueResult(
-            rendered=result.get_value_data("rendered_value"),
-            metadata=result.get_value_data("render_metadata"),
-        )
+        render_result = result["render_value_result"]
+        if render_result.data_type_name != "render_value_result":
+            raise Exception(
+                f"Invalid result type for render operation: {render_result.data_type_name}"
+            )
+
+        return render_result.data

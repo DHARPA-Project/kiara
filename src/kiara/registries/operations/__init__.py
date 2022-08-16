@@ -7,7 +7,18 @@
 
 import structlog
 import sys
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set, Type, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    Set,
+    Type,
+    TypeVar,
+    Union,
+)
 
 from kiara.interfaces.python_api.models.info import (
     OperationTypeClassesInfo,
@@ -28,6 +39,9 @@ if TYPE_CHECKING:
     from kiara.context import Kiara
 
 logger = structlog.getLogger()
+
+
+OP_TYPE = TypeVar("OP_TYPE", bound=OperationType)
 
 
 class OperationRegistry(object):
@@ -99,14 +113,22 @@ class OperationRegistry(object):
         self._operation_types = _operation_types
         return self._operation_types
 
-    def get_operation_type(self, op_type: str) -> OperationType:
+    def get_operation_type(self, op_type: Union[str, Type[OP_TYPE]]) -> OP_TYPE:
+
+        if not isinstance(op_type, str):
+            try:
+                op_type = op_type._operation_type_name  # type: ignore
+            except Exception:
+                raise ValueError(
+                    f"Can't retrieve operation type, invalid input type '{type(op_type)}'."
+                )
 
         if op_type not in self.operation_types.keys():
             raise Exception(
                 f"No operation type '{op_type}' registered. Available operation types: {', '.join(self.operation_types.keys())}."
             )
 
-        return self.operation_types[op_type]
+        return self.operation_types[op_type]  # type: ignore
 
     def get_type_metadata(self, type_name: str) -> OperationTypeInfo:
 

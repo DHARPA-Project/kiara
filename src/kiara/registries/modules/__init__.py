@@ -87,20 +87,26 @@ class ModuleRegistry(object):
         if isinstance(manifest, str):
             manifest = Manifest.construct(module_type=manifest, module_config={})
 
+        m_cls: Type[KiaraModule] = self.get_module_class(manifest.module_type)
+
+        if not manifest.is_resolved:
+            resolved = m_cls._resolve_module_config(**manifest.module_config)
+            manifest.module_config = resolved.dict()
+            manifest.is_resolved = True
+
         if self._cached_modules.setdefault(manifest.module_type, {}).get(
             manifest.instance_cid, None
         ):
             return self._cached_modules[manifest.module_type][manifest.instance_cid]
 
         if manifest.module_type in self.get_module_type_names():
-
-            m_cls: Type[KiaraModule] = self.get_module_class(manifest.module_type)
-            m_hash = m_cls._calculate_module_cid(manifest.module_config)
-
             kiara_module = m_cls(module_config=manifest.module_config)
-            assert (
-                kiara_module.module_instance_cid == m_hash
-            )  # TODO: might not be necessary? Leaving it in here for now, to see if it triggers at any stage.
+            kiara_module._manifest_cache = Manifest.construct(
+                module_type=manifest.module_type,
+                module_config=manifest.module_config,
+                is_resolved=manifest.is_resolved,
+            )
+
         else:
             raise Exception(
                 f"Invalid module type '{manifest.module_type}'. Available type names: {', '.join(self.get_module_type_names())}"

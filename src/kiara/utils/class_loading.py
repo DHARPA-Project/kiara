@@ -197,7 +197,7 @@ def _process_subclass(
                     "ignore.subclass",
                     sub_class=sub_class,
                     base_class=base_class,
-                    reason="'_module_type_name' subclass is set to 'None'",
+                    reason=f"'{ type_id_key }' subclass is set to 'None'",
                 )
                 return None
             if not type_id and not is_abstract:

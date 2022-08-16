@@ -293,10 +293,11 @@ def explain_value(
 def load_value(ctx, value: str, single_page: bool):
     """Load a stored value and print it in a format suitable for the terminal."""
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    # kiara_obj: Kiara = ctx.obj["kiara"]
+    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
 
     try:
-        _value = kiara_obj.data_registry.get_value(value=value)
+        _value = kiara_api.get_value(value=value)
     except Exception as e:
         terminal_print()
         terminal_print(f"[red]Error[/red]: {e}")
@@ -307,12 +308,13 @@ def load_value(ctx, value: str, single_page: bool):
 
     render_op: Union[Operation, None] = None
     if not single_page:
-        render_value_op_type: RenderValueOperationType = kiara_obj.operation_registry.get_operation_type("render_value")  # type: ignore
+        render_value_op_type: RenderValueOperationType = kiara_api.get_operation_type(
+            op_type=RenderValueOperationType
+        )
         render_op = render_value_op_type.get_render_operation(
             source_type=_value.data_type_name, target_type="terminal_renderable"
         )
-
-    if not render_op:
+    else:
         logger.debug(
             "fallback.render_value",
             solution="use pretty print",
@@ -321,7 +323,7 @@ def load_value(ctx, value: str, single_page: bool):
             reason="no 'render_value' operation for source/target operation",
         )
         try:
-            renderable = kiara_obj.data_registry.pretty_print_data(
+            renderable = kiara_api.context.data_registry.pretty_print_data(
                 _value.value_id, target_type="terminal_renderable"
             )
         except Exception as e:
@@ -332,7 +334,17 @@ def load_value(ctx, value: str, single_page: bool):
         terminal_print(renderable)
         sys.exit(0)
 
-    PagerApp.run(kiara=kiara_obj, value=_value, operation=render_op)
+    # log_file = None
+    # if is_develop() or is_debug() or True:
+    #     log_file = "kiara_pager.log"
+    PagerApp.run(kiara_api=kiara_api, value=_value, operation=render_op)
+
+    # inputs = {
+    #     "value": _value,
+    #     "render_scene": {}
+    # }
+    # result = render_op.run(kiara=kiara_api.context, inputs=inputs)
+    # dbg(result["render_scene_result"].data)
 
 
 @data.command("filter")

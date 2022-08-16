@@ -38,6 +38,10 @@ class Manifest(KiaraModel):
     module_config: Mapping[str, Any] = Field(
         default_factory=dict, description="The configuration for the module."
     )
+    is_resolved: bool = Field(
+        description="Whether the configuration of this module was augmented with the module type defaults etc.",
+        default=False,
+    )
     # python_class: PythonClass = Field(description="The python class that implements this module.")
     # doc: DocumentationMetadataModel = Field(
     #     description="Documentation for this module instance.", default=None

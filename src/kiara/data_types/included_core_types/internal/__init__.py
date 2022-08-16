@@ -10,7 +10,7 @@ from rich import box
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import Any, Generic, Mapping, Type, Union
+from typing import TYPE_CHECKING, Any, Generic, Iterable, Mapping, Type, Union
 
 from kiara.data_types import TYPE_CONFIG_CLS, TYPE_PYTHON_CLS, DataType, DataTypeConfig
 from kiara.defaults import NO_SERIALIZATION_MARKER
@@ -19,6 +19,10 @@ from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.python_class import PythonClass
 from kiara.models.values.value import SerializedData, Value
 from kiara.registries.models import ModelRegistry
+
+if TYPE_CHECKING:
+    from kiara.models.module.manifest import Manifest
+    from kiara.models.rendering import RenderScene
 
 logger = structlog.getLogger()
 
@@ -39,8 +43,54 @@ class InternalType(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
+        if hasattr(self, "_pretty_print_as__string"):
+            return self._pretty_print_as_string(value=value, render_config=render_config)  # type: ignore
+
+        return str(value.data)
+
+    def pretty_print_as__terminal_renderable(
+        self, value: "Value", render_config: Mapping[str, Any]
+    ):
+
+        if hasattr(self, "_pretty_print_as__terminal_renderable"):
+            return self._pretty_print_as__terminal_renderable(value=value, render_config=render_config)  # type: ignore
+
         data = value.data
-        return str(data)
+
+        from pydantic import BaseModel
+
+        if isinstance(data, BaseModel):
+            from kiara.utils.output import create_table_from_model_object
+
+            rendered = create_table_from_model_object(
+                model=data, render_config=render_config
+            )
+        elif isinstance(data, Iterable):
+            import pprint
+
+            rendered = pprint.pformat(data)
+        else:
+            rendered = str(data)
+        return rendered
+
+    def render_as__string(
+        self, value: "Value", render_config: "RenderScene", manifest: "Manifest"
+    ):
+
+        if hasattr(self, "_render_as__string"):
+            return self._render_as__string(value=value, render_config=render_config, manifest=manifest)  # type: ignore
+        else:
+            return self.pretty_print_as__string(value=value, render_config={})
+
+    def render_as__terminal_renderable(
+        self, value: "Value", render_config: "RenderScene", manifest: "Manifest"
+    ):
+
+        if hasattr(self, "_render_as__terminal_renderable"):
+            return self._render_as__terminal(value=value, render_config=render_config, manifest=manifest)  # type: ignore
+        return self.render_as__string(
+            value=value, render_config=render_config, manifest=manifest
+        )
 
 
 class TerminalRenderable(InternalType[object, DataTypeConfig]):
@@ -55,7 +105,7 @@ class TerminalRenderable(InternalType[object, DataTypeConfig]):
     def python_class(cls) -> Type:
         return object
 
-    def pretty_print_as__terminal_renderable(
+    def _pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
@@ -172,7 +222,7 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
         if not isinstance(value, KiaraModel):
             raise Exception(f"Invalid type: {type(value)}.")
 
-    def pretty_print_as__terminal_renderable(
+    def _pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ):
         json_str = value.data.json(option=orjson.OPT_INDENT_2)
@@ -192,7 +242,7 @@ class DocumentationModelValueType(InternalModelValueType):
     def python_class(cls) -> Type:
         return DocumentationMetadataModel
 
-    def pretty_print_as__terminal_renderable(
+    def _pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ):
         json_str = value.data.json(option=orjson.OPT_INDENT_2)

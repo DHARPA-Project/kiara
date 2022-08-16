@@ -7,17 +7,19 @@
 
 import structlog
 from pydantic import Field
-from typing import Dict, Iterable, Mapping, Type, Union
+from typing import Dict, Iterable, Mapping, Union
 
+from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (
     BaseOperationDetails,
+    ManifestOperationConfig,
     Operation,
     OperationConfig,
 )
-from kiara.models.render_value import RenderScene
 from kiara.modules import KiaraModule
+from kiara.modules.included_core_modules.render_value import RenderValueModule
 from kiara.operations import OperationType
-from kiara.registries.models import ModelRegistry
+from kiara.utils import log_message
 
 logger = structlog.getLogger()
 
@@ -26,12 +28,7 @@ class RenderValueDetails(BaseOperationDetails):
     """A model that contains information needed to describe an 'extract_metadata' operation."""
 
     source_data_type: str = Field(description="The data type that will be rendered.")
-    rendered_type: str = Field(description="The type of the render output.")
-    input_field_name: str = Field(description="The input field name.")
-    rendered_field_name: str = Field(description="The result field name.")
-    render_scene_type: str = Field(
-        description="The id of the render instruction model class."
-    )
+    target_data_type: str = Field(description="The rendered data type.")
 
 
 class RenderValueOperationType(OperationType[RenderValueDetails]):
@@ -39,32 +36,84 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
 
     _operation_type_name = "render_value"
 
+    def _calculate_op_id(cls, source_type: str, target_type: str):
+
+        if source_type == "any":
+            operation_id = f"render.as.{target_type}"
+        else:
+            operation_id = f"render.{source_type}.as.{target_type}"
+
+        return operation_id
+
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:
 
-        model_registry = ModelRegistry.instance()
-        all_models = model_registry.get_models_of_type(RenderScene)
+        result = {}
+        for name, module_cls in self._kiara.module_type_classes.items():
 
-        result = []
-        for model_id, model_cls_info in all_models.item_infos.items():
-            model_cls: Type[RenderScene] = model_cls_info.python_class.get_class()  # type: ignore
-            source_type = model_cls.retrieve_source_type()
-            supported_target_types = model_cls.retrieve_supported_target_types()
+            if not issubclass(module_cls, RenderValueModule):
+                continue
 
-            for target in supported_target_types:
+            for (
+                source_type,
+                target_type,
+            ) in module_cls.retrieve_supported_render_combinations():
+                if source_type not in self._kiara.data_type_names:
+                    log_message("ignore.operation_config", operation_type="render_value", module_type=module_cls._module_type_name, source_type=source_type, target_type=target_type, reason=f"Source type '{source_type}' not registered.")  # type: ignore
+                    continue
+                if target_type not in self._kiara.data_type_names:
+                    log_message(
+                        "ignore.operation_config",
+                        operation_type="render_value",
+                        module_type=module_cls._module_type_name,
+                        source_type=source_type,  # type: ignore
+                        target_type=target_type,
+                        reason=f"Target type '{target_type}' not registered.",
+                    )
+                    continue
+                func_name = f"render__{source_type}__as__{target_type}"
+                attr = getattr(module_cls, func_name)
+                doc = DocumentationMetadataModel.from_function(attr)
+                mc = {"source_type": source_type, "target_type": target_type}
+                oc = ManifestOperationConfig(
+                    module_type=name, module_config=mc, doc=doc
+                )
+                op_id = self._calculate_op_id(
+                    source_type=source_type, target_type=target_type
+                )
+                result[op_id] = oc
 
-                config = {
-                    "module_type": "render.value",
-                    "module_config": {
-                        "render_scene_type": model_id,
-                        "target_type": target,
-                    },
-                    "doc": f"Render a '{source_type}' value as '{target}'.",
+        for data_type_name, data_type_class in self._kiara.data_type_classes.items():
+            for attr in data_type_class.__dict__.keys():
+                if not attr.startswith("render_as__"):
+                    continue
+
+                target_type = attr[11:]
+                if target_type not in self._kiara.data_type_names:
+                    log_message(
+                        "operation_config.ignore",
+                        operation_type="render_value",
+                        source_type=data_type_name,
+                        target_type=target_type,
+                        reason=f"Target type '{target_type}' not registered.",
+                    )  # type: ignore
+
+                # TODO: inspect signature?
+                doc = DocumentationMetadataModel.from_string(
+                    f"Render a {data_type_name} value as a {target_type}."
+                )
+                mc = {
+                    "source_type": data_type_name,
+                    "target_type": target_type,
                 }
-                result.append(config)
+                oc = ManifestOperationConfig(
+                    module_type="render.value", module_config=mc, doc=doc
+                )
 
-        return result
+                result[f"_type_{data_type_name}_{target_type}"] = oc
+
+        return result.values()
 
     def check_matching_operation(
         self, module: "KiaraModule"
@@ -73,32 +122,30 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
         if len(module.inputs_schema) != 2:
             return None
 
-        if len(module.outputs_schema) != 2:
-            return None
-
-        if (
-            "render_scene" not in module.inputs_schema.keys()
-            or module.inputs_schema["render_scene"].type != "render_scene"
-        ):
-            return None
-
-        if (
-            "render_metadata" not in module.outputs_schema.keys()
-            or module.outputs_schema["render_metadata"].type != "render_metadata"
-        ):
-            return None
-
-        if "rendered_value" not in module.outputs_schema.keys():
+        if len(module.outputs_schema) != 1:
             return None
 
         if "value" not in module.inputs_schema.keys():
             return None
 
+        if (
+            "render_config" not in module.inputs_schema.keys()
+            or module.inputs_schema["render_config"].type != "dict"
+        ):
+            return None
+
+        if (
+            "render_value_result" not in module.outputs_schema.keys()
+            or module.outputs_schema["render_value_result"].type
+            != "render_value_result"
+        ):
+            return None
+
         source_type = module.inputs_schema["value"].type
-        target_type = module.outputs_schema["rendered_value"].type
+        target_type = module.get_config_value("target_type")
 
         if source_type == "any":
-            op_id = f"render.value.as.{target_type}"
+            op_id = f"render.as.{target_type}"
         else:
             op_id = f"render.{source_type}.as.{target_type}"
 
@@ -107,11 +154,8 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
             module_outputs_schema=module.outputs_schema,
             operation_id=op_id,
             source_data_type=source_type,
-            rendered_type=target_type,
-            input_field_name=source_type,
-            rendered_field_name=target_type,
+            target_data_type=target_type,
             is_internal_operation=True,
-            render_scene_type=module.config.get("render_scene_type"),
         )
 
         return details
@@ -139,7 +183,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
                 match = op_details.source_data_type == data_type
                 if not match:
                     continue
-                target_type = op_details.rendered_type
+                target_type = op_details.target_data_type
                 if target_type in result.keys():
                     continue
                 result[target_type] = op

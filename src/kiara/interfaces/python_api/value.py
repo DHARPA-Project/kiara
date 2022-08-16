@@ -6,7 +6,7 @@ from rich.console import RenderableType
 from rich.table import Table
 from typing import Any, Dict, List, Union
 
-from kiara.models.values.value import Value
+from kiara.models.values.value import PersistedData, Value
 
 logger = structlog.getLogger()
 
@@ -16,6 +16,9 @@ class StoreValueResult(BaseModel):
     value: Value = Field(description="The stored value.")
     aliases: List[str] = Field(
         description="The aliases that where assigned to the value when stored."
+    )
+    persisted_data: Union[None, PersistedData] = Field(
+        description="The structure describing the data that was persisted, 'None' if the data was already stored before (or storing failed)."
     )
     error: Union[str, None] = Field(
         description="An error that occured while trying to store."

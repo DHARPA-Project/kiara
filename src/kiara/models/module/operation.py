@@ -387,7 +387,8 @@ class Operation(Manifest):
             from kiara.interfaces.python_api import ModuleTypeInfo
 
             module_type_md = ModuleTypeInfo.create_from_type_class(
-                self.module_details.get_class()  # type: ignore
+                type_cls=self.module_details.get_class(),  # type: ignore
+                kiara=None,  # type: ignore
             )
 
             desc = module_type_md.documentation.description

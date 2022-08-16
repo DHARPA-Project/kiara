@@ -115,7 +115,7 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
                 result[op_id] = oc
 
         for data_type_name, data_type_class in self._kiara.data_type_classes.items():
-            for attr in dir(data_type_class):
+            for attr in data_type_class.__dict__.keys():
                 if not attr.startswith("pretty_print_as__"):
                     continue
 
@@ -140,8 +140,7 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
                 oc = ManifestOperationConfig(
                     module_type="pretty_print.value", module_config=mc, doc=doc
                 )
-                result[f"_type_{data_type_name}"] = oc
-
+                result[f"_type_{data_type_name}__{target_type}"] = oc
         return result.values()
 
     def check_matching_operation(
@@ -185,6 +184,8 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
             "target_type": target_type,
             "is_internal_operation": True,
         }
+
+        print(operation_id)
 
         result = PrettyPrintDetails.create_operation_details(**details)
         return result

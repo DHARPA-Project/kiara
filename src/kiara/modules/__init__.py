@@ -39,6 +39,7 @@ from kiara.utils.values import (
 from kiara.utils.yaml import StringYAML
 
 if TYPE_CHECKING:
+    from kiara.models.module.manifest import Manifest
     from kiara.models.values.value import ValueMap
     from kiara.operations import Operation
 
@@ -321,14 +322,21 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
     ) -> CID:
 
         if isinstance(module_type_config, Mapping):
-            module_type_config = cls._config_cls(**module_type_config)
+            module_type_config = cls._resolve_module_config(**module_type_config)
 
         obj = {
             "module_type": cls._module_type_name,  # type: ignore
-            "module_type_config": module_type_config.dict(),  # type: ignore
+            "module_type_config": module_type_config.dict(),
         }
         _, cid = compute_cid(data=obj)
         return cid
+
+    @classmethod
+    def _resolve_module_config(cls, **config: Any) -> KIARA_CONFIG:
+
+        _config = cls._config_cls(**config)  # type: ignore
+
+        return _config
 
     def __init__(
         self,
@@ -360,6 +368,17 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
 
         self._operation: Union[Operation, None] = None
         # self._merged_input_schemas: typing.Mapping[str, ValueSchema] = None  # type: ignore
+        self._manifest_cache: Union[None, Manifest] = None
+
+    @property
+    def manifest(self) -> "Manifest":
+        if self._manifest_cache is None:
+            self._manifest_cache = Manifest(
+                module_type=self.module_type_name,
+                module_config=self.config.dict(),
+                is_resolved=True,
+            )
+        return self._manifest_cache
 
     @property
     def module_id(self) -> uuid.UUID:

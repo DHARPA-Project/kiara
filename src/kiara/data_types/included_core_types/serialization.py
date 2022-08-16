@@ -33,7 +33,7 @@ class PythonObjectType(InternalType[object, DataTypeConfig]):
     def calculate_size(self, data: SerializedData) -> int:
         return INVALID_SIZE_MARKER
 
-    def pretty_print_as__terminal_renderable(
+    def _pretty_print_as__terminal_renderable(
         self, value: Value, render_config: Mapping[str, Any]
     ):
 

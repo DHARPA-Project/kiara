@@ -316,7 +316,7 @@ class DictValueType(AnyType[DictModel, DataTypeConfig]):
     #     return orjson_dumps(data.dict_data, option=orjson.OPT_INDENT_2)
 
     def _pretty_print_as__terminal_renderable(
-        self, value: Value, render_config: Mapping[str, Any]
+        self, value: "Value", render_config: Mapping[str, Any]
     ):
 
         show_schema = render_config.get("show_schema", True)
@@ -339,7 +339,7 @@ class DictValueType(AnyType[DictModel, DataTypeConfig]):
 
         return table
 
-    def serialize(self, data: DictModel) -> SerializedData:
+    def serialize(self, data: DictModel) -> "SerializedData":
 
         result = self.serialize_as_json(data.dict())
         return result

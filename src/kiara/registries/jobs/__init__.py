@@ -518,6 +518,9 @@ class JobRegistry(object):
             else:
                 raise Exception(f"Can't retrieve job with id '{job_id}': no such job.")
 
+    def get_job(self, job_id: uuid.UUID) -> ActiveJob:
+        return self._processor.get_job(job_id=job_id)
+
     def get_job_status(self, job_id: uuid.UUID) -> JobStatus:
 
         if job_id in self._archived_records.keys():

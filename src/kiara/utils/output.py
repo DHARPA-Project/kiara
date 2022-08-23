@@ -145,7 +145,7 @@ class TabularWrap(ABC):
     ):
 
         table_str = ""
-        for cn in self.retrieve_column_names():
+        for cn in self.column_names:
             table_str = f"{table_str}{cn}\t"
         table_str = f"{table_str}\n"
 
@@ -171,7 +171,7 @@ class TabularWrap(ABC):
     ) -> str:
 
         table_str = "<table><tr>"
-        for cn in self.retrieve_column_names():
+        for cn in self.column_names:
             table_str = f"{table_str}<th>{cn}</th>"
         table_str = f"{table_str}</tr>"
 
@@ -204,7 +204,7 @@ class TabularWrap(ABC):
         else:
             overflow = "ellipsis"
 
-        for cn in self.retrieve_column_names():
+        for cn in self.column_names:
             rich_table.add_column(cn, overflow=overflow)  # type: ignore
 
         data = self.prepare_table_data(
@@ -230,7 +230,7 @@ class TabularWrap(ABC):
     ) -> Iterator[Iterable[Any]]:
 
         if return_column_names:
-            yield self.retrieve_column_names()
+            yield self.column_names
 
         num_split_rows = 2
 
@@ -239,14 +239,14 @@ class TabularWrap(ABC):
             if rows_head < 0:
                 rows_head = 0
 
-            if rows_head > self.retrieve_number_of_rows():
-                rows_head = self.retrieve_number_of_rows()
+            if rows_head > self.num_rows:
+                rows_head = self.num_rows
                 rows_tail = None
                 num_split_rows = 0
 
             if rows_tail is not None:
                 if rows_head + rows_tail >= self.num_rows:  # type: ignore
-                    rows_head = self.retrieve_number_of_rows()
+                    rows_head = self.num_rows
                     rows_tail = None
                     num_split_rows = 0
         else:
@@ -257,12 +257,12 @@ class TabularWrap(ABC):
             num_rows = rows_head
         else:
             head = self
-            num_rows = self.retrieve_number_of_rows()
+            num_rows = self.num_rows
 
         table_dict = head.to_pydict()
         for i in range(0, num_rows):
             row = []
-            for cn in self.retrieve_column_names():
+            for cn in self.column_names:
                 cell = table_dict[cn][i]
                 cell_str = str(cell)
                 if max_row_height and max_row_height > 0 and "\n" in cell_str:
@@ -292,7 +292,7 @@ class TabularWrap(ABC):
         if num_split_rows:
             for i in range(0, num_split_rows):
                 row = []
-                for _ in self.retrieve_column_names():
+                for _ in self.column_names:
                     row.append("...")
                 yield row
 
@@ -301,12 +301,12 @@ class TabularWrap(ABC):
                 if rows_tail < 0:
                     rows_tail = 0
 
-                tail = self.slice(self.retrieve_number_of_rows() - rows_tail)
+                tail = self.slice(self.num_rows - rows_tail)
                 table_dict = tail.to_pydict()
                 for i in range(0, num_rows):
 
                     row = []
-                    for cn in self.retrieve_column_names():
+                    for cn in self.column_names:
 
                         cell = table_dict[cn][i]
                         cell_str = str(cell)
@@ -358,17 +358,20 @@ class ArrowTabularWrap(TabularWrap):
 
 
 class DictTabularWrap(TabularWrap):
-    def __init__(self, data: Mapping[str, Any]):
+    def __init__(self, data: Mapping[str, List[Any]]):
 
-        self._data: Mapping[str, Any] = data
+        self._data: Mapping[str, List[Any]] = data
+        # TODO: assert all rows are equal length
+        super().__init__()
 
     def retrieve_number_of_rows(self) -> int:
-        return len(self._data)
+        key = next(iter(self._data.keys()))
+        return len(self._data[key])
 
     def retrieve_column_names(self) -> Iterable[str]:
         return self._data.keys()
 
-    def to_pydict(self) -> Mapping:
+    def to_pydict(self) -> Mapping[str, List[Any]]:
         return self._data
 
     def slice(self, offset: int = 0, length: Union[int, None] = None) -> "TabularWrap":

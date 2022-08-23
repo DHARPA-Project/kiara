@@ -89,7 +89,10 @@ class TemplateRegistry(object):
         self._environment.filters["render_model"] = partial(render_model_filter, self)
         self._environment.filters["render_bool"] = boolean_filter
         self._environment.filters["render_default"] = default_filter
-        markdown = mistune.Markdown()
+        try:
+            markdown = mistune.create_markdown()
+        except Exception:
+            markdown = mistune.Markdown()
         self._environment.filters["markdown"] = partial(render_markdown, markdown)
         return self._environment
 

@@ -185,8 +185,6 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
             "is_internal_operation": True,
         }
 
-        print(operation_id)
-
         result = PrettyPrintDetails.create_operation_details(**details)
         return result
 

@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-import orjson
-from pydantic import Extra, Field, validator
-from pydantic.generics import GenericModel
-from typing import TYPE_CHECKING, Any, Dict, Generic, Mapping, TypeVar, Union
+import uuid
+from dag_cbor.encoding import EncodableType
+from pydantic import Field, validator
+from typing import TYPE_CHECKING, Any, Dict, Mapping, TypeVar, Union
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.models import KiaraModel
 from kiara.models.module.manifest import Manifest
-from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     pass
@@ -52,32 +51,16 @@ class RenderScene(KiaraModel):
     #     return DocumentationMetadataModel.create(value)
 
 
-class RenderValueResult(GenericModel, Generic[DataT]):
-    class Config(object):
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
-        extra = Extra.forbid
+class RenderValueResult(KiaraModel):
+    """Object containing all the result properties of a 'render_value' operation."""
 
-    # @classmethod
-    # def create(cls, this_scene: RenderScene, this_manifest: Manifest, related_scenes: Union[Mapping[str, RenderScene]]=None, manifest_lookup: Union[Mapping[str, Manifest]]=None, description: Any=None):
-    #
-    #     if related_scenes is None:
-    #         related_scenes = {}
-    #     if manifest_lookup is None:
-    #         manifest_lookup = {}
-    #
-    #     assert this_scene.title not in related_scenes.keys()
-    #     related_scenes[this_scene.title] = this_scene
-    #     manifest_lookup[this_scene.manifest_hash] = this_manifest.manifest_hash
-    #
-    #     return RenderSceneResult.construct(
-    #         related_scenes=related_scenes,
-    #         manifest_lookup=manifest_lookup,
-    #         description=description,
-    #         this_scene=this_scene.title
-    #     )
-
-    rendered: DataT = Field(description="The rendered object.")
+    value_id: uuid.UUID = Field(description="The value that was rendered.")
+    render_config: Mapping[str, Any] = Field(
+        description="The config that was used to render this."
+    )
+    render_manifest: str = Field(
+        description="The id of the manifest that was used to render this."
+    )
     related_scenes: Mapping[str, Union[None, RenderScene]] = Field(
         description="Other render scenes, related to this one.", default_factory=dict
     )
@@ -85,6 +68,14 @@ class RenderValueResult(GenericModel, Generic[DataT]):
         description="The manifests referenced in this model, indexed by the hashes.",
         default_factory=dict,
     )
+    rendered: Any = Field(description="The rendered object.")
+
+    def _retrieve_data_to_hash(self) -> EncodableType:
+        return {
+            "value_id": str(self.value_id),
+            "render_config": self.render_config,
+            "render_manifest": self.render_manifest,
+        }
 
 
 # class ValueRenderSceneString(RenderScene[str]):

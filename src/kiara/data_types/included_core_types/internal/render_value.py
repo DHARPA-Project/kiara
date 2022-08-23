@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 import orjson.orjson
 from pydantic import Field
+from rich import box
 from rich.syntax import Syntax
+from rich.table import Table
 from typing import TYPE_CHECKING, Any, Mapping, Type, Union
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types.internal import InternalType
 from kiara.models.rendering import RenderScene, RenderValueResult
 from kiara.utils.class_loading import find_all_kiara_model_classes
+from kiara.utils.output import extract_renderable
 
 if TYPE_CHECKING:
     from kiara.models.values.value import Value
@@ -128,5 +131,11 @@ class RenderValueResultDataType(InternalType[RenderValueResult, DataTypeConfig])
 
         data: RenderValueResult = value.data
 
-        ri_json = data.json(option=orjson.orjson.OPT_INDENT_2)
-        return Syntax(ri_json, "json", background_color="default")
+        ri_json = data.json(option=orjson.orjson.OPT_INDENT_2, exclude={"rendered"})
+        rendered = extract_renderable(data.rendered)
+        metadata = Syntax(ri_json, "json", background_color="default")
+        table = Table(show_header=True, box=box.SIMPLE)
+        table.add_column("Rendered item")
+        table.add_column("Render metadata")
+        table.add_row(rendered, metadata)
+        return table

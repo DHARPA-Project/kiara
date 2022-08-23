@@ -6,6 +6,11 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
+import orjson
+from pydantic import BaseModel
+from rich import box
+from rich.syntax import Syntax
+from rich.table import Table
 from typing import TYPE_CHECKING, Any, Generic, Iterable, Mapping, Type, TypeVar
 
 from kiara.data_types import (
@@ -17,6 +22,9 @@ from kiara.data_types import (
 )
 from kiara.defaults import INVALID_HASH_MARKER, SpecialValue
 from kiara.models import KiaraModel
+from kiara.models.data_types import DictModel
+from kiara.models.python_class import PythonClass
+from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from kiara.models.module.manifest import Manifest
@@ -85,7 +93,7 @@ class AnyType(
     ) -> Any:
 
         if hasattr(self, "_pretty_print_as__string"):
-            return self._pretty_print_as_string(value=value, render_config=render_config)  # type: ignore
+            return self._pretty_print_as__string(value=value, render_config=render_config)  # type: ignore
 
         return str(value.data)
 
@@ -229,6 +237,112 @@ class StringType(AnyType[str, DataTypeConfig]):
     def pretty_print_as__bytes(self, value: "Value", render_config: Mapping[str, Any]):
         value_str: str = value.data
         return value_str.encode()
+
+
+class DictValueType(AnyType[DictModel, DataTypeConfig]):
+    """A dictionary.
+
+    In addition to the actual dictionary value, this value type comes also with an optional schema, describing the
+    dictionary. In case no schema was attached, a simple generic one is attached. This data type is backed by the
+    [DictModel][kiara_plugin.core_types.models.DictModel] class.
+    """
+
+    _data_type_name = "dict"
+
+    @classmethod
+    def python_class(cls) -> Type:
+        return DictModel
+
+    # def calculate_size(self, data: DictModel) -> int:
+    #     return data.size
+    #
+    # def calculate_hash(self, data: DictModel) -> int:
+    #     return data.value_hash
+
+    def _retrieve_characteristics(self) -> DataTypeCharacteristics:
+        return DataTypeCharacteristics(is_scalar=False, is_json_serializable=True)
+
+    def parse_python_obj(self, data: Any) -> DictModel:
+
+        python_cls = data.__class__
+        dict_data = None
+        schema = None
+
+        if isinstance(data, Mapping):
+
+            if (
+                len(data) == 3
+                and "dict_data" in data.keys()
+                and "data_schema" in data.keys()
+                and "python_class" in data.keys()
+            ):
+                dict_model = DictModel(
+                    dict_data=data["dict_data"],
+                    data_schema=data["data_schema"],
+                    python_class=data["python_class"],
+                )
+                return dict_model
+
+            schema = {"title": "dict", "type": "object"}
+            dict_data = data
+        elif isinstance(data, BaseModel):
+            dict_data = data.dict()
+            schema = data.schema()
+        elif isinstance(data, str):
+            try:
+                dict_data = orjson.loads(data)
+                schema = {"title": "dict", "type": "object"}
+            except Exception:
+                pass
+
+        if dict_data is None or schema is None:
+            raise Exception(f"Invalid data for value type 'dict': {data}")
+
+        result = {
+            "dict_data": dict_data,
+            "data_schema": schema,
+            "python_class": PythonClass.from_class(python_cls).dict(),
+        }
+        return DictModel(**result)
+
+    def _validate(self, data: DictModel) -> None:
+
+        if not isinstance(data, DictModel):
+            raise Exception(f"Invalid type: {type(data)}.")
+
+    # def render_as__string(self, value: Value, render_config: Mapping[str, Any]) -> str:
+    #
+    #     data: DictModel = value.data
+    #     return orjson_dumps(data.dict_data, option=orjson.OPT_INDENT_2)
+
+    def _pretty_print_as__terminal_renderable(
+        self, value: Value, render_config: Mapping[str, Any]
+    ):
+
+        show_schema = render_config.get("show_schema", True)
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("key", style="i")
+        table.add_column("value")
+
+        data: DictModel = value.data
+        data_json = orjson_dumps(data.dict_data, option=orjson.OPT_INDENT_2)
+        table.add_row(
+            "dict data", Syntax(data_json, "json", background_color="default")
+        )
+
+        if show_schema:
+            schema_json = orjson_dumps(data.data_schema, option=orjson.OPT_INDENT_2)
+            table.add_row(
+                "dict schema", Syntax(schema_json, "json", background_color="default")
+            )
+
+        return table
+
+    def serialize(self, data: DictModel) -> SerializedData:
+
+        result = self.serialize_as_json(data.dict())
+        return result
 
 
 KIARA_MODEL_CLS = TypeVar("KIARA_MODEL_CLS", bound=KiaraModel)

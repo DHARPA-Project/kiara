@@ -6,7 +6,6 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import networkx as nx
-from IPython.core.display import Image
 
 
 def create_image(graph: nx.Graph):
@@ -39,4 +38,6 @@ def graph_to_image(graph: nx.Graph, return_bytes: bool = False):
     if return_bytes:
         return b
     else:
+        from IPython.core.display import Image
+
         return Image(b)

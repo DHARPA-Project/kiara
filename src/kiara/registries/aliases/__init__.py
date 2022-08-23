@@ -198,7 +198,7 @@ class AliasRegistry(object):
                 all_aliases[final_alias] = item
                 all_aliases_by_id.setdefault(v_id, set()).add(item)
 
-        self._cached_aliases = all_aliases
+        self._cached_aliases = {k: all_aliases[k] for k in sorted(all_aliases.keys())}
         self._cached_aliases_by_id = all_aliases_by_id
         return self._cached_aliases
 

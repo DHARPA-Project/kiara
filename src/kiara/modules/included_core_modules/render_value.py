@@ -9,6 +9,7 @@ from pydantic import Field
 from typing import Any, Iterable, Mapping, Tuple, Union
 
 from kiara.exceptions import KiaraProcessingException
+from kiara.models.data_types import DictModel
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.rendering import RenderValueResult
 from kiara.models.values.value import Value, ValueMap
@@ -78,11 +79,12 @@ class RenderValueModule(KiaraModule):
         # assert data_type_name
 
         source_type = self.get_config_value("source_type")
+        optional = source_type == "none"
         inputs = {
             "value": {
                 "type": source_type,
                 "doc": f"A value of type '{source_type}'",
-                "optional": False,
+                "optional": optional,
             },
             "render_config": {
                 "type": "dict",
@@ -111,16 +113,23 @@ class RenderValueModule(KiaraModule):
         target_type = self.get_config_value("target_type")
 
         value: Value = inputs.get_value_obj("value")
-        render_scene: Mapping[str, Any] = inputs.get_value_data("render_config")
+
+        render_scene: DictModel = inputs.get_value_data("render_config")
 
         func_name = f"render__{source_type}__as__{target_type}"
 
         func = getattr(self, func_name)
-        result = func(value=value, render_config=render_scene)
+        result = func(value=value, render_config=render_scene.dict_data)
         if isinstance(result, RenderValueResult):
             render_scene_result: RenderValueResult = result
         else:
-            render_scene_result = RenderValueResult(rendered=result, related_scenes={})
+            render_scene_result = RenderValueResult(
+                value_id=value.value_id,
+                render_config=render_scene,
+                render_manifest=self.manifest.manifest_hash,
+                rendered=result,
+                related_scenes={},
+            )
         render_scene_result.manifest_lookup[self.manifest.manifest_hash] = self.manifest
 
         outputs.set_value("render_value_result", render_scene_result)
@@ -181,7 +190,7 @@ class ValueTypeRenderModule(KiaraModule):
         # source_type = self.get_config_value("source_type")
         target_type = self.get_config_value("target_type")
 
-        render_scene = inputs.get_value_obj("render_config")
+        render_scene: DictModel = inputs.get_value_data("render_config")
 
         data_type_cls = source_value.data_type_class.get_class()
         data_type = data_type_cls(**source_value.value_schema.type_config)
@@ -190,16 +199,21 @@ class ValueTypeRenderModule(KiaraModule):
         func = getattr(data_type, func_name)
 
         result = func(
-            value=source_value, render_config=render_scene, manifest=self.manifest
+            value=source_value,
+            render_config=render_scene.dict_data,
+            manifest=self.manifest,
         )
 
         if isinstance(result, RenderValueResult):
             render_scene_result = result
         else:
             render_scene_result = RenderValueResult(
+                value_id=source_value.value_id,
+                render_config=render_scene,
+                render_manifest=self.manifest.manifest_hash,
                 rendered=result,
                 related_scenes={},
-                manifest_lookup={self.manifest.instance_id: self.manifest},
+                manifest_lookup={self.manifest.manifest_hash: self.manifest},
             )
 
         outputs.set_value("render_value_result", render_scene_result)

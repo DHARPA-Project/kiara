@@ -5,6 +5,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import structlog
 import uuid
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
 from kiara.interfaces.python_api.models.info import (
@@ -16,6 +17,7 @@ from kiara.interfaces.python_api.models.info import (
     ValuesInfo,
 )
 from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
+from kiara.models.module.jobs import ActiveJob
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig
@@ -29,6 +31,7 @@ from kiara.operations.included_core_operations.render_value import (
 from kiara.registries.data import ValueLink
 from kiara.registries.operations import OP_TYPE
 from kiara.utils import log_exception
+from kiara.utils.operations import create_operation
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -352,10 +355,10 @@ class KiaraAPI(object):
 
         if matcher_params:
             values = self.list_aliases(**matcher_params)
-            return sorted(values.keys())
+            return list(values.keys())
         else:
             _values = self._kiara.alias_registry.all_aliases
-            return sorted(_values)
+            return list(_values)
 
     def list_aliases(self, **matcher_params) -> Dict[str, Value]:
         """List all available values that have an alias assigned, optionally filter.
@@ -381,6 +384,8 @@ class KiaraAPI(object):
                             f"Duplicate value alias '{a}': this is most likely a bug."
                         )
                     result[a] = value
+
+            result = {k: result[k] for k in sorted(result.keys())}
         else:
             all_aliases = self._kiara.alias_registry.all_aliases
             result = {
@@ -408,7 +413,7 @@ class KiaraAPI(object):
             a dictionary with a value alias as key, and [kiara.interfaces.python_api.models.values.ValueInfo] as value
         """
 
-        values = self.list_values(**matcher_params)
+        values = self.list_aliases(**matcher_params)
 
         infos = ValuesInfo.create_from_instances(
             kiara=self._kiara, instances={str(k): v for k, v in values.items()}
@@ -569,9 +574,9 @@ class KiaraAPI(object):
             endpoint = Manifest(
                 module_type=match.module_type, module_config=match.module_config
             )
-            extra_input_aliases = {"render_value.render_scene": "render_scene"}
+            extra_input_aliases = {"render_value.render_config": "render_config"}
             extra_output_aliases = {
-                "render_value.render_scene_result": "render_scene_result"
+                "render_value.render_value_result": "render_value_result"
             }
             pipeline_config = self.assemble_filter_pipeline_config(
                 data_type=data_type,
@@ -594,10 +599,10 @@ class KiaraAPI(object):
 
     # ------------------------------------------------------------------------------------------------------------------
     # job-related methods
-    def run_manifest(
+    def queue_manifest(
         self, manifest: Manifest, inputs: Union[None, Mapping[str, Any]] = None
-    ) -> ValueMap:
-        """Run a job using the provided manifest to describe the module and config that should be executed.
+    ) -> uuid.UUID:
+        """Queue a job using the provided manifest to describe the module and config that should be executed.
 
         Arguments:
             manifest: the manifest
@@ -613,8 +618,105 @@ class KiaraAPI(object):
             manifest=manifest, inputs=inputs
         )
 
-        job_id = self.context.job_registry.execute_job(job_config=job_config, wait=True)
+        job_id = self.context.job_registry.execute_job(
+            job_config=job_config, wait=False
+        )
+        return job_id
+
+    def run_manifest(
+        self, manifest: Manifest, inputs: Union[None, Mapping[str, Any]] = None
+    ) -> ValueMap:
+        """Run a job using the provided manifest to describe the module and config that should be executed.
+
+        Arguments:
+            manifest: the manifest
+            inputs: the job inputs (can be either references to values, or raw inputs
+
+        Returns:
+            a result value map instance
+        """
+
+        job_id = self.queue_manifest(manifest=manifest, inputs=inputs)
         return self.context.job_registry.retrieve_result(job_id=job_id)
+
+    def queue_job(
+        self,
+        operation: Union[str, Path, Manifest],
+        inputs: Mapping[str, Any],
+        operation_config: Union[None, Mapping[str, Any]] = None,
+    ) -> uuid.UUID:
+        """Queue a job from a operation id, module_name (and config), or pipeline file, wait for the job to finish and retrieve the result.
+
+        This is a convenience method that auto-detects what is meant by the 'operation' string input argument.
+
+        Arguments:
+            operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..
+            inputs: the operation inputs
+            operation_config: the (optional) module config in case 'operation' is a module name
+
+        Returns:
+            the queued job id
+        """
+
+        if isinstance(operation, Path):
+            if not operation.is_file():
+                raise Exception(
+                    f"Can't queue job from file '{operation.as_posix()}': file does not exist."
+                )
+            operation = operation.as_posix()
+
+        if not isinstance(operation, Manifest):
+            manifest: Manifest = create_operation(
+                module_or_operation=operation,
+                operation_config=operation_config,
+                kiara=self.context,
+            )
+        else:
+            manifest = operation
+
+        job_id = self.queue_manifest(manifest=manifest, inputs=inputs)
+        return job_id
+
+    def run_job(
+        self,
+        operation: Union[str, Path, Manifest],
+        inputs: Mapping[str, Any],
+        operation_config: Union[None, Mapping[str, Any]] = None,
+    ) -> ValueMap:
+        """Run a job from a operation id, module_name (and config), or pipeline file, wait for the job to finish and retrieve the result.
+
+        This is a convenience method that auto-detects what is meant by the 'operation' string input argument.
+
+        Arguments:
+            operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..
+            inputs: the operation inputs
+            operation_config: the (optional) module config in case 'operation' is a module name
+
+        Returns:
+            the job result value map
+
+        """
+        job_id = self.queue_job(
+            operation=operation, inputs=inputs, operation_config=operation_config
+        )
+        return self.context.job_registry.retrieve_result(job_id=job_id)
+
+    def get_job(self, job_id: Union[str, uuid.UUID]) -> ActiveJob:
+        """Retrieve the status of the job with the provided id."""
+
+        if isinstance(job_id, str):
+            job_id = uuid.UUID(job_id)
+
+        job_status = self.context.job_registry.get_job(job_id=job_id)
+        return job_status
+
+    def retrieve_job_result(self, job_id: Union[str, uuid.UUID]) -> ValueMap:
+
+        if isinstance(job_id, str):
+            job_id = uuid.UUID(job_id)
+
+        result = self.context.job_registry.retrieve_result(job_id=job_id)
+        return result
 
     def render_value(
         self,
@@ -644,6 +746,15 @@ class KiaraAPI(object):
             target_format=target_format,
             filters=filters,
         )
+
+        if render_config and "render_config" in render_config.keys():
+            raise NotImplementedError()
+            # manifest_hash = render_config["manifest_hash"]
+            # if manifest_hash != render_operation.manifest_hash:
+            #     raise NotImplementedError(
+            #         "Using a non-default render operation is not supported (yet)."
+            #     )
+            # render_config = render_config["render_config"]
 
         result = render_operation.run(
             kiara=self.context,

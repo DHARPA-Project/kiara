@@ -40,6 +40,7 @@ from kiara.exceptions import (
     NoSuchValueException,
     NoSuchValueIdException,
 )
+from kiara.interfaces.python_api.models.info import ValueInfo
 from kiara.models.events.data_registry import (
     DataArchiveAddedEvent,
     ValueCreatedEvent,
@@ -50,7 +51,6 @@ from kiara.models.events.data_registry import (
 from kiara.models.module.operation import Operation
 from kiara.models.python_class import PythonClass
 from kiara.models.values import DEFAULT_SCALAR_DATATYPE_CHARACTERISTICS, ValueStatus
-from kiara.models.values.info import ValueInfo
 from kiara.models.values.matchers import ValueMatcher
 from kiara.models.values.value import (
     ORPHAN,
@@ -453,7 +453,7 @@ class DataRegistry(object):
         if isinstance(value, uuid.UUID):
             value = self.get_value(value=value)
 
-        value_info = ValueInfo.create_from_value(kiara=self._kiara, value=value)
+        value_info = ValueInfo.create_from_instance(kiara=self._kiara, instance=value)
         return value_info
 
     def find_values(self, matcher: ValueMatcher) -> Dict[uuid.UUID, Value]:

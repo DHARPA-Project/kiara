@@ -127,6 +127,10 @@ find_model_classes: KiaraEntryPointItem = (
     find_kiara_model_classes_under,
     "kiara.models",
 )
+find_model_classes_api: KiaraEntryPointItem = (
+    find_kiara_model_classes_under,
+    "kiara.interfaces.python_api.models",
+)
 
 
 def get_version() -> str:

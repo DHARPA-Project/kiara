@@ -84,7 +84,7 @@ class PythonClass(KiaraModel):
 
 class KiaraModuleInstance(PythonClass):
 
-    _kiara_model_id: str = "metadata.kiara_module_instance"
+    _kiara_model_id: str = "metadata.kiara_module_class"
 
     @classmethod
     def from_module(cls, module: "KiaraModule"):

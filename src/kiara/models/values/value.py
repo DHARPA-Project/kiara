@@ -62,7 +62,7 @@ yaml = StringYAML()
 if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.data_types import DataType
-    from kiara.models.values.info import ValueInfo
+    from kiara.interfaces.python_api.models.info import ValueInfo
     from kiara.models.values.lineage import ValueLineage
     from kiara.registries.data import DataRegistry
 
@@ -635,7 +635,7 @@ class ValuePedigree(InputsManifest):
 
 
 class DataTypeInfo(KiaraModel):
-    _kiara_model_id = "info.data_type"
+    _kiara_model_id = "info.data_type_instance"
 
     data_type_name: str = Field(description="The registered name of this data type.")
     data_type_config: Mapping[str, Any] = Field(

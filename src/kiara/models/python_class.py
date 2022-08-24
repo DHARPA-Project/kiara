@@ -82,9 +82,9 @@ class PythonClass(KiaraModel):
         return self._module_cache
 
 
-class KiaraModuleClass(PythonClass):
+class KiaraModuleInstance(PythonClass):
 
-    _kiara_model_id: str = "metadata.kiara_module_class"
+    _kiara_model_id: str = "metadata.kiara_module_instance"
 
     @classmethod
     def from_module(cls, module: "KiaraModule"):
@@ -108,7 +108,7 @@ class KiaraModuleClass(PythonClass):
         conf["inputs_schema"] = module.inputs_schema
         conf["outputs_schema"] = module.outputs_schema
 
-        result = KiaraModuleClass.construct(**conf)
+        result = KiaraModuleInstance.construct(**conf)
         result._cls_cache = item_cls
         result._module_instance_cache = module
         return result

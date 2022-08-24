@@ -267,7 +267,7 @@ class KiaraAPI(object):
         """
 
         if matcher_params:
-            matcher = ValueMatcher.create_matcher(kiara=self._kiara, **matcher_params)
+            matcher = ValueMatcher.create_matcher(**matcher_params)
 
             values = self._kiara.data_registry.find_values(matcher=matcher)
         else:

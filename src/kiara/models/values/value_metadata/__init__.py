@@ -15,17 +15,20 @@ from rich.syntax import Syntax
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Literal, Mapping, Type, Union
 
+from kiara.interfaces.python_api.models.info import TypeInfo, TypeInfoItemGroup
 from kiara.models import KiaraModel
 from kiara.models.documentation import (
     AuthorsMetadataModel,
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
-from kiara.models.info import TypeInfo, TypeInfoModelGroup
+
+# from kiara.models.info import TypeInfo
 from kiara.models.python_class import PythonClass
 from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
+    from kiara.context import Kiara
     from kiara.models.values.value import Value
 
 
@@ -59,7 +62,7 @@ class MetadataTypeInfo(TypeInfo):
 
     @classmethod
     def create_from_type_class(
-        self, type_cls: Type[ValueMetadata]
+        self, type_cls: Type[ValueMetadata], kiara: "Kiara"
     ) -> "MetadataTypeInfo":
 
         authors_md = AuthorsMetadataModel.from_class(type_cls)
@@ -121,7 +124,7 @@ class MetadataTypeInfo(TypeInfo):
         return table
 
 
-class MetadataTypeClassesInfo(TypeInfoModelGroup):
+class MetadataTypeClassesInfo(TypeInfoItemGroup):
 
     _kiara_model_id = "info.metadata_types"
 
@@ -130,6 +133,6 @@ class MetadataTypeClassesInfo(TypeInfoModelGroup):
         return MetadataTypeInfo
 
     type_name: Literal["value_metadata"] = "value_metadata"
-    item_infos: Mapping[str, MetadataTypeInfo] = Field(
+    item_infos: Mapping[str, MetadataTypeInfo] = Field(  # type: ignore
         description="The value metadata info instances for each type."
     )

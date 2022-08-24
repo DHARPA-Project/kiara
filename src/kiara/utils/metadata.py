@@ -22,12 +22,12 @@ def find_metadata_models(
     for model_id, info in _group.item_infos.items():
         classes[model_id] = info.python_class.get_class()  # type: ignore
 
-    group: MetadataTypeClassesInfo = MetadataTypeClassesInfo.create_from_type_items(group_title=alias, **classes)  # type: ignore
+    group: MetadataTypeClassesInfo = MetadataTypeClassesInfo.create_from_type_items(group_title=alias, kiara=None, **classes)  # type: ignore
 
     if only_for_package:
         temp = {}
-        for key, _info in group.items():
-            if info.context.labels.get("package") == only_for_package:
+        for key, _info in group.item_infos.items():
+            if _info.context.labels.get("package") == only_for_package:
                 temp[key] = _info
 
         group = MetadataTypeClassesInfo.construct(

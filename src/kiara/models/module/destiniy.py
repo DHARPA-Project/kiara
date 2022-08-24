@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
 from kiara.defaults import SpecialValue
 from kiara.models.module.manifest import Manifest
-from kiara.models.python_class import KiaraModuleClass
+from kiara.models.python_class import KiaraModuleInstance
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries.ids import ID_REGISTRY
 
@@ -63,7 +63,7 @@ class Destiny(Manifest):
             else:
                 deferred_inputs[field] = None
 
-        module_details = KiaraModuleClass.from_module(module=module)
+        module_details = KiaraModuleInstance.from_module(module=module)
 
         # TODO: check whether it'd be better to 'resolve' the module config, as this might change the resulting hash
         destiny_id: uuid.UUID = ID_REGISTRY.generate(obj_type=Destiny)
@@ -86,7 +86,7 @@ class Destiny(Manifest):
     destiny_id: uuid.UUID = Field(description="The id of this destiny.")
 
     destiny_alias: str = Field(description="The path to (the) destiny.")
-    module_details: KiaraModuleClass = Field(
+    module_details: KiaraModuleInstance = Field(
         description="The class of the underlying module."
     )
     fixed_inputs: Dict[str, uuid.UUID] = Field(

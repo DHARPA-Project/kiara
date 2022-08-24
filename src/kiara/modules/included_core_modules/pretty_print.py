@@ -163,7 +163,7 @@ class ValueTypePrettyPrintModule(KiaraModule):
             outputs.set_value("rendered_value", "-- none/not set --")
             return
 
-        data_type_cls = source_value.data_type_class.get_class()
+        data_type_cls = source_value.data_type_info.data_type_class.get_class()
         data_type = data_type_cls(**source_value.value_schema.type_config)
 
         func_name = f"pretty_print_as__{target_type}"

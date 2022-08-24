@@ -49,7 +49,7 @@ from kiara.exceptions import InvalidValuesException
 from kiara.models import KiaraModel
 from kiara.models.module.manifest import InputsManifest, Manifest
 from kiara.models.python_class import PythonClass
-from kiara.models.values import ValueStatus
+from kiara.models.values import DataTypeCharacteristics, ValueStatus
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import is_jupyter, log_exception
 from kiara.utils.hashing import create_cid_digest
@@ -142,40 +142,6 @@ class SerializedChunks(BaseModel, abc.ABC):
             content = f.read()
 
         return content
-
-    # @property
-    # def data_hashes(self) -> Iterable[bytes]:
-    #
-    #     if self._hash_cache is not None:
-    #         return self._hash_cache
-    #
-    #     result = []
-    #     size = 0
-    #     for chunk in self.get_chunks():
-    #         _hash = multihash.digest(chunk, self.codec)
-    #         size = size + len(chunk)
-    #         result.append(_hash)
-    #
-    #     if self._size_cache is None:
-    #         self._size_cache = size
-    #     else:
-    #         assert self._size_cache == size
-    #
-    #     self._hash_cache = result
-    #     return self._hash_cache
-
-    # @property
-    # def data_size(self) -> int:
-    #
-    #     if self._size_cache is not None:
-    #         return self._size_cache
-    #
-    #     size = 0
-    #     for chunk in self.get_chunks():
-    #         size = size + len(chunk)
-    #
-    #     self._size_cache = size
-    #     return self._size_cache
 
 
 class SerializedPreStoreChunks(SerializedChunks):
@@ -514,22 +480,6 @@ class SerializedData(KiaraModel):
     def get_serialized_data(self, key: str) -> SerializedChunks:
         pass
 
-    # @property
-    # def cid(self) -> CID:
-    #
-    #     if self._cached_cid is not None:
-    #         return self._cached_cid
-    #
-    #     # TODO: check whether that is correect, or whether it needs another wrapping in an 'identity' type
-    #     codec = multicodec.get("dag-cbor")
-    #
-    #     hash_func = Multihash(codec=self.hash_codec).digest
-    #     hash = hash_func(self.dag)
-    #     cid = create_cid_digest(codec, hash)
-    #     self._cached_cid = cid
-    #
-    #     return self._cached_cid
-
     def get_cids_for_key(self, key) -> Sequence[CID]:
 
         if key in self._cids_cache.keys():
@@ -659,26 +609,6 @@ class PersistedData(SerializedData):
         return self.chunk_id_map[key]
 
 
-# class LoadConfig(Manifest):
-#
-#     inputs: Mapping[str, PersistedData] = Field(
-#         description="A map translating from input field name to alias (key) in bytes_structure."
-#     )
-#     output_name: str = Field(
-#         description="The name of the field that contains the persisted value details."
-#     )
-#
-#     def _retrieve_data_to_hash(self) -> Any:
-#         return self.dict()
-#
-#     def __repr__(self):
-#
-#         return f"{self.__class__.__name__}(module_type={self.module_type}, output_name={self.output_name})"
-#
-#     def __str__(self):
-#         return self.__repr__()
-
-
 class ValuePedigree(InputsManifest):
 
     _kiara_model_id = "instance.value_pedigree"
@@ -702,6 +632,34 @@ class ValuePedigree(InputsManifest):
 
     def __str__(self):
         return self.__repr__()
+
+
+class DataTypeInfo(KiaraModel):
+    _kiara_model_id = "info.data_type"
+
+    data_type_name: str = Field(description="The registered name of this data type.")
+    data_type_config: Mapping[str, Any] = Field(
+        description="The (optional) configuration for this data type.",
+        default_factory=dict,
+    )
+    characteristics: DataTypeCharacteristics = Field(
+        description="Characteristics of this data type."
+    )
+    data_type_class: PythonClass = Field(
+        description="The python class that is associated with this model."
+    )
+    _data_type_instance: "DataType" = PrivateAttr(default=None)
+
+    @property
+    def data_type_instance(self) -> "DataType":
+
+        if self._data_type_instance is not None:
+            return self._data_type_instance
+
+        self._data_type_instance = self.data_type_class.get_class()(
+            **self.data_type_config
+        )
+        return self._data_type_instance
 
 
 class ValueDetails(KiaraModel):
@@ -728,8 +686,8 @@ class ValueDetails(KiaraModel):
     pedigree_output_name: str = Field(
         description="The output name that produced this value (using the manifest inside the pedigree)."
     )
-    data_type_class: PythonClass = Field(
-        description="The python class that is associtated with this model."
+    data_type_info: DataTypeInfo = Field(
+        description="Information about the data type this value is made of."
     )
 
     def _retrieve_id(self) -> str:
@@ -744,11 +702,11 @@ class ValueDetails(KiaraModel):
 
     @property
     def data_type_name(self) -> str:
-        return self.value_schema.type
+        return self.data_type_info.data_type_name
 
     @property
     def data_type_config(self) -> Mapping[str, Any]:
-        return self.value_schema.type_config
+        return self.data_type_info.data_type_config
 
     @property
     def is_optional(self) -> bool:
@@ -805,7 +763,7 @@ class Value(ValueDetails):
     _serialized_data: Union[None, str, SerializedData] = PrivateAttr(default=None)
     _data_retrieved: bool = PrivateAttr(default=False)
     _data_registry: "DataRegistry" = PrivateAttr(default=None)
-    _data_type: "DataType" = PrivateAttr(default=None)
+    # _data_type: "DataType" = PrivateAttr(default=None)
     _is_stored: bool = PrivateAttr(default=False)
     _cached_properties: Union["ValueMap", None] = PrivateAttr(default=None)
     _lineage: Union["ValueLineage", None] = PrivateAttr(default=None)
@@ -896,6 +854,11 @@ class Value(ValueDetails):
 
         return False
 
+    # @property
+    # def data_type_class(self) -> "PythonClass":
+    #     """Return the (Python) type of the underlying 'DataType' subclass."""
+    #     return self.data_type_info.data_type_class
+
     @property
     def serialized_data(self) -> SerializedData:
 
@@ -969,12 +932,7 @@ class Value(ValueDetails):
     @property
     def data_type(self) -> "DataType":
 
-        if self._data_type is not None:
-            return self._data_type
-
-        cls = self.data_type_class.get_class()
-        self._data_type = cls(**self.value_schema.type_config)
-        return self._data_type
+        return self.data_type_info.data_type_instance
 
     @property
     def lineage(self) -> "ValueLineage":

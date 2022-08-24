@@ -32,7 +32,6 @@ from typing import (
     Union,
 )
 
-from kiara.data_types import DataType
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.models import KiaraModel
 from kiara.models.documentation import (
@@ -47,6 +46,7 @@ from kiara.models.values import ValueStatus
 from kiara.models.values.lineage import ValueLineage
 from kiara.models.values.value import (
     ORPHAN,
+    DataTypeInfo,
     PersistedData,
     Value,
     ValueMap,
@@ -61,6 +61,7 @@ from kiara.utils.output import extract_renderable
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+    from kiara.data_types import DataType
     from kiara.operations import OperationType
     from kiara.registries.aliases import AliasRegistry
     from kiara.registries.data import DataRegistry
@@ -485,9 +486,9 @@ class ValueInfo(ItemInfo[Value]):
             value_hash=instance.value_hash,
             pedigree=instance.pedigree,
             pedigree_output_name=instance.pedigree_output_name,
-            data_type_name=instance.data_type_name,
-            data_type_config=instance.data_type_config,
-            data_type_class=instance.data_type_class,
+            data_type_info=instance.data_type_info,
+            # data_type_config=instance.data_type_config,
+            # data_type_class=instance.data_type_class,
             property_links=instance.property_links,
             destiny_links=filtered_destinies,
             destiny_backlinks=instance.destiny_backlinks,
@@ -521,14 +522,8 @@ class ValueInfo(ItemInfo[Value]):
     pedigree_output_name: str = Field(
         description="The output name that produced this value (using the manifest inside the pedigree)."
     )
-    data_type_name: str = Field(
-        description="The registered name of the data type of this value."
-    )
-    data_type_config: Mapping[str, Any] = Field(
-        description="The (optional) configuration of the data type of this value."
-    )
-    data_type_class: PythonClass = Field(
-        description="The python class that is associtated with this model."
+    data_type_info: DataTypeInfo = Field(
+        description="Information about the underlying data type and it's configuration."
     )
     aliases: Union[List[str], None] = Field(
         description="The aliases that are registered for this value."
@@ -765,13 +760,13 @@ class KiaraModuleConfigMetadata(KiaraModel):
         return self.python_class.full_name
 
 
-class DataTypeClassInfo(TypeInfo[Type[DataType]]):
+class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
 
     _kiara_model_id = "info.data_type"
 
     @classmethod
     def create_from_type_class(
-        self, type_cls: Type[DataType], kiara: Union["Kiara", None] = None
+        self, type_cls: Type["DataType"], kiara: Union["Kiara", None] = None
     ) -> "DataTypeClassInfo":
 
         authors = AuthorsMetadataModel.from_class(type_cls)
@@ -812,7 +807,9 @@ class DataTypeClassInfo(TypeInfo[Type[DataType]]):
         return result
 
     @classmethod
-    def base_class(self) -> Type[DataType]:
+    def base_class(self) -> Type["DataType"]:
+        from kiara.data_types import DataType
+
         return DataType
 
     @classmethod

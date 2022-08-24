@@ -14,7 +14,7 @@ from kiara.models.module.operation import (
     OperationConfig,
 )
 from kiara.models.module.pipeline import PipelineConfig
-from kiara.models.python_class import KiaraModuleClass
+from kiara.models.python_class import KiaraModuleInstance
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules.included_core_modules.filter import FilterModule
 from kiara.operations import OperationType
@@ -412,7 +412,7 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
             module_config=manifest.module_config,
             operation_id=op_details.operation_id,
             operation_details=op_details,
-            module_details=KiaraModuleClass.from_module(module),
+            module_details=KiaraModuleInstance.from_module(module),
             metadata={},
             doc=pipeline_config.doc,
         )

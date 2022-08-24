@@ -89,7 +89,7 @@ class DataArchive(BaseArchive):
             environment_hashes=value_data.get("environment_hashes", {}),
             pedigree=pedigree,
             pedigree_output_name=value_data["pedigree_output_name"],
-            data_type_class=value_data["data_type_class"],
+            data_type_info=value_data["data_type_info"],
             property_links=value_data["property_links"],
             destiny_backlinks=value_data["destiny_backlinks"],
         )

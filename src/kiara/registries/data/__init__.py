@@ -49,11 +49,12 @@ from kiara.models.events.data_registry import (
 )
 from kiara.models.module.operation import Operation
 from kiara.models.python_class import PythonClass
-from kiara.models.values import ValueStatus
+from kiara.models.values import DEFAULT_SCALAR_DATATYPE_CHARACTERISTICS, ValueStatus
 from kiara.models.values.info import ValueInfo
 from kiara.models.values.matchers import ValueMatcher
 from kiara.models.values.value import (
     ORPHAN,
+    DataTypeInfo,
     PersistedData,
     SerializationMetadata,
     SerializedData,
@@ -164,6 +165,11 @@ class DataRegistry(object):
 
         # initialize special values
         special_value_cls = PythonClass.from_class(NoneType)
+        data_type_info = DataTypeInfo.construct(
+            data_type_name="none",
+            characteristics=DEFAULT_SCALAR_DATATYPE_CHARACTERISTICS,
+            data_type_class=special_value_cls,
+        )
         self._not_set_value: Value = Value(
             value_id=NOT_SET_VALUE_ID,
             kiara_id=self._kiara.id,
@@ -179,7 +185,7 @@ class DataRegistry(object):
             value_hash=INVALID_HASH_MARKER,
             pedigree=ORPHAN,
             pedigree_output_name="__void__",
-            data_type_class=special_value_cls,
+            data_type_info=data_type_info,
         )
         self._not_set_value._data_registry = self
         self._cached_data[NOT_SET_VALUE_ID] = SpecialValue.NOT_SET
@@ -201,7 +207,7 @@ class DataRegistry(object):
             value_hash=str(NONE_CID),
             pedigree=ORPHAN,
             pedigree_output_name="__void__",
-            data_type_class=special_value_cls,
+            data_type_info=data_type_info,
         )
         self._none_value._data_registry = self
         self._cached_data[NONE_VALUE_ID] = SpecialValue.NO_VALUE
@@ -452,11 +458,6 @@ class DataRegistry(object):
 
     def find_values(self, matcher: ValueMatcher) -> Dict[uuid.UUID, Value]:
 
-        if matcher._kiara is None:
-            matcher._kiara = self._kiara
-        else:
-            assert matcher._kiara.id == self._kiara.id
-
         matches: Dict[uuid.UUID, Value] = {}
         for store_id, store in self.data_archives.items():
             try:
@@ -485,7 +486,7 @@ class DataRegistry(object):
 
                     self._registered_values[value.value_id] = value
 
-                    match = matcher.is_match(value)
+                    match = matcher.is_match(value, kiara=self._kiara)
                     if match:
                         if value.value_id in matches.keys():
                             raise Exception(

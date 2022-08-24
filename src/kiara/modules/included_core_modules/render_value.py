@@ -192,7 +192,7 @@ class ValueTypeRenderModule(KiaraModule):
 
         render_scene: DictModel = inputs.get_value_data("render_config")
 
-        data_type_cls = source_value.data_type_class.get_class()
+        data_type_cls = source_value.data_type_info.data_type_class.get_class()
         data_type = data_type_cls(**source_value.value_schema.type_config)
 
         func_name = f"render_as__{target_type}"

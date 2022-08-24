@@ -13,17 +13,12 @@ from rich.syntax import Syntax
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Generic, Iterable, Mapping, Type, TypeVar
 
-from kiara.data_types import (
-    TYPE_CONFIG_CLS,
-    TYPE_PYTHON_CLS,
-    DataType,
-    DataTypeCharacteristics,
-    DataTypeConfig,
-)
+from kiara.data_types import TYPE_CONFIG_CLS, TYPE_PYTHON_CLS, DataType, DataTypeConfig
 from kiara.defaults import INVALID_HASH_MARKER, SpecialValue
 from kiara.models import KiaraModel
 from kiara.models.data_types import DictModel
 from kiara.models.python_class import PythonClass
+from kiara.models.values import DataTypeCharacteristics
 from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:

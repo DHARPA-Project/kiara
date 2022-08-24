@@ -14,10 +14,11 @@ from rich import box
 from rich.console import RenderableType
 from rich.panel import Panel
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID, SpecialValue
 from kiara.exceptions import InvalidValuesException
+from kiara.interfaces.python_api.models.info import ItemInfo
 from kiara.models.aliases import AliasValueMap
 from kiara.models.documentation import (
     AuthorsMetadataModel,
@@ -30,7 +31,6 @@ from kiara.models.events.pipeline import (
     PipelineEvent,
     StepDetails,
 )
-from kiara.models.info import ItemInfo
 from kiara.models.module.jobs import JobConfig
 from kiara.models.module.pipeline import PipelineConfig, StepStatus
 from kiara.models.module.pipeline.structure import PipelineStep, PipelineStructure
@@ -608,9 +608,18 @@ class Pipeline(object):
         ).create_renderable(**config)
 
 
-class PipelineInfo(ItemInfo):
+class PipelineInfo(ItemInfo[Pipeline]):
 
     _kiara_model_id = "info.pipeline"
+
+    @classmethod
+    def base_instance_class(cls) -> Type[Pipeline]:
+        return Pipeline
+
+    @classmethod
+    def create_from_instance(cls, kiara: "Kiara", instance: Pipeline, **kwargs):
+
+        return cls.create_from_pipeline(kiara=kiara, pipeline=instance)
 
     @classmethod
     def category_name(cls) -> str:

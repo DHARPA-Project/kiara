@@ -7,8 +7,8 @@
 from pydantic import Field
 from typing import TYPE_CHECKING, Any, Dict, Literal, Union
 
+from kiara.interfaces.python_api.models.info import TypeInfo
 from kiara.models.archives import ArchiveTypeClassesInfo
-from kiara.models.info import TypeInfo
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value_metadata import MetadataTypeClassesInfo
 from kiara.utils.class_loading import find_all_archive_types

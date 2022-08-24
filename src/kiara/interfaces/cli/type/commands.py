@@ -12,7 +12,10 @@ from typing import Dict, Iterable, Type
 
 from kiara.context import Kiara
 from kiara.data_types import DataType
-from kiara.models.values.data_type import DataTypeClassesInfo, DataTypeClassInfo
+from kiara.interfaces.python_api.models.info import (
+    DataTypeClassesInfo,
+    DataTypeClassInfo,
+)
 from kiara.utils.cli import output_format_option, terminal_print_model
 from kiara.utils.graphs import print_ascii_graph
 
@@ -68,8 +71,8 @@ def list_types(
                 temp[k] = v
         type_classes = temp
 
-    data_types_info = DataTypeClassesInfo.create_augmented_from_type_items(
-        kiara=kiara_obj, group_alias=title, **type_classes
+    data_types_info = DataTypeClassesInfo.create_from_type_items(
+        kiara=kiara_obj, group_title=title, **type_classes
     )
 
     terminal_print_model(

@@ -21,7 +21,7 @@ from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.jobs import JobConfig
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.pipeline import PipelineConfig
-from kiara.models.python_class import KiaraModuleClass
+from kiara.models.python_class import KiaraModuleInstance
 from kiara.models.values.value import ValueMap, ValueMapReadOnly
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import InputOutputObject, KiaraModule, ValueMapSchema
@@ -235,7 +235,7 @@ class Operation(Manifest):
             module_config=module.config.dict(),
             operation_id=op_id,
             operation_details=details,
-            module_details=KiaraModuleClass.from_module(module),
+            module_details=KiaraModuleInstance.from_module(module),
             doc=doc,
         )
         operation._module = module
@@ -249,7 +249,7 @@ class Operation(Manifest):
         description="Documentation for this operation."
     )
 
-    module_details: KiaraModuleClass = Field(
+    module_details: KiaraModuleInstance = Field(
         description="The class of the underlying module."
     )
     metadata: Mapping[str, Any] = Field(

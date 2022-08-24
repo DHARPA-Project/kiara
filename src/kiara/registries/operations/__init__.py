@@ -31,7 +31,7 @@ from kiara.models.module.operation import (
     OperationConfig,
     PipelineOperationConfig,
 )
-from kiara.models.python_class import KiaraModuleClass
+from kiara.models.python_class import KiaraModuleInstance
 from kiara.operations import OperationType
 from kiara.utils import log_exception
 
@@ -414,7 +414,7 @@ class OperationRegistry(object):
                 module_config=manifest.module_config,
                 operation_id=op_details.operation_id,
                 operation_details=op_details,
-                module_details=KiaraModuleClass.from_module(module),
+                module_details=KiaraModuleInstance.from_module(module),
                 metadata=metadata,
                 doc=doc,
             )

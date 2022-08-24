@@ -143,7 +143,7 @@ class ValueInfo(Value):
             value_hash=value.value_hash,
             pedigree=value.pedigree,
             pedigree_output_name=value.pedigree_output_name,
-            data_type_class=value.data_type_class,
+            data_type_info=value.data_type_info,
             property_links=value.property_links,
             destiny_links=filtered_destinies,
             destiny_backlinks=value.destiny_backlinks,
@@ -153,7 +153,7 @@ class ValueInfo(Value):
         model._set_registry(value._data_registry)
         model._alias_registry = kiara.alias_registry  # type: ignore
         model._is_stored = value._is_stored
-        model._data_type = value._data_type
+        # model._data_type = value._data_type
         model._value_data = value._value_data
         model._data_retrieved = value._data_retrieved
         model._is_internal = is_internal

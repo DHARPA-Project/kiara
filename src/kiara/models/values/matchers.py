@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from pydantic import Field, PrivateAttr
+from pydantic import Field
 from typing import TYPE_CHECKING, Any, List, Union
 
 from kiara.models import KiaraModel
@@ -13,10 +13,9 @@ class ValueMatcher(KiaraModel):
     """An object describing requirements values should satisfy in order to be included in a query result."""
 
     @classmethod
-    def create_matcher(self, kiara: "Kiara", **match_options: Any):
+    def create_matcher(self, **match_options: Any):
 
         m = ValueMatcher(**match_options)
-        m._kiara = kiara
         return m
 
     data_types: List[str] = Field(description="The data type.", default_factory=list)
@@ -31,9 +30,8 @@ class ValueMatcher(KiaraModel):
     has_alias: bool = Field(
         description="Value must have at least one alias.", default=True
     )
-    _kiara: "Kiara" = PrivateAttr(default=None)
 
-    def is_match(self, value: Value) -> bool:
+    def is_match(self, value: Value, kiara: "Kiara") -> bool:
         if self.data_types:
             match = False
             if not self.allow_sub_types:
@@ -42,14 +40,9 @@ class ValueMatcher(KiaraModel):
                         match = True
                         break
             else:
-                if (
-                    value.data_type_name
-                    not in self._kiara.type_registry.data_type_names
-                ):
+                if value.data_type_name not in kiara.type_registry.data_type_names:
                     return False
-                lineage = self._kiara.type_registry.get_type_lineage(
-                    value.data_type_name
-                )
+                lineage = kiara.type_registry.get_type_lineage(value.data_type_name)
                 for data_type in self.data_types:
                     if data_type in lineage:
                         match = True
@@ -65,13 +58,13 @@ class ValueMatcher(KiaraModel):
                 return False
 
         if not self.allow_internal:
-            if self._kiara.type_registry.is_internal_type(
+            if kiara.type_registry.is_internal_type(
                 data_type_name=value.data_type_name
             ):
                 return False
 
         if self.has_alias:
-            aliases = self._kiara.alias_registry.find_aliases_for_value_id(
+            aliases = kiara.alias_registry.find_aliases_for_value_id(
                 value_id=value.value_id
             )
             if not aliases:

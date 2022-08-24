@@ -29,7 +29,7 @@ import orjson
 import structlog
 import uuid
 from deepdiff import DeepHash
-from pydantic import BaseModel, Extra, Field, PrivateAttr, ValidationError
+from pydantic import BaseModel, Extra, PrivateAttr, ValidationError
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.rule import Rule
@@ -46,7 +46,7 @@ from kiara.defaults import (
 )
 from kiara.exceptions import KiaraValueException, ValueTypeConfigException
 from kiara.models.python_class import PythonClass
-from kiara.models.values import ValueStatus
+from kiara.models.values import DataTypeCharacteristics, ValueStatus
 from kiara.models.values.value_schema import ValueSchema
 
 #
@@ -57,8 +57,12 @@ from kiara.models.values.value_schema import ValueSchema
 from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
-    from kiara.models.values.value import SerializedData, Value, ValuePedigree
-
+    from kiara.models.values.value import (
+        DataTypeInfo,
+        SerializedData,
+        Value,
+        ValuePedigree,
+    )
 
 logger = structlog.getLogger()
 
@@ -136,18 +140,6 @@ TYPE_PYTHON_CLS = TypeVar("TYPE_PYTHON_CLS")
 TYPE_CONFIG_CLS = TypeVar("TYPE_CONFIG_CLS", bound=DataTypeConfig)
 
 
-class DataTypeCharacteristics(BaseModel):
-
-    is_scalar: bool = Field(
-        description="Whether the data desribed by this data type behaves like a skalar.",
-        default=False,
-    )
-    is_json_serializable: bool = Field(
-        description="Whether the data can be serialized to json without information loss.",
-        default=False,
-    )
-
-
 class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
     """Base class that all *kiara* data_types must inherit from.
 
@@ -208,6 +200,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
         self._data_type_hash: Union[int, None] = None
         self._characteristics: Union[DataTypeCharacteristics, None] = None
+        self._info: Union[DataTypeInfo, None] = None
 
     @property
     def data_type_name(self) -> str:
@@ -220,6 +213,23 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
                 self._type_config
             )
         return self._data_type_hash
+
+    @property
+    def info(self) -> "DataTypeInfo":
+
+        if self._info is not None:
+            return self._info
+
+        from kiara.models.values.value import DataTypeInfo
+
+        self._info = DataTypeInfo(
+            data_type_name=self.data_type_name,
+            data_type_config=self.type_config.dict(),
+            characteristics=self.characteristics,
+            data_type_class=PythonClass.from_class(self.__class__),
+        )
+        self._info._data_type_instance = self
+        return self._info
 
     @property
     def characteristics(self) -> DataTypeCharacteristics:
@@ -412,7 +422,6 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
         if isinstance(status, str):
             status = ValueStatus(status).name
 
-        this_cls = PythonClass.from_class(self.__class__)
         if status in [ValueStatus.SET, ValueStatus.DEFAULT]:
             try:
 
@@ -426,7 +435,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
                     environment_hashes=environment_hashes,
                     pedigree=pedigree,
                     pedigree_output_name=pedigree_output_name,
-                    data_type_class=this_cls,
+                    data_type_info=self.info,
                 )
 
             except Exception as e:
@@ -444,11 +453,10 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
                 environment_hashes=environment_hashes,
                 pedigree=pedigree,
                 pedigree_output_name=pedigree_output_name,
-                data_type_class=this_cls,
+                data_type_info=self.info,
             )
 
         value._value_data = data
-        value._data_type = self
         value._serialized_data = serialized
         return value, data
 
@@ -491,7 +499,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
         table.add_row("type_config", config)
 
         if show_type_info:
-            from kiara.models.values.data_type import DataTypeClassInfo
+            from kiara.interfaces.python_api.models.info import DataTypeClassInfo
 
             info = DataTypeClassInfo.create_from_type_class(self.__class__)
             table.add_row("", "")

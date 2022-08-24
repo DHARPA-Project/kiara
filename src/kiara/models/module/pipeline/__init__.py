@@ -22,7 +22,7 @@ from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.jobs import ExecutionContext
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.pipeline.value_refs import StepValueAddress
-from kiara.models.python_class import KiaraModuleClass
+from kiara.models.python_class import KiaraModuleInstance
 from kiara.utils import find_free_id, is_jupyter
 from kiara.utils.files import get_data_from_file
 from kiara.utils.json import orjson_dumps
@@ -152,7 +152,7 @@ class PipelineStep(Manifest):
                     module_config=dict(resolved_module_config),
                     input_links=input_links,  # type: ignore
                     doc=doc,
-                    module_details=KiaraModuleClass.from_module(module=module),
+                    module_details=KiaraModuleInstance.from_module(module=module),
                 )
                 _s._module = module
                 result.append(_s)
@@ -190,7 +190,7 @@ class PipelineStep(Manifest):
         description="The links that connect to inputs of the module. Keys are field names, value(s) are connected outputs.",
         default_factory=dict,
     )
-    module_details: KiaraModuleClass = Field(
+    module_details: KiaraModuleInstance = Field(
         description="The class of the underlying module."
     )
     doc: DocumentationMetadataModel = Field(

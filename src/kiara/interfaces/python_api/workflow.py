@@ -20,7 +20,7 @@ from kiara.models.module.pipeline import (
 )
 from kiara.models.module.pipeline.controller import SinglePipelineController
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineInfo
-from kiara.models.python_class import KiaraModuleClass
+from kiara.models.python_class import KiaraModuleInstance
 from kiara.models.values.value import ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.models.workflow import WorkflowDetails, WorkflowInfo, WorkflowState
@@ -556,7 +556,7 @@ class Workflow(object):
             step_id=step_id,
             module_type=module.module_type_name,
             module_config=module.config.dict(),
-            module_details=KiaraModuleClass.from_module(module=module),
+            module_details=KiaraModuleInstance.from_module(module=module),
             doc=doc,
         )
         step._module = module

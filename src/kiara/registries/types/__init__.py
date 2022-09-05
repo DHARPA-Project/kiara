@@ -245,6 +245,17 @@ class TypeRegistry(object):
             )
         return t
 
+    def get_data_type_instance(
+        self, type_name: str, type_config: Union[None, Mapping[str, Any]] = None
+    ) -> DataType:
+
+        cls = self.get_data_type_cls(type_name=type_name)
+        if not type_config:
+            obj = cls()
+        else:
+            obj = cls(**type_config)
+        return obj
+
     def get_type_metadata(self, type_name: str) -> DataTypeClassInfo:
 
         md = self._data_type_metadata.get(type_name, None)

@@ -335,7 +335,9 @@ class Pipeline(object):
         values_to_set: Dict[str, uuid.UUID] = {}
 
         for k, v in inputs.items():
-            if v is None:
+            if v is SpecialValue.NOT_SET:
+                values_to_set[k] = NOT_SET_VALUE_ID
+            elif v in [None, SpecialValue.NO_VALUE]:
                 values_to_set[k] = NONE_VALUE_ID
             else:
                 alias_map = self._all_values.get_alias("pipeline.inputs")
@@ -353,6 +355,7 @@ class Pipeline(object):
 
         if not values_to_set:
             return {}
+
         changed_pipeline_inputs = self._set_values("pipeline.inputs", **values_to_set)
 
         changed_results = {"__pipeline__": {"inputs": changed_pipeline_inputs}}

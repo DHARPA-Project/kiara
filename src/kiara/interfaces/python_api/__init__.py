@@ -748,7 +748,9 @@ class KiaraAPI(object):
         )
 
         if render_config and "render_config" in render_config.keys():
-            raise NotImplementedError()
+            # raise NotImplementedError()
+            # TODO: is this necessary?
+            render_config = render_config["render_config"]  # type: ignore
             # manifest_hash = render_config["manifest_hash"]
             # if manifest_hash != render_operation.manifest_hash:
             #     raise NotImplementedError(

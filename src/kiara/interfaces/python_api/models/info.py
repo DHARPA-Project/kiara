@@ -1131,6 +1131,18 @@ class OperationTypeClassesInfo(TypeInfoItemGroup):
     )
 
 
+class FieldInfo(BaseModel):
+
+    field_name: str = Field(description="The field name.")
+    field_schema: ValueSchema = Field(description="The schema of the field.")
+    data_type_info: DataTypeInfo = Field(
+        description="Information about the data type instance of the associated value."
+    )
+    value_required: bool = Field(
+        description="Whether user input is required (meaning: 'optional' is False, and no default set)."
+    )
+
+
 class OperationInfo(ItemInfo):
 
     _kiara_model_id = "info.operation"
@@ -1157,11 +1169,37 @@ class OperationInfo(ItemInfo):
             operation_id=operation.operation_id
         )
 
+        input_fields = {}
+        for field_name, schema in operation.inputs_schema.items():
+            dt = kiara.type_registry.get_data_type_instance(
+                type_name=schema.type, type_config=schema.type_config
+            )
+            dt_info = FieldInfo.construct(
+                field_name=field_name,
+                field_schema=schema,
+                data_type_info=dt.info,
+                value_required=schema.is_required(),
+            )
+            input_fields[field_name] = dt_info
+
+        output_fields = {}
+        for field_name, schema in operation.outputs_schema.items():
+            dt = kiara.type_registry.get_data_type_instance(
+                type_name=schema.type, type_config=schema.type_config
+            )
+            dt_info = FieldInfo.construct(
+                field_name=field_name,
+                field_schema=schema,
+                data_type_info=dt.info,
+                value_required=schema.is_required(),
+            )
+            output_fields[field_name] = dt_info
+
         op_info = OperationInfo.construct(
             type_name=operation.operation_id,
             operation_types=list(op_types),
-            inputs_schema=operation.inputs_schema,
-            outputs_schema=operation.outputs_schema,
+            input_fields=input_fields,
+            output_fields=output_fields,
             operation=operation,
             documentation=operation.doc,
             authors=authors_md,
@@ -1178,10 +1216,10 @@ class OperationInfo(ItemInfo):
     operation_types: List[str] = Field(
         description="The operation types this operation belongs to."
     )
-    inputs_schema: Mapping[str, ValueSchema] = Field(
+    input_fields: Mapping[str, FieldInfo] = Field(
         description="The inputs schema for this operation."
     )
-    outputs_schema: Mapping[str, ValueSchema] = Field(
+    output_fields: Mapping[str, FieldInfo] = Field(
         description="The outputs schema for this operation."
     )
 

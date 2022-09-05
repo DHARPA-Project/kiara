@@ -635,6 +635,7 @@ class ValuePedigree(InputsManifest):
 
 
 class DataTypeInfo(KiaraModel):
+
     _kiara_model_id = "info.data_type_instance"
 
     data_type_name: str = Field(description="The registered name of this data type.")

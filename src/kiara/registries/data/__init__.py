@@ -725,26 +725,19 @@ class DataRegistry(object):
                 f"Can't register data of type '{schema.type}': type not registered. Available types: {', '.join(self._kiara.data_type_names)}"
             )
 
-        if schema.default in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
-            if (
-                data is None
-                or data is SpecialValue.NO_VALUE
-                or data is SpecialValue.NOT_SET
-            ):
-                return (self.NONE_VALUE, False)
-        else:
-            # TODO: allow other value_ids in defaults?
-            if data in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
-                if callable(schema.default):
-                    data = schema.default()
-                else:
-                    data = copy.deepcopy(schema.default)
+        if data is SpecialValue.NOT_SET and schema.default is not SpecialValue.NOT_SET:
+            if callable(schema.default):
+                data = schema.default()
+            else:
+                data = copy.deepcopy(schema.default)
 
-        # data_type: Optional[DataType] = None
-        # status: Optional[ValueStatus] = None
-        # value_hash: Optional[str] = None
+        if data is None:
+            data = SpecialValue.NO_VALUE
 
-        if reuse_existing:
+        if reuse_existing and data not in [
+            SpecialValue.NO_VALUE,
+            SpecialValue.NOT_SET,
+        ]:
             (
                 _existing,
                 data_type,
@@ -759,7 +752,6 @@ class DataRegistry(object):
                 # TODO: check pedigree
                 return (_existing, False)
         else:
-
             data_type = self._kiara.type_registry.retrieve_data_type(
                 data_type_name=schema.type, data_type_config=schema.type_config
             )
@@ -991,11 +983,32 @@ class DataRegistry(object):
                 )
 
         values = {}
-
         failed = {}
-        for input_name, details in input_details.items():
 
-            value_schema = details["schema"]
+        _resolved: Dict[str, Value] = {}
+        _unresolved = {}
+        for input_name, details in input_details.items():
+            _d = data.get(input_name, SpecialValue.NOT_SET)
+            if isinstance(_d, str):
+                try:
+                    _d = uuid.UUID(_d)
+                except Exception:
+                    pass
+
+            if isinstance(_d, Value):
+                _resolved[input_name] = _d
+            elif isinstance(_d, uuid.UUID):
+                _resolved[input_name] = self.get_value(_d)
+            else:
+                _unresolved[input_name] = _d
+
+        for input_name, _value in _resolved.items():
+            # TODO: validate values against schema
+            values[input_name] = _value
+
+        for input_name, _data in _unresolved.items():
+
+            value_schema = input_details[input_name]["schema"]
 
             if input_name not in data.keys():
                 value_data = SpecialValue.NOT_SET
@@ -1012,9 +1025,6 @@ class DataRegistry(object):
                 value = self.register_data(
                     data=value_data, schema=value_schema, reuse_existing=True
                 )
-                # value = self.retrieve_or_create_value(
-                #     value_data, value_schema=value_schema
-                # )
                 values[input_name] = value
             except Exception as e:
                 log_exception(e)

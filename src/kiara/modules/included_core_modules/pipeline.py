@@ -72,7 +72,6 @@ class PipelineModule(KiaraModule):
         pipeline = Pipeline(structure=pipeline_structure, kiara=outputs._kiara)
 
         assert self._job_registry is not None
-
         controller = SinglePipelineBatchController(
             pipeline=pipeline, job_registry=self._job_registry
         )

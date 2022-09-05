@@ -24,7 +24,6 @@ be discouraged, since this might not be trivial and there are quite a few things
 
 """
 import abc
-import copy
 import orjson
 import structlog
 import uuid
@@ -331,35 +330,36 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
         self, data: Any, schema: ValueSchema
     ) -> Tuple[Any, Union[str, "SerializedData"], ValueStatus, str, int]:
 
+        assert data is not None
+
         if data is SpecialValue.NOT_SET:
             status = ValueStatus.NOT_SET
+            data = None
+        elif data is SpecialValue.NO_VALUE:
+            status = ValueStatus.NONE
             data = None
         else:
             status = ValueStatus.SET
 
-        if data is None and schema.default not in [
-            None,
-            SpecialValue.NO_VALUE,
-            SpecialValue.NOT_SET,
-        ]:
+        # if data is None and schema.default not in [
+        #     None,
+        #     SpecialValue.NO_VALUE,
+        #     SpecialValue.NOT_SET,
+        # ]:
+        #
+        #     status = ValueStatus.DEFAULT
+        #     if callable(schema.default):
+        #         data = schema.default()
+        #     else:
+        #         data = copy.deepcopy(schema.default)
 
-            status = ValueStatus.DEFAULT
-            if callable(schema.default):
-                data = schema.default()
-            else:
-                data = copy.deepcopy(schema.default)
-
-        if (
-            data is None
-            or data is SpecialValue.NO_VALUE
-            or data is SpecialValue.NOT_SET
-        ):
-            if schema.default in [None, SpecialValue.NO_VALUE]:
-                data = SpecialValue.NO_VALUE
-                status = ValueStatus.NONE
-            elif schema.default == SpecialValue.NOT_SET:
-                data = SpecialValue.NOT_SET
-                status = ValueStatus.NOT_SET
+        if data is None or data is SpecialValue.NOT_SET:
+            # if schema.default in [None, SpecialValue.NO_VALUE]:
+            #     data = SpecialValue.NO_VALUE
+            #     status = ValueStatus.NONE
+            # elif schema.default == SpecialValue.NOT_SET:
+            #     data = SpecialValue.NOT_SET
+            #     status = ValueStatus.NOT_SET
 
             size = 0
             value_hash = INVALID_HASH_MARKER

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from abc import abstractmethod
 from pydantic import Field
-from typing import Any, Dict, List, Mapping, Union
+from typing import Any, Dict, List, Union
 
 from kiara.models.module import KiaraModuleConfig
-from kiara.models.values.value import Value, ValueMap
+from kiara.models.values.value import ValueMap
 from kiara.modules import KiaraModule, ValueMapSchema
 from kiara.utils import is_develop
 from kiara.utils.develop import log_dev_message
@@ -159,45 +159,3 @@ class FilterModule(KiaraModule):
             outputs.set_value("value", source_obj)
         else:
             outputs.set_value("value", result)
-
-
-class StringFiltersModule(FilterModule):
-
-    _module_type_name = "string.filters"
-
-    @classmethod
-    def retrieve_supported_type(cls) -> Union[Dict[str, Any], str]:
-
-        return "string"
-
-    def create_filter_inputs(self, filter_name: str) -> Union[None, ValueMapSchema]:
-
-        if filter_name == "tokens":
-            return {
-                "filter_tokens": {
-                    "type": "list",
-                    "doc": "A list of tokens to filter out.",
-                    "optional": True,
-                },
-                "replacement": {
-                    "type": "string",
-                    "doc": "The string to replace the tokens with.",
-                    "default": "",
-                },
-            }
-
-        return None
-
-    def filter__tokens(self, value: Value, filter_inputs: Mapping[str, Any]):
-
-        tokens = filter_inputs.get("filter_tokens", None)
-        if not tokens:
-            return None
-
-        repl = filter_inputs.get("replacement")
-
-        result: str = value.data
-        for token in tokens:
-            result = result.replace(token, repl)  # type: ignore
-
-        return result

@@ -4271,6 +4271,10 @@ typically done by a frontend. The return types of each method are json seriable 
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleTypesInfo</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Retrieve information for all available module types (or a filtered subset thereof).</span>
 
+<span class="sd">        A module type is Python class that inherits from [KiaraModule][kiara.modules.KiaraModule], and is the basic</span>
+<span class="sd">        building block for processing pipelines. Module types are not used directly by users, Operations are. Operations</span>
+<span class="sd">         are instantiated modules (meaning: the module &amp; some (optional) configuration).</span>
+
 <span class="sd">        Arguments:</span>
 <span class="sd">            filter: a string (or list of string) the returned module names have to match (all filters in case of list)</span>
 
@@ -4310,6 +4314,8 @@ typically done by a frontend. The return types of each method are json seriable 
     <span class="k">def</span> <span class="nf">retrieve_module_type_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleTypeInfo</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Retrieve information about a specific module type.</span>
 
+<span class="sd">        This can be used to retrieve information like module documentation and configuration options.</span>
+
 <span class="sd">        Arguments:</span>
 <span class="sd">            module_type: the registered name of the module</span>
 
@@ -4324,7 +4330,9 @@ typically done by a frontend. The return types of each method are json seriable 
     <span class="k">def</span> <span class="nf">create_operation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">module_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Create an Operation instance.</span>
+        <span class="sd">&quot;&quot;&quot;Create an [Operation][kiara.models.module.operation.Operation] instance for the specified module type and (optional) config.</span>
+
+<span class="sd">        This can be used to get information about the operation itself, it&#39;s inputs &amp; outputs schemas, documentation etc.</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            module_type: the registered name of the module</span>
@@ -4368,8 +4376,13 @@ typically done by a frontend. The return types of each method are json seriable 
     <span class="k">def</span> <span class="nf">get_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return the operation instance with the specified id.</span>
 
+<span class="sd">        This can be used to get information about a specific operation, like inputs/outputs scheman, documentation, etc.</span>
+
 <span class="sd">        Arguments:</span>
 <span class="sd">            operation_id: the operation id</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            operation instance data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="n">operation_id</span><span class="p">)</span>
@@ -4382,6 +4395,9 @@ typically done by a frontend. The return types of each method are json seriable 
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            operation_id: the operation id</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            augmented operation instance data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="n">operation_id</span><span class="p">)</span>
@@ -4398,7 +4414,7 @@ typically done by a frontend. The return types of each method are json seriable 
 <span class="sd">            include_internal: whether to include operations that are predominantly used internally in kiara.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            a dictionary with the operation id as key, and a [kiara.models.module.operation.Operation] instance as value</span>
+<span class="sd">            a dictionary with the operation id as key, and [kiara.models.module.operation.Operation] instance data as value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">operations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span>
@@ -4461,12 +4477,12 @@ typically done by a frontend. The return types of each method are json seriable 
     <span class="c1"># methods relating to values and data</span>
 
     <span class="k">def</span> <span class="nf">get_value_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;List all available value ids.</span>
+        <span class="sd">&quot;&quot;&quot;List all available value ids for this kiara context.</span>
 
 <span class="sd">        This method exists mainly so frontend can retrieve a list of all value_ids that exists on the backend without</span>
 <span class="sd">        having to look up the details of each value (like [list_values][kiara.interfaces.python_api.KiaraAPI.list_values]</span>
 <span class="sd">        does). This method can also be used with a matcher, but in this case the [list_values][kiara.interfaces.python_api.KiaraAPI.list_values]</span>
-<span class="sd">        would be preferrable in most cases, because it is called under the hood, and the performance advantage of not</span>
+<span class="sd">        would be preferable in most cases, because it is called under the hood, and the performance advantage of not</span>
 <span class="sd">        having to look up value details is gone.</span>
 
 <span class="sd">        Arguments:</span>
@@ -4485,6 +4501,9 @@ typically done by a frontend. The return types of each method are json seriable 
 
     <span class="k">def</span> <span class="nf">list_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;List all available values, optionally filter.</span>
+
+<span class="sd">        Retrieve information about all values that are available in the current kiara context session (both stored</span>
+<span class="sd">        and non-stored).</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            matcher_params: the (optional) filter parameters, check the [ValueMatcher][kiara.models.values.matchers.ValueMatcher] class for available parameters</span>
@@ -5374,7 +5393,8 @@ the value type of the source value, and the provided target format.</p>
 
     <div class="doc doc-contents ">
 
-      <p>Create an Operation instance.</p>
+      <p>Create an <a class="autorefs autorefs-internal" href="../../../models/module/operation/#kiara.models.module.operation.Operation">Operation</a> instance for the specified module type and (optional) config.</p>
+<p>This can be used to get information about the operation itself, it's inputs &amp; outputs schemas, documentation etc.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -5421,7 +5441,9 @@ the value type of the source value, and the provided target format.</p>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">module_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Create an Operation instance.</span>
+    <span class="sd">&quot;&quot;&quot;Create an [Operation][kiara.models.module.operation.Operation] instance for the specified module type and (optional) config.</span>
+
+<span class="sd">    This can be used to get information about the operation itself, it&#39;s inputs &amp; outputs schemas, documentation etc.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        module_type: the registered name of the module</span>
@@ -5664,6 +5686,7 @@ instead.</p>
     <div class="doc doc-contents ">
 
       <p>Return the operation instance with the specified id.</p>
+<p>This can be used to get information about a specific operation, like inputs/outputs scheman, documentation, etc.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -5684,13 +5707,33 @@ instead.</p>
       </tr>
   </tbody>
 </table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Operation</code></td>
+      <td><p>operation instance data</p></td>
+    </tr>
+  </tbody>
+</table>
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Return the operation instance with the specified id.</span>
 
+<span class="sd">    This can be used to get information about a specific operation, like inputs/outputs scheman, documentation, etc.</span>
+
 <span class="sd">    Arguments:</span>
 <span class="sd">        operation_id: the operation id</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        operation instance data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="n">operation_id</span><span class="p">)</span>
@@ -5803,6 +5846,21 @@ instead.</p>
       </tr>
   </tbody>
 </table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>OperationInfo</code></td>
+      <td><p>augmented operation instance data</p></td>
+    </tr>
+  </tbody>
+</table>
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_operation_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationInfo</span><span class="p">:</span>
@@ -5813,6 +5871,9 @@ instead.</p>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        operation_id: the operation id</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        augmented operation instance data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="n">operation_id</span><span class="p">)</span>
@@ -6039,11 +6100,11 @@ instead.</p>
 
     <div class="doc doc-contents ">
 
-      <p>List all available value ids.</p>
+      <p>List all available value ids for this kiara context.</p>
 <p>This method exists mainly so frontend can retrieve a list of all value_ids that exists on the backend without
 having to look up the details of each value (like <a class="autorefs autorefs-internal" href="#kiara.interfaces.python_api.KiaraAPI.list_values">list_values</a>
 does). This method can also be used with a matcher, but in this case the <a class="autorefs autorefs-internal" href="#kiara.interfaces.python_api.KiaraAPI.list_values">list_values</a>
-would be preferrable in most cases, because it is called under the hood, and the performance advantage of not
+would be preferable in most cases, because it is called under the hood, and the performance advantage of not
 having to look up value details is gone.</p>
 
 <p><strong>Parameters:</strong></p>
@@ -6083,12 +6144,12 @@ having to look up value details is gone.</p>
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_value_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;List all available value ids.</span>
+    <span class="sd">&quot;&quot;&quot;List all available value ids for this kiara context.</span>
 
 <span class="sd">    This method exists mainly so frontend can retrieve a list of all value_ids that exists on the backend without</span>
 <span class="sd">    having to look up the details of each value (like [list_values][kiara.interfaces.python_api.KiaraAPI.list_values]</span>
 <span class="sd">    does). This method can also be used with a matcher, but in this case the [list_values][kiara.interfaces.python_api.KiaraAPI.list_values]</span>
-<span class="sd">    would be preferrable in most cases, because it is called under the hood, and the performance advantage of not</span>
+<span class="sd">    would be preferable in most cases, because it is called under the hood, and the performance advantage of not</span>
 <span class="sd">    having to look up value details is gone.</span>
 
 <span class="sd">    Arguments:</span>
@@ -6422,7 +6483,7 @@ instead.</p>
   <tbody>
     <tr>
       <td><code>Mapping[str, kiara.models.module.operation.Operation]</code></td>
-      <td><p>a dictionary with the operation id as key, and a [kiara.models.module.operation.Operation] instance as value</p></td>
+      <td><p>a dictionary with the operation id as key, and [kiara.models.module.operation.Operation] instance data as value</p></td>
     </tr>
   </tbody>
 </table>
@@ -6438,7 +6499,7 @@ instead.</p>
 <span class="sd">        include_internal: whether to include operations that are predominantly used internally in kiara.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        a dictionary with the operation id as key, and a [kiara.models.module.operation.Operation] instance as value</span>
+<span class="sd">        a dictionary with the operation id as key, and [kiara.models.module.operation.Operation] instance data as value</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">operations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span>
@@ -6485,6 +6546,8 @@ instead.</p>
     <div class="doc doc-contents ">
 
       <p>List all available values, optionally filter.</p>
+<p>Retrieve information about all values that are available in the current kiara context session (both stored
+and non-stored).</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -6524,6 +6587,9 @@ instead.</p>
           <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">list_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;List all available values, optionally filter.</span>
+
+<span class="sd">    Retrieve information about all values that are available in the current kiara context session (both stored</span>
+<span class="sd">    and non-stored).</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        matcher_params: the (optional) filter parameters, check the [ValueMatcher][kiara.models.values.matchers.ValueMatcher] class for available parameters</span>
@@ -6922,6 +6988,7 @@ the value type of the source value, and the provided target format.</p>
     <div class="doc doc-contents ">
 
       <p>Retrieve information about a specific module type.</p>
+<p>This can be used to retrieve information like module documentation and configuration options.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -6962,6 +7029,8 @@ the value type of the source value, and the provided target format.</p>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_module_type_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleTypeInfo</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Retrieve information about a specific module type.</span>
 
+<span class="sd">    This can be used to retrieve information like module documentation and configuration options.</span>
+
 <span class="sd">    Arguments:</span>
 <span class="sd">        module_type: the registered name of the module</span>
 
@@ -6993,6 +7062,9 @@ the value type of the source value, and the provided target format.</p>
     <div class="doc doc-contents ">
 
       <p>Retrieve information for all available module types (or a filtered subset thereof).</p>
+<p>A module type is Python class that inherits from <a class="autorefs autorefs-internal" href="../../../modules/__init__/#kiara.modules.KiaraModule">KiaraModule</a>, and is the basic
+building block for processing pipelines. Module types are not used directly by users, Operations are. Operations
+ are instantiated modules (meaning: the module &amp; some (optional) configuration).</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -7034,6 +7106,10 @@ the value type of the source value, and the provided target format.</p>
     <span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleTypesInfo</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Retrieve information for all available module types (or a filtered subset thereof).</span>
+
+<span class="sd">    A module type is Python class that inherits from [KiaraModule][kiara.modules.KiaraModule], and is the basic</span>
+<span class="sd">    building block for processing pipelines. Module types are not used directly by users, Operations are. Operations</span>
+<span class="sd">     are instantiated modules (meaning: the module &amp; some (optional) configuration).</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        filter: a string (or list of string) the returned module names have to match (all filters in case of list)</span>

@@ -104,20 +104,27 @@ class TemplateRegistry(object):
 
         discovered_plugins = {}
 
-        import kiara_plugin  # type: ignore
+        try:
+            import kiara_plugin  # type: ignore
 
-        plugin_modules = [
-            name
-            for finder, name, ispkg in pkgutil.iter_modules(
-                kiara_plugin.__path__, kiara_plugin.__name__ + "."
-            )
-        ] + [
-            name
-            for finder, name, ispkg in pkgutil.iter_modules()
-            if name.startswith("kiara")
-        ]
+            plugin_modules_available = True
+        except Exception:
+            plugin_modules_available = False
+            plugin_modules = []
 
-        for module_name in plugin_modules:
+        if plugin_modules_available:
+            plugin_modules = [
+                name
+                for finder, name, ispkg in pkgutil.iter_modules(
+                    kiara_plugin.__path__, kiara_plugin.__name__ + "."  # type: ignore
+                )
+            ] + [
+                name
+                for finder, name, ispkg in pkgutil.iter_modules()
+                if name.startswith("kiara")
+            ]
+
+        for module_name in plugin_modules:  # type: ignore
 
             try:
                 module = importlib.import_module(module_name)

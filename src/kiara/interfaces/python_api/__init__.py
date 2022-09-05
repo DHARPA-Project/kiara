@@ -54,6 +54,10 @@ class KiaraAPI(object):
 
     @property
     def context(self) -> "Kiara":
+        """Return the kiara context.
+
+        DON"T USE THIS! This is going away in the production release.
+        """
         return self._kiara
 
     # ==================================================================================================================
@@ -136,11 +140,18 @@ class KiaraAPI(object):
 
     @property
     def operation_ids(self) -> List[str]:
+        """Get a list of all available operation ids."""
         return self.get_operation_ids()
 
     def get_operation_ids(
         self, *filters: str, include_internal: bool = False
     ) -> List[str]:
+        """Get a list of all operation ids that match the specified filter.
+
+        Arguments:
+            filters: a list of filters (all filters must match the operation id for the operation to be included)
+            include_internal: also return internal operations
+        """
 
         if not filters and include_internal:
             return sorted(self.context.operation_registry.operation_ids)
@@ -151,11 +162,23 @@ class KiaraAPI(object):
             )
 
     def get_operation(self, operation_id: str) -> Operation:
-        """Return the operation instance with the specified id."""
+        """Return the operation instance with the specified id.
+
+        Arguments:
+            operation_id: the operation id
+        """
 
         return self.context.operation_registry.get_operation(operation_id=operation_id)
 
     def get_operation_info(self, operation_id: str) -> OperationInfo:
+        """Return the full information for the specified operation id.
+
+        This is similar to the 'get_operation' method, but returns additional information. Only use this instead of
+        'get_operation' if you need the additional info, as it's more expensive to get.
+
+        Arguments:
+            operation_id: the operation id
+        """
 
         op = self.context.operation_registry.get_operation(operation_id=operation_id)
         op_info = OperationInfo.create_from_operation(kiara=self.context, operation=op)
@@ -425,6 +448,12 @@ class KiaraAPI(object):
         value: Union[str, uuid.UUID, ValueLink],
         aliases: Union[str, Iterable[str], None],
     ):
+        """Store the specified value in the (default) value store.
+
+        Arguments:
+            value: the value (or a reference to it)
+            aliases: (Optional) aliases for the value
+        """
 
         if isinstance(aliases, str):
             aliases = [aliases]
@@ -459,6 +488,18 @@ class KiaraAPI(object):
         values: Mapping[str, Union[str, uuid.UUID, ValueLink]],
         alias_map: Mapping[str, Iterable[str]],
     ) -> StoreValuesResult:
+        """Store multiple values into the (default) kiara value store.
+
+        Values are identified by unique keys in both input arguments, the alias map references the key that is used in
+        the 'values' argument.
+
+        Arguments:
+            values: a map of value keys/values
+            alias_map: a map of value keys aliases
+
+        Returns:
+            an object outlining which values (identified by the specified value key) where stored and how
+        """
 
         result = {}
         for field_name, value in values.items():
@@ -687,6 +728,9 @@ class KiaraAPI(object):
 
         This is a convenience method that auto-detects what is meant by the 'operation' string input argument.
 
+        In general, try to avoid this method and use 'queue_job', 'get_job' and 'retrieve_job_result' manually instead,
+        since this is a blocking operation.
+
         Arguments:
             operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..
             inputs: the operation inputs
@@ -711,6 +755,7 @@ class KiaraAPI(object):
         return job_status
 
     def retrieve_job_result(self, job_id: Union[str, uuid.UUID]) -> ValueMap:
+        """Retrieve the result(s) of the specified job."""
 
         if isinstance(job_id, str):
             job_id = uuid.UUID(job_id)

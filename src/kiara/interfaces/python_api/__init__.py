@@ -67,6 +67,10 @@ class KiaraAPI(object):
     ) -> ModuleTypesInfo:
         """Retrieve information for all available module types (or a filtered subset thereof).
 
+        A module type is Python class that inherits from [KiaraModule][kiara.modules.KiaraModule], and is the basic
+        building block for processing pipelines. Module types are not used directly by users, Operations are. Operations
+         are instantiated modules (meaning: the module & some (optional) configuration).
+
         Arguments:
             filter: a string (or list of string) the returned module names have to match (all filters in case of list)
 
@@ -106,6 +110,8 @@ class KiaraAPI(object):
     def retrieve_module_type_info(self, module_type: str) -> ModuleTypeInfo:
         """Retrieve information about a specific module type.
 
+        This can be used to retrieve information like module documentation and configuration options.
+
         Arguments:
             module_type: the registered name of the module
 
@@ -120,7 +126,9 @@ class KiaraAPI(object):
     def create_operation(
         self, module_type: str, module_config: Union[Mapping[str, Any], None] = None
     ) -> Operation:
-        """Create an Operation instance.
+        """Create an [Operation][kiara.models.module.operation.Operation] instance for the specified module type and (optional) config.
+
+        This can be used to get information about the operation itself, it's inputs & outputs schemas, documentation etc.
 
         Arguments:
             module_type: the registered name of the module
@@ -164,8 +172,13 @@ class KiaraAPI(object):
     def get_operation(self, operation_id: str) -> Operation:
         """Return the operation instance with the specified id.
 
+        This can be used to get information about a specific operation, like inputs/outputs scheman, documentation, etc.
+
         Arguments:
             operation_id: the operation id
+
+        Returns:
+            operation instance data
         """
 
         return self.context.operation_registry.get_operation(operation_id=operation_id)
@@ -178,6 +191,9 @@ class KiaraAPI(object):
 
         Arguments:
             operation_id: the operation id
+
+        Returns:
+            augmented operation instance data
         """
 
         op = self.context.operation_registry.get_operation(operation_id=operation_id)
@@ -194,7 +210,7 @@ class KiaraAPI(object):
             include_internal: whether to include operations that are predominantly used internally in kiara.
 
         Returns:
-            a dictionary with the operation id as key, and a [kiara.models.module.operation.Operation] instance as value
+            a dictionary with the operation id as key, and [kiara.models.module.operation.Operation] instance data as value
         """
 
         operations = self.context.operation_registry.operations
@@ -257,12 +273,12 @@ class KiaraAPI(object):
     # methods relating to values and data
 
     def get_value_ids(self, **matcher_params) -> List[uuid.UUID]:
-        """List all available value ids.
+        """List all available value ids for this kiara context.
 
         This method exists mainly so frontend can retrieve a list of all value_ids that exists on the backend without
         having to look up the details of each value (like [list_values][kiara.interfaces.python_api.KiaraAPI.list_values]
         does). This method can also be used with a matcher, but in this case the [list_values][kiara.interfaces.python_api.KiaraAPI.list_values]
-        would be preferrable in most cases, because it is called under the hood, and the performance advantage of not
+        would be preferable in most cases, because it is called under the hood, and the performance advantage of not
         having to look up value details is gone.
 
         Arguments:
@@ -281,6 +297,9 @@ class KiaraAPI(object):
 
     def list_values(self, **matcher_params: Any) -> Dict[uuid.UUID, Value]:
         """List all available values, optionally filter.
+
+        Retrieve information about all values that are available in the current kiara context session (both stored
+        and non-stored).
 
         Arguments:
             matcher_params: the (optional) filter parameters, check the [ValueMatcher][kiara.models.values.matchers.ValueMatcher] class for available parameters

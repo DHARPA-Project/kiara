@@ -234,6 +234,47 @@ class StringType(AnyType[str, DataTypeConfig]):
         return value_str.encode()
 
 
+class BooleanType(AnyType[bool, DataTypeConfig]):
+    "A boolean."
+
+    _data_type_name = "boolean"
+
+    @classmethod
+    def python_class(cls) -> Type:
+        return bool
+
+    def serialize(self, data: bool) -> "SerializedData":
+        result = self.serialize_as_json(data)
+        return result
+
+    def _retrieve_characteristics(self) -> DataTypeCharacteristics:
+        return SCALAR_CHARACTERISTICS
+
+    # def calculate_size(self, data: bool) -> int:
+    #     return 24
+    #
+    # def calculate_hash(cls, data: bool) -> int:
+    #     return 1 if data else 0
+
+    def parse_python_obj(self, data: Any) -> bool:
+
+        if data is True or data is False:
+            return data
+        elif data == 0:
+            return False
+        elif data == 1:
+            return True
+        elif isinstance(data, str):
+            if data.lower() == "true":
+                return True
+            elif data.lower() == "false":
+                return False
+        raise Exception(f"Can't parse value '{data}' as boolean.")
+
+    def validate(cls, value: Any):
+        pass
+
+
 class DictValueType(AnyType[DictModel, DataTypeConfig]):
     """A dictionary.
 

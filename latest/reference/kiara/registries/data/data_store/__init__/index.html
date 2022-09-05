@@ -4290,14 +4290,23 @@ BaseDataStore            (<a class="autorefs autorefs-internal" title="kiara.reg
     <span class="k">def</span> <span class="nf">_persist_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PersistedData</span><span class="p">:</span>
 
         <span class="c1"># TODO: check if value id is already persisted?</span>
-        <span class="n">persisted_value_info</span><span class="p">:</span> <span class="n">PersistedData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persist_value_data</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">persisted_value_info</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="s2">&quot;Can&#39;t write persisted value info, no load config returned when persisting value.&quot;</span>
-            <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">persisted_value_info</span><span class="p">,</span> <span class="n">PersistedData</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Can&#39;t write persisted value info, invalid result type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">persisted_value_info</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; when persisting value.&quot;</span>
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
+            <span class="n">persisted_value_info</span><span class="p">:</span> <span class="n">PersistedData</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persist_value_data</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">persisted_value_info</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s2">&quot;Can&#39;t write persisted value info, no load config returned when persisting value.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">persisted_value_info</span><span class="p">,</span> <span class="n">PersistedData</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t write persisted value info, invalid result type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">persisted_value_info</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39; when persisting value.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">persisted_value_info</span> <span class="o">=</span> <span class="n">PersistedData</span><span class="p">(</span>
+                <span class="n">archive_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">archive_id</span><span class="p">,</span>
+                <span class="n">data_type</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">,</span>
+                <span class="n">serialization_profile</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span>
+                <span class="n">data_type_config</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">data_type_config</span><span class="p">,</span>
+                <span class="n">chunk_id_map</span><span class="o">=</span><span class="p">{},</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_persist_stored_value_info</span><span class="p">(</span>

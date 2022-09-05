@@ -4208,7 +4208,8 @@ CreateMetadataDestinies        </code>
 
         <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_type</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;value_created&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">attach_metadata</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+                <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">attach_metadata</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
         <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_type</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;value_registered&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
@@ -4346,7 +4347,8 @@ CreateMetadataDestinies        </code>
 
     <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_type</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;value_created&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">attach_metadata</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">attach_metadata</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">get_event_type</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;value_registered&quot;</span><span class="p">:</span>  <span class="c1"># type: ignore</span>

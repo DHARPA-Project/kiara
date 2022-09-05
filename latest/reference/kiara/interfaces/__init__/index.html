@@ -6052,6 +6052,10 @@ typically done by a frontend. The return types of each method are json seriable 
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the kiara context.</span>
+
+<span class="sd">        DON&quot;T USE THIS! This is going away in the production release.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
 
     <span class="c1"># ==================================================================================================================</span>
@@ -6134,11 +6138,18 @@ typically done by a frontend. The return types of each method are json seriable 
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">operation_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of all available operation ids.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_operation_ids</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">get_operation_ids</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">filters</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">include_internal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of all operation ids that match the specified filter.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            filters: a list of filters (all filters must match the operation id for the operation to be included)</span>
+<span class="sd">            include_internal: also return internal operations</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filters</span> <span class="ow">and</span> <span class="n">include_internal</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span><span class="p">)</span>
@@ -6149,11 +6160,23 @@ typically done by a frontend. The return types of each method are json seriable 
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return the operation instance with the specified id.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return the operation instance with the specified id.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            operation_id: the operation id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="n">operation_id</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_operation_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationInfo</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the full information for the specified operation id.</span>
+
+<span class="sd">        This is similar to the &#39;get_operation&#39; method, but returns additional information. Only use this instead of</span>
+<span class="sd">        &#39;get_operation&#39; if you need the additional info, as it&#39;s more expensive to get.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            operation_id: the operation id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="n">operation_id</span><span class="p">)</span>
         <span class="n">op_info</span> <span class="o">=</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">op</span><span class="p">)</span>
@@ -6423,6 +6446,12 @@ typically done by a frontend. The return types of each method are json seriable 
         <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">ValueLink</span><span class="p">],</span>
         <span class="n">aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Store the specified value in the (default) value store.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            value: the value (or a reference to it)</span>
+<span class="sd">            aliases: (Optional) aliases for the value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aliases</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="n">aliases</span><span class="p">]</span>
@@ -6457,6 +6486,18 @@ typically done by a frontend. The return types of each method are json seriable 
         <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">ValueLink</span><span class="p">]],</span>
         <span class="n">alias_map</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StoreValuesResult</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Store multiple values into the (default) kiara value store.</span>
+
+<span class="sd">        Values are identified by unique keys in both input arguments, the alias map references the key that is used in</span>
+<span class="sd">        the &#39;values&#39; argument.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            values: a map of value keys/values</span>
+<span class="sd">            alias_map: a map of value keys aliases</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            an object outlining which values (identified by the specified value key) where stored and how</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -6685,6 +6726,9 @@ typically done by a frontend. The return types of each method are json seriable 
 
 <span class="sd">        This is a convenience method that auto-detects what is meant by the &#39;operation&#39; string input argument.</span>
 
+<span class="sd">        In general, try to avoid this method and use &#39;queue_job&#39;, &#39;get_job&#39; and &#39;retrieve_job_result&#39; manually instead,</span>
+<span class="sd">        since this is a blocking operation.</span>
+
 <span class="sd">        Arguments:</span>
 <span class="sd">            operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..</span>
 <span class="sd">            inputs: the operation inputs</span>
@@ -6709,6 +6753,7 @@ typically done by a frontend. The return types of each method are json seriable 
         <span class="k">return</span> <span class="n">job_status</span>
 
     <span class="k">def</span> <span class="nf">retrieve_job_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Retrieve the result(s) of the specified job.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">job_id</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
@@ -6778,7 +6823,7 @@ typically done by a frontend. The return types of each method are json seriable 
 
 
 
-
+<h6 id="kiara.interfaces.python_api.KiaraAPI-attributes">Attributes<a href="#kiara.interfaces.python_api.KiaraAPI-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
 
   <div class="doc doc-object doc-attribute">
 
@@ -6796,6 +6841,8 @@ typically done by a frontend. The return types of each method are json seriable 
 
     <div class="doc doc-contents ">
 
+      <p>Return the kiara context.</p>
+<p>DON"T USE THIS! This is going away in the production release.</p>
     </div>
 
   </div>
@@ -6818,6 +6865,7 @@ typically done by a frontend. The return types of each method are json seriable 
 
     <div class="doc doc-contents ">
 
+      <p>Get a list of all available operation ids.</p>
     </div>
 
   </div>
@@ -7411,10 +7459,33 @@ instead.</p>
 
       <p>Return the operation instance with the specified id.</p>
 
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>operation_id</code></td>
+        <td><code>str</code></td>
+        <td><p>the operation id</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return the operation instance with the specified id.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Return the operation instance with the specified id.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        operation_id: the operation id</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="n">operation_id</span><span class="p">)</span>
 </code></pre></div>
@@ -7437,12 +7508,44 @@ instead.</p>
 
     <div class="doc doc-contents ">
 
+      <p>Get a list of all operation ids that match the specified filter.</p>
 
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>filters</code></td>
+        <td><code>str</code></td>
+        <td><p>a list of filters (all filters must match the operation id for the operation to be included)</p></td>
+        <td><code>()</code></td>
+      </tr>
+      <tr>
+        <td><code>include_internal</code></td>
+        <td><code>bool</code></td>
+        <td><p>also return internal operations</p></td>
+        <td><code>False</code></td>
+      </tr>
+  </tbody>
+</table>
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_operation_ids</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">filters</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">include_internal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Get a list of all operation ids that match the specified filter.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        filters: a list of filters (all filters must match the operation id for the operation to be included)</span>
+<span class="sd">        include_internal: also return internal operations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">filters</span> <span class="ow">and</span> <span class="n">include_internal</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span><span class="p">)</span>
@@ -7471,10 +7574,40 @@ instead.</p>
 
     <div class="doc doc-contents ">
 
+      <p>Return the full information for the specified operation id.</p>
+<p>This is similar to the 'get_operation' method, but returns additional information. Only use this instead of
+'get_operation' if you need the additional info, as it's more expensive to get.</p>
 
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>operation_id</code></td>
+        <td><code>str</code></td>
+        <td><p>the operation id</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_operation_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationInfo</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return the full information for the specified operation id.</span>
+
+<span class="sd">    This is similar to the &#39;get_operation&#39; method, but returns additional information. Only use this instead of</span>
+<span class="sd">    &#39;get_operation&#39; if you need the additional info, as it&#39;s more expensive to get.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        operation_id: the operation id</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="n">operation_id</span><span class="p">)</span>
     <span class="n">op_info</span> <span class="o">=</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">op</span><span class="p">)</span>
@@ -8550,10 +8683,12 @@ the value type of the source value, and the provided target format.</p>
 
     <div class="doc doc-contents ">
 
+      <p>Retrieve the result(s) of the specified job.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_job_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Retrieve the result(s) of the specified job.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">job_id</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
@@ -8751,6 +8886,8 @@ the value type of the source value, and the provided target format.</p>
 
       <p>Run a job from a operation id, module_name (and config), or pipeline file, wait for the job to finish and retrieve the result.</p>
 <p>This is a convenience method that auto-detects what is meant by the 'operation' string input argument.</p>
+<p>In general, try to avoid this method and use 'queue_job', 'get_job' and 'retrieve_job_result' manually instead,
+since this is a blocking operation.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -8809,6 +8946,9 @@ the value type of the source value, and the provided target format.</p>
     <span class="sd">&quot;&quot;&quot;Run a job from a operation id, module_name (and config), or pipeline file, wait for the job to finish and retrieve the result.</span>
 
 <span class="sd">    This is a convenience method that auto-detects what is meant by the &#39;operation&#39; string input argument.</span>
+
+<span class="sd">    In general, try to avoid this method and use &#39;queue_job&#39;, &#39;get_job&#39; and &#39;retrieve_job_result&#39; manually instead,</span>
+<span class="sd">    since this is a blocking operation.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..</span>
@@ -8922,7 +9062,33 @@ the value type of the source value, and the provided target format.</p>
 
     <div class="doc doc-contents ">
 
+      <p>Store the specified value in the (default) value store.</p>
 
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>value</code></td>
+        <td><code>Union[str, uuid.UUID, kiara.registries.data.ValueLink]</code></td>
+        <td><p>the value (or a reference to it)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>aliases</code></td>
+        <td><code>Union[str, Iterable[str]]</code></td>
+        <td><p>(Optional) aliases for the value</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">store_value</span><span class="p">(</span>
@@ -8930,6 +9096,12 @@ the value type of the source value, and the provided target format.</p>
     <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">ValueLink</span><span class="p">],</span>
     <span class="n">aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
 <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Store the specified value in the (default) value store.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        value: the value (or a reference to it)</span>
+<span class="sd">        aliases: (Optional) aliases for the value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aliases</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="n">aliases</span><span class="p">]</span>
@@ -8978,7 +9150,50 @@ the value type of the source value, and the provided target format.</p>
 
     <div class="doc doc-contents ">
 
+      <p>Store multiple values into the (default) kiara value store.</p>
+<p>Values are identified by unique keys in both input arguments, the alias map references the key that is used in
+the 'values' argument.</p>
 
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>values</code></td>
+        <td><code>Mapping[str, Union[str, uuid.UUID, kiara.registries.data.ValueLink]]</code></td>
+        <td><p>a map of value keys/values</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>alias_map</code></td>
+        <td><code>Mapping[str, Iterable[str]]</code></td>
+        <td><p>a map of value keys aliases</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>StoreValuesResult</code></td>
+      <td><p>an object outlining which values (identified by the specified value key) where stored and how</p></td>
+    </tr>
+  </tbody>
+</table>
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">store_values</span><span class="p">(</span>
@@ -8986,6 +9201,18 @@ the value type of the source value, and the provided target format.</p>
     <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">ValueLink</span><span class="p">]],</span>
     <span class="n">alias_map</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StoreValuesResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Store multiple values into the (default) kiara value store.</span>
+
+<span class="sd">    Values are identified by unique keys in both input arguments, the alias map references the key that is used in</span>
+<span class="sd">    the &#39;values&#39; argument.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        values: a map of value keys/values</span>
+<span class="sd">        alias_map: a map of value keys aliases</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        an object outlining which values (identified by the specified value key) where stored and how</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>

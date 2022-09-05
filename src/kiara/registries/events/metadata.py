@@ -31,7 +31,8 @@ class CreateMetadataDestinies(object):
 
         for event in events:
             if event.get_event_type() == "value_created":  # type: ignore
-                self.attach_metadata(event.value)  # type: ignore
+                if event.value.is_set:  # type: ignore
+                    self.attach_metadata(event.value)  # type: ignore
 
         for event in events:
             if event.get_event_type() == "value_registered":  # type: ignore

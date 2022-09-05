@@ -310,14 +310,23 @@ class BaseDataStore(DataStore):
     def _persist_value(self, value: Value) -> PersistedData:
 
         # TODO: check if value id is already persisted?
-        persisted_value_info: PersistedData = self._persist_value_data(value=value)
-        if not persisted_value_info:
-            raise Exception(
-                "Can't write persisted value info, no load config returned when persisting value."
-            )
-        if not isinstance(persisted_value_info, PersistedData):
-            raise Exception(
-                f"Can't write persisted value info, invalid result type '{type(persisted_value_info)}' when persisting value."
+        if value.is_set:
+            persisted_value_info: PersistedData = self._persist_value_data(value=value)
+            if not persisted_value_info:
+                raise Exception(
+                    "Can't write persisted value info, no load config returned when persisting value."
+                )
+            if not isinstance(persisted_value_info, PersistedData):
+                raise Exception(
+                    f"Can't write persisted value info, invalid result type '{type(persisted_value_info)}' when persisting value."
+                )
+        else:
+            persisted_value_info = PersistedData(
+                archive_id=self.archive_id,
+                data_type=value.data_type_name,
+                serialization_profile="none",
+                data_type_config=value.data_type_config,
+                chunk_id_map={},
             )
 
         self._persist_stored_value_info(

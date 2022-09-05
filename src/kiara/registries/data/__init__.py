@@ -727,6 +727,7 @@ class DataRegistry(object):
 
         if data is SpecialValue.NOT_SET and schema.default is not SpecialValue.NOT_SET:
             if callable(schema.default):
+                raise NotImplementedError()
                 data = schema.default()
             else:
                 data = copy.deepcopy(schema.default)
@@ -790,6 +791,7 @@ class DataRegistry(object):
             kiara_id=self._kiara.id,
             pedigree_output_name=pedigree_output_name,
         )
+
         ID_REGISTRY.update_metadata(v_id, obj=value)
         value._data_registry = self
 
@@ -1027,6 +1029,7 @@ class DataRegistry(object):
                 )
                 values[input_name] = value
             except Exception as e:
+
                 log_exception(e)
 
                 msg: Any = str(e)

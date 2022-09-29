@@ -19,7 +19,7 @@ from typing import (
 )
 
 from kiara.models.events.destiny_registry import DestinyArchiveAddedEvent
-from kiara.models.module.destiniy import Destiny
+from kiara.models.module.destiny import Destiny
 from kiara.models.module.manifest import Manifest
 from kiara.models.values.value import Value
 from kiara.registries.destinies import DestinyArchive, DestinyStore

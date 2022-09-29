@@ -7,7 +7,7 @@
 import os
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
-from kiara.exceptions import NoSuchExecutionTargetException
+from kiara.exceptions import NoSuchExecutionTargetException, NoSuchOperationException
 from kiara.interfaces.python_api.models.info import OperationGroupInfo, OperationInfo
 from kiara.models.module.jobs import ExecutionContext
 from kiara.models.module.manifest import Manifest
@@ -109,11 +109,14 @@ def create_operation(
 
         manifest = kiara.create_manifest("pipeline", config=pipeline_config.dict())
         module = kiara.create_module(manifest=manifest)
+
         operation = Operation.create_from_module(module, doc=pipeline_config.doc)
 
     else:
-        raise Exception(
-            f"Can't assemble operation, invalid operation/module name: {module_or_operation}. Must be registered module or operation name, or file."
+        raise NoSuchOperationException(
+            msg=f"Can't assemble operation, invalid operation/module name: {module_or_operation}. Must be registered module or operation name, or file.",
+            operation_id=module_or_operation,
+            available_operations=sorted(kiara.operation_registry.operation_ids),
         )
         # manifest = Manifest(
         #     module_type=module_or_operation,

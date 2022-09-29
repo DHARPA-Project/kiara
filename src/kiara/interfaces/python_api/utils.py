@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+import structlog
 from typing import Any, Dict, Iterable, List, Mapping, Union
 
-from kiara.interfaces.python_api import logger
+logger = structlog.getLogger()
 
 
 def create_save_config(

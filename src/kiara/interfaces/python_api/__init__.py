@@ -8,6 +8,7 @@ import uuid
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
+from kiara.exceptions import NoSuchWorkflowException
 from kiara.interfaces.python_api.models.info import (
     ModuleTypeInfo,
     ModuleTypesInfo,
@@ -16,7 +17,9 @@ from kiara.interfaces.python_api.models.info import (
     ValueInfo,
     ValuesInfo,
 )
+from kiara.interfaces.python_api.models.workflow import WorkflowMatcher
 from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
+from kiara.interfaces.python_api.workflow import Workflow
 from kiara.models.module.jobs import ActiveJob
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
@@ -24,17 +27,20 @@ from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.rendering import RenderValueResult
 from kiara.models.values.matchers import ValueMatcher
 from kiara.models.values.value import PersistedData, Value, ValueMap
+from kiara.models.workflow import WorkflowGroupInfo, WorkflowInfo, WorkflowMetadata
 from kiara.operations.included_core_operations.filter import FilterOperationType
+from kiara.operations.included_core_operations.pipeline import PipelineOperationDetails
 from kiara.operations.included_core_operations.render_value import (
     RenderValueOperationType,
 )
 from kiara.registries.data import ValueLink
+from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.operations import OP_TYPE
 from kiara.utils import log_exception
 from kiara.utils.operations import create_operation
 
 if TYPE_CHECKING:
-    from kiara.context import Kiara
+    from kiara.context import Kiara, KiaraRuntimeConfig
 
 logger = structlog.getLogger()
 
@@ -48,9 +54,40 @@ class KiaraAPI(object):
     Can be extended for special scenarios and augmented with scenario-specific methdos (Jupyter, web-frontend, ...)
     ."""
 
+    _instances: Dict[uuid.UUID, "KiaraAPI"] = {}
+
+    @classmethod
+    def instance(
+        cls,
+        context: Union["Kiara", str] = None,
+        runtime_config: Union[None, Mapping[str, Any], "KiaraRuntimeConfig"] = None,
+    ) -> "KiaraAPI":
+
+        from kiara.context import Kiara
+
+        if context is not None:
+            if isinstance(context, Kiara):
+                if context.id in cls._instances.keys():
+                    return cls._instances[context.id]
+                else:
+                    api = KiaraAPI(kiara=context)
+                    cls._instances[context.id] = api
+                    return api
+
+        context_obj = Kiara.instance(
+            context_name=context, runtime_config=runtime_config
+        )
+        if context_obj.id in cls._instances.keys():
+            return cls._instances[context_obj.id]
+        else:
+            api = KiaraAPI(kiara=context_obj)
+            cls._instances[context_obj.id] = api
+            return api
+
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
+        self._workflow_cache: Dict[uuid.UUID, Workflow] = {}
 
     @property
     def context(self) -> "Kiara":
@@ -169,19 +206,23 @@ class KiaraAPI(object):
                 self.list_operations(*filters, include_internal=include_internal).keys()
             )
 
-    def get_operation(self, operation_id: str) -> Operation:
+    def get_operation(self, operation: str, allow_external: bool = False) -> Operation:
         """Return the operation instance with the specified id.
 
         This can be used to get information about a specific operation, like inputs/outputs scheman, documentation, etc.
 
         Arguments:
-            operation_id: the operation id
+            operation: the operation id
 
         Returns:
             operation instance data
         """
 
-        return self.context.operation_registry.get_operation(operation_id=operation_id)
+        if not allow_external:
+            op = self.context.operation_registry.get_operation(operation_id=operation)
+        else:
+            op = create_operation(module_or_operation=operation)
+        return op
 
     def get_operation_info(self, operation_id: str) -> OperationInfo:
         """Return the full information for the specified operation id.
@@ -429,6 +470,7 @@ class KiaraAPI(object):
 
             result = {k: result[k] for k in sorted(result.keys())}
         else:
+            # faster if not other matcher params
             all_aliases = self._kiara.alias_registry.all_aliases
             result = {
                 k: self._kiara.data_registry.get_value(f"alias:{k}")
@@ -834,3 +876,195 @@ class KiaraAPI(object):
             )
 
         return render_result.data
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # workflow-related methods
+    @property
+    def workflow_ids(self) -> List[uuid.UUID]:
+        """List all available workflow ids."""
+
+        return list(self.context.workflow_registry.all_workflow_ids)
+
+    @property
+    def workflow_aliases(self) -> List[str]:
+        """ "List all available workflow aliases."""
+
+        return list(self.context.workflow_registry.workflow_aliases.keys())
+
+    def get_workflow(
+        self, workflow: Union[str, uuid.UUID], create_if_necessary: bool = True
+    ) -> Workflow:
+        """Retrieve the workflow instance with the specified id or alias."""
+
+        no_such_alias: bool = False
+        workflow_id: Union[uuid.UUID, None] = None
+        workflow_alias: Union[str, None] = None
+
+        if isinstance(workflow, str):
+            try:
+                workflow_id = uuid.UUID(workflow)
+            except Exception:
+                workflow_alias = workflow
+                try:
+                    workflow_id = self.context.workflow_registry.get_workflow_id(
+                        workflow_alias=workflow
+                    )
+                except NoSuchWorkflowException:
+                    no_such_alias = True
+        else:
+            workflow_id = workflow
+
+        if workflow_id is None:
+            raise Exception(f"Can't retrieve workflow for: {workflow}")
+
+        if workflow_id in self._workflow_cache.keys():
+            return self._workflow_cache[workflow_id]
+
+        if workflow_id is None and not create_if_necessary:
+            if not no_such_alias:
+                msg = f"No workflow with id '{workflow}' registered."
+            else:
+                msg = f"No workflow with alias '{workflow}' registered."
+
+            raise NoSuchWorkflowException(workflow=workflow, msg=msg)
+
+        if workflow_id:
+            # workflow_metadata = self.context.workflow_registry.get_workflow_metadata(
+            #     workflow=workflow_id
+            # )
+            workflow_obj = Workflow(kiara=self.context, workflow=workflow_id)
+            self._workflow_cache[workflow_obj.workflow_id] = workflow_obj
+        else:
+            # means we need to create it
+            workflow_obj = self.create_workflow(workflow_alias=workflow_alias)
+
+        return workflow_obj
+
+    def get_workflow_info(self, workflow: Union[str, uuid.UUID, Workflow]):
+
+        if isinstance(workflow, Workflow):
+            _workflow: Workflow = workflow
+        else:
+            _workflow = self.get_workflow(workflow)
+
+        return WorkflowInfo.create_from_workflow(workflow=_workflow)
+
+    def list_workflows(self, **matcher_params) -> Mapping[uuid.UUID, Workflow]:
+        """List all available workflow sessions, indexed by their unique id."""
+
+        workflows = {}
+
+        matcher = WorkflowMatcher(**matcher_params)
+        if matcher.has_alias:
+            for (
+                alias,
+                workflow_id,
+            ) in self.context.workflow_registry.workflow_aliases.items():
+
+                workflow = self.get_workflow(workflow=workflow_id)
+                workflows[workflow.workflow_id] = workflow
+            return workflows
+        else:
+            for workflow_id in self.context.workflow_registry.all_workflow_ids:
+                workflow = self.get_workflow(workflow=workflow_id)
+                workflows[workflow_id] = workflow
+            return workflows
+
+    def list_workflow_aliases(self, **matcher_params) -> Dict[str, Workflow]:
+        """List all available workflow sessions that have an alias, indexed by alias."""
+
+        if matcher_params:
+            matcher_params["has_alias"] = True
+            workflows = self.list_workflows(**matcher_params)
+            result: Dict[str, Workflow] = {}
+            for workflow in workflows.values():
+                aliases = self.context.workflow_registry.get_aliases(
+                    workflow_id=workflow.workflow_id
+                )
+                for a in aliases:
+                    if a in result.keys():
+                        raise Exception(
+                            f"Duplicate workflow alias '{a}': this is most likely a bug."
+                        )
+                    result[a] = workflow
+            result = {k: result[k] for k in sorted(result.keys())}
+        else:
+            # faster if not other matcher params
+            all_aliases = self.context.workflow_registry.workflow_aliases
+            result = {
+                a: self.get_workflow(workflow=all_aliases[a])
+                for a in sorted(all_aliases.keys())
+            }
+        return result
+
+    def get_workflows_info(self, **matcher_params: Any) -> WorkflowGroupInfo:
+        """Get a map info instances for all available workflows, indexed by (stringified) workflow-id."""
+
+        workflows = self.list_workflows(**matcher_params)
+
+        workflow_infos = WorkflowGroupInfo.create_from_workflows(
+            *workflows.values(),
+            group_title=None,
+            alias_map=self.context.workflow_registry.workflow_aliases,
+        )
+        return workflow_infos
+
+    def get_workflow_aliases_info(self, **matcher_params: Any) -> WorkflowGroupInfo:
+        """Get a map info instances for all available workflows, indexed by alias."""
+
+        workflows = self.list_workflow_aliases(**matcher_params)
+        workflow_infos = WorkflowGroupInfo.create_from_workflows(
+            *workflows.values(),
+            group_title=None,
+            alias_map=self.context.workflow_registry.workflow_aliases,
+        )
+        return workflow_infos
+
+    def create_workflow(
+        self,
+        workflow_alias: Union[None, str] = None,
+        initial_pipeline: Union[None, str] = None,
+        initial_inputs: Union[None, Mapping[str, Any]] = None,
+        save: bool = False,
+    ) -> Workflow:
+
+        if workflow_alias is not None:
+            try:
+                uuid.UUID(workflow_alias)
+                raise Exception(
+                    f"Can't create workflow, provided alias can't be a uuid: {workflow_alias}."
+                )
+            except Exception:
+                pass
+
+        workflow_id = ID_REGISTRY.generate()
+        metadata = WorkflowMetadata(workflow_id=workflow_id)
+
+        workflow_obj = Workflow(kiara=self.context, workflow=metadata)
+        if initial_pipeline:
+            operation = self.get_operation(
+                operation=initial_pipeline, allow_external=True
+            )
+            if operation.module_type == "pipeline":
+                pipeline_details: PipelineOperationDetails = operation.operation_details  # type: ignore
+                workflow_obj.add_steps(*pipeline_details.pipeline_config.steps)
+                input_aliases = pipeline_details.pipeline_config.input_aliases
+                for k, v in input_aliases.items():
+                    workflow_obj.set_input_alias(input_field=k, alias=v)
+                output_aliases = pipeline_details.pipeline_config.output_aliases
+                for k, v in output_aliases.items():
+                    workflow_obj.set_output_alias(output_field=k, alias=v)
+            else:
+                raise NotImplementedError()
+
+            workflow_obj.set_inputs(**operation.module.config.defaults)
+
+        if initial_inputs:
+            workflow_obj.set_inputs(**initial_inputs)
+
+        self._workflow_cache[workflow_obj.workflow_id] = workflow_obj
+
+        if save:
+            workflow_obj.save()
+
+        return workflow_obj

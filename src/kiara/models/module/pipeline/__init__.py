@@ -530,7 +530,7 @@ class PipelineConfig(KiaraModuleConfig):
         description="A map of output aliases, with the location of the output (in the format '[step_id].[output_field]') as key, and the pipeline output field name as value.",
     )
     doc: DocumentationMetadataModel = Field(
-        default="-- n/a --", description="Documentation about what the pipeline does."
+        default="-- n/a --", description="Documentation about what the pipeline does."  # type: ignore
     )
     context: Dict[str, Any] = Field(
         default_factory=dict, description="Metadata for this workflow."
@@ -554,7 +554,7 @@ class PipelineConfig(KiaraModuleConfig):
             if isinstance(step, PipelineStep):
                 steps.append(step)
             elif isinstance(step, Mapping):
-                steps.append(PipelineStep(**step))
+                steps.append(PipelineStep(**step))  # type: ignore
             else:
                 raise TypeError(step)
         return steps
@@ -567,7 +567,7 @@ class PipelineConfig(KiaraModuleConfig):
 
         from kiara.models.module.pipeline.structure import PipelineStructure
 
-        self._structure = PipelineStructure(pipeline_config=self)
+        self._structure = PipelineStructure(pipeline_config=self)  # type: ignore
         return self._structure
 
     def create_renderable(self, **config: Any) -> RenderableType:

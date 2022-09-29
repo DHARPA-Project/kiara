@@ -126,7 +126,7 @@ class StepInputRef(ValueRef):
         default=None, description="A potential pipeline input."
     )
     is_constant: bool = Field(
-        "Whether this input is a constant and can't be changed by the user."
+        description="Whether this input is a constant and can't be changed by the user."
     )
 
     @root_validator(pre=True)
@@ -188,7 +188,7 @@ class PipelineInputRef(ValueRef):
         default_factory=list,
     )
     is_constant: bool = Field(
-        "Whether this input is a constant and can't be changed by the user."
+        description="Whether this input is a constant and can't be changed by the user."
     )
 
     @property

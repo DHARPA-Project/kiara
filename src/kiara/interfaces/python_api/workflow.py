@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+import pytz
 import structlog
 import uuid
+from datetime import datetime
 from slugify import slugify
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Set, Tuple, Union
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
-from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.events.pipeline import ChangedValue, PipelineEvent
@@ -15,15 +16,15 @@ from kiara.models.module.pipeline import (
     PipelineStep,
     StepStatus,
     StepValueAddress,
-    create_input_alias_map,
-    create_output_alias_map,
+    generate_pipeline_endpoint_name,
 )
 from kiara.models.module.pipeline.controller import SinglePipelineController
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineInfo
 from kiara.models.python_class import KiaraModuleInstance
 from kiara.models.values.value import ValueMap
 from kiara.models.values.value_schema import ValueSchema
-from kiara.models.workflow import WorkflowDetails, WorkflowInfo, WorkflowState
+from kiara.models.workflow import WorkflowInfo, WorkflowMetadata, WorkflowState
+from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import find_free_id, log_exception
 
 if TYPE_CHECKING:
@@ -131,113 +132,107 @@ class WorkflowStatus(KiaraModel):
 
 
 class Workflow(object):
-    @classmethod
-    def load(cls, workflow: Union[uuid.UUID, str]):
+    """A wrapper object to make working with workflows easier for frontend code.
 
-        pass
+    This is the type of class everyone advises you against creating in Object-Oriented code, all it contains is basically
+    internal state. In this case, I believe it's warranted because otherwise frontend code would spin out of control,
+    complexity-wise. I'm happy to be proven wrong, though.
 
-    @classmethod
-    def create(
-        cls,
-        alias: Union[None, str] = None,
-        blueprint: Union[str, None] = None,
-        doc: Union[None, str, DocumentationMetadataModel] = None,
-        kiara: Union[None, "Kiara"] = None,
-        overwrite_existing: bool = False,
-    ):
+    None of this is thread-safe (yet).
 
-        if kiara is None:
-            from kiara.context import Kiara
+    This object can be initialized in different ways, depending on circumstances:
 
-            kiara = Kiara.instance()
+     - if you want to create a new workflow object: use 'None' or a WorkflowMetadata object you createed earlier
+         (ensure you don't re-use an existing workflow_id, otherwise it might get overwrittern in the backend)
+     - if you want to create the wrapper object from an existing workflow: provide it's id or alias string
 
-        operation: Union[None, KiaraOperation] = None
-        if blueprint:
-            operation = KiaraOperation(kiara=kiara, operation_name=blueprint)
-            if doc is None:
-                doc = operation.operation.doc
-
-        details = WorkflowDetails(documentation=doc)
-
-        workflow_obj = Workflow(kiara=kiara, workflow=details)
-        if alias:
-            workflow_obj.workflow_alias = alias
-        if blueprint:
-            assert operation
-
-            module = operation.operation.module
-            if isinstance(module.config, PipelineConfig):
-                config: PipelineConfig = module.config
-            else:
-                raise NotImplementedError()
-
-            workflow_obj.add_steps(*config.steps)
-
-        return workflow_obj
+    Arguments:
+        kiara: the kiara context in which this workflow lives
+        workflow: the workflow metadata (or reference to it)
+    """
 
     def __init__(
-        self, kiara: "Kiara", workflow: Union[uuid.UUID, WorkflowDetails, str, None]
+        self, kiara: "Kiara", workflow: Union[None, WorkflowMetadata, uuid.UUID, str]
     ):
 
         self._kiara: Kiara = kiara
+        self._metadata_is_stored: bool = False
+        self._metadata_is_synced: bool = False
+
+        _workflow_id: Union[None, uuid.UUID] = None
+        if workflow is None:
+            _w_id = ID_REGISTRY.generate(comment="New workflow object.")
+            workflow = WorkflowMetadata(workflow_id=_w_id)
+        elif isinstance(workflow, str):
+            try:
+                _workflow_id = uuid.UUID(workflow)
+            except Exception:
+                # means it's an alias
+                _workflow_id = self._kiara.workflow_registry.get_workflow_id(workflow)
+        elif isinstance(workflow, uuid.UUID):
+            _workflow_id = workflow
+
+        if _workflow_id is not None:
+            workflow_metadata = self._kiara.workflow_registry.get_workflow_metadata(
+                workflow=_workflow_id
+            )
+            self._metadata_is_stored = True
+            self._metadata_is_synced = True
+        elif isinstance(workflow, WorkflowMetadata):
+            temp = None
+            workflow_metadata = None
+            try:
+                temp = self._kiara.workflow_registry.get_workflow_metadata(
+                    workflow.workflow_id
+                )
+            except Exception:
+                workflow_metadata = workflow
+
+            if temp is not None:
+                raise Exception(
+                    f"Can't create new workflow with id '{workflow.workflow_id}': id already registered."
+                )
+
+        else:
+            raise Exception(
+                f"Can't find workflow metadata for '{workflow}: invalid type '{type(workflow)}'."
+            )
+
+        assert workflow_metadata is not None
+
+        self._workflow_metadata: WorkflowMetadata = workflow_metadata
+        self._workflow_id: uuid.UUID = self.workflow_metadata.workflow_id
 
         self._execution_context: ExecutionContext = ExecutionContext()
         self._pipeline_controller: WorkflowPipelineController = (
             WorkflowPipelineController(kiara=self._kiara)
         )
 
-        workflow_id = None
-        self._workflow_alias: Union[None, str] = None
-        self._is_stored: bool = False
-        self._workflow_details: WorkflowDetails = None  # type: ignore
-
-        if workflow is None:
-            workflow_id = None
-        if isinstance(workflow, WorkflowDetails):
-            workflow_id = workflow.workflow_id
-        elif isinstance(workflow, uuid.UUID):
-            workflow_id = workflow
-        elif isinstance(workflow, str):
-            try:
-                workflow_id = uuid.UUID(workflow)
-            except Exception:
-                # means it is meant to be an alias
-                self._workflow_alias = workflow
-                try:
-                    self._workflow_details = (
-                        self._kiara.workflow_registry.get_workflow_details(workflow)
-                    )
-                    self._is_stored = True
-                    workflow_id = self._workflow_details.workflow_id
-                except Exception:
-                    pass
-
-        if workflow_id:
-            if self._workflow_details is None:
-                try:
-                    self._workflow_details = (
-                        self._kiara.workflow_registry.get_workflow_details(
-                            workflow=workflow_id
-                        )
-                    )
-                    self._is_stored = True
-                except Exception:
-                    pass
-
-        if self._workflow_details is None:
-            self._workflow_details = WorkflowDetails()
-
         self._all_inputs: Dict[str, Any] = {}
-        self._current_inputs: Union[Dict[str, uuid.UUID], None] = None
-        self._current_outputs: Union[Dict[str, uuid.UUID], None] = None
+        self._current_pipeline_inputs: Union[Dict[str, uuid.UUID], None] = None
+        self._current_pipeline_outputs: Union[Dict[str, uuid.UUID], None] = None
 
         self._steps: Dict[str, PipelineStep] = {}
 
-        self._pipeline_input_aliases: Dict[str, str] = {}
-        self._pipeline_output_aliasess: Dict[str, str] = {}
+        self._current_workflow_inputs_schema: Union[Dict[str, ValueSchema], None] = None
+        self._current_workflow_outputs_schema: Union[
+            Dict[str, ValueSchema], None
+        ] = None
+        self._workflow_input_aliases: Dict[str, str] = dict(
+            workflow_metadata.input_aliases
+        )
+        self._workflow_output_aliases: Dict[str, str] = dict(
+            workflow_metadata.output_aliases
+        )
+
+        self._current_workflow_inputs: Union[Dict[str, uuid.UUID], None] = None
+        self._current_workflow_outputs: Union[Dict[str, uuid.UUID], None] = None
 
         # self._current_state_cid: Union[None, CID] = None
+        self._state_history: Dict[datetime, str] = {}
         self._state_cache: Dict[str, WorkflowState] = {}
+        self._state_output_cache: Dict[str, Set[uuid.UUID]] = {}
+        self._state_jobrecord_cache: Dict[str, Set[uuid.UUID]] = {}
 
         self._job_id_cache: Dict[uuid.UUID, uuid.UUID] = {}
         """Cache to save job ids per output value(s), in order to save jobs if output values are saved."""
@@ -247,61 +242,160 @@ class Workflow(object):
         self._current_info: Union[WorkflowInfo, None] = None
         self._current_state: Union[WorkflowState, None] = None
 
-        if self._workflow_details.workflow_states:
+        if self._workflow_metadata.workflow_states:
             self.load_state()
+
+    def _sync_workflow_metadata(self):
+        """Store/update the metadata of this workflow."""
+
+        self._workflow_metadata = self._kiara.workflow_registry.register_workflow(
+            workflow_details=self._workflow_metadata
+        )
+        self._metadata_is_stored = True
+        self._metadata_is_synced = True
 
     @property
     def workflow_id(self) -> uuid.UUID:
-        return self._workflow_details.workflow_id
+        """Retrieve the globally unique id for this workflow."""
+        return self._workflow_metadata.workflow_id
 
     @property
-    def workflow_alias(self) -> Union[None, str]:
-        return self._workflow_alias
-
-    @workflow_alias.setter
-    def workflow_alias(self, alias: str):
-        self._workflow_alias = alias
-        # TODO: register in registry
+    def workflow_metadata(self) -> WorkflowMetadata:
+        """Retrieve an object that contains metadata for this workflow."""
+        return self._workflow_metadata
 
     @property
-    def details(self) -> WorkflowDetails:
-        return self._workflow_details
+    def is_persisted(self) -> bool:
+        """Check whether this workflow is persisted in it's current state."""
+
+        return self.workflow_metadata.is_persisted
+
+    @property
+    def current_pipeline_inputs_schema(self) -> Mapping[str, ValueSchema]:
+        return self.pipeline.structure.pipeline_inputs_schema
+
+    @property
+    def current_pipeline_inputs(self) -> Mapping[str, uuid.UUID]:
+
+        if self._current_pipeline_inputs is None:
+            self._apply_inputs()
+        assert self._current_pipeline_inputs is not None
+        return self._current_pipeline_inputs
+
+    @property
+    def current_pipeline_input_values(self) -> ValueMap:
+        return self._kiara.data_registry.load_values(
+            values=self.current_pipeline_inputs
+        )
+
+    @property
+    def current_pipeline_outputs_schema(self) -> Mapping[str, ValueSchema]:
+        return self.pipeline.structure.pipeline_outputs_schema
+
+    @property
+    def current_pipeline_outputs(self) -> Mapping[str, uuid.UUID]:
+
+        if self._current_pipeline_outputs is None:
+            try:
+                self.process_steps()
+            except Exception:
+                self._current_pipeline_outputs = (
+                    self.pipeline.get_current_pipeline_outputs()
+                )
+
+        assert self._current_pipeline_outputs is not None
+        return self._current_pipeline_outputs
+
+    @property
+    def current_pipeline_output_values(self) -> ValueMap:
+        return self._kiara.data_registry.load_values(
+            values=self.current_pipeline_outputs
+        )
+
+    @property
+    def input_aliases(self) -> Mapping[str, str]:
+        return self._workflow_input_aliases
+
+    @property
+    def output_aliases(self) -> Mapping[str, str]:
+        return self._workflow_output_aliases
 
     @property
     def current_inputs_schema(self) -> Mapping[str, ValueSchema]:
-        return self.pipeline.structure.pipeline_inputs_schema
+
+        if self._current_workflow_inputs_schema is not None:
+            return self._current_workflow_inputs_schema
+
+        temp = {}
+        # TODO; check correctness when an alias refers to two different inputs
+        for k, v in self.current_pipeline_inputs_schema.items():
+            if k in self._workflow_input_aliases.keys():
+                temp[self._workflow_input_aliases[k]] = v
+            else:
+                temp[k] = v
+        self._current_workflow_inputs_schema = temp
+        return self._current_workflow_inputs_schema
 
     @property
     def current_input_names(self) -> List[str]:
         return sorted(self.current_inputs_schema.keys())
 
     @property
+    def current_inputs(self) -> Mapping[str, uuid.UUID]:
+
+        if self._current_workflow_inputs is not None:
+            return self._current_workflow_inputs
+
+        temp = {}
+        for k, v in self.current_pipeline_inputs.items():
+            if k in self._workflow_input_aliases.keys():
+                temp[self._workflow_input_aliases[k]] = v
+            else:
+                temp[k] = v
+        self._current_workflow_inputs = temp
+        return self._current_workflow_inputs
+
+    @property
+    def current_input_values(self) -> ValueMap:
+        return self._kiara.data_registry.load_values(values=self.current_inputs)
+
+    @property
     def current_outputs_schema(self) -> Mapping[str, ValueSchema]:
-        return self.pipeline.structure.pipeline_outputs_schema
+
+        if self._current_workflow_outputs_schema is not None:
+            return self._current_workflow_outputs_schema
+
+        if not self._workflow_output_aliases:
+            self._current_workflow_outputs_schema = dict(
+                self.current_pipeline_outputs_schema
+            )
+        else:
+            temp = {}
+            for k, v in self._workflow_output_aliases.items():
+                temp[v] = self.current_pipeline_outputs_schema[k]
+            self._current_workflow_outputs_schema = temp
+
+        return self._current_workflow_outputs_schema
 
     @property
     def current_output_names(self) -> List[str]:
         return sorted(self.current_outputs_schema.keys())
 
     @property
-    def current_inputs(self) -> Mapping[str, uuid.UUID]:
-
-        if self._current_inputs is None:
-            self._apply_inputs()
-        assert self._current_inputs is not None
-        return self._current_inputs
-
-    @property
     def current_outputs(self) -> Mapping[str, uuid.UUID]:
 
-        if self._current_outputs is None:
-            try:
-                self.process_steps()
-            except Exception:
-                self._current_outputs = self.pipeline.get_current_pipeline_outputs()
+        if self._current_workflow_outputs is not None:
+            return self._current_workflow_outputs
 
-        assert self._current_outputs is not None
-        return self._current_outputs
+        if not self._workflow_output_aliases:
+            self._current_workflow_outputs = dict(self.current_pipeline_outputs)
+        else:
+            temp: Dict[str, uuid.UUID] = {}
+            for k, v in self._workflow_output_aliases.items():
+                temp[v] = self.current_pipeline_outputs[k]
+            self._current_workflow_outputs = temp
+
+        return self._current_workflow_outputs
 
     @property
     def current_output_values(self) -> ValueMap:
@@ -325,29 +419,27 @@ class Workflow(object):
 
         self._invalidate_pipeline()
 
-        # if not self._steps:
-        #     raise Exception("Can't assemble pipeline, no steps set (yet).")
         steps = list(self._steps.values())
-        input_aliases_temp = create_input_alias_map(steps=steps)
-        input_aliases = {}
-        for k, v in input_aliases_temp.items():
-            if k in self._pipeline_input_aliases.keys():
-                input_aliases[k] = self._pipeline_input_aliases[k]
-            else:
-                input_aliases[k] = v
-
-        if not self._pipeline_output_aliasess:
-            output_aliases = create_output_alias_map(steps=steps)
-        else:
-            output_aliases = self._pipeline_output_aliasess
+        # input_aliases_temp = create_input_alias_map(steps=steps)
+        # input_aliases = {}
+        # for k, v in input_aliases_temp.items():
+        #     if k in self._pipeline_input_aliases.keys():
+        #         input_aliases[k] = self._pipeline_input_aliases[k]
+        #     else:
+        #         input_aliases[k] = v
+        #
+        # if not self._pipeline_output_aliasess:
+        #     output_aliases = create_output_alias_map(steps=steps)
+        # else:
+        #     output_aliases = self._pipeline_output_aliasess
 
         pipeline_config = PipelineConfig.from_config(
             pipeline_name="__workflow__",
             data={
                 "steps": steps,
-                "doc": self.details.documentation,
-                "input_aliases": input_aliases,
-                "output_aliases": output_aliases,
+                "doc": self.workflow_metadata.documentation,
+                # "input_aliases": input_aliases,
+                # "output_aliases": output_aliases,
             },
         )
         structure = pipeline_config.structure
@@ -376,11 +468,11 @@ class Workflow(object):
             str, Mapping[str, Mapping[str, ChangedValue]]
         ] = pipeline.set_pipeline_inputs(inputs=inputs_to_set)
 
-        self._current_inputs = pipeline.get_current_pipeline_inputs()
+        self._current_pipeline_inputs = pipeline.get_current_pipeline_inputs()
 
-        for field_name, value_id in self._current_inputs.items():
+        for field_name, value_id in self._current_pipeline_inputs.items():
             self._all_inputs[field_name] = value_id
-        self._current_outputs = None
+        self._current_pipeline_outputs = None
 
         for stage, steps in pipeline.get_steps_by_stage().items():
             stage_valid = True
@@ -430,7 +522,7 @@ class Workflow(object):
 
         self._job_id_cache.update(output_job_map)
 
-        self._current_outputs = self.pipeline.get_current_pipeline_outputs()
+        self._current_pipeline_outputs = self.pipeline.get_current_pipeline_outputs()
         self._current_state = None
         self._pipeline_info = None
         self._current_info = None
@@ -449,13 +541,26 @@ class Workflow(object):
 
     def set_inputs(self, **inputs: Any):
 
+        _inputs = {}
+        for k, v in inputs.items():
+            match = False
+            for field, alias in self._workflow_input_aliases.items():
+                if k == alias:
+                    match = True
+                    _inputs[field] = v
+
+            if not match and k in self.current_pipeline_inputs_schema.keys():
+                _inputs[k] = v
+
+        inputs = _inputs
+
         invalid = []
         for k, v in inputs.items():
             if k not in self.pipeline.structure.pipeline_inputs_schema.keys():
                 invalid.append(k)
         if invalid:
             raise Exception(
-                f"Can't set pipeline inputs, invalid field(s): '{', '.join(invalid)}'. Available inputs: '{', '.join(self.pipeline.structure.pipeline_inputs_schema.keys())}'"
+                f"Can't set pipeline inputs, invalid field(s): {', '.join(invalid)}. Available inputs: '{', '.join(self.pipeline.structure.pipeline_inputs_schema.keys())}'"
             )
 
         changed = False
@@ -469,8 +574,10 @@ class Workflow(object):
         if changed:
             self._current_info = None
             self._current_state = None
-            self._current_inputs = None
-            self._current_outputs = None
+            self._current_pipeline_inputs = None
+            self._current_pipeline_outputs = None
+            self._current_workflow_inputs = None
+            self._current_workflow_outputs = None
             self._pipeline_info = None
             self._apply_inputs()
 
@@ -506,11 +613,31 @@ class Workflow(object):
 
     def set_input_alias(self, input_field: str, alias: str):
 
-        self._pipeline_input_aliases[input_field] = alias
-        self._invalidate_pipeline()
+        if "." in input_field:
+            tokens = input_field.split(".")
+            if len(tokens) != 2:
+                raise Exception(
+                    f"Invalid input field specification '{input_field}': can only contain a single (or no) '.' character."
+                )
+            input_field = generate_pipeline_endpoint_name(tokens[0], tokens[1])
+
+        self._workflow_input_aliases[input_field] = alias
+        self._current_workflow_inputs = None
+        self._current_workflow_inputs_schema = None
 
     def set_output_alias(self, output_field: str, alias: str):
-        self._pipeline_output_aliasess[output_field] = alias
+
+        if "." in output_field:
+            tokens = output_field.split(".")
+            if len(tokens) != 2:
+                raise Exception(
+                    f"Invalid output field specification '{output_field}': can only contain a single (or no) '.' character."
+                )
+            output_field = generate_pipeline_endpoint_name(tokens[0], tokens[1])
+
+        self._workflow_output_aliases[output_field] = alias
+        self._current_workflow_outputs = None
+        self._current_workflow_outputs_schema = None
 
     def add_step(
         self,
@@ -748,10 +875,10 @@ class Workflow(object):
         """
 
         if workflow_state_id is None:
-            if not self._workflow_details.workflow_states:
+            if not self._workflow_metadata.workflow_states:
                 return None
             else:
-                workflow_state_id = self._workflow_details.last_state_id
+                workflow_state_id = self._workflow_metadata.last_state_id
 
         if workflow_state_id is None:
             raise Exception(
@@ -770,18 +897,20 @@ class Workflow(object):
         self._state_cache[workflow_state_id] = state
 
         self._all_inputs.clear()
-        self._current_inputs = None
+        self._current_pipeline_inputs = None
         self.clear_steps()
         self._invalidate_pipeline()
 
         self.add_steps(*state.steps)
-        self._pipeline_input_aliases = dict(state.pipeline_config.input_aliases)
-        self._pipeline_output_aliasess = dict(state.pipeline_config.output_aliases)
+        # self._workflow_input_aliases = dict(state.input_aliases)
+        # self._workflow_output_aliases = dict(state.output_aliases)
 
         self.set_inputs(**state.inputs)
 
-        assert self._current_inputs == state.inputs
-        self._current_outputs = state.pipeline_info.pipeline_details.pipeline_outputs
+        assert self._current_pipeline_inputs == state.inputs
+        self._current_pipeline_outputs = (
+            state.pipeline_info.pipeline_details.pipeline_outputs
+        )
         self._pipeline_info = state.pipeline_info
         self._current_state = state
         self._current_info = None
@@ -792,7 +921,7 @@ class Workflow(object):
     def all_states(self) -> Mapping[str, WorkflowState]:
 
         missing = []
-        for state_id in self.details.workflow_states.values():
+        for state_id in self.workflow_metadata.workflow_states.values():
             if state_id not in self._state_cache.keys():
                 missing.append(state_id)
 
@@ -825,36 +954,87 @@ class Workflow(object):
         )
         return self._pipeline_info
 
-    def snapshot(self, save: bool = True) -> WorkflowState:
+    def save(self, *aliases: str):
+
+        self._workflow_metadata = self._kiara.workflow_registry.register_workflow(
+            workflow_details=self.workflow_metadata, workflow_aliases=aliases
+        )
+        self._metadata_is_stored = True
+        self._metadata_is_synced = True
+
+    def snapshot(self, save: bool = False) -> WorkflowState:
 
         state = self.current_state
 
-        if not self._is_stored:
-            aliases = []
-            if self._workflow_alias:
-                aliases.append(self._workflow_alias)
-            self._kiara.workflow_registry.register_workflow(
-                workflow_details=self._workflow_details, workflow_aliases=aliases
+        if state.instance_id not in self._state_cache.keys():
+            self._state_cache[state.instance_id] = state
+
+        now = datetime.now(pytz.utc)
+
+        for field_name, value in self.current_pipeline_outputs.items():
+            if value in [NOT_SET_VALUE_ID, NONE_VALUE_ID]:
+                continue
+
+            self._state_output_cache.setdefault(state.instance_id, set()).add(value)
+            self._state_jobrecord_cache.setdefault(state.instance_id, set()).add(
+                self._job_id_cache[value]
             )
-            self._is_stored = True
+
+        self._state_history[now] = state.instance_id
 
         if save:
-            for value in state.inputs.values():
-                self._kiara.data_registry.store_value(value=value)
+            self.register_snapshot(snapshot=state.instance_id)
+        return state
 
-            for value in self.current_outputs.values():
-                if value in [NOT_SET_VALUE_ID, NONE_VALUE_ID]:
-                    continue
-                self._kiara.data_registry.store_value(value=value)
-                job_id = self._job_id_cache[value]
+    def register_snapshot(self, snapshot: Union[datetime, str]):
+
+        timestamps: List[datetime]
+        if isinstance(snapshot, str):
+            if snapshot not in self._state_cache.keys():
+                raise Exception(
+                    f"Can't register snapshot with hash '{snapshot}': no state with this hash available."
+                )
+            state: WorkflowState = self._state_cache[snapshot]
+            timestamps = [
+                _timestamp
+                for _timestamp, _hash in self._state_history.items()
+                if _hash == snapshot
+            ]
+        elif isinstance(snapshot, datetime):
+            if snapshot not in self._state_history.keys():
+                raise Exception(
+                    f"Can't register snapshot with timestamp '{snapshot}': no state with this timestamp available."
+                )
+            state = self._state_cache[self._state_history[snapshot]]
+            timestamps = [snapshot]
+        else:
+            raise Exception(
+                f"Can't register snapshot '{snapshot}': invalid type '{type(snapshot)}'."
+            )
+
+        # input values are stored in the add_workflow_state method on the backend
+
+        if state.instance_id in self._state_output_cache.keys():
+            for value_id in self._state_output_cache[state.instance_id]:
+                self._kiara.data_registry.store_value(value=value_id)
+
+        if state.instance_id in self._state_jobrecord_cache.keys():
+            for job_id in self._state_jobrecord_cache[state.instance_id]:
                 try:
                     self._kiara.job_registry.store_job_record(job_id=job_id)
                 except Exception as e:
-                    print(e)
+                    log_exception(e)
 
-            self._workflow_details = self._kiara.workflow_registry.add_workflow_state(
-                workflow=self._workflow_details, workflow_state=state
+        if not self._metadata_is_stored:
+            self._sync_workflow_metadata()
+
+        for timestamp in timestamps:
+            self._workflow_metadata = self._kiara.workflow_registry.add_workflow_state(
+                workflow=self._workflow_metadata.workflow_id,
+                workflow_state=state,
+                timestamp=timestamp,
             )
+            self._metadata_is_synced = True
 
         return state
 

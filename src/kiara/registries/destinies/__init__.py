@@ -8,7 +8,7 @@ import abc
 import uuid
 from typing import Iterable, Set, Union
 
-from kiara.models.module.destiniy import Destiny
+from kiara.models.module.destiny import Destiny
 from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
 
 

@@ -222,8 +222,19 @@ class Operation(Manifest):
         )
 
         op_id = f"{module.module_type_name}._{module.module_instance_cid}"
+        if module.is_pipeline():
+            from kiara.operations.included_core_operations.pipeline import (
+                PipelineOperationDetails,
+            )
 
-        details = CustomModuleOperationDetails.create_from_module(module=module)
+            details = PipelineOperationDetails.create_operation_details(
+                operation_id=module.config.pipeline_name,
+                pipeline_inputs_schema=module.inputs_schema,
+                pipeline_outputs_schema=module.outputs_schema,
+                pipeline_config=module.config,
+            )
+        else:
+            details = CustomModuleOperationDetails.create_from_module(module=module)
 
         if doc is not None:
             doc = DocumentationMetadataModel.create(doc)

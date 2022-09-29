@@ -12,7 +12,7 @@ import uuid
 from pathlib import Path
 from typing import Set, Tuple, Union
 
-from kiara.models.module.destiniy import Destiny
+from kiara.models.module.destiny import Destiny
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
 from kiara.registries.destinies import DestinyArchive, DestinyStore
 
@@ -22,7 +22,7 @@ logger = structlog.getLogger()
 class FileSystemDestinyArchive(DestinyArchive):
 
     _archive_type_name = "filesystem_destiny_archive"
-    _config_cls = FileSystemArchiveConfig
+    _config_cls = FileSystemArchiveConfig  # type: ignore
 
     @classmethod
     def is_writeable(cls) -> bool:

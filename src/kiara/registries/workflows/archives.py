@@ -5,7 +5,7 @@ import uuid
 from pathlib import Path
 from typing import Dict, Iterable, Mapping, Union
 
-from kiara.models.workflow import WorkflowDetails, WorkflowState
+from kiara.models.workflow import WorkflowMetadata, WorkflowState
 from kiara.registries import ARCHIVE_CONFIG_CLS, FileSystemArchiveConfig
 from kiara.registries.workflows import WorkflowArchive, WorkflowStore
 
@@ -13,7 +13,7 @@ from kiara.registries.workflows import WorkflowArchive, WorkflowStore
 class FileSystemWorkflowArchive(WorkflowArchive):
 
     _archive_type_name = "filesystem_workflow_archive"
-    _config_cls = FileSystemArchiveConfig
+    _config_cls = FileSystemArchiveConfig  # type: ignore
 
     def __init__(self, archive_id: uuid.UUID, config: ARCHIVE_CONFIG_CLS):
 
@@ -81,7 +81,7 @@ class FileSystemWorkflowArchive(WorkflowArchive):
             result.append(workflow_id)
         return result
 
-    def retrieve_workflow_details(self, workflow_id: uuid.UUID) -> WorkflowDetails:
+    def retrieve_workflow_details(self, workflow_id: uuid.UUID) -> WorkflowMetadata:
 
         workflow_path = self.get_workflow_details_path(workflow_id=workflow_id)
         if not workflow_path.exists():
@@ -92,7 +92,7 @@ class FileSystemWorkflowArchive(WorkflowArchive):
         workflow_json = workflow_path.read_text()
 
         workflow_data = orjson.loads(workflow_json)
-        workflow = WorkflowDetails(**workflow_data)
+        workflow = WorkflowMetadata(**workflow_data)
         workflow._kiara = self.kiara_context
 
         return workflow
@@ -134,23 +134,23 @@ class FileSystemWorkflowStore(FileSystemWorkflowArchive, WorkflowStore):
 
     _archive_type_name = "filesystem_workflow_store"
 
-    def _register_workflow_details(self, workflow_details: WorkflowDetails):
+    def _register_workflow_metadata(self, workflow_metadata: WorkflowMetadata):
 
         workflow_path = self.get_workflow_details_path(
-            workflow_id=workflow_details.workflow_id
+            workflow_id=workflow_metadata.workflow_id
         )
 
         if workflow_path.exists():
             raise Exception(
-                f"Can't register workflow with id '{workflow_details.workflow_id}': id already registered."
+                f"Can't register workflow with id '{workflow_metadata.workflow_id}': id already registered."
             )
 
         workflow_path.parent.mkdir(parents=True, exist_ok=False)
 
-        workflow_json = workflow_details.json()
+        workflow_json = workflow_metadata.json()
         workflow_path.write_text(workflow_json)
 
-    def _update_workflow_details(self, workflow_details: WorkflowDetails):
+    def _update_workflow_details(self, workflow_details: WorkflowMetadata):
 
         workflow_path = self.get_workflow_details_path(
             workflow_id=workflow_details.workflow_id

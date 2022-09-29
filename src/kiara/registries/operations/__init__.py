@@ -20,6 +20,7 @@ from typing import (
     Union,
 )
 
+from kiara.exceptions import NoSuchOperationException
 from kiara.interfaces.python_api.models.info import (
     OperationTypeClassesInfo,
     OperationTypeInfo,
@@ -427,7 +428,10 @@ class OperationRegistry(object):
     def get_operation(self, operation_id: str) -> Operation:
 
         if operation_id not in self.operation_ids:
-            raise Exception(f"No operation registered with id: {operation_id}")
+            raise NoSuchOperationException(
+                operation_id=operation_id,
+                available_operations=sorted(self.operation_ids),
+            )
 
         op = self.operations[operation_id]
         return op

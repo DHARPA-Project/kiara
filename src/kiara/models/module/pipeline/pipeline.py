@@ -199,11 +199,17 @@ class Pipeline(object):
     def get_current_pipeline_inputs(self) -> Dict[str, uuid.UUID]:
         """All (pipeline) input values of this pipeline."""
 
+        if not self._structure.steps:
+            return {}
+
         alias_map = self._all_values.get_alias("pipeline.inputs")
         return alias_map.get_all_value_ids()  # type: ignore
 
     def get_current_pipeline_outputs(self) -> Dict[str, uuid.UUID]:
         """All (pipeline) output values of this pipeline."""
+
+        if not self._structure.steps:
+            return {}
 
         alias_map = self._all_values.get_alias("pipeline.outputs")
         return alias_map.get_all_value_ids()  # type: ignore

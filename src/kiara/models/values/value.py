@@ -444,7 +444,7 @@ class SerializedData(KiaraModel):
     )
     metadata: SerializationMetadata = Field(
         description="Optional metadata describing aspects of the serialization used.",
-        default_factory=dict,
+        default_factory=SerializationMetadata,
     )
 
     hash_codec: str = Field(

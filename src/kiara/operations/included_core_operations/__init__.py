@@ -57,12 +57,6 @@ class CustomModuleOperationDetails(OperationDetails):
         )
         return self._op_schema
 
-    # def create_module_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
-    #     return inputs
-    #
-    # def create_operation_outputs(self, outputs: ValueMap) -> Mapping[str, Value]:
-    #     return outputs
-
 
 class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
 

@@ -6,13 +6,16 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import abc
 import datetime
+import pytz
 import structlog
 import uuid
-from typing import TYPE_CHECKING, Callable, Dict, Iterable, Mapping, Union
+from typing import TYPE_CHECKING, Callable, Dict, Iterable, List, Mapping, Union
 
+from kiara.exceptions import NoSuchWorkflowException
 from kiara.models.events.workflow_registry import WorkflowArchiveAddedEvent
-from kiara.models.workflow import WorkflowDetails, WorkflowState
+from kiara.models.workflow import WorkflowMetadata, WorkflowState
 from kiara.registries import BaseArchive
+from kiara.registries.ids import ID_REGISTRY
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -74,29 +77,31 @@ class WorkflowStore(WorkflowArchive):
         return True
 
     def register_workflow(
-        self, workflow_details: WorkflowDetails, workflow_aliases: Iterable[str] = None
+        self,
+        workflow_metadata: WorkflowMetadata,
+        workflow_aliases: Iterable[str] = None,
     ):
 
-        self._register_workflow_details(workflow_details=workflow_details)
+        self._register_workflow_metadata(workflow_metadata=workflow_metadata)
         if workflow_aliases:
             if isinstance(workflow_aliases, str):
                 workflow_aliases = [workflow_aliases]
             for workflow_alias in workflow_aliases:
                 self.register_alias(
-                    workflow_id=workflow_details.workflow_id, alias=workflow_alias
+                    workflow_id=workflow_metadata.workflow_id, alias=workflow_alias
                 )
-        return workflow_details
+        return workflow_metadata
 
-    def update_workflow(self, workflow_details: WorkflowDetails):
+    def update_workflow(self, workflow_details: WorkflowMetadata):
 
         self._update_workflow_details(workflow_details=workflow_details)
 
     @abc.abstractmethod
-    def _register_workflow_details(self, workflow_details: WorkflowDetails):
+    def _register_workflow_metadata(self, workflow_metadata: WorkflowMetadata):
         pass
 
     @abc.abstractmethod
-    def _update_workflow_details(self, workflow_details: WorkflowDetails):
+    def _update_workflow_details(self, workflow_details: WorkflowMetadata):
         pass
 
     @abc.abstractmethod
@@ -126,7 +131,7 @@ class WorkflowRegistry(object):
         self._all_workflow_ids: Union[Dict[uuid.UUID, str], None] = None
         """All workflow ids, with store alias as values"""
 
-        self._cached_workflows: Dict[uuid.UUID, WorkflowDetails] = {}
+        self._cached_workflow_metadata_items: Dict[uuid.UUID, WorkflowMetadata] = {}
 
     def register_archive(
         self,
@@ -196,6 +201,15 @@ class WorkflowRegistry(object):
         archive = self._workflow_archives.get(archive_id, None)
         return archive
 
+    def get_aliases(self, workflow_id: uuid.UUID) -> List[str]:
+        """Return all aliases for the specified workflow id."""
+
+        return [
+            alias
+            for alias, w_id in self.workflow_aliases.items()
+            if w_id == workflow_id
+        ]
+
     @property
     def workflow_aliases(self) -> Dict[str, uuid.UUID]:
         """Retrieve all registered workflow aliases."""
@@ -237,26 +251,32 @@ class WorkflowRegistry(object):
         self._all_workflow_ids = all_ids
         return self._all_workflow_ids.keys()
 
-    def get_workflow_details(self, workflow: Union[str, uuid.UUID]) -> WorkflowDetails:
+    def get_workflow_id(self, workflow_alias: str) -> uuid.UUID:
+
+        workflow_id = self.workflow_aliases.get(workflow_alias, None)
+
+        if workflow_id is None:
+            raise NoSuchWorkflowException(
+                workflow=workflow_alias,
+                msg=f"Can't retrieve workflow with id/alias '{workflow_alias}': alias not registered.",
+            )
+
+        return workflow_id
+
+    def get_workflow_metadata(
+        self, workflow: Union[str, uuid.UUID]
+    ) -> WorkflowMetadata:
 
         if isinstance(workflow, str):
-            workflow_id: Union[uuid.UUID, None] = self.workflow_aliases.get(
-                workflow, None
-            )
-            if workflow_id is None:
-                try:
-                    workflow_id = uuid.UUID(workflow)
-                except Exception:
-                    pass
-                if workflow_id is None:
-                    raise Exception(
-                        f"Can't retrieve workflow with alias '{workflow}': alias not registered."
-                    )
+            try:
+                workflow_id = uuid.UUID(workflow)
+            except Exception:
+                workflow_id = self.get_workflow_id(workflow_alias=workflow)
         else:
             workflow_id = workflow
 
-        if workflow_id in self._cached_workflows.keys():
-            return self._cached_workflows[workflow_id]
+        if workflow_id in self._cached_workflow_metadata_items.keys():
+            return self._cached_workflow_metadata_items[workflow_id]
 
         if self._all_workflow_ids is None:
             self.all_workflow_ids  # noqa
@@ -265,9 +285,9 @@ class WorkflowRegistry(object):
         store = self._workflow_archives[store_alias]
 
         workflow_details = store.retrieve_workflow_details(workflow_id=workflow_id)
-        # workflow_details._kiara = self._kiara
-        # workflow = Workflow(kiara=self._kiara, workflow_details=workflow_details)
-        self._cached_workflows[workflow_id] = workflow_details
+        # workflow_metadata._kiara = self._kiara
+        # workflow = Workflow(kiara=self._kiara, workflow_metadata=workflow_metadata)
+        self._cached_workflow_metadata_items[workflow_id] = workflow_details
 
         # states = store.retrieve_workflow_states(workflow_id=workflow_id)
         # workflow._snapshots = states
@@ -277,9 +297,18 @@ class WorkflowRegistry(object):
 
     def register_workflow(
         self,
-        workflow_details: Union[None, WorkflowDetails, str] = None,
+        workflow_details: Union[None, WorkflowMetadata, str] = None,
         workflow_aliases: Union[Iterable[str], None] = None,
-    ) -> WorkflowDetails:
+    ) -> WorkflowMetadata:
+        """Register a workflow.
+
+        If no details are specified, a new WorkflowMetadata object will be created. If a string is provided, a new
+        WorkflowMetadata object will be created that uses the string as documentation/description.
+
+        Arguments:
+            workflow_details: the (optional) metadata of the workflow
+            workflow_aliases: (optional) aliases to register the workflow under
+        """
 
         if workflow_aliases:
             for workflow_alias in workflow_aliases:
@@ -292,51 +321,31 @@ class WorkflowRegistry(object):
         store: WorkflowStore = self.get_archive(archive_id=store_name)  # type: ignore
 
         if workflow_details is None:
-            workflow_details = WorkflowDetails()
+            _workflow_id = ID_REGISTRY.generate(comment="New workflow object.")
+            workflow_details = WorkflowMetadata(workflow_id=_workflow_id)
             workflow_details._kiara = self._kiara
         elif isinstance(workflow_details, str):
-            workflow_details = WorkflowDetails(documentation=workflow_details)  # type: ignore
+            workflow_details = WorkflowMetadata(documentation=workflow_details)  # type: ignore
             workflow_details._kiara = self._kiara
 
-        # workflow_details._kiara = self._kiara
-
-        store.register_workflow(
-            workflow_details=workflow_details, workflow_aliases=workflow_aliases
-        )
-        # workflow = Workflow(kiara=self._kiara, workflow_details=workflow_details)
         if self._all_workflow_ids is None:
             self.all_workflow_ids  # noqa
+
+        store.register_workflow(
+            workflow_metadata=workflow_details, workflow_aliases=workflow_aliases
+        )
+
         self._all_workflow_ids[workflow_details.workflow_id] = store_name  # type: ignore
-        self._cached_workflows[workflow_details.workflow_id] = workflow_details
+        self._cached_workflow_metadata_items[
+            workflow_details.workflow_id
+        ] = workflow_details
 
         if workflow_aliases:
             for workflow_alias in workflow_aliases:
                 self._all_workflow_ids[workflow_details.workflow_id] = store_name  # type: ignore
                 self.workflow_aliases[workflow_alias] = workflow_details.workflow_id
 
-        # if steps:
-        #     workflow.add_steps(*steps)
-        #     self.save_workflow_state(workflow=workflow.workflow_id)
-
         return workflow_details
-
-    # def get_workflow_states(
-    #     self, workflow: Union[uuid.UUID, str]
-    # ) -> Dict[uuid.UUID, WorkflowState]:
-    #
-    #     workflow_details = self.get_workflow_details(workflow=workflow)
-    #     archive_alias = self._workflow_locations[workflow_details.workflow_id]
-    #
-    #     archive = self.get_archive(archive_alias)
-    #     if archive is None:
-    #         raise Exception(
-    #             f"Can't retrieve workflow archive '{archive_alias}', this is most likely a bug."
-    #         )
-    #     states = archive.retrieve_workflow_states(
-    #         workflow_id=workflow_details.workflow_id
-    #     )
-    #
-    #     return states
 
     def get_workflow_state(
         self,
@@ -350,7 +359,7 @@ class WorkflowRegistry(object):
             )
 
         if workflow:
-            workflow_details = self.get_workflow_details(workflow=workflow)
+            workflow_details = self.get_workflow_metadata(workflow=workflow)
             if workflow_state_id is None:
                 workflow_state_id = workflow_details.current_state
             else:
@@ -386,7 +395,7 @@ class WorkflowRegistry(object):
         self, workflow: Union[uuid.UUID, str]
     ) -> Mapping[str, WorkflowState]:
 
-        workflow_details = self.get_workflow_details(workflow=workflow)
+        workflow_details = self.get_workflow_metadata(workflow=workflow)
 
         if self._all_workflow_ids is None:
             self.all_workflow_ids  # noqa
@@ -405,19 +414,29 @@ class WorkflowRegistry(object):
 
     def add_workflow_state(
         self,
-        workflow: Union[str, uuid.UUID, WorkflowDetails],
+        workflow: Union[str, uuid.UUID],
         workflow_state: WorkflowState,
+        timestamp: Union[None, datetime.datetime] = None,
         set_current: bool = True,
-    ) -> WorkflowDetails:
+    ) -> WorkflowMetadata:
 
-        # make sure the workflow is registed
-        created = datetime.datetime.now()
-        if not isinstance(workflow, WorkflowDetails):
-            workflow_details = self.get_workflow_details(workflow=workflow)
-        else:
-            workflow_details = workflow
+        workflow_details = self.get_workflow_metadata(workflow=workflow)
 
-        workflow_details.workflow_states[created] = workflow_state.instance_id
+        if timestamp is None:
+            timestamp = datetime.datetime.now(pytz.utc)
+
+        if timestamp in workflow_details.workflow_states.keys():
+            if (
+                workflow_details.workflow_states[timestamp]
+                == workflow_state.instance_id
+            ):
+                return workflow_details
+            else:
+                raise Exception(
+                    f"Can't register workflow for timestamp '{timestamp}': timestamp already registered."
+                )
+
+        workflow_details.workflow_states[timestamp] = workflow_state.instance_id
 
         for field_name, value_id in workflow_state.inputs.items():
             self._kiara.data_registry.store_value(value=value_id)

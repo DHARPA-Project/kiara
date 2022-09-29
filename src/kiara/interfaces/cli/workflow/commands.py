@@ -8,11 +8,11 @@
 """Data-related sub-commands for the cli."""
 import rich_click as click
 import structlog
-from typing import Tuple, Union
+from typing import Any, Dict, Tuple, Union
 
+from kiara import KiaraAPI
 from kiara.context import Kiara
 from kiara.interfaces.python_api.workflow import Workflow
-from kiara.models.workflow import WorkflowGroupInfo
 from kiara.utils.cli import dict_from_cli_args, terminal_print, terminal_print_model
 from kiara.utils.yaml import StringYAML
 
@@ -35,48 +35,53 @@ def workflow(ctx):
 def list(ctx, all):
     """List existing workflows."""
 
-    kiara: Kiara = ctx.obj["kiara"]
+    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
 
-    workflows = []
+    if all:
+        workflows = kiara_api.get_workflows_info()
+    else:
+        workflows = kiara_api.get_workflow_aliases_info()
 
-    for workflow_id in kiara.workflow_registry.all_workflow_ids:
-
-        workflow = Workflow(kiara=kiara, workflow=workflow_id)
-        workflows.append(workflow)
-
-    all_aliases = kiara.workflow_registry.workflow_aliases
-
-    workflow_infos = WorkflowGroupInfo.create_from_workflows(
-        *workflows, group_alias=None, alias_map=all_aliases
-    )
-
-    terminal_print_model(workflow_infos)
+    terminal_print_model(workflows)
 
 
 @workflow.command()
-@click.argument("workflow_alias", nargs=1)
+@click.argument("workflow_alias", nargs=1, required=False)
 @click.argument("blueprint", nargs=1, required=False)
+@click.argument("inputs", nargs=-1)
 @click.option(
     "--desc", "-d", help="Description string for the workflow.", required=False
 )
 @click.pass_context
 def create(
-    ctx, workflow_alias: str, blueprint: Union[str, None], desc: Union[str, None] = None
+    ctx,
+    workflow_alias: str,
+    blueprint: Union[str, None],
+    desc: Union[str, None] = None,
+    inputs: Tuple[str, ...] = (),
 ):
     """Create a new workflow."""
 
-    kiara: Kiara = ctx.obj["kiara"]
+    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
 
-    workflow_obj = Workflow.create(
-        alias=workflow_alias, blueprint=blueprint, kiara=kiara
+    inputs_dict: Union[None, Dict[str, Any]] = None
+    if inputs:
+        inputs_dict = dict_from_cli_args(*inputs)
+
+    workflow_obj = kiara_api.create_workflow(
+        workflow_alias=workflow_alias,
+        initial_pipeline=blueprint,
+        initial_inputs=inputs_dict,
     )
+
+    workflow_obj.save(workflow_alias)
 
     workflow_obj.process_steps()
 
-    workflow_obj.snapshot()
+    workflow_obj.snapshot(save=True)
 
     terminal_print_model(
-        workflow_obj.info.create_renderable(),
+        workflow_obj.info,
         in_panel=f"Workflow: [b i]{workflow_alias}[/b i]",
     )
 
@@ -90,13 +95,10 @@ def create(
 def explain(ctx, workflow: str, states: bool):
     """Explain the workflow with the specified id/alias."""
 
-    kiara: Kiara = ctx.obj["kiara"]
-
-    workflow_details = kiara.workflow_registry.get_workflow_details(workflow=workflow)
-
-    workflow_obj = Workflow(kiara=kiara, workflow=workflow_details.workflow_id)
+    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+    workflow_info = kiara_api.get_workflow_info(workflow=workflow)
     terminal_print(
-        workflow_obj.info.create_renderable(include_history=states),
+        workflow_info.create_renderable(include_history=states),
         in_panel=f"Workflow: [b i]{workflow}[/b i]",
     )
 
@@ -117,10 +119,10 @@ def set_input(ctx, workflow: str, inputs: Tuple[str], process: bool):
 
     kiara: Kiara = ctx.obj["kiara"]
 
-    workflow_details = kiara.workflow_registry.get_workflow_details(workflow=workflow)
+    workflow_details = kiara.workflow_registry.get_workflow_metadata(workflow=workflow)
     workflow_obj = Workflow(kiara=kiara, workflow=workflow_details.workflow_id)
 
-    inputs_schema = workflow_obj.current_inputs_schema
+    inputs_schema = workflow_obj.current_pipeline_inputs_schema
     list_keys = []
     for name, value_schema in inputs_schema.items():
         if value_schema.type in ["list"]:

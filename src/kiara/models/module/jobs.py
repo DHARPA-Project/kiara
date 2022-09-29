@@ -35,7 +35,8 @@ class ExecutionContext(KiaraModel):
         description="The path of the working directory.", default_factory=os.getcwd
     )
     pipeline_dir: Union[str, None] = Field(
-        description="The path of the pipeline file that is being executed (if applicable)."
+        description="The path of the pipeline file that is being executed (if applicable).",
+        default=None,
     )
 
 
@@ -124,8 +125,12 @@ class ActiveJob(KiaraModel):
     finished: Union[datetime, None] = Field(
         description="When the job was finished.", default=None
     )
-    results: Union[Dict[str, uuid.UUID], None] = Field(description="The result(s).")
-    error: Union[str, None] = Field(description="Potential error message.")
+    results: Union[Dict[str, uuid.UUID], None] = Field(
+        description="The result(s).", default=None
+    )
+    error: Union[str, None] = Field(
+        description="Potential error message.", default=None
+    )
     _exception: Union[Exception, None] = PrivateAttr(default=None)
 
     def _retrieve_id(self) -> str:

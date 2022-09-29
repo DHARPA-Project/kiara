@@ -78,6 +78,7 @@ class Destiny(Manifest):
             fixed_inputs=fixed_inputs,
             inputs_schema=dict(module.inputs_schema),
             deferred_inputs=deferred_inputs,
+            result_value_id=None,
         )
         destiny._module = module
         ID_REGISTRY.update_metadata(destiny_id, obj=destiny)

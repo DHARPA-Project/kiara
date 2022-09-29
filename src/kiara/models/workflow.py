@@ -6,6 +6,7 @@ from pydantic import Field, PrivateAttr, validator
 from rich import box
 from rich.console import RenderableType
 from rich.panel import Panel
+from rich.syntax import Syntax
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Type, Union
 
@@ -19,8 +20,9 @@ from kiara.models.documentation import (
 from kiara.models.module.pipeline import PipelineConfig, PipelineStep
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineInfo
 from kiara.models.module.pipeline.structure import PipelineStructure
-from kiara.registries.ids import ID_REGISTRY
+from kiara.models.values.value import ValueMap
 from kiara.utils import is_jupyter
+from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -32,7 +34,7 @@ class WorkflowState(KiaraModel):
     def create_from_workflow(self, workflow: "Workflow"):
 
         steps = list(workflow._steps.values())
-        inputs = dict(workflow.current_inputs)
+        inputs = dict(workflow.current_pipeline_inputs)
         info = PipelineInfo.create_from_pipeline(
             kiara=workflow._kiara, pipeline=workflow.pipeline
         )
@@ -58,7 +60,7 @@ class WorkflowState(KiaraModel):
 
     def _retrieve_data_to_hash(self) -> EncodableType:
         return {
-            "pipeline_info": self.pipeline_info.instance_cid,
+            "steps": [s.instance_cid for s in self.steps],
             "inputs": {k: str(v) for k, v in self.inputs.items()},
         }
 
@@ -98,12 +100,11 @@ class WorkflowState(KiaraModel):
             return table
 
 
-class WorkflowDetails(KiaraModel):
+class WorkflowMetadata(KiaraModel):
     _kiara_model_id = "instance.workflow"
 
     workflow_id: uuid.UUID = Field(
-        description="The globally unique uuid for this workflow.",
-        default_factory=ID_REGISTRY.generate,
+        description="The globaly unique uuid for this workflow."
     )
     documentation: DocumentationMetadataModel = Field(
         description="A description for this workflow.",
@@ -122,6 +123,20 @@ class WorkflowDetails(KiaraModel):
     workflow_states: Dict[datetime.datetime, str] = Field(
         description="A history of all the states of this workflow.",
         default_factory=dict,
+    )
+
+    input_aliases: Dict[str, str] = Field(
+        description="A set of aliases that can be used to forward inputs to their (unaliased) pipeline inputs.",
+        default_factory=dict,
+    )
+    output_aliases: Dict[str, str] = Field(
+        description="A set of aliases to make output field names more user friendly.",
+        default_factory=dict,
+    )
+
+    is_persisted: bool = Field(
+        description="Whether this workflow is persisted in it's current state in a kiara store.",
+        default=False,
     )
 
     _kiara: Union["Kiara", None] = PrivateAttr(default=None)
@@ -150,12 +165,16 @@ class WorkflowInfo(ItemInfo):
 
         wf_info = WorkflowInfo.construct(
             type_name=str(workflow.workflow_id),
-            workflow_details=workflow.details,
+            workflow_details=workflow.workflow_metadata,
             workflow_states=workflow.all_states,
             pipeline_info=workflow.pipeline_info,
-            documentation=workflow.details.documentation,
-            authors=workflow.details.authors,
-            context=workflow.details.context,
+            documentation=workflow.workflow_metadata.documentation,
+            authors=workflow.workflow_metadata.authors,
+            context=workflow.workflow_metadata.context,
+            current_input_values=workflow.current_input_values,
+            current_output_values=workflow.current_output_values,
+            input_aliases=dict(workflow.input_aliases),
+            output_aliases=dict(workflow.output_aliases),
         )
         return wf_info
 
@@ -163,12 +182,35 @@ class WorkflowInfo(ItemInfo):
     def category_name(cls) -> str:
         return "workflow"
 
-    workflow_details: WorkflowDetails = Field(description="The workflow details.")
+    @classmethod
+    def base_instance_class(cls) -> Type["Workflow"]:
+        from kiara.interfaces.python_api.workflow import Workflow
+
+        return Workflow
+
+    @classmethod
+    def create_from_instance(cls, kiara: "Kiara", instance: "Workflow", **kwargs):
+
+        return cls.create_from_workflow(workflow=instance)
+
+    workflow_details: WorkflowMetadata = Field(description="The workflow details.")
     workflow_states: Mapping[str, WorkflowState] = Field(
         description="All states for this workflow."
     )
     pipeline_info: PipelineInfo = Field(
         description="The current state of the workflows' pipeline."
+    )
+    current_input_values: ValueMap = Field(
+        description="The current workflow inputs (after aliasing)."
+    )
+    current_output_values: ValueMap = Field(
+        description="The current workflow outputs (after aliasing)."
+    )
+    input_aliases: Dict[str, str] = Field(
+        description="The (current) input aliases for this workflow."
+    )
+    output_aliases: Dict[str, str] = Field(
+        description="The (current) output aliases for this workflow."
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:
@@ -182,8 +224,12 @@ class WorkflowInfo(ItemInfo):
 
         include_doc = config.get("include_doc", True)
         include_authors = config.get("include_authors", True)
+        include_id = config.get("include_id", True)
         include_context = config.get("include_context", True)
         include_history = config.get("include_history", True)
+        include_current_inputs = config.get("include_current_inputs", True)
+        include_current_outputs = config.get("include_current_outputs", True)
+        include_aliases = config.get("include_aliases", True)
         include_current_state = config.get("include_current_state", True)
 
         table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
@@ -197,8 +243,23 @@ class WorkflowInfo(ItemInfo):
             )
         if include_authors:
             table.add_row("author(s)", self.authors.create_renderable(**config))
+        if include_id:
+            table.add_row("workflow id", str(self.workflow_details.workflow_id))
         if include_context:
             table.add_row("context", self.context.create_renderable(**config))
+        if include_aliases:
+            aliases = orjson_dumps(
+                {"inputs": self.input_aliases, "outputs": self.output_aliases}
+            )
+            table.add_row(
+                "current aliases", Syntax(aliases, "json", background_color="default")
+            )
+        if include_current_inputs:
+            inputs_renderable = self.current_input_values.create_renderable(**config)
+            table.add_row("current inputs", inputs_renderable)
+        if include_current_outputs:
+            outputs_renderable = self.current_output_values.create_renderable(**config)
+            table.add_row("current outputs", outputs_renderable)
         if include_history:
             history_table = Table(show_header=False, box=box.SIMPLE)
             history_table.add_column("date", style="i")

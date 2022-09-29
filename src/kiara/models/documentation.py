@@ -110,7 +110,7 @@ class ContextMetadataModel(KiaraModel):
         description="A list of tags for the item.", default_factory=list
     )
     labels: Dict[str, str] = Field(
-        description="A list of labels for the item.", default_factory=list
+        description="A list of labels for the item.", default_factory=dict
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:

@@ -34,14 +34,6 @@ logger = structlog.getLogger()
 
 
 class PipelineOperationDetails(OperationDetails):
-    # @classmethod
-    # def create_from_module(cls, module: KiaraModule):
-    #
-    #     return PipelineOperationDetails(
-    #         operation_id=module.module_type_name,
-    #         pipeline_inputs_schema=module.inputs_schema,
-    #         pipeline_outputs_schema=module.outputs_schema,
-    #     )
 
     pipeline_inputs_schema: Mapping[str, ValueSchema] = Field(
         description="The input schema for the pipeline."

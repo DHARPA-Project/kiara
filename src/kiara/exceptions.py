@@ -254,3 +254,48 @@ class NoSuchValueAliasException(NoSuchValueException):
         if not msg:
             msg = f"No value with alias: {alias}."
         super().__init__(msg)
+
+
+class NoSuchWorkflowException(Exception):
+    def __init__(self, workflow: Union[uuid.UUID, str], msg: Union[str, None] = None):
+        self._workflow: Union[str, uuid.UUID] = workflow
+        if not msg:
+            msg = f"No such workflow: {workflow}"
+        super().__init__(msg)
+
+    @property
+    def alias_requested(self) -> bool:
+
+        if isinstance(self._workflow, str):
+            try:
+                uuid.UUID(self._workflow)
+                return False
+            except Exception:
+                return True
+        else:
+            return False
+
+
+class NoSuchOperationException(Exception):
+    def __init__(
+        self,
+        operation_id: str,
+        available_operations: Iterable[str],
+        msg: Union[None, str] = None,
+    ):
+
+        self._operation_id: str = operation_id
+        self._available_operations: Iterable[str] = available_operations
+
+        if not msg:
+            msg = f"No operation with id: {operation_id} available."
+
+        super().__init__(msg)
+
+    @property
+    def available_operations(self) -> Iterable[str]:
+        return self._available_operations
+
+    @property
+    def operation_id(self) -> str:
+        return self._operation_id

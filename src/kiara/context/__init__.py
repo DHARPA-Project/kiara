@@ -405,14 +405,20 @@ class Kiara(object):
                 if field_aliases:
                     self.alias_registry.register_aliases(value.value_id, *field_aliases)
 
-                stored[field_name] = StoreValueResult.construct(
-                    value=value, aliases=sorted(field_aliases), error=None
+                stored[field_name] = StoreValueResult(
+                    value=value,
+                    aliases=sorted(field_aliases),
+                    error=None,
+                    persisted_data=None,
                 )
 
             except Exception as e:
                 log_exception(e)
-                stored[field_name] = StoreValueResult.construct(
-                    value=value, aliases=sorted(field_aliases), error=str(e)
+                stored[field_name] = StoreValueResult(
+                    value=value,
+                    aliases=sorted(field_aliases),
+                    error=str(e),
+                    persisted_data=None,
                 )
 
         return StoreValuesResult.construct(__root__=stored)

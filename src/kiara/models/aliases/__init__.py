@@ -33,7 +33,7 @@ class AliasValueMap(ValueMap):
     alias: Union[str, None] = Field(description="This maps own (full) alias.")
     version: int = Field(description="The version of this map (in this maps parent).")
     created: Union[datetime.datetime, None] = Field(
-        description="The time this map was created."
+        description="The time this map was created.", default=None
     )
     assoc_schema: Union[ValueSchema, None] = Field(
         description="The schema for this maps associated value."

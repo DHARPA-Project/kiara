@@ -10,7 +10,7 @@ import orjson
 import structlog
 import uuid
 from pydantic import BaseModel, Field
-from typing import TYPE_CHECKING, ClassVar, Generic, Iterable, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Generic, Iterable, Type, TypeVar, Union
 
 from kiara.utils.json import orjson_dumps
 
@@ -42,7 +42,7 @@ NON_ARCHIVE_DETAILS = ArchiveDetails()
 
 class KiaraArchive(abc.ABC):
 
-    _config_cls: ClassVar[Type[ArchiveConfig]] = ArchiveConfig
+    _config_cls = ArchiveConfig  # type: ignore
 
     @classmethod
     @abc.abstractmethod
@@ -109,7 +109,7 @@ class KiaraArchive(abc.ABC):
 
 class BaseArchive(KiaraArchive, Generic[ARCHIVE_CONFIG_CLS]):
 
-    _config_cls = ArchiveConfig
+    _config_cls: Type[ARCHIVE_CONFIG_CLS] = ArchiveConfig  # type: ignore
 
     def __init__(self, archive_id: uuid.UUID, config: ARCHIVE_CONFIG_CLS):
 

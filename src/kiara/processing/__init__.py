@@ -136,7 +136,9 @@ class ModuleProcessor(abc.ABC):
         job_id = ID_REGISTRY.generate(kiara_id=self._kiara.id)
         job_log = JobLog()
 
-        job = ActiveJob.construct(job_id=job_id, job_config=job_config, job_log=job_log)
+        job = ActiveJob(
+            job_id=job_id, job_config=job_config, job_log=job_log, results=None
+        )
         ID_REGISTRY.update_metadata(job_id, obj=job)
         job.job_log.add_log("job created")
 

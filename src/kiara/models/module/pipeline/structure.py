@@ -562,6 +562,7 @@ class PipelineStructure(KiaraModel):
                         value_schema=schema,
                         connected_pipeline_input=connected_pipeline_input.value_name,
                         connected_outputs=None,
+                        is_constant=is_constant,
                     )
                     connected_pipeline_input.connected_inputs.append(
                         step_input_point.address

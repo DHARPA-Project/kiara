@@ -3,9 +3,8 @@ import os
 import uuid
 from rich.console import Group, RenderableType
 from rich.markdown import Markdown
-from typing import Any, Dict, List, Mapping, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
 
-from kiara.context import Kiara
 from kiara.exceptions import FailedJobException, InvalidValuesException
 from kiara.interfaces.python_api.utils import create_save_config
 
@@ -20,6 +19,9 @@ from kiara.utils.output import (
     create_table_from_field_schemas,
     create_value_map_status_renderable,
 )
+
+if TYPE_CHECKING:
+    from kiara.context import Kiara
 
 
 class KiaraOperation(object):

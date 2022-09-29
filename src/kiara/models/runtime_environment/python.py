@@ -6,7 +6,6 @@
 
 import sys
 from functools import lru_cache
-from importlib_metadata import distribution, packages_distributions
 from pydantic import BaseModel, Field
 from rich import box
 from rich.console import RenderableType
@@ -15,6 +14,11 @@ from typing import Any, Dict, List, Literal, Mapping, Union
 
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.utils.output import extract_renderable
+
+try:
+    from importlib.metadata import distribution, packages_distributions
+except Exception:
+    from importlib_metadata import distribution, packages_distributions  # type:ignore
 
 
 class PythonPackage(BaseModel):

@@ -1025,7 +1025,9 @@ class KiaraAPI(object):
         workflow_alias: Union[None, str] = None,
         initial_pipeline: Union[None, str] = None,
         initial_inputs: Union[None, Mapping[str, Any]] = None,
+        documentation: Any = None,
         save: bool = False,
+        force_alias: bool = False,
     ) -> Workflow:
 
         if workflow_alias is not None:
@@ -1038,9 +1040,14 @@ class KiaraAPI(object):
                 pass
 
         workflow_id = ID_REGISTRY.generate()
-        metadata = WorkflowMetadata(workflow_id=workflow_id)
+        metadata = WorkflowMetadata(
+            workflow_id=workflow_id, documentation=documentation
+        )
 
         workflow_obj = Workflow(kiara=self.context, workflow=metadata)
+        if workflow_alias:
+            workflow_obj._pending_aliases.add(workflow_alias)
+
         if initial_pipeline:
             operation = self.get_operation(
                 operation=initial_pipeline, allow_external=True
@@ -1065,6 +1072,8 @@ class KiaraAPI(object):
         self._workflow_cache[workflow_obj.workflow_id] = workflow_obj
 
         if save:
+            if force_alias and workflow_alias:
+                self.context.workflow_registry.unregister_alias(workflow_alias)
             workflow_obj.save()
 
         return workflow_obj

@@ -120,7 +120,7 @@ class WorkflowMetadata(KiaraModel):
     current_state: Union[str, None] = Field(
         description="A reference to the current state of this workflow.", default=None
     )
-    workflow_states: Dict[datetime.datetime, str] = Field(
+    workflow_history: Dict[datetime.datetime, str] = Field(
         description="A history of all the states of this workflow.",
         default_factory=dict,
     )
@@ -144,15 +144,18 @@ class WorkflowMetadata(KiaraModel):
 
     @validator("documentation", pre=True)
     def validate_doc(cls, value):
-        return DocumentationMetadataModel.create(value)
+        if not isinstance(value, DocumentationMetadataModel):
+            return DocumentationMetadataModel.create(value)
+        else:
+            return value
 
     @property
     def last_state_id(self) -> Union[None, str]:
 
-        if not self.workflow_states:
+        if not self.workflow_history:
             return None
-        last_date = max(self.workflow_states.keys())
-        workflow_state_id = self.workflow_states[last_date]
+        last_date = max(self.workflow_history.keys())
+        workflow_state_id = self.workflow_history[last_date]
         return workflow_state_id
 
 
@@ -165,7 +168,7 @@ class WorkflowInfo(ItemInfo):
 
         wf_info = WorkflowInfo.construct(
             type_name=str(workflow.workflow_id),
-            workflow_details=workflow.workflow_metadata,
+            workflow_metadata=workflow.workflow_metadata,
             workflow_states=workflow.all_states,
             pipeline_info=workflow.pipeline_info,
             documentation=workflow.workflow_metadata.documentation,
@@ -193,7 +196,7 @@ class WorkflowInfo(ItemInfo):
 
         return cls.create_from_workflow(workflow=instance)
 
-    workflow_details: WorkflowMetadata = Field(description="The workflow details.")
+    workflow_metadata: WorkflowMetadata = Field(description="The workflow details.")
     workflow_states: Mapping[str, WorkflowState] = Field(
         description="All states for this workflow."
     )
@@ -244,7 +247,7 @@ class WorkflowInfo(ItemInfo):
         if include_authors:
             table.add_row("author(s)", self.authors.create_renderable(**config))
         if include_id:
-            table.add_row("workflow id", str(self.workflow_details.workflow_id))
+            table.add_row("workflow id", str(self.workflow_metadata.workflow_id))
         if include_context:
             table.add_row("context", self.context.create_renderable(**config))
         if include_aliases:
@@ -264,15 +267,15 @@ class WorkflowInfo(ItemInfo):
             history_table = Table(show_header=False, box=box.SIMPLE)
             history_table.add_column("date", style="i")
             history_table.add_column("id")
-            for d, s_id in self.workflow_details.workflow_states.items():
+            for d, s_id in self.workflow_metadata.workflow_history.items():
                 history_table.add_row(str(d), s_id)
-            table.add_row("states", history_table)
+            table.add_row("snapshot timeline", history_table)
 
         if include_current_state:
             current_state_id = (
                 "-- n/a --"
-                if not self.workflow_details.current_state
-                else self.workflow_details.current_state
+                if not self.workflow_metadata.current_state
+                else self.workflow_metadata.current_state
             )
             table.add_row("current state id", current_state_id)
             table.add_row(

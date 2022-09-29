@@ -50,6 +50,12 @@ def list(ctx, all):
 @click.argument("blueprint", nargs=1, required=False)
 @click.argument("inputs", nargs=-1)
 @click.option(
+    "--force-alias",
+    "-f",
+    is_flag=True,
+    help="Force (replace) an existing alias, if equal to the one provided.",
+)
+@click.option(
     "--desc", "-d", help="Description string for the workflow.", required=False
 )
 @click.pass_context
@@ -59,6 +65,7 @@ def create(
     blueprint: Union[str, None],
     desc: Union[str, None] = None,
     inputs: Tuple[str, ...] = (),
+    force_alias: bool = False,
 ):
     """Create a new workflow."""
 
@@ -74,9 +81,10 @@ def create(
         initial_inputs=inputs_dict,
     )
 
-    workflow_obj.save(workflow_alias)
-
     workflow_obj.process_steps()
+
+    if force_alias:
+        kiara_api.context.workflow_registry.unregister_alias(workflow_alias)
 
     workflow_obj.snapshot(save=True)
 
@@ -88,17 +96,14 @@ def create(
 
 @workflow.command()
 @click.argument("workflow", nargs=1)
-@click.option(
-    "--states", "-s", help="Display the history of this workflows states.", is_flag=True
-)
 @click.pass_context
-def explain(ctx, workflow: str, states: bool):
+def explain(ctx, workflow: str):
     """Explain the workflow with the specified id/alias."""
 
     kiara_api: KiaraAPI = ctx.obj["kiara_api"]
     workflow_info = kiara_api.get_workflow_info(workflow=workflow)
     terminal_print(
-        workflow_info.create_renderable(include_history=states),
+        workflow_info.create_renderable(),
         in_panel=f"Workflow: [b i]{workflow}[/b i]",
     )
 

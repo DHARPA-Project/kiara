@@ -7,6 +7,7 @@ from slugify import slugify
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Set, Tuple, Union
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
+from kiara.exceptions import NoSuchWorkflowException
 from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.events.pipeline import ChangedValue, PipelineEvent
@@ -144,49 +145,171 @@ class Workflow(object):
 
      - if you want to create a new workflow object: use 'None' or a WorkflowMetadata object you createed earlier
          (ensure you don't re-use an existing workflow_id, otherwise it might get overwrittern in the backend)
-     - if you want to create the wrapper object from an existing workflow: provide it's id or alias string
+     - if you want to create the wrapper object from an existing workflow: provide its id or alias string
 
     Arguments:
         kiara: the kiara context in which this workflow lives
         workflow: the workflow metadata (or reference to it)
+        load_existing: if set to 'False', a workflow with the provided id/alias can't already exist, if 'True', it must, if set to 'None', kiara tries to be smart and loads if exists, otherwise creates a new one
     """
 
-    def __init__(
-        self, kiara: "Kiara", workflow: Union[None, WorkflowMetadata, uuid.UUID, str]
+    @classmethod
+    def load(
+        cls,
+        workflow: Union[uuid.UUID, str],
+        kiara: Union["Kiara", None] = None,
+        create: bool = False,
+    ):
+        """Load an existing workflow using a workflow id or alias."""
+
+        try:
+            workflow_obj = Workflow(workflow=workflow, kiara=kiara, load_existing=True)
+        except NoSuchWorkflowException as nswe:
+            if create:
+
+                if isinstance(workflow, uuid.UUID):
+                    raise nswe
+                temp = None
+                try:
+                    temp = uuid.UUID(workflow)
+                except Exception:
+                    pass
+                if temp is not None:
+                    raise nswe
+
+                if kiara is None:
+                    from kiara.context import Kiara
+
+                    kiara = Kiara.instance()
+
+                workflow_metadata = kiara.workflow_registry.register_workflow(
+                    workflow_aliases=[workflow]
+                )
+                workflow_obj = Workflow(workflow=workflow_metadata.workflow_id)
+
+        return workflow_obj
+
+    @classmethod
+    def create(
+        cls,
+        alias: Union[None, str] = None,
+        replace_existing_alias: bool = False,
+        doc: Any = None,
+        kiara: Union["Kiara", None] = None,
     ):
 
-        self._kiara: Kiara = kiara
+        if replace_existing_alias and alias is not None:
+            if kiara is None:
+                from kiara.context import Kiara
+
+                kiara = Kiara.instance()
+
+            kiara.workflow_registry.unregister_alias(alias=alias)
+
+        workflow = Workflow(workflow=alias, kiara=kiara, load_existing=False)
+        if doc:
+            workflow.documentation = doc
+        return workflow
+
+    def __init__(
+        self,
+        workflow: Union[None, WorkflowMetadata, uuid.UUID, str] = None,
+        kiara: Union["Kiara", None] = None,
+        load_existing: Union[bool, None] = None,
+    ):
+
+        if kiara is None:
+            from kiara.context import Kiara
+
+            kiara = Kiara.instance()
+
+        self._kiara: "Kiara" = kiara
         self._metadata_is_stored: bool = False
         self._metadata_is_synced: bool = False
 
+        self._pending_aliases: Set[str] = set()
+
         _workflow_id: Union[None, uuid.UUID] = None
+        _workflow_alias: Union[None, str] = None
+        _workflow_metadata: Union[None, WorkflowMetadata] = None
+
         if workflow is None:
+            if load_existing is True:
+                raise Exception(
+                    "Can't create workflow: no workflow reference provided, but 'load_existing' forced to 'True'."
+                )
             _w_id = ID_REGISTRY.generate(comment="New workflow object.")
-            workflow = WorkflowMetadata(workflow_id=_w_id)
+            _workflow_metadata = WorkflowMetadata(workflow_id=_w_id)
         elif isinstance(workflow, str):
             try:
                 _workflow_id = uuid.UUID(workflow)
+                _workflow_metadata = (
+                    self._kiara.workflow_registry.get_workflow_metadata(
+                        workflow=_workflow_id
+                    )
+                )
+                if load_existing is False:
+                    raise Exception(
+                        f"Can't create workflow for id '{_workflow_id}': workflow with this id already registered and 'load_existing' set to 'False'."
+                    )
+                self._metadata_is_stored = True
+                self._metadata_is_synced = True
+            except NoSuchWorkflowException as nswe:
+                # means an uuid was provided
+                raise nswe
             except Exception:
                 # means it's an alias
-                _workflow_id = self._kiara.workflow_registry.get_workflow_id(workflow)
+                _workflow_alias = workflow
+                try:
+                    _workflow_id = self._kiara.workflow_registry.get_workflow_id(
+                        workflow
+                    )
+                    if load_existing is False:
+                        raise Exception(
+                            f"Can't create workflow with alias '{_workflow_alias}': alias already registered, and 'load_existing' set to 'False'."
+                        )
+                    _workflow_metadata = (
+                        self._kiara.workflow_registry.get_workflow_metadata(
+                            workflow=_workflow_id
+                        )
+                    )
+                    self._metadata_is_stored = True
+                    self._metadata_is_synced = True
+                except NoSuchWorkflowException:
+                    # does not exist yet
+                    if load_existing is True:
+                        raise NoSuchWorkflowException(
+                            msg=f"Can't load workflow with alias '{_workflow_alias}': no workflow with this alias registered.",
+                            workflow=_workflow_alias,
+                        )
+                    self._pending_aliases.add(_workflow_alias)
+                    _workflow_id = ID_REGISTRY.generate(comment="New workflow object.")
+                    _workflow_metadata = WorkflowMetadata(workflow_id=_workflow_id)
         elif isinstance(workflow, uuid.UUID):
             _workflow_id = workflow
-
-        if _workflow_id is not None:
-            workflow_metadata = self._kiara.workflow_registry.get_workflow_metadata(
+            if load_existing is False:
+                raise Exception(
+                    f"Can't create workflow for id '{_workflow_id}': 'load_existing' set to 'False'."
+                )
+            _workflow_metadata = self._kiara.workflow_registry.get_workflow_metadata(
                 workflow=_workflow_id
             )
             self._metadata_is_stored = True
             self._metadata_is_synced = True
         elif isinstance(workflow, WorkflowMetadata):
+            if load_existing is True:
+                raise Exception(
+                    f"Can't create workflow with id '{workflow.workflow_id}': 'load_existing' forced to 'True'."
+                )
             temp = None
-            workflow_metadata = None
+            _workflow_metadata = None
             try:
                 temp = self._kiara.workflow_registry.get_workflow_metadata(
                     workflow.workflow_id
                 )
             except Exception:
-                workflow_metadata = workflow
+                _workflow_metadata = workflow
+                _workflow_id = _workflow_metadata.workflow_id
 
             if temp is not None:
                 raise Exception(
@@ -198,9 +321,10 @@ class Workflow(object):
                 f"Can't find workflow metadata for '{workflow}: invalid type '{type(workflow)}'."
             )
 
-        assert workflow_metadata is not None
+        assert _workflow_id is not None
+        assert _workflow_metadata is not None
 
-        self._workflow_metadata: WorkflowMetadata = workflow_metadata
+        self._workflow_metadata: WorkflowMetadata = _workflow_metadata
         self._workflow_id: uuid.UUID = self.workflow_metadata.workflow_id
 
         self._execution_context: ExecutionContext = ExecutionContext()
@@ -219,17 +343,17 @@ class Workflow(object):
             Dict[str, ValueSchema], None
         ] = None
         self._workflow_input_aliases: Dict[str, str] = dict(
-            workflow_metadata.input_aliases
+            _workflow_metadata.input_aliases
         )
         self._workflow_output_aliases: Dict[str, str] = dict(
-            workflow_metadata.output_aliases
+            _workflow_metadata.output_aliases
         )
 
         self._current_workflow_inputs: Union[Dict[str, uuid.UUID], None] = None
         self._current_workflow_outputs: Union[Dict[str, uuid.UUID], None] = None
 
         # self._current_state_cid: Union[None, CID] = None
-        self._state_history: Dict[datetime, str] = {}
+        # self._state_history: Dict[datetime, str] = {}
         self._state_cache: Dict[str, WorkflowState] = {}
         self._state_output_cache: Dict[str, Set[uuid.UUID]] = {}
         self._state_jobrecord_cache: Dict[str, Set[uuid.UUID]] = {}
@@ -242,15 +366,17 @@ class Workflow(object):
         self._current_info: Union[WorkflowInfo, None] = None
         self._current_state: Union[WorkflowState, None] = None
 
-        if self._workflow_metadata.workflow_states:
+        if self._workflow_metadata.workflow_history:
             self.load_state()
 
     def _sync_workflow_metadata(self):
         """Store/update the metadata of this workflow."""
 
         self._workflow_metadata = self._kiara.workflow_registry.register_workflow(
-            workflow_details=self._workflow_metadata
+            workflow_metadata=self._workflow_metadata,
+            workflow_aliases=self._pending_aliases,
         )
+        self._pending_aliases.clear()
         self._metadata_is_stored = True
         self._metadata_is_synced = True
 
@@ -263,6 +389,16 @@ class Workflow(object):
     def workflow_metadata(self) -> WorkflowMetadata:
         """Retrieve an object that contains metadata for this workflow."""
         return self._workflow_metadata
+
+    @property
+    def documentation(self) -> DocumentationMetadataModel:
+        return self.workflow_metadata.documentation
+
+    @documentation.setter
+    def documentation(self, documentation: Any):
+
+        doc = DocumentationMetadataModel.create(documentation)
+        self.workflow_metadata.documentation = doc
 
     @property
     def is_persisted(self) -> bool:
@@ -624,6 +760,8 @@ class Workflow(object):
         self._workflow_input_aliases[input_field] = alias
         self._current_workflow_inputs = None
         self._current_workflow_inputs_schema = None
+        self.workflow_metadata.input_aliases[input_field] = alias
+        self._metadata_is_synced = False
 
     def set_output_alias(self, output_field: str, alias: str):
 
@@ -638,6 +776,8 @@ class Workflow(object):
         self._workflow_output_aliases[output_field] = alias
         self._current_workflow_outputs = None
         self._current_workflow_outputs_schema = None
+        self.workflow_metadata.output_aliases[output_field] = alias
+        self._metadata_is_synced = False
 
     def add_step(
         self,
@@ -875,7 +1015,7 @@ class Workflow(object):
         """
 
         if workflow_state_id is None:
-            if not self._workflow_metadata.workflow_states:
+            if not self._workflow_metadata.workflow_history:
                 return None
             else:
                 workflow_state_id = self._workflow_metadata.last_state_id
@@ -906,8 +1046,7 @@ class Workflow(object):
         # self._workflow_output_aliases = dict(state.output_aliases)
 
         self.set_inputs(**state.inputs)
-
-        assert self._current_pipeline_inputs == state.inputs
+        assert {k: v for k, v in self._current_pipeline_inputs.items() if v not in [NONE_VALUE_ID, NOT_SET_VALUE_ID]} == {k: v for k, v in state.inputs.items() if v not in [NONE_VALUE_ID, NOT_SET_VALUE_ID]}  # type: ignore
         self._current_pipeline_outputs = (
             state.pipeline_info.pipeline_details.pipeline_outputs
         )
@@ -919,9 +1058,10 @@ class Workflow(object):
 
     @property
     def all_states(self) -> Mapping[str, WorkflowState]:
+        """Return a list of all states this workflow had in the past, indexed by the hash of each state."""
 
         missing = []
-        for state_id in self.workflow_metadata.workflow_states.values():
+        for state_id in self.workflow_metadata.workflow_history.values():
             if state_id not in self._state_cache.keys():
                 missing.append(state_id)
 
@@ -956,9 +1096,13 @@ class Workflow(object):
 
     def save(self, *aliases: str):
 
+        self._pending_aliases.update(aliases)
+
         self._workflow_metadata = self._kiara.workflow_registry.register_workflow(
-            workflow_details=self.workflow_metadata, workflow_aliases=aliases
+            workflow_metadata=self.workflow_metadata,
+            workflow_aliases=self._pending_aliases,
         )
+        self._pending_aliases.clear()
         self._metadata_is_stored = True
         self._metadata_is_synced = True
 
@@ -980,7 +1124,8 @@ class Workflow(object):
                 self._job_id_cache[value]
             )
 
-        self._state_history[now] = state.instance_id
+        self.workflow_metadata.workflow_history[now] = state.instance_id
+        self._metadata_is_synced = False
 
         if save:
             self.register_snapshot(snapshot=state.instance_id)
@@ -997,15 +1142,15 @@ class Workflow(object):
             state: WorkflowState = self._state_cache[snapshot]
             timestamps = [
                 _timestamp
-                for _timestamp, _hash in self._state_history.items()
+                for _timestamp, _hash in self.workflow_metadata.workflow_history.items()
                 if _hash == snapshot
             ]
         elif isinstance(snapshot, datetime):
-            if snapshot not in self._state_history.keys():
+            if snapshot not in self.workflow_metadata.workflow_history.keys():
                 raise Exception(
                     f"Can't register snapshot with timestamp '{snapshot}': no state with this timestamp available."
                 )
-            state = self._state_cache[self._state_history[snapshot]]
+            state = self._state_cache[self.workflow_metadata.workflow_history[snapshot]]
             timestamps = [snapshot]
         else:
             raise Exception(
@@ -1027,6 +1172,12 @@ class Workflow(object):
 
         if not self._metadata_is_stored:
             self._sync_workflow_metadata()
+            self._metadata_is_synced = True
+
+        if not self._metadata_is_synced:
+            self._kiara.workflow_registry.update_workflow_metadata(
+                self.workflow_metadata
+            )
 
         for timestamp in timestamps:
             self._workflow_metadata = self._kiara.workflow_registry.add_workflow_state(

@@ -15,20 +15,21 @@
 # ---
 
 # %%
+%env CONSOLE_WIDTH=140
+
 from kiara.interfaces.python_api.workflow import Workflow
 from kiara.utils.jupyter import graph_to_image
 from kiara.utils.cli import terminal_print_model
 
 
 # %% [markdown]
-# # Workflow description
-
-{{ pipeline.doc.full_doc }}
-
 # # Creating the workflow object <a class="anchor" id="create_workflow_obj"></a>
 
+As the first step we create a [`Workflow`](https://dharpa.org/kiara/latest/reference/kiara/interfaces/python_api/workflow/) object, which is a convenience class that manages workflow state, internal consistency and history for us:
+
 # %%
-workflow = Workflow.create("{{ pipeline.pipeline_name }}")
+doc = """{{ pipeline.doc.full_doc }}"""
+workflow = Workflow.create("{{ pipeline.pipeline_name }}", doc=doc, replace_existing_alias=True)
 
 # %% [markdown]
 # # Assembling the workflow <a class="anchor" id="assembly"></a>
@@ -88,3 +89,5 @@ workflow.set_output_alias(output_field="{{ key }}", alias="{{ value }}")
 {% include 'workflow_inputs.j2' %}
 
 {% include 'workflow_outputs.j2' %}
+
+{% include 'workflow_snapshot.j2' %}

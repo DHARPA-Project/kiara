@@ -5,6 +5,7 @@ import uuid
 from pathlib import Path
 from typing import Dict, Iterable, Mapping, Union
 
+from kiara.exceptions import NoSuchWorkflowException
 from kiara.models.workflow import WorkflowMetadata, WorkflowState
 from kiara.registries import ARCHIVE_CONFIG_CLS, FileSystemArchiveConfig
 from kiara.registries.workflows import WorkflowArchive, WorkflowStore
@@ -81,12 +82,13 @@ class FileSystemWorkflowArchive(WorkflowArchive):
             result.append(workflow_id)
         return result
 
-    def retrieve_workflow_details(self, workflow_id: uuid.UUID) -> WorkflowMetadata:
+    def retrieve_workflow_metadata(self, workflow_id: uuid.UUID) -> WorkflowMetadata:
 
         workflow_path = self.get_workflow_details_path(workflow_id=workflow_id)
         if not workflow_path.exists():
-            raise Exception(
-                f"Can't retrieve workflow with id '{workflow_id}': id does not exist."
+            raise NoSuchWorkflowException(
+                workflow=workflow_id,
+                msg=f"Can't retrieve workflow with id '{workflow_id}': id does not exist.",
             )
 
         workflow_json = workflow_path.read_text()
@@ -120,10 +122,10 @@ class FileSystemWorkflowArchive(WorkflowArchive):
         self, workflow_id: uuid.UUID
     ) -> Mapping[str, WorkflowState]:
 
-        details = self.retrieve_workflow_details(workflow_id=workflow_id)
+        details = self.retrieve_workflow_metadata(workflow_id=workflow_id)
 
         result = {}
-        for ws_id in details.workflow_states.values():
+        for ws_id in details.workflow_history.values():
             ws_state = self.retrieve_workflow_state(workflow_state_id=ws_id)
             result[ws_id] = ws_state
 
@@ -147,21 +149,21 @@ class FileSystemWorkflowStore(FileSystemWorkflowArchive, WorkflowStore):
 
         workflow_path.parent.mkdir(parents=True, exist_ok=False)
 
-        workflow_json = workflow_metadata.json()
+        workflow_json = workflow_metadata.json(option=orjson.OPT_NON_STR_KEYS)
         workflow_path.write_text(workflow_json)
 
-    def _update_workflow_details(self, workflow_details: WorkflowMetadata):
+    def _update_workflow_metadata(self, workflow_metadata: WorkflowMetadata):
 
         workflow_path = self.get_workflow_details_path(
-            workflow_id=workflow_details.workflow_id
+            workflow_id=workflow_metadata.workflow_id
         )
 
         if not workflow_path.exists():
             raise Exception(
-                f"Can't update workflow with id '{workflow_details.workflow_id}': id not registered."
+                f"Can't update workflow with id '{workflow_metadata.workflow_id}': id not registered."
             )
 
-        workflow_json = workflow_details.json(option=orjson.OPT_NON_STR_KEYS)
+        workflow_json = workflow_metadata.json(option=orjson.OPT_NON_STR_KEYS)
         workflow_path.write_text(workflow_json)
 
     def register_alias(self, workflow_id: uuid.UUID, alias: str, force: bool = False):
@@ -181,6 +183,16 @@ class FileSystemWorkflowStore(FileSystemWorkflowArchive, WorkflowStore):
             )
 
         alias_path.symlink_to(workflow_path)
+
+    def unregister_alias(self, alias: str) -> bool:
+
+        alias_path = self.get_alias_path(alias=alias)
+
+        if not alias_path.exists():
+            return False
+
+        alias_path.unlink()
+        return True
 
     def add_workflow_state(self, workflow_state: WorkflowState):
 

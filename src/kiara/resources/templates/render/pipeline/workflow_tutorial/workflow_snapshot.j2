@@ -1,0 +1,18 @@
+# %% [markdown]
+# # Workflow snapshot <a class="anchor" id="snapshot"></a>
+
+So far, our workflow only exists in memory. If we want to save it so we can have a look at it again at a later stage, we can snapshot the current state, which will save the current structure of the internal pipeline, as well as all inputs that are currently used. In addition, this will register the workflow under the alias we specified on top of this file when creating the `Workflow` object (in our case: `{{ pipeline.pipeline_name }}`).
+
+If we would not not specify `save=True`, the structure of the pipeline and inputs would still be frozen and kept, but only in memory, and we'd only be able to access it in our current session.
+
+# %%
+workflow.snapshot(save=True)
+
+# %% [markdown]
+Now, we can access our workflow in other environments, for example from the commandline:
+
+# %%
+! kiara workflow list
+
+# %%
+! kiara workflow explain {{ pipeline.pipeline_name }}

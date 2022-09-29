@@ -24,10 +24,10 @@ from mkdocs.structure.pages import Page
 
 from kiara.doc.generate_api_doc import gen_pages_for_module
 
-try:
-    from mkdocs.exceptions import PluginError
-except ImportError:
-    PluginError = SystemExit
+# try:
+#     from mkdocs.exceptions import PluginError
+# except ImportError:
+#     PluginError = SystemExit  # type: ignore
 
 
 class FrklDocumentationPlugin(BasePlugin):

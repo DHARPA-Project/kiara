@@ -16,7 +16,7 @@ from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.utils.output import extract_renderable
 
 try:
-    from importlib.metadata import distribution, packages_distributions
+    from importlib.metadata import distribution, packages_distributions  # type: ignore
 except Exception:
     from importlib_metadata import distribution, packages_distributions  # type:ignore
 

@@ -5813,6 +5813,95 @@ Examples:
     <td>definitions</td>
     <td><table>
   <tr>
+    <td>Manifest</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>A class to hold the type and configuration for a module instance.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>module_type</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Type</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The module type.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>module_config</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Config</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The configuration for the module.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>is_resolved</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Is Resolved</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Whether the configuration of this module was augmented with the module type defaults etc.</td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td>False</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>boolean</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    module_type
+  </li>
+</ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
     <td>StepValueAddress</td>
     <td><table>
   <tr>
@@ -6382,6 +6471,32 @@ For more complex container data_types like array, tables, unions etc, data_types
 </table></td>
   </tr>
   <tr>
+    <td>manifest_src</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest Src</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The original manfifest provided by the user.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/Manifest</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
     <td>input_links</td>
     <td><table>
   <tr>
@@ -6478,6 +6593,9 @@ For more complex container data_types like array, tables, unions etc, data_types
   </li>
   <li>
     step_id
+  </li>
+  <li>
+    manifest_src
   </li>
   <li>
     module_details
@@ -8471,6 +8589,32 @@ For more complex container data_types like array, tables, unions etc, data_types
 </table></td>
   </tr>
   <tr>
+    <td>manifest_src</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest Src</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The original manfifest provided by the user.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/Manifest</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
     <td>input_links</td>
     <td><table>
   <tr>
@@ -8569,6 +8713,9 @@ For more complex container data_types like array, tables, unions etc, data_types
     step_id
   </li>
   <li>
+    manifest_src
+  </li>
+  <li>
     module_details
   </li>
   <li>
@@ -8583,6 +8730,95 @@ For more complex container data_types like array, tables, unions etc, data_types
   <tr>
     <td>definitions</td>
     <td><table>
+  <tr>
+    <td>Manifest</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>A class to hold the type and configuration for a module instance.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>module_type</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Type</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The module type.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>module_config</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Config</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The configuration for the module.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>is_resolved</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Is Resolved</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Whether the configuration of this module was augmented with the module type defaults etc.</td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td>False</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>boolean</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    module_type
+  </li>
+</ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+</table></td>
+  </tr>
   <tr>
     <td>StepValueAddress</td>
     <td><table>
@@ -29343,6 +29579,95 @@ For more complex container data_types like array, tables, unions etc, data_types
 </table></td>
   </tr>
   <tr>
+    <td>Manifest</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>A class to hold the type and configuration for a module instance.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>module_type</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Type</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The module type.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>module_config</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Config</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The configuration for the module.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>is_resolved</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Is Resolved</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Whether the configuration of this module was augmented with the module type defaults etc.</td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td>False</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>boolean</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    module_type
+  </li>
+</ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
     <td>StepValueAddress</td>
     <td><table>
   <tr>
@@ -29848,6 +30173,32 @@ For more complex container data_types like array, tables, unions etc, data_types
 </table></td>
   </tr>
   <tr>
+    <td>manifest_src</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest Src</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The original manfifest provided by the user.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/Manifest</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
     <td>input_links</td>
     <td><table>
   <tr>
@@ -29944,6 +30295,9 @@ For more complex container data_types like array, tables, unions etc, data_types
   </li>
   <li>
     step_id
+  </li>
+  <li>
+    manifest_src
   </li>
   <li>
     module_details
@@ -31972,6 +32326,95 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
 </table></td>
   </tr>
   <tr>
+    <td>Manifest</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>A class to hold the type and configuration for a module instance.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>module_type</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Type</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The module type.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>module_config</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Config</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The configuration for the module.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>is_resolved</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Is Resolved</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Whether the configuration of this module was augmented with the module type defaults etc.</td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td>False</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>boolean</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    module_type
+  </li>
+</ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
     <td>StepValueAddress</td>
     <td><table>
   <tr>
@@ -32477,6 +32920,32 @@ For more complex container data_types like array, tables, unions etc, data_types
 </table></td>
   </tr>
   <tr>
+    <td>manifest_src</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest Src</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The original manfifest provided by the user.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/Manifest</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
     <td>input_links</td>
     <td><table>
   <tr>
@@ -32573,6 +33042,9 @@ For more complex container data_types like array, tables, unions etc, data_types
   </li>
   <li>
     step_id
+  </li>
+  <li>
+    manifest_src
   </li>
   <li>
     module_details
@@ -37635,6 +38107,95 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
 </table></td>
   </tr>
   <tr>
+    <td>Manifest</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>A class to hold the type and configuration for a module instance.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>module_type</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Type</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The module type.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>module_config</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Config</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The configuration for the module.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>is_resolved</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Is Resolved</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Whether the configuration of this module was augmented with the module type defaults etc.</td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td>False</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>boolean</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    module_type
+  </li>
+</ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
     <td>StepValueAddress</td>
     <td><table>
   <tr>
@@ -38140,6 +38701,32 @@ For more complex container data_types like array, tables, unions etc, data_types
 </table></td>
   </tr>
   <tr>
+    <td>manifest_src</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest Src</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The original manfifest provided by the user.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/Manifest</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
     <td>input_links</td>
     <td><table>
   <tr>
@@ -38236,6 +38823,9 @@ For more complex container data_types like array, tables, unions etc, data_types
   </li>
   <li>
     step_id
+  </li>
+  <li>
+    manifest_src
   </li>
   <li>
     module_details
@@ -41360,6 +41950,95 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
     <td>definitions</td>
     <td><table>
   <tr>
+    <td>Manifest</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>A class to hold the type and configuration for a module instance.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>module_type</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Type</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The module type.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>module_config</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Config</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The configuration for the module.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>is_resolved</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Is Resolved</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Whether the configuration of this module was augmented with the module type defaults etc.</td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td>False</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>boolean</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    module_type
+  </li>
+</ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
     <td>StepValueAddress</td>
     <td><table>
   <tr>
@@ -41929,6 +42608,32 @@ For more complex container data_types like array, tables, unions etc, data_types
 </table></td>
   </tr>
   <tr>
+    <td>manifest_src</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest Src</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The original manfifest provided by the user.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/Manifest</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
     <td>input_links</td>
     <td><table>
   <tr>
@@ -42025,6 +42730,9 @@ For more complex container data_types like array, tables, unions etc, data_types
   </li>
   <li>
     step_id
+  </li>
+  <li>
+    manifest_src
   </li>
   <li>
     module_details
@@ -42853,6 +43561,95 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
     <td>definitions</td>
     <td><table>
   <tr>
+    <td>Manifest</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>A class to hold the type and configuration for a module instance.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>module_type</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Type</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The module type.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>module_config</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Config</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The configuration for the module.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>is_resolved</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Is Resolved</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Whether the configuration of this module was augmented with the module type defaults etc.</td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td>False</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>boolean</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    module_type
+  </li>
+</ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
     <td>StepValueAddress</td>
     <td><table>
   <tr>
@@ -43422,6 +44219,32 @@ For more complex container data_types like array, tables, unions etc, data_types
 </table></td>
   </tr>
   <tr>
+    <td>manifest_src</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest Src</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The original manfifest provided by the user.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/Manifest</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
     <td>input_links</td>
     <td><table>
   <tr>
@@ -43518,6 +44341,9 @@ For more complex container data_types like array, tables, unions etc, data_types
   </li>
   <li>
     step_id
+  </li>
+  <li>
+    manifest_src
   </li>
   <li>
     module_details

@@ -21883,9 +21883,9 @@ to the shortest possible names for each case.</p>
         <span class="n">repl_dict</span> <span class="o">=</span> <span class="n">execution_context</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">steps</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">)</span>
+        <span class="n">_steps</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">)</span>
         <span class="n">steps</span> <span class="o">=</span> <span class="n">PipelineStep</span><span class="o">.</span><span class="n">create_steps</span><span class="p">(</span>
-            <span class="o">*</span><span class="n">steps</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">,</span> <span class="n">auto_step_ids</span><span class="o">=</span><span class="n">auto_step_ids</span>
+            <span class="o">*</span><span class="n">_steps</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">,</span> <span class="n">auto_step_ids</span><span class="o">=</span><span class="n">auto_step_ids</span>
         <span class="p">)</span>
         <span class="n">data</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">steps</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_aliases&quot;</span><span class="p">):</span>
@@ -21940,9 +21940,6 @@ to the shortest possible names for each case.</p>
 
     <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">_validate_steps</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-
-        <span class="c1"># if not v:</span>
-        <span class="c1">#     raise ValueError(f&quot;Invalid type for &#39;steps&#39; value: {type(v)}&quot;)</span>
 
         <span class="n">steps</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
@@ -22478,6 +22475,108 @@ PipelineStep            (<a class="autorefs autorefs-internal" title="kiara.mode
         <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
 
     <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_step</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">step</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;PipelineStep&quot;</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+        <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
+        <span class="n">module_map</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">auto_step_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">taken_step_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a step object from step data.</span>
+
+<span class="sd">        Beware: the provided &#39;module_map&#39; dictionary will be modified, as will the &#39;taken_step_ids&#39;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">module_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">module_map</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">taken_step_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">taken_step_ids</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">):</span>
+
+            <span class="n">module_type</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">module_type</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;module_type&#39; specified.&quot;</span><span class="p">)</span>
+
+            <span class="n">module_config</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_config&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+            <span class="n">src_manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
+                <span class="n">module_type</span><span class="o">=</span><span class="n">module_type</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">module_config</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">module_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">module_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span><span class="s2">&quot;module_type&quot;</span><span class="p">]</span>
+                    <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span><span class="s2">&quot;module_config&quot;</span><span class="p">]</span>
+                    <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
+                        <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
+                        <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">elif</span> <span class="p">(</span>
+                    <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">is_initialized</span>
+                    <span class="ow">and</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span>
+                <span class="p">):</span>
+                    <span class="n">op</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span><span class="p">[</span><span class="n">module_type</span><span class="p">]</span>
+                    <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_type</span>
+                    <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span>
+                    <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
+                        <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
+                        <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t resolve module type: </span><span class="si">{</span><span class="n">module_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
+                    <span class="n">module_or_operation</span><span class="o">=</span><span class="n">module_type</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">module_config</span>
+                <span class="p">)</span>
+                <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">module_type</span>
+                <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">module_config</span>
+
+            <span class="n">module</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
+
+            <span class="n">step_id</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;step_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">step_id</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">auto_step_id</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;step_id&#39; specified.&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span>
+                        <span class="n">slugify</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">),</span>
+                        <span class="n">current_ids</span><span class="o">=</span><span class="n">taken_step_ids</span><span class="p">,</span>
+                    <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">taken_step_ids</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t create step: duplicate step id &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+            <span class="n">taken_step_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
+
+            <span class="n">input_links</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_links&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">sources</span><span class="p">]</span>
+                <span class="n">input_links</span><span class="p">[</span><span class="n">input_field</span><span class="p">]</span> <span class="o">=</span> <span class="n">sources</span>
+
+            <span class="n">doc</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="c1"># TODO: do we really need the deepcopy here?</span>
+            <span class="n">_s</span> <span class="o">=</span> <span class="n">PipelineStep</span><span class="p">(</span>
+                <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
+                <span class="n">module_type</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
+                <span class="n">module_config</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">resolved_module_config</span><span class="p">),</span>
+                <span class="n">input_links</span><span class="o">=</span><span class="n">input_links</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span>
+                <span class="n">module_details</span><span class="o">=</span><span class="n">KiaraModuleInstance</span><span class="o">.</span><span class="n">from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">),</span>
+                <span class="n">manifest_src</span><span class="o">=</span><span class="n">src_manifest</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">_s</span><span class="o">.</span><span class="n">_module</span> <span class="o">=</span> <span class="n">module</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_s</span> <span class="o">=</span> <span class="n">step</span>
+
+        <span class="k">return</span> <span class="n">_s</span>
+
+    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_steps</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="o">*</span><span class="n">steps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;PipelineStep&quot;</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
@@ -22491,93 +22590,19 @@ PipelineStep            (<a class="autorefs autorefs-internal" title="kiara.mode
         <span class="k">else</span><span class="p">:</span>
             <span class="n">module_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">module_map</span><span class="p">)</span>
 
-        <span class="c1"># if kiara.operation_registry.is_initialized:</span>
-        <span class="c1">#     module_map.update(kiara.operation_registry.get_module_map())</span>
-
         <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">step_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
 
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">):</span>
-
-                <span class="n">module_type</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">module_type</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;module_type&#39; specified.&quot;</span><span class="p">)</span>
-
-                <span class="n">module_config</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_config&quot;</span><span class="p">,</span> <span class="p">{})</span>
-
-                <span class="k">if</span> <span class="n">module_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
-
-                    <span class="k">if</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">module_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                        <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span><span class="s2">&quot;module_type&quot;</span><span class="p">]</span>
-                        <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span>
-                            <span class="s2">&quot;module_config&quot;</span>
-                        <span class="p">]</span>
-                        <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
-                            <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
-                            <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
-                        <span class="p">)</span>
-                    <span class="k">elif</span> <span class="p">(</span>
-                        <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">is_initialized</span>
-                        <span class="ow">and</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span>
-                    <span class="p">):</span>
-                        <span class="n">op</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span><span class="p">[</span><span class="n">module_type</span><span class="p">]</span>
-                        <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_type</span>
-                        <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span>
-                        <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
-                            <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
-                            <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
-                        <span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t resolve module type: </span><span class="si">{</span><span class="n">module_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
-                        <span class="n">module_or_operation</span><span class="o">=</span><span class="n">module_type</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">module_config</span>
-                    <span class="p">)</span>
-                    <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">module_type</span>
-                    <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">module_config</span>
-
-                <span class="n">module</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
-
-                <span class="n">step_id</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;step_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">step_id</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">auto_step_ids</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;step_id&#39; specified.&quot;</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span>
-                            <span class="n">slugify</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">),</span>
-                            <span class="n">current_ids</span><span class="o">=</span><span class="n">step_ids</span><span class="p">,</span>
-                        <span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">step_ids</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Can&#39;t create step: duplicate step id &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-                    <span class="p">)</span>
-
-                <span class="n">step_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
-
-                <span class="n">input_links</span> <span class="o">=</span> <span class="p">{}</span>
-                <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_links&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                        <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">sources</span><span class="p">]</span>
-                    <span class="n">input_links</span><span class="p">[</span><span class="n">input_field</span><span class="p">]</span> <span class="o">=</span> <span class="n">sources</span>
-
-                <span class="n">doc</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-
-                <span class="c1"># TODO: do we really need the deepcopy here?</span>
-                <span class="n">_s</span> <span class="o">=</span> <span class="n">PipelineStep</span><span class="p">(</span>
-                    <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
-                    <span class="n">module_type</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
-                    <span class="n">module_config</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">resolved_module_config</span><span class="p">),</span>
-                    <span class="n">input_links</span><span class="o">=</span><span class="n">input_links</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
-                    <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span>
-                    <span class="n">module_details</span><span class="o">=</span><span class="n">KiaraModuleInstance</span><span class="o">.</span><span class="n">from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">),</span>
-                <span class="p">)</span>
-                <span class="n">_s</span><span class="o">.</span><span class="n">_module</span> <span class="o">=</span> <span class="n">module</span>
-                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_s</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+            <span class="n">_s</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_step</span><span class="p">(</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
+                <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
+                <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">,</span>
+                <span class="n">auto_step_id</span><span class="o">=</span><span class="n">auto_step_ids</span><span class="p">,</span>
+                <span class="n">taken_step_ids</span><span class="o">=</span><span class="n">step_ids</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_s</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">result</span>
 
@@ -22597,6 +22622,9 @@ PipelineStep            (<a class="autorefs autorefs-internal" title="kiara.mode
     <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The module type.&quot;</span><span class="p">)</span>
     <span class="n">module_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The module config.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
+    <span class="p">)</span>
+    <span class="n">manifest_src</span><span class="p">:</span> <span class="n">Manifest</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The original manfifest provided by the user.&quot;</span>
     <span class="p">)</span>
     <span class="c1"># required: bool = Field(</span>
     <span class="c1">#     description=&quot;Whether this step is required within the workflow.\n\nIn some cases, when none of the pipeline outputs have a required input that connects to a step, then it is not necessary for this step to have been executed, even if it is placed before a step in the execution hierarchy. This also means that the pipeline inputs that are connected to this step might not be required.&quot;,</span>
@@ -22704,6 +22732,19 @@ PipelineStep            (<a class="autorefs autorefs-internal" title="kiara.mode
                 <span class="n">mc</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;defaults&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constants&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
                 <span class="n">mc</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;constants&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="s2">&quot;steps&quot;</span> <span class="ow">in</span> <span class="n">mc</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">_steps</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">mc</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">]:</span>
+                    <span class="n">_s</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s2">&quot;step_id&quot;</span><span class="p">:</span> <span class="n">step</span><span class="p">[</span><span class="s2">&quot;step_id&quot;</span><span class="p">],</span>
+                        <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="n">step</span><span class="p">[</span><span class="s2">&quot;manifest_src&quot;</span><span class="p">][</span><span class="s2">&quot;module_type&quot;</span><span class="p">],</span>
+                    <span class="p">}</span>
+                    <span class="n">sc</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_config&quot;</span><span class="p">,</span> <span class="p">{})</span>
+                    <span class="k">if</span> <span class="n">sc</span><span class="p">:</span>
+                        <span class="n">_s</span><span class="p">[</span><span class="s2">&quot;module_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sc</span>
+                    <span class="n">_steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_s</span><span class="p">)</span>
+                <span class="n">mc</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_steps</span>
             <span class="n">config_str</span> <span class="o">=</span> <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">mc</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
                 <span class="s2">&quot;module_config&quot;</span><span class="p">,</span>
@@ -22785,6 +22826,29 @@ PipelineStep            (<a class="autorefs autorefs-internal" title="kiara.mode
     <div class="doc doc-contents ">
 
       <p>The links that connect to inputs of the module. Keys are field names, value(s) are connected outputs.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.models.module.pipeline.PipelineStep.manifest_src" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">manifest_src</span><span class="p">:</span> <span class="n">Manifest</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.module.pipeline.PipelineStep.manifest_src" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>The original manfifest provided by the user.</p>
     </div>
 
   </div>
@@ -22982,6 +23046,19 @@ Config        </code>
             <span class="n">mc</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;defaults&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">mc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;constants&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
             <span class="n">mc</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;constants&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;steps&quot;</span> <span class="ow">in</span> <span class="n">mc</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">_steps</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">mc</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">]:</span>
+                <span class="n">_s</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;step_id&quot;</span><span class="p">:</span> <span class="n">step</span><span class="p">[</span><span class="s2">&quot;step_id&quot;</span><span class="p">],</span>
+                    <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="n">step</span><span class="p">[</span><span class="s2">&quot;manifest_src&quot;</span><span class="p">][</span><span class="s2">&quot;module_type&quot;</span><span class="p">],</span>
+                <span class="p">}</span>
+                <span class="n">sc</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_config&quot;</span><span class="p">,</span> <span class="p">{})</span>
+                <span class="k">if</span> <span class="n">sc</span><span class="p">:</span>
+                    <span class="n">_s</span><span class="p">[</span><span class="s2">&quot;module_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sc</span>
+                <span class="n">_steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_s</span><span class="p">)</span>
+            <span class="n">mc</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_steps</span>
         <span class="n">config_str</span> <span class="o">=</span> <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">mc</span><span class="p">,</span> <span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
             <span class="s2">&quot;module_config&quot;</span><span class="p">,</span>
@@ -23012,6 +23089,135 @@ Config        </code>
         <span class="k">return</span> <span class="n">Panel</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Step: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">title_align</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.models.module.pipeline.PipelineStep.create_step" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_step</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto_step_id</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">taken_step_ids</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.models.module.pipeline.PipelineStep.create_step" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+      <p>Create a step object from step data.</p>
+<p>Beware: the provided 'module_map' dictionary will be modified, as will the 'taken_step_ids'.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/module/pipeline/__init__.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">create_step</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">step</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;PipelineStep&quot;</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+    <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
+    <span class="n">module_map</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">auto_step_id</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">taken_step_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create a step object from step data.</span>
+
+<span class="sd">    Beware: the provided &#39;module_map&#39; dictionary will be modified, as will the &#39;taken_step_ids&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">module_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">module_map</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">taken_step_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">taken_step_ids</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">):</span>
+
+        <span class="n">module_type</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">module_type</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;module_type&#39; specified.&quot;</span><span class="p">)</span>
+
+        <span class="n">module_config</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_config&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="n">src_manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
+            <span class="n">module_type</span><span class="o">=</span><span class="n">module_type</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">module_config</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">module_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">module_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span><span class="s2">&quot;module_type&quot;</span><span class="p">]</span>
+                <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span><span class="s2">&quot;module_config&quot;</span><span class="p">]</span>
+                <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
+                    <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
+                    <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span>
+                <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">is_initialized</span>
+                <span class="ow">and</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span>
+            <span class="p">):</span>
+                <span class="n">op</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span><span class="p">[</span><span class="n">module_type</span><span class="p">]</span>
+                <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_type</span>
+                <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span>
+                <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
+                    <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
+                    <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t resolve module type: </span><span class="si">{</span><span class="n">module_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
+                <span class="n">module_or_operation</span><span class="o">=</span><span class="n">module_type</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">module_config</span>
+            <span class="p">)</span>
+            <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">module_type</span>
+            <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">module_config</span>
+
+        <span class="n">module</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
+
+        <span class="n">step_id</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;step_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">step_id</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">auto_step_id</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;step_id&#39; specified.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span>
+                    <span class="n">slugify</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">),</span>
+                    <span class="n">current_ids</span><span class="o">=</span><span class="n">taken_step_ids</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">taken_step_ids</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t create step: duplicate step id &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="n">taken_step_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
+
+        <span class="n">input_links</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_links&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">sources</span><span class="p">]</span>
+            <span class="n">input_links</span><span class="p">[</span><span class="n">input_field</span><span class="p">]</span> <span class="o">=</span> <span class="n">sources</span>
+
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># TODO: do we really need the deepcopy here?</span>
+        <span class="n">_s</span> <span class="o">=</span> <span class="n">PipelineStep</span><span class="p">(</span>
+            <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
+            <span class="n">module_type</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
+            <span class="n">module_config</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">resolved_module_config</span><span class="p">),</span>
+            <span class="n">input_links</span><span class="o">=</span><span class="n">input_links</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span>
+            <span class="n">module_details</span><span class="o">=</span><span class="n">KiaraModuleInstance</span><span class="o">.</span><span class="n">from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">),</span>
+            <span class="n">manifest_src</span><span class="o">=</span><span class="n">src_manifest</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">_s</span><span class="o">.</span><span class="n">_module</span> <span class="o">=</span> <span class="n">module</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_s</span> <span class="o">=</span> <span class="n">step</span>
+
+    <span class="k">return</span> <span class="n">_s</span>
 </code></pre></div>
         </details>
     </div>
@@ -23087,93 +23293,19 @@ Config        </code>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">module_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">module_map</span><span class="p">)</span>
 
-    <span class="c1"># if kiara.operation_registry.is_initialized:</span>
-    <span class="c1">#     module_map.update(kiara.operation_registry.get_module_map())</span>
-
     <span class="n">result</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="n">step_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">:</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">):</span>
-
-            <span class="n">module_type</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">module_type</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;module_type&#39; specified.&quot;</span><span class="p">)</span>
-
-            <span class="n">module_config</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;module_config&quot;</span><span class="p">,</span> <span class="p">{})</span>
-
-            <span class="k">if</span> <span class="n">module_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">module_type_names</span><span class="p">:</span>
-
-                <span class="k">if</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">module_map</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                    <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span><span class="s2">&quot;module_type&quot;</span><span class="p">]</span>
-                    <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">module_map</span><span class="p">[</span><span class="n">module_type</span><span class="p">][</span>
-                        <span class="s2">&quot;module_config&quot;</span>
-                    <span class="p">]</span>
-                    <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
-                        <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
-                        <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
-                    <span class="p">)</span>
-                <span class="k">elif</span> <span class="p">(</span>
-                    <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">is_initialized</span>
-                    <span class="ow">and</span> <span class="n">module_type</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operation_ids</span>
-                <span class="p">):</span>
-                    <span class="n">op</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span><span class="p">[</span><span class="n">module_type</span><span class="p">]</span>
-                    <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_type</span>
-                    <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">module_config</span>
-                    <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
-                        <span class="n">module_or_operation</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
-                        <span class="n">config</span><span class="o">=</span><span class="n">resolved_module_config</span><span class="p">,</span>
-                    <span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t resolve module type: </span><span class="si">{</span><span class="n">module_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">manifest</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
-                    <span class="n">module_or_operation</span><span class="o">=</span><span class="n">module_type</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">module_config</span>
-                <span class="p">)</span>
-                <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">module_type</span>
-                <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">module_config</span>
-
-            <span class="n">module</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
-
-            <span class="n">step_id</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;step_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">step_id</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">auto_step_ids</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t create step, no &#39;step_id&#39; specified.&quot;</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">step_id</span> <span class="o">=</span> <span class="n">find_free_id</span><span class="p">(</span>
-                        <span class="n">slugify</span><span class="p">(</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s2">&quot;_&quot;</span><span class="p">),</span>
-                        <span class="n">current_ids</span><span class="o">=</span><span class="n">step_ids</span><span class="p">,</span>
-                    <span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">step_ids</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t create step: duplicate step id &#39;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-                <span class="p">)</span>
-
-            <span class="n">step_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
-
-            <span class="n">input_links</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">sources</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_links&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                    <span class="n">sources</span> <span class="o">=</span> <span class="p">[</span><span class="n">sources</span><span class="p">]</span>
-                <span class="n">input_links</span><span class="p">[</span><span class="n">input_field</span><span class="p">]</span> <span class="o">=</span> <span class="n">sources</span>
-
-            <span class="n">doc</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-
-            <span class="c1"># TODO: do we really need the deepcopy here?</span>
-            <span class="n">_s</span> <span class="o">=</span> <span class="n">PipelineStep</span><span class="p">(</span>
-                <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
-                <span class="n">module_type</span><span class="o">=</span><span class="n">resolved_module_type</span><span class="p">,</span>
-                <span class="n">module_config</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">resolved_module_config</span><span class="p">),</span>
-                <span class="n">input_links</span><span class="o">=</span><span class="n">input_links</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
-                <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span>
-                <span class="n">module_details</span><span class="o">=</span><span class="n">KiaraModuleInstance</span><span class="o">.</span><span class="n">from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">),</span>
-            <span class="p">)</span>
-            <span class="n">_s</span><span class="o">.</span><span class="n">_module</span> <span class="o">=</span> <span class="n">module</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_s</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+        <span class="n">_s</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_step</span><span class="p">(</span>
+            <span class="n">step</span><span class="o">=</span><span class="n">step</span><span class="p">,</span>
+            <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
+            <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">,</span>
+            <span class="n">auto_step_id</span><span class="o">=</span><span class="n">auto_step_ids</span><span class="p">,</span>
+            <span class="n">taken_step_ids</span><span class="o">=</span><span class="n">step_ids</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_s</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>

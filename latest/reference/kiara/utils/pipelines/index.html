@@ -4058,6 +4058,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.utils.pipelines.get_pipeline_config" class="md-nav__link">
+    get_pipeline_config()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.utils.pipelines.get_pipeline_details_from_path" class="md-nav__link">
     get_pipeline_details_from_path()
   </a>
@@ -4196,6 +4203,13 @@
           <li class="md-nav__item">
   <a href="#kiara.utils.pipelines.ensure_step_value_addresses" class="md-nav__link">
     ensure_step_value_addresses()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.pipelines.get_pipeline_config" class="md-nav__link">
+    get_pipeline_config()
   </a>
   
 </li>
@@ -4395,6 +4409,130 @@
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t parse input map, invalid type for output: </span><span class="si">{</span><span class="n">link</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">input_links</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h3 id="kiara.utils.pipelines.get_pipeline_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_pipeline_config</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+
+<a href="#kiara.utils.pipelines.get_pipeline_config" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+      <p>Extract a pipeline config from the item specified.</p>
+<p>The lookup of the 'pipeline' reference happens in this order (first match returns the result):
+- check whether there is an operation with that name that is a pipeline
+- check whether the provided string is a path to an existing file
+- check whether the provided string starts with 'workflow:' and matches a workflow alias (or id), in which case it returns the pipeline config for the workflows current state</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>pipeline</code></td>
+        <td><code>str</code></td>
+        <td><p>a reference to the desired pipeline</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>kiara</code></td>
+        <td><code>Optional[Kiara]</code></td>
+        <td><p>the kiara context</p></td>
+        <td><code>None</code></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>PipelineConfig</code></td>
+      <td><p>a pipeline config object</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>kiara/utils/pipelines.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_pipeline_config</span><span class="p">(</span>
+    <span class="n">pipeline</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PipelineConfig&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Extract a pipeline config from the item specified.</span>
+
+<span class="sd">    The lookup of the &#39;pipeline&#39; reference happens in this order (first match returns the result):</span>
+<span class="sd">    - check whether there is an operation with that name that is a pipeline</span>
+<span class="sd">    - check whether the provided string is a path to an existing file</span>
+<span class="sd">    - check whether the provided string starts with &#39;workflow:&#39; and matches a workflow alias (or id), in which case it returns the pipeline config for the workflows current state</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        pipeline: a reference to the desired pipeline</span>
+<span class="sd">        kiara: the kiara context</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a pipeline config object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">kiara</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
+
+        <span class="n">kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
+
+    <span class="n">pc</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PipelineConfig</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_operation</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span>
+
+        <span class="n">pipeline_module</span><span class="p">:</span> <span class="n">PipelineModule</span> <span class="o">=</span> <span class="n">_operation</span><span class="o">.</span><span class="n">module</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="n">pipeline_module</span><span class="o">.</span><span class="n">is_pipeline</span><span class="p">():</span>
+            <span class="n">pc</span> <span class="o">=</span> <span class="n">pipeline_module</span><span class="o">.</span><span class="n">config</span>
+    <span class="k">except</span> <span class="n">NoSuchOperationException</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">pc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pipeline</span><span class="p">):</span>
+            <span class="n">pc</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">pc</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;workflow:&quot;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">workflow</span> <span class="o">=</span> <span class="n">pipeline</span><span class="p">[</span><span class="mi">9</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="s2">&quot;@&quot;</span> <span class="ow">in</span> <span class="n">workflow</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+            <span class="n">wfm</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">workflow_registry</span><span class="o">.</span><span class="n">get_workflow_metadata</span><span class="p">(</span><span class="n">workflow</span><span class="o">=</span><span class="n">workflow</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">wfm</span><span class="o">.</span><span class="n">current_state</span><span class="p">:</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">workflow_registry</span><span class="o">.</span><span class="n">get_workflow_state</span><span class="p">(</span>
+                    <span class="n">workflow_state_id</span><span class="o">=</span><span class="n">wfm</span><span class="o">.</span><span class="n">current_state</span><span class="p">,</span> <span class="n">workflow</span><span class="o">=</span><span class="n">wfm</span><span class="o">.</span><span class="n">workflow_id</span>
+                <span class="p">)</span>
+                <span class="n">pc</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">pipeline_config</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">pc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not resolve pipeline reference &#39;</span><span class="si">{</span><span class="n">pipeline</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pc</span>
 </code></pre></div>
         </details>
     </div>

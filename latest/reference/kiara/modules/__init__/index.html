@@ -10413,9 +10413,9 @@ to the shortest possible names for each case.</p>
         <span class="n">repl_dict</span> <span class="o">=</span> <span class="n">execution_context</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
 
         <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">steps</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">)</span>
+        <span class="n">_steps</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">)</span>
         <span class="n">steps</span> <span class="o">=</span> <span class="n">PipelineStep</span><span class="o">.</span><span class="n">create_steps</span><span class="p">(</span>
-            <span class="o">*</span><span class="n">steps</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">,</span> <span class="n">auto_step_ids</span><span class="o">=</span><span class="n">auto_step_ids</span>
+            <span class="o">*</span><span class="n">_steps</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">module_map</span><span class="o">=</span><span class="n">module_map</span><span class="p">,</span> <span class="n">auto_step_ids</span><span class="o">=</span><span class="n">auto_step_ids</span>
         <span class="p">)</span>
         <span class="n">data</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">steps</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input_aliases&quot;</span><span class="p">):</span>
@@ -10470,9 +10470,6 @@ to the shortest possible names for each case.</p>
 
     <span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">_validate_steps</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-
-        <span class="c1"># if not v:</span>
-        <span class="c1">#     raise ValueError(f&quot;Invalid type for &#39;steps&#39; value: {type(v)}&quot;)</span>
 
         <span class="n">steps</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>

@@ -5611,64 +5611,6 @@
       <p>Pipeline-related subcommands for the cli.</p>
 
 
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-  <div class="doc doc-object doc-function">
-
-
-
-<h9 id="kiara.interfaces.cli.pipeline.commands.get_pipeline_config" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_pipeline_config</span><span class="p">(</span><span class="n">kiara_obj</span><span class="p">,</span> <span class="n">pipeline_name_or_path</span><span class="p">)</span></code>
-
-
-<a href="#kiara.interfaces.cli.pipeline.commands.get_pipeline_config" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/cli/pipeline/commands.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_pipeline_config</span><span class="p">(</span><span class="n">kiara_obj</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">pipeline_name_or_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineConfig</span><span class="p">:</span>
-
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pipeline_name_or_path</span><span class="p">):</span>
-        <span class="n">pc</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">pipeline_name_or_path</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara_obj</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span> <span class="o">=</span> <span class="n">kiara_obj</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span>
-            <span class="n">pipeline_name_or_path</span>
-        <span class="p">)</span>
-        <span class="n">pipeline_module</span><span class="p">:</span> <span class="n">PipelineModule</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">module</span>  <span class="c1"># type: ignore</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">pipeline_module</span><span class="o">.</span><span class="n">is_pipeline</span><span class="p">():</span>
-            <span class="nb">print</span><span class="p">()</span>
-            <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Specified operation id exists, but is not a pipeline: </span><span class="si">{</span><span class="n">pipeline_name_or_path</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-        <span class="n">pc</span> <span class="o">=</span> <span class="n">pipeline_module</span><span class="o">.</span><span class="n">config</span>
-
-    <span class="k">return</span> <span class="n">pc</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-
-  </div>
-
     </div>
 
   </div>
@@ -18508,7 +18450,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
     <span class="k">def</span> <span class="nf">add_steps</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">PipelineStep</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
         <span class="n">replace_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">clear_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
@@ -18516,14 +18458,40 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
         <span class="k">if</span> <span class="n">clear_existing</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">clear_steps</span><span class="p">()</span>
 
+        <span class="n">duplicates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">pipeline_steps</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">step_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">replace_existing</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Can&#39;t add step with id &#39;</span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;: step with that id already exists and &#39;replace_existing&#39; not set.&quot;</span>
-                <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">):</span>
+                <span class="n">step_id</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">step_id</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">step_id</span> <span class="o">=</span> <span class="n">step</span><span class="p">[</span><span class="s2">&quot;step_id&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">replace_existing</span><span class="p">:</span>
+                <span class="n">duplicates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">duplicates</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t add steps, step id(s) already taken: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">duplicates</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">pipeline_steps</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="p">[</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">):</span>
+                <span class="n">input_connections</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">links</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">input_links</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">links</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+                    <span class="n">input_connections</span><span class="p">[</span><span class="n">input_field</span><span class="p">]</span> <span class="o">=</span> <span class="n">links</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">alias</span>
+                <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;operation&quot;</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">manifest_src</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
+                    <span class="s2">&quot;step_id&quot;</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span>
+                    <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">manifest_src</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
+                    <span class="s2">&quot;input_connections&quot;</span><span class="p">:</span> <span class="n">input_connections</span><span class="p">,</span>
+                    <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
+                    <span class="s2">&quot;replace_existing&quot;</span><span class="p">:</span> <span class="n">replace_existing</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">step</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_step</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate_pipeline</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">clear_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">step_ids</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -18614,6 +18582,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
             <span class="n">module_config</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
             <span class="n">module_details</span><span class="o">=</span><span class="n">KiaraModuleInstance</span><span class="o">.</span><span class="n">from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">),</span>
             <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span>
+            <span class="n">manifest_src</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">step</span><span class="o">.</span><span class="n">_module</span> <span class="o">=</span> <span class="n">module</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span>
@@ -19659,6 +19628,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
         <span class="n">module_config</span><span class="o">=</span><span class="n">module</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">dict</span><span class="p">(),</span>
         <span class="n">module_details</span><span class="o">=</span><span class="n">KiaraModuleInstance</span><span class="o">.</span><span class="n">from_module</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">),</span>
         <span class="n">doc</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span>
+        <span class="n">manifest_src</span><span class="o">=</span><span class="n">manifest</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">step</span><span class="o">.</span><span class="n">_module</span> <span class="o">=</span> <span class="n">module</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span>
@@ -19695,7 +19665,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
           <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">add_steps</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="o">*</span><span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">PipelineStep</span><span class="p">,</span>
+    <span class="o">*</span><span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
     <span class="n">replace_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">clear_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
@@ -19703,14 +19673,40 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
     <span class="k">if</span> <span class="n">clear_existing</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clear_steps</span><span class="p">()</span>
 
+    <span class="n">duplicates</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">pipeline_steps</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">step_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">replace_existing</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Can&#39;t add step with id &#39;</span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&#39;: step with that id already exists and &#39;replace_existing&#39; not set.&quot;</span>
-            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">):</span>
+            <span class="n">step_id</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">step_id</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">step_id</span> <span class="o">=</span> <span class="n">step</span><span class="p">[</span><span class="s2">&quot;step_id&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">replace_existing</span><span class="p">:</span>
+            <span class="n">duplicates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">duplicates</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t add steps, step id(s) already taken: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">duplicates</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">pipeline_steps</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="p">[</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">):</span>
+            <span class="n">input_connections</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">input_field</span><span class="p">,</span> <span class="n">links</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">input_links</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">links</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+                <span class="n">input_connections</span><span class="p">[</span><span class="n">input_field</span><span class="p">]</span> <span class="o">=</span> <span class="n">links</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">alias</span>
+            <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;operation&quot;</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">manifest_src</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
+                <span class="s2">&quot;step_id&quot;</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">,</span>
+                <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">manifest_src</span><span class="o">.</span><span class="n">module_config</span><span class="p">,</span>
+                <span class="s2">&quot;input_connections&quot;</span><span class="p">:</span> <span class="n">input_connections</span><span class="p">,</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
+                <span class="s2">&quot;replace_existing&quot;</span><span class="p">:</span> <span class="n">replace_existing</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">step</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_step</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+
     <span class="bp">self</span><span class="o">.</span><span class="n">_invalidate_pipeline</span><span class="p">()</span>
 </code></pre></div>
         </details>

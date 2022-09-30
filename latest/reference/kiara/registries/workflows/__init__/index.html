@@ -4918,12 +4918,11 @@ WorkflowRegistry        </code>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Can&#39;t register workflow for timestamp &#39;</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">&#39;: timestamp already registered.&quot;</span>
                 <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
 
-            <span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_history</span><span class="p">[</span><span class="n">timestamp</span><span class="p">]</span> <span class="o">=</span> <span class="n">workflow_state</span><span class="o">.</span><span class="n">instance_id</span>
+        <span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_history</span><span class="p">[</span><span class="n">timestamp</span><span class="p">]</span> <span class="o">=</span> <span class="n">workflow_state</span><span class="o">.</span><span class="n">instance_id</span>
 
-            <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="n">workflow_state</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">store_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="n">workflow_state</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">store_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
 
         <span class="n">store_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_alias_store</span>
         <span class="n">store</span><span class="p">:</span> <span class="n">WorkflowStore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_archive</span><span class="p">(</span><span class="n">archive_id</span><span class="o">=</span><span class="n">store_name</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
@@ -5082,12 +5081,11 @@ WorkflowRegistry        </code>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Can&#39;t register workflow for timestamp &#39;</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">&#39;: timestamp already registered.&quot;</span>
             <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
 
-        <span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_history</span><span class="p">[</span><span class="n">timestamp</span><span class="p">]</span> <span class="o">=</span> <span class="n">workflow_state</span><span class="o">.</span><span class="n">instance_id</span>
+    <span class="n">workflow_details</span><span class="o">.</span><span class="n">workflow_history</span><span class="p">[</span><span class="n">timestamp</span><span class="p">]</span> <span class="o">=</span> <span class="n">workflow_state</span><span class="o">.</span><span class="n">instance_id</span>
 
-        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="n">workflow_state</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">store_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value_id</span> <span class="ow">in</span> <span class="n">workflow_state</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">store_value</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value_id</span><span class="p">)</span>
 
     <span class="n">store_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_alias_store</span>
     <span class="n">store</span><span class="p">:</span> <span class="n">WorkflowStore</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_archive</span><span class="p">(</span><span class="n">archive_id</span><span class="o">=</span><span class="n">store_name</span><span class="p">)</span>  <span class="c1"># type: ignore</span>

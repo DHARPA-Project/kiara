@@ -67,7 +67,7 @@ workflow.connect_fields("{{ step_id }}.{{ field_name }}", "{{ connection.step_id
 
 {% if pipeline.structure.pipeline_config.input_aliases  or pipeline.structure.pipeline_config.output_aliases -%}
 # %% [markdown]
-# ## Setting pipeline input/output names (optional)
+# ## Setting workflow input/output names (optional)
 
 To make our workflow nicer to use, we can set aliases for its inputs and outputs.
 # %%

@@ -57,11 +57,14 @@ def pipeline(ctx, pipeline: str, template: str, inputs: Tuple[str]):
         sys.exit(1)
 
     if pipeline.startswith("workflow:"):
+        pipeline_defaults = {}
         raise NotImplementedError()
     else:
         pipeline_obj = Pipeline.create_pipeline(kiara=kiara, pipeline=pipeline)
         # controller = SinglePipelineBatchController(pipeline=pipeline, job_registry=kiara.job_registry)
+        pipeline_defaults = pipeline_obj.structure.pipeline_config.defaults
 
+    pipeline_inputs = dict(pipeline_defaults)
     if inputs:
         # prepare inputs
         list_keys = []
@@ -70,7 +73,9 @@ def pipeline(ctx, pipeline: str, template: str, inputs: Tuple[str]):
                 list_keys.append(name)
 
         inputs_dict = dict_from_cli_args(*inputs, list_keys=list_keys)
-        pipeline_obj.set_pipeline_inputs(inputs=inputs_dict)
+        pipeline_inputs.update(inputs_dict)
+
+    pipeline_obj.set_pipeline_inputs(inputs=pipeline_inputs)
 
     render_config = {"template": template_path}
     renderer = JinjaPipelineRenderer(config=render_config, kiara=kiara)

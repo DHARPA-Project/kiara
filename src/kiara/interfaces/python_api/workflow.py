@@ -197,6 +197,7 @@ class Workflow(object):
         doc: Any = None,
         kiara: Union["Kiara", None] = None,
     ):
+        """Create a new workflow object."""
 
         if replace_existing_alias and alias is not None:
             if kiara is None:

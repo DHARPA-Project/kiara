@@ -462,12 +462,11 @@ class WorkflowRegistry(object):
                 raise Exception(
                     f"Can't register workflow for timestamp '{timestamp}': timestamp already registered."
                 )
-        else:
 
-            workflow_details.workflow_history[timestamp] = workflow_state.instance_id
+        workflow_details.workflow_history[timestamp] = workflow_state.instance_id
 
-            for field_name, value_id in workflow_state.inputs.items():
-                self._kiara.data_registry.store_value(value=value_id)
+        for field_name, value_id in workflow_state.inputs.items():
+            self._kiara.data_registry.store_value(value=value_id)
 
         store_name = self.default_alias_store
         store: WorkflowStore = self.get_archive(archive_id=store_name)  # type: ignore

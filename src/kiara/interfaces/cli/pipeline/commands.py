@@ -7,42 +7,16 @@
 
 """Pipeline-related subcommands for the cli."""
 
-import os.path
 import rich_click as click
-import sys
 import typing
 from rich import box
 from rich.table import Table
 
 from kiara.context import Kiara
 from kiara.interfaces.python_api.models.info import OperationGroupInfo
-from kiara.models.module.operation import Operation
-from kiara.models.module.pipeline import PipelineConfig
-from kiara.modules.included_core_modules.pipeline import PipelineModule
 from kiara.utils.cli import output_format_option, terminal_print_model
 from kiara.utils.graphs import print_ascii_graph
-
-
-def get_pipeline_config(kiara_obj: Kiara, pipeline_name_or_path: str) -> PipelineConfig:
-
-    if os.path.isfile(pipeline_name_or_path):
-        pc = PipelineConfig.from_file(pipeline_name_or_path, kiara=kiara_obj)
-    else:
-        operation: Operation = kiara_obj.operation_registry.get_operation(
-            pipeline_name_or_path
-        )
-        pipeline_module: PipelineModule = operation.module  # type: ignore
-
-        if not pipeline_module.is_pipeline():
-            print()
-            print(
-                f"Specified operation id exists, but is not a pipeline: {pipeline_name_or_path}."
-            )
-            sys.exit(1)
-
-        pc = pipeline_module.config
-
-    return pc
+from kiara.utils.pipelines import get_pipeline_config
 
 
 @click.group()
@@ -109,9 +83,7 @@ def explain(ctx, pipeline_name_or_path: str, format: str):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
-    pc = get_pipeline_config(
-        kiara_obj=kiara_obj, pipeline_name_or_path=pipeline_name_or_path
-    )
+    pc = get_pipeline_config(kiara=kiara_obj, pipeline=pipeline_name_or_path)
 
     terminal_print_model(
         pc, format=format, in_panel=f"Pipeline: [b i]{pipeline_name_or_path}[/b i]"
@@ -126,9 +98,7 @@ def execution_graph(ctx, pipeline_name_or_path: str):
 
     kiara_obj = ctx.obj["kiara"]
 
-    pc = get_pipeline_config(
-        kiara_obj=kiara_obj, pipeline_name_or_path=pipeline_name_or_path
-    )
+    pc = get_pipeline_config(kiara=kiara_obj, pipeline=pipeline_name_or_path)
 
     structure = pc.structure
     print_ascii_graph(structure.execution_graph)
@@ -148,9 +118,7 @@ def data_flow_graph(ctx, pipeline_name_or_path: str, full: bool):
 
     kiara_obj = ctx.obj["kiara"]
 
-    pc = get_pipeline_config(
-        kiara_obj=kiara_obj, pipeline_name_or_path=pipeline_name_or_path
-    )
+    pc = get_pipeline_config(kiara=kiara_obj, pipeline=pipeline_name_or_path)
 
     structure = pc.structure
 

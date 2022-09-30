@@ -11,12 +11,12 @@ from kiara.models.module.jobs import JobLog
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.module.pipeline.controller import SinglePipelineBatchController
 from kiara.models.module.pipeline.pipeline import Pipeline
-from kiara.models.module.pipeline.structure import PipelineStructure
 from kiara.models.values.value import ValueMap, ValueMapWritable
 from kiara.modules import KIARA_CONFIG, KiaraModule, ValueMapSchema
 
 if TYPE_CHECKING:
     from kiara.models.module.operation import Operation
+    from kiara.models.module.pipeline.structure import PipelineStructure
     from kiara.registries.jobs import JobRegistry
 
 

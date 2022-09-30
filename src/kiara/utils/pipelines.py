@@ -6,12 +6,20 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import os
+import typing
 from pathlib import Path
 from typing import Any, Iterable, List, Mapping, Union
 
 from kiara.defaults import MODULE_TYPE_NAME_KEY
+from kiara.exceptions import NoSuchOperationException
 from kiara.models.module.pipeline.value_refs import StepValueAddress
+from kiara.utils import log_exception
 from kiara.utils.files import get_data_from_file
+
+if typing.TYPE_CHECKING:
+    from kiara.context import Kiara
+    from kiara.models.module.pipeline import PipelineConfig
+    from kiara.modules.included_core_modules.pipeline import PipelineModule
 
 
 def create_step_value_address(
@@ -147,3 +155,61 @@ def check_doc_sidecar(
                 data["data"]["documentation"] = doc
 
     return data
+
+
+def get_pipeline_config(
+    pipeline: str, kiara: typing.Union["Kiara", None] = None
+) -> "PipelineConfig":
+    """Extract a pipeline config from the item specified.
+
+    The lookup of the 'pipeline' reference happens in this order (first match returns the result):
+    - check whether there is an operation with that name that is a pipeline
+    - check whether the provided string is a path to an existing file
+    - check whether the provided string starts with 'workflow:' and matches a workflow alias (or id), in which case it returns the pipeline config for the workflows current state
+
+    Arguments:
+        pipeline: a reference to the desired pipeline
+        kiara: the kiara context
+
+    Returns:
+        a pipeline config object
+    """
+
+    if kiara is None:
+        from kiara.context import Kiara
+
+        kiara = Kiara.instance()
+
+    pc: Union[PipelineConfig, None] = None
+    try:
+        _operation = kiara.operation_registry.get_operation(pipeline)
+
+        pipeline_module: PipelineModule = _operation.module  # type: ignore
+        if pipeline_module.is_pipeline():
+            pc = pipeline_module.config
+    except NoSuchOperationException:
+        pass
+
+    if pc is None:
+        if os.path.isfile(pipeline):
+            pc = PipelineConfig.from_file(pipeline, kiara=kiara)
+
+    if pc is None and pipeline.startswith("workflow:"):
+        try:
+            workflow = pipeline[9:]
+            if "@" in workflow:
+                raise NotImplementedError()
+
+            wfm = kiara.workflow_registry.get_workflow_metadata(workflow=workflow)
+            if wfm.current_state:
+                state = kiara.workflow_registry.get_workflow_state(
+                    workflow_state_id=wfm.current_state, workflow=wfm.workflow_id
+                )
+                pc = state.pipeline_config
+        except Exception as e:
+            log_exception(e)
+
+    if pc is None:
+        raise Exception(f"Could not resolve pipeline reference '{pipeline}'.")
+
+    return pc

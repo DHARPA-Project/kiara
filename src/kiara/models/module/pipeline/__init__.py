@@ -58,6 +58,108 @@ class PipelineStep(Manifest):
         extra = Extra.forbid
 
     @classmethod
+    def create_step(
+        cls,
+        step: Union["PipelineStep", Mapping[str, Any]],
+        kiara: "Kiara",
+        module_map: Union[Mapping[str, Any], None] = None,
+        auto_step_id: bool = False,
+        taken_step_ids: Union[List[str], None] = None,
+    ):
+        """Create a step object from step data.
+
+        Beware: the provided 'module_map' dictionary will be modified, as will the 'taken_step_ids'.
+        """
+
+        if module_map is None:
+            module_map = {}
+
+        if taken_step_ids is None:
+            taken_step_ids = []
+
+        if not isinstance(step, PipelineStep):
+
+            module_type = step.get("module_type", None)
+            if not module_type:
+                raise ValueError("Can't create step, no 'module_type' specified.")
+
+            module_config = step.get("module_config", {})
+
+            src_manifest = Manifest(
+                module_type=module_type, module_config=module_config
+            )
+
+            if module_type not in kiara.module_type_names:
+
+                if module_type in module_map.keys():
+                    resolved_module_type = module_map[module_type]["module_type"]
+                    resolved_module_config = module_map[module_type]["module_config"]
+                    manifest = kiara.create_manifest(
+                        module_or_operation=resolved_module_type,
+                        config=resolved_module_config,
+                    )
+                elif (
+                    kiara.operation_registry.is_initialized
+                    and module_type in kiara.operation_registry.operation_ids
+                ):
+                    op = kiara.operation_registry.operations[module_type]
+                    resolved_module_type = op.module_type
+                    resolved_module_config = op.module_config
+                    manifest = kiara.create_manifest(
+                        module_or_operation=resolved_module_type,
+                        config=resolved_module_config,
+                    )
+                else:
+                    raise Exception(f"Can't resolve module type: {module_type}")
+            else:
+                manifest = kiara.create_manifest(
+                    module_or_operation=module_type, config=module_config
+                )
+                resolved_module_type = module_type
+                resolved_module_config = module_config
+
+            module = kiara.create_module(manifest=manifest)
+
+            step_id = step.get("step_id", None)
+            if not step_id:
+                if not auto_step_id:
+                    raise ValueError("Can't create step, no 'step_id' specified.")
+                else:
+                    step_id = find_free_id(
+                        slugify(manifest.module_type, separator="_"),
+                        current_ids=taken_step_ids,
+                    )
+
+            if step_id in taken_step_ids:
+                raise ValueError(f"Can't create step: duplicate step id '{step_id}'.")
+
+            taken_step_ids.append(step_id)
+
+            input_links = {}
+            for input_field, sources in step.get("input_links", {}).items():
+                if isinstance(sources, str):
+                    sources = [sources]
+                input_links[input_field] = sources
+
+            doc = step.get("doc", None)
+
+            # TODO: do we really need the deepcopy here?
+            _s = PipelineStep(
+                step_id=step_id,
+                module_type=resolved_module_type,
+                module_config=dict(resolved_module_config),
+                input_links=input_links,  # type: ignore
+                doc=doc,
+                module_details=KiaraModuleInstance.from_module(module=module),
+                manifest_src=src_manifest,
+            )
+            _s._module = module
+        else:
+            _s = step
+
+        return _s
+
+    @classmethod
     def create_steps(
         cls,
         *steps: Union["PipelineStep", Mapping[str, Any]],
@@ -71,93 +173,19 @@ class PipelineStep(Manifest):
         else:
             module_map = dict(module_map)
 
-        # if kiara.operation_registry.is_initialized:
-        #     module_map.update(kiara.operation_registry.get_module_map())
-
         result: List[PipelineStep] = []
 
         step_ids: List[str] = []
         for step in steps:
 
-            if not isinstance(step, PipelineStep):
-
-                module_type = step.get("module_type", None)
-                if not module_type:
-                    raise ValueError("Can't create step, no 'module_type' specified.")
-
-                module_config = step.get("module_config", {})
-
-                if module_type not in kiara.module_type_names:
-
-                    if module_type in module_map.keys():
-                        resolved_module_type = module_map[module_type]["module_type"]
-                        resolved_module_config = module_map[module_type][
-                            "module_config"
-                        ]
-                        manifest = kiara.create_manifest(
-                            module_or_operation=resolved_module_type,
-                            config=resolved_module_config,
-                        )
-                    elif (
-                        kiara.operation_registry.is_initialized
-                        and module_type in kiara.operation_registry.operation_ids
-                    ):
-                        op = kiara.operation_registry.operations[module_type]
-                        resolved_module_type = op.module_type
-                        resolved_module_config = op.module_config
-                        manifest = kiara.create_manifest(
-                            module_or_operation=resolved_module_type,
-                            config=resolved_module_config,
-                        )
-                    else:
-                        raise Exception(f"Can't resolve module type: {module_type}")
-                else:
-                    manifest = kiara.create_manifest(
-                        module_or_operation=module_type, config=module_config
-                    )
-                    resolved_module_type = module_type
-                    resolved_module_config = module_config
-
-                module = kiara.create_module(manifest=manifest)
-
-                step_id = step.get("step_id", None)
-                if not step_id:
-                    if not auto_step_ids:
-                        raise ValueError("Can't create step, no 'step_id' specified.")
-                    else:
-                        step_id = find_free_id(
-                            slugify(manifest.module_type, separator="_"),
-                            current_ids=step_ids,
-                        )
-
-                if step_id in step_ids:
-                    raise ValueError(
-                        f"Can't create step: duplicate step id '{step_id}'."
-                    )
-
-                step_ids.append(step_id)
-
-                input_links = {}
-                for input_field, sources in step.get("input_links", {}).items():
-                    if isinstance(sources, str):
-                        sources = [sources]
-                    input_links[input_field] = sources
-
-                doc = step.get("doc", None)
-
-                # TODO: do we really need the deepcopy here?
-                _s = PipelineStep(
-                    step_id=step_id,
-                    module_type=resolved_module_type,
-                    module_config=dict(resolved_module_config),
-                    input_links=input_links,  # type: ignore
-                    doc=doc,
-                    module_details=KiaraModuleInstance.from_module(module=module),
-                )
-                _s._module = module
-                result.append(_s)
-            else:
-                result.append(step)
+            _s = cls.create_step(
+                step=step,
+                kiara=kiara,
+                module_map=module_map,
+                auto_step_id=auto_step_ids,
+                taken_step_ids=step_ids,
+            )
+            result.append(_s)
 
         return result
 
@@ -177,6 +205,9 @@ class PipelineStep(Manifest):
     module_type: str = Field(description="The module type.")
     module_config: Dict[str, Any] = Field(
         description="The module config.", default_factory=dict
+    )
+    manifest_src: Manifest = Field(
+        description="The original manfifest provided by the user."
     )
     # required: bool = Field(
     #     description="Whether this step is required within the workflow.\n\nIn some cases, when none of the pipeline outputs have a required input that connects to a step, then it is not necessary for this step to have been executed, even if it is placed before a step in the execution hierarchy. This also means that the pipeline inputs that are connected to this step might not be required.",
@@ -284,6 +315,19 @@ class PipelineStep(Manifest):
                 mc.pop("defaults", None)
             if not mc.get("constants", None):
                 mc.pop("constants", None)
+
+            if "steps" in mc.keys():
+                _steps = []
+                for step in mc["steps"]:
+                    _s = {
+                        "step_id": step["step_id"],
+                        "module_type": step["manifest_src"]["module_type"],
+                    }
+                    sc = step.get("module_config", {})
+                    if sc:
+                        _s["module_config"] = sc
+                    _steps.append(_s)
+                mc["steps"] = _steps
             config_str = orjson_dumps(mc, option=orjson.OPT_INDENT_2)
             table.add_row(
                 "module_config",
@@ -486,9 +530,9 @@ class PipelineConfig(KiaraModuleConfig):
         repl_dict = execution_context.dict()
 
         data = dict(data)
-        steps = data.pop("steps")
+        _steps = data.pop("steps")
         steps = PipelineStep.create_steps(
-            *steps, kiara=kiara, module_map=module_map, auto_step_ids=auto_step_ids
+            *_steps, kiara=kiara, module_map=module_map, auto_step_ids=auto_step_ids
         )
         data["steps"] = steps
         if not data.get("input_aliases"):
@@ -543,9 +587,6 @@ class PipelineConfig(KiaraModuleConfig):
 
     @validator("steps", pre=True)
     def _validate_steps(cls, v):
-
-        # if not v:
-        #     raise ValueError(f"Invalid type for 'steps' value: {type(v)}")
 
         steps = []
         for step in v:

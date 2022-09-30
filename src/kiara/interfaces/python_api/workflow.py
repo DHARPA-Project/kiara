@@ -720,7 +720,7 @@ class Workflow(object):
 
     def add_steps(
         self,
-        *pipeline_steps: PipelineStep,
+        *pipeline_steps: Union[PipelineStep, Mapping[str, Any]],
         replace_existing: bool = False,
         clear_existing: bool = False,
     ):
@@ -728,14 +728,40 @@ class Workflow(object):
         if clear_existing:
             self.clear_steps()
 
+        duplicates = []
         for step in pipeline_steps:
-            if step.step_id in self._steps.keys() and not replace_existing:
-                raise Exception(
-                    f"Can't add step with id '{step.step_id}': step with that id already exists and 'replace_existing' not set."
-                )
+            if isinstance(step, PipelineStep):
+                step_id = step.step_id
+            else:
+                step_id = step["step_id"]
+            if step_id in self._steps.keys() and not replace_existing:
+                duplicates.append(step_id)
+
+        if duplicates:
+            raise Exception(
+                f"Can't add steps, step id(s) already taken: {', '.join(duplicates)}."
+            )
 
         for step in pipeline_steps:
-            self._steps[step.step_id] = step
+            if isinstance(step, PipelineStep):
+                input_connections = {}
+                for input_field, links in step.input_links.items():
+                    if len(links) != 1:
+                        raise NotImplementedError()
+                    input_connections[input_field] = links[0].alias
+                data: Mapping[str, Any] = {
+                    "operation": step.manifest_src.module_type,
+                    "step_id": step.step_id,
+                    "module_config": step.manifest_src.module_config,
+                    "input_connections": input_connections,
+                    "doc": step.doc,
+                    "replace_existing": replace_existing,
+                }
+            else:
+                data = step
+
+            self.add_step(**data)
+
         self._invalidate_pipeline()
 
     def clear_steps(self, *step_ids: str):
@@ -826,6 +852,7 @@ class Workflow(object):
             module_config=module.config.dict(),
             module_details=KiaraModuleInstance.from_module(module=module),
             doc=doc,
+            manifest_src=manifest,
         )
         step._module = module
         self._steps[step_id] = step

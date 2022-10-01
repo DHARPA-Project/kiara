@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/included_components/kiara_model_types/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.3">
+      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.4">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.7a952b86.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.80dcb947.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -651,6 +651,13 @@
         <li class="md-nav__item">
   <a href="#kiara_info.kiara_model_types.info.archives" class="md-nav__link">
     info.archives
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.kiara_model_types.pipeline_stage" class="md-nav__link">
+    pipeline_stage
   </a>
   
 </li>
@@ -4934,6 +4941,13 @@
         <li class="md-nav__item">
   <a href="#kiara_info.kiara_model_types.info.archives" class="md-nav__link">
     info.archives
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.kiara_model_types.pipeline_stage" class="md-nav__link">
+    pipeline_stage
   </a>
   
 </li>
@@ -29161,11 +29175,11 @@ For more complex container data_types like array, tables, unions etc, data_types
 </table></td>
   </tr>
   <tr>
-    <td>pipeline_details</td>
+    <td>pipeline_state</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>Pipeline Details</td>
+    <td>Pipeline State</td>
   </tr>
   <tr>
     <td>description</td>
@@ -29178,7 +29192,7 @@ For more complex container data_types like array, tables, unions etc, data_types
     <table>
   <tr>
     <td>$ref</td>
-    <td>#/definitions/PipelineDetails</td>
+    <td>#/definitions/PipelineState</td>
   </tr>
 </table>
   </li>
@@ -29207,7 +29221,7 @@ For more complex container data_types like array, tables, unions etc, data_types
     pipeline_structure
   </li>
   <li>
-    pipeline_details
+    pipeline_state
   </li>
 </ul></td>
   </tr>
@@ -31022,11 +31036,11 @@ Examples:
 </table></td>
   </tr>
   <tr>
-    <td>PipelineDetails</td>
+    <td>PipelineState</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>PipelineDetails</td>
+    <td>PipelineState</td>
   </tr>
   <tr>
     <td>type</td>
@@ -33769,11 +33783,11 @@ Examples:
 </table></td>
   </tr>
   <tr>
-    <td>PipelineDetails</td>
+    <td>PipelineState</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>PipelineDetails</td>
+    <td>PipelineState</td>
   </tr>
   <tr>
     <td>type</td>
@@ -34125,11 +34139,11 @@ Examples:
 </table></td>
   </tr>
   <tr>
-    <td>pipeline_details</td>
+    <td>pipeline_state</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>Pipeline Details</td>
+    <td>Pipeline State</td>
   </tr>
   <tr>
     <td>description</td>
@@ -34142,7 +34156,7 @@ Examples:
     <table>
   <tr>
     <td>$ref</td>
-    <td>#/definitions/PipelineDetails</td>
+    <td>#/definitions/PipelineState</td>
   </tr>
 </table>
   </li>
@@ -34171,7 +34185,7 @@ Examples:
     pipeline_structure
   </li>
   <li>
-    pipeline_details
+    pipeline_state
   </li>
 </ul></td>
   </tr>
@@ -39550,11 +39564,11 @@ Examples:
 </table></td>
   </tr>
   <tr>
-    <td>PipelineDetails</td>
+    <td>PipelineState</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>PipelineDetails</td>
+    <td>PipelineState</td>
   </tr>
   <tr>
     <td>type</td>
@@ -39906,11 +39920,11 @@ Examples:
 </table></td>
   </tr>
   <tr>
-    <td>pipeline_details</td>
+    <td>pipeline_state</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>Pipeline Details</td>
+    <td>Pipeline State</td>
   </tr>
   <tr>
     <td>description</td>
@@ -39923,7 +39937,7 @@ Examples:
     <table>
   <tr>
     <td>$ref</td>
-    <td>#/definitions/PipelineDetails</td>
+    <td>#/definitions/PipelineState</td>
   </tr>
 </table>
   </li>
@@ -39952,7 +39966,7 @@ Examples:
     pipeline_structure
   </li>
   <li>
-    pipeline_details
+    pipeline_state
   </li>
 </ul></td>
   </tr>
@@ -41669,6 +41683,334 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
 </table></td>
   </tr>
 </table></td>
+  </tr>
+</table></td>
+    <td>The (json) schema for this model data.</td>
+  </tr>
+</table><h3 id="kiara_info.kiara_model_types.pipeline_stage"><code>pipeline_stage</code><a class="headerlink" href="#kiara_info.kiara_model_types.pipeline_stage" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>pipeline_stage</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>-- n/a --</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>PipelineStage</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.models.module.pipeline.structure</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.models.module.pipeline.structure.PipelineStage</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>metadata_schema</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>PipelineStage</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Base class that all models in kiara inherit from.
+
+This class provides utility functions for things like rendering the model on terminal or as html, integration into
+a tree hierarchy of the overall kiara context, hashing, etc.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>stage_index</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Stage Index</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The index of this stage.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>integer</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>steps</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Steps</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The pipeline steps that are executed in this stage.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>array</td>
+  </tr>
+  <tr>
+    <td>items</td>
+    <td><table>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>pipeline_inputs</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Pipeline Inputs</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The pipeline inputs required for this stage.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>array</td>
+  </tr>
+  <tr>
+    <td>items</td>
+    <td><table>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>pipeline_outputs</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Pipeline Outputs</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The pipeline outputs that are ready once this stage is processed.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>array</td>
+  </tr>
+  <tr>
+    <td>items</td>
+    <td><table>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>previous_inputs</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Previous Inputs</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Pipeline inputs that are already set by this stage.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>array</td>
+  </tr>
+  <tr>
+    <td>items</td>
+    <td><table>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>previous_outputs</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Previous Outputs</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Pipeline outputs that are already computed by this stage.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>array</td>
+  </tr>
+  <tr>
+    <td>items</td>
+    <td><table>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    stage_index
+  </li>
+  <li>
+    steps
+  </li>
+  <li>
+    pipeline_inputs
+  </li>
+  <li>
+    pipeline_outputs
+  </li>
+  <li>
+    previous_inputs
+  </li>
+  <li>
+    previous_outputs
+  </li>
+</ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
   </tr>
 </table></td>
     <td>The (json) schema for this model data.</td>
@@ -45364,11 +45706,11 @@ Examples:
 </table></td>
   </tr>
   <tr>
-    <td>PipelineDetails</td>
+    <td>PipelineState</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>PipelineDetails</td>
+    <td>PipelineState</td>
   </tr>
   <tr>
     <td>type</td>
@@ -45720,11 +46062,11 @@ Examples:
 </table></td>
   </tr>
   <tr>
-    <td>pipeline_details</td>
+    <td>pipeline_state</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>Pipeline Details</td>
+    <td>Pipeline State</td>
   </tr>
   <tr>
     <td>description</td>
@@ -45737,7 +46079,7 @@ Examples:
     <table>
   <tr>
     <td>$ref</td>
-    <td>#/definitions/PipelineDetails</td>
+    <td>#/definitions/PipelineState</td>
   </tr>
 </table>
   </li>
@@ -45766,7 +46108,7 @@ Examples:
     pipeline_structure
   </li>
   <li>
-    pipeline_details
+    pipeline_state
   </li>
 </ul></td>
   </tr>
@@ -64219,7 +64561,7 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.37e9125f.min.js"></script>
+      <script src="../../assets/javascripts/bundle.078830c0.min.js"></script>
       
     
   </body>

@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/models/events/__init__/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.3">
+      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.4">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.7a952b86.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.80dcb947.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -6190,373 +6190,6 @@ ChangedValue            (<span title="pydantic.main.BaseModel">BaseModel</span>)
 
 
 
-<h5 id="kiara.models.events.pipeline.PipelineDetails" class="doc doc-heading">
-        <code>
-PipelineDetails            (<span title="pydantic.main.BaseModel">BaseModel</span>)
-        </code>
-
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
-  </span>
-
-<a href="#kiara.models.events.pipeline.PipelineDetails" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/events/pipeline.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineDetails</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-        <span class="n">json_loads</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span>
-        <span class="n">json_dumps</span> <span class="o">=</span> <span class="n">orjson_dumps</span>
-
-    <span class="n">kiara_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the kiara context.&quot;</span><span class="p">)</span>
-    <span class="n">pipeline_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the pipeline.&quot;</span><span class="p">)</span>
-
-    <span class="n">pipeline_status</span><span class="p">:</span> <span class="n">StepStatus</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The current status of this pipeline.&quot;</span>
-    <span class="p">)</span>
-    <span class="n">invalid_details</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Details about fields that are invalid (if status &lt; &#39;INPUTS_READY&#39;.&quot;</span><span class="p">,</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">pipeline_inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The current pipeline inputs.&quot;</span>
-    <span class="p">)</span>
-    <span class="n">pipeline_outputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The current pipeline outputs.&quot;</span>
-    <span class="p">)</span>
-
-    <span class="n">step_states</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StepDetails</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The state of each step within this pipeline.&quot;</span>
-    <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">get_steps_by_processing_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StepDetails</span><span class="p">]]:</span>
-
-        <span class="n">result</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StepDetails</span><span class="p">]]</span> <span class="o">=</span> <span class="n">SortedDict</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">step_details</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_states</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">step_details</span><span class="o">.</span><span class="n">processing_stage</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_details</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-<h6 id="kiara.models.events.pipeline.PipelineDetails-attributes">Attributes<a href="#kiara.models.events.pipeline.PipelineDetails-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.events.pipeline.PipelineDetails.invalid_details" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">invalid_details</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-  </span>
-
-<a href="#kiara.models.events.pipeline.PipelineDetails.invalid_details" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>Details about fields that are invalid (if status &lt; 'INPUTS_READY'.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.events.pipeline.PipelineDetails.kiara_id" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">kiara_id</span><span class="p">:</span> <span class="n">UUID</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.events.pipeline.PipelineDetails.kiara_id" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The id of the kiara context.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.events.pipeline.PipelineDetails.pipeline_id" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">pipeline_id</span><span class="p">:</span> <span class="n">UUID</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.events.pipeline.PipelineDetails.pipeline_id" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The id of the pipeline.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.events.pipeline.PipelineDetails.pipeline_inputs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">pipeline_inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.events.pipeline.PipelineDetails.pipeline_inputs" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The current pipeline inputs.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.events.pipeline.PipelineDetails.pipeline_outputs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">pipeline_outputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.events.pipeline.PipelineDetails.pipeline_outputs" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The current pipeline outputs.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.events.pipeline.PipelineDetails.pipeline_status" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">pipeline_status</span><span class="p">:</span> <span class="n">StepStatus</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.events.pipeline.PipelineDetails.pipeline_status" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The current status of this pipeline.</p>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h7 id="kiara.models.events.pipeline.PipelineDetails.step_states" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">step_states</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">StepDetails</span><span class="p">]</span></code>
-
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
-  </span>
-
-<a href="#kiara.models.events.pipeline.PipelineDetails.step_states" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-      <p>The state of each step within this pipeline.</p>
-    </div>
-
-  </div>
-
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
-<h7 id="kiara.models.events.pipeline.PipelineDetails.Config" class="doc doc-heading">
-        <code>
-Config        </code>
-
-
-
-<a href="#kiara.models.events.pipeline.PipelineDetails.Config" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/events/pipeline.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
-    <span class="n">json_loads</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span>
-    <span class="n">json_dumps</span> <span class="o">=</span> <span class="n">orjson_dumps</span>
-</code></pre></div>
-        </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h9 id="kiara.models.events.pipeline.PipelineDetails.Config.json_loads" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">json_loads</span></code>
-
-
-<a href="#kiara.models.events.pipeline.PipelineDetails.Config.json_loads" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-    </div>
-
-  </div>
-
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h9 id="kiara.models.events.pipeline.PipelineDetails.Config.json_dumps" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">json_dumps</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span></code>
-
-
-<a href="#kiara.models.events.pipeline.PipelineDetails.Config.json_dumps" class="headerlink" title="Permanent link">&para;</a></h9>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/events/pipeline.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">orjson_dumps</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
-    <span class="c1"># orjson.dumps returns bytes, to match standard json.dumps we need to decode</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
-    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error dumping json data: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="kn">from</span> <span class="nn">kiara</span> <span class="kn">import</span> <span class="n">dbg</span>
-
-            <span class="n">dbg</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-
-        <span class="k">raise</span> <span class="n">e</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h7 id="kiara.models.events.pipeline.PipelineDetails.get_steps_by_processing_stage" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_steps_by_processing_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-
-<a href="#kiara.models.events.pipeline.PipelineDetails.get_steps_by_processing_stage" class="headerlink" title="Permanent link">&para;</a></h7>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/models/events/pipeline.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_steps_by_processing_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StepDetails</span><span class="p">]]:</span>
-
-    <span class="n">result</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StepDetails</span><span class="p">]]</span> <span class="o">=</span> <span class="n">SortedDict</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">step_details</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_states</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">step_details</span><span class="o">.</span><span class="n">processing_stage</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_details</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">result</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-
-
-  </div>
-
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-class">
-
-
-
 <h5 id="kiara.models.events.pipeline.PipelineEvent" class="doc doc-heading">
         <code>
 PipelineEvent            (<a class="autorefs autorefs-internal" title="kiara.models.events.KiaraEvent" href="#kiara.models.events.KiaraEvent">KiaraEvent</a>)
@@ -6919,6 +6552,373 @@ Config        </code>
         <span class="n">changed_steps</span><span class="o">=</span><span class="nb">sorted</span><span class="p">(</span><span class="n">invalidated_steps</span><span class="p">),</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">event</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.models.events.pipeline.PipelineState" class="doc doc-heading">
+        <code>
+PipelineState            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.models.events.pipeline.PipelineState" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/events/pipeline.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineState</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+        <span class="n">json_loads</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span>
+        <span class="n">json_dumps</span> <span class="o">=</span> <span class="n">orjson_dumps</span>
+
+    <span class="n">kiara_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the kiara context.&quot;</span><span class="p">)</span>
+    <span class="n">pipeline_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the pipeline.&quot;</span><span class="p">)</span>
+
+    <span class="n">pipeline_status</span><span class="p">:</span> <span class="n">StepStatus</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The current status of this pipeline.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">invalid_details</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Details about fields that are invalid (if status &lt; &#39;INPUTS_READY&#39;.&quot;</span><span class="p">,</span>
+        <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">pipeline_inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The current pipeline inputs.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pipeline_outputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The current pipeline outputs.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">step_states</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StepDetails</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The state of each step within this pipeline.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_steps_by_processing_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StepDetails</span><span class="p">]]:</span>
+
+        <span class="n">result</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StepDetails</span><span class="p">]]</span> <span class="o">=</span> <span class="n">SortedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">step_details</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_states</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">step_details</span><span class="o">.</span><span class="n">processing_stage</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_details</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h6 id="kiara.models.events.pipeline.PipelineState-attributes">Attributes<a href="#kiara.models.events.pipeline.PipelineState-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.events.pipeline.PipelineState.invalid_details" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">invalid_details</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.models.events.pipeline.PipelineState.invalid_details" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>Details about fields that are invalid (if status &lt; 'INPUTS_READY'.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.events.pipeline.PipelineState.kiara_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">kiara_id</span><span class="p">:</span> <span class="n">UUID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.pipeline.PipelineState.kiara_id" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The id of the kiara context.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.events.pipeline.PipelineState.pipeline_id" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_id</span><span class="p">:</span> <span class="n">UUID</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.pipeline.PipelineState.pipeline_id" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The id of the pipeline.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.events.pipeline.PipelineState.pipeline_inputs" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.pipeline.PipelineState.pipeline_inputs" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The current pipeline inputs.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.events.pipeline.PipelineState.pipeline_outputs" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_outputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.pipeline.PipelineState.pipeline_outputs" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The current pipeline outputs.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.events.pipeline.PipelineState.pipeline_status" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_status</span><span class="p">:</span> <span class="n">StepStatus</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.pipeline.PipelineState.pipeline_status" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The current status of this pipeline.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.models.events.pipeline.PipelineState.step_states" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">step_states</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">StepDetails</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.events.pipeline.PipelineState.step_states" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>The state of each step within this pipeline.</p>
+    </div>
+
+  </div>
+
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h7 id="kiara.models.events.pipeline.PipelineState.Config" class="doc doc-heading">
+        <code>
+Config        </code>
+
+
+
+<a href="#kiara.models.events.pipeline.PipelineState.Config" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/events/pipeline.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+    <span class="n">json_loads</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span>
+    <span class="n">json_dumps</span> <span class="o">=</span> <span class="n">orjson_dumps</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h9 id="kiara.models.events.pipeline.PipelineState.Config.json_loads" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">json_loads</span></code>
+
+
+<a href="#kiara.models.events.pipeline.PipelineState.Config.json_loads" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h9 id="kiara.models.events.pipeline.PipelineState.Config.json_dumps" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">json_dumps</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span></code>
+
+
+<a href="#kiara.models.events.pipeline.PipelineState.Config.json_dumps" class="headerlink" title="Permanent link">&para;</a></h9>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/events/pipeline.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">orjson_dumps</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+    <span class="c1"># orjson.dumps returns bytes, to match standard json.dumps we need to decode</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error dumping json data: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="kn">from</span> <span class="nn">kiara</span> <span class="kn">import</span> <span class="n">dbg</span>
+
+            <span class="n">dbg</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="n">e</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h7 id="kiara.models.events.pipeline.PipelineState.get_steps_by_processing_stage" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_steps_by_processing_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.models.events.pipeline.PipelineState.get_steps_by_processing_stage" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/models/events/pipeline.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_steps_by_processing_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StepDetails</span><span class="p">]]:</span>
+
+    <span class="n">result</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StepDetails</span><span class="p">]]</span> <span class="o">=</span> <span class="n">SortedDict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">step_details</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_states</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">step_details</span><span class="o">.</span><span class="n">processing_stage</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_details</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
 </code></pre></div>
         </details>
     </div>
@@ -7611,7 +7611,7 @@ WorkflowArchiveAddedEvent            (<a class="autorefs autorefs-internal" titl
     <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.37e9125f.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.078830c0.min.js"></script>
       
     
   </body>

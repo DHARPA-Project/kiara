@@ -4262,6 +4262,9 @@ PipelineStage            (<a class="autorefs autorefs-internal" title="kiara.mod
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/pipeline/structure.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineStage</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;info.pipeline_stage&quot;</span>
+
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_pipeline_structure</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span>

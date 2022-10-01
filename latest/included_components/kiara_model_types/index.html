@@ -656,8 +656,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara_info.kiara_model_types.pipeline_stage" class="md-nav__link">
-    pipeline_stage
+  <a href="#kiara_info.kiara_model_types.instance.pipeline_state" class="md-nav__link">
+    instance.pipeline_state
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.kiara_model_types.info.pipeline_stage" class="md-nav__link">
+    info.pipeline_stage
   </a>
   
 </li>
@@ -4946,8 +4953,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara_info.kiara_model_types.pipeline_stage" class="md-nav__link">
-    pipeline_stage
+  <a href="#kiara_info.kiara_model_types.instance.pipeline_state" class="md-nav__link">
+    instance.pipeline_state
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.kiara_model_types.info.pipeline_stage" class="md-nav__link">
+    info.pipeline_stage
   </a>
   
 </li>
@@ -31043,6 +31057,13 @@ Examples:
     <td>PipelineState</td>
   </tr>
   <tr>
+    <td>description</td>
+    <td>Base class that all models in kiara inherit from.
+
+This class provides utility functions for things like rendering the model on terminal or as html, integration into
+a tree hierarchy of the overall kiara context, hashing, etc.</td>
+  </tr>
+  <tr>
     <td>type</td>
     <td>object</td>
   </tr>
@@ -31249,6 +31270,10 @@ Examples:
     step_states
   </li>
 </ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
   </tr>
 </table></td>
   </tr>
@@ -33790,6 +33815,13 @@ Examples:
     <td>PipelineState</td>
   </tr>
   <tr>
+    <td>description</td>
+    <td>Base class that all models in kiara inherit from.
+
+This class provides utility functions for things like rendering the model on terminal or as html, integration into
+a tree hierarchy of the overall kiara context, hashing, etc.</td>
+  </tr>
+  <tr>
     <td>type</td>
     <td>object</td>
   </tr>
@@ -33996,6 +34028,10 @@ Examples:
     step_states
   </li>
 </ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
   </tr>
 </table></td>
   </tr>
@@ -39571,6 +39607,13 @@ Examples:
     <td>PipelineState</td>
   </tr>
   <tr>
+    <td>description</td>
+    <td>Base class that all models in kiara inherit from.
+
+This class provides utility functions for things like rendering the model on terminal or as html, integration into
+a tree hierarchy of the overall kiara context, hashing, etc.</td>
+  </tr>
+  <tr>
     <td>type</td>
     <td>object</td>
   </tr>
@@ -39777,6 +39820,10 @@ Examples:
     step_states
   </li>
 </ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
   </tr>
 </table></td>
   </tr>
@@ -41687,11 +41734,1456 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
 </table></td>
     <td>The (json) schema for this model data.</td>
   </tr>
-</table><h3 id="kiara_info.kiara_model_types.pipeline_stage"><code>pipeline_stage</code><a class="headerlink" href="#kiara_info.kiara_model_types.pipeline_stage" title="Permanent link">&para;</a></h3>
+</table><h3 id="kiara_info.kiara_model_types.instance.pipeline_state"><code>instance.pipeline_state</code><a class="headerlink" href="#kiara_info.kiara_model_types.instance.pipeline_state" title="Permanent link">&para;</a></h3>
 <table>
   <tr>
     <td>type_name</td>
-    <td>pipeline_stage</td>
+    <td>instance.pipeline_state</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>-- n/a --</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>PipelineState</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.models.events.pipeline</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.models.events.pipeline.PipelineState</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>metadata_schema</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>PipelineState</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Base class that all models in kiara inherit from.
+
+This class provides utility functions for things like rendering the model on terminal or as html, integration into
+a tree hierarchy of the overall kiara context, hashing, etc.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>kiara_id</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Kiara Id</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The id of the kiara context.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+  <tr>
+    <td>format</td>
+    <td>uuid</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>pipeline_id</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Pipeline Id</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The id of the pipeline.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+  <tr>
+    <td>format</td>
+    <td>uuid</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>pipeline_status</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>The current status of this pipeline.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/StepStatus</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>invalid_details</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Invalid Details</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Details about fields that are invalid (if status < 'INPUTS_READY'.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>pipeline_inputs</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Pipeline Inputs</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The current pipeline inputs.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+  <tr>
+    <td>format</td>
+    <td>uuid</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>pipeline_outputs</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Pipeline Outputs</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The current pipeline outputs.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+  <tr>
+    <td>format</td>
+    <td>uuid</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>step_states</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Step States</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The state of each step within this pipeline.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/StepDetails</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    kiara_id
+  </li>
+  <li>
+    pipeline_id
+  </li>
+  <li>
+    pipeline_status
+  </li>
+  <li>
+    pipeline_inputs
+  </li>
+  <li>
+    pipeline_outputs
+  </li>
+  <li>
+    step_states
+  </li>
+</ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+  <tr>
+    <td>definitions</td>
+    <td><table>
+  <tr>
+    <td>StepStatus</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>StepStatus</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Enum to describe the state of a workflow.</td>
+  </tr>
+  <tr>
+    <td>enum</td>
+    <td><ul>
+  <li>
+    inputs_invalid
+  </li>
+  <li>
+    inputs_ready
+  </li>
+  <li>
+    results_ready
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>Manifest</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>A class to hold the type and configuration for a module instance.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>module_type</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Type</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The module type.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>module_config</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Config</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The configuration for the module.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>is_resolved</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Is Resolved</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Whether the configuration of this module was augmented with the module type defaults etc.</td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td>False</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>boolean</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    module_type
+  </li>
+</ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>StepValueAddress</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>StepValueAddress</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Small model to describe the address of a value of a step, within a Pipeline/PipelineStructure.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>step_id</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Step Id</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The id of a step within a pipeline.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>value_name</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Value Name</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The name of the value (output name or pipeline input name).</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>sub_value</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Sub Value</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>A reference to a subitem of a value (e.g. column, list item)</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    step_id
+  </li>
+  <li>
+    value_name
+  </li>
+</ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>DocumentationMetadataModel</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Documentation</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Documentation about a resource.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td>-- n/a --</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Doc</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>ValueSchema</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>ValueSchema</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The schema of a value.
+
+The schema contains the [ValueTypeOrm][kiara.data.values.ValueTypeOrm] of a value, as well as an optional default that
+will be used if no user input was given (yet) for a value.
+
+For more complex container data_types like array, tables, unions etc, data_types can also be configured with values from the ``type_config`` field.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>type</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Type</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The type of the value.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>type_config</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Type Config</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Configuration for the type, in case it's complex.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Default</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>A default value.</td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td>__not_set__</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>optional</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Optional</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Whether this value is required (True), or whether 'None' value is allowed (False).</td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td>False</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>boolean</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>is_constant</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Is Constant</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Whether the value is a constant.</td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td>False</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>boolean</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Doc</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>A description for the value of this input field.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/DocumentationMetadataModel</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    type
+  </li>
+</ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>KiaraModuleInstance</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>KiaraModuleInstance</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Python class and module information.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Python Class Name</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Python Module Name</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Full Name</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The full class namespace.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>module_config</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Config</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The module config.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>inputs_schema</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Inputs Schema</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The schema for the module input(s).</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/ValueSchema</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>outputs_schema</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Outputs Schema</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The schema for the module output(s).</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/ValueSchema</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    python_class_name
+  </li>
+  <li>
+    python_module_name
+  </li>
+  <li>
+    full_name
+  </li>
+  <li>
+    module_config
+  </li>
+  <li>
+    inputs_schema
+  </li>
+  <li>
+    outputs_schema
+  </li>
+</ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>PipelineStep</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>PipelineStep</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>A step within a pipeline-structure, includes information about it's connection(s) and other metadata.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>module_type</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Type</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The module type.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>module_config</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Config</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The module config.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>is_resolved</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Is Resolved</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Whether the configuration of this module was augmented with the module type defaults etc.</td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td>False</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>boolean</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>step_id</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Step Id</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Locally unique id (within a pipeline) of this step.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>manifest_src</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Manifest Src</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The original manfifest provided by the user.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/Manifest</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>input_links</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Input Links</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The links that connect to inputs of the module. Keys are field names, value(s) are connected outputs.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>type</td>
+    <td>array</td>
+  </tr>
+  <tr>
+    <td>items</td>
+    <td><table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/StepValueAddress</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>module_details</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Details</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The class of the underlying module.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/KiaraModuleInstance</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Doc</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>A description what this step does.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/DocumentationMetadataModel</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    module_type
+  </li>
+  <li>
+    step_id
+  </li>
+  <li>
+    manifest_src
+  </li>
+  <li>
+    module_details
+  </li>
+  <li>
+    doc
+  </li>
+</ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>StepDetails</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>StepDetails</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>kiara_id</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Kiara Id</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The id of the kiara context.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+  <tr>
+    <td>format</td>
+    <td>uuid</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>pipeline_id</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Pipeline Id</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The id of the pipeline.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+  <tr>
+    <td>format</td>
+    <td>uuid</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>step</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Step</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The pipeline step details.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/PipelineStep</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>step_id</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Step Id</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The id of the step.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>processing_stage</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Processing Stage</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The execution stage where this step is executed.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>integer</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>status</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>The current status of this step.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/StepStatus</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>invalid_details</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Invalid Details</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Details about fields that are invalid (if status < 'INPUTS_READY'.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>inputs</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Inputs</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The current inputs of this step.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+  <tr>
+    <td>format</td>
+    <td>uuid</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>outputs</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Outputs</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The current outputs of this step.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+  <tr>
+    <td>format</td>
+    <td>uuid</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    kiara_id
+  </li>
+  <li>
+    pipeline_id
+  </li>
+  <li>
+    step
+  </li>
+  <li>
+    step_id
+  </li>
+  <li>
+    processing_stage
+  </li>
+  <li>
+    status
+  </li>
+  <li>
+    inputs
+  </li>
+  <li>
+    outputs
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>The (json) schema for this model data.</td>
+  </tr>
+</table><h3 id="kiara_info.kiara_model_types.info.pipeline_stage"><code>info.pipeline_stage</code><a class="headerlink" href="#kiara_info.kiara_model_types.info.pipeline_stage" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>info.pipeline_stage</td>
     <td>The registered name for this item type.</td>
   </tr>
   <tr>
@@ -45713,6 +47205,13 @@ Examples:
     <td>PipelineState</td>
   </tr>
   <tr>
+    <td>description</td>
+    <td>Base class that all models in kiara inherit from.
+
+This class provides utility functions for things like rendering the model on terminal or as html, integration into
+a tree hierarchy of the overall kiara context, hashing, etc.</td>
+  </tr>
+  <tr>
     <td>type</td>
     <td>object</td>
   </tr>
@@ -45919,6 +47418,10 @@ Examples:
     step_states
   </li>
 </ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
   </tr>
 </table></td>
   </tr>

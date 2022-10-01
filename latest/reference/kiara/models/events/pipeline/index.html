@@ -4734,7 +4734,7 @@ Config        </code>
 
 <h3 id="kiara.models.events.pipeline.PipelineState" class="doc doc-heading">
         <code>
-PipelineState            (<span title="pydantic.main.BaseModel">BaseModel</span>)
+PipelineState            (<a class="autorefs autorefs-internal" title="kiara.models.KiaraModel" href="../../__init__/#kiara.models.KiaraModel">KiaraModel</a>)
         </code>
 
 
@@ -4749,7 +4749,10 @@ PipelineState            (<span title="pydantic.main.BaseModel">BaseModel</span>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/events/pipeline.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineState</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineState</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.pipeline_state&quot;</span>
+
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
         <span class="n">json_loads</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span>
         <span class="n">json_dumps</span> <span class="o">=</span> <span class="n">orjson_dumps</span>

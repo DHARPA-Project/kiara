@@ -9,7 +9,7 @@ import structlog
 import uuid
 from typing import Dict, Mapping, Union
 
-from kiara.models.events.pipeline import PipelineDetails, PipelineEvent
+from kiara.models.events.pipeline import PipelineEvent, PipelineState
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineListener
 from kiara.registries.jobs import JobRegistry
 from kiara.utils import log_exception
@@ -29,7 +29,7 @@ class SinglePipelineController(PipelineController):
 
         self._pipeline: Union[Pipeline, None] = None
         self._job_registry: JobRegistry = job_registry
-        self._pipeline_details: Union[PipelineDetails, None] = None
+        self._pipeline_details: Union[PipelineState, None] = None
 
         if pipeline is not None:
             self.pipeline = pipeline
@@ -52,7 +52,7 @@ class SinglePipelineController(PipelineController):
         if self._pipeline is not None:
             self._pipeline.add_listener(self)
 
-    def current_pipeline_state(self) -> PipelineDetails:
+    def current_pipeline_state(self) -> PipelineState:
 
         if self._pipeline_details is None:
             self._pipeline_details = self.pipeline.get_pipeline_details()

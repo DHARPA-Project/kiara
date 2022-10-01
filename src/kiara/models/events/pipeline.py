@@ -78,7 +78,7 @@ class StepDetails(BaseModel):
         return f"{self.kiara_id}.{self.pipeline_id}.{self.step_id}"
 
 
-class PipelineDetails(BaseModel):
+class PipelineState(BaseModel):
     class Config:
         json_loads = orjson.loads
         json_dumps = orjson_dumps

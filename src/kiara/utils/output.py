@@ -36,7 +36,7 @@ if TYPE_CHECKING:
     from pyarrow import Table as ArrowTable
     from sqlalchemy.engine import Engine
 
-    from kiara.models.events.pipeline import PipelineDetails
+    from kiara.models.events.pipeline import PipelineState
     from kiara.models.module.pipeline import PipelineStructure
     from kiara.models.values.value_schema import ValueSchema
 
@@ -805,7 +805,7 @@ def create_renderable_from_values(
 
 
 def create_pipeline_steps_tree(
-    pipeline_structure: "PipelineStructure", pipeline_details: "PipelineDetails"
+    pipeline_structure: "PipelineStructure", pipeline_details: "PipelineState"
 ) -> Tree:
 
     from kiara.models.module.pipeline import StepStatus

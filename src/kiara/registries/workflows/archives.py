@@ -201,5 +201,5 @@ class FileSystemWorkflowStore(FileSystemWorkflowArchive, WorkflowStore):
             self.workflow_states_path / f"{workflow_state.instance_id}.state"
         )
 
-        workflow_state_json = workflow_state.json()
+        workflow_state_json = workflow_state.json(option=orjson.OPT_NON_STR_KEYS)
         workflow_state_path.write_text(workflow_state_json)

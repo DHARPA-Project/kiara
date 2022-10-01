@@ -27,8 +27,8 @@ from kiara.models.documentation import (
 )
 from kiara.models.events.pipeline import (
     ChangedValue,
-    PipelineDetails,
     PipelineEvent,
+    PipelineState,
     StepDetails,
 )
 from kiara.models.module.jobs import JobConfig
@@ -251,7 +251,7 @@ class Pipeline(object):
         for listener in self._listeners:
             listener._pipeline_event_occurred(event=event)
 
-    def get_pipeline_details(self) -> PipelineDetails:
+    def get_pipeline_details(self) -> PipelineState:
 
         pipeline_inputs = self._all_values.get_alias("pipeline.inputs")
         pipeline_outputs = self._all_values.get_alias("pipeline.outputs")
@@ -284,7 +284,7 @@ class Pipeline(object):
             d = self.get_step_details(step_id)
             step_states[step_id] = d
 
-        details = PipelineDetails.construct(
+        details = PipelineState.construct(
             kiara_id=self._data_registry.kiara_id,
             pipeline_id=self.pipeline_id,
             pipeline_status=status,
@@ -641,19 +641,23 @@ class PipelineInfo(ItemInfo[Pipeline]):
         authors = AuthorsMetadataModel()
         context = ContextMetadataModel()
 
+        # stages = PipelineStage.from_pipeline_structure(structure=pipeline.structure)
+
         pipeline_info = PipelineInfo(
             type_name=str(pipeline.pipeline_id),
             documentation=doc,
             authors=authors,
             context=context,
             pipeline_structure=pipeline.structure,
-            pipeline_details=pipeline.get_pipeline_details(),
+            pipeline_state=pipeline.get_pipeline_details(),
+            # stages=stages
         )
         pipeline_info._kiara = kiara
         return pipeline_info
 
     pipeline_structure: PipelineStructure = Field(description="The pipeline structure.")
-    pipeline_details: PipelineDetails = Field(description="The current input details.")
+    pipeline_state: PipelineState = Field(description="The current input details.")
+    # stages: Mapping[int, PipelineStage] = Field(description="Details about this pipelines stages/execution order.")
     _kiara: "Kiara" = PrivateAttr(default=None)
 
     def create_pipeline_table(self, **config: Any) -> Table:
@@ -673,7 +677,7 @@ class PipelineInfo(ItemInfo[Pipeline]):
 
         if include_pipeline_inputs:
             input_values = self._kiara.data_registry.create_valuemap(
-                data=self.pipeline_details.pipeline_inputs,
+                data=self.pipeline_state.pipeline_inputs,
                 schema=self.pipeline_structure.pipeline_inputs_schema,
             )
 
@@ -708,13 +712,13 @@ class PipelineInfo(ItemInfo[Pipeline]):
         if include_steps:
             steps = create_pipeline_steps_tree(
                 pipeline_structure=self.pipeline_structure,
-                pipeline_details=self.pipeline_details,
+                pipeline_details=self.pipeline_state,
             )
             table.add_row("steps", steps)
 
         if include_pipeline_outputs:
             output_values = self._kiara.data_registry.load_values(
-                values=self.pipeline_details.pipeline_outputs
+                values=self.pipeline_state.pipeline_outputs
             )
             ordered_fields = {}
             for (
@@ -757,7 +761,7 @@ class PipelineInfo(ItemInfo[Pipeline]):
 
         if include_details:
             t_details = create_table_from_model_object(
-                self.pipeline_details, render_config=config
+                self.pipeline_state, render_config=config
             )
             table.add_row("details", t_details)
 

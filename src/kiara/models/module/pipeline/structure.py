@@ -30,71 +30,67 @@ def generate_pipeline_endpoint_name(step_id: str, value_name: str):
     return f"{step_id}__{value_name}"
 
 
-# def calculate_shortest_field_aliases(
-#     steps: List[PipelineStep], alias_type: str, alias_for: str
-# ):
-#     """Utility method to figure out the best field aliases automatically."""
-#
-#     assert alias_for in ["inputs", "outputs"]
-#     if alias_type == "auto_all_outputs":
-#
-#         aliases: Dict[str, List[str]] = {}
-#
-#         for step in steps:
-#
-#             if alias_for == "inputs":
-#                 field_names = step.module.input_names
-#             else:
-#                 field_names = step.module.output_names
-#
-#             for field_name in field_names:
-#                 aliases.setdefault(field_name, []).append(step.step_id)
-#
-#         result = {}
-#         for field_name, step_ids in aliases.items():
-#             if len(step_ids) == 1:
-#                 result[
-#                     generate_pipeline_endpoint_name(step_ids[0], field_name)
-#                 ] = field_name
-#             else:
-#                 for step_id in step_ids:
-#                     generated = generate_pipeline_endpoint_name(step_id, field_name)
-#                     result[generated] = generated
-#
-#     elif alias_type == "auto":
-#
-#         aliases = {}
-#
-#         for stage_nr, step in enumerate(steps):
-#
-#             _field_names: Optional[Iterable[str]] = None
-#             if alias_for == "inputs":
-#                 _field_names = step.module.input_names
-#             else:
-#                 if stage_nr == len(steps) - 1:
-#                     _field_names = step.module.output_names
-#
-#             if not _field_names:
-#                 continue
-#
-#             for field_name in _field_names:
-#                 aliases.setdefault(field_name, []).append(step.step_id)
-#
-#         result = {}
-#         for field_name, step_ids in aliases.items():
-#             if len(step_ids) == 1:
-#                 result[
-#                     generate_pipeline_endpoint_name(step_ids[0], field_name)
-#                 ] = field_name
-#             else:
-#                 for step_id in step_ids:
-#                     generated = generate_pipeline_endpoint_name(step_id, field_name)
-#                     result[generated] = generated
-#
-#     return result
+class PipelineStage(KiaraModel):
+    @classmethod
+    def from_pipeline_structure(
+        cls, structure: "PipelineStructure"
+    ) -> Dict[int, "PipelineStage"]:
+        used_pipeline_inputs: Set[str] = set()
+        used_pipeline_outputs: Set[str] = set()
+        result = {}
+        for idx, stage in enumerate(structure.processing_stages, start=1):
+            stage_steps = []
+            inputs = []
+            outputs = []
 
+            for step_id in stage:
+                step = structure.get_step(step_id=step_id)
+                stage_steps.append(step.step_id)
+                for pipeline_input, ref in structure.pipeline_input_refs.items():
+                    if pipeline_input in used_pipeline_inputs:
+                        continue
+                    for con_inp in ref.connected_inputs:
+                        if con_inp.step_id == step_id and pipeline_input not in inputs:
+                            inputs.append(pipeline_input)
+                for pipeline_output, out_ref in structure.pipeline_output_refs.items():
+                    if pipeline_output in used_pipeline_outputs:
+                        continue
+                    if out_ref.connected_output.step_id == step_id:
+                        outputs.append(pipeline_output)
 
-# ALLOWED_INPUT_ALIAS_MARKERS = ["auto", "auto_all_outputs"]
+            stage_used_inputs = list(used_pipeline_inputs)
+            stage_used_outputs = list(used_pipeline_outputs)
+
+            result[idx] = PipelineStage(
+                stage_index=idx,
+                steps=stage_steps,
+                pipeline_inputs=inputs,
+                pipeline_outputs=outputs,
+                previous_inputs=stage_used_inputs,
+                previous_outputs=stage_used_outputs,
+            )
+
+            used_pipeline_inputs.update(inputs)
+            used_pipeline_outputs.update(outputs)
+
+        return result
+
+    stage_index: int = Field(description="The index of this stage.")
+    steps: List[str] = Field(
+        description="The pipeline steps that are executed in this stage."
+    )
+    pipeline_inputs: List[str] = Field(
+        description="The pipeline inputs required for this stage."
+    )
+    pipeline_outputs: List[str] = Field(
+        description="The pipeline outputs that are ready once this stage is processed."
+    )
+    previous_inputs: List[str] = Field(
+        description="Pipeline inputs that are already set by this stage."
+    )
+    previous_outputs: List[str] = Field(
+        description="Pipeline outputs that are already computed by this stage."
+    )
 
 
 class PipelineStructure(KiaraModel):
@@ -106,6 +102,7 @@ class PipelineStructure(KiaraModel):
         description="The underlying pipeline config."
     )
     steps: List[PipelineStep] = Field(description="The pipeline steps ")
+    # stages: Mapping[int, PipelineStage] = Field(description="Details about each of the pipeline stages.")
     input_aliases: Dict[str, str] = Field(description="The input aliases.")
     output_aliases: Dict[str, str] = Field(description="The output aliases.")
 
@@ -163,6 +160,9 @@ class PipelineStructure(KiaraModel):
                 f"Invalid output reference(s): {', '.join(invalid_output_names)}. Must be one of: {', '.join(valid_output_names)}"
             )
 
+        # stages = PipelineStage.from_pipeline_structure(stages=)
+
+        # values["steps"] = {step.step_id: step for step in _steps}
         values["steps"] = _steps
         values["input_aliases"] = _input_aliases
         values["output_aliases"] = _output_aliases
@@ -178,6 +178,7 @@ class PipelineStructure(KiaraModel):
     _data_flow_graph_simple: nx.DiGraph = PrivateAttr(None)  # type: ignore
 
     _processing_stages: List[List[str]] = PrivateAttr(None)  # type: ignore
+    _stages_info: Mapping[int, PipelineStage] = PrivateAttr(None)  # type: ignore
 
     # holds details about the (current) processing steps contained in this workflow
     _steps_details: Dict[str, Any] = PrivateAttr(None)  # type: ignore
@@ -274,6 +275,14 @@ class PipelineStructure(KiaraModel):
         if self._steps_details is None:
             self._process_steps()
         return self._processing_stages
+
+    @property
+    def processing_stages_info(self) -> Mapping[int, PipelineStage]:
+        if self._stages_info is not None:
+            return self._stages_info
+
+        self._stages_info = PipelineStage.from_pipeline_structure(self)
+        return self._stages_info
 
     @lru_cache()
     def _get_node_of_type(self, node_type: str):
@@ -631,7 +640,7 @@ class PipelineStructure(KiaraModel):
                 step = self.get_step(step_id=step_id)
                 if step.doc.is_set:
                     step_node.add(f"desc: {step.doc.description}")
-                step_node.add(f"module: {step.module_type}")
+                step_node.add(f"module: {step.manifest_src.module_type}")
 
         outputs = tree.add("outputs")
         for field_name, schema in self.pipeline_outputs_schema.items():

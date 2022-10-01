@@ -12,6 +12,7 @@ from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.events.pipeline import ChangedValue, PipelineEvent
 from kiara.models.module.jobs import ExecutionContext, JobConfig
+from kiara.models.module.manifest import Manifest
 from kiara.models.module.pipeline import (
     PipelineConfig,
     PipelineStep,
@@ -846,13 +847,16 @@ class Workflow(object):
             module_or_operation=operation, config=module_config
         )
         module = self._kiara.create_module(manifest=manifest)
+        manifest_src = Manifest(
+            module_type=manifest.module_type, module_config=manifest.module_config
+        )
         step = PipelineStep(
             step_id=step_id,
             module_type=module.module_type_name,
             module_config=module.config.dict(),
             module_details=KiaraModuleInstance.from_module(module=module),
             doc=doc,
-            manifest_src=manifest,
+            manifest_src=manifest_src,
         )
         step._module = module
         self._steps[step_id] = step
@@ -1076,7 +1080,7 @@ class Workflow(object):
         self.set_inputs(**state.inputs)
         assert {k: v for k, v in self._current_pipeline_inputs.items() if v not in [NONE_VALUE_ID, NOT_SET_VALUE_ID]} == {k: v for k, v in state.inputs.items() if v not in [NONE_VALUE_ID, NOT_SET_VALUE_ID]}  # type: ignore
         self._current_pipeline_outputs = (
-            state.pipeline_info.pipeline_details.pipeline_outputs
+            state.pipeline_info.pipeline_state.pipeline_outputs
         )
         self._pipeline_info = state.pipeline_info
         self._current_state = state

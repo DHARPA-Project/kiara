@@ -11,6 +11,7 @@ from sortedcontainers import SortedDict
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, MutableMapping, Set, Union
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
+from kiara.models import KiaraModel
 from kiara.models.events import KiaraEvent
 from kiara.models.module.pipeline import PipelineStep, StepStatus
 from kiara.utils.json import orjson_dumps
@@ -78,7 +79,10 @@ class StepDetails(BaseModel):
         return f"{self.kiara_id}.{self.pipeline_id}.{self.step_id}"
 
 
-class PipelineState(BaseModel):
+class PipelineState(KiaraModel):
+
+    _kiara_model_id = "instance.pipeline_state"
+
     class Config:
         json_loads = orjson.loads
         json_dumps = orjson_dumps

@@ -31,6 +31,9 @@ def generate_pipeline_endpoint_name(step_id: str, value_name: str):
 
 
 class PipelineStage(KiaraModel):
+
+    _kiara_model_id = "info.pipeline_stage"
+
     @classmethod
     def from_pipeline_structure(
         cls, structure: "PipelineStructure"

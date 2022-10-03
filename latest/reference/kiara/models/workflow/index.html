@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/models/workflow/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.4">
+      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.6">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.80dcb947.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.20d9efc8.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -4318,9 +4318,9 @@ WorkflowGroupInfo            (<a class="autorefs autorefs-internal" title="kiara
         <span class="k">for</span> <span class="n">workflow_id</span><span class="p">,</span> <span class="n">wf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
             <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="n">workflow_id</span><span class="p">]</span>
-            <span class="n">steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">pipeline_info</span><span class="o">.</span><span class="n">pipeline_structure</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span>
-            <span class="n">stages</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">pipeline_info</span><span class="o">.</span><span class="n">pipeline_structure</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">)</span>
-            <span class="n">states</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">workflow_states</span><span class="p">)</span>
+            <span class="n">steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">pipeline_info</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span>
+            <span class="n">stages</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">pipeline_info</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">)</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">workflow_state_ids</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">aliases</span><span class="p">:</span>
                 <span class="n">alias_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -4474,9 +4474,9 @@ WorkflowGroupInfo            (<a class="autorefs autorefs-internal" title="kiara
     <span class="k">for</span> <span class="n">workflow_id</span><span class="p">,</span> <span class="n">wf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
         <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="n">workflow_id</span><span class="p">]</span>
-        <span class="n">steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">pipeline_info</span><span class="o">.</span><span class="n">pipeline_structure</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span>
-        <span class="n">stages</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">pipeline_info</span><span class="o">.</span><span class="n">pipeline_structure</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">)</span>
-        <span class="n">states</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">workflow_states</span><span class="p">)</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">pipeline_info</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span>
+        <span class="n">stages</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">pipeline_info</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">)</span>
+        <span class="n">states</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">wf</span><span class="o">.</span><span class="n">workflow_state_ids</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">aliases</span><span class="p">:</span>
             <span class="n">alias_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -4541,7 +4541,7 @@ WorkflowInfo            (<a class="autorefs autorefs-internal" title="kiara.inte
         <span class="n">wf_info</span> <span class="o">=</span> <span class="n">WorkflowInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
             <span class="n">type_name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">workflow</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">),</span>
             <span class="n">workflow_metadata</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">workflow_metadata</span><span class="p">,</span>
-            <span class="n">workflow_states</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">all_states</span><span class="p">,</span>
+            <span class="n">workflow_state_ids</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">all_state_ids</span><span class="p">,</span>
             <span class="n">pipeline_info</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">pipeline_info</span><span class="p">,</span>
             <span class="n">documentation</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">workflow_metadata</span><span class="o">.</span><span class="n">documentation</span><span class="p">,</span>
             <span class="n">authors</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">workflow_metadata</span><span class="o">.</span><span class="n">authors</span><span class="p">,</span>
@@ -4569,9 +4569,7 @@ WorkflowInfo            (<a class="autorefs autorefs-internal" title="kiara.inte
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">create_from_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="o">=</span><span class="n">instance</span><span class="p">)</span>
 
     <span class="n">workflow_metadata</span><span class="p">:</span> <span class="n">WorkflowMetadata</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The workflow details.&quot;</span><span class="p">)</span>
-    <span class="n">workflow_states</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WorkflowState</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;All states for this workflow.&quot;</span>
-    <span class="p">)</span>
+    <span class="n">workflow_state_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;All states for this workflow.&quot;</span><span class="p">)</span>
     <span class="n">pipeline_info</span><span class="p">:</span> <span class="n">PipelineInfo</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The current state of the workflows&#39; pipeline.&quot;</span>
     <span class="p">)</span>
@@ -4812,15 +4810,15 @@ WorkflowInfo            (<a class="autorefs autorefs-internal" title="kiara.inte
 
 
 
-<h5 id="kiara.models.workflow.WorkflowInfo.workflow_states" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">workflow_states</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">WorkflowState</span><span class="p">]</span></code>
+<h5 id="kiara.models.workflow.WorkflowInfo.workflow_state_ids" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">workflow_state_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
       <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
-<a href="#kiara.models.workflow.WorkflowInfo.workflow_states" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.workflow.WorkflowInfo.workflow_state_ids" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4948,7 +4946,7 @@ WorkflowInfo            (<a class="autorefs autorefs-internal" title="kiara.inte
     <span class="n">wf_info</span> <span class="o">=</span> <span class="n">WorkflowInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
         <span class="n">type_name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">workflow</span><span class="o">.</span><span class="n">workflow_id</span><span class="p">),</span>
         <span class="n">workflow_metadata</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">workflow_metadata</span><span class="p">,</span>
-        <span class="n">workflow_states</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">all_states</span><span class="p">,</span>
+        <span class="n">workflow_state_ids</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">all_state_ids</span><span class="p">,</span>
         <span class="n">pipeline_info</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">pipeline_info</span><span class="p">,</span>
         <span class="n">documentation</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">workflow_metadata</span><span class="o">.</span><span class="n">documentation</span><span class="p">,</span>
         <span class="n">authors</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">workflow_metadata</span><span class="o">.</span><span class="n">authors</span><span class="p">,</span>
@@ -5491,11 +5489,11 @@ WorkflowState            (<a class="autorefs autorefs-internal" title="kiara.mod
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">pipeline_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineConfig</span><span class="p">:</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_info</span><span class="o">.</span><span class="n">pipeline_structure</span><span class="o">.</span><span class="n">pipeline_config</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_info</span><span class="o">.</span><span class="n">pipeline_config</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">pipeline_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineStructure</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_info</span><span class="o">.</span><span class="n">pipeline_structure</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_info</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span>
 
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 

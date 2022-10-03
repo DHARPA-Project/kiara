@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/interfaces/python_api/workflow/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.4">
+      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.6">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.80dcb947.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.20d9efc8.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -5297,6 +5297,12 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
         <span class="k">return</span> <span class="n">state</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">all_state_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+
+        <span class="n">hashes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_workflow_metadata</span><span class="o">.</span><span class="n">workflow_history</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">hashes</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">all_states</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WorkflowState</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Return a list of all states this workflow had in the past, indexed by the hash of each state.&quot;&quot;&quot;</span>
 
@@ -5446,6 +5452,28 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
 
 <h4 id="kiara.interfaces.python_api.workflow.Workflow-attributes">Attributes<a href="#kiara.interfaces.python_api.workflow.Workflow-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.workflow.Workflow.all_state_ids" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">all_state_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.workflow.Workflow.all_state_ids" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-attribute">
 

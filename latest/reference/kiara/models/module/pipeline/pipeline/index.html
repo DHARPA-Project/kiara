@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/models/module/pipeline/pipeline/">
       
       <link rel="icon" href="../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.4">
+      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.6">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.80dcb947.min.css">
+      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.20d9efc8.min.css">
       
         
         <link rel="stylesheet" href="../../../../../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -5919,17 +5919,26 @@ PipelineInfo            (<a class="autorefs autorefs-internal" title="kiara.inte
             <span class="n">documentation</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span>
             <span class="n">authors</span><span class="o">=</span><span class="n">authors</span><span class="p">,</span>
             <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span>
-            <span class="n">pipeline_structure</span><span class="o">=</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span>
+            <span class="c1"># pipeline_structure=pipeline.structure,</span>
+            <span class="n">pipeline_config</span><span class="o">=</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_config</span><span class="p">,</span>
             <span class="n">pipeline_state</span><span class="o">=</span><span class="n">pipeline</span><span class="o">.</span><span class="n">get_pipeline_details</span><span class="p">(),</span>
             <span class="c1"># stages=stages</span>
         <span class="p">)</span>
         <span class="n">pipeline_info</span><span class="o">.</span><span class="n">_kiara</span> <span class="o">=</span> <span class="n">kiara</span>
         <span class="k">return</span> <span class="n">pipeline_info</span>
 
-    <span class="n">pipeline_structure</span><span class="p">:</span> <span class="n">PipelineStructure</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The pipeline structure.&quot;</span><span class="p">)</span>
+    <span class="c1"># pipeline_structure: PipelineStructure = Field(description=&quot;The pipeline structure.&quot;)</span>
+    <span class="n">pipeline_config</span><span class="p">:</span> <span class="n">PipelineConfig</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The configuration of the pipeline.&quot;</span>
+    <span class="p">)</span>
     <span class="n">pipeline_state</span><span class="p">:</span> <span class="n">PipelineState</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The current input details.&quot;</span><span class="p">)</span>
     <span class="c1"># stages: Mapping[int, PipelineStage] = Field(description=&quot;Details about this pipelines stages/execution order.&quot;)</span>
     <span class="n">_kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">_structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pipeline_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">structure</span>
 
     <span class="k">def</span> <span class="nf">create_pipeline_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
 
@@ -5958,7 +5967,7 @@ PipelineInfo            (<a class="autorefs autorefs-internal" title="kiara.inte
                     <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_structure</span><span class="o">.</span><span class="n">get_step_details</span><span class="p">(</span>
                         <span class="n">step_id</span><span class="o">=</span><span class="n">con_input</span><span class="o">.</span><span class="n">step_id</span>
                     <span class="p">)</span>
-                    <span class="n">stage</span> <span class="o">=</span> <span class="n">details</span><span class="p">[</span><span class="s2">&quot;processing_stage&quot;</span><span class="p">]</span>
+                    <span class="n">stage</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">processing_stage</span>
                     <span class="n">ordered_fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
 
             <span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>
@@ -5998,7 +6007,7 @@ PipelineInfo            (<a class="autorefs autorefs-internal" title="kiara.inte
             <span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_structure</span><span class="o">.</span><span class="n">pipeline_output_refs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">con_step_id</span> <span class="o">=</span> <span class="n">o_ref</span><span class="o">.</span><span class="n">connected_output</span><span class="o">.</span><span class="n">step_id</span>
                 <span class="n">details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_structure</span><span class="o">.</span><span class="n">get_step_details</span><span class="p">(</span><span class="n">step_id</span><span class="o">=</span><span class="n">con_step_id</span><span class="p">)</span>
-                <span class="n">stage</span> <span class="o">=</span> <span class="n">details</span><span class="p">[</span><span class="s2">&quot;processing_stage&quot;</span><span class="p">]</span>
+                <span class="n">stage</span> <span class="o">=</span> <span class="n">details</span><span class="o">.</span><span class="n">processing_stage</span>
                 <span class="n">ordered_fields</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">field_name</span><span class="p">)</span>
 
             <span class="n">fields</span> <span class="o">=</span> <span class="p">[]</span>
@@ -6069,6 +6078,29 @@ PipelineInfo            (<a class="autorefs autorefs-internal" title="kiara.inte
 
 
 
+<h5 id="kiara.models.module.pipeline.pipeline.PipelineInfo.pipeline_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_config</span><span class="p">:</span> <span class="n">PipelineConfig</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.models.module.pipeline.pipeline.PipelineInfo.pipeline_config" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The configuration of the pipeline.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
 <h5 id="kiara.models.module.pipeline.pipeline.PipelineInfo.pipeline_state" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">pipeline_state</span><span class="p">:</span> <span class="n">PipelineState</span></code>
 
@@ -6093,18 +6125,17 @@ PipelineInfo            (<a class="autorefs autorefs-internal" title="kiara.inte
 
 
 <h5 id="kiara.models.module.pipeline.pipeline.PipelineInfo.pipeline_structure" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">pipeline_structure</span><span class="p">:</span> <span class="n">PipelineStructure</span></code>
+<code class="highlight language-python"><span class="n">pipeline_structure</span></code>
 
   <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.pipeline.PipelineInfo.pipeline_structure" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
-      <p>The pipeline structure.</p>
     </div>
 
   </div>
@@ -6234,7 +6265,8 @@ PipelineInfo            (<a class="autorefs autorefs-internal" title="kiara.inte
         <span class="n">documentation</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span>
         <span class="n">authors</span><span class="o">=</span><span class="n">authors</span><span class="p">,</span>
         <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span>
-        <span class="n">pipeline_structure</span><span class="o">=</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span>
+        <span class="c1"># pipeline_structure=pipeline.structure,</span>
+        <span class="n">pipeline_config</span><span class="o">=</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_config</span><span class="p">,</span>
         <span class="n">pipeline_state</span><span class="o">=</span><span class="n">pipeline</span><span class="o">.</span><span class="n">get_pipeline_details</span><span class="p">(),</span>
         <span class="c1"># stages=stages</span>
     <span class="p">)</span>

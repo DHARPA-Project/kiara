@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/interfaces/python_api/models/info/">
       
       <link rel="icon" href="../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.4">
+      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.6">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.80dcb947.min.css">
+      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.20d9efc8.min.css">
       
         
         <link rel="stylesheet" href="../../../../../../assets/stylesheets/palette.cbb835fc.min.css">
@@ -1768,6 +1768,13 @@
           <li class="md-nav__item">
   <a href="#kiara.interfaces.python_api.models.info.OperationTypeInfo" class="md-nav__link">
     OperationTypeInfo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo" class="md-nav__link">
+    PipelineStructureInfo
   </a>
   
 </li>
@@ -4457,6 +4464,13 @@
           <li class="md-nav__item">
   <a href="#kiara.interfaces.python_api.models.info.OperationTypeInfo" class="md-nav__link">
     OperationTypeInfo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo" class="md-nav__link">
+    PipelineStructureInfo
   </a>
   
 </li>
@@ -8155,6 +8169,776 @@ OperationTypeInfo            (<a class="autorefs autorefs-internal" title="kiara
             <span class="s2">&quot;python_class&quot;</span><span class="p">:</span> <span class="n">python_class</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo" class="doc doc-heading">
+        <code>
+PipelineStructureInfo            (<a class="autorefs autorefs-internal" title="kiara.interfaces.python_api.models.info.ItemInfo" href="#kiara.interfaces.python_api.models.info.ItemInfo">ItemInfo</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/models/info.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineStructureInfo</span><span class="p">(</span><span class="n">ItemInfo</span><span class="p">):</span>
+
+    <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;info.pipeline_structure&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">base_instance_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">PipelineStructure</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">PipelineStructure</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_from_instance</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">PipelineStructure</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">):</span>
+
+        <span class="n">authors</span> <span class="o">=</span> <span class="n">AuthorsMetadataModel</span><span class="p">()</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="n">ContextMetadataModel</span><span class="p">()</span>
+
+        <span class="n">execution_graph</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">data_flow_graph</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">data_flow_graph_simple</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">input_fields</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">pipeline_inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_data_type_instance</span><span class="p">(</span>
+                <span class="n">type_name</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">type_config</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type_config</span>
+            <span class="p">)</span>
+            <span class="n">dt_info</span> <span class="o">=</span> <span class="n">FieldInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+                <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
+                <span class="n">field_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
+                <span class="n">data_type_info</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">info</span><span class="p">,</span>
+                <span class="n">value_required</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">(),</span>
+            <span class="p">)</span>
+            <span class="n">input_fields</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt_info</span>
+
+        <span class="n">output_fields</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">pipeline_outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_data_type_instance</span><span class="p">(</span>
+                <span class="n">type_name</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">type_config</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type_config</span>
+            <span class="p">)</span>
+            <span class="n">dt_info</span> <span class="o">=</span> <span class="n">FieldInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+                <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
+                <span class="n">field_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
+                <span class="n">data_type_info</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">info</span><span class="p">,</span>
+                <span class="n">value_required</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">(),</span>
+            <span class="p">)</span>
+            <span class="n">output_fields</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt_info</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">type_name</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">instance_id</span><span class="p">,</span>
+            <span class="n">documentation</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
+            <span class="n">authors</span><span class="o">=</span><span class="n">authors</span><span class="p">,</span>
+            <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span>
+            <span class="n">pipeline_config</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">pipeline_config</span><span class="p">,</span>
+            <span class="n">steps</span><span class="o">=</span><span class="p">{</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">:</span> <span class="n">step</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">steps</span><span class="p">},</span>
+            <span class="n">step_details</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">steps_details</span><span class="p">,</span>
+            <span class="n">input_aliases</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">,</span>
+            <span class="n">output_aliases</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">,</span>
+            <span class="n">constants</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">constants</span><span class="p">,</span>
+            <span class="n">defaults</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">defaults</span><span class="p">,</span>
+            <span class="n">pipeline_input_fields</span><span class="o">=</span><span class="n">input_fields</span><span class="p">,</span>
+            <span class="n">pipeline_output_fields</span><span class="o">=</span><span class="n">output_fields</span><span class="p">,</span>
+            <span class="n">pipeline_input_refs</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">pipeline_input_refs</span><span class="p">,</span>
+            <span class="n">pipeline_output_refs</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">pipeline_output_refs</span><span class="p">,</span>
+            <span class="n">execution_graph</span><span class="o">=</span><span class="n">execution_graph</span><span class="p">,</span>
+            <span class="n">data_flow_graph</span><span class="o">=</span><span class="n">data_flow_graph</span><span class="p">,</span>
+            <span class="n">data_flow_graph_simple</span><span class="o">=</span><span class="n">data_flow_graph_simple</span><span class="p">,</span>
+            <span class="n">processing_stages</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">,</span>
+            <span class="n">processing_stages_info</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">processing_stages_info</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">pipeline_config</span><span class="p">:</span> <span class="n">PipelineConfig</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The underlying pipeline config.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">steps</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PipelineStep</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;All steps for this pipeline, indexed by their step_id.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">step_details</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StepInfo</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Additional information for each step.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">input_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The input aliases.&quot;</span><span class="p">)</span>
+    <span class="n">output_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The output aliases.&quot;</span><span class="p">)</span>
+    <span class="n">constants</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The input constants for this pipeline.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">defaults</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The default inputs for this pipeline.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">pipeline_input_fields</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FieldInfo</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The pipeline inputs schema.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pipeline_output_fields</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FieldInfo</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The pipeline outputs schema.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">pipeline_input_refs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PipelineInputRef</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;References to the step inputs that are linked to pipeline inputs.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">pipeline_output_refs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">PipelineOutputRef</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;References to the step outputs that are linked to pipeline outputs.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">execution_graph</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Data describing the execution graph of this pipeline.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">data_flow_graph</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Data describing the data flow of this pipeline.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">data_flow_graph_simple</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Data describing the (simplified) data flow of this pipeline.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">processing_stages</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A list of lists, containing all the step_ids per stage, in the order of execution.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">processing_stages_info</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">PipelineStage</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;More detailed information about each step of this pipelines execution graph.&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineStep</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_step_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepInfo</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_details</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">Tree</span><span class="p">(</span><span class="s2">&quot;pipeline&quot;</span><span class="p">)</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_input_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">inputs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[i]</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">[i] (type: </span><span class="si">{</span><span class="n">field_info</span><span class="o">.</span><span class="n">field_schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+        <span class="n">steps</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">stage_node</span> <span class="o">=</span> <span class="n">steps</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stage </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">stage</span><span class="p">:</span>
+                <span class="n">step_node</span> <span class="o">=</span> <span class="n">stage_node</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;step: </span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
+                    <span class="n">step_node</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;desc: </span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">step_node</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;module: </span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">manifest_src</span><span class="o">.</span><span class="n">module_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_output_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">outputs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[i]</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">[i] (type: </span><span class="si">{</span><span class="n">field_info</span><span class="o">.</span><span class="n">field_schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">tree</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h4 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo-attributes">Attributes<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.constants" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">constants</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.constants" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The input constants for this pipeline.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.data_flow_graph" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">data_flow_graph</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.data_flow_graph" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Data describing the data flow of this pipeline.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.data_flow_graph_simple" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">data_flow_graph_simple</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.data_flow_graph_simple" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Data describing the (simplified) data flow of this pipeline.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.defaults" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">defaults</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.defaults" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The default inputs for this pipeline.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.execution_graph" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">execution_graph</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.execution_graph" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Data describing the execution graph of this pipeline.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.input_aliases" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">input_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.input_aliases" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The input aliases.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.output_aliases" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">output_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.output_aliases" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The output aliases.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.pipeline_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_config</span><span class="p">:</span> <span class="n">PipelineConfig</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.pipeline_config" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The underlying pipeline config.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.pipeline_input_fields" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_input_fields</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">interfaces</span><span class="o">.</span><span class="n">python_api</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">FieldInfo</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.pipeline_input_fields" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The pipeline inputs schema.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.pipeline_input_refs" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_input_refs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">value_refs</span><span class="o">.</span><span class="n">PipelineInputRef</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.pipeline_input_refs" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>References to the step inputs that are linked to pipeline inputs.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.pipeline_output_fields" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_output_fields</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">interfaces</span><span class="o">.</span><span class="n">python_api</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">FieldInfo</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.pipeline_output_fields" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>The pipeline outputs schema.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.pipeline_output_refs" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">pipeline_output_refs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">value_refs</span><span class="o">.</span><span class="n">PipelineOutputRef</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.pipeline_output_refs" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>References to the step outputs that are linked to pipeline outputs.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.processing_stages" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">processing_stages</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.processing_stages" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>A list of lists, containing all the step_ids per stage, in the order of execution.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.processing_stages_info" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">processing_stages_info</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">PipelineStage</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.processing_stages_info" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>More detailed information about each step of this pipelines execution graph.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.step_details" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">step_details</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">StepInfo</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.step_details" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Additional information for each step.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.steps" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">steps</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">PipelineStep</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+      <small class="doc doc-property doc-property-required"><code>required</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.steps" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>All steps for this pipeline, indexed by their step_id.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.base_instance_class" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">base_instance_class</span><span class="p">()</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.base_instance_class" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/models/info.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">base_instance_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">PipelineStructure</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">PipelineStructure</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.create_from_instance" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_from_instance</span><span class="p">(</span><span class="n">kiara</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.create_from_instance" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/models/info.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">create_from_instance</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">PipelineStructure</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">):</span>
+
+    <span class="n">authors</span> <span class="o">=</span> <span class="n">AuthorsMetadataModel</span><span class="p">()</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="n">ContextMetadataModel</span><span class="p">()</span>
+
+    <span class="n">execution_graph</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">data_flow_graph</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">data_flow_graph_simple</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">input_fields</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">pipeline_inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_data_type_instance</span><span class="p">(</span>
+            <span class="n">type_name</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">type_config</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type_config</span>
+        <span class="p">)</span>
+        <span class="n">dt_info</span> <span class="o">=</span> <span class="n">FieldInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+            <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
+            <span class="n">field_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
+            <span class="n">data_type_info</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">info</span><span class="p">,</span>
+            <span class="n">value_required</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">(),</span>
+        <span class="p">)</span>
+        <span class="n">input_fields</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt_info</span>
+
+    <span class="n">output_fields</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">pipeline_outputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_data_type_instance</span><span class="p">(</span>
+            <span class="n">type_name</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">type_config</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type_config</span>
+        <span class="p">)</span>
+        <span class="n">dt_info</span> <span class="o">=</span> <span class="n">FieldInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+            <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
+            <span class="n">field_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
+            <span class="n">data_type_info</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">info</span><span class="p">,</span>
+            <span class="n">value_required</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">(),</span>
+        <span class="p">)</span>
+        <span class="n">output_fields</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt_info</span>
+
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+        <span class="n">type_name</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">instance_id</span><span class="p">,</span>
+        <span class="n">documentation</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">doc</span><span class="p">,</span>
+        <span class="n">authors</span><span class="o">=</span><span class="n">authors</span><span class="p">,</span>
+        <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span>
+        <span class="n">pipeline_config</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">pipeline_config</span><span class="p">,</span>
+        <span class="n">steps</span><span class="o">=</span><span class="p">{</span><span class="n">step</span><span class="o">.</span><span class="n">step_id</span><span class="p">:</span> <span class="n">step</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">steps</span><span class="p">},</span>
+        <span class="n">step_details</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">steps_details</span><span class="p">,</span>
+        <span class="n">input_aliases</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">,</span>
+        <span class="n">output_aliases</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">,</span>
+        <span class="n">constants</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">constants</span><span class="p">,</span>
+        <span class="n">defaults</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">defaults</span><span class="p">,</span>
+        <span class="n">pipeline_input_fields</span><span class="o">=</span><span class="n">input_fields</span><span class="p">,</span>
+        <span class="n">pipeline_output_fields</span><span class="o">=</span><span class="n">output_fields</span><span class="p">,</span>
+        <span class="n">pipeline_input_refs</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">pipeline_input_refs</span><span class="p">,</span>
+        <span class="n">pipeline_output_refs</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">pipeline_output_refs</span><span class="p">,</span>
+        <span class="n">execution_graph</span><span class="o">=</span><span class="n">execution_graph</span><span class="p">,</span>
+        <span class="n">data_flow_graph</span><span class="o">=</span><span class="n">data_flow_graph</span><span class="p">,</span>
+        <span class="n">data_flow_graph_simple</span><span class="o">=</span><span class="n">data_flow_graph_simple</span><span class="p">,</span>
+        <span class="n">processing_stages</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">,</span>
+        <span class="n">processing_stages_info</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">processing_stages_info</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.create_renderable" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.create_renderable" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/models/info.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+
+    <span class="n">tree</span> <span class="o">=</span> <span class="n">Tree</span><span class="p">(</span><span class="s2">&quot;pipeline&quot;</span><span class="p">)</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_input_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">inputs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[i]</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">[i] (type: </span><span class="si">{</span><span class="n">field_info</span><span class="o">.</span><span class="n">field_schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+    <span class="n">steps</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;steps&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">stage_node</span> <span class="o">=</span> <span class="n">steps</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stage </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">step_id</span> <span class="ow">in</span> <span class="n">stage</span><span class="p">:</span>
+            <span class="n">step_node</span> <span class="o">=</span> <span class="n">stage_node</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;step: </span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
+                <span class="n">step_node</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;desc: </span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">description</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">step_node</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;module: </span><span class="si">{</span><span class="n">step</span><span class="o">.</span><span class="n">manifest_src</span><span class="o">.</span><span class="n">module_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">field_info</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_output_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">outputs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[i]</span><span class="si">{</span><span class="n">field_name</span><span class="si">}</span><span class="s2">[i] (type: </span><span class="si">{</span><span class="n">field_info</span><span class="o">.</span><span class="n">field_schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tree</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.get_step" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.get_step" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/models/info.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineStep</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.get_step_details" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_step_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.get_step_details" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/python_api/models/info.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_step_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StepInfo</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_details</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span>
 </code></pre></div>
         </details>
     </div>

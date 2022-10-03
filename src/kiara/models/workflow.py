@@ -73,11 +73,11 @@ class WorkflowState(KiaraModel):
     @property
     def pipeline_config(self) -> PipelineConfig:
 
-        return self.pipeline_info.pipeline_structure.pipeline_config
+        return self.pipeline_info.pipeline_config
 
     @property
     def pipeline_structure(self) -> PipelineStructure:
-        return self.pipeline_info.pipeline_structure
+        return self.pipeline_info.pipeline_config.structure
 
     def create_renderable(self, **config: Any) -> RenderableType:
 
@@ -169,7 +169,7 @@ class WorkflowInfo(ItemInfo):
         wf_info = WorkflowInfo.construct(
             type_name=str(workflow.workflow_id),
             workflow_metadata=workflow.workflow_metadata,
-            workflow_states=workflow.all_states,
+            workflow_state_ids=workflow.all_state_ids,
             pipeline_info=workflow.pipeline_info,
             documentation=workflow.workflow_metadata.documentation,
             authors=workflow.workflow_metadata.authors,
@@ -197,9 +197,7 @@ class WorkflowInfo(ItemInfo):
         return cls.create_from_workflow(workflow=instance)
 
     workflow_metadata: WorkflowMetadata = Field(description="The workflow details.")
-    workflow_states: Mapping[str, WorkflowState] = Field(
-        description="All states for this workflow."
-    )
+    workflow_state_ids: List[str] = Field(description="All states for this workflow.")
     pipeline_info: PipelineInfo = Field(
         description="The current state of the workflows' pipeline."
     )
@@ -335,9 +333,9 @@ class WorkflowGroupInfo(InfoItemGroup):
         for workflow_id, wf in self.item_infos.items():
 
             aliases = [k for k, v in self.aliases.items() if str(v) == workflow_id]
-            steps = len(wf.pipeline_info.pipeline_structure.steps)
-            stages = len(wf.pipeline_info.pipeline_structure.processing_stages)
-            states = len(wf.workflow_states)
+            steps = len(wf.pipeline_info.pipeline_config.structure.steps)
+            stages = len(wf.pipeline_info.pipeline_config.structure.processing_stages)
+            states = len(wf.workflow_state_ids)
 
             if not aliases:
                 alias_str = ""

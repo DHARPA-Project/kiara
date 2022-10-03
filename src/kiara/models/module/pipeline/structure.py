@@ -10,7 +10,7 @@ from functools import lru_cache
 from pydantic import Field, PrivateAttr, root_validator
 from rich.console import RenderableType
 from rich.tree import Tree
-from typing import Any, Dict, Iterable, List, Mapping, Set
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set
 
 from kiara.models import KiaraModel
 from kiara.models.module.pipeline import PipelineConfig, PipelineStep
@@ -24,10 +24,36 @@ from kiara.models.module.pipeline.value_refs import (
 )
 from kiara.models.values.value_schema import ValueSchema
 
+if TYPE_CHECKING:
+    pass
+
 
 def generate_pipeline_endpoint_name(step_id: str, value_name: str):
 
     return f"{step_id}__{value_name}"
+
+
+class StepInfo(KiaraModel):
+
+    _kiara_model_id = "info.pipeline_step"
+
+    step: PipelineStep = Field(description="The pipeline step object.")
+    inputs: Dict[str, StepInputRef] = Field(
+        description="Reference(s) to the fields that feed this steps inputs."
+    )
+    outputs: Dict[str, StepOutputRef] = Field(
+        description="Reference(s) to the fields that are fed by this steps outputs."
+    )
+    required: bool = Field(
+        description="Whether this step is always required or whether all his outputs feed into optional input fields."
+    )
+    processing_stage: int = Field(
+        description="The index of the processing stage of this step."
+    )
+
+    @property
+    def step_id(self) -> str:
+        return self.step.step_id
 
 
 class PipelineStage(KiaraModel):
@@ -184,7 +210,8 @@ class PipelineStructure(KiaraModel):
     _stages_info: Mapping[int, PipelineStage] = PrivateAttr(None)  # type: ignore
 
     # holds details about the (current) processing steps contained in this workflow
-    _steps_details: Dict[str, Any] = PrivateAttr(None)  # type: ignore
+    _steps_details: Dict[str, StepInfo] = PrivateAttr(None)  # type: ignore
+    # _info: "PipelineStructureInfo" = PrivateAttr(None)  # type: ignore
 
     def _retrieve_data_to_hash(self) -> Any:
         return {
@@ -197,7 +224,7 @@ class PipelineStructure(KiaraModel):
         return self.pipeline_config.instance_id
 
     @property
-    def steps_details(self) -> Mapping[str, Any]:
+    def steps_details(self) -> Mapping[str, StepInfo]:
 
         if self._steps_details is None:
             self._process_steps()
@@ -229,7 +256,7 @@ class PipelineStructure(KiaraModel):
         if d is None:
             raise Exception(f"No step with id: {step_id}")
 
-        return d["step"]
+        return d.step
 
     def get_step_input_refs(self, step_id: str) -> Mapping[str, StepInputRef]:
 
@@ -237,7 +264,7 @@ class PipelineStructure(KiaraModel):
         if d is None:
             raise Exception(f"No step with id: {step_id}")
 
-        return d["inputs"]
+        return d.inputs
 
     def get_step_output_refs(self, step_id: str) -> Mapping[str, StepOutputRef]:
 
@@ -245,9 +272,9 @@ class PipelineStructure(KiaraModel):
         if d is None:
             raise Exception(f"No step with id: {step_id}")
 
-        return d["outputs"]
+        return d.outputs
 
-    def get_step_details(self, step_id: str) -> Mapping[str, Any]:
+    def get_step_details(self, step_id: str) -> StepInfo:
 
         d = self.steps_details.get(step_id, None)
         if d is None:
@@ -357,7 +384,7 @@ class PipelineStructure(KiaraModel):
     def step_is_required(self, step_id: str) -> bool:
         """Check if the specified step is required, or can be omitted."""
 
-        return self.get_step_details(step_id=step_id)["required"]
+        return self.get_step_details(step_id=step_id).required
 
     def _process_steps(self):
         """The core method of this class, it connects all the processing modules, their inputs and outputs."""
@@ -620,13 +647,25 @@ class PipelineStructure(KiaraModel):
 
         self._constants = constants
         self._defaults = structure_defaults
-        self._steps_details = steps_details
+        self._steps_details = {
+            step_id: StepInfo(**data) for step_id, data in steps_details.items()
+        }
         self._execution_graph = execution_graph
         self._data_flow_graph = data_flow_graph
         self._data_flow_graph_simple = data_flow_graph_simple
         self._processing_stages = processing_stages
 
         self._get_node_of_type.cache_clear()
+
+    # def info(self) -> "PipelineStructureInfo":
+    #
+    #     if self._info is not None:
+    #         return self._info
+    #
+    #     from kiara.interfaces.python_api.models.info import PipelineStructureInfo
+    #
+    #     self._info = PipelineStructureInfo.create_from_instance(kiara=None, instance=self)  # type: ignore
+    #     return self._info
 
     def create_renderable(self, **config: Any) -> RenderableType:
 

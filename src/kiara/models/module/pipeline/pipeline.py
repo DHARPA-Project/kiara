@@ -648,17 +648,26 @@ class PipelineInfo(ItemInfo[Pipeline]):
             documentation=doc,
             authors=authors,
             context=context,
-            pipeline_structure=pipeline.structure,
+            # pipeline_structure=pipeline.structure,
+            pipeline_config=pipeline.structure.pipeline_config,
             pipeline_state=pipeline.get_pipeline_details(),
             # stages=stages
         )
         pipeline_info._kiara = kiara
         return pipeline_info
 
-    pipeline_structure: PipelineStructure = Field(description="The pipeline structure.")
+    # pipeline_structure: PipelineStructure = Field(description="The pipeline structure.")
+    pipeline_config: PipelineConfig = Field(
+        description="The configuration of the pipeline."
+    )
     pipeline_state: PipelineState = Field(description="The current input details.")
     # stages: Mapping[int, PipelineStage] = Field(description="Details about this pipelines stages/execution order.")
     _kiara: "Kiara" = PrivateAttr(default=None)
+    _structure: "PipelineStructure" = PrivateAttr(default=None)
+
+    @property
+    def pipeline_structure(self):
+        return self.pipeline_config.structure
 
     def create_pipeline_table(self, **config: Any) -> Table:
 
@@ -687,7 +696,7 @@ class PipelineInfo(ItemInfo[Pipeline]):
                     details = self.pipeline_structure.get_step_details(
                         step_id=con_input.step_id
                     )
-                    stage = details["processing_stage"]
+                    stage = details.processing_stage
                     ordered_fields.setdefault(stage, []).append(field_name)
 
             fields = []
@@ -727,7 +736,7 @@ class PipelineInfo(ItemInfo[Pipeline]):
             ) in self.pipeline_structure.pipeline_output_refs.items():
                 con_step_id = o_ref.connected_output.step_id
                 details = self.pipeline_structure.get_step_details(step_id=con_step_id)
-                stage = details["processing_stage"]
+                stage = details.processing_stage
                 ordered_fields.setdefault(stage, []).append(field_name)
 
             fields = []

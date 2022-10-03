@@ -108,11 +108,11 @@ class FileSystemWorkflowArchive(WorkflowArchive):
 
         _data = workflow_state_path.read_text()
         _json = orjson.loads(_data)
-        _json["pipeline_info"]["pipeline_structure"] = {
-            "pipeline_config": _json["pipeline_info"]["pipeline_structure"][
-                "pipeline_config"
-            ]
-        }
+        # _json["pipeline_info"]["pipeline_structure"] = {
+        #     "pipeline_config": _json["pipeline_info"]["pipeline_structure"][
+        #         "pipeline_config"
+        #     ]
+        # }
         _state = WorkflowState(**_json)
         _state.pipeline_info._kiara = self.kiara_context
         _state._kiara = self.kiara_context

@@ -17,6 +17,7 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
+from rich.tree import Tree
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -41,6 +42,13 @@ from kiara.models.documentation import (
 )
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.operation import Operation
+from kiara.models.module.pipeline import PipelineConfig, PipelineStep
+from kiara.models.module.pipeline.structure import (
+    PipelineStage,
+    PipelineStructure,
+    StepInfo,
+)
+from kiara.models.module.pipeline.value_refs import PipelineInputRef, PipelineOutputRef
 from kiara.models.python_class import PythonClass
 from kiara.models.values import ValueStatus
 from kiara.models.values.lineage import ValueLineage
@@ -1141,6 +1149,154 @@ class FieldInfo(BaseModel):
     value_required: bool = Field(
         description="Whether user input is required (meaning: 'optional' is False, and no default set)."
     )
+
+
+class PipelineStructureInfo(ItemInfo):
+
+    _kiara_model_id = "info.pipeline_structure"
+
+    @classmethod
+    def base_instance_class(cls) -> Type[PipelineStructure]:
+        return PipelineStructure
+
+    @classmethod
+    def create_from_instance(
+        cls, kiara: "Kiara", instance: PipelineStructure, **kwargs
+    ):
+
+        authors = AuthorsMetadataModel()
+        context = ContextMetadataModel()
+
+        execution_graph: Dict[str, Any] = {}
+        data_flow_graph: Dict[str, Any] = {}
+        data_flow_graph_simple: Dict[str, Any] = {}
+
+        input_fields = {}
+        for field_name, schema in instance.pipeline_inputs_schema.items():
+            dt = kiara.type_registry.get_data_type_instance(
+                type_name=schema.type, type_config=schema.type_config
+            )
+            dt_info = FieldInfo.construct(
+                field_name=field_name,
+                field_schema=schema,
+                data_type_info=dt.info,
+                value_required=schema.is_required(),
+            )
+            input_fields[field_name] = dt_info
+
+        output_fields = {}
+        for field_name, schema in instance.pipeline_outputs_schema.items():
+            dt = kiara.type_registry.get_data_type_instance(
+                type_name=schema.type, type_config=schema.type_config
+            )
+            dt_info = FieldInfo.construct(
+                field_name=field_name,
+                field_schema=schema,
+                data_type_info=dt.info,
+                value_required=schema.is_required(),
+            )
+            output_fields[field_name] = dt_info
+
+        return cls(
+            type_name=instance.instance_id,
+            documentation=instance.pipeline_config.doc,
+            authors=authors,
+            context=context,
+            pipeline_config=instance.pipeline_config,
+            steps={step.step_id: step for step in instance.steps},
+            step_details=instance.steps_details,
+            input_aliases=instance.input_aliases,
+            output_aliases=instance.output_aliases,
+            constants=instance.constants,
+            defaults=instance.defaults,
+            pipeline_input_fields=input_fields,
+            pipeline_output_fields=output_fields,
+            pipeline_input_refs=instance.pipeline_input_refs,
+            pipeline_output_refs=instance.pipeline_output_refs,
+            execution_graph=execution_graph,
+            data_flow_graph=data_flow_graph,
+            data_flow_graph_simple=data_flow_graph_simple,
+            processing_stages=instance.processing_stages,
+            processing_stages_info=instance.processing_stages_info,
+        )
+
+    pipeline_config: PipelineConfig = Field(
+        description="The underlying pipeline config."
+    )
+    steps: Mapping[str, PipelineStep] = Field(
+        description="All steps for this pipeline, indexed by their step_id."
+    )
+    step_details: Mapping[str, StepInfo] = Field(
+        description="Additional information for each step."
+    )
+    input_aliases: Dict[str, str] = Field(description="The input aliases.")
+    output_aliases: Dict[str, str] = Field(description="The output aliases.")
+    constants: Mapping[str, Any] = Field(
+        description="The input constants for this pipeline."
+    )
+    defaults: Mapping[str, Any] = Field(
+        description="The default inputs for this pipeline."
+    )
+
+    pipeline_input_fields: Mapping[str, FieldInfo] = Field(
+        description="The pipeline inputs schema."
+    )
+    pipeline_output_fields: Mapping[str, FieldInfo] = Field(
+        description="The pipeline outputs schema."
+    )
+
+    pipeline_input_refs: Mapping[str, PipelineInputRef] = Field(
+        description="References to the step inputs that are linked to pipeline inputs."
+    )
+    pipeline_output_refs: Mapping[str, PipelineOutputRef] = Field(
+        description="References to the step outputs that are linked to pipeline outputs."
+    )
+
+    execution_graph: Dict[str, Any] = Field(
+        description="Data describing the execution graph of this pipeline."
+    )
+    data_flow_graph: Dict[str, Any] = Field(
+        description="Data describing the data flow of this pipeline."
+    )
+    data_flow_graph_simple: Dict[str, Any] = Field(
+        description="Data describing the (simplified) data flow of this pipeline."
+    )
+
+    processing_stages: List[List[str]] = Field(
+        description="A list of lists, containing all the step_ids per stage, in the order of execution."
+    )
+    processing_stages_info: Mapping[int, PipelineStage] = Field(
+        description="More detailed information about each step of this pipelines execution graph."
+    )
+
+    def get_step(self, step_id) -> PipelineStep:
+        return self.steps[step_id]
+
+    def get_step_details(self, step_id: str) -> StepInfo:
+        return self.step_details[step_id]
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        tree = Tree("pipeline")
+        inputs = tree.add("inputs")
+        for field_name, field_info in self.pipeline_input_fields.items():
+            inputs.add(f"[i]{field_name}[i] (type: {field_info.field_schema.type})")
+
+        steps = tree.add("steps")
+        for idx, stage in enumerate(self.processing_stages, start=1):
+            stage_node = steps.add(f"stage {idx}")
+            for step_id in stage:
+                step_node = stage_node.add(f"step: {step_id}")
+                step = self.get_step(step_id=step_id)
+                if step.doc.is_set:
+                    step_node.add(f"desc: {step.doc.description}")
+                step_node.add(f"module: {step.manifest_src.module_type}")
+
+        outputs = tree.add("outputs")
+        for field_name, field_info in self.pipeline_output_fields.items():
+            outputs.add(f"[i]{field_name}[i] (type: {field_info.field_schema.type})")
+
+        return tree
 
 
 class OperationInfo(ItemInfo):

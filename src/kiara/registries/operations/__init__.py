@@ -357,7 +357,7 @@ class OperationRegistry(object):
                         details["details"] = msg
                         error_details[missing_op_id] = details
                         exc_info = sys.exc_info()
-                        details["exception"] = exc_info
+                        details["exception"] = exc_info[1]
                         continue
 
             for name, dependencies in deferred_module_names.items():

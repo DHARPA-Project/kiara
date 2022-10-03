@@ -1089,6 +1089,12 @@ class Workflow(object):
         return state
 
     @property
+    def all_state_ids(self) -> List[str]:
+
+        hashes = set(self._workflow_metadata.workflow_history.values())
+        return sorted(hashes)
+
+    @property
     def all_states(self) -> Mapping[str, WorkflowState]:
         """Return a list of all states this workflow had in the past, indexed by the hash of each state."""
 

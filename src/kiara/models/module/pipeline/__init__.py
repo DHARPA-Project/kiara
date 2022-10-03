@@ -27,10 +27,7 @@ from kiara.utils import find_free_id, is_jupyter
 from kiara.utils.files import get_data_from_file
 from kiara.utils.json import orjson_dumps
 from kiara.utils.modules import module_config_is_empty
-from kiara.utils.output import (
-    create_table_from_field_schemas,
-    create_table_from_model_object,
-)
+from kiara.utils.output import create_table_from_field_schemas
 from kiara.utils.pipelines import ensure_step_value_addresses
 from kiara.utils.string_vars import replace_var_names_in_obj
 
@@ -623,7 +620,7 @@ class PipelineConfig(KiaraModuleConfig):
 
         # return create_table_from_model_object(self, exclude_fields={"steps"})
 
-        return create_table_from_model_object(self)
+        # return create_table_from_model_object(self)
 
     # def create_input_alias_map(self) -> Dict[str, str]:
     #

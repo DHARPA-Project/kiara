@@ -192,6 +192,8 @@ def get_pipeline_config(
 
     if pc is None:
         if os.path.isfile(pipeline):
+            from kiara.models.module.pipeline import PipelineConfig
+
             pc = PipelineConfig.from_file(pipeline, kiara=kiara)
 
     if pc is None and pipeline.startswith("workflow:"):

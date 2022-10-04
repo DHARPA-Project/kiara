@@ -28,7 +28,7 @@ class RenderValueModuleConfig(KiaraModuleConfig):
     # )
     source_type: str = Field(description="The (kiara) data type to be rendered.")
     target_type: str = Field(
-        description="The (kiara) data type of the rendered result."
+        description="The (kiara) data type of210 the rendered result."
     )
 
     # @validator("render_scene_type")
@@ -115,17 +115,21 @@ class RenderValueModule(KiaraModule):
         value: Value = inputs.get_value_obj("value")
 
         render_scene: DictModel = inputs.get_value_data("render_config")
+        if render_scene:
+            rc = render_scene.dict_data
+        else:
+            rc = {}
 
         func_name = f"render__{source_type}__as__{target_type}"
 
         func = getattr(self, func_name)
-        result = func(value=value, render_config=render_scene.dict_data)
+        result = func(value=value, render_config=rc)
         if isinstance(result, RenderValueResult):
             render_scene_result: RenderValueResult = result
         else:
             render_scene_result = RenderValueResult(
                 value_id=value.value_id,
-                render_config=render_scene,
+                render_config=rc,
                 render_manifest=self.manifest.manifest_hash,
                 rendered=result,
                 related_scenes={},
@@ -198,9 +202,13 @@ class ValueTypeRenderModule(KiaraModule):
         func_name = f"render_as__{target_type}"
         func = getattr(data_type, func_name)
 
+        if render_scene:
+            rc = render_scene.dict_data
+        else:
+            rc = {}
         result = func(
             value=source_value,
-            render_config=render_scene.dict_data,
+            render_config=rc,
             manifest=self.manifest,
         )
 
@@ -209,7 +217,7 @@ class ValueTypeRenderModule(KiaraModule):
         else:
             render_scene_result = RenderValueResult(
                 value_id=source_value.value_id,
-                render_config=render_scene,
+                render_config=rc,
                 render_manifest=self.manifest.manifest_hash,
                 rendered=result,
                 related_scenes={},

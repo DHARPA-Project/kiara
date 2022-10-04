@@ -120,7 +120,6 @@ class AnyType(
     def render_as__string(
         self, value: "Value", render_config: Mapping[str, Any], manifest: "Manifest"
     ):
-
         if hasattr(self, "_render_as__string"):
             return self._render_as__string(value=value, render_scene=render_config, manifest=manifest)  # type: ignore
         else:

@@ -224,20 +224,25 @@ class KiaraAPI(object):
             op = create_operation(module_or_operation=operation)
         return op
 
-    def get_operation_info(self, operation_id: str) -> OperationInfo:
+    def get_operation_info(
+        self, operation: str, allow_external: bool = False
+    ) -> OperationInfo:
         """Return the full information for the specified operation id.
 
         This is similar to the 'get_operation' method, but returns additional information. Only use this instead of
         'get_operation' if you need the additional info, as it's more expensive to get.
 
         Arguments:
-            operation_id: the operation id
+            operation: the operation id
 
         Returns:
             augmented operation instance data
         """
 
-        op = self.context.operation_registry.get_operation(operation_id=operation_id)
+        if not allow_external:
+            op = self.context.operation_registry.get_operation(operation_id=operation)
+        else:
+            op = create_operation(module_or_operation=operation)
         op_info = OperationInfo.create_from_operation(kiara=self.context, operation=op)
         return op_info
 
@@ -743,7 +748,7 @@ class KiaraAPI(object):
 
     def queue_job(
         self,
-        operation: Union[str, Path, Manifest],
+        operation: Union[str, Path, Manifest, OperationInfo],
         inputs: Mapping[str, Any],
         operation_config: Union[None, Mapping[str, Any]] = None,
     ) -> uuid.UUID:
@@ -766,6 +771,8 @@ class KiaraAPI(object):
                     f"Can't queue job from file '{operation.as_posix()}': file does not exist."
                 )
             operation = operation.as_posix()
+        elif isinstance(operation, OperationInfo):
+            operation = operation.operation
 
         if not isinstance(operation, Manifest):
             manifest: Manifest = create_operation(
@@ -781,7 +788,7 @@ class KiaraAPI(object):
 
     def run_job(
         self,
-        operation: Union[str, Path, Manifest],
+        operation: Union[str, Path, Manifest, OperationInfo],
         inputs: Mapping[str, Any],
         operation_config: Union[None, Mapping[str, Any]] = None,
     ) -> ValueMap:

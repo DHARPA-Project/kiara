@@ -6473,9 +6473,13 @@
     func_name = f"render_as__{target_type}"
     func = getattr(data_type, func_name)
 
+    if render_scene:
+        rc = render_scene.dict_data
+    else:
+        rc = {}
     result = func(
         value=source_value,
-        render_config=render_scene.dict_data,
+        render_config=rc,
         manifest=self.manifest,
     )
 
@@ -6484,7 +6488,7 @@
     else:
         render_scene_result = RenderValueResult(
             value_id=source_value.value_id,
-            render_config=render_scene,
+            render_config=rc,
             render_manifest=self.manifest.manifest_hash,
             rendered=result,
             related_scenes={},

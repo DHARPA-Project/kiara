@@ -4327,17 +4327,21 @@ RenderValueModule            (<a class="autorefs autorefs-internal" title="kiara
         <span class="n">value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
 
         <span class="n">render_scene</span><span class="p">:</span> <span class="n">DictModel</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;render_config&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">render_scene</span><span class="p">:</span>
+            <span class="n">rc</span> <span class="o">=</span> <span class="n">render_scene</span><span class="o">.</span><span class="n">dict_data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rc</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;render__</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">__as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="n">render_scene</span><span class="o">.</span><span class="n">dict_data</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="n">rc</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">RenderValueResult</span><span class="p">):</span>
             <span class="n">render_scene_result</span><span class="p">:</span> <span class="n">RenderValueResult</span> <span class="o">=</span> <span class="n">result</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">render_scene_result</span> <span class="o">=</span> <span class="n">RenderValueResult</span><span class="p">(</span>
                 <span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">,</span>
-                <span class="n">render_config</span><span class="o">=</span><span class="n">render_scene</span><span class="p">,</span>
+                <span class="n">render_config</span><span class="o">=</span><span class="n">rc</span><span class="p">,</span>
                 <span class="n">render_manifest</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">manifest</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">,</span>
                 <span class="n">rendered</span><span class="o">=</span><span class="n">result</span><span class="p">,</span>
                 <span class="n">related_scenes</span><span class="o">=</span><span class="p">{},</span>
@@ -4387,7 +4391,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
     <span class="c1"># )</span>
     <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (kiara) data type to be rendered.&quot;</span><span class="p">)</span>
     <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (kiara) data type of the rendered result.&quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (kiara) data type of210 the rendered result.&quot;</span>
     <span class="p">)</span>
 
     <span class="c1"># @validator(&quot;render_scene_type&quot;)</span>
@@ -4452,7 +4456,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
     <div class="doc doc-contents ">
 
-      <p>The (kiara) data type of the rendered result.</p>
+      <p>The (kiara) data type of210 the rendered result.</p>
     </div>
 
   </div>
@@ -4583,17 +4587,21 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
     <span class="n">value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
 
     <span class="n">render_scene</span><span class="p">:</span> <span class="n">DictModel</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;render_config&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">render_scene</span><span class="p">:</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="n">render_scene</span><span class="o">.</span><span class="n">dict_data</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;render__</span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">__as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="n">render_scene</span><span class="o">.</span><span class="n">dict_data</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="n">rc</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">RenderValueResult</span><span class="p">):</span>
         <span class="n">render_scene_result</span><span class="p">:</span> <span class="n">RenderValueResult</span> <span class="o">=</span> <span class="n">result</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">render_scene_result</span> <span class="o">=</span> <span class="n">RenderValueResult</span><span class="p">(</span>
             <span class="n">value_id</span><span class="o">=</span><span class="n">value</span><span class="o">.</span><span class="n">value_id</span><span class="p">,</span>
-            <span class="n">render_config</span><span class="o">=</span><span class="n">render_scene</span><span class="p">,</span>
+            <span class="n">render_config</span><span class="o">=</span><span class="n">rc</span><span class="p">,</span>
             <span class="n">render_manifest</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">manifest</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">,</span>
             <span class="n">rendered</span><span class="o">=</span><span class="n">result</span><span class="p">,</span>
             <span class="n">related_scenes</span><span class="o">=</span><span class="p">{},</span>
@@ -4691,7 +4699,7 @@ RenderValueModuleConfig            (<a class="autorefs autorefs-internal" title=
     <span class="c1"># )</span>
     <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (kiara) data type to be rendered.&quot;</span><span class="p">)</span>
     <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (kiara) data type of the rendered result.&quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (kiara) data type of210 the rendered result.&quot;</span>
     <span class="p">)</span>
 
     <span class="c1"># @validator(&quot;render_scene_type&quot;)</span>
@@ -4756,7 +4764,7 @@ RenderValueModuleConfig            (<a class="autorefs autorefs-internal" title=
 
     <div class="doc doc-contents ">
 
-      <p>The (kiara) data type of the rendered result.</p>
+      <p>The (kiara) data type of210 the rendered result.</p>
     </div>
 
   </div>
@@ -4858,9 +4866,13 @@ ValueTypeRenderModule            (<a class="autorefs autorefs-internal" title="k
         <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;render_as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">render_scene</span><span class="p">:</span>
+            <span class="n">rc</span> <span class="o">=</span> <span class="n">render_scene</span><span class="o">.</span><span class="n">dict_data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rc</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span>
             <span class="n">value</span><span class="o">=</span><span class="n">source_value</span><span class="p">,</span>
-            <span class="n">render_config</span><span class="o">=</span><span class="n">render_scene</span><span class="o">.</span><span class="n">dict_data</span><span class="p">,</span>
+            <span class="n">render_config</span><span class="o">=</span><span class="n">rc</span><span class="p">,</span>
             <span class="n">manifest</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">manifest</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -4869,7 +4881,7 @@ ValueTypeRenderModule            (<a class="autorefs autorefs-internal" title="k
         <span class="k">else</span><span class="p">:</span>
             <span class="n">render_scene_result</span> <span class="o">=</span> <span class="n">RenderValueResult</span><span class="p">(</span>
                 <span class="n">value_id</span><span class="o">=</span><span class="n">source_value</span><span class="o">.</span><span class="n">value_id</span><span class="p">,</span>
-                <span class="n">render_config</span><span class="o">=</span><span class="n">render_scene</span><span class="p">,</span>
+                <span class="n">render_config</span><span class="o">=</span><span class="n">rc</span><span class="p">,</span>
                 <span class="n">render_manifest</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">manifest</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">,</span>
                 <span class="n">rendered</span><span class="o">=</span><span class="n">result</span><span class="p">,</span>
                 <span class="n">related_scenes</span><span class="o">=</span><span class="p">{},</span>
@@ -4919,7 +4931,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
     <span class="c1"># )</span>
     <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (kiara) data type to be rendered.&quot;</span><span class="p">)</span>
     <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (kiara) data type of the rendered result.&quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The (kiara) data type of210 the rendered result.&quot;</span>
     <span class="p">)</span>
 
     <span class="c1"># @validator(&quot;render_scene_type&quot;)</span>
@@ -4984,7 +4996,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
 
     <div class="doc doc-contents ">
 
-      <p>The (kiara) data type of the rendered result.</p>
+      <p>The (kiara) data type of210 the rendered result.</p>
     </div>
 
   </div>
@@ -5121,9 +5133,13 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
     <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;render_as__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="n">func_name</span><span class="p">)</span>
 
+    <span class="k">if</span> <span class="n">render_scene</span><span class="p">:</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="n">render_scene</span><span class="o">.</span><span class="n">dict_data</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rc</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span>
         <span class="n">value</span><span class="o">=</span><span class="n">source_value</span><span class="p">,</span>
-        <span class="n">render_config</span><span class="o">=</span><span class="n">render_scene</span><span class="o">.</span><span class="n">dict_data</span><span class="p">,</span>
+        <span class="n">render_config</span><span class="o">=</span><span class="n">rc</span><span class="p">,</span>
         <span class="n">manifest</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">manifest</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -5132,7 +5148,7 @@ _config_cls            (<a class="autorefs autorefs-internal" title="kiara.model
     <span class="k">else</span><span class="p">:</span>
         <span class="n">render_scene_result</span> <span class="o">=</span> <span class="n">RenderValueResult</span><span class="p">(</span>
             <span class="n">value_id</span><span class="o">=</span><span class="n">source_value</span><span class="o">.</span><span class="n">value_id</span><span class="p">,</span>
-            <span class="n">render_config</span><span class="o">=</span><span class="n">render_scene</span><span class="p">,</span>
+            <span class="n">render_config</span><span class="o">=</span><span class="n">rc</span><span class="p">,</span>
             <span class="n">render_manifest</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">manifest</span><span class="o">.</span><span class="n">manifest_hash</span><span class="p">,</span>
             <span class="n">rendered</span><span class="o">=</span><span class="n">result</span><span class="p">,</span>
             <span class="n">related_scenes</span><span class="o">=</span><span class="p">{},</span>

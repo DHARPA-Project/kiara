@@ -6344,20 +6344,25 @@ typically done by a frontend. The return types of each method are json seriable 
             <span class="n">op</span> <span class="o">=</span> <span class="n">create_operation</span><span class="p">(</span><span class="n">module_or_operation</span><span class="o">=</span><span class="n">operation</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">op</span>
 
-    <span class="k">def</span> <span class="nf">get_operation_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationInfo</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_operation_info</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">allow_external</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationInfo</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return the full information for the specified operation id.</span>
 
 <span class="sd">        This is similar to the &#39;get_operation&#39; method, but returns additional information. Only use this instead of</span>
 <span class="sd">        &#39;get_operation&#39; if you need the additional info, as it&#39;s more expensive to get.</span>
 
 <span class="sd">        Arguments:</span>
-<span class="sd">            operation_id: the operation id</span>
+<span class="sd">            operation: the operation id</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            augmented operation instance data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="n">operation_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">allow_external</span><span class="p">:</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="n">operation</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">op</span> <span class="o">=</span> <span class="n">create_operation</span><span class="p">(</span><span class="n">module_or_operation</span><span class="o">=</span><span class="n">operation</span><span class="p">)</span>
         <span class="n">op_info</span> <span class="o">=</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">op</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">op_info</span>
 
@@ -6863,7 +6868,7 @@ typically done by a frontend. The return types of each method are json seriable 
 
     <span class="k">def</span> <span class="nf">queue_job</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">],</span>
+        <span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">OperationInfo</span><span class="p">],</span>
         <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
         <span class="n">operation_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
@@ -6886,6 +6891,8 @@ typically done by a frontend. The return types of each method are json seriable 
                     <span class="sa">f</span><span class="s2">&quot;Can&#39;t queue job from file &#39;</span><span class="si">{</span><span class="n">operation</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;: file does not exist.&quot;</span>
                 <span class="p">)</span>
             <span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">OperationInfo</span><span class="p">):</span>
+            <span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">operation</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">):</span>
             <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span> <span class="o">=</span> <span class="n">create_operation</span><span class="p">(</span>
@@ -6901,7 +6908,7 @@ typically done by a frontend. The return types of each method are json seriable 
 
     <span class="k">def</span> <span class="nf">run_job</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">],</span>
+        <span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">OperationInfo</span><span class="p">],</span>
         <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
         <span class="n">operation_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
@@ -8105,7 +8112,7 @@ instead.</p>
 
 
 <h7 id="kiara.interfaces.python_api.KiaraAPI.get_operation_info" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_operation_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_id</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">get_operation_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">,</span> <span class="n">allow_external</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
 
 <a href="#kiara.interfaces.python_api.KiaraAPI.get_operation_info" class="headerlink" title="Permanent link">&para;</a></h7>
@@ -8128,7 +8135,7 @@ instead.</p>
   </thead>
   <tbody>
       <tr>
-        <td><code>operation_id</code></td>
+        <td><code>operation</code></td>
         <td><code>str</code></td>
         <td><p>the operation id</p></td>
         <td><em>required</em></td>
@@ -8152,20 +8159,25 @@ instead.</p>
 </table>
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_operation_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationInfo</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_operation_info</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">allow_external</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationInfo</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Return the full information for the specified operation id.</span>
 
 <span class="sd">    This is similar to the &#39;get_operation&#39; method, but returns additional information. Only use this instead of</span>
 <span class="sd">    &#39;get_operation&#39; if you need the additional info, as it&#39;s more expensive to get.</span>
 
 <span class="sd">    Arguments:</span>
-<span class="sd">        operation_id: the operation id</span>
+<span class="sd">        operation: the operation id</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        augmented operation instance data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="n">operation_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">allow_external</span><span class="p">:</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="o">=</span><span class="n">operation</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">create_operation</span><span class="p">(</span><span class="n">module_or_operation</span><span class="o">=</span><span class="n">operation</span><span class="p">)</span>
     <span class="n">op_info</span> <span class="o">=</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">op</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">op_info</span>
 </code></pre></div>
@@ -9255,7 +9267,7 @@ and non-stored).</p>
   <tbody>
       <tr>
         <td><code>operation</code></td>
-        <td><code>Union[str, pathlib.Path, kiara.models.module.manifest.Manifest]</code></td>
+        <td><code>Union[str, pathlib.Path, kiara.models.module.manifest.Manifest, kiara.interfaces.python_api.models.info.OperationInfo]</code></td>
         <td><p>a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..</p></td>
         <td><em>required</em></td>
       </tr>
@@ -9292,7 +9304,7 @@ and non-stored).</p>
           <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">queue_job</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">],</span>
+    <span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">OperationInfo</span><span class="p">],</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
     <span class="n">operation_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
@@ -9315,6 +9327,8 @@ and non-stored).</p>
                 <span class="sa">f</span><span class="s2">&quot;Can&#39;t queue job from file &#39;</span><span class="si">{</span><span class="n">operation</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;: file does not exist.&quot;</span>
             <span class="p">)</span>
         <span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">OperationInfo</span><span class="p">):</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">operation</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">):</span>
         <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span> <span class="o">=</span> <span class="n">create_operation</span><span class="p">(</span>
@@ -9793,7 +9807,7 @@ since this is a blocking operation.</p>
   <tbody>
       <tr>
         <td><code>operation</code></td>
-        <td><code>Union[str, pathlib.Path, kiara.models.module.manifest.Manifest]</code></td>
+        <td><code>Union[str, pathlib.Path, kiara.models.module.manifest.Manifest, kiara.interfaces.python_api.models.info.OperationInfo]</code></td>
         <td><p>a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..</p></td>
         <td><em>required</em></td>
       </tr>
@@ -9830,7 +9844,7 @@ since this is a blocking operation.</p>
           <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">run_job</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">],</span>
+    <span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">OperationInfo</span><span class="p">],</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
     <span class="n">operation_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>

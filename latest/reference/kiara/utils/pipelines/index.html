@@ -4512,6 +4512,8 @@
 
     <span class="k">if</span> <span class="n">pc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pipeline</span><span class="p">):</span>
+            <span class="kn">from</span> <span class="nn">kiara.models.module.pipeline</span> <span class="kn">import</span> <span class="n">PipelineConfig</span>
+
             <span class="n">pc</span> <span class="o">=</span> <span class="n">PipelineConfig</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">pc</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;workflow:&quot;</span><span class="p">):</span>

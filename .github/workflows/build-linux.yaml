@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python_version: ["3.8", "3.9", "3.10"]
+        python_version: ["3.8", "3.9", "3.10", "3.11"]
     steps:
       - name: "Set up Python ${{ matrix.python_version }}"
         uses: actions/setup-python@v2
@@ -73,7 +73,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python_version: ["3.8", "3.9", "3.10"]
+        python_version: ["3.8", "3.9", "3.10", "3.11"]
     steps:
       - name: "Set up Python ${{ matrix.python_version }}"
         uses: actions/setup-python@v2
@@ -189,7 +189,7 @@ jobs:
     if: ${{ startsWith(github.ref, 'refs/tags') != true }}
     strategy:
       matrix:
-        python_version: ["3.8", "3.9", "3.10"]
+        python_version: ["3.8", "3.9", "3.10", "3.11"]
     steps:
       - uses: actions/checkout@v1
       - uses: conda-incubator/setup-miniconda@v2
@@ -204,7 +204,7 @@ jobs:
     if: ${{ startsWith(github.ref, 'refs/tags') }}
     strategy:
       matrix:
-        python_version: ["3.8", "3.9", "3.10"]
+        python_version: ["3.8", "3.9", "3.10", "3.11"]
     env:
       ANACONDA_PUSH_TOKEN: ${{ secrets.ANACONDA_PUSH_TOKEN }}
     needs:

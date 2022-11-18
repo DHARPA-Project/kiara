@@ -230,7 +230,7 @@ def load_all_subclasses_for_entry_point(
     base_class: Type[SUBCLASS_TYPE],
     ignore_abstract_classes: bool = True,
     type_id_key: Union[str, None] = None,
-    type_id_func: Callable = None,
+    type_id_func: Union[Callable, None] = None,
     type_id_no_attach: bool = False,
     attach_python_metadata: Union[bool, str] = False,
 ) -> Dict[str, Type[SUBCLASS_TYPE]]:
@@ -554,7 +554,7 @@ def find_pipeline_base_path_for_module(
     assert module_file is not None
     path = os.path.dirname(module_file)
 
-    if not os.path.exists:
+    if not os.path.exists(path):
         log_message("ignore.pipeline_folder", path=path, reason="folder does not exist")
         return None
 
@@ -563,7 +563,7 @@ def find_pipeline_base_path_for_module(
 
 def find_all_kiara_pipeline_paths(
     skip_errors: bool = False,
-) -> Dict[str, Union[Mapping[str, Any], None]]:
+) -> Dict[str, Union[Dict[str, Any], None]]:
 
     import logging
 
@@ -582,7 +582,7 @@ def find_all_kiara_pipeline_paths(
         namespace="kiara.pipelines", invoke_on_load=False, propagate_map_exceptions=True
     )
 
-    paths: Dict[str, Union[Mapping[str, Any], None]] = {}
+    paths: Dict[str, Union[Dict[str, Any], None]] = {}
     # TODO: make sure we load 'core' first?
     for plugin in mgr:
 
@@ -601,7 +601,7 @@ def find_all_kiara_pipeline_paths(
                     args = plugin.plugin[1:]
 
                 f_args = []
-                metadata: Union[Mapping[str, Any], None] = None
+                metadata: Union[Dict[str, Any], None] = None
                 if len(args) >= 1:
                     f_args.append(args[0])
                 if len(args) >= 2:

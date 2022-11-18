@@ -41,11 +41,14 @@ class BatchOperation(BaseModel):
                 name = name[0:-5]
             data["pipeline_name"] = name
 
-        return cls.from_config(data=data, kiara=kiara)
+        alias = os.path.basename(path)
+
+        return cls.from_config(alias=alias, data=data, kiara=kiara)
 
     @classmethod
     def from_config(
         cls,
+        alias: str,
         data: Mapping[str, Any],
         kiara: Union["Kiara", None],
     ):
@@ -64,7 +67,12 @@ class BatchOperation(BaseModel):
             pipeline_name=pipeline_id, data=data, kiara=kiara
         )
 
-        result = cls(pipeline_config=pipeline_config, inputs=inputs, save=save)
+        result = cls(
+            alias=alias,
+            pipeline_config=pipeline_config,
+            inputs=inputs,
+            save_defaults=save,
+        )
         result._kiara = kiara
         return result
 

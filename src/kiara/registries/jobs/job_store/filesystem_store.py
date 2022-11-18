@@ -22,7 +22,7 @@ log = structlog.getLogger()
 class FileSystemJobArchive(JobArchive):
 
     _archive_type_name = "filesystem_job_archive"
-    _config_cls = FileSystemArchiveConfig
+    _config_cls = FileSystemArchiveConfig  # type: ignore
 
     @classmethod
     def is_writeable(cls) -> bool:
@@ -54,7 +54,7 @@ class FileSystemJobArchive(JobArchive):
         self._base_path.mkdir(parents=True, exist_ok=True)
         return self._base_path
 
-    def _delete_archive(self):
+    def _delete_archive(self) -> None:
 
         shutil.rmtree(self.job_store_path)
 

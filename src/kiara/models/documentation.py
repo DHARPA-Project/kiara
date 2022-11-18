@@ -225,7 +225,7 @@ class DocumentationMetadataModel(KiaraModel):
             return cls(description=desc, doc=doc)
 
     @classmethod
-    def create(cls, item: Any = None):
+    def create(cls, item: Union[Any, None] = None):
 
         if not item:
             return cls.from_string(DEFAULT_NO_DESC_VALUE)

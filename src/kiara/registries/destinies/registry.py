@@ -66,7 +66,7 @@ class DestinyRegistry(object):
     def register_destiny_archive(
         self,
         archive: DestinyArchive,
-        alias: str = None,
+        alias: Union[str, None] = None,
         set_as_default_store: Union[bool, None] = None,
     ):
 

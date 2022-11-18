@@ -4,7 +4,6 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 from enum import Enum
-from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import Any, List, Mapping, Union
 
@@ -28,8 +27,8 @@ class BytesStructure(BaseModel):
         default_factory=dict,
     )
 
-    def provision_as_folder(self, copy_files: bool = False) -> Path:
-        pass
+    # def provision_as_folder(self, copy_files: bool = False) -> Path:
+    #     pass
 
 
 class BytesAliasStructure(BaseModel):

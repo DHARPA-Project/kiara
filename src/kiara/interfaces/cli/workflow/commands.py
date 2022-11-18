@@ -32,7 +32,7 @@ def workflow(ctx):
     "--all", "-a", help="Also displays workflows without alias.", is_flag=True
 )
 @click.pass_context
-def list(ctx, all):
+def list(ctx, all) -> None:
     """List existing workflows."""
 
     kiara_api: KiaraAPI = ctx.obj["kiara_api"]

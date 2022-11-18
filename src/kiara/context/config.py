@@ -151,7 +151,7 @@ class KiaraConfig(BaseSettings):
                 f"Can't create new kiara config, path exists: {path.as_posix()}"
             )
 
-        config = KiaraConfig(base_data_path=path)
+        config = KiaraConfig(base_data_path=path.as_posix())
         config_file = path / KIARA_CONFIG_FILE_NAME
 
         config.save(config_file)
@@ -320,7 +320,10 @@ class KiaraConfig(BaseSettings):
     def _validate_context(self, context_config: KiaraContextConfig) -> bool:
 
         env_registry = EnvironmentRegistry.instance()
-        available_archives = env_registry.environments["kiara_types"].archive_types
+        from kiara.models.runtime_environment.kiara import KiaraTypesRuntimeEnvironment
+
+        kiara_types: KiaraTypesRuntimeEnvironment = env_registry.environments["kiara_types"]  # type: ignore
+        available_archives = kiara_types.archive_types
 
         changed = False
         if DEFAULT_DATA_STORE_MARKER not in context_config.archives.keys():

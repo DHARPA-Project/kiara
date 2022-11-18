@@ -239,7 +239,7 @@ class DataRegistry(object):
     def register_data_archive(
         self,
         archive: DataArchive,
-        alias: str = None,
+        alias: Union[str, None] = None,
         set_as_default_store: Union[bool, None] = None,
     ):
 
@@ -543,7 +543,7 @@ class DataRegistry(object):
         return set((self.get_value(value=v_id) for v_id in stored))
 
     def find_destinies_for_value(
-        self, value_id: uuid.UUID, alias_filter: str = None
+        self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
     ) -> Mapping[str, uuid.UUID]:
 
         if alias_filter:
@@ -568,9 +568,9 @@ class DataRegistry(object):
     def register_data(
         self,
         data: Any,
-        schema: Union[ValueSchema, str] = None,
+        schema: Union[ValueSchema, str, None] = None,
         pedigree: Union[ValuePedigree, None] = None,
-        pedigree_output_name: str = None,
+        pedigree_output_name: Union[str, None] = None,
         reuse_existing: bool = True,
     ) -> Value:
 
@@ -702,7 +702,7 @@ class DataRegistry(object):
         data: Any,
         schema: Union[None, str, ValueSchema] = None,
         pedigree: Union[ValuePedigree, None] = None,
-        pedigree_output_name: str = None,
+        pedigree_output_name: Union[str, None] = None,
         reuse_existing: bool = True,
     ) -> Tuple[Value, bool]:
         """Create a new value, or return an existing one that matches the incoming data or reference.

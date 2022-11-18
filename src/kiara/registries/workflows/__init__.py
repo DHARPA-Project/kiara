@@ -79,7 +79,7 @@ class WorkflowStore(WorkflowArchive):
     def register_workflow(
         self,
         workflow_metadata: WorkflowMetadata,
-        workflow_aliases: Iterable[str] = None,
+        workflow_aliases: Union[Iterable[str], None] = None,
     ):
 
         self._register_workflow_metadata(workflow_metadata=workflow_metadata)
@@ -98,6 +98,8 @@ class WorkflowStore(WorkflowArchive):
         Returns:
             'True' if an alias existed and was unregistered, 'False' otherwise
         """
+
+        raise NotImplementedError()
 
     def update_workflow_metadata(self, workflow_metadata: WorkflowMetadata):
 
@@ -143,7 +145,7 @@ class WorkflowRegistry(object):
     def register_archive(
         self,
         archive: WorkflowArchive,
-        alias: str = None,
+        alias: Union[str, None] = None,
         set_as_default_store: Union[bool, None] = None,
     ):
 

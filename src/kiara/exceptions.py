@@ -132,7 +132,7 @@ class InvalidValuesException(Exception):
     def __init__(
         self,
         msg: Union[None, str, Exception] = None,
-        invalid_values: Mapping[str, str] = None,
+        invalid_values: Union[Mapping[str, str], None] = None,
     ):
 
         if invalid_values is None:

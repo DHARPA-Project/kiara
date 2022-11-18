@@ -18,7 +18,7 @@ from kiara.registries.aliases import AliasArchive, AliasStore
 class FileSystemAliasArchive(AliasArchive):
 
     _archive_type_name = "filesystem_alias_archive"
-    _config_cls = FileSystemArchiveConfig
+    _config_cls = FileSystemArchiveConfig  # type: ignore
 
     def __init__(self, archive_id: uuid.UUID, config: ARCHIVE_CONFIG_CLS):
 

@@ -71,10 +71,10 @@ class TemplateRegistry(object):
             cls._instance = TemplateRegistry()
         return cls._instance
 
-    def __init__(self):
+    def __init__(self) -> None:
 
         self._template_dirs: Union[None, Mapping[str, Path]] = None
-        self._template_loader: Union[PrefixLoader] = None
+        self._template_loader: Union[None, PrefixLoader] = None
         self._environment: Union[None, Environment] = None
 
     @property

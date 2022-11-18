@@ -215,7 +215,9 @@ class Operation(Manifest):
     _kiara_model_id = "instance.operation"
 
     @classmethod
-    def create_from_module(cls, module: KiaraModule, doc: Any = None) -> "Operation":
+    def create_from_module(
+        cls, module: KiaraModule, doc: Union[Any, None] = None
+    ) -> "Operation":
 
         from kiara.operations.included_core_operations import (
             CustomModuleOperationDetails,

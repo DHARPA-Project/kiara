@@ -203,7 +203,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
 
     # ==========================================================================================
     # model rendering related methods
-    def create_panel(self, title: str = None, **config: Any) -> Panel:
+    def create_panel(self, title: Union[str, None] = None, **config: Any) -> Panel:
 
         rend = self.create_renderable(**config)
         return Panel(rend, box=box.ROUNDED, title=title, title_align="left")

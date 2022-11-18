@@ -21,7 +21,7 @@ class EnvironmentRegistry(object):
     _instance = None
 
     @classmethod
-    def instance(cls):
+    def instance(cls) -> "EnvironmentRegistry":
         """The default *kiara* context. In most cases, it's recommended you create and manage your own, though."""
 
         if cls._instance is None:
@@ -30,7 +30,7 @@ class EnvironmentRegistry(object):
 
     def __init__(
         self,
-    ):
+    ) -> None:
         self._environments: Union[Dict[str, RuntimeEnvironment], None] = None
         self._environment_hashes: Union[Dict[str, Mapping[str, str]], None] = None
 

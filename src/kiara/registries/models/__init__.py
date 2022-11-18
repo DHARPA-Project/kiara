@@ -23,7 +23,7 @@ class ModelRegistry(object):
             cls._instance = ModelRegistry()
         return cls._instance
 
-    def __init__(self):
+    def __init__(self) -> None:
 
         self._all_models: Union[KiaraModelClassesInfo, None] = None
         self._models_per_package: Dict[str, KiaraModelClassesInfo] = {}

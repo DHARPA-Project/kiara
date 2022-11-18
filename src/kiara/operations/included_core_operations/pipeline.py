@@ -67,20 +67,20 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
 
     _operation_type_name = "pipeline"
 
-    def __init__(self, kiara: "Kiara", op_type_name: str):
+    def __init__(self, kiara: "Kiara", op_type_name: str) -> None:
 
         super().__init__(kiara=kiara, op_type_name=op_type_name)
-        self._pipelines = None
+        self._pipelines: Union[None, Mapping[str, Mapping[str, Any]]] = None
 
     @property
-    def pipeline_data(self):
+    def pipeline_data(self) -> Mapping[str, Mapping[str, Any]]:
 
         if self._pipelines is not None:
             return self._pipelines
 
         ignore_errors = False
         pipeline_paths: Dict[
-            str, Union[Mapping[str, Any], None]
+            str, Union[Dict[str, Any], None]
         ] = find_all_kiara_pipeline_paths(skip_errors=ignore_errors)
 
         for ep in self._kiara.context_config.extra_pipelines:
@@ -167,7 +167,7 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
 
         op_configs = []
         for pipeline_name, pipeline_data in self.pipeline_data.items():
-            pipeline_config = dict(pipeline_data["data"])
+            pipeline_config: Dict[str, Any] = dict(pipeline_data["data"])
             pipeline_id = pipeline_config.pop("pipeline_name", None)
             doc = pipeline_config.get("doc", None)
             pipeline_metadata = pipeline_data["metadata"]

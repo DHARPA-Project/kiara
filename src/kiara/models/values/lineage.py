@@ -226,12 +226,11 @@ def create_lineage_graph_modules(
 
 
 class ValueLineage(JupyterMixin):
-    @classmethod
-    def from_value(cls, value: Value) -> "ValueLineage":
+    # @classmethod
+    # def from_value(cls, value: Value) -> "ValueLineage":
+    #     pass
 
-        pass
-
-    def __init__(self, kiara: "Kiara", value: Value):
+    def __init__(self, kiara: "Kiara", value: Value) -> None:
 
         self._value: Value = value
         self._kiara: Kiara = kiara

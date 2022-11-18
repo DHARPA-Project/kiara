@@ -89,7 +89,7 @@ def list_types(
     default=False,
 )
 @click.pass_context
-def hierarchy(ctx, include_internal):
+def hierarchy(ctx, include_internal) -> None:
     """Show the current runtime environments' type hierarchy."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]

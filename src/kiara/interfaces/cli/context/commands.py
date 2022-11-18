@@ -27,7 +27,7 @@ def context(ctx):
 
 @context.command("list")
 @click.pass_context
-def list_contexts(ctx):
+def list_contexts(ctx) -> None:
     """List existing contexts."""
 
     kiara_config: KiaraConfig = ctx.obj["kiara_config"]
@@ -188,7 +188,7 @@ def config(ctx):
 @config.command("print")
 @output_format_option()
 @click.pass_context
-def print_config(ctx, format):
+def print_config(ctx, format) -> None:
     """Print the (current) kiara context configuration."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
@@ -251,7 +251,7 @@ def list_envs(ctx):
 @click.argument("env_type", metavar="ENVIRONMENT_TYPE", nargs=1, required=True)
 @output_format_option()
 @click.pass_context
-def explain_env(ctx, env_type: str, format: str):
+def explain_env(ctx, env_type: str, format: str) -> None:
 
     env_reg = EnvironmentRegistry.instance()
 
@@ -280,7 +280,7 @@ def metadata(ctx):
 @metadata.command(name="list")
 @output_format_option()
 @click.pass_context
-def list_metadata(ctx, format):
+def list_metadata(ctx, format) -> None:
     """List available metadata schemas."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
@@ -293,26 +293,26 @@ def list_metadata(ctx, format):
 
 @metadata.command(name="explain")
 @click.argument("metadata_key", nargs=1, required=True)
-@click.option(
-    "--details",
-    "-d",
-    help="Print more metadata schema details (for 'terminal' format).",
-    is_flag=True,
-)
+# @click.option(
+#     "--details",
+#     "-d",
+#     help="Print more metadata schema details (for 'terminal' format).",
+#     is_flag=True,
+# )
 @output_format_option()
 @click.pass_context
-def explain_metadata(ctx, metadata_key, format, details):
+def explain_metadata(ctx, metadata_key, format) -> None:
     """Print details for a specific metadata schema."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
     metadata_types = kiara_obj.kiara_model_registry.get_models_of_type(ValueMetadata)
 
-    if metadata_key not in metadata_types.keys():
+    if metadata_key not in metadata_types.item_infos.keys():
         print()
         print(f"No metadata schema for key '{metadata_key}' found...")
         sys.exit(1)
 
-    info_obj = metadata_types[metadata_key]
+    info_obj = metadata_types.item_infos[metadata_key]
 
     terminal_print_model(
         info_obj,

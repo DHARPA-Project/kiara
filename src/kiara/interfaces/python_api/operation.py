@@ -82,7 +82,7 @@ class KiaraOperation(object):
         )
         return self._inputs
 
-    def set_input(self, field: Union[str, None], value: Any = None):
+    def set_input(self, field: Union[str, None], value: Union[Any, None] = None):
 
         if field is None:
             if value is None:
@@ -140,7 +140,7 @@ class KiaraOperation(object):
         return self._operation_config
 
     def set_operation_config_value(
-        self, key: Union[str, None], value: Any = None
+        self, key: Union[str, None], value: Union[Any, None] = None
     ) -> Mapping[str, Any]:
 
         if key is None:

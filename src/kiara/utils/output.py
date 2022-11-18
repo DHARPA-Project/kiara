@@ -81,7 +81,7 @@ class OutputDetails(BaseModel):
     )
 
     @root_validator(pre=True)
-    def _set_defaults(cls, values):
+    def _set_defaults(cls, values) -> Dict[str, Any]:
 
         target: str = values.pop("target", "terminal")
         format: str = values.pop("format", None)
@@ -103,7 +103,7 @@ class OutputDetails(BaseModel):
 
 
 class TabularWrap(ABC):
-    def __init__(self):
+    def __init__(self) -> None:
         self._num_rows: Union[int, None] = None
         self._column_names: Union[Iterable[str], None] = None
         self._force_single_line: bool = True

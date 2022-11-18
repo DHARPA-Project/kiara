@@ -20,7 +20,7 @@ class NO_TYPE_MARKER(object):
 
 
 class IdRegistry(object):
-    def __init__(self):
+    def __init__(self) -> None:
         self._ids: Dict[uuid.UUID, Dict[Type, Dict[str, Any]]] = {}
         self._objs: Dict[uuid.UUID, WeakValueDictionary[Type, Any]] = {}
 

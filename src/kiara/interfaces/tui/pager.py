@@ -108,7 +108,7 @@ class PagerControl(Widget):
         scene: Union[RenderScene, None],
         scene_keys: Dict[str, Union[None, RenderScene]],
         forced_titles: Dict[str, str],
-        node: Union[Tree] = None,
+        node: Union[Tree, None] = None,
     ):
 
         if key in forced_titles.keys():

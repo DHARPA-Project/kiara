@@ -37,7 +37,7 @@ def _param_memo(f: FC, param: Parameter) -> None:
 
 # ======================================================================================================================
 def terminal_print(
-    msg: Any = None,
+    msg: Union[Any, None] = None,
     in_panel: Union[str, None] = None,
     rich_config: Union[Mapping[str, Any], None] = None,
     empty_line_before: bool = False,

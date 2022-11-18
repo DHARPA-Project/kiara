@@ -125,7 +125,7 @@ def list_values(
     properties,
     data_type,
     lineage,
-):
+) -> None:
     """List all data items that are stored in kiara."""
 
     kiara_api: KiaraAPI = ctx.obj["kiara_api"]

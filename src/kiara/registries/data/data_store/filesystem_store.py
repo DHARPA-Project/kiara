@@ -54,7 +54,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
     """Data store that loads data from the local filesystem."""
 
     _archive_type_name = "filesystem_data_archive"
-    _config_cls = FileSystemArchiveConfig
+    _config_cls = FileSystemArchiveConfig  # type: ignore
 
     # @classmethod
     # def supported_item_types(cls) -> Iterable[str]:

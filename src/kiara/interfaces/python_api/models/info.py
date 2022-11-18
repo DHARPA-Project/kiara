@@ -1480,13 +1480,13 @@ class OperationGroupInfo(InfoItemGroup):
 
         return table
 
-    def _create_renderable_by_type(self, **config):
+    def _create_renderable_by_type(self, **config) -> Table:
 
         include_internal_operations = config.get("include_internal_operations", True)
         full_doc = config.get("full_doc", False)
         filter = config.get("filter", [])
 
-        by_type = {}
+        by_type: Dict[str, Dict[str, OperationInfo]] = {}
         for op_id, op in self.item_infos.items():
             if filter:
                 match = True
@@ -1532,7 +1532,7 @@ class OperationGroupInfo(InfoItemGroup):
                 else:
                     desc = Markdown(op_info.documentation.description)
 
-                row = []
+                row: List[RenderableType] = []
                 if first_line_value:
                     row.append(operation_name)
                 else:

@@ -10,7 +10,7 @@ from functools import lru_cache
 from pydantic import Field, PrivateAttr, root_validator
 from rich.console import RenderableType
 from rich.tree import Tree
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set, Union
 
 from kiara.models import KiaraModel
 from kiara.models.module.pipeline import PipelineConfig, PipelineStep
@@ -136,7 +136,7 @@ class PipelineStructure(KiaraModel):
     output_aliases: Dict[str, str] = Field(description="The output aliases.")
 
     @root_validator(pre=True)
-    def validate_pipeline_config(cls, values):
+    def validate_pipeline_config(cls, values) -> Dict[str, Any]:
 
         pipeline_config = values.get("pipeline_config", None)
         if not pipeline_config:
@@ -386,7 +386,7 @@ class PipelineStructure(KiaraModel):
 
         return self.get_step_details(step_id=step_id).required
 
-    def _process_steps(self):
+    def _process_steps(self) -> None:
         """The core method of this class, it connects all the processing modules, their inputs and outputs."""
 
         steps_details: Dict[str, Any] = {}
@@ -429,6 +429,7 @@ class PipelineStructure(KiaraModel):
                     value_name=output_name,
                     value_schema=schema,
                     step_id=step.step_id,
+                    pipeline_output=None,
                 )
 
                 steps_details[step.step_id]["outputs"][output_name] = step_output
@@ -438,11 +439,11 @@ class PipelineStructure(KiaraModel):
                 # step_output_name = generate_pipeline_endpoint_name(
                 #     step_id=step.step_id, value_name=output_name
                 # )
-                step_output_name = f"{step.step_id}.{output_name}"
+                step_output_name: Union[None, str] = f"{step.step_id}.{output_name}"
                 if not self.output_aliases:
                     raise NotImplementedError()
                 if step_output_name in self.output_aliases.keys():
-                    step_output_name = self.output_aliases[step_output_name]
+                    step_output_name = self.output_aliases[step_output_name]  # type: ignore
                 else:
                     if not self._add_all_workflow_outputs:
                         # this output is not interesting for the workflow

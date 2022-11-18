@@ -195,7 +195,7 @@ class Workflow(object):
         cls,
         alias: Union[None, str] = None,
         replace_existing_alias: bool = False,
-        doc: Any = None,
+        doc: Union[Any, None] = None,
         kiara: Union["Kiara", None] = None,
     ):
         """Create a new workflow object."""

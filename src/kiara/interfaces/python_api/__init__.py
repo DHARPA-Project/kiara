@@ -59,7 +59,7 @@ class KiaraAPI(object):
     @classmethod
     def instance(
         cls,
-        context: Union["Kiara", str] = None,
+        context: Union["Kiara", str, None] = None,
         runtime_config: Union[None, Mapping[str, Any], "KiaraRuntimeConfig"] = None,
     ) -> "KiaraAPI":
 
@@ -1032,7 +1032,7 @@ class KiaraAPI(object):
         workflow_alias: Union[None, str] = None,
         initial_pipeline: Union[None, str] = None,
         initial_inputs: Union[None, Mapping[str, Any]] = None,
-        documentation: Any = None,
+        documentation: Union[Any, None] = None,
         save: bool = False,
         force_alias: bool = False,
     ) -> Workflow:

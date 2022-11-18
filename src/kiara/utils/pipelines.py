@@ -8,7 +8,7 @@
 import os
 import typing
 from pathlib import Path
-from typing import Any, Iterable, List, Mapping, Union
+from typing import Any, Dict, Iterable, List, Mapping, Union
 
 from kiara.defaults import MODULE_TYPE_NAME_KEY
 from kiara.exceptions import NoSuchOperationException
@@ -97,7 +97,7 @@ def get_pipeline_details_from_path(
     path: Union[str, Path],
     module_type_name: Union[str, None] = None,
     base_module: Union[str, None] = None,
-) -> Mapping[str, Any]:
+) -> Dict[str, Any]:
     """Load a pipeline description, save it's content, and determine it the pipeline base name.
 
     Arguments:
@@ -139,9 +139,7 @@ def get_pipeline_details_from_path(
     return result
 
 
-def check_doc_sidecar(
-    path: Union[Path, str], data: Mapping[str, Any]
-) -> Mapping[str, Any]:
+def check_doc_sidecar(path: Union[Path, str], data: Dict[str, Any]) -> Dict[str, Any]:
 
     if isinstance(path, str):
         path = Path(os.path.expanduser(path))

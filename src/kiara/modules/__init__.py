@@ -78,7 +78,7 @@ class InputOutputObject(abc.ABC):
     def __init__(
         self,
         alias: str,
-        config: KiaraModuleConfig = None,
+        config: Union[KiaraModuleConfig, None] = None,
         allow_empty_inputs_schema: bool = False,
         allow_empty_outputs_schema: bool = False,
     ):

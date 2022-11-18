@@ -90,7 +90,7 @@ class AliasRegistry(object):
     def register_archive(
         self,
         archive: AliasArchive,
-        alias: str = None,
+        alias: Union[str, None] = None,
         set_as_default_store: Union[bool, None] = None,
     ):
 

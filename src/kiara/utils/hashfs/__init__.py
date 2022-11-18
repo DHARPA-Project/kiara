@@ -84,7 +84,7 @@ class HashFS(object):
 
     Attributes:
         root (str): Directory path used as root of storage space.
-        depth (int, optional): Depth of subfolders to create when saving a
+        depth (int, optional): Depth of subfolders when saving a
             file.
         width (int, optional): Width of each subfolder to create when saving a
             file.

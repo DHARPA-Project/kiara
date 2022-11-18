@@ -4,7 +4,8 @@ import uuid
 from humanfriendly import format_size
 from pydantic import BaseModel, Field, PrivateAttr
 from rich import box
-from rich.console import RenderableType
+from rich.console import Group, RenderableType
+from rich.markdown import Markdown
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
 
@@ -33,12 +34,34 @@ class ContextSummary(KiaraModel):
     @classmethod
     def create_from_context(cls, kiara: "Kiara", context_name: Union[str, None] = None):
 
-        value_ids = list(kiara.data_registry.retrieve_all_available_value_ids())
-        aliases = {
-            a.full_alias: a.value_id for a in kiara.alias_registry.aliases.values()
-        }
+        errors = {}
+        try:
+            value_ids = list(kiara.data_registry.retrieve_all_available_value_ids())
+        except Exception as e:
+            errors["values"] = e
+            value_ids = []
 
-        archives_info = ArchiveGroupInfo.create_from_context(kiara=kiara)
+        try:
+            aliases = {
+                a.full_alias: a.value_id for a in kiara.alias_registry.aliases.values()
+            }
+        except Exception as e:
+            errors["aliases"] = e
+            aliases = {}
+
+        try:
+            archives_info = ArchiveGroupInfo.create_from_context(kiara=kiara)
+        except Exception as e:
+            errors["archives"] = e
+            archives_info = ArchiveGroupInfo(item_infos={})
+
+        comment = None
+        invalid = False
+        if errors:
+            invalid = True
+            comment = "Errors creating this context, this is most likely a bug:\n\n"
+            for k, err in errors.items():
+                comment = f"{comment}  - {k}: {err}"
 
         result = ContextSummary.construct(
             kiara_id=kiara.id,
@@ -46,6 +69,8 @@ class ContextSummary(KiaraModel):
             aliases=aliases,
             context_name=context_name,
             archives=archives_info,
+            invalid=invalid,
+            comment=comment,
         )
         result._kiara = kiara
         return result
@@ -64,6 +89,10 @@ class ContextSummary(KiaraModel):
     )
     archives: ArchiveGroupInfo = Field(
         description="The archives registered in this context."
+    )
+    invalid: bool = Field(description="Whether this context has errors.", bool=False)
+    comment: Union[str, None] = Field(
+        description="(Optional) comment about this context.", default=None
     )
 
     _kiara: Union["Kiara", None] = PrivateAttr()
@@ -144,6 +173,15 @@ class ContextSummary(KiaraModel):
 
         table.add_column("Property", style="i")
         table.add_column("Value")
+
+        if self.invalid:
+            msg = "[red]This context is invalid![/red]\n"
+            cmt = self.comment if self.comment else "-- no details --"
+            md = Markdown(cmt)
+            table.add_row(
+                "",
+                Group(msg, md, ""),
+            )
 
         if self.context_name:
             table.add_row("context name", self.context_name)

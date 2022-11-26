@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/context/config/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.0, mkdocs-material-8.5.6">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
     
     
       
@@ -23,10 +23,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.20d9efc8.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.472b142f.min.css">
       
         
-        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.08040f6c.min.css">
         
       
       
@@ -62,7 +62,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
   
     
     
@@ -4650,7 +4650,7 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
                 <span class="sa">f</span><span class="s2">&quot;Can&#39;t create new kiara config, path exists: </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
-        <span class="n">config</span> <span class="o">=</span> <span class="n">KiaraConfig</span><span class="p">(</span><span class="n">base_data_path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">KiaraConfig</span><span class="p">(</span><span class="n">base_data_path</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span>
         <span class="n">config_file</span> <span class="o">=</span> <span class="n">path</span> <span class="o">/</span> <span class="n">KIARA_CONFIG_FILE_NAME</span>
 
         <span class="n">config</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
@@ -4819,7 +4819,10 @@ KiaraConfig            (<span title="pydantic.env_settings.BaseSettings">BaseSet
     <span class="k">def</span> <span class="nf">_validate_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_config</span><span class="p">:</span> <span class="n">KiaraContextConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 
         <span class="n">env_registry</span> <span class="o">=</span> <span class="n">EnvironmentRegistry</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
-        <span class="n">available_archives</span> <span class="o">=</span> <span class="n">env_registry</span><span class="o">.</span><span class="n">environments</span><span class="p">[</span><span class="s2">&quot;kiara_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">archive_types</span>
+        <span class="kn">from</span> <span class="nn">kiara.models.runtime_environment.kiara</span> <span class="kn">import</span> <span class="n">KiaraTypesRuntimeEnvironment</span>
+
+        <span class="n">kiara_types</span><span class="p">:</span> <span class="n">KiaraTypesRuntimeEnvironment</span> <span class="o">=</span> <span class="n">env_registry</span><span class="o">.</span><span class="n">environments</span><span class="p">[</span><span class="s2">&quot;kiara_types&quot;</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+        <span class="n">available_archives</span> <span class="o">=</span> <span class="n">kiara_types</span><span class="o">.</span><span class="n">archive_types</span>
 
         <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">DEFAULT_DATA_STORE_MARKER</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context_config</span><span class="o">.</span><span class="n">archives</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -5548,7 +5551,7 @@ Config        </code>
             <span class="sa">f</span><span class="s2">&quot;Can&#39;t create new kiara config, path exists: </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-    <span class="n">config</span> <span class="o">=</span> <span class="n">KiaraConfig</span><span class="p">(</span><span class="n">base_data_path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">KiaraConfig</span><span class="p">(</span><span class="n">base_data_path</span><span class="o">=</span><span class="n">path</span><span class="o">.</span><span class="n">as_posix</span><span class="p">())</span>
     <span class="n">config_file</span> <span class="o">=</span> <span class="n">path</span> <span class="o">/</span> <span class="n">KIARA_CONFIG_FILE_NAME</span>
 
     <span class="n">config</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
@@ -6394,10 +6397,10 @@ Config        </code>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.5bf1dace.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.078830c0.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.d6c3db9e.min.js"></script>
       
     
   </body>

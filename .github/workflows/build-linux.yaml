@@ -204,7 +204,7 @@ jobs:
       - name: install required plugin packages
         run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_plugin.develop
       - name: build conda package
-        run: kiara conda build-package --patch-data ci/conda/conda-pkg-patch.yaml kiara
+        run: kiara conda build-package --patch-data ci/conda/conda-pkg-patch.yaml .
 
   publish_conda_package:
     name: publish conda package

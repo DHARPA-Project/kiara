@@ -4,7 +4,8 @@ requirements:
 
 channels:
   - conda-forge
-  - frkl
+  - dharpa
+
 host_requirements:
   - pip
   - python

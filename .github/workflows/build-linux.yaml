@@ -183,20 +183,28 @@ jobs:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
 
-  test_conda_package_build:
+  conda_package_build:
     name: test conda package build
     runs-on: ubuntu-latest
     if: ${{ startsWith(github.ref, 'refs/tags') != true }}
-    strategy:
-      matrix:
-        python_version: ["3.8", "3.9", "3.10", "3.11"]
     steps:
-      - uses: actions/checkout@v1
-      - uses: conda-incubator/setup-miniconda@v2
-      - name: install conda build packages
-        run: conda install -c conda-forge conda-build anaconda-client boa
+      - name: "Set up Python 3.9"
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+      - name: pip cache
+        id: pip-cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}
+      - uses: actions/checkout@v2
+      - name: install required plugin packages
+        run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_plugin.develop
+      - name: install kiara
+        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .
       - name: build conda package
-        run: cd ci/conda/ && ./build-conda-packages.sh kiara develop "${{ matrix.python_version }}" true
+        run: kiara conda build-package --patch-data ci/conda/conda-pkg-patch.yaml kiara
 
   publish_conda_package:
     name: publish conda package

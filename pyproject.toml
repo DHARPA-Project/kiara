@@ -1,7 +1,7 @@
 [build-system]
 requires = [
-    "setuptools",
-    "setuptools_scm",
+    "setuptools>=63",
+    "setuptools_scm[toml]>7.0.0",
     "wheel",
 ]
 build-backend = 'setuptools.build_meta'
@@ -23,5 +23,5 @@ exclude = '''
 )/
 '''
 
-[tool.dephell.main]
-from = {format = "setuppy", path = "setup.py"}
+[tool.setuptools_scm]
+write_to = "src/kiara/version.txt"

@@ -1,0 +1,27 @@
+requirements:
+  mmhash3: "mmh3"
+  email-validator: "email-validator>=1.0.0"
+
+channels:
+  - conda-forge
+  - frkl
+host_requirements:
+  - pip
+  - python
+  - setuptools<=63
+  - setuptools_scm
+  - setuptools_scm_git_archive
+
+test:
+  imports:
+    - kiara
+    - kiara.interfaces.python_api
+  source_files:
+    - tests
+  commands:
+    - kiara module list
+#    - kiara data list#
+    - kiara operation list
+#    - pytest tests#
+#  requires:#
+#    - pytest#

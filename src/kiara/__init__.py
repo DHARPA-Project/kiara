@@ -32,6 +32,7 @@ from .modules import KiaraModule, ValueMapSchema, KiaraModuleConfig
 from .models.values.value import Value, ValueMap
 from .models.values.value_schema import ValueSchema
 
+
 try:
     builtins = __import__("__builtin__")
 except ImportError:
@@ -50,7 +51,6 @@ if "google.colab" in sys.modules or "jupyter_client" in sys.modules:
     from kiara.interfaces import set_console_width
 
     set_console_width()
-
 
 try:
     from rich import inspect

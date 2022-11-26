@@ -1,0 +1,4 @@
+host_requirements:
+  - pip
+  - python
+  - poetry

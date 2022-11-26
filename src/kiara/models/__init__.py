@@ -27,7 +27,6 @@ from kiara.registries.templates import TemplateRegistry
 from kiara.utils.class_loading import _default_id_func
 from kiara.utils.develop import log_dev_message
 from kiara.utils.hashing import compute_cid
-from kiara.utils.html import generate_html
 from kiara.utils.json import orjson_dumps
 from kiara.utils.models import (
     assemble_subcomponent_graph,
@@ -226,6 +225,8 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
                 )
 
         try:
+            from kiara.utils.html import generate_html
+
             html = generate_html(item=self, add_header=False)
             return html
         except Exception as e:

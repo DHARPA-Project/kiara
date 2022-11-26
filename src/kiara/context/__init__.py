@@ -8,13 +8,13 @@
 import os
 import structlog
 import uuid
-from alembic import command  # type: ignore
+
+# from alembic import command  # type: ignore
 from pydantic import Field
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set, Type, Union
 
 from kiara.context.config import KiaraConfig, KiaraContextConfig, KiaraRuntimeConfig
 from kiara.data_types import DataType
-from kiara.defaults import KIARA_DB_MIGRATIONS_CONFIG, KIARA_DB_MIGRATIONS_FOLDER
 from kiara.interfaces import get_console
 from kiara.interfaces.python_api.models.info import (
     DataTypeClassesInfo,
@@ -46,7 +46,7 @@ from kiara.registries.modules import ModuleRegistry
 from kiara.registries.operations import OperationRegistry
 from kiara.registries.types import TypeRegistry
 from kiara.registries.workflows import WorkflowRegistry
-from kiara.utils import log_exception, log_message
+from kiara.utils import log_exception
 from kiara.utils.class_loading import find_all_archive_types
 from kiara.utils.operations import filter_operations
 
@@ -204,16 +204,16 @@ class Kiara(object):
                 if supported_type == "workflow":
                     self.workflow_registry.register_archive(archive_obj, alias=archive_alias)  # type: ignore
 
-    def _run_alembic_migrations(self):
-        script_location = os.path.abspath(KIARA_DB_MIGRATIONS_FOLDER)
-        dsn = self._config.db_url
-        log_message("running migration script", script=script_location, db_url=dsn)
-        from alembic.config import Config
-
-        alembic_cfg = Config(KIARA_DB_MIGRATIONS_CONFIG)
-        alembic_cfg.set_main_option("script_location", script_location)
-        alembic_cfg.set_main_option("sqlalchemy.url", dsn)
-        command.upgrade(alembic_cfg, "head")
+    # def _run_alembic_migrations(self):
+    #     script_location = os.path.abspath(KIARA_DB_MIGRATIONS_FOLDER)
+    #     dsn = self._config.db_url
+    #     log_message("running migration script", script=script_location, db_url=dsn)
+    #     from alembic.config import Config
+    #
+    #     alembic_cfg = Config(KIARA_DB_MIGRATIONS_CONFIG)
+    #     alembic_cfg.set_main_option("script_location", script_location)
+    #     alembic_cfg.set_main_option("sqlalchemy.url", dsn)
+    #     command.upgrade(alembic_cfg, "head")
 
     @property
     def id(self) -> uuid.UUID:

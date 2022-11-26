@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING, Any, Dict, Generic, Mapping, Type, TypeVar, Un
 from kiara.defaults import KIARA_RESOURCES_FOLDER
 from kiara.models import KiaraModel
 from kiara.models.module.pipeline.pipeline import Pipeline
+from kiara.utils import log_message
 from kiara.utils.values import extract_raw_value
 
 if TYPE_CHECKING:
@@ -160,8 +161,15 @@ class JinjaPipelineRenderer(KiaraRenderer[Pipeline, JinjaPipelineRenderConfig]):
             converted = jupytext.writes(notebook, fmt="notebook")
             return converted
         else:
-            import black
-            from black import Mode
+            try:
+                import black
+                from black import Mode
 
-            cleaned = black.format_str(rendered, mode=Mode())
-            return cleaned
+                cleaned = black.format_str(rendered, mode=Mode())
+                return cleaned
+
+            except Exception as e:
+                log_message(
+                    f"Could not format python code, 'black' not in virtual environment: {e}."
+                )
+                return rendered

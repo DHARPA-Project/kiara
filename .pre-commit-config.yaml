@@ -10,11 +10,6 @@ repos:
       stages: [commit-msg]
       additional_dependencies: ['@commitlint/config-conventional']
 
-- repo: https://github.com/asottile/setup-cfg-fmt
-  rev: 'v1.16.0'
-  hooks:
-    - id: setup-cfg-fmt
-
 - repo: https://github.com/pycqa/isort
   rev: 5.7.0
   hooks:

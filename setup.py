@@ -64,7 +64,7 @@ def get_extra_requires(add_all=True, add_all_dev=True, add_all_modules=True):
             if not e_n.startswith("modules_"):
                 all_modules_dev.update(deps)
 
-        extras["all_dev"] = all_modules_dev
+        extras["dev_all"] = all_modules_dev
 
     return extras
 

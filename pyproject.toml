@@ -62,6 +62,11 @@ dependencies = [
 ]
 dynamic = ["version"]
 
+[project.urls]
+homepage = "https://github.com/DHARPA-Project/kiara"
+documentation = "https://dharpa.org/kiara.documentation"
+repository = "https://github.com/DHARPA-Project/kiara"
+
 [tool.black]
 include = '\.pyi?$'
 exclude = '''

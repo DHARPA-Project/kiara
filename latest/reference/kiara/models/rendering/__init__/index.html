@@ -4473,7 +4473,7 @@ RenderValueResult            (<a class="autorefs autorefs-internal" title="kiara
 
     <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value that was rendered.&quot;</span><span class="p">)</span>
     <span class="n">render_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The config that was used to render this.&quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The config that was used to render this.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
     <span class="p">)</span>
     <span class="n">render_manifest</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the manifest that was used to render this.&quot;</span>
@@ -4558,7 +4558,6 @@ RenderValueResult            (<a class="autorefs autorefs-internal" title="kiara
 
   <span class="doc doc-properties">
       <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
-      <small class="doc doc-property doc-property-required"><code>required</code></small>
   </span>
 
 <a href="#kiara.models.rendering.RenderValueResult.render_config" class="headerlink" title="Permanent link">&para;</a></h5>

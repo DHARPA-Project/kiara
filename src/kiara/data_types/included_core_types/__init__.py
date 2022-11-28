@@ -9,6 +9,7 @@ import abc
 import orjson
 from pydantic import BaseModel
 from rich import box
+from rich.console import RenderableType
 from rich.syntax import Syntax
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Generic, Iterable, Mapping, Type, TypeVar
@@ -127,10 +128,10 @@ class AnyType(
 
     def render_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any], manifest: "Manifest"
-    ):
+    ) -> RenderableType:
 
         if hasattr(self, "_render_as__terminal_renderable"):
-            return self._render_as__terminal(value=value, render_config=render_config, manifest=manifest)  # type: ignore
+            return self._render_as__terminal_renderable(value=value, render_config=render_config, manifest=manifest)  # type: ignore
         return self.render_as__string(
             value=value, render_config=render_config, manifest=manifest
         )

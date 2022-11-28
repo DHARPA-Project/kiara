@@ -56,7 +56,7 @@ class RenderValueResult(KiaraModel):
 
     value_id: uuid.UUID = Field(description="The value that was rendered.")
     render_config: Mapping[str, Any] = Field(
-        description="The config that was used to render this."
+        description="The config that was used to render this.", default_factory=dict
     )
     render_manifest: str = Field(
         description="The id of the manifest that was used to render this."

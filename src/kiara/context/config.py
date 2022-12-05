@@ -110,6 +110,21 @@ class JobCacheStrategy(Enum):
     data_hash = "data_hash"
 
 
+class KiaraSettings(BaseSettings):
+    class Config:
+        extra = Extra.forbid
+        validate_assignment = True
+        env_prefix = "kiara_setting_"
+
+    syntax_highlight_background: str = Field(
+        description="The background color for code blocks when rendering to terminal, Jupyter, etc.",
+        default="default",
+    )
+
+
+KIARA_SETTINGS = KiaraSettings()
+
+
 class KiaraRuntimeConfig(BaseSettings):
     class Config:
         extra = Extra.forbid
@@ -131,14 +146,6 @@ class KiaraConfig(BaseSettings):
         env_prefix = "kiara_"
         extra = Extra.forbid
         use_enum_values = True
-        # @classmethod
-        # def customise_sources(
-        #     cls,
-        #     init_settings,
-        #     env_settings,
-        #     file_secret_settings,
-        # ):
-        #     return (init_settings, env_settings, config_file_settings_source)
 
     @classmethod
     def create_in_folder(cls, path: Union[Path, str]) -> "KiaraConfig":

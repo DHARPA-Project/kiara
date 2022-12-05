@@ -1,0 +1,6 @@
+channels:
+  - conda-forge
+host_requirements:
+  - pip
+  - python
+  - hatchling

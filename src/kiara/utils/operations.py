@@ -5,6 +5,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import os
+from ruamel.yaml import YAML
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
 from kiara.exceptions import NoSuchExecutionTargetException, NoSuchOperationException
@@ -17,6 +18,8 @@ from kiara.utils.files import get_data_from_file
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+
+yaml = YAML(typ="safe")
 
 
 def filter_operations(
@@ -73,6 +76,7 @@ def create_operation(
 
         kiara = Kiara.instance()
 
+    operation = None
     if module_or_operation in kiara.operation_registry.operation_ids:
 
         operation = kiara.operation_registry.get_operation(module_or_operation)
@@ -81,7 +85,10 @@ def create_operation(
                 f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
             )
 
-    elif module_or_operation in kiara.module_type_names:
+    elif (
+        module_or_operation != "pipeline"
+        and module_or_operation in kiara.module_type_names
+    ):
 
         manifest = Manifest(
             module_type=module_or_operation, module_config=operation_config
@@ -90,8 +97,8 @@ def create_operation(
         operation = Operation.create_from_module(module)
 
     elif os.path.isfile(module_or_operation):
-        data = get_data_from_file(module_or_operation)
-        pipeline_name = data.pop("pipeline_name", None)
+        _data = get_data_from_file(module_or_operation)
+        pipeline_name = _data.pop("pipeline_name", None)
         if pipeline_name is None:
             pipeline_name = os.path.basename(module_or_operation)
 
@@ -102,7 +109,7 @@ def create_operation(
         )
         pipeline_config = PipelineConfig.from_config(
             pipeline_name=pipeline_name,
-            data=data,
+            data=_data,
             kiara=kiara,
             execution_context=execution_context,
         )
@@ -113,17 +120,54 @@ def create_operation(
         operation = Operation.create_from_module(module, doc=pipeline_config.doc)
 
     else:
-        raise NoSuchOperationException(
-            msg=f"Can't assemble operation, invalid operation/module name: {module_or_operation}. Must be registered module or operation name, or file.",
-            operation_id=module_or_operation,
-            available_operations=sorted(kiara.operation_registry.operation_ids),
-        )
-        # manifest = Manifest(
-        #     module_type=module_or_operation,
-        #     module_config=self._operation_config,
-        # )
-        # module = self._kiara.create_module(manifest=manifest)
-        # operation = Operation.create_from_module(module=module)
+        if module_or_operation == "pipeline":
+            data: Union[None, Mapping[str, Any]] = operation_config
+        else:
+            try:
+                import json
+
+                data = json.loads(module_or_operation)
+            except Exception:
+                try:
+                    data = yaml.load(module_or_operation)
+                except Exception:
+                    data = None
+
+        if data is not None:
+            d = dict(data)
+            pipeline_name = d.pop("pipeline_name", None)
+            if pipeline_name is not None:
+
+                try:
+                    execution_context = ExecutionContext(
+                        pipeline_dir=os.path.abspath(
+                            os.path.dirname(module_or_operation)
+                        )
+                    )
+                    pipeline_config = PipelineConfig.from_config(
+                        pipeline_name=pipeline_name,
+                        data=d,
+                        kiara=kiara,
+                        execution_context=execution_context,
+                    )
+
+                    manifest = kiara.create_manifest(
+                        "pipeline", config=pipeline_config.dict()
+                    )
+                    module = kiara.create_module(manifest=manifest)
+
+                    operation = Operation.create_from_module(
+                        module, doc=pipeline_config.doc
+                    )
+                except Exception:
+                    pass
+
+        if operation is None:
+            raise NoSuchOperationException(
+                msg=f"Can't assemble operation, invalid operation/module name: {module_or_operation}. Must be registered module or operation name, or file.",
+                operation_id=module_or_operation,
+                available_operations=sorted(kiara.operation_registry.operation_ids),
+            )
 
     if operation is None:
 

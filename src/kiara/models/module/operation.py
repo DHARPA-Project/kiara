@@ -29,7 +29,7 @@ from kiara.utils.output import create_table_from_field_schemas
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
-
+    from kiara.models.module.pipeline.structure import PipelineStructure
 
 logger = structlog.getLogger()
 
@@ -270,6 +270,7 @@ class Operation(Manifest):
     )
 
     _module: Union["KiaraModule", None] = PrivateAttr(default=None)
+    _pipeline_config: Union[None, PipelineConfig] = PrivateAttr(default=None)
 
     def _retrieve_data_to_hash(self) -> Any:
         return {"operation_id": self.operation_id, "manifest": self.manifest_cid}
@@ -340,6 +341,21 @@ class Operation(Manifest):
     #     p = Panel(r, title=f"Operation: {self.operation_id}", title_align="left")
     #     mime_bundle = p._repr_mimebundle_(include=[], exclude=[])  # type: ignore
     #     return mime_bundle["text/html"]
+
+    @property
+    def pipeline_config(self) -> PipelineConfig:
+
+        if not self.module.is_pipeline():
+            raise Exception(
+                f"Can't retrieve pipeline details from operation '{self.operation_id}: not a pipeline operation type.'"
+            )
+
+        op_details = self.operation_details
+        return op_details.pipeline_config  # type: ignore
+
+    @property
+    def pipeline_structure(self) -> "PipelineStructure":
+        return self.pipeline_config.structure
 
     def create_renderable(self, **config: Any) -> RenderableType:
         """Create a printable overview of this operations details.

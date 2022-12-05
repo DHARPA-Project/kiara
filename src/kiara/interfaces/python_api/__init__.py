@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 
 #  Copyright (c) 2021, Markus Binsteiner
 #
@@ -6,6 +7,7 @@
 import structlog
 import uuid
 from pathlib import Path
+from ruamel.yaml import YAML
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
 from kiara.exceptions import NoSuchWorkflowException
@@ -43,6 +45,7 @@ if TYPE_CHECKING:
     from kiara.context import Kiara, KiaraRuntimeConfig
 
 logger = structlog.getLogger()
+yaml = YAML(typ="safe")
 
 
 class KiaraAPI(object):
@@ -96,6 +99,10 @@ class KiaraAPI(object):
         DON"T USE THIS! This is going away in the production release.
         """
         return self._kiara
+
+    @property
+    def runtime_config(self) -> "KiaraRuntimeConfig":
+        return self.context.runtime_config
 
     # ==================================================================================================================
     # methods for module and operations info
@@ -161,7 +168,9 @@ class KiaraAPI(object):
         return info
 
     def create_operation(
-        self, module_type: str, module_config: Union[Mapping[str, Any], None] = None
+        self,
+        module_type: str,
+        module_config: Union[Mapping[str, Any], str, None] = None,
     ) -> Operation:
         """Create an [Operation][kiara.models.module.operation.Operation] instance for the specified module type and (optional) config.
 
@@ -177,11 +186,28 @@ class KiaraAPI(object):
 
         if module_config is None:
             module_config = {}
+        elif isinstance(module_config, str):
+            try:
+                module_config = json.load(module_config)  # type: ignore
+            except Exception:
+                try:
+                    module_config = yaml.load(module_config)  # type: ignore
+                except Exception:
+                    raise Exception(
+                        f"Can't parse module config string: {module_config}."
+                    )
 
-        mc = Manifest(module_type=module_type, module_config=module_config)
-        module_obj = self._kiara.create_module(mc)
+        if module_type == "pipeline":
+            if not module_config:
+                raise Exception("Pipeline configuration can't be empty.")
+            assert module_config is None or isinstance(module_config, Mapping)
+            operation = create_operation("pipeline", operation_config=module_config)
+            return operation
+        else:
+            mc = Manifest(module_type=module_type, module_config=module_config)
+            module_obj = self._kiara.create_module(mc)
 
-        return module_obj.operation
+            return module_obj.operation
 
     @property
     def operation_ids(self) -> List[str]:

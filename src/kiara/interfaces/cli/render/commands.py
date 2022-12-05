@@ -25,12 +25,45 @@ def render(ctx):
     """Rendering-related sub-commands."""
 
 
-@render.command()
+@render.group()
 @click.argument("pipeline", nargs=1)
+@click.pass_context
+def pipeline(ctx, pipeline):
+    kiara: Kiara = ctx.obj["kiara"]
+
+    if pipeline.startswith("workflow:"):
+        # pipeline_defaults = {}
+        raise NotImplementedError()
+    else:
+        pipeline_obj = Pipeline.create_pipeline(kiara=kiara, pipeline=pipeline)
+
+    ctx.obj["pipeline"] = pipeline_obj
+
+
+@pipeline.command()
+@click.argument("base_name", nargs=1)
+@click.pass_context
+def as_graph_images(ctx, base_name: str):
+
+    from kiara.utils.jupyter import save_image
+
+    pipeline_obj: Pipeline = ctx.obj["pipeline"]
+
+    path = os.path.join(os.getcwd(), f"{base_name}-execution-graph.png")
+    save_image(graph=pipeline_obj.execution_graph, path=path)
+
+    path = os.path.join(os.getcwd(), f"{base_name}-data-flow-graph.png")
+    save_image(graph=pipeline_obj.data_flow_graph, path=path)
+
+    path = os.path.join(os.getcwd(), f"{base_name}-data-flow-graph-simplified.png")
+    save_image(graph=pipeline_obj.data_flow_graph_simple, path=path)
+
+
+@pipeline.command()
 @click.argument("inputs", nargs=-1, required=False)
 @click.option("--template", "-t", default="notebook")
 @click.pass_context
-def pipeline(ctx, pipeline: str, template: str, inputs: Tuple[str]):
+def from_template(ctx, template: str, inputs: Tuple[str]):
     """Render a pipeline into a notebook, streamlit app, etc...
 
     This command is still work in progress, and its interface will likely change in the future.
@@ -56,13 +89,9 @@ def pipeline(ctx, pipeline: str, template: str, inputs: Tuple[str]):
         )
         sys.exit(1)
 
-    if pipeline.startswith("workflow:"):
-        pipeline_defaults = {}
-        raise NotImplementedError()
-    else:
-        pipeline_obj = Pipeline.create_pipeline(kiara=kiara, pipeline=pipeline)
-        # controller = SinglePipelineBatchController(pipeline=pipeline, job_registry=kiara.job_registry)
-        pipeline_defaults = pipeline_obj.structure.pipeline_config.defaults
+    pipeline_obj = ctx.obj["pipeline"]
+    # controller = SinglePipelineBatchController(pipeline=pipeline, job_registry=kiara.job_registry)
+    pipeline_defaults = pipeline_obj.structure.pipeline_config.defaults
 
     pipeline_inputs = dict(pipeline_defaults)
     if inputs:

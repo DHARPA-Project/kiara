@@ -1028,6 +1028,7 @@ class Value(ValueDetails):
                     "aliases",
                     "kiara_id",
                     "environments",
+                    "lineage",
                     "environment_hashes",
                 ]
                 or k in ignore_fields
@@ -1156,6 +1157,7 @@ class Value(ValueDetails):
                     "value_id",
                     "aliases",
                     "kiara_id",
+                    "lineage",
                     "environments",
                     "environment_hashes",
                 ]

@@ -421,6 +421,7 @@ class PipelineStructure(KiaraModel):
             }
 
             data_flow_graph.add_node(step, type="step")
+            data_flow_graph_simple.add_node(step, type="step")
 
             # go through all the module outputs, create points for them and connect them to pipeline outputs
             for output_name, schema in step.module.outputs_schema.items():

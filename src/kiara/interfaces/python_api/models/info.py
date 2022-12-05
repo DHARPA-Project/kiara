@@ -1064,7 +1064,13 @@ class ModuleTypeInfo(TypeInfo[Type["KiaraModule"]]):
         table.add_row("Python class", self.python_class.create_renderable())
 
         if include_src:
-            _config = Syntax(self.process_src, "python", background_color="default")
+            from kiara.context.config import KIARA_SETTINGS
+
+            _config = Syntax(
+                self.process_src,
+                "python",
+                background_color=KIARA_SETTINGS.syntax_highlight_background,
+            )
             table.add_row("Processing source code", Panel(_config, box=box.HORIZONTALS))
 
         return table

@@ -7,10 +7,12 @@
 import orjson
 import os
 import shutil
-from typing import Any, Mapping, Type
+from pydantic import Field
+from typing import Any, List, Mapping, Type, Union
 
+from kiara import KiaraModuleConfig
 from kiara.exceptions import KiaraProcessingException
-from kiara.models.filesystem import FileBundle, FileModel
+from kiara.models.filesystem import FileBundle, FileModel, FolderImportConfig
 from kiara.models.values.value import SerializedData, ValueMap
 from kiara.modules import (
     DEFAULT_NO_IDEMPOTENT_MODULE_CHARACTERISTICS,
@@ -94,10 +96,21 @@ class DeserializeFileModule(DeserializeValueModule):
         return fm
 
 
+class ImportFileBundleConfig(KiaraModuleConfig):
+
+    include_file_types: Union[None, List[str]] = Field(
+        description="File types to include.", default=None
+    )
+    exclude_file_types: Union[None, List[str]] = Field(
+        description="File types to include.", default=None
+    )
+
+
 class ImportFileBundleModule(KiaraModule):
     """Import a folder (file_bundle) from the local filesystem."""
 
     _module_type_name = "import.file_bundle"
+    _config_cls = ImportFileBundleConfig
 
     def create_inputs_schema(
         self,
@@ -122,7 +135,12 @@ class ImportFileBundleModule(KiaraModule):
 
         path = inputs.get_value_data("path")
 
-        file_bundle = FileBundle.import_folder(source=path)
+        include = self.get_config_value("include_file_types")
+        exclude = self.get_config_value("exclude_file_types")
+
+        config = FolderImportConfig(include_files=include, exclude_files=exclude)
+
+        file_bundle = FileBundle.import_folder(source=path, import_config=config)
         outputs.set_value("file_bundle", file_bundle)
 
 

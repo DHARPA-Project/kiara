@@ -1,82 +1,59 @@
 # -*- coding: utf-8 -*-
+import os
 import structlog
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
+from rich.text import Text
 from rich.tree import Tree
-from textual.app import App
-from textual.reactive import Reactive
-from textual.widget import Widget
-from typing import Any, Dict, Mapping, Union
+from textual import events
+from textual._types import MessageTarget
+from textual.app import App, ComposeResult
+from textual.message import Message
+from textual.reactive import reactive
+from textual.widgets import Footer, Header, Static
+from typing import Any, Dict, Mapping, Tuple, Union
 
+from kiara.defaults import KIARA_RESOURCES_FOLDER
+from kiara.interfaces import get_console
 from kiara.interfaces.python_api import KiaraAPI
-from kiara.models.module.operation import Operation
 from kiara.models.rendering import RenderScene, RenderValueResult
-from kiara.models.values.value import Value
 
 logger = structlog.getLogger()
 
 
-class ValuePager(Widget):
+class ValueViewPane(Static):
+    """A widget that displays a data preview."""
 
-    _render_op: Operation = None  # type: ignore
-    _kiara_api: KiaraAPI = None  # type: ignore
-    _value: Value = None  # type: ignore
-    _control_widget: "PagerControl" = None  # type: ignore
+    value_view = reactive(None)
 
-    render_scene: Union[Mapping[str, Any], None] = Reactive(None)  # type: ignore
+    def __init__(self, *args, **kwargs) -> None:
 
-    current_result: Union[RenderValueResult, None] = None  # type: ignore
+        super().__init__(*args, **kwargs)
 
-    def get_num_rows(self) -> int:
-        rows = self.size.height - 5
-        if rows <= 0:
-            rows = 1
-        return rows
+    def watch_value_view(self, value_view: Union[RenderableType, None]) -> None:
+        """Update the data preview."""
 
-    def update_render_scene(self, new_render_scene: Mapping[str, Any]):
-
-        new_ri = dict(new_render_scene)
-        new_ri.setdefault("render_config", {})["number_of_rows"] = self.get_num_rows()
-
-        self.render_scene = new_ri
-
-    def render(self) -> RenderableType:
-
-        if self._value is None or not self._value.is_set:
-            return "-- no value --"
-
-        render_scene: Dict[str, Any] = self.render_scene  # type: ignore
-
-        if render_scene is None:
-            render_scene = {"render_config": {"number_of_rows": self.get_num_rows()}}
-        render_result = self._kiara_api.render_value(
-            value=self._value,
-            target_format="terminal_renderable",
-            render_config=render_scene["render_config"],
-        )
-
-        self.current_result = render_result
-        self._control_widget.current_result = self.current_result
-
-        return self.current_result.rendered  # type: ignore
-
-
-class PagerControl(Widget):
-
-    _pager: ValuePager = None  # type: ignore
-    _scene_keys: Dict[str, Union[None, RenderScene]] = None  # type: ignore
-
-    current_result: RenderValueResult = Reactive(None)  # type: ignore
-
-    def key_pressed(self, key: str):
-
-        if key in self._scene_keys.keys():
-            new_ri = self._scene_keys.get(key)
-            if new_ri:
-                self._pager.update_render_scene(new_ri.dict())
+        if not value_view:
+            self.update("-- no value --")
         else:
-            self.log(f"No matching scene for key: {key}")
+            self.update(value_view)
+
+
+RESERVED_KEYS = ("q", "r")
+
+
+class ValueViewControl(Static):
+
+    related_scenes: Union[None, Mapping[str, Union[None, RenderScene]]] = None
+    scene_keys: Union[None, Dict[str, Union[None, RenderScene]]] = None
+    max_level: int = 0
+    control_table: Union[None, RenderableType] = None
+
+    def on_mount(self):
+
+        self.compute_related_scenes(None)
+        self.commit()
 
     def get_title(
         self,
@@ -89,16 +66,22 @@ class PagerControl(Widget):
 
         title = None
         for idx, command_key in enumerate(last_token):
-            if command_key not in scene_keys.keys():
-                title = last_token.replace(command_key, f"\[{command_key}]", 1)  # noqa
+            if command_key.lower() not in RESERVED_KEYS and command_key.lower() not in (
+                x.lower() for x in scene_keys.keys()
+            ):
+                replaced = last_token.replace(
+                    command_key, f"\[{command_key}]", 1  # noqa
+                )  # noqa
+                if scene is None or scene.disabled:
+                    title = Text.from_markup(f"[grey46]{replaced}[/grey46]")
+                else:
+                    title = Text.from_markup(replaced)  # noqa
                 break
 
         if title is None:
             raise NotImplementedError("Could not find free command key.")
 
-        scene_keys[command_key] = scene
-        if scene is None or scene.disabled:
-            title = f"[grey46]{title}[/grey46]"
+        scene_keys[command_key] = scene  # tpye: ignore
 
         return title
 
@@ -109,6 +92,7 @@ class PagerControl(Widget):
         scene_keys: Dict[str, Union[None, RenderScene]],
         forced_titles: Dict[str, str],
         node: Union[Tree, None] = None,
+        level: int = 0,
     ):
 
         if key in forced_titles.keys():
@@ -123,77 +107,241 @@ class PagerControl(Widget):
 
         if scene:
             for scene_key, sub_scene in scene.related_scenes.items():
-                self.render_sub_command_tree(
+                _, level = self.render_sub_command_tree(
                     key=f"{key}.{scene_key}",
                     scene=sub_scene,
                     scene_keys=scene_keys,
                     forced_titles=forced_titles,
                     node=node,
+                    level=level + 1,
                 )
 
-        return node
+        return (node, level)
 
-    def render(self) -> RenderableType:
+    def render_command_table(self) -> Tuple[RenderableType, int]:
 
-        if self.current_result is None:
-            return "-- no value --"
+        max_level = 0
+
+        if self.related_scenes is None:
+            return "", max_level
 
         scene_keys: Dict[str, Union[None, RenderScene]] = {}
         table = Table(show_header=False, box=box.SIMPLE)
         row = []
 
         forced_titles = {}
-        for key, scene in self.current_result.related_scenes.items():
+        for key, scene in self.related_scenes.items():
 
             title = self.get_title(key=key, scene=scene, scene_keys=scene_keys)
             forced_titles[key] = title
 
-        for key, scene in self.current_result.related_scenes.items():
+        for key, scene in self.related_scenes.items():
 
             table.add_column(f"category: {key}")
-            row.append(
-                self.render_sub_command_tree(
-                    key=key,
-                    scene=scene,
-                    scene_keys=scene_keys,
-                    forced_titles=forced_titles,
-                )
+            node, level = self.render_sub_command_tree(
+                key=key,
+                scene=scene,
+                scene_keys=scene_keys,
+                forced_titles=forced_titles,
             )
+            row.append(node)
+            if level > max_level:
+                max_level = level
 
         table.add_row(*row)
 
-        self._scene_keys = scene_keys
-        return table
+        self.scene_keys = scene_keys
+
+        return table, max_level
+
+    def compute_related_scenes(
+        self, related_scenes: Union[None, Mapping[str, Union[None, RenderScene]]]
+    ) -> int:
+
+        self.related_scenes = related_scenes
+
+        self.control_table, self.max_level = self.render_command_table()
+
+        return self.max_level
+
+    def commit(self):
+
+        self.update(self.control_table)
+
+    def get_scene_for_key(self, key: str) -> Union[None, RenderScene]:
+
+        if self.scene_keys is None:
+            return None
+
+        if key in self.scene_keys.keys():
+            return self.scene_keys[key]
+
+        for x in self.scene_keys.keys():
+            if x.lower() == key.lower():
+                return self.scene_keys[x]
+
+        return None
+
+
+class DataPreview(Static):
+
+    CSS_PATH = os.path.join(KIARA_RESOURCES_FOLDER, "tui", "pager_app.css")
+
+    # BINDINGS = [("n", "send_command('next')", "Next page"), ("p", "send_command('previous')", "Previous page")]
+    can_focus = True
+
+    class Command(Message):
+        """Color selected message."""
+
+        def __init__(self, sender: MessageTarget, command: str) -> None:
+            self.command = command
+            super().__init__(sender)
+
+    def __init__(
+        self,
+        api: KiaraAPI,
+        base_id: str,
+        value: Union[None, str] = None,
+        *args,
+        **kwargs,
+    ):
+
+        self._api: KiaraAPI = api
+        self._current_value: Union[None, str] = value
+
+        self._current_render_config: Union[Mapping[str, Any], None] = None  # type: ignore
+        self._current_result: Union[RenderValueResult, None] = None  # type: ignore
+        self._value_preview = ValueViewPane()
+
+        self._base_id = base_id
+        self._preview = ValueViewPane(id=f"{base_id}.preview")
+        self._control = ValueViewControl(id=f"{base_id}.control")
+        self._num_rows: int = 0
+        self._control_height = 1
+
+        super().__init__(*args, id=self._base_id, **kwargs)
+
+    @property
+    def control_height(self) -> int:
+        return self._control_height
+
+    def set_num_rows(self, num_rows: int):
+
+        if self._num_rows == num_rows:
+            return
+
+        self._num_rows = num_rows
+        self._preview.styles.height = self._num_rows + 4
+        self.update_scene(self._current_render_config)
+
+    def on_mount(self):
+
+        self._control.compute_related_scenes(None)
+        self._control.commit()
+        self._preview.value_view = "initializing..."
+
+    def set_value(self, value: Union[None, str]) -> None:
+
+        self._current_value = value
+        self.update_scene({})
+
+    def on_key(self, event: events.Key) -> None:
+
+        print(f"KEY IN CONTROLS: {event.key}")
+
+        scene = self._control.get_scene_for_key(event.key)
+        if scene:
+            self.update_scene(scene.render_config)
+
+    def compose(self) -> ComposeResult:
+
+        yield self._preview
+        yield self._control
+
+    def update_scene(self, render_config: Union[None, Mapping[str, Any]]):
+
+        if not self._current_value:
+            self._preview.renderable = "-- no value --"
+            self._control.compute_related_scenes(None)
+            self._control.commit()
+            return
+
+        if render_config is None:
+            return
+
+        if self._num_rows <= 0:
+            self._num_rows = 4
+
+        rc = dict(render_config)
+        rc["number_of_rows"] = self._num_rows
+
+        render_result = self._api.render_value(
+            value=self._current_value,
+            target_format="terminal_renderable",
+            render_config=rc,
+        )
+
+        max_level = self._control.compute_related_scenes(render_result.related_scenes)
+
+        if max_level != self._control_height:
+            print("RECOMPUTING")
+            self._control_height = max_level
+            self.set_num_rows(self._num_rows - (self._control_height))
+            self.update_scene(render_config=rc)
+        else:
+            self._current_render_config = rc
+            self._current_result = render_result
+            self._preview.value_view = render_result.rendered
+            self._control.commit()
 
 
 class PagerApp(App):
-    def __init__(self, **kwargs):
 
-        self._control = PagerControl()
-        self._pager = ValuePager()
+    CSS_PATH = os.path.join(KIARA_RESOURCES_FOLDER, "tui", "pager_app.css")
+    BINDINGS = [("r", "redraw_preview", "Redraw"), ("q", "quit", "Quit")]
 
-        self._pager._render_op = kwargs.pop("operation")
-        self._pager._value = kwargs.pop("value")
-        self._pager._kiara_api = kwargs.pop("kiara_api")
-        self._pager._control_widget = self._control
-        self._control._pager = self._pager
+    def __init__(
+        self,
+        api: Union[None, KiaraAPI] = None,
+        value: Union[str, None] = None,
+        *args,
+        **kwargs,
+    ):
 
-        super().__init__(**kwargs)
+        if api is None:
+            api = KiaraAPI.instance()
 
-    # async def on_mount(self) -> None:
-    #
-    #     await self.view.dock(Footer(), edge="bottom")
-    #     await self.view.dock(self._pager, name="data")
+        preview_widget_id = "data_preview"
+        self._init_value: Union[None, str] = value
 
-    async def on_mount(self) -> None:
+        self._api: KiaraAPI = api
+        self._data_preview = DataPreview(
+            api=self._api, base_id=preview_widget_id, value=value
+        )
+        super().__init__(*args, **kwargs)
 
-        await self.view.dock(self._control, edge="bottom", size=10)
-        await self.view.dock(self._pager, edge="top")
+    def on_mount(self) -> None:
 
-    async def on_load(self, event):
+        self._data_preview.focus()
 
-        await self.bind("q", "quit", "Quit")
+        num_rows = (get_console().size.height - 6) - (
+            self._data_preview.control_height + 2
+        )
+        self._data_preview.set_num_rows(num_rows)
 
-    async def on_key(self, event):
+        if self._init_value:
+            self._data_preview.set_value(self._init_value)
 
-        self._control.key_pressed(event.key)
+    def compose(self) -> ComposeResult:
+        """Create child widgets for the app."""
+
+        yield Header()
+        yield self._data_preview
+        yield Footer()
+
+    def action_redraw_preview(self) -> None:
+
+        num_rows = (get_console().size.height - 6) - (
+            self._data_preview.control_height + 3
+        )
+        self._data_preview.set_num_rows(num_rows)

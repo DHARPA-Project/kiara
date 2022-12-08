@@ -9,17 +9,13 @@
 import rich_click as click
 import structlog
 import sys
-from typing import Iterable, Tuple, Union
+from typing import Iterable, Tuple
 
 from kiara.context import Kiara
 from kiara.interfaces.python_api import KiaraAPI
 from kiara.interfaces.python_api.models.info import RENDER_FIELDS, ValueInfo, ValuesInfo
 from kiara.interfaces.tui.pager import PagerApp
-from kiara.models.module.operation import Operation
 from kiara.operations.included_core_operations.filter import FilterOperationType
-from kiara.operations.included_core_operations.render_value import (
-    RenderValueOperationType,
-)
 from kiara.utils import log_exception, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
 from kiara.utils.cli.run import (
@@ -306,15 +302,7 @@ def load_value(ctx, value: str, single_page: bool):
         terminal_print(f"[red]Error[/red]: No value found for: {value}")
         sys.exit(1)
 
-    render_op: Union[Operation, None] = None
-    if not single_page:
-        render_value_op_type: RenderValueOperationType = kiara_api.get_operation_type(
-            op_type=RenderValueOperationType
-        )
-        render_op = render_value_op_type.get_render_operation(
-            source_type=_value.data_type_name, target_type="terminal_renderable"
-        )
-    else:
+    if single_page:
         logger.debug(
             "fallback.render_value",
             solution="use pretty print",
@@ -333,18 +321,9 @@ def load_value(ctx, value: str, single_page: bool):
 
         terminal_print(renderable)
         sys.exit(0)
-
-    # log_file = None
-    # if is_develop() or is_debug() or True:
-    #     log_file = "kiara_pager.log"
-    PagerApp.run(kiara_api=kiara_api, value=_value, operation=render_op)
-
-    # inputs = {
-    #     "value": _value,
-    #     "render_scene": {}
-    # }
-    # result = render_op.run(kiara=kiara_api.context, inputs=inputs)
-    # dbg(result["render_scene_result"].data)
+    else:
+        app = PagerApp(api=kiara_api, value=str(_value.value_id))
+        app.run()
 
 
 @data.command("filter")

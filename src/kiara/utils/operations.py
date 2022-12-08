@@ -77,9 +77,16 @@ def create_operation(
 
         operation = kiara.operation_registry.get_operation(module_or_operation)
         if operation_config:
-            raise Exception(
-                f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
-            )
+            if module_or_operation in kiara.module_type_names:
+                manifest = Manifest(
+                    module_type=module_or_operation, module_config=operation_config
+                )
+                module = kiara.create_module(manifest=manifest)
+                operation = Operation.create_from_module(module)
+            else:
+                raise Exception(
+                    f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed."
+                )
 
     elif module_or_operation in kiara.module_type_names:
 

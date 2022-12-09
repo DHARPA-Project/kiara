@@ -836,6 +836,7 @@ class KiaraAPI(object):
         value: Union[str, uuid.UUID, ValueLink],
         target_format: Union[str, Iterable[str]] = "string",
         filters: Union[None, Iterable[str], Mapping[str, str]] = None,
+        add_metadata: bool = False,
         render_config: Union[Mapping[str, str], None] = None,
     ) -> RenderValueResult:
         """Render a value in the specified target format.
@@ -847,6 +848,7 @@ class KiaraAPI(object):
             value: the value (or value id)
             target_format: the format into which to render the value
             filters: an (optional) list of filters
+            add_metadata: whether to add scenes for metadata, lineage, etc.
             render_config: manifest specific render configuration
 
         Returns:

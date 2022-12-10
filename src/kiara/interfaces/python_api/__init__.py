@@ -863,6 +863,7 @@ class KiaraAPI(object):
         target_format: Union[str, Iterable[str]] = "string",
         filters: Union[None, Iterable[str], Mapping[str, str]] = None,
         render_config: Union[Mapping[str, str], None] = None,
+        add_root_scenes: bool = True,
     ) -> RenderValueResult:
         """Render a value in the specified target format.
 
@@ -874,9 +875,10 @@ class KiaraAPI(object):
             target_format: the format into which to render the value
             filters: an (optional) list of filters
             render_config: manifest specific render configuration
+            add_root_scenes: add root scenes to the result
 
         Returns:
-            the rendered value data
+            the rendered value data, and any related scenes, if applicable
         """
 
         _value = self.get_value(value)
@@ -897,18 +899,35 @@ class KiaraAPI(object):
             #     )
             # render_config = render_config["render_config"]
 
+        if render_config is None:
+            render_config = {}
+        else:
+            render_config = dict(render_config)
+
+        render_type = render_config.pop("render_type", None)
+        if not render_type or render_type == "data":
+            pass
+        elif render_type == "metadata":
+            pass
+        elif render_type == "properties":
+            pass
+        elif render_type == "lineage":
+            pass
+
         result = render_operation.run(
             kiara=self.context,
             inputs={"value": _value, "render_config": render_config},
         )
 
-        render_result = result["render_value_result"]
+        render_result: Value = result["render_value_result"]
         if render_result.data_type_name != "render_value_result":
             raise Exception(
                 f"Invalid result type for render operation: {render_result.data_type_name}"
             )
 
-        return render_result.data
+        value_render_data: RenderValueResult = render_result.data  # type: ignore
+
+        return value_render_data
 
     # ------------------------------------------------------------------------------------------------------------------
     # workflow-related methods

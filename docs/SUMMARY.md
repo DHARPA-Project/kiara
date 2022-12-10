@@ -1,3 +1,5 @@
 * [Home](index.md)
+* [Development](development/)
 * [Included components](included_components/)
 * [API reference](reference/)
+* [Design docs](design_docs/)

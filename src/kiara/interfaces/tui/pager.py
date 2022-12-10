@@ -386,8 +386,6 @@ class PagerApp(App):
             api = KiaraAPI.instance()
 
         preview_widget_id = "data_preview"
-        value = "journals_db"
-        value = "journal_nodes.table"
         self._init_value: Union[None, str] = value
 
         self._api: KiaraAPI = api

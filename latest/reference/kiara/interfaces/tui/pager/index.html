@@ -1776,6 +1776,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.interfaces.tui.pager.RESERVED_KEYS" class="md-nav__link">
+    RESERVED_KEYS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.interfaces.tui.pager.logger" class="md-nav__link">
     logger
   </a>
@@ -1796,6 +1803,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.interfaces.tui.pager.DataPreview" class="md-nav__link">
+    DataPreview
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.interfaces.tui.pager.PagerApp" class="md-nav__link">
     PagerApp
   </a>
@@ -1803,15 +1817,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.interfaces.tui.pager.PagerControl" class="md-nav__link">
-    PagerControl
+  <a href="#kiara.interfaces.tui.pager.ValueViewControl" class="md-nav__link">
+    ValueViewControl
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.interfaces.tui.pager.ValuePager" class="md-nav__link">
-    ValuePager
+  <a href="#kiara.interfaces.tui.pager.ValueViewPane" class="md-nav__link">
+    ValueViewPane
   </a>
   
 </li>
@@ -4181,6 +4195,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.interfaces.tui.pager.RESERVED_KEYS" class="md-nav__link">
+    RESERVED_KEYS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.interfaces.tui.pager.logger" class="md-nav__link">
     logger
   </a>
@@ -4201,6 +4222,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.interfaces.tui.pager.DataPreview" class="md-nav__link">
+    DataPreview
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.interfaces.tui.pager.PagerApp" class="md-nav__link">
     PagerApp
   </a>
@@ -4208,15 +4236,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.interfaces.tui.pager.PagerControl" class="md-nav__link">
-    PagerControl
+  <a href="#kiara.interfaces.tui.pager.ValueViewControl" class="md-nav__link">
+    ValueViewControl
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.interfaces.tui.pager.ValuePager" class="md-nav__link">
-    ValuePager
+  <a href="#kiara.interfaces.tui.pager.ValueViewPane" class="md-nav__link">
+    ValueViewPane
   </a>
   
 </li>
@@ -4267,6 +4295,24 @@
 
 
 
+<h3 id="kiara.interfaces.tui.pager.RESERVED_KEYS" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">RESERVED_KEYS</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.RESERVED_KEYS" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="kiara.interfaces.tui.pager.logger" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">logger</span></code>
 
@@ -4281,6 +4327,563 @@
 
 
 <h2 id="kiara.interfaces.tui.pager-classes">Classes<a href="#kiara.interfaces.tui.pager-classes" class="headerlink" title="Permanent link">&para;</a></h2>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.interfaces.tui.pager.DataPreview" class="doc doc-heading">
+        <code>
+DataPreview            (<span title="textual.widgets._static.Static">Static</span>)
+        </code>
+
+
+
+<a href="#kiara.interfaces.tui.pager.DataPreview" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">DataPreview</span><span class="p">(</span><span class="n">Static</span><span class="p">):</span>
+
+    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">KIARA_RESOURCES_FOLDER</span><span class="p">,</span> <span class="s2">&quot;tui&quot;</span><span class="p">,</span> <span class="s2">&quot;pager_app.css&quot;</span><span class="p">)</span>
+
+    <span class="c1"># BINDINGS = [(&quot;v&quot;, &quot;send_command(&#39;next&#39;)&quot;, &quot;Next page&quot;), (&quot;p&quot;, &quot;send_command(&#39;previous&#39;)&quot;, &quot;Previous page&quot;)]</span>
+    <span class="n">can_focus</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">class</span> <span class="nc">Command</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Color selected message.&quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sender</span><span class="p">:</span> <span class="n">MessageTarget</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="n">command</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">sender</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">api</span><span class="p">:</span> <span class="n">KiaraAPI</span><span class="p">,</span>
+        <span class="n">base_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_api</span><span class="p">:</span> <span class="n">KiaraAPI</span> <span class="o">=</span> <span class="n">api</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_render_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_result</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderValueResult</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value_preview</span> <span class="o">=</span> <span class="n">ValueViewPane</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_id</span> <span class="o">=</span> <span class="n">base_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_preview</span> <span class="o">=</span> <span class="n">ValueViewPane</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_id</span><span class="si">}</span><span class="s2">.preview&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span> <span class="o">=</span> <span class="n">ValueViewControl</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_id</span><span class="si">}</span><span class="s2">.control&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control_height</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">control_height</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control_height</span>
+
+    <span class="k">def</span> <span class="nf">set_num_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_rows</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">==</span> <span class="n">num_rows</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">=</span> <span class="n">num_rows</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_preview</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">+</span> <span class="mi">4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_scene</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_render_config</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">compute_related_scenes</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_preview</span><span class="o">.</span><span class="n">value_view</span> <span class="o">=</span> <span class="s2">&quot;initializing...&quot;</span>
+
+    <span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_scene</span><span class="p">({})</span>
+
+    <span class="k">def</span> <span class="nf">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">events</span><span class="o">.</span><span class="n">Key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">scene</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">get_scene_for_key</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">scene</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_scene</span><span class="p">(</span><span class="n">scene</span><span class="o">.</span><span class="n">render_config</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preview</span>
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span>
+
+    <span class="k">def</span> <span class="nf">update_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_preview</span><span class="o">.</span><span class="n">renderable</span> <span class="o">=</span> <span class="s2">&quot;-- no value --&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">compute_related_scenes</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">render_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">=</span> <span class="mi">4</span>
+
+        <span class="n">rc</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">render_config</span><span class="p">)</span>
+        <span class="n">rc</span><span class="p">[</span><span class="s2">&quot;number_of_rows&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span>
+
+        <span class="n">render_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api</span><span class="o">.</span><span class="n">render_value</span><span class="p">(</span>
+            <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span><span class="p">,</span>
+            <span class="n">target_format</span><span class="o">=</span><span class="s2">&quot;terminal_renderable&quot;</span><span class="p">,</span>
+            <span class="n">render_config</span><span class="o">=</span><span class="n">rc</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">max_level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">compute_related_scenes</span><span class="p">(</span><span class="n">render_result</span><span class="o">.</span><span class="n">related_scenes</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">max_level</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control_height</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_control_height</span> <span class="o">=</span> <span class="n">max_level</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_num_rows</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_control_height</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_scene</span><span class="p">(</span><span class="n">render_config</span><span class="o">=</span><span class="n">rc</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_render_config</span> <span class="o">=</span> <span class="n">rc</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_current_result</span> <span class="o">=</span> <span class="n">render_result</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_preview</span><span class="o">.</span><span class="n">value_view</span> <span class="o">=</span> <span class="n">render_result</span><span class="o">.</span><span class="n">rendered</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h4 id="kiara.interfaces.tui.pager.DataPreview-attributes">Attributes<a href="#kiara.interfaces.tui.pager.DataPreview-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.DataPreview.CSS_PATH" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">CSS_PATH</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.DataPreview.CSS_PATH" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.DataPreview.can_focus" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">can_focus</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.DataPreview.can_focus" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Widget may receive focus.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.DataPreview.can_focus_children" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">can_focus_children</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.DataPreview.can_focus_children" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Widget's children may receive focus.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.DataPreview.control_height" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">control_height</span><span class="p">:</span> <span class="nb">int</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-property"><code>property</code></small>
+      <small class="doc doc-property doc-property-readonly"><code>readonly</code></small>
+  </span>
+
+<a href="#kiara.interfaces.tui.pager.DataPreview.control_height" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+<h4 id="kiara.interfaces.tui.pager.DataPreview-classes">Classes<a href="#kiara.interfaces.tui.pager.DataPreview-classes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.DataPreview.Command" class="doc doc-heading">
+        <code>
+Command            (<span title="textual.message.Message">Message</span>)
+        </code>
+
+
+
+<a href="#kiara.interfaces.tui.pager.DataPreview.Command" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Color selected message.</p>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Command</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Color selected message.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sender</span><span class="p">:</span> <span class="n">MessageTarget</span><span class="p">,</span> <span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">command</span> <span class="o">=</span> <span class="n">command</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">sender</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.tui.pager.DataPreview.Command.bubble" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">bubble</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.DataPreview.Command.bubble" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.tui.pager.DataPreview.Command.namespace" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">namespace</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.DataPreview.Command.namespace" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.tui.pager.DataPreview.Command.no_dispatch" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">no_dispatch</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.DataPreview.Command.no_dispatch" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.interfaces.tui.pager.DataPreview.Command.verbose" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">verbose</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.DataPreview.Command.verbose" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+<h4 id="kiara.interfaces.tui.pager.DataPreview-methods">Methods<a href="#kiara.interfaces.tui.pager.DataPreview-methods" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.DataPreview.compose" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.DataPreview.compose" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Called by Textual to create child widgets.</p>
+<p>Extend this to build a UI.</p>
+
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+    <span class="k">yield</span> <span class="n">Header</span><span class="p">()</span>
+    <span class="k">yield</span> <span class="n">Container</span><span class="p">(</span>
+        <span class="n">TreeControl</span><span class="p">(),</span> <span class="n">Viewer</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="k">yield</span> <span class="n">Footer</span><span class="p">()</span>
+</code></pre></div>
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+
+    <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preview</span>
+    <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.DataPreview.on_key" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.DataPreview.on_key" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">events</span><span class="o">.</span><span class="n">Key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="n">scene</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">get_scene_for_key</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">scene</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_scene</span><span class="p">(</span><span class="n">scene</span><span class="o">.</span><span class="n">render_config</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.DataPreview.on_mount" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.DataPreview.on_mount" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">compute_related_scenes</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_preview</span><span class="o">.</span><span class="n">value_view</span> <span class="o">=</span> <span class="s2">&quot;initializing...&quot;</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.DataPreview.set_num_rows" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">set_num_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_rows</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.DataPreview.set_num_rows" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_num_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_rows</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">==</span> <span class="n">num_rows</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">=</span> <span class="n">num_rows</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_preview</span><span class="o">.</span><span class="n">styles</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">+</span> <span class="mi">4</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">update_scene</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_render_config</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.DataPreview.set_value" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.DataPreview.set_value" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">update_scene</span><span class="p">({})</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.DataPreview.update_scene" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">update_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_config</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.DataPreview.update_scene" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">update_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]):</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_preview</span><span class="o">.</span><span class="n">renderable</span> <span class="o">=</span> <span class="s2">&quot;-- no value --&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">compute_related_scenes</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span>
+
+    <span class="k">if</span> <span class="n">render_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">=</span> <span class="mi">4</span>
+
+    <span class="n">rc</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">render_config</span><span class="p">)</span>
+    <span class="n">rc</span><span class="p">[</span><span class="s2">&quot;number_of_rows&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span>
+
+    <span class="n">render_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api</span><span class="o">.</span><span class="n">render_value</span><span class="p">(</span>
+        <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span><span class="p">,</span>
+        <span class="n">target_format</span><span class="o">=</span><span class="s2">&quot;terminal_renderable&quot;</span><span class="p">,</span>
+        <span class="n">render_config</span><span class="o">=</span><span class="n">rc</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">max_level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">compute_related_scenes</span><span class="p">(</span><span class="n">render_result</span><span class="o">.</span><span class="n">related_scenes</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">max_level</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control_height</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control_height</span> <span class="o">=</span> <span class="n">max_level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_num_rows</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_control_height</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_scene</span><span class="p">(</span><span class="n">render_config</span><span class="o">=</span><span class="n">rc</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_render_config</span> <span class="o">=</span> <span class="n">rc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_result</span> <span class="o">=</span> <span class="n">render_result</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_preview</span><span class="o">.</span><span class="n">value_view</span> <span class="o">=</span> <span class="n">render_result</span><span class="o">.</span><span class="n">rendered</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
 
   <div class="doc doc-object doc-class">
 
@@ -4301,36 +4904,57 @@ PagerApp            (<span title="textual.app.App">App</span>)
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PagerApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span> <span class="o">=</span> <span class="n">PagerControl</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span> <span class="o">=</span> <span class="n">ValuePager</span><span class="p">()</span>
+    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">KIARA_RESOURCES_FOLDER</span><span class="p">,</span> <span class="s2">&quot;tui&quot;</span><span class="p">,</span> <span class="s2">&quot;pager_app.css&quot;</span><span class="p">)</span>
+    <span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="s2">&quot;redraw_preview&quot;</span><span class="p">,</span> <span class="s2">&quot;Redraw&quot;</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;quit&quot;</span><span class="p">,</span> <span class="s2">&quot;Quit&quot;</span><span class="p">)]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">_render_op</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;operation&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">_kiara_api</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;kiara_api&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">_control_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_control</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">_pager</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">api</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">KiaraAPI</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">api</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">api</span> <span class="o">=</span> <span class="n">KiaraAPI</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
 
-    <span class="c1"># async def on_mount(self) -&gt; None:</span>
-    <span class="c1">#</span>
-    <span class="c1">#     await self.view.dock(Footer(), edge=&quot;bottom&quot;)</span>
-    <span class="c1">#     await self.view.dock(self._pager, name=&quot;data&quot;)</span>
+        <span class="n">preview_widget_id</span> <span class="o">=</span> <span class="s2">&quot;data_preview&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;journals_db&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;journal_nodes.table&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_api</span><span class="p">:</span> <span class="n">KiaraAPI</span> <span class="o">=</span> <span class="n">api</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_preview</span> <span class="o">=</span> <span class="n">DataPreview</span><span class="p">(</span>
+            <span class="n">api</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_api</span><span class="p">,</span> <span class="n">base_id</span><span class="o">=</span><span class="n">preview_widget_id</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">value</span>
+        <span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">dock</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">dock</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_preview</span><span class="o">.</span><span class="n">focus</span><span class="p">()</span>
 
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;quit&quot;</span><span class="p">,</span> <span class="s2">&quot;Quit&quot;</span><span class="p">)</span>
+        <span class="n">num_rows</span> <span class="o">=</span> <span class="p">(</span><span class="n">get_console</span><span class="p">()</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="mi">6</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data_preview</span><span class="o">.</span><span class="n">control_height</span> <span class="o">+</span> <span class="mi">2</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_preview</span><span class="o">.</span><span class="n">set_num_rows</span><span class="p">(</span><span class="n">num_rows</span><span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data_preview</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_init_value</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">key_pressed</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create child widgets for the app.&quot;&quot;&quot;</span>
+
+        <span class="k">yield</span> <span class="n">Header</span><span class="p">()</span>
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_preview</span>
+        <span class="k">yield</span> <span class="n">Footer</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">action_redraw_preview</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="n">num_rows</span> <span class="o">=</span> <span class="p">(</span><span class="n">get_console</span><span class="p">()</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="mi">6</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data_preview</span><span class="o">.</span><span class="n">control_height</span> <span class="o">+</span> <span class="mi">3</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_preview</span><span class="o">.</span><span class="n">set_num_rows</span><span class="p">(</span><span class="n">num_rows</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -4343,30 +4967,66 @@ PagerApp            (<span title="textual.app.App">App</span>)
 
 
 
+  <div class="doc doc-object doc-attribute">
 
 
+
+<h5 id="kiara.interfaces.tui.pager.PagerApp.BINDINGS" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">BINDINGS</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="s1">&#39;Binding | tuple[str, str, str]&#39;</span><span class="p">]]</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.PagerApp.BINDINGS" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.PagerApp.CSS_PATH" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">CSS_PATH</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">PurePath</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">PurePath</span><span class="p">]]]</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.PagerApp.CSS_PATH" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+
+<h4 id="kiara.interfaces.tui.pager.PagerApp-methods">Methods<a href="#kiara.interfaces.tui.pager.PagerApp-methods" class="headerlink" title="Permanent link">&para;</a></h4>
 
   <div class="doc doc-object doc-method">
 
 
 
-<h5 id="kiara.interfaces.tui.pager.PagerApp.on_key" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span></code>
+<h5 id="kiara.interfaces.tui.pager.PagerApp.action_redraw_preview" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">action_redraw_preview</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-async"><code>async</code></small>
-  </span>
 
-<a href="#kiara.interfaces.tui.pager.PagerApp.on_key" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.interfaces.tui.pager.PagerApp.action_redraw_preview" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">action_redraw_preview</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="o">.</span><span class="n">key_pressed</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+    <span class="n">num_rows</span> <span class="o">=</span> <span class="p">(</span><span class="n">get_console</span><span class="p">()</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="mi">6</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_preview</span><span class="o">.</span><span class="n">control_height</span> <span class="o">+</span> <span class="mi">3</span>
+    <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_data_preview</span><span class="o">.</span><span class="n">set_num_rows</span><span class="p">(</span><span class="n">num_rows</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -4379,23 +5039,24 @@ PagerApp            (<span title="textual.app.App">App</span>)
 
 
 
-<h5 id="kiara.interfaces.tui.pager.PagerApp.on_load" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">on_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span></code>
+<h5 id="kiara.interfaces.tui.pager.PagerApp.compose" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-async"><code>async</code></small>
-  </span>
 
-<a href="#kiara.interfaces.tui.pager.PagerApp.on_load" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.interfaces.tui.pager.PagerApp.compose" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
+      <p>Create child widgets for the app.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Create child widgets for the app.&quot;&quot;&quot;</span>
 
-    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;quit&quot;</span><span class="p">,</span> <span class="s2">&quot;Quit&quot;</span><span class="p">)</span>
+    <span class="k">yield</span> <span class="n">Header</span><span class="p">()</span>
+    <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_preview</span>
+    <span class="k">yield</span> <span class="n">Footer</span><span class="p">()</span>
 </code></pre></div>
         </details>
     </div>
@@ -4411,9 +5072,6 @@ PagerApp            (<span title="textual.app.App">App</span>)
 <h5 id="kiara.interfaces.tui.pager.PagerApp.on_mount" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
-  <span class="doc doc-properties">
-      <small class="doc doc-property doc-property-async"><code>async</code></small>
-  </span>
 
 <a href="#kiara.interfaces.tui.pager.PagerApp.on_mount" class="headerlink" title="Permanent link">&para;</a></h5>
 
@@ -4422,10 +5080,17 @@ PagerApp            (<span title="textual.app.App">App</span>)
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
-    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">dock</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_control</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="s2">&quot;bottom&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">dock</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="p">,</span> <span class="n">edge</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_data_preview</span><span class="o">.</span><span class="n">focus</span><span class="p">()</span>
+
+    <span class="n">num_rows</span> <span class="o">=</span> <span class="p">(</span><span class="n">get_console</span><span class="p">()</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="mi">6</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_preview</span><span class="o">.</span><span class="n">control_height</span> <span class="o">+</span> <span class="mi">2</span>
+    <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_data_preview</span><span class="o">.</span><span class="n">set_num_rows</span><span class="p">(</span><span class="n">num_rows</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_value</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_preview</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_init_value</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -4448,71 +5113,123 @@ PagerApp            (<span title="textual.app.App">App</span>)
 
 
 
-<h3 id="kiara.interfaces.tui.pager.PagerControl" class="doc doc-heading">
+<h3 id="kiara.interfaces.tui.pager.ValueViewControl" class="doc doc-heading">
         <code>
-PagerControl            (<span title="textual.widget.Widget">Widget</span>)
+ValueViewControl            (<span title="textual.widgets._static.Static">Static</span>)
         </code>
 
 
 
-<a href="#kiara.interfaces.tui.pager.PagerControl" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.interfaces.tui.pager.ValueViewControl" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">PagerControl</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueViewControl</span><span class="p">(</span><span class="n">Static</span><span class="p">):</span>
 
-    <span class="n">_pager</span><span class="p">:</span> <span class="n">ValuePager</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
-    <span class="n">_scene_keys</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+    <span class="n">current_value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">related_scenes</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">scene_keys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">max_level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">control_table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderableType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="n">current_result</span><span class="p">:</span> <span class="n">RenderValueResult</span> <span class="o">=</span> <span class="n">Reactive</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="nf">key_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-
-        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">new_ri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene_keys</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">new_ri</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">update_render_scene</span><span class="p">(</span><span class="n">new_ri</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No matching scene for key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute_related_scenes</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">get_title</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">scene</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">],</span>
         <span class="n">scene_keys</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]],</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
         <span class="n">last_token</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="n">title</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">found_key</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">command_key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">last_token</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">command_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scene_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">title</span> <span class="o">=</span> <span class="n">last_token</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">command_key</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;\[</span><span class="si">{</span><span class="n">command_key</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># noqa</span>
+            <span class="k">if</span> <span class="n">command_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">RESERVED_KEYS</span> <span class="ow">and</span> <span class="n">command_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
+                <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scene_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="p">):</span>
+                <span class="n">replaced</span> <span class="o">=</span> <span class="n">last_token</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="n">command_key</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;\[</span><span class="si">{</span><span class="n">command_key</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="mi">1</span>  <span class="c1"># noqa</span>
+                <span class="p">)</span>  <span class="c1"># noqa</span>
+                <span class="k">if</span> <span class="n">scene</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">scene</span><span class="o">.</span><span class="n">disabled</span><span class="p">:</span>
+                    <span class="n">title</span> <span class="o">=</span> <span class="n">Text</span><span class="o">.</span><span class="n">from_markup</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[grey46]</span><span class="si">{</span><span class="n">replaced</span><span class="si">}</span><span class="s2">[/grey46]&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">title</span> <span class="o">=</span> <span class="n">Text</span><span class="o">.</span><span class="n">from_markup</span><span class="p">(</span><span class="n">replaced</span><span class="p">)</span>  <span class="c1"># noqa</span>
+                <span class="n">found_key</span> <span class="o">=</span> <span class="n">command_key</span>
                 <span class="k">break</span>
 
         <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Could not find free command key.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">found_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Invalid key.&quot;</span><span class="p">)</span>
 
-        <span class="n">scene_keys</span><span class="p">[</span><span class="n">command_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">scene</span>
-        <span class="k">if</span> <span class="n">scene</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">scene</span><span class="o">.</span><span class="n">disabled</span><span class="p">:</span>
-            <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[grey46]</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">[/grey46]&quot;</span>
-
+        <span class="n">scene_keys</span><span class="p">[</span><span class="n">found_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">scene</span>  <span class="c1"># tpye: ignore</span>
         <span class="k">return</span> <span class="n">title</span>
+
+    <span class="k">def</span> <span class="nf">render_sub_command_table</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">scene</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">],</span>
+        <span class="n">scene_keys</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]],</span>
+        <span class="n">forced_titles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">RenderableType</span><span class="p">],</span>
+        <span class="n">row_list</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]],</span> <span class="nb">int</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="n">row_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">row_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">scene</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">row_list</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">scene</span><span class="o">.</span><span class="n">related_scenes</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">row_list</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+
+        <span class="n">level</span> <span class="o">=</span> <span class="n">level</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">sub_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">scene_key</span><span class="p">,</span> <span class="n">sub_scene</span> <span class="ow">in</span> <span class="n">scene</span><span class="o">.</span><span class="n">related_scenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">scene_key</span> <span class="ow">in</span> <span class="n">forced_titles</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">new_scene_key</span><span class="p">:</span> <span class="n">RenderableType</span> <span class="o">=</span> <span class="n">forced_titles</span><span class="p">[</span><span class="n">scene_key</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_scene_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_title</span><span class="p">(</span>
+                    <span class="n">key</span><span class="o">=</span><span class="n">scene_key</span><span class="p">,</span> <span class="n">scene</span><span class="o">=</span><span class="n">sub_scene</span><span class="p">,</span> <span class="n">scene_keys</span><span class="o">=</span><span class="n">scene_keys</span>
+                <span class="p">)</span>
+
+            <span class="n">sub_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_scene_key</span><span class="p">)</span>
+
+        <span class="n">row_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub_list</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">scene_key</span><span class="p">,</span> <span class="n">sub_scene</span> <span class="ow">in</span> <span class="n">scene</span><span class="o">.</span><span class="n">related_scenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_sub_command_table</span><span class="p">(</span>
+                <span class="n">scene</span><span class="o">=</span><span class="n">sub_scene</span><span class="p">,</span>
+                <span class="n">scene_keys</span><span class="o">=</span><span class="n">scene_keys</span><span class="p">,</span>
+                <span class="n">forced_titles</span><span class="o">=</span><span class="n">forced_titles</span><span class="p">,</span>
+                <span class="n">row_list</span><span class="o">=</span><span class="n">row_list</span><span class="p">,</span>
+                <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">row_list</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">render_sub_command_tree</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">scene</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
         <span class="n">scene_keys</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]],</span>
-        <span class="n">forced_titles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+        <span class="n">forced_titles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">RenderableType</span><span class="p">],</span>
         <span class="n">node</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tree</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">forced_titles</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">title</span> <span class="o">=</span> <span class="n">forced_titles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">title</span><span class="p">:</span> <span class="n">RenderableType</span> <span class="o">=</span> <span class="n">forced_titles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_title</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">scene</span><span class="o">=</span><span class="n">scene</span><span class="p">,</span> <span class="n">scene_keys</span><span class="o">=</span><span class="n">scene_keys</span><span class="p">)</span>
 
@@ -4523,47 +5240,109 @@ PagerControl            (<span title="textual.widget.Widget">Widget</span>)
 
         <span class="k">if</span> <span class="n">scene</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">scene_key</span><span class="p">,</span> <span class="n">sub_scene</span> <span class="ow">in</span> <span class="n">scene</span><span class="o">.</span><span class="n">related_scenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">render_sub_command_tree</span><span class="p">(</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_sub_command_tree</span><span class="p">(</span>
                     <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">scene_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                     <span class="n">scene</span><span class="o">=</span><span class="n">sub_scene</span><span class="p">,</span>
                     <span class="n">scene_keys</span><span class="o">=</span><span class="n">scene_keys</span><span class="p">,</span>
                     <span class="n">forced_titles</span><span class="o">=</span><span class="n">forced_titles</span><span class="p">,</span>
                     <span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span>
+                    <span class="n">level</span><span class="o">=</span><span class="n">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
                 <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">node</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">render_command_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;-- no value --&quot;</span>
+        <span class="n">max_level</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">related_scenes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">max_level</span>
 
         <span class="n">scene_keys</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">forced_titles</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">scene</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_result</span><span class="o">.</span><span class="n">related_scenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">scene</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">related_scenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
             <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_title</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">scene</span><span class="o">=</span><span class="n">scene</span><span class="p">,</span> <span class="n">scene_keys</span><span class="o">=</span><span class="n">scene_keys</span><span class="p">)</span>
             <span class="n">forced_titles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">title</span>
 
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">scene</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_result</span><span class="o">.</span><span class="n">related_scenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">render_as_tree</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">render_as_tree</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">scene</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">related_scenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
-            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;category: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">render_sub_command_tree</span><span class="p">(</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;category: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">node</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_sub_command_tree</span><span class="p">(</span>
                     <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
                     <span class="n">scene</span><span class="o">=</span><span class="n">scene</span><span class="p">,</span>
                     <span class="n">scene_keys</span><span class="o">=</span><span class="n">scene_keys</span><span class="p">,</span>
                     <span class="n">forced_titles</span><span class="o">=</span><span class="n">forced_titles</span><span class="p">,</span>
                 <span class="p">)</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+                <span class="n">control_height</span> <span class="o">=</span> <span class="p">((</span><span class="n">level</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span>
+                <span class="k">if</span> <span class="n">control_height</span> <span class="o">&gt;</span> <span class="n">max_level</span><span class="p">:</span>
+                    <span class="n">max_level</span> <span class="o">=</span> <span class="n">control_height</span>
+
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">main_scene</span> <span class="o">=</span> <span class="n">RenderScene</span><span class="p">(</span>
+                <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Value: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">disabled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Preview of value: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">manifest_hash</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="n">render_config</span><span class="o">=</span><span class="p">{},</span>
+                <span class="n">related_scenes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">related_scenes</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">row_list</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_sub_command_table</span><span class="p">(</span>
+                <span class="n">scene</span><span class="o">=</span><span class="n">main_scene</span><span class="p">,</span>
+                <span class="n">scene_keys</span><span class="o">=</span><span class="n">scene_keys</span><span class="p">,</span>
+                <span class="n">forced_titles</span><span class="o">=</span><span class="n">forced_titles</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">max_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">row_list</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_len</span><span class="p">):</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;col_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_scene_keys</span> <span class="o">=</span> <span class="n">scene_keys</span>
-        <span class="k">return</span> <span class="n">table</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">row_list</span><span class="p">:</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">level</span> <span class="o">&gt;</span> <span class="n">max_level</span><span class="p">:</span>
+                <span class="n">max_level</span> <span class="o">=</span> <span class="n">level</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene_keys</span> <span class="o">=</span> <span class="n">scene_keys</span>
+        <span class="k">return</span> <span class="n">table</span><span class="p">,</span> <span class="n">max_level</span>
+
+    <span class="k">def</span> <span class="nf">compute_related_scenes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">related_scenes</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">related_scenes</span> <span class="o">=</span> <span class="n">related_scenes</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_command_table</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_level</span>
+
+    <span class="k">def</span> <span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">control_table</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_scene_for_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_keys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_keys</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="kc">None</span>
 </code></pre></div>
         </details>
 
@@ -4574,17 +5353,55 @@ PagerControl            (<span title="textual.widget.Widget">Widget</span>)
 
 
 
+<h4 id="kiara.interfaces.tui.pager.ValueViewControl-attributes">Attributes<a href="#kiara.interfaces.tui.pager.ValueViewControl-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.ValueViewControl.can_focus" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">can_focus</span><span class="p">:</span> <span class="nb">bool</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValueViewControl.can_focus" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Widget may receive focus.</p>
+    </div>
+
+  </div>
+
 
 
   <div class="doc doc-object doc-attribute">
 
 
 
-<h5 id="kiara.interfaces.tui.pager.PagerControl.can_focus" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">can_focus</span></code>
+<h5 id="kiara.interfaces.tui.pager.ValueViewControl.can_focus_children" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">can_focus_children</span><span class="p">:</span> <span class="nb">bool</span></code>
 
 
-<a href="#kiara.interfaces.tui.pager.PagerControl.can_focus" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.interfaces.tui.pager.ValueViewControl.can_focus_children" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Widget's children may receive focus.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.ValueViewControl.control_table" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">control_table</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">NoneType</span><span class="p">,</span> <span class="n">rich</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">ConsoleRenderable</span><span class="p">,</span> <span class="n">rich</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">RichCast</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValueViewControl.control_table" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4598,11 +5415,65 @@ PagerControl            (<span title="textual.widget.Widget">Widget</span>)
 
 
 
-<h5 id="kiara.interfaces.tui.pager.PagerControl.current_result" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">current_result</span></code>
+<h5 id="kiara.interfaces.tui.pager.ValueViewControl.current_value" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">current_value</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
 
 
-<a href="#kiara.interfaces.tui.pager.PagerControl.current_result" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.interfaces.tui.pager.ValueViewControl.current_value" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.ValueViewControl.max_level" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">max_level</span><span class="p">:</span> <span class="nb">int</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValueViewControl.max_level" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.ValueViewControl.related_scenes" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">related_scenes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">rendering</span><span class="o">.</span><span class="n">RenderScene</span><span class="p">]]]</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValueViewControl.related_scenes" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.ValueViewControl.scene_keys" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">scene_keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">kiara</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">rendering</span><span class="o">.</span><span class="n">RenderScene</span><span class="p">]]]</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValueViewControl.scene_keys" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4613,17 +5484,111 @@ PagerControl            (<span title="textual.widget.Widget">Widget</span>)
 
 
 
-<h4 id="kiara.interfaces.tui.pager.PagerControl-methods">Methods<a href="#kiara.interfaces.tui.pager.PagerControl-methods" class="headerlink" title="Permanent link">&para;</a></h4>
+
 
   <div class="doc doc-object doc-method">
 
 
 
-<h5 id="kiara.interfaces.tui.pager.PagerControl.get_title" class="doc doc-heading">
+<h5 id="kiara.interfaces.tui.pager.ValueViewControl.commit" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValueViewControl.commit" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">control_table</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.ValueViewControl.compute_related_scenes" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">compute_related_scenes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">related_scenes</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValueViewControl.compute_related_scenes" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">compute_related_scenes</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">related_scenes</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">related_scenes</span> <span class="o">=</span> <span class="n">related_scenes</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">control_table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_command_table</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_level</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.ValueViewControl.get_scene_for_key" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_scene_for_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValueViewControl.get_scene_for_key" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_scene_for_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]:</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_keys</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene_keys</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.ValueViewControl.get_title" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">scene</span><span class="p">,</span> <span class="n">scene_keys</span><span class="p">)</span></code>
 
 
-<a href="#kiara.interfaces.tui.pager.PagerControl.get_title" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.interfaces.tui.pager.ValueViewControl.get_title" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4635,23 +5600,32 @@ PagerControl            (<span title="textual.widget.Widget">Widget</span>)
     <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">scene</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">],</span>
     <span class="n">scene_keys</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]],</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="n">last_token</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="n">title</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">found_key</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">command_key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">last_token</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">command_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scene_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">title</span> <span class="o">=</span> <span class="n">last_token</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">command_key</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;\[</span><span class="si">{</span><span class="n">command_key</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># noqa</span>
+        <span class="k">if</span> <span class="n">command_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">RESERVED_KEYS</span> <span class="ow">and</span> <span class="n">command_key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scene_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">):</span>
+            <span class="n">replaced</span> <span class="o">=</span> <span class="n">last_token</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="n">command_key</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;\[</span><span class="si">{</span><span class="n">command_key</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="mi">1</span>  <span class="c1"># noqa</span>
+            <span class="p">)</span>  <span class="c1"># noqa</span>
+            <span class="k">if</span> <span class="n">scene</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">scene</span><span class="o">.</span><span class="n">disabled</span><span class="p">:</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="n">Text</span><span class="o">.</span><span class="n">from_markup</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[grey46]</span><span class="si">{</span><span class="n">replaced</span><span class="si">}</span><span class="s2">[/grey46]&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="n">Text</span><span class="o">.</span><span class="n">from_markup</span><span class="p">(</span><span class="n">replaced</span><span class="p">)</span>  <span class="c1"># noqa</span>
+            <span class="n">found_key</span> <span class="o">=</span> <span class="n">command_key</span>
             <span class="k">break</span>
 
     <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Could not find free command key.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">found_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Invalid key.&quot;</span><span class="p">)</span>
 
-    <span class="n">scene_keys</span><span class="p">[</span><span class="n">command_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">scene</span>
-    <span class="k">if</span> <span class="n">scene</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">scene</span><span class="o">.</span><span class="n">disabled</span><span class="p">:</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[grey46]</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s2">[/grey46]&quot;</span>
-
+    <span class="n">scene_keys</span><span class="p">[</span><span class="n">found_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">scene</span>  <span class="c1"># tpye: ignore</span>
     <span class="k">return</span> <span class="n">title</span>
 </code></pre></div>
         </details>
@@ -4665,25 +5639,21 @@ PagerControl            (<span title="textual.widget.Widget">Widget</span>)
 
 
 
-<h5 id="kiara.interfaces.tui.pager.PagerControl.key_pressed" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">key_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span></code>
+<h5 id="kiara.interfaces.tui.pager.ValueViewControl.on_mount" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.interfaces.tui.pager.PagerControl.key_pressed" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.interfaces.tui.pager.ValueViewControl.on_mount" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">key_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
-    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene_keys</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">new_ri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene_keys</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">new_ri</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_pager</span><span class="o">.</span><span class="n">update_render_scene</span><span class="p">(</span><span class="n">new_ri</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No matching scene for key: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">compute_related_scenes</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 </code></pre></div>
         </details>
     </div>
@@ -4696,64 +5666,81 @@ PagerControl            (<span title="textual.widget.Widget">Widget</span>)
 
 
 
-<h5 id="kiara.interfaces.tui.pager.PagerControl.render" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+<h5 id="kiara.interfaces.tui.pager.ValueViewControl.render_command_table" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">render_command_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-<a href="#kiara.interfaces.tui.pager.PagerControl.render" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.interfaces.tui.pager.ValueViewControl.render_command_table" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
-      <p>Get renderable for widget.</p>
 
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>RenderableType</code></td>
-      <td><p>Any renderable</p></td>
-    </tr>
-  </tbody>
-</table>
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render_command_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;-- no value --&quot;</span>
+    <span class="n">max_level</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">related_scenes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">max_level</span>
 
     <span class="n">scene_keys</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
-    <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="n">forced_titles</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">scene</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_result</span><span class="o">.</span><span class="n">related_scenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">scene</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">related_scenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
         <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_title</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">scene</span><span class="o">=</span><span class="n">scene</span><span class="p">,</span> <span class="n">scene_keys</span><span class="o">=</span><span class="n">scene_keys</span><span class="p">)</span>
         <span class="n">forced_titles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">title</span>
 
-    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">scene</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_result</span><span class="o">.</span><span class="n">related_scenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">render_as_tree</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">render_as_tree</span><span class="p">:</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">scene</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">related_scenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
-        <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;category: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">render_sub_command_tree</span><span class="p">(</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;category: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">node</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_sub_command_tree</span><span class="p">(</span>
                 <span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
                 <span class="n">scene</span><span class="o">=</span><span class="n">scene</span><span class="p">,</span>
                 <span class="n">scene_keys</span><span class="o">=</span><span class="n">scene_keys</span><span class="p">,</span>
                 <span class="n">forced_titles</span><span class="o">=</span><span class="n">forced_titles</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+
+            <span class="n">control_height</span> <span class="o">=</span> <span class="p">((</span><span class="n">level</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span>
+            <span class="k">if</span> <span class="n">control_height</span> <span class="o">&gt;</span> <span class="n">max_level</span><span class="p">:</span>
+                <span class="n">max_level</span> <span class="o">=</span> <span class="n">control_height</span>
+
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">main_scene</span> <span class="o">=</span> <span class="n">RenderScene</span><span class="p">(</span>
+            <span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Value: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">disabled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Preview of value: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">manifest_hash</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">render_config</span><span class="o">=</span><span class="p">{},</span>
+            <span class="n">related_scenes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">related_scenes</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">row_list</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_sub_command_table</span><span class="p">(</span>
+            <span class="n">scene</span><span class="o">=</span><span class="n">main_scene</span><span class="p">,</span>
+            <span class="n">scene_keys</span><span class="o">=</span><span class="n">scene_keys</span><span class="p">,</span>
+            <span class="n">forced_titles</span><span class="o">=</span><span class="n">forced_titles</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">max_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">row_list</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_len</span><span class="p">):</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;col_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">_scene_keys</span> <span class="o">=</span> <span class="n">scene_keys</span>
-    <span class="k">return</span> <span class="n">table</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">row_list</span><span class="p">:</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="o">*</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">level</span> <span class="o">&gt;</span> <span class="n">max_level</span><span class="p">:</span>
+            <span class="n">max_level</span> <span class="o">=</span> <span class="n">level</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">scene_keys</span> <span class="o">=</span> <span class="n">scene_keys</span>
+    <span class="k">return</span> <span class="n">table</span><span class="p">,</span> <span class="n">max_level</span>
 </code></pre></div>
         </details>
     </div>
@@ -4766,11 +5753,78 @@ PagerControl            (<span title="textual.widget.Widget">Widget</span>)
 
 
 
-<h5 id="kiara.interfaces.tui.pager.PagerControl.render_sub_command_tree" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">render_sub_command_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">scene</span><span class="p">,</span> <span class="n">scene_keys</span><span class="p">,</span> <span class="n">forced_titles</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<h5 id="kiara.interfaces.tui.pager.ValueViewControl.render_sub_command_table" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">render_sub_command_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">,</span> <span class="n">scene_keys</span><span class="p">,</span> <span class="n">forced_titles</span><span class="p">,</span> <span class="n">row_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></code>
 
 
-<a href="#kiara.interfaces.tui.pager.PagerControl.render_sub_command_tree" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.interfaces.tui.pager.ValueViewControl.render_sub_command_table" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render_sub_command_table</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">scene</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">],</span>
+    <span class="n">scene_keys</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]],</span>
+    <span class="n">forced_titles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">RenderableType</span><span class="p">],</span>
+    <span class="n">row_list</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]],</span> <span class="nb">int</span><span class="p">]:</span>
+
+    <span class="k">if</span> <span class="n">row_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">row_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">scene</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">row_list</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">scene</span><span class="o">.</span><span class="n">related_scenes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">row_list</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+
+    <span class="n">level</span> <span class="o">=</span> <span class="n">level</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">sub_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">scene_key</span><span class="p">,</span> <span class="n">sub_scene</span> <span class="ow">in</span> <span class="n">scene</span><span class="o">.</span><span class="n">related_scenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="k">if</span> <span class="n">scene_key</span> <span class="ow">in</span> <span class="n">forced_titles</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">new_scene_key</span><span class="p">:</span> <span class="n">RenderableType</span> <span class="o">=</span> <span class="n">forced_titles</span><span class="p">[</span><span class="n">scene_key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_scene_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_title</span><span class="p">(</span>
+                <span class="n">key</span><span class="o">=</span><span class="n">scene_key</span><span class="p">,</span> <span class="n">scene</span><span class="o">=</span><span class="n">sub_scene</span><span class="p">,</span> <span class="n">scene_keys</span><span class="o">=</span><span class="n">scene_keys</span>
+            <span class="p">)</span>
+
+        <span class="n">sub_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_scene_key</span><span class="p">)</span>
+
+    <span class="n">row_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub_list</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">scene_key</span><span class="p">,</span> <span class="n">sub_scene</span> <span class="ow">in</span> <span class="n">scene</span><span class="o">.</span><span class="n">related_scenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_sub_command_table</span><span class="p">(</span>
+            <span class="n">scene</span><span class="o">=</span><span class="n">sub_scene</span><span class="p">,</span>
+            <span class="n">scene_keys</span><span class="o">=</span><span class="n">scene_keys</span><span class="p">,</span>
+            <span class="n">forced_titles</span><span class="o">=</span><span class="n">forced_titles</span><span class="p">,</span>
+            <span class="n">row_list</span><span class="o">=</span><span class="n">row_list</span><span class="p">,</span>
+            <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">row_list</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-method">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.ValueViewControl.render_sub_command_tree" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">render_sub_command_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">scene</span><span class="p">,</span> <span class="n">scene_keys</span><span class="p">,</span> <span class="n">forced_titles</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValueViewControl.render_sub_command_tree" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4782,12 +5836,13 @@ PagerControl            (<span title="textual.widget.Widget">Widget</span>)
     <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">scene</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
     <span class="n">scene_keys</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]],</span>
-    <span class="n">forced_titles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="n">forced_titles</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">RenderableType</span><span class="p">],</span>
     <span class="n">node</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tree</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">forced_titles</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="n">forced_titles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">title</span><span class="p">:</span> <span class="n">RenderableType</span> <span class="o">=</span> <span class="n">forced_titles</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_title</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">scene</span><span class="o">=</span><span class="n">scene</span><span class="p">,</span> <span class="n">scene_keys</span><span class="o">=</span><span class="n">scene_keys</span><span class="p">)</span>
 
@@ -4798,15 +5853,16 @@ PagerControl            (<span title="textual.widget.Widget">Widget</span>)
 
     <span class="k">if</span> <span class="n">scene</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">scene_key</span><span class="p">,</span> <span class="n">sub_scene</span> <span class="ow">in</span> <span class="n">scene</span><span class="o">.</span><span class="n">related_scenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">render_sub_command_tree</span><span class="p">(</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_sub_command_tree</span><span class="p">(</span>
                 <span class="n">key</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">scene_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="n">scene</span><span class="o">=</span><span class="n">sub_scene</span><span class="p">,</span>
                 <span class="n">scene_keys</span><span class="o">=</span><span class="n">scene_keys</span><span class="p">,</span>
                 <span class="n">forced_titles</span><span class="o">=</span><span class="n">forced_titles</span><span class="p">,</span>
                 <span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span>
+                <span class="n">level</span><span class="o">=</span><span class="n">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">node</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">level</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
@@ -4829,63 +5885,37 @@ PagerControl            (<span title="textual.widget.Widget">Widget</span>)
 
 
 
-<h3 id="kiara.interfaces.tui.pager.ValuePager" class="doc doc-heading">
+<h3 id="kiara.interfaces.tui.pager.ValueViewPane" class="doc doc-heading">
         <code>
-ValuePager            (<span title="textual.widget.Widget">Widget</span>)
+ValueViewPane            (<span title="textual.widgets._static.Static">Static</span>)
         </code>
 
 
 
-<a href="#kiara.interfaces.tui.pager.ValuePager" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.interfaces.tui.pager.ValueViewPane" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
+      <p>A widget that displays a data preview.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValuePager</span><span class="p">(</span><span class="n">Widget</span><span class="p">):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ValueViewPane</span><span class="p">(</span><span class="n">Static</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A widget that displays a data preview.&quot;&quot;&quot;</span>
 
-    <span class="n">_render_op</span><span class="p">:</span> <span class="n">Operation</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
-    <span class="n">_kiara_api</span><span class="p">:</span> <span class="n">KiaraAPI</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
-    <span class="n">_value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
-    <span class="n">_control_widget</span><span class="p">:</span> <span class="s2">&quot;PagerControl&quot;</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+    <span class="n">value_view</span> <span class="o">=</span> <span class="n">reactive</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
-    <span class="n">render_scene</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Reactive</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
-    <span class="n">current_result</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderValueResult</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">get_num_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="mi">5</span>
-        <span class="k">if</span> <span class="n">rows</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">rows</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">rows</span>
+    <span class="k">def</span> <span class="nf">watch_value_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_view</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Update the data preview.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">update_render_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_render_scene</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-
-        <span class="n">new_ri</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">new_render_scene</span><span class="p">)</span>
-        <span class="n">new_ri</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;render_config&quot;</span><span class="p">,</span> <span class="p">{})[</span><span class="s2">&quot;number_of_rows&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_num_rows</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">render_scene</span> <span class="o">=</span> <span class="n">new_ri</span>
-
-    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;-- no value --&quot;</span>
-
-        <span class="n">render_scene</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_scene</span>  <span class="c1"># type: ignore</span>
-
-        <span class="k">if</span> <span class="n">render_scene</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">render_scene</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;render_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;number_of_rows&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_num_rows</span><span class="p">()}}</span>
-        <span class="n">render_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara_api</span><span class="o">.</span><span class="n">render_value</span><span class="p">(</span>
-            <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span>
-            <span class="n">target_format</span><span class="o">=</span><span class="s2">&quot;terminal_renderable&quot;</span><span class="p">,</span>
-            <span class="n">render_config</span><span class="o">=</span><span class="n">render_scene</span><span class="p">[</span><span class="s2">&quot;render_config&quot;</span><span class="p">],</span>
-        <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">current_result</span> <span class="o">=</span> <span class="n">render_result</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_control_widget</span><span class="o">.</span><span class="n">current_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_result</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_result</span><span class="o">.</span><span class="n">rendered</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">value_view</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s2">&quot;-- no value --&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value_view</span><span class="p">)</span>
 </code></pre></div>
         </details>
 
@@ -4896,38 +5926,21 @@ ValuePager            (<span title="textual.widget.Widget">Widget</span>)
 
 
 
-
-
-  <div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.interfaces.tui.pager.ValuePager.can_focus" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">can_focus</span></code>
-
-
-<a href="#kiara.interfaces.tui.pager.ValuePager.can_focus" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-    </div>
-
-  </div>
-
-
+<h4 id="kiara.interfaces.tui.pager.ValueViewPane-attributes">Attributes<a href="#kiara.interfaces.tui.pager.ValueViewPane-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
 
   <div class="doc doc-object doc-attribute">
 
 
 
-<h5 id="kiara.interfaces.tui.pager.ValuePager.current_result" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">current_result</span></code>
+<h5 id="kiara.interfaces.tui.pager.ValueViewPane.can_focus" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">can_focus</span><span class="p">:</span> <span class="nb">bool</span></code>
 
 
-<a href="#kiara.interfaces.tui.pager.ValuePager.current_result" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.interfaces.tui.pager.ValueViewPane.can_focus" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
+      <p>Widget may receive focus.</p>
     </div>
 
   </div>
@@ -4938,11 +5951,30 @@ ValuePager            (<span title="textual.widget.Widget">Widget</span>)
 
 
 
-<h5 id="kiara.interfaces.tui.pager.ValuePager.render_scene" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">render_scene</span></code>
+<h5 id="kiara.interfaces.tui.pager.ValueViewPane.can_focus_children" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">can_focus_children</span><span class="p">:</span> <span class="nb">bool</span></code>
 
 
-<a href="#kiara.interfaces.tui.pager.ValuePager.render_scene" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.interfaces.tui.pager.ValueViewPane.can_focus_children" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>Widget's children may receive focus.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.interfaces.tui.pager.ValueViewPane.value_view" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">value_view</span></code>
+
+
+<a href="#kiara.interfaces.tui.pager.ValueViewPane.value_view" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -4953,115 +5985,31 @@ ValuePager            (<span title="textual.widget.Widget">Widget</span>)
 
 
 
-<h4 id="kiara.interfaces.tui.pager.ValuePager-methods">Methods<a href="#kiara.interfaces.tui.pager.ValuePager-methods" class="headerlink" title="Permanent link">&para;</a></h4>
+<h4 id="kiara.interfaces.tui.pager.ValueViewPane-methods">Methods<a href="#kiara.interfaces.tui.pager.ValueViewPane-methods" class="headerlink" title="Permanent link">&para;</a></h4>
 
   <div class="doc doc-object doc-method">
 
 
 
-<h5 id="kiara.interfaces.tui.pager.ValuePager.get_num_rows" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_num_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
+<h5 id="kiara.interfaces.tui.pager.ValueViewPane.watch_value_view" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">watch_value_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_view</span><span class="p">)</span></code>
 
 
-<a href="#kiara.interfaces.tui.pager.ValuePager.get_num_rows" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
-
-        <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_num_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="n">rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">height</span> <span class="o">-</span> <span class="mi">5</span>
-    <span class="k">if</span> <span class="n">rows</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">rows</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="n">rows</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.interfaces.tui.pager.ValuePager.render" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
-
-
-<a href="#kiara.interfaces.tui.pager.ValuePager.render" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.interfaces.tui.pager.ValueViewPane.watch_value_view" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
-      <p>Get renderable for widget.</p>
-
-<p><strong>Returns:</strong></p>
-<table>
-  <thead>
-    <tr>
-      <th>Type</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><code>RenderableType</code></td>
-      <td><p>Any renderable</p></td>
-    </tr>
-  </tbody>
-</table>
-        <details class="quote">
-          <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
-
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="o">.</span><span class="n">is_set</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;-- no value --&quot;</span>
-
-    <span class="n">render_scene</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_scene</span>  <span class="c1"># type: ignore</span>
-
-    <span class="k">if</span> <span class="n">render_scene</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">render_scene</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;render_config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;number_of_rows&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_num_rows</span><span class="p">()}}</span>
-    <span class="n">render_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara_api</span><span class="o">.</span><span class="n">render_value</span><span class="p">(</span>
-        <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span>
-        <span class="n">target_format</span><span class="o">=</span><span class="s2">&quot;terminal_renderable&quot;</span><span class="p">,</span>
-        <span class="n">render_config</span><span class="o">=</span><span class="n">render_scene</span><span class="p">[</span><span class="s2">&quot;render_config&quot;</span><span class="p">],</span>
-    <span class="p">)</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">current_result</span> <span class="o">=</span> <span class="n">render_result</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_control_widget</span><span class="o">.</span><span class="n">current_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_result</span>
-
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_result</span><span class="o">.</span><span class="n">rendered</span>  <span class="c1"># type: ignore</span>
-</code></pre></div>
-        </details>
-    </div>
-
-  </div>
-
-
-
-  <div class="doc doc-object doc-method">
-
-
-
-<h5 id="kiara.interfaces.tui.pager.ValuePager.update_render_scene" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">update_render_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_render_scene</span><span class="p">)</span></code>
-
-
-<a href="#kiara.interfaces.tui.pager.ValuePager.update_render_scene" class="headerlink" title="Permanent link">&para;</a></h5>
-
-    <div class="doc doc-contents ">
-
+      <p>Update the data preview.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/tui/pager.py</code></summary>
-          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">update_render_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_render_scene</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">watch_value_view</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_view</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Update the data preview.&quot;&quot;&quot;</span>
 
-    <span class="n">new_ri</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">new_render_scene</span><span class="p">)</span>
-    <span class="n">new_ri</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;render_config&quot;</span><span class="p">,</span> <span class="p">{})[</span><span class="s2">&quot;number_of_rows&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_num_rows</span><span class="p">()</span>
-
-    <span class="bp">self</span><span class="o">.</span><span class="n">render_scene</span> <span class="o">=</span> <span class="n">new_ri</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">value_view</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s2">&quot;-- no value --&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value_view</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>

@@ -2698,6 +2698,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleConfig" class="md-nav__link">
+    ImportFileBundleConfig
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule" class="md-nav__link">
     ImportFileBundleModule
   </a>
@@ -4217,6 +4224,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleConfig" class="md-nav__link">
+    ImportFileBundleConfig
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule" class="md-nav__link">
     ImportFileBundleModule
   </a>
@@ -4840,6 +4854,104 @@ ExportFileModule            (<a class="autorefs autorefs-internal" title="kiara.
 
 
 
+<h3 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleConfig" class="doc doc-heading">
+        <code>
+ImportFileBundleConfig            (<a class="autorefs autorefs-internal" title="kiara.models.module.KiaraModuleConfig" href="../../../models/module/__init__/#kiara.models.module.KiaraModuleConfig">KiaraModuleConfig</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleConfig" class="headerlink" title="Permanent link">&para;</a></h3>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ImportFileBundleConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
+
+    <span class="n">include_file_types</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;File types to include.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">exclude_file_types</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;File types to include.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h4 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleConfig-attributes">Attributes<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleConfig-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleConfig.exclude_file_types" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">exclude_file_types</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleConfig.exclude_file_types" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>File types to include.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleConfig.include_file_types" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">include_file_types</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleConfig.include_file_types" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+      <p>File types to include.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-class">
+
+
+
 <h3 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule" class="doc doc-heading">
         <code>
 ImportFileBundleModule            (<a class="autorefs autorefs-internal" title="kiara.modules.KiaraModule" href="../../__init__/#kiara.modules.KiaraModule">KiaraModule</a>)
@@ -4859,6 +4971,7 @@ ImportFileBundleModule            (<a class="autorefs autorefs-internal" title="
     <span class="sd">&quot;&quot;&quot;Import a folder (file_bundle) from the local filesystem.&quot;&quot;&quot;</span>
 
     <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;import.file_bundle&quot;</span>
+    <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">ImportFileBundleConfig</span>
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -4883,7 +4996,12 @@ ImportFileBundleModule            (<a class="autorefs autorefs-internal" title="
 
         <span class="n">path</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
 
-        <span class="n">file_bundle</span> <span class="o">=</span> <span class="n">FileBundle</span><span class="o">.</span><span class="n">import_folder</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">include</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;include_file_types&quot;</span><span class="p">)</span>
+        <span class="n">exclude</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;exclude_file_types&quot;</span><span class="p">)</span>
+
+        <span class="n">config</span> <span class="o">=</span> <span class="n">FolderImportConfig</span><span class="p">(</span><span class="n">include_files</span><span class="o">=</span><span class="n">include</span><span class="p">,</span> <span class="n">exclude_files</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+
+        <span class="n">file_bundle</span> <span class="o">=</span> <span class="n">FileBundle</span><span class="o">.</span><span class="n">import_folder</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">import_config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
         <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="n">file_bundle</span><span class="p">)</span>
 </code></pre></div>
         </details>
@@ -4895,6 +5013,105 @@ ImportFileBundleModule            (<a class="autorefs autorefs-internal" title="
 
 
 
+
+<h4 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule-classes">Classes<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule-classes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+  <div class="doc doc-object doc-class">
+
+
+
+<h5 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule._config_cls" class="doc doc-heading">
+        <code>
+_config_cls            (<a class="autorefs autorefs-internal" title="kiara.models.module.KiaraModuleConfig" href="../../../models/module/__init__/#kiara.models.module.KiaraModuleConfig">KiaraModuleConfig</a>)
+        </code>
+
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-private"><code>private</code></small>
+      <small class="doc doc-property doc-property-pydantic-model"><code>pydantic-model</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule._config_cls" class="headerlink" title="Permanent link">&para;</a></h5>
+
+    <div class="doc doc-contents ">
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ImportFileBundleConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
+
+    <span class="n">include_file_types</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;File types to include.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+    <span class="n">exclude_file_types</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;File types to include.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">)</span>
+</code></pre></div>
+        </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+<h6 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule._config_cls-attributes">Attributes<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule._config_cls-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule._config_cls.exclude_file_types" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">exclude_file_types</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule._config_cls.exclude_file_types" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>File types to include.</p>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-attribute">
+
+
+
+<h7 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule._config_cls.include_file_types" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">include_file_types</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></code>
+
+  <span class="doc doc-properties">
+      <small class="doc doc-property doc-property-pydantic-field"><code>pydantic-field</code></small>
+  </span>
+
+<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule._config_cls.include_file_types" class="headerlink" title="Permanent link">&para;</a></h7>
+
+    <div class="doc doc-contents ">
+
+      <p>File types to include.</p>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+  </div>
 
 
 
@@ -4981,7 +5198,12 @@ ImportFileBundleModule            (<a class="autorefs autorefs-internal" title="
 
     <span class="n">path</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">)</span>
 
-    <span class="n">file_bundle</span> <span class="o">=</span> <span class="n">FileBundle</span><span class="o">.</span><span class="n">import_folder</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">include</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;include_file_types&quot;</span><span class="p">)</span>
+    <span class="n">exclude</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;exclude_file_types&quot;</span><span class="p">)</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">FolderImportConfig</span><span class="p">(</span><span class="n">include_files</span><span class="o">=</span><span class="n">include</span><span class="p">,</span> <span class="n">exclude_files</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
+
+    <span class="n">file_bundle</span> <span class="o">=</span> <span class="n">FileBundle</span><span class="o">.</span><span class="n">import_folder</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">import_config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
     <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="n">file_bundle</span><span class="p">)</span>
 </code></pre></div>
         </details>

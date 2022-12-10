@@ -5101,6 +5101,7 @@ typically done by a frontend. The return types of each method are json seriable 
         <span class="n">target_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
         <span class="n">filters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">render_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">add_root_scenes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderValueResult</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Render a value in the specified target format.</span>
 
@@ -5112,9 +5113,10 @@ typically done by a frontend. The return types of each method are json seriable 
 <span class="sd">            target_format: the format into which to render the value</span>
 <span class="sd">            filters: an (optional) list of filters</span>
 <span class="sd">            render_config: manifest specific render configuration</span>
+<span class="sd">            add_root_scenes: add root scenes to the result</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            the rendered value data</span>
+<span class="sd">            the rendered value data, and any related scenes, if applicable</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -5135,18 +5137,35 @@ typically done by a frontend. The return types of each method are json seriable 
             <span class="c1">#     )</span>
             <span class="c1"># render_config = render_config[&quot;render_config&quot;]</span>
 
+        <span class="k">if</span> <span class="n">render_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">render_config</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">render_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">render_config</span><span class="p">)</span>
+
+        <span class="n">render_type</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;render_type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">render_type</span> <span class="ow">or</span> <span class="n">render_type</span> <span class="o">==</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">render_type</span> <span class="o">==</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">render_type</span> <span class="o">==</span> <span class="s2">&quot;properties&quot;</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="n">render_type</span> <span class="o">==</span> <span class="s2">&quot;lineage&quot;</span><span class="p">:</span>
+            <span class="k">pass</span>
+
         <span class="n">result</span> <span class="o">=</span> <span class="n">render_operation</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
             <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
             <span class="n">inputs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">_value</span><span class="p">,</span> <span class="s2">&quot;render_config&quot;</span><span class="p">:</span> <span class="n">render_config</span><span class="p">},</span>
         <span class="p">)</span>
 
-        <span class="n">render_result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;render_value_result&quot;</span><span class="p">]</span>
+        <span class="n">render_result</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;render_value_result&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">render_result</span><span class="o">.</span><span class="n">data_type_name</span> <span class="o">!=</span> <span class="s2">&quot;render_value_result&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Invalid result type for render operation: </span><span class="si">{</span><span class="n">render_result</span><span class="o">.</span><span class="n">data_type_name</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">render_result</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">value_render_data</span><span class="p">:</span> <span class="n">RenderValueResult</span> <span class="o">=</span> <span class="n">render_result</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># type: ignore</span>
+
+        <span class="k">return</span> <span class="n">value_render_data</span>
 
     <span class="c1"># ------------------------------------------------------------------------------------------------------------------</span>
     <span class="c1"># workflow-related methods</span>
@@ -7626,7 +7645,7 @@ and non-stored).</p>
 
 
 <h5 id="kiara.interfaces.python_api.KiaraAPI.render_value" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">render_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">render_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">target_format</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="n">filters</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">add_root_scenes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
 
 
 <a href="#kiara.interfaces.python_api.KiaraAPI.render_value" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7672,6 +7691,12 @@ the value type of the source value, and the provided target format.</p>
         <td><p>manifest specific render configuration</p></td>
         <td><code>None</code></td>
       </tr>
+      <tr>
+        <td><code>add_root_scenes</code></td>
+        <td><code>bool</code></td>
+        <td><p>add root scenes to the result</p></td>
+        <td><code>True</code></td>
+      </tr>
   </tbody>
 </table>
 <p><strong>Returns:</strong></p>
@@ -7685,7 +7710,7 @@ the value type of the source value, and the provided target format.</p>
   <tbody>
     <tr>
       <td><code>RenderValueResult</code></td>
-      <td><p>the rendered value data</p></td>
+      <td><p>the rendered value data, and any related scenes, if applicable</p></td>
     </tr>
   </tbody>
 </table>
@@ -7697,6 +7722,7 @@ the value type of the source value, and the provided target format.</p>
     <span class="n">target_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
     <span class="n">filters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">render_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">add_root_scenes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderValueResult</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Render a value in the specified target format.</span>
 
@@ -7708,9 +7734,10 @@ the value type of the source value, and the provided target format.</p>
 <span class="sd">        target_format: the format into which to render the value</span>
 <span class="sd">        filters: an (optional) list of filters</span>
 <span class="sd">        render_config: manifest specific render configuration</span>
+<span class="sd">        add_root_scenes: add root scenes to the result</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        the rendered value data</span>
+<span class="sd">        the rendered value data, and any related scenes, if applicable</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -7731,18 +7758,35 @@ the value type of the source value, and the provided target format.</p>
         <span class="c1">#     )</span>
         <span class="c1"># render_config = render_config[&quot;render_config&quot;]</span>
 
+    <span class="k">if</span> <span class="n">render_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">render_config</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">render_config</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">render_config</span><span class="p">)</span>
+
+    <span class="n">render_type</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;render_type&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">render_type</span> <span class="ow">or</span> <span class="n">render_type</span> <span class="o">==</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">elif</span> <span class="n">render_type</span> <span class="o">==</span> <span class="s2">&quot;metadata&quot;</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">elif</span> <span class="n">render_type</span> <span class="o">==</span> <span class="s2">&quot;properties&quot;</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">elif</span> <span class="n">render_type</span> <span class="o">==</span> <span class="s2">&quot;lineage&quot;</span><span class="p">:</span>
+        <span class="k">pass</span>
+
     <span class="n">result</span> <span class="o">=</span> <span class="n">render_operation</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
         <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
         <span class="n">inputs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">_value</span><span class="p">,</span> <span class="s2">&quot;render_config&quot;</span><span class="p">:</span> <span class="n">render_config</span><span class="p">},</span>
     <span class="p">)</span>
 
-    <span class="n">render_result</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;render_value_result&quot;</span><span class="p">]</span>
+    <span class="n">render_result</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;render_value_result&quot;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">render_result</span><span class="o">.</span><span class="n">data_type_name</span> <span class="o">!=</span> <span class="s2">&quot;render_value_result&quot;</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Invalid result type for render operation: </span><span class="si">{</span><span class="n">render_result</span><span class="o">.</span><span class="n">data_type_name</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">render_result</span><span class="o">.</span><span class="n">data</span>
+    <span class="n">value_render_data</span><span class="p">:</span> <span class="n">RenderValueResult</span> <span class="o">=</span> <span class="n">render_result</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">return</span> <span class="n">value_render_data</span>
 </code></pre></div>
         </details>
     </div>

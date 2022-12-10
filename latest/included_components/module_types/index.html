@@ -5410,7 +5410,12 @@
 
     path = inputs.get_value_data("path")
 
-    file_bundle = FileBundle.import_folder(source=path)
+    include = self.get_config_value("include_file_types")
+    exclude = self.get_config_value("exclude_file_types")
+
+    config = FolderImportConfig(include_files=include, exclude_files=exclude)
+
+    file_bundle = FileBundle.import_folder(source=path, import_config=config)
     outputs.set_value("file_bundle", file_bundle)
 </td>
     <td>The source code of the process method of the module.</td>

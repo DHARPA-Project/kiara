@@ -61,11 +61,12 @@ class ValueViewControl(Static):
         key: str,
         scene: Union[None, RenderScene],
         scene_keys: Dict[str, Union[None, RenderScene]],
-    ):
+    ) -> RenderableType:
 
         last_token = key.split(".")[-1]
 
         title = None
+        found_key = None
         for idx, command_key in enumerate(last_token):
             if command_key.lower() not in RESERVED_KEYS and command_key.lower() not in (
                 x.lower() for x in scene_keys.keys()
@@ -77,20 +78,22 @@ class ValueViewControl(Static):
                     title = Text.from_markup(f"[grey46]{replaced}[/grey46]")
                 else:
                     title = Text.from_markup(replaced)  # noqa
+                found_key = command_key
                 break
 
         if title is None:
             raise NotImplementedError("Could not find free command key.")
+        if found_key is None:
+            raise NotImplementedError("Invalid key.")
 
-        scene_keys[command_key] = scene  # tpye: ignore
-
+        scene_keys[found_key] = scene  # tpye: ignore
         return title
 
     def render_sub_command_table(
         self,
         scene: Union[None, RenderScene],
         scene_keys: Dict[str, Union[None, RenderScene]],
-        forced_titles: Dict[str, str],
+        forced_titles: Dict[str, RenderableType],
         row_list: Union[None, List[List[RenderableType]]] = None,
         level: int = 0,
     ) -> Tuple[List[List[RenderableType]], int]:
@@ -110,13 +113,13 @@ class ValueViewControl(Static):
         for scene_key, sub_scene in scene.related_scenes.items():
 
             if scene_key in forced_titles.keys():
-                scene_key = forced_titles[scene_key]
+                new_scene_key: RenderableType = forced_titles[scene_key]
             else:
-                scene_key = self.get_title(
+                new_scene_key = self.get_title(
                     key=scene_key, scene=sub_scene, scene_keys=scene_keys
                 )
 
-            sub_list.append(scene_key)
+            sub_list.append(new_scene_key)
 
         row_list.append(sub_list)
 
@@ -142,7 +145,7 @@ class ValueViewControl(Static):
     ):
 
         if key in forced_titles.keys():
-            title = forced_titles[key]
+            title: RenderableType = forced_titles[key]
         else:
             title = self.get_title(key=key, scene=scene, scene_keys=scene_keys)
 
@@ -179,7 +182,7 @@ class ValueViewControl(Static):
             title = self.get_title(key=key, scene=scene, scene_keys=scene_keys)
             forced_titles[key] = title
 
-        render_as_tree = False
+        render_as_tree = True
         if render_as_tree:
             row = []
             table = Table(show_header=False, box=box.SIMPLE)
@@ -227,7 +230,6 @@ class ValueViewControl(Static):
                 max_level = level
 
         self.scene_keys = scene_keys
-
         return table, max_level
 
     def compute_related_scenes(
@@ -302,7 +304,6 @@ class DataPreview(Static):
         return self._control_height
 
     def set_num_rows(self, num_rows: int):
-
         if self._num_rows == num_rows:
             return
 
@@ -358,7 +359,6 @@ class DataPreview(Static):
         max_level = self._control.compute_related_scenes(render_result.related_scenes)
 
         if max_level != self._control_height:
-            print("RECOMPUTING")
             self._control_height = max_level
             self.set_num_rows(self._num_rows - (self._control_height))
             self.update_scene(render_config=rc)
@@ -386,6 +386,8 @@ class PagerApp(App):
             api = KiaraAPI.instance()
 
         preview_widget_id = "data_preview"
+        value = "journals_db"
+        value = "journal_nodes.table"
         self._init_value: Union[None, str] = value
 
         self._api: KiaraAPI = api
@@ -419,3 +421,8 @@ class PagerApp(App):
             self._data_preview.control_height + 3
         )
         self._data_preview.set_num_rows(num_rows)
+
+
+if __name__ == "__main__":
+    app = PagerApp(value="journals_node.table")
+    app.run()

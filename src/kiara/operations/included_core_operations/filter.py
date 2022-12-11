@@ -175,17 +175,17 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
         result = FilterOperationDetails.create_operation_details(**details)
         return result
 
-    # def find_filter_operations_for_data_type(
-    #     self, data_type: str
-    # ) -> Dict[str, Operation]:
-    #
-    #     result = {}
-    #     for op in self.operations.values():
-    #         details: FilterOperationDetails = op.operation_details  # type: ignore
-    #         if details.data_type == data_type:
-    #             result[details.filter_name] = op
-    #
-    #     return result
+    def find_filter_operations_for_data_type(
+        self, data_type: str
+    ) -> Dict[str, Operation]:
+
+        result = {}
+        for op in self.operations.values():
+            details: FilterOperationDetails = op.operation_details  # type: ignore
+            if details.data_type == data_type:
+                result[details.filter_name] = op
+
+        return result
 
     def get_filter(self, data_type: str, filter_name: str) -> Filter:
 

@@ -16,6 +16,7 @@ from kiara.interfaces.python_api.models.info import (
     ModuleTypesInfo,
     OperationGroupInfo,
     OperationInfo,
+    OperationTypeInfo,
     ValueInfo,
     ValuesInfo,
 )
@@ -30,6 +31,7 @@ from kiara.models.rendering import RenderValueResult
 from kiara.models.values.matchers import ValueMatcher
 from kiara.models.values.value import PersistedData, Value, ValueMap
 from kiara.models.workflow import WorkflowGroupInfo, WorkflowInfo, WorkflowMetadata
+from kiara.operations import OperationType
 from kiara.operations.included_core_operations.filter import FilterOperationType
 from kiara.operations.included_core_operations.pipeline import PipelineOperationDetails
 from kiara.operations.included_core_operations.render_value import (
@@ -605,10 +607,20 @@ class KiaraAPI(object):
     # ------------------------------------------------------------------------------------------------------------------
     # operation-related methods
 
-    def get_operation_type(self, op_type: Union[str, Type[OP_TYPE]]):
+    def get_operation_type(self, op_type: Union[str, Type[OP_TYPE]]) -> OperationType:
         """Get the management object for the specified operation type."""
 
         return self.context.operation_registry.get_operation_type(op_type=op_type)
+
+    def get_operation_type_info(
+        self, op_type: Union[str, Type[OP_TYPE]]
+    ) -> OperationTypeInfo:
+        """Get an info object for the specified operation type."""
+
+        _op_type = self.get_operation_type(op_type=op_type)
+        return OperationTypeInfo.create_from_type_class(
+            kiara=self.context, type_cls=_op_type.__class__
+        )
 
     # ------------------------------------------------------------------------------------------------------------------
     # pipeline-related methods

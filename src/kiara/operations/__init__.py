@@ -8,6 +8,7 @@
 import abc
 from typing import TYPE_CHECKING, Generic, Iterable, Mapping, TypeVar, Union
 
+from kiara.interfaces.python_api.models.info import OperationTypeInfo
 from kiara.models.module.operation import Operation, OperationConfig, OperationDetails
 
 if TYPE_CHECKING:
@@ -55,3 +56,10 @@ class OperationType(abc.ABC, Generic[OPERATION_TYPE_DETAILS]):
             operation = self.operations[operation]
 
         return operation.operation_details  # type: ignore
+
+    def create_renderable(self, **config):
+
+        info = OperationTypeInfo.create_from_type_class(
+            kiara=None, type_cls=self.__class__
+        )
+        return info.create_renderable(**config)

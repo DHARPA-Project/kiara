@@ -60,13 +60,70 @@ from rich_click.rich_click import (
 )
 from typing import List, Union
 
+from kiara.interfaces.python_api import KiaraAPI, OperationGroupInfo
 from kiara.interfaces.python_api.operation import KiaraOperation
+from kiara.operations.included_core_operations.filter import FilterOperationType
 from kiara.utils.cli import terminal_print
 
-try:
-    pass
-except ImportError:
-    pass
+
+def rich_format_filter_operation_help(
+    api: KiaraAPI,
+    obj: Union[click.Command, click.Group],
+    ctx: click.Context,
+    cmd_help: str,
+    value: Union[None, str] = None,
+):
+    """Print nicely formatted help text using rich."""
+
+    renderables: List[RenderableType] = []
+    # Header text if we have it
+    if HEADER_TEXT:
+        renderables.append(
+            Padding(_make_rich_rext(HEADER_TEXT, STYLE_HEADER_TEXT), (1, 1, 0, 1))
+        )
+
+    # Print usage
+
+    _cmd = cmd_help
+    renderables.append(Padding(_cmd, 1))
+    renderables.append(
+        Padding(
+            Align(Markdown(obj.__doc__), width=MAX_WIDTH, pad=False),
+            (0, 1, 1, 1),
+        )
+    )
+
+    v = None
+    if value:
+        filter_op_type: FilterOperationType = api.get_operation_type("filter")  # type: ignore
+        v = api.get_value(value)
+        ops = filter_op_type.find_filter_operations_for_data_type(v.data_type_name)
+        ops_info = OperationGroupInfo.create_from_operations(
+            kiara=api.context, group_title=f"{v.data_type_name} filters", **ops
+        )
+        p = Panel(
+            ops_info,
+            title=f"Available filter operations for type [i]'{v.data_type_name}'[/i]",
+            title_align="left",
+        )
+        renderables.append(p)
+
+    # Epilogue if we have it
+    if obj.epilog:
+        # Remove single linebreaks, replace double with single
+        lines = obj.epilog.split("\n\n")
+        epilogue = "\n".join([x.replace("\n", " ").strip() for x in lines])
+        renderables.append(
+            Padding(Align(highlighter(epilogue), width=MAX_WIDTH, pad=False), 1)
+        )
+
+    # Footer text if we have it
+    if FOOTER_TEXT:
+        renderables.append(
+            Padding(_make_rich_rext(FOOTER_TEXT, STYLE_FOOTER_TEXT), (1, 1, 0, 1))
+        )
+
+    terminal_print(Group(*renderables))
 
 
 def rich_format_operation_help(

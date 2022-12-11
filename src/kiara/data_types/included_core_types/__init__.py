@@ -12,13 +12,25 @@ from rich import box
 from rich.console import RenderableType
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Generic, Iterable, Mapping, Type, TypeVar
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Generic,
+    Iterable,
+    Mapping,
+    Type,
+    TypeVar,
+    Union,
+)
 
 from kiara.data_types import TYPE_CONFIG_CLS, TYPE_PYTHON_CLS, DataType, DataTypeConfig
 from kiara.defaults import INVALID_HASH_MARKER, SpecialValue
+from kiara.exceptions import KiaraProcessingException
 from kiara.models import KiaraModel
 from kiara.models.data_types import DictModel
 from kiara.models.python_class import PythonClass
+from kiara.models.rendering import RenderScene, RenderValueResult
 from kiara.models.values import DataTypeCharacteristics
 from kiara.utils.json import orjson_dumps
 
@@ -378,6 +390,54 @@ class DictValueType(AnyType[DictModel, DataTypeConfig]):
     def serialize(self, data: DictModel) -> "SerializedData":
 
         result = self.serialize_as_json(data.dict())
+        return result
+
+    def render_as__terminal_renderable(
+        self, value: "Value", render_config: Mapping[str, Any], manifest: "Manifest"
+    ) -> RenderableType:
+
+        render_item = render_config.get("render_item", "data")
+        related_scenes: Dict[str, Union[None, RenderScene]] = {}
+        if render_item == "data":
+            dict_data = value.data.dict_data
+            json_string = orjson_dumps(dict_data, option=orjson.OPT_INDENT_2)
+
+            rendered = Syntax(json_string, "json")
+            related_scenes["data"] = None
+            related_scenes["schema"] = RenderScene.construct(
+                title="schema",
+                description="The (json) schema for the data.",
+                manifest_hash=manifest.manifest_hash,
+                render_config={"render_item": "schema"},
+            )
+
+        elif render_item == "schema":
+            schema = value.data.data_schema
+            json_string = orjson_dumps(schema, option=orjson.OPT_INDENT_2)
+
+            rendered = Syntax(json_string, "json")
+            related_scenes["data"] = RenderScene.construct(
+                title="data",
+                description="The actual data of the dictionary.",
+                manifest_hash=manifest.manifest_hash,
+                render_config={"render_item": "data"},
+            )
+            related_scenes["schema"] = None
+
+        else:
+            raise KiaraProcessingException(
+                f"Invalid render item '{render_item}', allowed: 'data', 'schema'."
+            )
+
+        result = RenderValueResult(
+            value_id=value.value_id,
+            render_config=render_config,
+            render_manifest=manifest.manifest_hash,
+            related_scenes=related_scenes,
+            manifest_lookup={manifest.manifest_hash: manifest},
+            rendered=rendered,
+        )
+
         return result
 
 

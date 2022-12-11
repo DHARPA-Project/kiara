@@ -10,6 +10,7 @@ import rich_click as click
 import sys
 import typing
 
+from kiara import KiaraAPI
 from kiara.context import Kiara
 from kiara.interfaces.python_api.models.info import (
     OperationGroupInfo,
@@ -62,6 +63,21 @@ def list_types(ctx, full_doc, format: str, filter: typing.Iterable[str]):
     )
 
     terminal_print_model(operation_types_info, format=format, in_panel=title)
+
+
+@operation.command()
+@click.argument("operation_type", nargs=1, required=True)
+@output_format_option()
+@click.pass_context
+def explain_type(ctx, operation_type: str, format: str):
+
+    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+
+    op_type = kiara_api.get_operation_type_info(operation_type)
+
+    terminal_print_model(
+        op_type, format=format, in_panel=f"Operation type: [b i]{operation_type}[/b i]"
+    )
 
 
 @operation.command(name="list")

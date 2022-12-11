@@ -18,6 +18,7 @@ from kiara.interfaces.tui.pager import PagerApp
 from kiara.operations.included_core_operations.filter import FilterOperationType
 from kiara.utils import log_exception, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
+from kiara.utils.cli.rich_click import rich_format_filter_operation_help
 from kiara.utils.cli.run import (
     _validate_save_option,
     calculate_aliases,
@@ -327,8 +328,8 @@ def load_value(ctx, value: str, single_page: bool):
 
 
 @data.command("filter")
-@click.argument("value", nargs=1, required=True)
-@click.argument("filters", nargs=1)
+@click.argument("value", nargs=1, required=True, default="__no_value__")
+@click.argument("filters", nargs=1, default="__no_filters__")
 @click.argument("inputs", nargs=-1, required=False)
 @click.option(
     "--explain",
@@ -358,7 +359,10 @@ def filter_value(
     save: Iterable[str],
     help: bool,
 ):
-    """Load a value, fiter it, then display."""
+    """Filter a value, then display it like the 'load' subcommand does.
+
+    Filters must be provided as a single string, where filters are seperated using ":".
+    """
 
     save_results = _validate_save_option(save)
 
@@ -368,6 +372,24 @@ def filter_value(
         silent = True
 
     kiara_obj: Kiara = ctx.obj["kiara"]
+    api: KiaraAPI = ctx.obj["kiara_api"]
+
+    cmd_help = "[yellow bold]Usage: [/yellow bold][bold]kiara data filter VALUE FILTER_1:FILTER_2 [FILTER ARGS...][/bold]"
+
+    if help and value == "__no_value__":
+        rich_format_filter_operation_help(
+            api=api,
+            obj=ctx.command,
+            ctx=ctx,
+            cmd_help=cmd_help,
+        )
+        sys.exit(0)
+
+    if filters == "__no_filters__":
+        rich_format_filter_operation_help(
+            api=api, obj=ctx.command, ctx=ctx, cmd_help=cmd_help, value=value
+        )
+        sys.exit(0)
 
     try:
         _value = kiara_obj.data_registry.get_value(value=value)
@@ -379,20 +401,18 @@ def filter_value(
         terminal_print(f"[red]Error[/red]: No value found for: {value}")
         sys.exit(1)
 
-    filter_op_type: FilterOperationType = kiara_obj.operation_registry.get_operation_type("filter")  # type: ignore
-
-    _filter_names = filters.split(",")
+    _filter_names = filters.split(":")
     filter_names = []
     for fn in _filter_names:
         filter_names.extend(fn.split(":"))
+
+    filter_op_type: FilterOperationType = kiara_obj.operation_registry.get_operation_type("filter")  # type: ignore
     op = filter_op_type.create_filter_operation(
         data_type=_value.data_type_name, filters=filter_names
     )
 
     all_inputs = [f"value={value}"]
     all_inputs.extend(inputs)
-
-    cmd_help = "[yellow bold]Usage: [/yellow bold][bold]kiara data filter VALUE FILTER_1:FILTER_2 [FILTER ARGS...][/bold]"
 
     kiara_op = validate_operation_in_terminal(
         kiara=kiara_obj, module_or_operation="pipeline", module_config=op.module_config
@@ -406,9 +426,38 @@ def filter_value(
         click_context=ctx,
         cmd_help=cmd_help,
     )
-    execute_job(
+    job_id = execute_job(
         kiara_op=kiara_op,
-        silent=silent,
-        save_results=save_results,
+        silent=True,
+        save_results=False,
         aliases=final_aliases,
     )
+
+    if not silent:
+        result = kiara_op.retrieve_result(job_id=job_id)
+        title = f"[b]Value '[i]{value}[/i]'[/b], filtered with: {filters}"
+        filtered = result["filtered_value"]
+        try:
+            renderable = api.context.data_registry.pretty_print_data(
+                filtered.value_id, target_type="terminal_renderable"
+            )
+        except Exception as e:
+            log_exception(e)
+            log_message("error.pretty_print", value=_value.value_id, error=e)
+            renderable = [str(_value.data)]
+        terminal_print(
+            renderable, in_panel=title, empty_line_before=True, show_data_type=True
+        )
+
+    if save_results:
+        try:
+            saved_results = kiara_op.save_result(job_id=job_id, aliases=final_aliases)
+            if len(saved_results) == 1:
+                title = "[b]Stored result value[/b]"
+            else:
+                title = "[b]Stored result values[/b]"
+            terminal_print(saved_results, in_panel=title, empty_line_before=True)
+        except Exception as e:
+            log_exception(e)
+            terminal_print(f"[red]Error saving results[/red]: {e}")
+            sys.exit(1)

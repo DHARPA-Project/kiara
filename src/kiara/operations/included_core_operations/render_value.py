@@ -32,7 +32,22 @@ class RenderValueDetails(BaseOperationDetails):
 
 
 class RenderValueOperationType(OperationType[RenderValueDetails]):
-    """An operation that renders a value."""
+    """An operation that renders a value.
+
+    A 'render_value' operation typically is named follwing the pattern:
+
+    ```
+     'render.<source_type>.as.<target_type>'
+    ```
+
+    It has 2 inputs:
+      - 'value': the value to render
+      - 'reneer_config' a target type-specific configuration dict
+
+    And one output:
+      - `render_value_result`: using internal type [RenderValueResultDataType][kiara.data_types.included_core_types.internal.render_value.RenderValueResultDataType]
+
+    """
 
     _operation_type_name = "render_value"
 
@@ -101,7 +116,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
 
                 # TODO: inspect signature?
                 doc = DocumentationMetadataModel.from_string(
-                    f"Render a {data_type_name} value as a {target_type}."
+                    f"Render a '{data_type_name}' value as a {target_type}."
                 )
                 mc = {
                     "source_type": data_type_name,

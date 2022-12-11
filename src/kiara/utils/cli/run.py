@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import uuid
 from click import Context as ClickContext
 from pydantic import ValidationError
 from rich.console import Group
@@ -13,7 +14,6 @@ from kiara.exceptions import (
     NoSuchExecutionTargetException,
 )
 from kiara.interfaces.python_api.operation import KiaraOperation
-from kiara.models.values.value import ValueMap
 from kiara.utils import log_exception
 from kiara.utils.cli import dict_from_cli_args, terminal_print
 from kiara.utils.cli.rich_click import rich_format_operation_help
@@ -225,7 +225,7 @@ def execute_job(
     silent: bool,
     save_results: bool,
     aliases: Union[None, Mapping[str, List[str]]],
-) -> ValueMap:
+) -> uuid.UUID:
     """Execute the job"""
 
     job_id = kiara_op.queue_job()
@@ -273,4 +273,4 @@ def execute_job(
             terminal_print(f"[red]Error saving results[/red]: {e}")
             sys.exit(1)
 
-    return outputs
+    return job_id

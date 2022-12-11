@@ -133,6 +133,7 @@ class RenderValueResultDataType(InternalType[RenderValueResult, DataTypeConfig])
 
         ri_json = data.json(option=orjson.orjson.OPT_INDENT_2, exclude={"rendered"})
         rendered = extract_renderable(data.rendered)
+
         metadata = Syntax(ri_json, "json", background_color="default")
         table = Table(show_header=True, box=box.SIMPLE)
         table.add_column("Rendered item")

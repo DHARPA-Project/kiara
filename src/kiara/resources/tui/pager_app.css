@@ -2,23 +2,26 @@
 /*    align: center middle;*/
 /*}*/
 
-DataPreview {
-    width: 100%;
-    height: 100%;
-    /*padding: 1 2;*/
-    background: $panel;
-    color: $text;
-    /*border: $secondary tall;*/
-    /*content-align: center middle;*/
-}
+/*DataPreview {*/
+/*    height: 100%;*/
+/*    !*height: 100%;*!*/
+/*    !*padding: 1 2;*!*/
+/*    background: $panel;*/
+/*    color: $text;*/
+/*    !*overflow: scroll;*!*/
+/*    !*border: $secondary tall;*!*/
+/*    !*content-align: center middle;*!*/
+/*}*/
 
-ValueViewPane {
+DataViewPane {
+    /*overflow: scroll;*/
     /*background: blue;*/
     /*border: $secondary tall;*/
 }
-ValueViewControl {
+DataViewControl {
+    dock: bottom;
     /*border: $secondary tall;*/
-    padding: 0 0;
+    padding: 1 0;
     /*background: red;*/
     /*height: 5;*/
 }

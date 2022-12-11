@@ -88,7 +88,7 @@ def rich_format_filter_operation_help(
     renderables.append(Padding(_cmd, 1))
     renderables.append(
         Padding(
-            Align(Markdown(obj.__doc__), width=MAX_WIDTH, pad=False),
+            Align(Markdown(obj.__doc__), width=MAX_WIDTH, pad=False),  # type: ignore
             (0, 1, 1, 1),
         )
     )

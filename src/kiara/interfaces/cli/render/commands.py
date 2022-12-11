@@ -21,14 +21,14 @@ from kiara.utils.cli import dict_from_cli_args, terminal_print
 
 @click.group()
 @click.pass_context
-def render(ctx):
+def render(ctx) -> None:
     """Rendering-related sub-commands."""
 
 
 @render.group()
 @click.argument("pipeline", nargs=1)
 @click.pass_context
-def pipeline(ctx, pipeline):
+def pipeline(ctx, pipeline) -> None:
     kiara: Kiara = ctx.obj["kiara"]
 
     if pipeline.startswith("workflow:"):
@@ -43,7 +43,7 @@ def pipeline(ctx, pipeline):
 @pipeline.command()
 @click.argument("base_name", nargs=1)
 @click.pass_context
-def as_graph_images(ctx, base_name: str):
+def as_graph_images(ctx, base_name: str) -> None:
 
     from kiara.utils.jupyter import save_image
 

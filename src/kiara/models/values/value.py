@@ -45,7 +45,7 @@ from kiara.defaults import (
     VOID_KIARA_ID,
     SpecialValue,
 )
-from kiara.exceptions import InvalidValuesException
+from kiara.exceptions import DataTypeUnknownException, InvalidValuesException
 from kiara.models import KiaraModel
 from kiara.models.module.manifest import InputsManifest, Manifest
 from kiara.models.python_class import PythonClass
@@ -885,7 +885,11 @@ class Value(ValueDetails):
             raise Exception(
                 f"Can't retrieve data for value '{self.value_id}': value not initialized yet. This is most likely a bug."
             )
-        return self._retrieve_data()
+        try:
+            return self._retrieve_data()
+        except DataTypeUnknownException as dtue:
+            dtue._value = self
+            raise dtue
 
     def _retrieve_data(self) -> Any:
 
@@ -969,7 +973,11 @@ class Value(ValueDetails):
 
     def get_property_data(self, property_key: str) -> Any:
 
-        return self.get_property_value(property_key=property_key).data
+        try:
+            return self.get_property_value(property_key=property_key).data
+        except Exception as e:
+            log_exception(e)
+            return None
 
     def get_all_property_data(self) -> Mapping[str, Any]:
 

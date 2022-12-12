@@ -19,6 +19,7 @@ from kiara.modules import (
     KiaraModule,
     ModuleCharacteristics,
 )
+from kiara.utils import log_message
 
 
 class RenderValueModuleConfig(KiaraModuleConfig):
@@ -196,8 +197,17 @@ class ValueTypeRenderModule(KiaraModule):
 
         render_scene: DictModel = inputs.get_value_data("render_config")
 
-        data_type_cls = source_value.data_type_info.data_type_class.get_class()
-        data_type = data_type_cls(**source_value.value_schema.type_config)
+        try:
+            data_type_cls = source_value.data_type_info.data_type_class.get_class()
+            data_type = data_type_cls(**source_value.value_schema.type_config)
+
+        except Exception as e:
+            source_data_type = source_value.data_type_name
+            log_message("data_type.unknown", data_type=source_data_type, error=e)
+
+            from kiara.data_types.included_core_types import AnyType
+
+            data_type = AnyType()
 
         func_name = f"render_as__{target_type}"
         func = getattr(data_type, func_name)
@@ -206,6 +216,7 @@ class ValueTypeRenderModule(KiaraModule):
             rc = render_scene.dict_data
         else:
             rc = {}
+
         result = func(
             value=source_value,
             render_config=rc,

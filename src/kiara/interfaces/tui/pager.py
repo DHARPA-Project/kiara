@@ -36,6 +36,7 @@ class PagerApp(App):
         self._base_id = "data_preview"
 
         self._api: KiaraAPI = api
+
         self._init_value: Union[None, str] = value
 
         self._current_value: Union[None, str] = value

@@ -65,6 +65,52 @@ class ValueTypeConfigException(Exception):
         super().__init__(_msg)
 
 
+class DataTypeUnknownException(Exception):
+    def __init__(
+        self,
+        data_type: str,
+        msg: Union[str, None] = None,
+        value: Union[None, "Value"] = None,
+    ):
+
+        self._data_type = data_type
+        if msg is None:
+            msg = f"Data type '{data_type}' not registered in current context."
+        self._msg = msg
+        self._value = value
+
+        super().__init__(msg)
+
+    @property
+    def data_type(self) -> str:
+        return self._data_type
+
+    @property
+    def value(self) -> Union[None, "Value"]:
+        return self._value
+
+    def create_renderable(self, **config: Any) -> "Table":
+
+        from rich import box
+        from rich.table import Table
+
+        table = Table(box=box.SIMPLE, show_header=False)
+
+        table.add_column("key", style="i")
+        table.add_column("value")
+
+        table.add_row("error", self._msg)
+        table.add_row("data type", self._data_type)
+        table.add_row(
+            "solution", "Install the Python package that provides this data type."
+        )
+
+        if self._value is not None:
+            table.add_row("value", self._value.create_renderable())
+
+        return table
+
+
 class KiaraValueException(Exception):
     def __init__(
         self,

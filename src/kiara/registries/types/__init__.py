@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Set, Type, Union
 
 from kiara.data_types import DataType
 from kiara.defaults import KIARA_ROOT_TYPE_NAME
+from kiara.exceptions import DataTypeUnknownException
 from kiara.interfaces.python_api.models.info import (
     DataTypeClassesInfo,
     DataTypeClassInfo,
@@ -168,7 +169,7 @@ class TypeRegistry(object):
         """Returns the shortest path between the specified type and the root, in reverse direction starting from the specified type."""
 
         if data_type_name not in self.data_type_profiles.keys():
-            raise Exception(f"No data type '{data_type_name}' registered.")
+            raise DataTypeUnknownException(data_type=data_type_name)
 
         if data_type_name in self._lineages_cache.keys():
             return self._lineages_cache[data_type_name]

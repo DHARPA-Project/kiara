@@ -10,7 +10,7 @@ from pathlib import Path
 from ruamel.yaml import YAML
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
-from kiara.exceptions import NoSuchWorkflowException
+from kiara.exceptions import DataTypeUnknownException, NoSuchWorkflowException
 from kiara.interfaces.python_api.models.info import (
     ModuleTypeInfo,
     ModuleTypesInfo,
@@ -40,7 +40,7 @@ from kiara.operations.included_core_operations.render_value import (
 from kiara.registries.data import ValueLink
 from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.operations import OP_TYPE
-from kiara.utils import log_exception
+from kiara.utils import log_exception, log_message
 from kiara.utils.operations import create_operation
 
 if TYPE_CHECKING:
@@ -694,6 +694,9 @@ class KiaraAPI(object):
             "render_value"
         )  # type: ignore
 
+        if data_type not in self.context.data_type_names:
+            raise DataTypeUnknownException(data_type=data_type)
+
         ops = render_op_type.get_render_operations_for_source_type(data_type)
 
         if isinstance(target_format, str):
@@ -894,11 +897,27 @@ class KiaraAPI(object):
         """
 
         _value = self.get_value(value)
-        render_operation = self.assemble_render_pipeline(
-            data_type=_value.data_type_name,
-            target_format=target_format,
-            filters=filters,
-        )
+        try:
+            render_operation: Union[None, Operation] = self.assemble_render_pipeline(
+                data_type=_value.data_type_name,
+                target_format=target_format,
+                filters=filters,
+            )
+        except DataTypeUnknownException as dtue:
+            log_message("data_type.unknown", data_type=dtue.data_type, error=dtue)
+            render_ops: RenderValueOperationType = self.context.operation_registry.get_operation_type("render_value")  # type: ignore
+            if not isinstance(target_format, str):
+                raise NotImplementedError(
+                    "Can't handle multiple target formats for 'render_value' yet."
+                )
+            render_operation = render_ops.get_render_operation(
+                source_type="any", target_type=target_format
+            )
+
+        if render_operation is None:
+            raise Exception(
+                f"Could not find render operation for value: {_value.value_id}"
+            )
 
         if render_config and "render_config" in render_config.keys():
             # raise NotImplementedError()
@@ -916,15 +935,15 @@ class KiaraAPI(object):
         else:
             render_config = dict(render_config)
 
-        render_type = render_config.pop("render_type", None)
-        if not render_type or render_type == "data":
-            pass
-        elif render_type == "metadata":
-            pass
-        elif render_type == "properties":
-            pass
-        elif render_type == "lineage":
-            pass
+        # render_type = render_config.pop("render_type", None)
+        # if not render_type or render_type == "data":
+        #     pass
+        # elif render_type == "metadata":
+        #     pass
+        # elif render_type == "properties":
+        #     pass
+        # elif render_type == "lineage":
+        #     pass
 
         result = render_operation.run(
             kiara=self.context,

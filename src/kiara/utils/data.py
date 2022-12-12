@@ -31,15 +31,19 @@ def pretty_print_data(
 
     op_type: PrettyPrintOperationType = kiara.operation_registry.get_operation_type("pretty_print")  # type: ignore
 
+    data_type = value.data_type_name
+    if data_type not in kiara.data_type_names:
+        data_type = "any"
+
     try:
         op: Union[Operation, None] = op_type.get_operation_for_render_combination(
-            source_type=value.value_schema.type, target_type=target_type
+            source_type=data_type, target_type=target_type
         )
     except Exception as e:
 
         logger.debug(
             "error.pretty_print",
-            source_type=value.value_schema.type,
+            source_type=data_type,
             target_type=target_type,
             error=e,
         )

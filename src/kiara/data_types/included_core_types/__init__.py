@@ -26,7 +26,7 @@ from typing import (
 
 from kiara.data_types import TYPE_CONFIG_CLS, TYPE_PYTHON_CLS, DataType, DataTypeConfig
 from kiara.defaults import INVALID_HASH_MARKER, SpecialValue
-from kiara.exceptions import KiaraProcessingException
+from kiara.exceptions import DataTypeUnknownException, KiaraProcessingException
 from kiara.models import KiaraModel
 from kiara.models.data_types import DictModel
 from kiara.models.python_class import PythonClass
@@ -103,7 +103,10 @@ class AnyType(
         if hasattr(self, "_pretty_print_as__string"):
             return self._pretty_print_as__string(value=value, render_config=render_config)  # type: ignore
 
-        return str(value.data)
+        try:
+            return str(value.data)
+        except DataTypeUnknownException as dtue:
+            return str(dtue)
 
     def pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
@@ -112,7 +115,21 @@ class AnyType(
         if hasattr(self, "_pretty_print_as__terminal_renderable"):
             return self._pretty_print_as__terminal_renderable(value=value, render_config=render_config)  # type: ignore
 
-        data = value.data
+        try:
+            data = value.data
+        except DataTypeUnknownException as dtue:
+            rendered: RenderableType = dtue.create_renderable(**render_config)
+            from rich.panel import Panel
+
+            return Panel(
+                rendered,
+                title=f"Unsupported data type: {dtue.data_type}",
+                title_align="left",
+            )
+        except Exception as e:
+            raise KiaraProcessingException(
+                f"Error getting data for value '{value.value_id}': {e}"
+            )
 
         from pydantic import BaseModel
 
@@ -142,11 +159,20 @@ class AnyType(
         self, value: "Value", render_config: Mapping[str, Any], manifest: "Manifest"
     ) -> RenderableType:
 
-        if hasattr(self, "_render_as__terminal_renderable"):
+        if not hasattr(self, "_render_as__terminal_renderable"):
+
+            try:
+                value.data  # noqa
+                return self.render_as__string(
+                    value=value, render_config=render_config, manifest=manifest
+                )
+            except DataTypeUnknownException:
+                return self.pretty_print_as__terminal_renderable(
+                    value=value, render_config=render_config
+                )
+
+        else:
             return self._render_as__terminal_renderable(value=value, render_config=render_config, manifest=manifest)  # type: ignore
-        return self.render_as__string(
-            value=value, render_config=render_config, manifest=manifest
-        )
 
 
 class BytesType(AnyType[bytes, DataTypeConfig]):

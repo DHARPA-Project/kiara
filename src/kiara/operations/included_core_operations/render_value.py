@@ -187,6 +187,9 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
             a mapping with the target type as key, and the operation as value
         """
 
+        if source_type not in self._kiara.data_type_names:
+            source_type = "any"
+
         lineage = self._kiara.type_registry.get_type_lineage(data_type_name=source_type)
 
         result: Dict[str, Operation] = {}

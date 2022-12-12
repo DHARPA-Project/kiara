@@ -4914,7 +4914,10 @@
 <span class="normal">210</span>
 <span class="normal">211</span>
 <span class="normal">212</span>
-<span class="normal">213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RenderValueOperationType</span><span class="p">(</span><span class="n">OperationType</span><span class="p">[</span><span class="n">RenderValueDetails</span><span class="p">]):</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RenderValueOperationType</span><span class="p">(</span><span class="n">OperationType</span><span class="p">[</span><span class="n">RenderValueDetails</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;An operation that renders a value.</span>
 
 <span class="sd">    A &#39;render_value&#39; operation typically is named follwing the pattern:</span>
@@ -5069,6 +5072,9 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            a mapping with the target type as key, and the operation as value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">source_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_type_names</span><span class="p">:</span>
+            <span class="n">source_type</span> <span class="o">=</span> <span class="s2">&quot;any&quot;</span>
 
         <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">data_type_name</span><span class="o">=</span><span class="n">source_type</span><span class="p">)</span>
 
@@ -5459,7 +5465,10 @@
 <span class="normal">203</span>
 <span class="normal">204</span>
 <span class="normal">205</span>
-<span class="normal">206</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_render_operations_for_source_type</span><span class="p">(</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_render_operations_for_source_type</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Return all render operations for the specified data type.</span>
@@ -5470,6 +5479,9 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        a mapping with the target type as key, and the operation as value</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">source_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_type_names</span><span class="p">:</span>
+        <span class="n">source_type</span> <span class="o">=</span> <span class="s2">&quot;any&quot;</span>
 
     <span class="n">lineage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_type_lineage</span><span class="p">(</span><span class="n">data_type_name</span><span class="o">=</span><span class="n">source_type</span><span class="p">)</span>
 
@@ -5508,12 +5520,12 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/operations/included_core_operations/render_value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">211</span>
 <span class="normal">212</span>
-<span class="normal">213</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_render_operation</span><span class="p">(</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_render_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Operation</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 

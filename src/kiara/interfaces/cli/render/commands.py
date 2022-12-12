@@ -28,7 +28,7 @@ def render(ctx) -> None:
 @render.group()
 @click.argument("pipeline", nargs=1)
 @click.pass_context
-def pipeline(ctx, pipeline) -> None:
+def pipeline(ctx, pipeline: str) -> None:
     kiara: Kiara = ctx.obj["kiara"]
 
     if pipeline.startswith("workflow:"):

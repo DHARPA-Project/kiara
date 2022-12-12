@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
-
-# MIT License
-# Copyright (c) 2022 Phil Ewels
-# adapted from: https://github.com/ewels/rich-click
-
 import click
+import inspect
+import textwrap
 from rich import box
 from rich.align import Align
 from rich.console import Group, RenderableType
@@ -65,6 +62,10 @@ from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.operations.included_core_operations.filter import FilterOperationType
 from kiara.utils.cli import terminal_print
 
+# MIT License
+# Copyright (c) 2022 Phil Ewels
+# adapted from: https://github.com/ewels/rich-click
+
 
 def rich_format_filter_operation_help(
     api: KiaraAPI,
@@ -72,7 +73,7 @@ def rich_format_filter_operation_help(
     ctx: click.Context,
     cmd_help: str,
     value: Union[None, str] = None,
-):
+) -> None:
     """Print nicely formatted help text using rich."""
 
     renderables: List[RenderableType] = []
@@ -86,9 +87,13 @@ def rich_format_filter_operation_help(
 
     _cmd = cmd_help
     renderables.append(Padding(_cmd, 1))
+    d = inspect.getdoc(obj)
+    if d is None:
+        d = ""
+    d = textwrap.dedent(d)
     renderables.append(
         Padding(
-            Align(Markdown(obj.__doc__), width=MAX_WIDTH, pad=False),  # type: ignore
+            Align(d, width=MAX_WIDTH, pad=False),  # type: ignore
             (0, 1, 1, 1),
         )
     )

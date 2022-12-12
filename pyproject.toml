@@ -50,6 +50,7 @@ dependencies = [
     "pp-ez>=0.2.0",
     "pydantic[email]>=1.10.0",
     "python-slugify>=5.0.0",
+    "pytz>=2022.6",
     "regex>=2022.4.0",
     "rich>=12.4.0",
     "rich-click>=1.0.0",
@@ -57,7 +58,7 @@ dependencies = [
     "sortedcontainers>=2.4.0",
     "stevedore>=4.0.0,<5.0.0",
     "structlog>=21.5.0",
-    "textual>=0.5.0,<0.6.0",
+    "textual>=0.6.0,<0.7.0",
     "tzlocal>=2.1,<5.0",
 ]
 dynamic = ["version"]

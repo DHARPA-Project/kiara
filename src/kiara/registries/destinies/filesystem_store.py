@@ -15,6 +15,7 @@ from typing import Set, Tuple, Union
 from kiara.models.module.destiny import Destiny
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
 from kiara.registries.destinies import DestinyArchive, DestinyStore
+from kiara.utils.windows import fix_windows_longpath
 
 logger = structlog.getLogger()
 
@@ -63,6 +64,7 @@ class FileSystemDestinyArchive(DestinyArchive):
             return self._base_path
 
         self._base_path = Path(self.config.archive_path).absolute()  # type: ignore
+        self._base_path = fix_windows_longpath(self._base_path)
         self._base_path.mkdir(parents=True, exist_ok=True)
         return self._base_path
 

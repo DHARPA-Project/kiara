@@ -15,6 +15,7 @@ from typing import Any, Dict, Iterable, Union
 from kiara.models.module.jobs import JobRecord
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
 from kiara.registries.jobs import MANIFEST_SUB_PATH, JobArchive, JobStore
+from kiara.utils.windows import fix_windows_longpath
 
 log = structlog.getLogger()
 
@@ -51,6 +52,7 @@ class FileSystemJobArchive(JobArchive):
             return self._base_path
 
         self._base_path = Path(self.config.archive_path).absolute()  # type: ignore
+        self._base_path = fix_windows_longpath(self._base_path)
         self._base_path.mkdir(parents=True, exist_ok=True)
         return self._base_path
 
@@ -160,9 +162,12 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
             manifest_info_file.write_text(job_record.manifest_data_as_json())
 
         job_folder = manifest_folder / inputs_hash
+        job_folder = fix_windows_longpath(job_folder)
         job_folder.mkdir(parents=True, exist_ok=True)
 
         job_details_file = job_folder / f"{job_record.job_hash}.job_record"
+        job_details_file = fix_windows_longpath(job_details_file)
+
         exists = False
         if job_details_file.exists():
             exists = True

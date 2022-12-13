@@ -27,6 +27,7 @@ from kiara.registries.jobs import JobArchive
 from kiara.utils import log_message
 from kiara.utils.hashfs import HashAddress, HashFS
 from kiara.utils.json import orjson_dumps
+from kiara.utils.windows import fix_windows_longpath
 
 if TYPE_CHECKING:
     pass
@@ -89,6 +90,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
             return self._base_path
 
         self._base_path = Path(self.config.archive_path).absolute()  # type: ignore
+        self._base_path = fix_windows_longpath(self._base_path)
         self._base_path.mkdir(parents=True, exist_ok=True)
         return self._base_path
 
@@ -472,6 +474,8 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
             job_folder
             / f"output__{value.pedigree_output_name}__value_id__{value.value_id}.json"
         )
+
+        outputs_file_name = fix_windows_longpath(outputs_file_name)
 
         if outputs_file_name.exists():
             # if value.pedigree_output_name == "__void__":

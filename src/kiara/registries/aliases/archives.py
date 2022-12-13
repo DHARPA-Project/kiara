@@ -13,6 +13,7 @@ from typing import Mapping, Set, Union
 
 from kiara.registries import ARCHIVE_CONFIG_CLS, FileSystemArchiveConfig
 from kiara.registries.aliases import AliasArchive, AliasStore
+from kiara.utils.windows import fix_windows_longpath
 
 
 class FileSystemAliasArchive(AliasArchive):
@@ -33,6 +34,7 @@ class FileSystemAliasArchive(AliasArchive):
             return self._base_path
 
         self._base_path = Path(self.config.archive_path).absolute()  # type: ignore
+        self._base_path = fix_windows_longpath(self._base_path)
         self._base_path.mkdir(parents=True, exist_ok=True)
         return self._base_path
 

@@ -88,8 +88,8 @@ class FileSystemAliasArchive(AliasArchive):
     def _translate_value_path(self, value_path: Path) -> uuid.UUID:
 
         relative = (
-            value_path.absolute()
-            .relative_to(self.value_id_path.absolute())
+            fix_windows_longpath(value_path.absolute())
+            .relative_to(fix_windows_longpath(self.value_id_path.absolute()))
             .as_posix()[:-6]
         )
         relative = os.path.normpath(relative)

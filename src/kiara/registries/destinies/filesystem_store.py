@@ -187,5 +187,4 @@ class FileSystemDestinyStore(FileSystemDestinyArchive, DestinyStore):
                 # )
 
             path.parent.mkdir(parents=True, exist_ok=True)
-            fix_windows_symlink(destiny, path)
-            path.symlink_to(destiny_path)
+            fix_windows_symlink(destiny_path, path)

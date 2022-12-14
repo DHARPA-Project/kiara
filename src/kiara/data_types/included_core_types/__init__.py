@@ -423,10 +423,22 @@ class DictValueType(AnyType[DictModel, DataTypeConfig]):
     ) -> RenderableType:
 
         render_item = render_config.get("render_item", "data")
+        width = render_config.get("display_width", 0)
+
         related_scenes: Dict[str, Union[None, RenderScene]] = {}
         if render_item == "data":
             dict_data = value.data.dict_data
             json_string = orjson_dumps(dict_data, option=orjson.OPT_INDENT_2)
+
+            if width > 0:
+                new_lines = []
+                for line in json_string.split("\n"):
+                    if len(line) > width:
+                        new_lines.append(line[0 : width - 3] + "...")  # noqa
+                    else:
+                        new_lines.append(line)
+
+            json_string = "\n".join(new_lines)
 
             rendered = Syntax(json_string, "json")
             related_scenes["data"] = None

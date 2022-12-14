@@ -102,6 +102,7 @@ class PagerApp(App):
         if self._current_render_config is None:
             self._current_render_config = {}
         self._current_render_config["number_of_rows"] = self._num_rows
+        self._current_render_config["display_width"] = get_console().size.width - 4
 
         current_result = self._api.render_value(
             value=self._current_value,

@@ -4255,6 +4255,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../utils/windows/" class="md-nav__link">
+        windows
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../utils/yaml/" class="md-nav__link">
         yaml
       </a>
@@ -4779,7 +4793,8 @@
 <span class="normal">118</span>
 <span class="normal">119</span>
 <span class="normal">120</span>
-<span class="normal">121</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PagerApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<span class="normal">121</span>
+<span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PagerApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
 
     <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">KIARA_RESOURCES_FOLDER</span><span class="p">,</span> <span class="s2">&quot;tui&quot;</span><span class="p">,</span> <span class="s2">&quot;pager_app.css&quot;</span><span class="p">)</span>
     <span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;quit&quot;</span><span class="p">,</span> <span class="s2">&quot;Quit&quot;</span><span class="p">)]</span>
@@ -4864,6 +4879,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_render_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_current_render_config</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_render_config</span><span class="p">[</span><span class="s2">&quot;number_of_rows&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_render_config</span><span class="p">[</span><span class="s2">&quot;display_width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_console</span><span class="p">()</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">4</span>
 
         <span class="n">current_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api</span><span class="o">.</span><span class="n">render_value</span><span class="p">(</span>
             <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span><span class="p">,</span>
@@ -5137,7 +5153,8 @@
 <span class="normal">118</span>
 <span class="normal">119</span>
 <span class="normal">120</span>
-<span class="normal">121</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">update_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">121</span>
+<span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">update_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_control_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preview_control</span><span class="o">.</span><span class="n">compute_related_scenes</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
@@ -5149,6 +5166,7 @@
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_render_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current_render_config</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_current_render_config</span><span class="p">[</span><span class="s2">&quot;number_of_rows&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_rows</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_current_render_config</span><span class="p">[</span><span class="s2">&quot;display_width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_console</span><span class="p">()</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">4</span>
 
     <span class="n">current_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_api</span><span class="o">.</span><span class="n">render_value</span><span class="p">(</span>
         <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_value</span><span class="p">,</span>

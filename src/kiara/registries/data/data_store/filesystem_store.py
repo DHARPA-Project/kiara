@@ -27,7 +27,7 @@ from kiara.registries.jobs import JobArchive
 from kiara.utils import log_message
 from kiara.utils.hashfs import HashAddress, HashFS
 from kiara.utils.json import orjson_dumps
-from kiara.utils.windows import fix_windows_longpath
+from kiara.utils.windows import fix_windows_longpath, fix_windows_symlink
 
 if TYPE_CHECKING:
     pass
@@ -395,7 +395,7 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
             value_file = value_dir / VALUE_DETAILS_FILE_NAME
             assert value_file.exists()
 
-            destiny_file.symlink_to(value_file)
+            fix_windows_symlink(value_file, destiny_file)
 
     def _persist_value_data(self, value: Value) -> PersistedData:
 
@@ -492,4 +492,5 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
         )
         target_file = value_data_dir / f"value_id__{value.value_id}.json"
 
-        target_file.symlink_to(outputs_file_name)
+        fix_windows_symlink(outputs_file_name, target_file)
+

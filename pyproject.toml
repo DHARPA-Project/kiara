@@ -87,3 +87,8 @@ exclude = '''
 
 [tool.setuptools_scm]
 write_to = "src/kiara/version.txt"
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "src"
+]

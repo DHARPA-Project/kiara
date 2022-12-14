@@ -15,7 +15,7 @@ from typing import Set, Tuple, Union
 from kiara.models.module.destiny import Destiny
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
 from kiara.registries.destinies import DestinyArchive, DestinyStore
-from kiara.utils.windows import fix_windows_longpath
+from kiara.utils.windows import fix_windows_longpath, fix_windows_symlink
 
 logger = structlog.getLogger()
 
@@ -187,4 +187,5 @@ class FileSystemDestinyStore(FileSystemDestinyArchive, DestinyStore):
                 # )
 
             path.parent.mkdir(parents=True, exist_ok=True)
+            fix_windows_symlink(destiny, path)
             path.symlink_to(destiny_path)

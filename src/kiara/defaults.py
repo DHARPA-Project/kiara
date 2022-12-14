@@ -241,3 +241,18 @@ FILE_BUNDLE_MODEL_CATEOGORY_ID = "instance.model.file_bundle"
 ARRAY_MODEL_CATEOGORY_ID = "instance.model.array"
 TABLE_MODEL_CATEOGORY_ID = "instance.model.table"
 DEFAULT_CONTEXT_NAME = "default"
+
+
+SYMLINK_ISSUE_MSG = """Your operating system does not support symlinks, which is a requirement for kiara to work.
+
+You can enable developer mode to fix this issue:
+
+- open 'Settings'
+- click 'Updates & Security'
+- click 'For developers'
+- make sure 'Developer Mode' is turned on
+
+For more information, please visit:
+- https://dharpa.org/kiara.documentation/latest/installation/#enable-developer-mode
+- https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development
+"""

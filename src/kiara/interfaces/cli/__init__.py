@@ -14,12 +14,15 @@ import rich_click as click
 import structlog
 import sys
 from pathlib import Path
+from rich.markdown import Markdown
 from typing import Tuple, Union
 
-from rich.markdown import Markdown
-
 from kiara.context.config import KiaraConfig
-from kiara.defaults import KIARA_CONFIG_FILE_NAME, KIARA_MAIN_CONFIG_FILE, SYMLINK_ISSUE_MSG
+from kiara.defaults import (
+    KIARA_CONFIG_FILE_NAME,
+    KIARA_MAIN_CONFIG_FILE,
+    SYMLINK_ISSUE_MSG,
+)
 from kiara.interfaces.python_api import KiaraAPI
 from kiara.utils import is_debug
 from kiara.utils.class_loading import find_all_cli_subcommands
@@ -77,6 +80,7 @@ def cli(
 
     # check if windows symlink work
     from kiara.utils.windows import check_symlink_works
+
     if not check_symlink_works():
 
         terminal_print()

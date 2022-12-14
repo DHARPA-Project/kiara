@@ -493,4 +493,3 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
         target_file = value_data_dir / f"value_id__{value.value_id}.json"
 
         fix_windows_symlink(outputs_file_name, target_file)
-

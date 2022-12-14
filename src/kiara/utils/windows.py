@@ -1,19 +1,21 @@
+# -*- coding: utf-8 -*-
 import os
+import platform
 import shutil
 import tempfile
-from functools import cache
+from functools import lru_cache
 from pathlib import Path
-import platform
 
 is_windows = any(platform.win32_ver())
+
 
 def fix_windows_longpath(path: Path) -> Path:
     if not is_windows:
         return path
 
     normalized = os.fspath(path.resolve())
-    if not normalized.startswith('\\\\?\\'):
-        normalized = '\\\\?\\' + normalized
+    if not normalized.startswith("\\\\?\\"):
+        normalized = "\\\\?\\" + normalized
     return Path(normalized)
 
 
@@ -27,11 +29,16 @@ def fix_windows_symlink(source: Path, target: Path) -> None:
             target.symlink_to(source)
         except OSError:
             import traceback
-            raise Exception(u'Operating system does not support symbolic '
-                              u'links.', 'link', (source, target),
-                              traceback.format_exc())
 
-@cache
+            raise Exception(
+                "Operating system does not support symbolic " "links.",
+                "link",
+                (source, target),
+                traceback.format_exc(),
+            )
+
+
+@lru_cache
 def check_symlink_works() -> bool:
 
     dirname = tempfile.mkdtemp()
@@ -43,7 +50,7 @@ def check_symlink_works() -> bool:
     try:
         target.symlink_to(source)
         return True
-    except OSError as e:
+    except OSError:
         return False
     finally:
         shutil.rmtree(dirname, ignore_errors=True)

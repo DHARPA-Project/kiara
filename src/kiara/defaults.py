@@ -251,6 +251,7 @@ You can enable developer mode to fix this issue:
 - click 'Updates & Security'
 - click 'For developers'
 - make sure 'Developer Mode' is turned on
+- log out of your Windows session, and log back in again
 
 For more information, please visit:
 - https://dharpa.org/kiara.documentation/latest/installation/#enable-developer-mode

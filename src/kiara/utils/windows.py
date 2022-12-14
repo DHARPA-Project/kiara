@@ -41,9 +41,9 @@ def check_symlink_works() -> bool:
 
     source.touch()
     try:
-        source.symlink_to(target)
+        target.symlink_to(source)
         return True
-    except OSError:
+    except OSError as e:
         return False
     finally:
-        shutil.rmtree(dirname)
+        shutil.rmtree(dirname, ignore_errors=True)

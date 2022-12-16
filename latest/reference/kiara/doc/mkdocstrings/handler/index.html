@@ -897,13 +897,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.doc.mkdocstrings.handler-attributes" class="md-nav__link">
-    Attributes
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#kiara.doc.mkdocstrings.handler-classes" class="md-nav__link">
     Classes
   </a>
@@ -4503,13 +4496,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.doc.mkdocstrings.handler-attributes" class="md-nav__link">
-    Attributes
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#kiara.doc.mkdocstrings.handler-classes" class="md-nav__link">
     Classes
   </a>
@@ -4585,7 +4571,7 @@
 
 
 
-<h2 id="kiara.doc.mkdocstrings.handler-attributes">Attributes<a href="#kiara.doc.mkdocstrings.handler-attributes" class="headerlink" title="Permanent link">&para;</a></h2>
+
 <h2 id="kiara.doc.mkdocstrings.handler-classes">Classes<a href="#kiara.doc.mkdocstrings.handler-classes" class="headerlink" title="Permanent link">&para;</a></h2>
 
 <div class="doc doc-object doc-class">
@@ -4637,7 +4623,8 @@ of the <code>objects.inv</code> Sphinx inventory file.</p></td>
 
         <details class="quote">
           <summary>Source code in <code>kiara/doc/mkdocstrings/handler.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
+<span class="normal">19</span>
 <span class="normal">20</span>
 <span class="normal">21</span>
 <span class="normal">22</span>
@@ -4645,8 +4632,7 @@ of the <code>objects.inv</code> Sphinx inventory file.</p></td>
 <span class="normal">24</span>
 <span class="normal">25</span>
 <span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraHandler</span><span class="p">(</span><span class="n">BaseHandler</span><span class="p">):</span>
+<span class="normal">27</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraHandler</span><span class="p">(</span><span class="n">BaseHandler</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The kiara handler class.</span>
 <span class="sd">    Attributes:</span>
 <span class="sd">        domain: The cross-documentation domain/language for this handler.</span>
@@ -4796,7 +4782,8 @@ of the <code>objects.inv</code> Sphinx inventory file.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>kiara/doc/mkdocstrings/handler.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">62</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">61</span>
+<span class="normal">62</span>
 <span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span>
@@ -4837,13 +4824,14 @@ of the <code>objects.inv</code> Sphinx inventory file.</p></td>
     <span class="k">if</span> <span class="n">custom_templates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Custom templates are not supported for the kiara renderer.&quot;</span><span class="p">)</span>
 
-    <span class="n">custom_templates</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-        <span class="n">KIARA_RESOURCES_FOLDER</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;info_templates&quot;</span>
-    <span class="p">)</span>
+    <span class="c1"># custom_templates = os.path.join(</span>
+    <span class="c1">#     KIARA_RESOURCES_FOLDER, &quot;templates&quot;, &quot;info_templates&quot;</span>
+    <span class="c1"># )</span>
 
     <span class="k">return</span> <span class="n">KiaraHandler</span><span class="p">(</span>
         <span class="n">collector</span><span class="o">=</span><span class="n">KiaraCollector</span><span class="p">(),</span>
-        <span class="n">renderer</span><span class="o">=</span><span class="n">KiaraInfoRenderer</span><span class="p">(</span><span class="s2">&quot;kiara&quot;</span><span class="p">,</span> <span class="n">theme</span><span class="p">,</span> <span class="n">custom_templates</span><span class="p">),</span>
+        <span class="c1"># renderer=KiaraInfoRenderer(&quot;kiara&quot;, theme, custom_templates),</span>
+        <span class="n">renderer</span><span class="o">=</span><span class="n">KiaraInfoRenderer</span><span class="p">(</span><span class="s2">&quot;kiara&quot;</span><span class="p">,</span> <span class="n">theme</span><span class="p">),</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>

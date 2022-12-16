@@ -2,1027 +2,1027 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://dharpa.org/kiara/latest/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>None</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/design_docs/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>None</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/design_docs/architecture/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>None</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/design_docs/architecture/assumptions/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/design_docs/architecture/decisions/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/design_docs/architecture/metadata/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/design_docs/architecture/data/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/design_docs/architecture/data/persistence/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/design_docs/architecture/workflows/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/development/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>None</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/development/install/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>None</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/development/modules/render_value/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/included_components/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>None</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/included_components/data_types/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/included_components/kiara_model_types/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/included_components/module_types/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/included_components/operation_types/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/included_components/operations/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>None</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/defaults/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/exceptions/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/context/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/context/config/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/context/orm/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/data_types/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/data_types/included_core_types/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/data_types/included_core_types/filesystem/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/data_types/included_core_types/serialization/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/data_types/included_core_types/internal/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/data_types/included_core_types/internal/render_value/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/doc/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/doc/gen_info_pages/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/doc/generate_api_doc/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/doc/mkdocs_macros_cli/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/doc/mkdocs_macros_kiara/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/doc/mkdocstrings/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/doc/mkdocstrings/collector/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/doc/mkdocstrings/handler/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/doc/mkdocstrings/renderer/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/run/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/config/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/config/commands/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/context/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/context/commands/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/data/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/data/commands/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/dev/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/dev/commands/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/module/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/module/commands/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/operation/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/operation/commands/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/pipeline/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/pipeline/commands/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/render/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/render/commands/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/service/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/service/commands/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/type/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/type/commands/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/workflow/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/workflow/commands/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/python_api/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/python_api/batch/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/python_api/operation/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/python_api/utils/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/python_api/value/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/python_api/workflow/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/python_api/models/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/python_api/models/info/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/python_api/models/job/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/python_api/models/workflow/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/tui/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/tui/pager/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/tui/widgets/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/tui/widgets/pager/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/archives/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/context/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/data_types/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/documentation/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/filesystem/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/python_class/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/workflow/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/aliases/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/events/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/events/alias_registry/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/events/data_registry/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/events/destiny_registry/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/events/job_registry/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/events/pipeline/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/events/workflow_registry/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/module/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/module/destiny/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/module/jobs/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/module/manifest/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/module/operation/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/module/persistence/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/module/pipeline/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/module/pipeline/controller/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/module/pipeline/pipeline/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/module/pipeline/structure/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/module/pipeline/value_refs/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/rendering/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/rendering/values/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/runtime_environment/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/runtime_environment/kiara/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/runtime_environment/operating_system/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/runtime_environment/python/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/values/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/values/data_type/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/values/lineage/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/values/matchers/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/values/value/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/values/value_schema/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/values/value_metadata/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/models/values/value_metadata/included_metadata_types/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/included_core_modules/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/included_core_modules/create_from/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/included_core_modules/export_as/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/included_core_modules/filesystem/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/included_core_modules/filter/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/included_core_modules/metadata/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/included_core_modules/pipeline/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/included_core_modules/pretty_print/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/included_core_modules/render_value/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/modules/included_core_modules/serialization/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/create_from/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/export_as/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/filter/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/metadata/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/pipeline/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/pretty_print/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/render_value/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/operations/included_core_operations/serialize/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/processing/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/processing/synchronous/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/aliases/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/aliases/archives/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/data/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/data/data_store/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/data/data_store/filesystem_store/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/destinies/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/destinies/filesystem_store/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/destinies/registry/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/environment/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/events/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/events/metadata/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/events/registry/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/ids/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/jobs/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/jobs/job_store/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/jobs/job_store/filesystem_store/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/models/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/modules/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/operations/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/templates/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/types/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/workflows/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/registries/workflows/archives/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/render/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/render/pipeline/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/class_loading/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/concurrency/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/data/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/db/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/debug/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/dicts/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/doc/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/files/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/global_metadata/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/graphs/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/hashing/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/html/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/json/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/jupyter/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/metadata/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/models/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/modules/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/operations/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/output/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/pipelines/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/string_vars/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/values/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/windows/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/yaml/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/cli/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/cli/rich_click/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/cli/run/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/develop/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/hashfs/__init__/</loc>
-         <lastmod>2022-12-15</lastmod>
+         <lastmod>2022-12-16</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

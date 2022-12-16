@@ -793,13 +793,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.doc.gen_info_pages-attributes" class="md-nav__link">
-    Attributes
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#kiara.doc.gen_info_pages-classes" class="md-nav__link">
     Classes
   </a>
@@ -4502,13 +4495,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.doc.gen_info_pages-attributes" class="md-nav__link">
-    Attributes
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#kiara.doc.gen_info_pages-classes" class="md-nav__link">
     Classes
   </a>
@@ -4585,7 +4571,7 @@
 
 
 
-<h2 id="kiara.doc.gen_info_pages-attributes">Attributes<a href="#kiara.doc.gen_info_pages-attributes" class="headerlink" title="Permanent link">&para;</a></h2>
+
 <h2 id="kiara.doc.gen_info_pages-classes">Classes<a href="#kiara.doc.gen_info_pages-classes" class="headerlink" title="Permanent link">&para;</a></h2>
 <h2 id="kiara.doc.gen_info_pages-functions">Functions<a href="#kiara.doc.gen_info_pages-functions" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -4603,9 +4589,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/doc/gen_info_pages.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
 <span class="normal">20</span>
 <span class="normal">21</span>
 <span class="normal">22</span>
@@ -4615,18 +4599,32 @@
 <span class="normal">26</span>
 <span class="normal">27</span>
 <span class="normal">28</span>
-<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_jina_env</span><span class="p">():</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_jina_env</span><span class="p">():</span>
 
     <span class="k">global</span> <span class="n">_jinja_env</span>
     <span class="k">if</span> <span class="n">_jinja_env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">jinja2</span> <span class="kn">import</span> <span class="n">Environment</span><span class="p">,</span> <span class="n">FileSystemLoader</span>
+        <span class="kn">from</span> <span class="nn">jinja2</span> <span class="kn">import</span> <span class="n">Environment</span>
 
-        <span class="n">_jinja_env</span> <span class="o">=</span> <span class="n">Environment</span><span class="p">(</span>
-            <span class="n">loader</span><span class="o">=</span><span class="n">FileSystemLoader</span><span class="p">(</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">KIARA_RESOURCES_FOLDER</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;doc_gen&quot;</span><span class="p">),</span>
-                <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf8&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="n">_loader</span> <span class="o">=</span> <span class="n">PackageLoader</span><span class="p">(</span>
+            <span class="n">package_name</span><span class="o">=</span><span class="s2">&quot;kiara&quot;</span><span class="p">,</span>
+            <span class="n">package_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;resources&quot;</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;doc_gen&quot;</span><span class="p">),</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf8&quot;</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="n">_jinja_env</span> <span class="o">=</span> <span class="n">Environment</span><span class="p">(</span><span class="n">loader</span><span class="o">=</span><span class="n">_loader</span><span class="p">)</span>
+        <span class="c1"># _jinja_env = Environment(</span>
+        <span class="c1">#     loader=FileSystemLoader(</span>
+        <span class="c1">#         os.path.join(KIARA_RESOURCES_FOLDER, &quot;templates&quot;, &quot;doc_gen&quot;),</span>
+        <span class="c1">#         encoding=&quot;utf8&quot;,</span>
+        <span class="c1">#     )</span>
+        <span class="c1"># )</span>
     <span class="k">return</span> <span class="n">_jinja_env</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -4648,20 +4646,20 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/doc/gen_info_pages.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
-<span class="normal">45</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">render_item_listing</span><span class="p">(</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">render_item_listing</span><span class="p">(</span>
     <span class="n">item_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ItemInfo</span><span class="p">],</span> <span class="n">sub_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;info&quot;</span>
 <span class="p">):</span>
 
@@ -4695,15 +4693,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/doc/gen_info_pages.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">56</span>
 <span class="normal">57</span>
 <span class="normal">58</span>
 <span class="normal">59</span>
@@ -4720,7 +4710,15 @@
 <span class="normal">70</span>
 <span class="normal">71</span>
 <span class="normal">72</span>
-<span class="normal">73</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">generate_detail_pages</span><span class="p">(</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">generate_detail_pages</span><span class="p">(</span>
     <span class="n">context_info</span><span class="p">:</span> <span class="n">KiaraContextInfo</span><span class="p">,</span>
     <span class="n">sub_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span>
     <span class="n">add_summary_page</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>

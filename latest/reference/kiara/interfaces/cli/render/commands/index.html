@@ -1422,13 +1422,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.interfaces.cli.render.commands-attributes" class="md-nav__link">
-    Attributes
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#kiara.interfaces.cli.render.commands-classes" class="md-nav__link">
     Classes
   </a>
@@ -4513,13 +4506,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara.interfaces.cli.render.commands-attributes" class="md-nav__link">
-    Attributes
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#kiara.interfaces.cli.render.commands-classes" class="md-nav__link">
     Classes
   </a>
@@ -4605,7 +4591,7 @@
 
 
 
-<h2 id="kiara.interfaces.cli.render.commands-attributes">Attributes<a href="#kiara.interfaces.cli.render.commands-attributes" class="headerlink" title="Permanent link">&para;</a></h2>
+
 <h2 id="kiara.interfaces.cli.render.commands-classes">Classes<a href="#kiara.interfaces.cli.render.commands-classes" class="headerlink" title="Permanent link">&para;</a></h2>
 <h2 id="kiara.interfaces.cli.render.commands-functions">Functions<a href="#kiara.interfaces.cli.render.commands-functions" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -4625,10 +4611,10 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/render/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
+<span class="normal">22</span>
 <span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Rendering-related sub-commands.&quot;&quot;&quot;</span>
@@ -4652,7 +4638,8 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/render/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">27</span>
+<span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span>
@@ -4663,8 +4650,7 @@
 <span class="normal">36</span>
 <span class="normal">37</span>
 <span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@render</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+<span class="normal">39</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@render</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;pipeline&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">pipeline</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -4697,7 +4683,8 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/render/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">43</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">42</span>
+<span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span>
 <span class="normal">46</span>
@@ -4712,8 +4699,7 @@
 <span class="normal">55</span>
 <span class="normal">56</span>
 <span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;base_name&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">as_graph_images</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">base_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -4753,7 +4739,8 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/render/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 62</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 61</span>
+<span class="normal"> 62</span>
 <span class="normal"> 63</span>
 <span class="normal"> 64</span>
 <span class="normal"> 65</span>
@@ -4805,7 +4792,16 @@
 <span class="normal">111</span>
 <span class="normal">112</span>
 <span class="normal">113</span>
-<span class="normal">114</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--template&quot;</span><span class="p">,</span> <span class="s2">&quot;-t&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;notebook&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
@@ -4818,14 +4814,24 @@
     <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara&quot;</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">template</span> <span class="o">==</span> <span class="s2">&quot;notebook&quot;</span><span class="p">:</span>
-        <span class="n">template_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">KIARA_RESOURCES_FOLDER</span><span class="p">,</span>
-            <span class="s2">&quot;templates&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;render&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;pipeline&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;workflow_tutorial&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;jupyter_notebook.ipynb.j2&quot;</span><span class="p">,</span>
+        <span class="n">template_path</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">resources</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span>
+            <span class="s2">&quot;kiara&quot;</span><span class="p">,</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="s2">&quot;templates&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;render&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;pipeline&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;workflow_tutorial&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;jupyter_notebook.ipynb.j2&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
         <span class="p">)</span>
+        <span class="c1"># template_path = os.path.join(</span>
+        <span class="c1">#     KIARA_RESOURCES_FOLDER,</span>
+        <span class="c1">#     &quot;templates&quot;,</span>
+        <span class="c1">#     &quot;render&quot;,</span>
+        <span class="c1">#     &quot;pipeline&quot;,</span>
+        <span class="c1">#     &quot;workflow_tutorial&quot;,</span>
+        <span class="c1">#     &quot;jupyter_notebook.ipynb.j2&quot;,</span>
+        <span class="c1"># )</span>
     <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">template</span><span class="p">):</span>
         <span class="n">template_path</span> <span class="o">=</span> <span class="n">template</span>
     <span class="k">else</span><span class="p">:</span>

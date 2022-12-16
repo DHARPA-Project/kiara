@@ -7,7 +7,6 @@
 
 import mmh3
 import os
-import sys
 import typing
 import uuid
 from appdirs import AppDirs
@@ -15,15 +14,18 @@ from enum import Enum
 
 kiara_app_dirs = AppDirs("kiara", "DHARPA")
 
-if not hasattr(sys, "frozen"):
-    KIARA_MODULE_BASE_FOLDER = os.path.dirname(__file__)
-    """Marker to indicate the base folder for the `kiara` module."""
-else:
-    KIARA_MODULE_BASE_FOLDER = os.path.join(sys._MEIPASS, "kiara")  # type: ignore
-    """Marker to indicate the base folder for the `kiara` module."""
+# if getattr(sys, 'oxidized', False):
+#     KIARA_MODULE_BASE_FOLDER = "xxx"
+#     raise NotImplementedError()
+# elif not hasattr(sys, "_MEIPASS"):
+#     KIARA_MODULE_BASE_FOLDER = os.path.dirname(__file__)
+#     """Marker to indicate the base folder for the `kiara` module."""
+# else:
+#     KIARA_MODULE_BASE_FOLDER = os.path.join(sys._MEIPASS, "kiara")  # type: ignore
+#     """Marker to indicate the base folder for the `kiara` module."""
 
-KIARA_RESOURCES_FOLDER = os.path.join(KIARA_MODULE_BASE_FOLDER, "resources")
-"""Default resources folder for this package."""
+# KIARA_RESOURCES_FOLDER = os.path.join(KIARA_MODULE_BASE_FOLDER, "resources")
+# """Default resources folder for this package."""
 
 KIARA_CONFIG_FILE_NAME = "kiara.config"
 KIARA_DEV_CONFIG_FILE_NAME = "dev.config"
@@ -34,17 +36,7 @@ KIARA_DEV_CONFIG_FILE = os.path.join(
     kiara_app_dirs.user_config_dir, KIARA_DEV_CONFIG_FILE_NAME
 )
 KIARA_MAIN_CONTEXTS_PATH = os.path.join(kiara_app_dirs.user_config_dir, "contexts")
-
-# KIARA_CONTEXTS_FOLDER = os.path.join(kiara_app_dirs.user_data_dir, "contexts")
-# KIARA_STORES_FOLDER = os.path.join(kiara_app_dirs.user_data_dir, "stores")
-
-# KIARA_DB_FILE = os.path.join(kiara_app_dirs.user_data_dir, "kiara.db")
-KIARA_DB_MIGRATIONS_CONFIG = os.path.join(
-    KIARA_RESOURCES_FOLDER, "database", "alembic.ini"
-)
-KIARA_DB_MIGRATIONS_FOLDER = os.path.join(KIARA_RESOURCES_FOLDER, "database", "kiara")
-
-USER_PIPELINES_FOLDER = os.path.join(kiara_app_dirs.user_config_dir, "pipelines")
+# USER_PIPELINES_FOLDER = os.path.join(kiara_app_dirs.user_config_dir, "pipelines")
 
 
 MODULE_TYPE_KEY = "module_type"

@@ -6,14 +6,13 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Pipeline-related subcommands for the cli."""
-
+import importlib.resources
 import os.path
 import rich_click as click
 import sys
 from typing import Tuple
 
 from kiara.context import Kiara
-from kiara.defaults import KIARA_RESOURCES_FOLDER
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.render.pipeline import JinjaPipelineRenderer
 from kiara.utils.cli import dict_from_cli_args, terminal_print
@@ -72,14 +71,24 @@ def from_template(ctx, template: str, inputs: Tuple[str]):
     kiara: Kiara = ctx.obj["kiara"]
 
     if template == "notebook":
-        template_path = os.path.join(
-            KIARA_RESOURCES_FOLDER,
-            "templates",
-            "render",
-            "pipeline",
-            "workflow_tutorial",
-            "jupyter_notebook.ipynb.j2",
+        template_path = importlib.resources.read_text(
+            "kiara",
+            os.path.join(
+                "templates",
+                "render",
+                "pipeline",
+                "workflow_tutorial",
+                "jupyter_notebook.ipynb.j2",
+            ),
         )
+        # template_path = os.path.join(
+        #     KIARA_RESOURCES_FOLDER,
+        #     "templates",
+        #     "render",
+        #     "pipeline",
+        #     "workflow_tutorial",
+        #     "jupyter_notebook.ipynb.j2",
+        # )
     elif os.path.isfile(template):
         template_path = template
     else:

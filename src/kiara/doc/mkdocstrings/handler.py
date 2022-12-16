@@ -4,14 +4,13 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import os
 import typing
 from mkdocstrings.handlers.base import BaseHandler
 
 __all__ = ["get_handler"]  # noqa: WPS410
 
 
-from kiara.defaults import KIARA_RESOURCES_FOLDER
+# from kiara.defaults import KIARA_RESOURCES_FOLDER
 from kiara.doc.mkdocstrings.collector import KiaraCollector
 from kiara.doc.mkdocstrings.renderer import KiaraInfoRenderer
 
@@ -76,11 +75,12 @@ def get_handler(
     if custom_templates is not None:
         raise Exception("Custom templates are not supported for the kiara renderer.")
 
-    custom_templates = os.path.join(
-        KIARA_RESOURCES_FOLDER, "templates", "info_templates"
-    )
+    # custom_templates = os.path.join(
+    #     KIARA_RESOURCES_FOLDER, "templates", "info_templates"
+    # )
 
     return KiaraHandler(
         collector=KiaraCollector(),
-        renderer=KiaraInfoRenderer("kiara", theme, custom_templates),
+        # renderer=KiaraInfoRenderer("kiara", theme, custom_templates),
+        renderer=KiaraInfoRenderer("kiara", theme),
     )

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import copy
-import dpath.util
+import dpath
 from typing import Any, Dict, Mapping
 
 
@@ -11,6 +11,6 @@ def merge_dicts(*dicts: Mapping[str, Any]) -> Dict[str, Any]:
 
     current: Dict[str, Any] = {}
     for d in dicts:
-        dpath.util.merge(current, copy.deepcopy(d))
+        dpath.merge(current, dict(copy.deepcopy(d)))
 
     return current

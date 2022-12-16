@@ -5,10 +5,12 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import mkdocs_gen_files
 import os
+from jinja2 import PackageLoader
 from typing import Mapping
 
 from kiara.context import KiaraContextInfo
-from kiara.defaults import KIARA_RESOURCES_FOLDER
+
+# from kiara.defaults import KIARA_RESOURCES_FOLDER
 from kiara.interfaces.python_api.models.info import ItemInfo
 
 _jinja_env = None
@@ -18,14 +20,20 @@ def get_jina_env():
 
     global _jinja_env
     if _jinja_env is None:
-        from jinja2 import Environment, FileSystemLoader
+        from jinja2 import Environment
 
-        _jinja_env = Environment(
-            loader=FileSystemLoader(
-                os.path.join(KIARA_RESOURCES_FOLDER, "templates", "doc_gen"),
-                encoding="utf8",
-            )
+        _loader = PackageLoader(
+            pacckage_name="kiara",
+            package_path=os.path.join("resources", "templates", "doc_gen"),
+            encoding="utf8",
         )
+        _jinja_env = Environment(loader=_loader)
+        # _jinja_env = Environment(
+        #     loader=FileSystemLoader(
+        #         os.path.join(KIARA_RESOURCES_FOLDER, "templates", "doc_gen"),
+        #         encoding="utf8",
+        #     )
+        # )
     return _jinja_env
 
 

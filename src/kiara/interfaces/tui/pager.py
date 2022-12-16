@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-import os
 import structlog
 from textual import events
 from textual.app import App, ComposeResult
 from textual.widgets import Footer, Header
 from typing import Any, Mapping, Union
 
-from kiara.defaults import KIARA_RESOURCES_FOLDER
 from kiara.interfaces import get_console
 from kiara.interfaces.python_api import KiaraAPI
 from kiara.interfaces.tui.widgets.pager import DataViewControl, DataViewPane
@@ -19,7 +17,14 @@ RESERVED_KEYS = ("q", "r")
 
 class PagerApp(App):
 
-    CSS_PATH = os.path.join(KIARA_RESOURCES_FOLDER, "tui", "pager_app.css")
+    CSS = """
+DataViewPane {
+}
+DataViewControl {
+    dock: bottom;
+    padding: 1 0;
+}
+"""
     BINDINGS = [("q", "quit", "Quit")]
 
     def __init__(

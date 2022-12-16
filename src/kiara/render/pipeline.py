@@ -11,9 +11,8 @@ from functools import partial
 from jinja2 import BaseLoader, Environment, FileSystemLoader
 from pathlib import Path
 from pydantic import Field
-from typing import TYPE_CHECKING, Any, Dict, Generic, Mapping, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Generic, Mapping, Type, TypeVar, Union
 
-from kiara.defaults import KIARA_RESOURCES_FOLDER
 from kiara.models import KiaraModel
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.utils import log_message
@@ -21,7 +20,6 @@ from kiara.utils.values import extract_raw_value
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
-    from kiara.modules.included_core_modules.pipeline import PipelineModule
 
 
 class KiaraRendererConfig(KiaraModel):
@@ -112,44 +110,44 @@ class JinjaPipelineRenderer(KiaraRenderer[Pipeline, JinjaPipelineRenderConfig]):
         rendered = _template.render(pipeline=object, config=self.config)
         return rendered
 
-    def _augment_inputs(self, **inputs: Any) -> Mapping[str, Any]:
-
-        # pipeline_input = inputs.get("inputs", None)
-        module = inputs.get("module")
-        module_config = inputs.get("module_config", None)
-
-        module_obj: "PipelineModule" = self._kiara.create_module(  # type: ignore
-            module_type=module, module_config=module_config  # type: ignore
-        )
-
-        if not module_obj.is_pipeline():
-            raise Exception("Only pipeline modules supported (for now).")
-
-        step_inputs: Dict[str, Dict[str, Any]] = {}
-        # for k, v in pipeline_input.items():
-        #     pi = module_obj.structure.pipeline_inputs.get(k)
-        #     assert pi
-        #     if len(pi.connected_inputs) != 1:
-        #         raise NotImplementedError()
-        #
-        #     ci = pi.connected_inputs[0]
-        #     if isinstance(v, str):
-        #         v = f'"{v}"'
-        #     step_inputs.setdefault(ci.step_id, {})[ci.value_name] = v
-
-        result = {"structure": module_obj.config.structure, "input_values": step_inputs}
-        if "template" in inputs.keys():
-            template = inputs["template"]
-        else:
-            template = "notebook"
-
-        if template in ["notebook", "python-script"]:
-            template = os.path.join(
-                KIARA_RESOURCES_FOLDER, "templates", f"{template}.j2"
-            )
-
-        result["template"] = template
-        return result
+    # def _augment_inputs(self, **inputs: Any) -> Mapping[str, Any]:
+    #
+    #     # pipeline_input = inputs.get("inputs", None)
+    #     module = inputs.get("module")
+    #     module_config = inputs.get("module_config", None)
+    #
+    #     module_obj: "PipelineModule" = self._kiara.create_module(  # type: ignore
+    #         module_type=module, module_config=module_config  # type: ignore
+    #     )
+    #
+    #     if not module_obj.is_pipeline():
+    #         raise Exception("Only pipeline modules supported (for now).")
+    #
+    #     step_inputs: Dict[str, Dict[str, Any]] = {}
+    #     # for k, v in pipeline_input.items():
+    #     #     pi = module_obj.structure.pipeline_inputs.get(k)
+    #     #     assert pi
+    #     #     if len(pi.connected_inputs) != 1:
+    #     #         raise NotImplementedError()
+    #     #
+    #     #     ci = pi.connected_inputs[0]
+    #     #     if isinstance(v, str):
+    #     #         v = f'"{v}"'
+    #     #     step_inputs.setdefault(ci.step_id, {})[ci.value_name] = v
+    #
+    #     result = {"structure": module_obj.config.structure, "input_values": step_inputs}
+    #     if "template" in inputs.keys():
+    #         template = inputs["template"]
+    #     else:
+    #         template = "notebook"
+    #
+    #     if template in ["notebook", "python-script"]:
+    #         template = os.path.join(
+    #             KIARA_RESOURCES_FOLDER, "templates", f"{template}.j2"
+    #         )
+    #
+    #     result["template"] = template
+    #     return result
 
     def _post_process(self, rendered: Any) -> Any:
 

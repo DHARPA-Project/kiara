@@ -368,7 +368,7 @@ class Pipeline(object):
 
         if sync_to_step_inputs:
             changed = self.sync_pipeline_inputs(notify_listeners=False)
-            dpath.util.merge(changed_results, changed)  # type: ignore
+            dpath.merge(changed_results, changed)  # type: ignore
 
         if notify_listeners:
             event = PipelineEvent.create_event(pipeline=self, changed=changed_results)
@@ -398,7 +398,7 @@ class Pipeline(object):
         for step_id in values_to_sync.keys():
             values = values_to_sync[step_id]
             step_changed = self._set_step_inputs(step_id=step_id, inputs=values)
-            dpath.util.merge(results, step_changed)  # type: ignore
+            dpath.merge(results, step_changed)  # type: ignore
 
         if notify_listeners:
             event = PipelineEvent.create_event(pipeline=self, changed=results)
@@ -442,7 +442,7 @@ class Pipeline(object):
             step_results = self.set_step_outputs(
                 step_id=step_id, outputs=outputs, notify_listeners=False
             )
-            dpath.util.merge(results, step_results)  # type: ignore
+            dpath.merge(results, step_results)  # type: ignore
 
         if notify_listeners:
             event = PipelineEvent.create_event(pipeline=self, changed=results)
@@ -487,11 +487,11 @@ class Pipeline(object):
             changed_step_fields = self._set_step_inputs(
                 step_id=step_id, inputs=step_inputs
             )
-            dpath.util.merge(result, changed_step_fields)  # type: ignore
+            dpath.merge(result, changed_step_fields)  # type: ignore
 
         if pipeline_outputs:
             changed_pipeline_outputs = self._set_pipeline_outputs(**pipeline_outputs)
-            dpath.util.merge(  # type: ignore
+            dpath.merge(  # type: ignore
                 result, {"__pipeline__": {"outputs": changed_pipeline_outputs}}
             )
 

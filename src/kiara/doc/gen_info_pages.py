@@ -23,7 +23,7 @@ def get_jina_env():
         from jinja2 import Environment
 
         _loader = PackageLoader(
-            pacckage_name="kiara",
+            package_name="kiara",
             package_path=os.path.join("resources", "templates", "doc_gen"),
             encoding="utf8",
         )

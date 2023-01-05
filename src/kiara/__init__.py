@@ -153,7 +153,7 @@ def get_version() -> str:
                 __version__ = "unknown"
 
         except (Exception):
-            pass
+            __version__ = "unknown"
 
         if __version__ is None:
             __version__ = "unknown"

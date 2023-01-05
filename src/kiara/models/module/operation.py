@@ -207,7 +207,7 @@ class PipelineOperationConfig(OperationConfig):
 
     def __repr__(self):
 
-        return f"{self.__class__.__name__}(pipeline_name={self.pipeline_name} required_modules={list(self.required_module_types)} instance_id={self.instance_id}, category={self.model_type_d}, fields=[{', '.join(self.__fields__.keys())}])"
+        return f"{self.__class__.__name__}(pipeline_name={self.pipeline_name} required_modules={list(self.required_module_types)} instance_id={self.instance_id} fields=[{', '.join(self.__fields__.keys())}])"
 
 
 class Operation(Manifest):

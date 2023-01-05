@@ -451,3 +451,11 @@ class OperationRegistry(object):
         if self._operations_by_type is None:
             self.operations  # noqa
         return self._operations_by_type  # type: ignore
+
+    def find_operation_id(self, manifest: Manifest) -> Union[str, None]:
+
+        for op in self.operations.values():
+            if manifest.manifest_cid == op.manifest_cid:
+                return op.operation_id
+
+        return None

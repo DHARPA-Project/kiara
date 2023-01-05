@@ -6,6 +6,7 @@
 
 import orjson
 import os
+from boltons.strutils import slugify
 from enum import Enum
 from pydantic import Extra, Field, PrivateAttr, root_validator, validator
 from rich import box
@@ -14,7 +15,6 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
-from slugify import slugify
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
@@ -77,6 +77,7 @@ class PipelineStep(Manifest):
         if not isinstance(step, PipelineStep):
 
             module_type = step.get("module_type", None)
+
             if not module_type:
                 raise ValueError("Can't create step, no 'module_type' specified.")
 
@@ -123,7 +124,7 @@ class PipelineStep(Manifest):
                     raise ValueError("Can't create step, no 'step_id' specified.")
                 else:
                     step_id = find_free_id(
-                        slugify(manifest.module_type, separator="_"),
+                        slugify(manifest.module_type, delim="_"),
                         current_ids=taken_step_ids,
                     )
 
@@ -206,6 +207,7 @@ class PipelineStep(Manifest):
     manifest_src: Manifest = Field(
         description="The original manfifest provided by the user."
     )
+
     # required: bool = Field(
     #     description="Whether this step is required within the workflow.\n\nIn some cases, when none of the pipeline outputs have a required input that connects to a step, then it is not necessary for this step to have been executed, even if it is placed before a step in the execution hierarchy. This also means that the pipeline inputs that are connected to this step might not be required.",
     #     default=True,
@@ -232,7 +234,7 @@ class PipelineStep(Manifest):
         if "module_type" not in values:
             raise ValueError("No 'module_type' specified.")
         if "step_id" not in values or not values["step_id"]:
-            values["step_id"] = slugify(values["module_type"], separator="_")
+            values["step_id"] = slugify(values["module_type"], delim="_")
 
         return values
 

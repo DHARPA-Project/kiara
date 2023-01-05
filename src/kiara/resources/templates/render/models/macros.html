@@ -22,3 +22,29 @@
     </tbody>
 </table>
 {% endmacro %}
+
+
+{% macro field_infos(field_infos) %}
+<table>
+    <thead>
+    <tr>
+        <th>field name</th>
+        <th>type</th>
+        <th>description</th>
+        <th>required</th>
+        <th>default</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+{% for field_name, field_info in field_infos.items() %}
+<td>{{ field_name }}</td>
+<td>{{ field_info.field_schema.type }}</td>
+<td>{{ field_info.field_schema.doc.description }}</td>
+<td>{{ field_info.value_required| render_bool }}</td>
+<td>{{ field_info.field_schema.default | render_default }}</td>
+    </tr>
+{% endfor %}
+    </tbody>
+</table>
+{% endmacro %}

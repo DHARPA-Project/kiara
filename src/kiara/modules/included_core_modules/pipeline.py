@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
+import uuid
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
-#  Copyright (c) 2021, University of Luxembourg / DHARPA project
-#  Copyright (c) 2021, Markus Binsteiner
-#
-#  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
-from typing import TYPE_CHECKING, Any, Mapping, Union
-
+from kiara.exceptions import KiaraProcessingException
 from kiara.models.module.jobs import JobLog
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.module.pipeline.controller import SinglePipelineBatchController
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.models.values.value import ValueMap, ValueMapWritable
 from kiara.modules import KIARA_CONFIG, KiaraModule, ValueMapSchema
+
+#  Copyright (c) 2021, University of Luxembourg / DHARPA project
+#  Copyright (c) 2021, Markus Binsteiner
+#
+#  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
+
 
 if TYPE_CHECKING:
     from kiara.models.module.operation import Operation
@@ -77,7 +79,26 @@ class PipelineModule(KiaraModule):
         )
 
         pipeline.set_pipeline_inputs(inputs=inputs)
-        controller.process_pipeline()
+        step_details = controller.process_pipeline()
+
+        errors: Dict[str, Union[Exception, uuid.UUID]] = {}
+        for step_id, details in step_details.items():
+            if isinstance(details, Exception):
+                errors[step_id] = details
+            else:
+                job = self._job_registry.get_job(details)
+                if job.error:
+                    if job._exception:
+                        errors[step_id] = job._exception
+                    else:
+                        errors[step_id] = Exception(job.error)
+
+        if errors:
+            msg = "Error processing pipeline:"
+            for f, e in errors.items():
+                msg = f"{msg}\n  - {f}: {e}"
+
+            raise KiaraProcessingException(f"Errors while processing pipeline: {msg}")
 
         # TODO: resolve values first?
         outputs.set_values(**pipeline.get_current_pipeline_outputs())

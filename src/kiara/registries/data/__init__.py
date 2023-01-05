@@ -944,7 +944,9 @@ class DataRegistry(object):
 
         return parsed
 
-    def load_values(self, values: Mapping[str, Union[uuid.UUID, None]]) -> ValueMap:
+    def load_values(
+        self, values: Mapping[str, Union[uuid.UUID, None, str, ValueLink]]
+    ) -> ValueMap:
 
         value_items = {}
         schemas = {}

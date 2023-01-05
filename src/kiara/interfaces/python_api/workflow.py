@@ -2,8 +2,8 @@
 import pytz
 import structlog
 import uuid
+from boltons.strutils import slugify
 from datetime import datetime
-from slugify import slugify
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Set, Tuple, Union
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
@@ -11,7 +11,7 @@ from kiara.exceptions import NoSuchWorkflowException
 from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.events.pipeline import ChangedValue, PipelineEvent
-from kiara.models.module.jobs import ExecutionContext, JobConfig
+from kiara.models.module.jobs import ActiveJob, ExecutionContext, JobConfig, JobStatus
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.pipeline import (
     PipelineConfig,
@@ -61,7 +61,9 @@ class WorkflowPipelineController(SinglePipelineController):
 
         self._pipeline_details = None
 
-    def process_pipeline(self) -> Mapping[uuid.UUID, uuid.UUID]:
+    def process_pipeline(
+        self,
+    ) -> Tuple[Mapping[uuid.UUID, uuid.UUID], Mapping[str, ActiveJob]]:
 
         log = logger.bind(pipeline_id=self.pipeline.pipeline_id)
         if self._is_running:
@@ -75,6 +77,8 @@ class WorkflowPipelineController(SinglePipelineController):
         self._is_running = True
 
         result: Dict[uuid.UUID, uuid.UUID] = {}
+        errors: Dict[str, ActiveJob] = {}
+
         try:
             for idx, stage in enumerate(
                 self.pipeline.structure.processing_stages, start=1
@@ -101,12 +105,17 @@ class WorkflowPipelineController(SinglePipelineController):
                         # TODO: cancel running jobs?
                         log_exception(e)
                         log.error(
-                            "error.processing.pipeline",
+                            "error.processing.workflow_pipeline",
                             step_id=step_id,
                             error=e,
                         )
                         stage_failed = True
 
+                self._job_registry.wait_for(*job_ids.values())
+                for step_id, job_id in job_ids.items():
+                    j = self._job_registry.get_job(job_id)
+                    if j.status != JobStatus.SUCCESS:
+                        errors[step_id] = j
                 output_job_map = self.set_processing_results(job_ids=job_ids)
                 result.update(output_job_map)
                 if not stage_failed:
@@ -126,7 +135,7 @@ class WorkflowPipelineController(SinglePipelineController):
             self._is_running = False
 
         log.debug("execute_finished.pipeline")
-        return result
+        return result, errors
 
 
 class WorkflowStatus(KiaraModel):
@@ -474,6 +483,20 @@ class Workflow(object):
         self._current_workflow_inputs_schema = temp
         return self._current_workflow_inputs_schema
 
+    def get_current_inputs_schema_for_step(
+        self, step_id: str
+    ) -> Mapping[str, ValueSchema]:
+        return self.pipeline.structure.get_pipeline_inputs_schema_for_step(
+            step_id=step_id
+        )
+
+    def get_current_outputs_schema_for_step(
+        self, step_id: str
+    ) -> Mapping[str, ValueSchema]:
+        return self.pipeline.structure.get_pipeline_outputs_schema_for_step(
+            step_id=step_id
+        )
+
     @property
     def current_input_names(self) -> List[str]:
         return sorted(self.current_inputs_schema.keys())
@@ -641,12 +664,14 @@ class Workflow(object):
         self._pipeline_info = None
         return changed
 
-    def process_steps(self, *step_ids: str):
+    def process_steps(
+        self, *step_ids: str
+    ) -> Tuple[Mapping[uuid.UUID, uuid.UUID], Mapping[str, ActiveJob]]:
 
         self.pipeline  # noqa
 
         if not step_ids:
-            output_job_map = self._pipeline_controller.process_pipeline()
+            output_job_map, errors = self._pipeline_controller.process_pipeline()
         else:
             job_ids = {}
             for step_id in step_ids:
@@ -654,6 +679,13 @@ class Workflow(object):
                     step_id=step_id, wait=True
                 )
                 job_ids[step_id] = job_id
+
+            self._pipeline_controller._job_registry.wait_for(*job_ids.values())
+            errors = {}
+            for step_id, job_id in job_ids.items():
+                j = self._pipeline_controller._job_registry.get_job(job_id)
+                if j.status != JobStatus.SUCCESS:
+                    errors[step_id] = j
             output_job_map = self._pipeline_controller.set_processing_results(
                 job_ids=job_ids
             )
@@ -665,6 +697,8 @@ class Workflow(object):
         self._pipeline_info = None
         self._current_info = None
 
+        return output_job_map, errors
+
     def _invalidate_pipeline(self):
 
         self._pipeline_controller.pipeline = None
@@ -672,6 +706,10 @@ class Workflow(object):
         self._pipeline_info = None
         self._current_info = None
         self._current_state = None
+        self._current_workflow_inputs_schema = None
+        self._current_workflow_outputs_schema = None
+        self._current_pipeline_inputs = None
+        self._current_pipeline_outputs = None
 
     def set_input(self, field_name: str, value: Any):
 
@@ -807,6 +845,20 @@ class Workflow(object):
         self.workflow_metadata.output_aliases[output_field] = alias
         self._metadata_is_synced = False
 
+    # def remove_step(self, step_id: str):
+    #
+    #     if step_id not in self._steps.keys():
+    #         raise Exception(f"Can't remove step, no step with id '{step_id}'.")
+    #
+    #     del_step = self._steps[step_id]
+    #     for step_id, step in self._steps.items():
+    #         for input_field, links in step.input_links.items():
+    #             for link in links:
+    #                 if link.step_id == del_step.step_id:
+    #                     links.remove(link)
+    #
+    #     self._invalidate_pipeline()
+
     def add_step(
         self,
         operation: str,
@@ -830,7 +882,7 @@ class Workflow(object):
 
         if step_id is None:
             step_id = find_free_id(
-                slugify(operation, separator="_"), current_ids=self._steps.keys()
+                slugify(operation, delim="_"), current_ids=self._steps.keys()
             )
 
         if "." in step_id:

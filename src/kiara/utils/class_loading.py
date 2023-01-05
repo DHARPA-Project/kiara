@@ -96,8 +96,8 @@ def find_subclasses_under(
         a list of all subclasses
     """
 
-    if hasattr(sys, "frozen"):
-        raise NotImplementedError("Pyinstaller bundling not supported yet.")
+    # if hasattr(sys, "frozen"):
+    #     raise NotImplementedError("Pyinstaller bundling not supported yet.")
 
     try:
         if isinstance(python_module, str):
@@ -544,8 +544,8 @@ def find_pipeline_base_path_for_module(
     module: Union[str, ModuleType]
 ) -> Union[str, None]:
 
-    if hasattr(sys, "frozen"):
-        raise NotImplementedError("Pyinstaller bundling not supported yet.")
+    # if hasattr(sys, "frozen"):
+    #     raise NotImplementedError("Pyinstaller bundling not supported yet.")
 
     if isinstance(module, str):
         module = importlib.import_module(module)

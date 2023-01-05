@@ -10,7 +10,7 @@ from functools import lru_cache
 from pydantic import Field, PrivateAttr, root_validator
 from rich.console import RenderableType
 from rich.tree import Tree
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set, Union
+from typing import Any, Dict, Iterable, List, Mapping, Set, Union
 
 from kiara.models import KiaraModel
 from kiara.models.module.pipeline import PipelineConfig, PipelineStep
@@ -23,9 +23,6 @@ from kiara.models.module.pipeline.value_refs import (
     generate_step_alias,
 )
 from kiara.models.values.value_schema import ValueSchema
-
-if TYPE_CHECKING:
-    pass
 
 
 def generate_pipeline_endpoint_name(step_id: str, value_name: str):
@@ -368,6 +365,29 @@ class PipelineStructure(KiaraModel):
             output_name: w_out.value_schema
             for output_name, w_out in self.pipeline_output_refs.items()
         }
+
+    def get_pipeline_inputs_schema_for_step(
+        self, step_id: str
+    ) -> Mapping[str, ValueSchema]:
+
+        result = {}
+        for field, ref in self.pipeline_input_refs.items():
+            for con in ref.connected_inputs:
+                if con.step_id == step_id:
+                    result[field] = ref.value_schema
+                    break
+        return result
+
+    def get_pipeline_outputs_schema_for_step(
+        self, step_id: str
+    ) -> Mapping[str, ValueSchema]:
+
+        result = {}
+        for field, ref in self.pipeline_output_refs.items():
+            if ref.connected_output.step_id == step_id:
+                result[field] = ref.value_schema
+
+        return result
 
     def get_processing_stage(self, step_id: str) -> int:
         """Return the processing stage for the specified step_id.

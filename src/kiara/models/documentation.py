@@ -170,7 +170,6 @@ class DocumentationMetadataModel(KiaraModel):
 
     @classmethod
     def from_class_doc(cls, item_cls: Type):
-
         doc = item_cls.__doc__
 
         if not doc:

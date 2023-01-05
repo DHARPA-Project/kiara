@@ -7,10 +7,10 @@
     </tr>
     <tr>
         <td>Inputs</td>
-        <td>{{ model_macros.values_schema(values_schema=instance.inputs_schema) }}</td>
+        <td>{{ model_macros.field_infos(field_infos=instance.input_fields) }}</td>
     </tr>
     <tr>
         <td>Outputs</td>
-        <td>{{ model_macros.values_schema(values_schema=instance.outputs_schema) }}</td>
+        <td>{{ model_macros.field_infos(field_infos=instance.output_fields) }}</td>
     </tr>
 </table>

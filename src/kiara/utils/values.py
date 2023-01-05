@@ -9,12 +9,40 @@ import copy
 import uuid
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
-from kiara.defaults import DEFAULT_NO_DESC_VALUE, INVALID_VALUE_NAMES, SpecialValue
+from kiara.defaults import (
+    DEFAULT_NO_DESC_VALUE,
+    INVALID_VALUE_NAMES,
+    NONE_VALUE_ID,
+    SpecialValue,
+)
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import check_valid_field_names
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+    from kiara.interfaces.python_api import KiaraAPI
+    from kiara.models.values.value import ValueMapReadOnly
+    from kiara.registries.data import ValueLink
+
+
+def construct_valuemap(
+    kiara_api: "KiaraAPI",
+    values: Mapping[str, Union[uuid.UUID, None, str, "ValueLink"]],
+) -> "ValueMapReadOnly":
+
+    value_items = {}
+    schemas = {}
+    for field_name, value_id in values.items():
+        if value_id is None:
+            value_id = NONE_VALUE_ID
+
+        value = kiara_api.get_value(value=value_id)
+        value_items[field_name] = value
+        schemas[field_name] = value.value_schema
+
+    from kiara.models.values.value import ValueMapReadOnly
+
+    return ValueMapReadOnly(value_items=value_items, values_schema=schemas)
 
 
 def create_schema_dict(

@@ -25,7 +25,7 @@ from typing import (
     Union,
 )
 
-from kiara.exceptions import KiaraModuleConfigException
+from kiara.exceptions import KiaraModuleConfigException, KiaraProcessingException
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.jobs import JobLog
 from kiara.models.values.value_schema import ValueSchema
@@ -463,9 +463,12 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
 
         try:
             self.process(**process_inputs)  # type: ignore
+        except KiaraProcessingException as kpe:
+            log_exception(kpe)
+            raise kpe
         except Exception as e:
             log_exception(e)
-            raise e
+            raise KiaraProcessingException(e, module=self, inputs=inputs)
 
     def __eq__(self, other):
         if self.__class__ != other.__class__:

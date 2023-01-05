@@ -1,17 +1,22 @@
 # -*- coding: utf-8 -*-
+import inspect
 import json
 
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import structlog
+import textwrap
 import uuid
+from functools import cached_property
 from pathlib import Path
 from ruamel.yaml import YAML
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
 from kiara.exceptions import DataTypeUnknownException, NoSuchWorkflowException
 from kiara.interfaces.python_api.models.info import (
+    DataTypeClassesInfo,
+    DataTypeClassInfo,
     ModuleTypeInfo,
     ModuleTypesInfo,
     OperationGroupInfo,
@@ -34,6 +39,9 @@ from kiara.models.workflow import WorkflowGroupInfo, WorkflowInfo, WorkflowMetad
 from kiara.operations import OperationType
 from kiara.operations.included_core_operations.filter import FilterOperationType
 from kiara.operations.included_core_operations.pipeline import PipelineOperationDetails
+from kiara.operations.included_core_operations.pretty_print import (
+    PrettyPrintOperationType,
+)
 from kiara.operations.included_core_operations.render_value import (
     RenderValueOperationType,
 )
@@ -94,6 +102,26 @@ class KiaraAPI(object):
         self._kiara: Kiara = kiara
         self._workflow_cache: Dict[uuid.UUID, Workflow] = {}
 
+    @cached_property
+    def doc(self) -> Dict[str, str]:
+        """Get the documentation for this API."""
+
+        result = {}
+        for method_name in dir(self):
+            if method_name.startswith("_"):
+                continue
+
+            method = getattr(self.__class__, method_name)
+            doc = inspect.getdoc(method)
+            if doc is None:
+                doc = "-- n/a --"
+            else:
+                doc = textwrap.dedent(doc)
+
+            result[method_name] = doc
+
+        return result
+
     @property
     def context(self) -> "Kiara":
         """Return the kiara context.
@@ -107,6 +135,81 @@ class KiaraAPI(object):
         return self.context.runtime_config
 
     # ==================================================================================================================
+    # methods for data_types
+
+    @property
+    def data_type_names(self) -> List[str]:
+        """Get a list of all registered data types."""
+
+        return self.context.type_registry.data_type_names
+
+    def is_internal_data_type(self, data_type_name: str) -> bool:
+        """Checks if the data type is repdominantly used internally by kiara, or whether it should be exposed to the user."""
+
+        return self.context.type_registry.is_internal_type(
+            data_type_name=data_type_name
+        )
+
+    def retrieve_data_types_info(
+        self, filter: Union[str, Iterable[str], None]
+    ) -> DataTypeClassesInfo:
+        """Retrieve information about all data types.
+
+        A data type is a Python class that inherits from [DataType[kiara.data_types.DataType], and it wraps a specific
+        Python class that holds the actual data and provides metadata and convenience methods for managing the data internally. Data types are not directly used by users, but they are exposed in the input/output schemas of moudles and other data-related features.
+
+        Arguments:
+            filter: an optional string or (list of strings) the returned datatype ids have to match (all filters in the case of a list)
+
+        Returns:
+            an object containing all information about all data types
+        """
+
+        if filter:
+            title = f"Filtered data_types: {filter}"
+            data_type_names: Iterable[str] = []
+
+            for m in self._kiara.type_registry.data_type_names:
+                match = True
+
+                for f in filter:
+
+                    if f.lower() not in m.lower():
+                        match = False
+                        break
+
+                if match:
+                    data_type_names.append(m)  # type: ignore
+        else:
+            title = "All data types"
+            data_type_names = self._kiara.type_registry.data_type_names
+
+        data_types = {
+            d: self._kiara.type_registry.get_data_type_cls(d) for d in data_type_names
+        }
+        data_types_info = DataTypeClassesInfo.create_from_type_items(
+            kiara=self.context, group_title=title, **data_types
+        )
+
+        return data_types_info  # type: ignore
+
+    def retrieve_data_type_info(self, data_type_name: str) -> DataTypeClassInfo:
+        """Retrieve information about a specific data type.
+
+        Arguments:
+            data_type: the registered name of the data type
+
+        Returns:
+            an object containing all information about a data type
+        """
+
+        dt_cls = self.context.type_registry.get_data_type_cls(data_type_name)
+        info = DataTypeClassInfo.create_from_type_class(
+            kiara=self.context, type_cls=dt_cls
+        )
+        return info
+
+    # ==================================================================================================================
     # methods for module and operations info
     def retrieve_module_types_info(
         self, filter: Union[None, str, Iterable[str]] = None
@@ -118,7 +221,7 @@ class KiaraAPI(object):
          are instantiated modules (meaning: the module & some (optional) configuration).
 
         Arguments:
-            filter: a string (or list of string) the returned module names have to match (all filters in case of list)
+            filter: an optional string (or list of string) the returned module names have to match (all filters in case of list)
 
         Returns:
             a mapping object containing module names as keys, and information about the modules as values
@@ -275,12 +378,18 @@ class KiaraAPI(object):
         return op_info
 
     def list_operations(
-        self, *filters: str, include_internal: bool = False
+        self,
+        *filters: str,
+        input_types: Union[str, Iterable[str], None] = None,
+        output_types: Union[str, Iterable[str], None] = None,
+        include_internal: bool = False,
     ) -> Mapping[str, Operation]:
         """List all available values, optionally filter.
 
         Arguments:
             filters: the (optional) filter strings, an operation must match all of them to be included in the result
+            input_types: each operation must have at least one input that matches one of the specified types
+            output_types: each operation must have at least one output that matches one of the specified types
             include_internal: whether to include operations that are predominantly used internally in kiara.
 
         Returns:
@@ -294,6 +403,8 @@ class KiaraAPI(object):
             for op_id, op in operations.items():
                 match = True
                 for f in filters:
+                    if not f:
+                        continue
                     if f.lower() not in op_id.lower():
                         match = False
                         break
@@ -309,10 +420,48 @@ class KiaraAPI(object):
 
             operations = temp
 
+        if input_types:
+            if isinstance(input_types, str):
+                input_types = [input_types]
+            temp = {}
+            for op_id, op in operations.items():
+                for input_type in input_types:
+                    match = False
+                    for schema in op.inputs_schema.values():
+                        if schema.type == input_type:
+                            temp[op_id] = op
+                            match = True
+                            break
+                    if match:
+                        break
+
+            operations = temp
+
+        if output_types:
+            if isinstance(output_types, str):
+                output_types = [output_types]
+            temp = {}
+            for op_id, op in operations.items():
+                for output_type in output_types:
+                    match = False
+                    for schema in op.outputs_schema.values():
+                        if schema.type == output_type:
+                            temp[op_id] = op
+                            match = True
+                            break
+                    if match:
+                        break
+
+            operations = temp
+
         return operations
 
     def get_operations_info(
-        self, *filters, include_internal: bool = False
+        self,
+        *filters,
+        input_types: Union[str, Iterable[str], None] = None,
+        output_types: Union[str, Iterable[str], None] = None,
+        include_internal: bool = False,
     ) -> OperationGroupInfo:
         """Retrieve information about the matching operations.
 
@@ -327,6 +476,8 @@ class KiaraAPI(object):
         Arguments:
             filters: the (optional) filter strings, an operation must match all of them to be included in the result
             include_internal: whether to include operations that are predominantly used internally in kiara.
+            output_types: each operation must have at least one output that matches one of the specified types
+            include_internal: whether to include operations that are predominantly used internally in kiara.
 
         Returns:
             a wrapper object containing a dictionary of items with value_id as key, and [kiara.interfaces.python_api.models.info.OperationInfo] as value
@@ -336,7 +487,12 @@ class KiaraAPI(object):
         if filters:
             title = "Filtered operations"
 
-        operations = self.list_operations(*filters, include_internal=include_internal)
+        operations = self.list_operations(
+            *filters,
+            input_types=input_types,
+            output_types=output_types,
+            include_internal=include_internal,
+        )
 
         ops_info = OperationGroupInfo.create_from_operations(
             kiara=self.context, group_title=title, **operations
@@ -345,6 +501,30 @@ class KiaraAPI(object):
 
     # ==================================================================================================================
     # methods relating to values and data
+
+    def register_data(self, data: Any, data_type: Union[None, str] = None) -> Value:
+        """Register data with kiara.
+
+        This will create a new value instance from the data and return it. The data/value itself won't be stored
+        in a store, you have to use the 'store_value' function for that.
+
+        Arguments:
+            data: the data to register
+            data_type: (optional) the data type of the data. If not provided, kiara will try to infer the data type.
+
+        Returns:
+            a [kiara.models.values.value.Value] instance
+        """
+
+        if data_type is None:
+            raise NotImplementedError(
+                "Infering data types not implemented yet. Please provide one manually."
+            )
+
+        value = self.context.data_registry.register_data(
+            data=data, schema=data_type, reuse_existing=False
+        )
+        return value
 
     def get_value_ids(self, **matcher_params) -> List[uuid.UUID]:
         """List all available value ids for this kiara context.
@@ -541,7 +721,7 @@ class KiaraAPI(object):
         self,
         value: Union[str, uuid.UUID, ValueLink],
         aliases: Union[str, Iterable[str], None],
-    ):
+    ) -> StoreValueResult:
         """Store the specified value in the (default) value store.
 
         Arguments:
@@ -622,8 +802,23 @@ class KiaraAPI(object):
             kiara=self.context, type_cls=_op_type.__class__
         )
 
-    # ------------------------------------------------------------------------------------------------------------------
-    # pipeline-related methods
+    def find_operation_id(
+        self, module_type: str, module_config: Union[None, Mapping[str, Any]] = None
+    ) -> Union[None, str]:
+        """Try to find the registered operation id for the specified module type and configuration.
+
+        Arguments:
+            module_type: the module type
+            module_config: the module configuration
+
+        Returns:
+            the registered operation id, if found, or None
+        """
+
+        manifest = self.context.create_manifest(
+            module_or_operation=module_type, config=module_config
+        )
+        return self.context.operation_registry.find_operation_id(manifest=manifest)
 
     def assemble_filter_pipeline_config(
         self,
@@ -676,6 +871,7 @@ class KiaraAPI(object):
         data_type: str,
         target_format: Union[str, Iterable[str]] = "string",
         filters: Union[None, str, Iterable[str], Mapping[str, str]] = None,
+        use_pretty_print: bool = False,
     ) -> Operation:
         """Create a manifest describing a transformation that renders a value of the specified data type in the target format.
 
@@ -685,22 +881,31 @@ class KiaraAPI(object):
         Arguments:
             value: the value (or value id)
             target_format: the format into which to render the value
+            filters: a list of filters to apply to the value before rendering it
+            use_pretty_print: if True, use a 'pretty_print' operation instead of 'render_value'
 
         Returns:
             the manifest for the transformation
         """
 
-        render_op_type: RenderValueOperationType = self._kiara.operation_registry.get_operation_type(  # type: ignore
-            "render_value"
-        )  # type: ignore
-
         if data_type not in self.context.data_type_names:
             raise DataTypeUnknownException(data_type=data_type)
 
-        ops = render_op_type.get_render_operations_for_source_type(data_type)
+        if use_pretty_print:
+            pretty_print_op_type: PrettyPrintOperationType = (
+                self._kiara.operation_registry.get_operation_type("pretty_print")
+            )  # type: ignore
+            ops = pretty_print_op_type.get_target_types_for(data_type)
+        else:
+            render_op_type: RenderValueOperationType = self._kiara.operation_registry.get_operation_type(
+                # type: ignore
+                "render_value"
+            )  # type: ignore
+            ops = render_op_type.get_render_operations_for_source_type(data_type)
 
         if isinstance(target_format, str):
             target_format = [target_format]
+
         match = None
         for _target_type in target_format:
             if _target_type not in ops.keys():
@@ -879,6 +1084,7 @@ class KiaraAPI(object):
         filters: Union[None, Iterable[str], Mapping[str, str]] = None,
         render_config: Union[Mapping[str, str], None] = None,
         add_root_scenes: bool = True,
+        use_pretty_print: bool = False,
     ) -> RenderValueResult:
         """Render a value in the specified target format.
 
@@ -891,6 +1097,7 @@ class KiaraAPI(object):
             filters: an (optional) list of filters
             render_config: manifest specific render configuration
             add_root_scenes: add root scenes to the result
+            use_pretty_print: use 'pretty_print' operation instead of 'render_value'
 
         Returns:
             the rendered value data, and any related scenes, if applicable
@@ -902,17 +1109,36 @@ class KiaraAPI(object):
                 data_type=_value.data_type_name,
                 target_format=target_format,
                 filters=filters,
+                use_pretty_print=True,
             )
-        except DataTypeUnknownException as dtue:
-            log_message("data_type.unknown", data_type=dtue.data_type, error=dtue)
-            render_ops: RenderValueOperationType = self.context.operation_registry.get_operation_type("render_value")  # type: ignore
-            if not isinstance(target_format, str):
-                raise NotImplementedError(
-                    "Can't handle multiple target formats for 'render_value' yet."
+        except Exception as e:
+            log_message(
+                "create_render_pipeline.failure",
+                source_type=_value.data_type_name,
+                target_format=target_format,
+                error=e,
+            )
+
+            if use_pretty_print:
+                pretty_print_ops: PrettyPrintOperationType = self.context.operation_registry.get_operation_type("pretty_print")  # type: ignore
+                if not isinstance(target_format, str):
+                    raise NotImplementedError(
+                        "Can't handle multiple target formats for 'render_value' yet."
+                    )
+                render_operation = (
+                    pretty_print_ops.get_operation_for_render_combination(
+                        source_type="any", target_type=target_format
+                    )
                 )
-            render_operation = render_ops.get_render_operation(
-                source_type="any", target_type=target_format
-            )
+            else:
+                render_ops: RenderValueOperationType = self.context.operation_registry.get_operation_type("render_value")  # type: ignore
+                if not isinstance(target_format, str):
+                    raise NotImplementedError(
+                        "Can't handle multiple target formats for 'render_value' yet."
+                    )
+                render_operation = render_ops.get_render_operation(
+                    source_type="any", target_type=target_format
+                )
 
         if render_operation is None:
             raise Exception(
@@ -950,13 +1176,18 @@ class KiaraAPI(object):
             inputs={"value": _value, "render_config": render_config},
         )
 
-        render_result: Value = result["render_value_result"]
-        if render_result.data_type_name != "render_value_result":
-            raise Exception(
-                f"Invalid result type for render operation: {render_result.data_type_name}"
-            )
+        if use_pretty_print:
+            render_result: Value = result["rendered_value"]
+            value_render_data = render_result.data
+        else:
+            render_result = result["render_value_result"]
 
-        value_render_data: RenderValueResult = render_result.data  # type: ignore
+            if render_result.data_type_name != "render_value_result":
+                raise Exception(
+                    f"Invalid result type for render operation: {render_result.data_type_name}"
+                )
+
+            value_render_data: RenderValueResult = render_result.data  # type: ignore
 
         return value_render_data
 

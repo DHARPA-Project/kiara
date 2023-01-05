@@ -435,6 +435,55 @@ def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
     return table
 
 
+def create_dict_from_field_schemas(
+    fields: Mapping[str, "ValueSchema"],
+    _add_default: bool = True,
+    _add_required: bool = True,
+    _show_header: bool = False,
+    _constants: Union[Mapping[str, Any], None] = None,
+    _doc_to_string: bool = True,
+) -> Mapping[str, List[Any]]:
+
+    table: Dict[str, List[Any]] = {}
+    table["field_name"] = []
+    table["data_type"] = []
+    table["description"] = []
+
+    if _add_required:
+        table["required"] = []
+    if _add_default:
+        table["default"] = []
+
+    for field_name, schema in fields.items():
+
+        table["field_name"].append(field_name)
+        table["data_type"].append(schema.type)
+        if _doc_to_string:
+            table["description"].append(schema.doc.full_doc)
+        else:
+            table["description"].append(schema.doc)
+
+        if _add_required:
+            req = schema.is_required()
+            table["required"].append(req)
+
+        if _add_default:
+            if _constants and field_name in _constants.keys():
+                d = f"{_constants[field_name]} (constant)"
+            else:
+                if schema.default in [
+                    None,
+                    SpecialValue.NO_VALUE,
+                    SpecialValue.NOT_SET,
+                ]:
+                    d = "-- no default --"
+                else:
+                    d = str(schema.default)
+            table["default"].append(d)
+
+    return table
+
+
 def create_table_from_field_schemas(
     fields: Mapping[str, "ValueSchema"],
     _add_default: bool = True,

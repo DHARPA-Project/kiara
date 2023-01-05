@@ -14,8 +14,14 @@
       
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/utils/hashfs/__init__/">
       
+      
+        <link rel="prev" href="../../graphs/">
+      
+      
+        <link rel="next" href="../../hashing/">
+      
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.2">
     
     
       
@@ -23,11 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.975780f9.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.f56500e0.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.2505c338.min.css">
-        
       
       
 
@@ -62,7 +67,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
   
     
     
@@ -4631,10 +4636,9 @@
                 
                   
 
-  <a href="https://github.com/DHARPA-Project/kiara/edit/master/docs/src/kiara/utils/hashfs/__init__.py" title="Edit this page" class="md-content__button md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
-  </a>
+  
+  
+
 
 
   <h1>hashfs</h1>
@@ -5112,7 +5116,7 @@ read/write and everyone else to read and everyone to execute.</p></td>
 <span class="normal">422</span>
 <span class="normal">423</span>
 <span class="normal">424</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">HashFS</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Content addressable file manager.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Content addressable file manager.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        root (str): Directory path used as root of storage space.</span>
@@ -5148,7 +5152,7 @@ read/write and everyone else to read and everyone to execute.</p></td>
         <span class="bp">self</span><span class="o">.</span><span class="n">dmode</span> <span class="o">=</span> <span class="n">dmode</span>
 
     <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BinaryIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;HashAddress&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Store contents of `file` on disk using its content hash for the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store contents of `file` on disk using its content hash for the</span>
 <span class="sd">        address.</span>
 
 <span class="sd">        Args:</span>
@@ -5176,7 +5180,7 @@ read/write and everyone else to read and everyone to execute.</p></td>
         <span class="k">return</span> <span class="n">HashAddress</span><span class="p">(</span><span class="n">hash_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">filepath</span><span class="p">),</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">is_duplicate</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="s2">&quot;Stream&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Copy the contents of `stream` onto disk with an optional file</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Copy the contents of `stream` onto disk with an optional file</span>
 <span class="sd">        extension appended. The copy process uses a temporary file to store the</span>
 <span class="sd">        initial contents and then moves that file to it&#39;s final location.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -5195,7 +5199,7 @@ read/write and everyone else to read and everyone to execute.</p></td>
         <span class="k">return</span> <span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">is_duplicate</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_mktempfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Create a named temporary file from a :class:`Stream` object and</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a named temporary file from a :class:`Stream` object and</span>
 <span class="sd">        return its filename.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">delete</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -5216,7 +5220,7 @@ read/write and everyone else to read and everyone to execute.</p></td>
         <span class="k">return</span> <span class="n">tmp</span><span class="o">.</span><span class="n">name</span>
 
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return :class:`HashAdress` from given id or path. If `file` does not</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return :class:`HashAdress` from given id or path. If `file` does not</span>
 <span class="sd">        refer to a valid file, then ``None`` is returned.</span>
 
 <span class="sd">        Args:</span>
@@ -5233,7 +5237,7 @@ read/write and everyone else to read and everyone to execute.</p></td>
             <span class="k">return</span> <span class="n">HashAddress</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unshard</span><span class="p">(</span><span class="n">realpath</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">realpath</span><span class="p">),</span> <span class="n">realpath</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return open buffer object from given id or path.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return open buffer object from given id or path.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            file (str): Address ID or path of file.</span>
@@ -5252,7 +5256,7 @@ read/write and everyone else to read and everyone to execute.</p></td>
         <span class="k">return</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">realpath</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Delete file using id or path. Remove any empty directories after</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delete file using id or path. Remove any empty directories after</span>
 <span class="sd">        deleting. No exception is raised if file doesn&#39;t exist.</span>
 
 <span class="sd">        Args:</span>
@@ -5270,7 +5274,7 @@ read/write and everyone else to read and everyone to execute.</p></td>
             <span class="bp">self</span><span class="o">.</span><span class="n">remove_empty</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">realpath</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">remove_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subpath</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Successively remove all empty folders starting with `subpath` and</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Successively remove all empty folders starting with `subpath` and</span>
 <span class="sd">        proceeding &quot;up&quot; through directory tree until reaching the :attr:`root`</span>
 <span class="sd">        folder.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -5286,7 +5290,7 @@ read/write and everyone else to read and everyone to execute.</p></td>
             <span class="n">subpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">subpath</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return generator that yields all files in the :attr:`root`</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return generator that yields all files in the :attr:`root`</span>
 <span class="sd">        directory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">folder</span><span class="p">,</span> <span class="n">subfolders</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">):</span>
@@ -5294,7 +5298,7 @@ read/write and everyone else to read and everyone to execute.</p></td>
                 <span class="k">yield</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">file</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">folders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return generator that yields all folders in the :attr:`root`</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return generator that yields all folders in the :attr:`root`</span>
 <span class="sd">        directory that contain files.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">folder</span><span class="p">,</span> <span class="n">subfolders</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">):</span>
@@ -5302,14 +5306,14 @@ read/write and everyone else to read and everyone to execute.</p></td>
                 <span class="k">yield</span> <span class="n">folder</span>
 
     <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return count of the number of files in the :attr:`root` directory.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return count of the number of files in the :attr:`root` directory.&quot;&quot;&quot;</span>
         <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
             <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">count</span>
 
     <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the total size in bytes of all files in the :attr:`root`</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the total size in bytes of all files in the :attr:`root`</span>
 <span class="sd">        directory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
@@ -5320,28 +5324,28 @@ read/write and everyone else to read and everyone to execute.</p></td>
         <span class="k">return</span> <span class="n">total</span>
 
     <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Check whether a given file id or path exists on disk.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether a given file id or path exists on disk.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">haspath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return whether `path` is a subdirectory of the :attr:`root`</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether `path` is a subdirectory of the :attr:`root`</span>
 <span class="sd">        directory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">issubdir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">makepath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Physically create the folder path on disk.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Physically create the folder path on disk.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dmode</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">FileExistsError</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="s2">&quot;expected </span><span class="si">{}</span><span class="s2"> to be a directory&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">relpath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return `path` relative to the :attr:`root` directory.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return `path` relative to the :attr:`root` directory.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">realpath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Attempt to determine the real path of a file id or path through</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Attempt to determine the real path of a file id or path through</span>
 <span class="sd">        successive checking of candidate paths. If the real path is stored with</span>
 <span class="sd">        an extension, the path is considered a match if the basename matches</span>
 <span class="sd">        the expected file path of the id.</span>
@@ -5369,7 +5373,7 @@ read/write and everyone else to read and everyone to execute.</p></td>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">idpath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Build the file path for a given hash id. Optionally, append a</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build the file path for a given hash id. Optionally, append a</span>
 <span class="sd">        file extension.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">paths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shard</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
@@ -5377,18 +5381,18 @@ read/write and everyone else to read and everyone to execute.</p></td>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="o">*</span><span class="n">paths</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">computehash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Compute hash of file using :attr:`algorithm`.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute hash of file using :attr:`algorithm`.&quot;&quot;&quot;</span>
         <span class="n">hashobj</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
             <span class="n">hashobj</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">to_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">hashobj</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">shard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Shard content ID into subfolders.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Shard content ID into subfolders.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">shard</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">unshard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Unshard path to determine hash value.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Unshard path to determine hash value.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">haspath</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Cannot unshard path. The path </span><span class="si">{0!r}</span><span class="s2"> is not &quot;</span>
@@ -5398,7 +5402,7 @@ read/write and everyone else to read and everyone to execute.</p></td>
         <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">repair</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Repair any file locations whose content address doesn&#39;t match it&#39;s</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Repair any file locations whose content address doesn&#39;t match it&#39;s</span>
 <span class="sd">        file path.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">repaired</span> <span class="o">=</span> <span class="p">[]</span>
@@ -5423,7 +5427,7 @@ read/write and everyone else to read and everyone to execute.</p></td>
         <span class="k">return</span> <span class="n">repaired</span>
 
     <span class="k">def</span> <span class="nf">corrupted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return generator that yields corrupted files as ``(path, address)``</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return generator that yields corrupted files as ``(path, address)``</span>
 <span class="sd">        where ``path`` is the path of the corrupted file and ``address`` is</span>
 <span class="sd">        the :class:`HashAddress` of the expected location.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -5442,17 +5446,17 @@ read/write and everyone else to read and everyone to execute.</p></td>
                 <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return whether a given file id or path is contained in the</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether a given file id or path is contained in the</span>
 <span class="sd">        :attr:`root` directory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Iterate over all files in the :attr:`root` directory.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over all files in the :attr:`root` directory.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return count of the number of files in the :attr:`root` directory.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return count of the number of files in the :attr:`root` directory.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
         </details>
@@ -5659,7 +5663,7 @@ address.</p>
 <span class="normal">132</span>
 <span class="normal">133</span>
 <span class="normal">134</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">BinaryIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;HashAddress&quot;</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Store contents of `file` on disk using its content hash for the</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Store contents of `file` on disk using its content hash for the</span>
 <span class="sd">    address.</span>
 
 <span class="sd">    Args:</span>
@@ -5792,7 +5796,7 @@ refer to a valid file, then <code>None</code> is returned.</p>
 <span class="normal">199</span>
 <span class="normal">200</span>
 <span class="normal">201</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return :class:`HashAdress` from given id or path. If `file` does not</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return :class:`HashAdress` from given id or path. If `file` does not</span>
 <span class="sd">    refer to a valid file, then ``None`` is returned.</span>
 
 <span class="sd">    Args:</span>
@@ -5916,7 +5920,7 @@ refer to a valid file, then <code>None</code> is returned.</p>
 <span class="normal">218</span>
 <span class="normal">219</span>
 <span class="normal">220</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return open buffer object from given id or path.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return open buffer object from given id or path.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        file (str): Address ID or path of file.</span>
@@ -5997,7 +6001,7 @@ deleting. No exception is raised if file doesn't exist.</p>
 <span class="normal">236</span>
 <span class="normal">237</span>
 <span class="normal">238</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Delete file using id or path. Remove any empty directories after</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete file using id or path. Remove any empty directories after</span>
 <span class="sd">    deleting. No exception is raised if file doesn&#39;t exist.</span>
 
 <span class="sd">    Args:</span>
@@ -6052,7 +6056,7 @@ folder.</p>
 <span class="normal">252</span>
 <span class="normal">253</span>
 <span class="normal">254</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">remove_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subpath</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Successively remove all empty folders starting with `subpath` and</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Successively remove all empty folders starting with `subpath` and</span>
 <span class="sd">    proceeding &quot;up&quot; through directory tree until reaching the :attr:`root`</span>
 <span class="sd">    folder.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -6096,7 +6100,7 @@ directory.</p>
 <span class="normal">260</span>
 <span class="normal">261</span>
 <span class="normal">262</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return generator that yields all files in the :attr:`root`</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return generator that yields all files in the :attr:`root`</span>
 <span class="sd">    directory.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">folder</span><span class="p">,</span> <span class="n">subfolders</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">):</span>
@@ -6132,7 +6136,7 @@ directory that contain files.</p>
 <span class="normal">268</span>
 <span class="normal">269</span>
 <span class="normal">270</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">folders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return generator that yields all folders in the :attr:`root`</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return generator that yields all folders in the :attr:`root`</span>
 <span class="sd">    directory that contain files.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">folder</span><span class="p">,</span> <span class="n">subfolders</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">):</span>
@@ -6166,7 +6170,7 @@ directory that contain files.</p>
 <span class="normal">275</span>
 <span class="normal">276</span>
 <span class="normal">277</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return count of the number of files in the :attr:`root` directory.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return count of the number of files in the :attr:`root` directory.&quot;&quot;&quot;</span>
     <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
         <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -6204,7 +6208,7 @@ directory.</p>
 <span class="normal">286</span>
 <span class="normal">287</span>
 <span class="normal">288</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return the total size in bytes of all files in the :attr:`root`</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the total size in bytes of all files in the :attr:`root`</span>
 <span class="sd">    directory.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
@@ -6238,7 +6242,7 @@ directory.</p>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">290</span>
 <span class="normal">291</span>
 <span class="normal">292</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Check whether a given file id or path exists on disk.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether a given file id or path exists on disk.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">file</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -6268,7 +6272,7 @@ directory.</p>
 <span class="normal">296</span>
 <span class="normal">297</span>
 <span class="normal">298</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">haspath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return whether `path` is a subdirectory of the :attr:`root`</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return whether `path` is a subdirectory of the :attr:`root`</span>
 <span class="sd">    directory.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">issubdir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
@@ -6300,7 +6304,7 @@ directory.</p>
 <span class="normal">303</span>
 <span class="normal">304</span>
 <span class="normal">305</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">makepath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Physically create the folder path on disk.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Physically create the folder path on disk.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dmode</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">FileExistsError</span><span class="p">:</span>
@@ -6330,7 +6334,7 @@ directory.</p>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">307</span>
 <span class="normal">308</span>
 <span class="normal">309</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">relpath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return `path` relative to the :attr:`root` directory.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return `path` relative to the :attr:`root` directory.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -6384,7 +6388,7 @@ the expected file path of the id.</p>
 <span class="normal">335</span>
 <span class="normal">336</span>
 <span class="normal">337</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">realpath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Attempt to determine the real path of a file id or path through</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Attempt to determine the real path of a file id or path through</span>
 <span class="sd">    successive checking of candidate paths. If the real path is stored with</span>
 <span class="sd">    an extension, the path is considered a match if the basename matches</span>
 <span class="sd">    the expected file path of the id.</span>
@@ -6440,7 +6444,7 @@ file extension.</p>
 <span class="normal">343</span>
 <span class="normal">344</span>
 <span class="normal">345</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">idpath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Build the file path for a given hash id. Optionally, append a</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the file path for a given hash id. Optionally, append a</span>
 <span class="sd">    file extension.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">paths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shard</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
@@ -6474,7 +6478,7 @@ file extension.</p>
 <span class="normal">350</span>
 <span class="normal">351</span>
 <span class="normal">352</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">computehash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Compute hash of file using :attr:`algorithm`.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute hash of file using :attr:`algorithm`.&quot;&quot;&quot;</span>
     <span class="n">hashobj</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">algorithm</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
         <span class="n">hashobj</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">to_bytes</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
@@ -6504,7 +6508,7 @@ file extension.</p>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">354</span>
 <span class="normal">355</span>
 <span class="normal">356</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">shard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Shard content ID into subfolders.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Shard content ID into subfolders.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">shard</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">depth</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -6537,7 +6541,7 @@ file extension.</p>
 <span class="normal">364</span>
 <span class="normal">365</span>
 <span class="normal">366</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">unshard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Unshard path to determine hash value.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unshard path to determine hash value.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">haspath</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Cannot unshard path. The path </span><span class="si">{0!r}</span><span class="s2"> is not &quot;</span>
@@ -6592,7 +6596,7 @@ file path.</p>
 <span class="normal">389</span>
 <span class="normal">390</span>
 <span class="normal">391</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">repair</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Repair any file locations whose content address doesn&#39;t match it&#39;s</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Repair any file locations whose content address doesn&#39;t match it&#39;s</span>
 <span class="sd">    file path.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">repaired</span> <span class="o">=</span> <span class="p">[]</span>
@@ -6657,7 +6661,7 @@ the :class:<code>HashAddress</code> of the expected location.</p>
 <span class="normal">408</span>
 <span class="normal">409</span>
 <span class="normal">410</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">corrupted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return generator that yields corrupted files as ``(path, address)``</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return generator that yields corrupted files as ``(path, address)``</span>
 <span class="sd">    where ``path`` is the path of the corrupted file and ``address`` is</span>
 <span class="sd">    the :class:`HashAddress` of the expected location.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -6770,7 +6774,7 @@ after a put operation. Defaults to <code>False</code>.</p></td>
 <span class="normal">442</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">HashAddress</span><span class="p">(</span>
     <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;HashAddress&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="s2">&quot;relpath&quot;</span><span class="p">,</span> <span class="s2">&quot;abspath&quot;</span><span class="p">,</span> <span class="s2">&quot;is_duplicate&quot;</span><span class="p">])</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;File address containing file&#39;s path on disk and it&#39;s content hash ID.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;File address containing file&#39;s path on disk and it&#39;s content hash ID.</span>
 
 <span class="sd">    Attributes:</span>
 <span class="sd">        id (str): Hash ID (hexdigest) of file contents.</span>
@@ -6893,7 +6897,7 @@ set it's position back to <code>0</code>.</p>
 <span class="normal">500</span>
 <span class="normal">501</span>
 <span class="normal">502</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Stream</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Common interface for file-like objects.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Common interface for file-like objects.</span>
 
 <span class="sd">    The input `obj` can be a file-like object or a path to a file. If `obj` is</span>
 <span class="sd">    a path to a file, then it will be opened until :meth:`close` is called.</span>
@@ -6926,7 +6930,7 @@ set it's position back to <code>0</code>.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer_size</span> <span class="o">=</span> <span class="n">buffer_size</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Read underlying IO object and yield results. Return object to</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read underlying IO object and yield results. Return object to</span>
 <span class="sd">        original position if we didn&#39;t open it originally.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -6943,7 +6947,7 @@ set it's position back to <code>0</code>.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pos</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Close underlying IO object if we opened it, else return it to</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close underlying IO object if we opened it, else return it to</span>
 <span class="sd">        original position.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -6990,7 +6994,7 @@ original position.</p>
 <span class="normal">500</span>
 <span class="normal">501</span>
 <span class="normal">502</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Close underlying IO object if we opened it, else return it to</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Close underlying IO object if we opened it, else return it to</span>
 <span class="sd">    original position.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -7058,7 +7062,7 @@ original position.</p>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
 <span class="normal">61</span>
 <span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">compact</span><span class="p">(</span><span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Return only truthy elements of `items`.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return only truthy elements of `items`.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span> <span class="k">if</span> <span class="n">item</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -7088,7 +7092,7 @@ original position.</p>
 <span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">issubdir</span><span class="p">(</span><span class="n">subpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return whether `subpath` is a sub-directory of `path`.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return whether `subpath` is a sub-directory of `path`.&quot;&quot;&quot;</span>
     <span class="c1"># Append os.sep so that paths like /usr/var2/log doesn&#39;t match /usr/var.</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span>
     <span class="n">subpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">subpath</span><span class="p">)</span>
@@ -7155,42 +7159,6 @@ original position.</p>
       
         <footer class="md-footer">
   
-    
-    <nav class="md-footer__inner md-grid" aria-label="Footer" >
-      
-        
-        <a href="../../graphs/" class="md-footer__link md-footer__link--prev" aria-label="Previous: graphs" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              graphs
-            </div>
-          </div>
-        </a>
-      
-      
-        
-        <a href="../../hashing/" class="md-footer__link md-footer__link--next" aria-label="Next: hashing" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              hashing
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
-  
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
@@ -7216,12 +7184,11 @@ original position.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.5cf534bf.min.js"></script>
       
-    
     
   </body>
 </html>

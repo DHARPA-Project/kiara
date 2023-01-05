@@ -14,8 +14,14 @@
       
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/models/values/value/">
       
+      
+        <link rel="prev" href="../matchers/">
+      
+      
+        <link rel="next" href="../value_metadata/__init__/">
+      
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.2">
     
     
       
@@ -23,11 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.975780f9.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.f56500e0.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.2505c338.min.css">
-        
       
       
 
@@ -62,7 +67,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
   
     
     
@@ -4871,10 +4876,9 @@
                 
                   
 
-  <a href="https://github.com/DHARPA-Project/kiara/edit/master/docs/src/kiara/models/values/value.py" title="Edit this page" class="md-content__button md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
-  </a>
+  
+  
+
 
 
   <h1>value</h1>
@@ -5078,7 +5082,7 @@
     <span class="k">def</span> <span class="nf">get_chunks</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">as_files</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">symlink_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BytesLike</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Retrieve the chunks belonging to this data instance.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the chunks belonging to this data instance.</span>
 
 <span class="sd">        If &#39;as_file&#39; is False, return the data as bytes. If set to &#39;True&#39; store it to an arbitrary location (or use</span>
 <span class="sd">        an existing one), and return the path to that file. If &#39;as_file&#39; is a string, write the data (bytes) into</span>
@@ -5297,7 +5301,7 @@ a new file using the string as path. If 'symlink_ok' is set to True, symlinking 
 <span class="k">def</span> <span class="nf">get_chunks</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">as_files</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">symlink_ok</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">BytesLike</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Retrieve the chunks belonging to this data instance.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the chunks belonging to this data instance.</span>
 
 <span class="sd">    If &#39;as_file&#39; is False, return the data as bytes. If set to &#39;True&#39; store it to an arbitrary location (or use</span>
 <span class="sd">    an existing one), and return the path to that file. If &#39;as_file&#39; is a string, write the data (bytes) into</span>
@@ -8474,7 +8478,7 @@ a new file using the string as path. If 'symlink_ok' is set to True, symlinking 
 <span class="normal">754</span>
 <span class="normal">755</span>
 <span class="normal">756</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueDetails</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A wrapper class that manages and retieves value data and its details.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper class that manages and retieves value data and its details.&quot;&quot;&quot;</span>
 
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.value_details&quot;</span>
 
@@ -8525,7 +8529,7 @@ a new file using the string as path. If 'symlink_ok' is set to True, symlinking 
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Check whether the current value is valid&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether the current value is valid&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_optional</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">True</span>
@@ -8538,7 +8542,7 @@ a new file using the string as path. If 'symlink_ok' is set to True, symlinking 
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">value_status_string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Print a human readable short description of this values status.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print a human readable short description of this values status.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_status</span> <span class="o">==</span> <span class="n">ValueStatus</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;set (default)&quot;</span>
@@ -11149,7 +11153,7 @@ a new file using the string as path. If 'symlink_ok' is set to True, symlinking 
 <span class="normal">1295</span>
 <span class="normal">1296</span>
 <span class="normal">1297</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">UnloadableData</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A special &#39;marker&#39; model, indicating that the data of value can&#39;t be loaded.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A special &#39;marker&#39; model, indicating that the data of value can&#39;t be loaded.</span>
 
 <span class="sd">    In most cases, the reason this happens is because the current kiara context is missing some value types and/or modules.&quot;&quot;&quot;</span>
 
@@ -11438,7 +11442,7 @@ a new file using the string as path. If 'symlink_ok' is set to True, symlinking 
         <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">check_invalid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Check whether the value set is invalid, if it is, return a description of what&#39;s wrong.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether the value set is invalid, if it is, return a description of what&#39;s wrong.&quot;&quot;&quot;</span>
 
         <span class="n">invalid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -11463,7 +11467,7 @@ a new file using the string as path. If 'symlink_ok' is set to True, symlinking 
     <span class="k">def</span> <span class="nf">get_value_data_for_fields</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">field_names</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">raise_exception_when_unset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return the data for a one or several fields of this ValueMap.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the data for a one or several fields of this ValueMap.</span>
 
 <span class="sd">        If a value is unset, by default &#39;None&#39; is returned for it. Unless &#39;raise_exception_when_unset&#39; is set to &#39;True&#39;,</span>
 <span class="sd">        in which case an Exception will be raised (obviously).</span>
@@ -11737,7 +11741,7 @@ a new file using the string as path. If 'symlink_ok' is set to True, symlinking 
 <span class="normal">1346</span>
 <span class="normal">1347</span>
 <span class="normal">1348</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">check_invalid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Check whether the value set is invalid, if it is, return a description of what&#39;s wrong.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether the value set is invalid, if it is, return a description of what&#39;s wrong.&quot;&quot;&quot;</span>
 
     <span class="n">invalid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_schema</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -11813,7 +11817,7 @@ in which case an Exception will be raised (obviously).</p>
 <span class="normal">1378</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_value_data_for_fields</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">field_names</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">raise_exception_when_unset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Return the data for a one or several fields of this ValueMap.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the data for a one or several fields of this ValueMap.</span>
 
 <span class="sd">    If a value is unset, by default &#39;None&#39; is returned for it. Unless &#39;raise_exception_when_unset&#39; is set to &#39;True&#39;,</span>
 <span class="sd">    in which case an Exception will be raised (obviously).</span>
@@ -12487,7 +12491,7 @@ in which case an Exception will be raised (obviously).</p>
     <span class="n">_auto_commit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">PrivateAttr</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_value_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Retrieve the value object for the specified field.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the value object for the specified field.</span>
 
 <span class="sd">        This class only creates the actual value object the first time it is requested, because there is a potential</span>
 <span class="sd">        cost to assembling it, and it might not be needed ever.</span>
@@ -12540,7 +12544,7 @@ in which case an Exception will be raised (obviously).</p>
                 <span class="k">raise</span> <span class="n">e</span>
 
     <span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Set the value for the specified field.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the value for the specified field.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">field_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_names</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
@@ -12742,7 +12746,7 @@ cost to assembling it, and it might not be needed ever.</p>
 <span class="normal">1588</span>
 <span class="normal">1589</span>
 <span class="normal">1590</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_value_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Retrieve the value object for the specified field.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the value object for the specified field.</span>
 
 <span class="sd">    This class only creates the actual value object the first time it is requested, because there is a potential</span>
 <span class="sd">    cost to assembling it, and it might not be needed ever.</span>
@@ -12866,7 +12870,7 @@ cost to assembling it, and it might not be needed ever.</p>
 <span class="normal">1623</span>
 <span class="normal">1624</span>
 <span class="normal">1625</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Set the value for the specified field.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the value for the specified field.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">field_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_names</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
@@ -12922,42 +12926,6 @@ cost to assembling it, and it might not be needed ever.</p>
       
         <footer class="md-footer">
   
-    
-    <nav class="md-footer__inner md-grid" aria-label="Footer" >
-      
-        
-        <a href="../matchers/" class="md-footer__link md-footer__link--prev" aria-label="Previous: matchers" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              matchers
-            </div>
-          </div>
-        </a>
-      
-      
-        
-        <a href="../value_metadata/__init__/" class="md-footer__link md-footer__link--next" aria-label="Next: value_metadata" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              value_metadata
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
-  
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
@@ -12983,12 +12951,11 @@ cost to assembling it, and it might not be needed ever.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.5cf534bf.min.js"></script>
       
-    
     
   </body>
 </html>

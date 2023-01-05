@@ -14,8 +14,14 @@
       
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/data_types/included_core_types/__init__/">
       
+      
+        <link rel="prev" href="../../__init__/">
+      
+      
+        <link rel="next" href="../filesystem/">
+      
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.2">
     
     
       
@@ -23,11 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.975780f9.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.f56500e0.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.2505c338.min.css">
-        
       
       
 
@@ -62,7 +67,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
   
     
     
@@ -4528,10 +4533,9 @@
                 
                   
 
-  <a href="https://github.com/DHARPA-Project/kiara/edit/master/docs/src/kiara/data_types/included_core_types/__init__.py" title="Edit this page" class="md-content__button md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
-  </a>
+  
+  
+
 
 
   <h1>included_core_types</h1>
@@ -4644,7 +4648,7 @@
 <span class="normal">76</span>
 <span class="normal">77</span>
 <span class="normal">78</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">NoneType</span><span class="p">(</span><span class="n">DataType</span><span class="p">[</span><span class="n">SpecialValue</span><span class="p">,</span> <span class="n">DataTypeConfig</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;Type indicating a &#39;None&#39; value&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Type indicating a &#39;None&#39; value&quot;&quot;&quot;</span>
 
     <span class="n">_data_type_name</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
 
@@ -4977,7 +4981,7 @@ this might or might not change).</p>
 <span class="normal">175</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">AnyType</span><span class="p">(</span>
     <span class="n">DataType</span><span class="p">[</span><span class="n">TYPE_PYTHON_CLS</span><span class="p">,</span> <span class="n">DataTypeConfig</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">TYPE_PYTHON_CLS</span><span class="p">,</span> <span class="n">TYPE_CONFIG_CLS</span><span class="p">]</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;&#39;Any&#39; type, the parent type for most other types.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;&#39;Any&#39; type, the parent type for most other types.</span>
 
 <span class="sd">    This type acts as the parents for all (or at least most) non-internal value types. There are some generic operations</span>
 <span class="sd">    (like &#39;persist_value&#39;, or &#39;pretty_print&#39;) which are implemented for this type, so it&#39;s descendents have a fallback</span>
@@ -5409,7 +5413,7 @@ this might or might not change).</p>
 <span class="normal">218</span>
 <span class="normal">219</span>
 <span class="normal">220</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">BytesType</span><span class="p">(</span><span class="n">AnyType</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">DataTypeConfig</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;An array of bytes.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An array of bytes.&quot;&quot;&quot;</span>
 
     <span class="n">_data_type_name</span> <span class="o">=</span> <span class="s2">&quot;bytes&quot;</span>
 
@@ -5647,7 +5651,7 @@ this might or might not change).</p>
 <span class="normal">270</span>
 <span class="normal">271</span>
 <span class="normal">272</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StringType</span><span class="p">(</span><span class="n">AnyType</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DataTypeConfig</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;A string.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A string.&quot;&quot;&quot;</span>
 
     <span class="n">_data_type_name</span> <span class="o">=</span> <span class="s2">&quot;string&quot;</span>
 
@@ -6283,7 +6287,7 @@ dictionary. In case no schema was attached, a simple generic one is attached. Th
 <span class="normal">477</span>
 <span class="normal">478</span>
 <span class="normal">479</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">DictValueType</span><span class="p">(</span><span class="n">AnyType</span><span class="p">[</span><span class="n">DictModel</span><span class="p">,</span> <span class="n">DataTypeConfig</span><span class="p">]):</span>
-    <span class="sd">&quot;&quot;&quot;A dictionary.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dictionary.</span>
 
 <span class="sd">    In addition to the actual dictionary value, this value type comes also with an optional schema, describing the</span>
 <span class="sd">    dictionary. In case no schema was attached, a simple generic one is attached. This data type is backed by the</span>
@@ -6821,7 +6825,7 @@ dictionary. In case no schema was attached, a simple generic one is attached. Th
 <span class="normal">516</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraModelValueType</span><span class="p">(</span>
     <span class="n">AnyType</span><span class="p">[</span><span class="n">KIARA_MODEL_CLS</span><span class="p">,</span> <span class="n">TYPE_CONFIG_CLS</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">KIARA_MODEL_CLS</span><span class="p">,</span> <span class="n">TYPE_CONFIG_CLS</span><span class="p">]</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A value type that is used internally.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A value type that is used internally.</span>
 
 <span class="sd">    This type should not be used by user-facing modules and/or operations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -6988,42 +6992,6 @@ dictionary. In case no schema was attached, a simple generic one is attached. Th
       
         <footer class="md-footer">
   
-    
-    <nav class="md-footer__inner md-grid" aria-label="Footer" >
-      
-        
-        <a href="../../__init__/" class="md-footer__link md-footer__link--prev" aria-label="Previous: data_types" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              data_types
-            </div>
-          </div>
-        </a>
-      
-      
-        
-        <a href="../filesystem/" class="md-footer__link md-footer__link--next" aria-label="Next: filesystem" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              filesystem
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
-  
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
@@ -7049,12 +7017,11 @@ dictionary. In case no schema was attached, a simple generic one is attached. Th
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.5cf534bf.min.js"></script>
       
-    
     
   </body>
 </html>

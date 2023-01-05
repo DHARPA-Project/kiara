@@ -14,8 +14,14 @@
       
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/registries/workflows/__init__/">
       
+      
+        <link rel="prev" href="../../types/__init__/">
+      
+      
+        <link rel="next" href="../archives/">
+      
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.2">
     
     
       
@@ -23,11 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.975780f9.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.f56500e0.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.2505c338.min.css">
-        
       
       
 
@@ -62,7 +67,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
   
     
     
@@ -4486,10 +4491,9 @@
                 
                   
 
-  <a href="https://github.com/DHARPA-Project/kiara/edit/master/docs/src/kiara/registries/workflows/__init__.py" title="Edit this page" class="md-content__button md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
-  </a>
+  
+  
+
 
 
   <h1>workflows</h1>
@@ -4623,7 +4627,7 @@
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">retrieve_workflow_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_state_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowState</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Retrieve workflow state details for the provided state id.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve workflow state details for the provided state id.</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            workflow_id: id of the workflow</span>
@@ -4634,7 +4638,7 @@
     <span class="k">def</span> <span class="nf">retrieve_all_states_for_workflow</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WorkflowState</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Retrieve workflow state details for the provided state id.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve workflow state details for the provided state id.</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            workflow_id: id of the workflow</span>
@@ -4862,7 +4866,7 @@
 <span class="normal">59</span>
 <span class="normal">60</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
 <span class="k">def</span> <span class="nf">retrieve_workflow_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_state_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowState</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Retrieve workflow state details for the provided state id.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve workflow state details for the provided state id.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        workflow_id: id of the workflow</span>
@@ -4940,7 +4944,7 @@
 <span class="k">def</span> <span class="nf">retrieve_all_states_for_workflow</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WorkflowState</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Retrieve workflow state details for the provided state id.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve workflow state details for the provided state id.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        workflow_id: id of the workflow</span>
@@ -5049,7 +5053,7 @@
         <span class="k">return</span> <span class="n">workflow_metadata</span>
 
     <span class="k">def</span> <span class="nf">unregister_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Unregister a workflow alias.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Unregister a workflow alias.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            &#39;True&#39; if an alias existed and was unregistered, &#39;False&#39; otherwise</span>
@@ -5211,7 +5215,7 @@
 <span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">unregister_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Unregister a workflow alias.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unregister a workflow alias.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        &#39;True&#39; if an alias existed and was unregistered, &#39;False&#39; otherwise</span>
@@ -5705,16 +5709,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_event_callback</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">event_registry</span><span class="o">.</span><span class="n">add_producer</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_workflow_archives</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WorkflowArchive</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="sd">&quot;&quot;&quot;All registered archives/stores.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;All registered archives/stores.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_default_alias_store</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="sd">&quot;&quot;&quot;The alias of the store where new aliases are stored by default.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The alias of the store where new aliases are stored by default.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_all_aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="sd">&quot;&quot;&quot;All workflow aliases.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;All workflow aliases.&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_all_workflow_ids</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="sd">&quot;&quot;&quot;All workflow ids, with store alias as values&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;All workflow ids, with store alias as values&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cached_workflow_metadata_items</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">WorkflowMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -5787,7 +5791,7 @@
         <span class="k">return</span> <span class="n">archive</span>
 
     <span class="k">def</span> <span class="nf">get_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return all aliases for the specified workflow id.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all aliases for the specified workflow id.&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">alias</span>
@@ -5797,7 +5801,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">workflow_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Retrieve all registered workflow aliases.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve all registered workflow aliases.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_aliases</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_aliases</span>
@@ -5881,7 +5885,7 @@
         <span class="k">return</span> <span class="n">workflow_details</span>
 
     <span class="k">def</span> <span class="nf">unregister_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Unregister a workflow alias.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Unregister a workflow alias.</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            alias: the alias</span>
@@ -5907,7 +5911,7 @@
         <span class="n">workflow_metadata</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">WorkflowMetadata</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">workflow_aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowMetadata</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Register a workflow.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register a workflow.</span>
 
 <span class="sd">        If no details are specified, a new WorkflowMetadata object will be created. If a string is provided, a new</span>
 <span class="sd">        WorkflowMetadata object will be created that uses the string as documentation/description.</span>
@@ -6328,7 +6332,7 @@
 <span class="normal">218</span>
 <span class="normal">219</span>
 <span class="normal">220</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Return all aliases for the specified workflow id.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return all aliases for the specified workflow id.&quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="p">[</span>
         <span class="n">alias</span>
@@ -6542,7 +6546,7 @@
 <span class="normal">325</span>
 <span class="normal">326</span>
 <span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">unregister_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Unregister a workflow alias.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unregister a workflow alias.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        alias: the alias</span>
@@ -6675,7 +6679,7 @@ WorkflowMetadata object will be created that uses the string as documentation/de
     <span class="n">workflow_metadata</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">WorkflowMetadata</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">workflow_aliases</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowMetadata</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Register a workflow.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a workflow.</span>
 
 <span class="sd">    If no details are specified, a new WorkflowMetadata object will be created. If a string is provided, a new</span>
 <span class="sd">    WorkflowMetadata object will be created that uses the string as documentation/description.</span>
@@ -7047,42 +7051,6 @@ WorkflowMetadata object will be created that uses the string as documentation/de
       
         <footer class="md-footer">
   
-    
-    <nav class="md-footer__inner md-grid" aria-label="Footer" >
-      
-        
-        <a href="../../types/__init__/" class="md-footer__link md-footer__link--prev" aria-label="Previous: types" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              types
-            </div>
-          </div>
-        </a>
-      
-      
-        
-        <a href="../archives/" class="md-footer__link md-footer__link--next" aria-label="Next: archives" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              archives
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
-  
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
@@ -7108,12 +7076,11 @@ WorkflowMetadata object will be created that uses the string as documentation/de
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.5cf534bf.min.js"></script>
       
-    
     
   </body>
 </html>

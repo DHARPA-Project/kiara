@@ -14,8 +14,14 @@
       
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/utils/class_loading/">
       
+      
+        <link rel="prev" href="../__init__/">
+      
+      
+        <link rel="next" href="../cli/__init__/">
+      
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.2">
     
     
       
@@ -23,11 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.975780f9.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.f56500e0.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.2505c338.min.css">
-        
       
       
 
@@ -62,7 +67,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
   
     
     
@@ -4785,10 +4790,9 @@
                 
                   
 
-  <a href="https://github.com/DHARPA-Project/kiara/edit/master/docs/src/kiara/utils/class_loading.py" title="Edit this page" class="md-content__button md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
-  </a>
+  
+  
+
 
 
   <h1>class_loading</h1>
@@ -4996,7 +5000,7 @@
     <span class="n">base_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">SUBCLASS_TYPE</span><span class="p">],</span>
     <span class="n">python_module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModuleType</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">SUBCLASS_TYPE</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Find all (non-abstract) subclasses of a base class that live under a module (recursively).</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find all (non-abstract) subclasses of a base class that live under a module (recursively).</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        base_class: the parent class</span>
@@ -5006,8 +5010,8 @@
 <span class="sd">        a list of all subclasses</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;frozen&quot;</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Pyinstaller bundling not supported yet.&quot;</span><span class="p">)</span>
+    <span class="c1"># if hasattr(sys, &quot;frozen&quot;):</span>
+    <span class="c1">#     raise NotImplementedError(&quot;Pyinstaller bundling not supported yet.&quot;)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">python_module</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -5274,7 +5278,7 @@
     <span class="n">type_id_no_attach</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">attach_python_metadata</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">SUBCLASS_TYPE</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Find all subclasses of a base class via package entry points.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find all subclasses of a base class via package entry points.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        entry_point_name: the entry point name to query entries for</span>
@@ -5453,7 +5457,7 @@
 <span class="normal">392</span>
 <span class="normal">393</span>
 <span class="normal">394</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_kiara_modules</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.</span>
 
 <span class="sd">    TODO</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -5525,7 +5529,7 @@
 <span class="normal">409</span>
 <span class="normal">410</span>
 <span class="normal">411</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_kiara_model_classes</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModel&quot;</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.</span>
 
 <span class="sd">    TODO</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -5573,7 +5577,7 @@
 <span class="normal">440</span>
 <span class="normal">441</span>
 <span class="normal">442</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_archive_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraArchive&quot;</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Find all [KiaraArchive][kiara.registries.KiaraArchive] subclasses via package entry points.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find all [KiaraArchive][kiara.registries.KiaraArchive] subclasses via package entry points.&quot;&quot;&quot;</span>
 
     <span class="kn">from</span> <span class="nn">kiara.registries</span> <span class="kn">import</span> <span class="n">KiaraArchive</span>
 
@@ -5629,7 +5633,7 @@
 <span class="normal">464</span>
 <span class="normal">465</span>
 <span class="normal">466</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_data_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;DataType&quot;</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.</span>
 
 <span class="sd">    TODO</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -5887,8 +5891,8 @@
     <span class="n">module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModuleType</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s2">&quot;frozen&quot;</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Pyinstaller bundling not supported yet.&quot;</span><span class="p">)</span>
+    <span class="c1"># if hasattr(sys, &quot;frozen&quot;):</span>
+    <span class="c1">#     raise NotImplementedError(&quot;Pyinstaller bundling not supported yet.&quot;)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
@@ -6191,42 +6195,6 @@
       
         <footer class="md-footer">
   
-    
-    <nav class="md-footer__inner md-grid" aria-label="Footer" >
-      
-        
-        <a href="../__init__/" class="md-footer__link md-footer__link--prev" aria-label="Previous: utils" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              utils
-            </div>
-          </div>
-        </a>
-      
-      
-        
-        <a href="../cli/__init__/" class="md-footer__link md-footer__link--next" aria-label="Next: cli" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              cli
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
-  
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
@@ -6252,12 +6220,11 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.5cf534bf.min.js"></script>
       
-    
     
   </body>
 </html>

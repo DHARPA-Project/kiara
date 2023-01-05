@@ -14,8 +14,14 @@
       
         <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/models/module/pipeline/controller/">
       
+      
+        <link rel="prev" href="../__init__/">
+      
+      
+        <link rel="next" href="../pipeline/">
+      
       <link rel="icon" href="../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.2">
     
     
       
@@ -23,11 +29,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.975780f9.min.css">
+      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.f56500e0.min.css">
       
         
         <link rel="stylesheet" href="../../../../../../assets/stylesheets/palette.2505c338.min.css">
-        
       
       
 
@@ -62,7 +67,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
   
     
     
@@ -4593,10 +4598,9 @@
                 
                   
 
-  <a href="https://github.com/DHARPA-Project/kiara/edit/master/docs/src/kiara/models/module/pipeline/controller.py" title="Edit this page" class="md-content__button md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
-  </a>
+  
+  
+
 
 
   <h1>controller</h1>
@@ -4844,7 +4848,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_details</span>
 
     <span class="k">def</span> <span class="nf">can_be_processed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Check whether the step with the provided id is ready to be processed.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether the step with the provided id is ready to be processed.&quot;&quot;&quot;</span>
 
         <span class="n">pipeline_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_pipeline_state</span><span class="p">()</span>
         <span class="n">step_state</span> <span class="o">=</span> <span class="n">pipeline_state</span><span class="o">.</span><span class="n">step_states</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span>
@@ -4852,7 +4856,7 @@
         <span class="k">return</span> <span class="ow">not</span> <span class="n">step_state</span><span class="o">.</span><span class="n">invalid_details</span>
 
     <span class="k">def</span> <span class="nf">can_be_skipped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Check whether the processing of a step can be skipped.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether the processing of a step can be skipped.&quot;&quot;&quot;</span>
 
         <span class="n">required</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">step_is_required</span><span class="p">(</span><span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">required</span><span class="p">:</span>
@@ -4869,7 +4873,7 @@
     <span class="k">def</span> <span class="nf">set_processing_results</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">job_ids</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Set the processing results as values of the approrpiate step outputs.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the processing results as values of the approrpiate step outputs.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            a dict with the result value id as key, and the id of the job that produced it as value</span>
@@ -4895,7 +4899,7 @@
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="nf">pipeline_is_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return whether the pipeline is ready to be processed.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether the pipeline is ready to be processed.</span>
 
 <span class="sd">        A ``True`` result means that all pipeline inputs are set with valid values, and therefore every step within the</span>
 <span class="sd">        pipeline can be processed.</span>
@@ -4909,7 +4913,7 @@
         <span class="k">return</span> <span class="n">pipeline_inputs</span><span class="o">.</span><span class="n">all_items_valid</span>
 
     <span class="k">def</span> <span class="nf">process_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Kick off processing for the step with the provided id.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Kick off processing for the step with the provided id.</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            step_id: the id of the step that should be started</span>
@@ -5015,7 +5019,7 @@
 <span class="normal">65</span>
 <span class="normal">66</span>
 <span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">can_be_processed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Check whether the step with the provided id is ready to be processed.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether the step with the provided id is ready to be processed.&quot;&quot;&quot;</span>
 
     <span class="n">pipeline_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_pipeline_state</span><span class="p">()</span>
     <span class="n">step_state</span> <span class="o">=</span> <span class="n">pipeline_state</span><span class="o">.</span><span class="n">step_states</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span>
@@ -5050,7 +5054,7 @@
 <span class="normal">73</span>
 <span class="normal">74</span>
 <span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">can_be_skipped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Check whether the processing of a step can be skipped.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether the processing of a step can be skipped.&quot;&quot;&quot;</span>
 
     <span class="n">required</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">step_is_required</span><span class="p">(</span><span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">required</span><span class="p">:</span>
@@ -5125,7 +5129,7 @@
 <span class="normal">110</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_processing_results</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">job_ids</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Set the processing results as values of the approrpiate step outputs.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set the processing results as values of the approrpiate step outputs.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        a dict with the result value id as key, and the id of the job that produced it as value</span>
@@ -5204,7 +5208,7 @@ pipeline can be processed.</p>
 <span class="normal">122</span>
 <span class="normal">123</span>
 <span class="normal">124</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pipeline_is_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return whether the pipeline is ready to be processed.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return whether the pipeline is ready to be processed.</span>
 
 <span class="sd">    A ``True`` result means that all pipeline inputs are set with valid values, and therefore every step within the</span>
 <span class="sd">    pipeline can be processed.</span>
@@ -5282,7 +5286,7 @@ pipeline can be processed.</p>
 <span class="normal">143</span>
 <span class="normal">144</span>
 <span class="normal">145</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Kick off processing for the step with the provided id.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Kick off processing for the step with the provided id.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        step_id: the id of the step that should be started</span>
@@ -5454,8 +5458,11 @@ It waits until all inputs are set, after which it executes all pipeline steps in
 <span class="normal">227</span>
 <span class="normal">228</span>
 <span class="normal">229</span>
-<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">SinglePipelineBatchController</span><span class="p">(</span><span class="n">SinglePipelineController</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A [PipelineController][kiara.models.modules.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">SinglePipelineBatchController</span><span class="p">(</span><span class="n">SinglePipelineController</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A [PipelineController][kiara.models.modules.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.</span>
 
 <span class="sd">    This is the default implementation of a ``PipelineController``, and probably the most simple implementation of one.</span>
 <span class="sd">    It waits until all inputs are set, after which it executes all pipeline steps in the required order.</span>
@@ -5484,7 +5491,7 @@ It waits until all inputs are set, after which it executes all pipeline steps in
     <span class="k">def</span> <span class="nf">auto_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auto_process</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_auto_process</span> <span class="o">=</span> <span class="n">auto_process</span>
 
-    <span class="k">def</span> <span class="nf">process_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">process_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">]]:</span>
 
         <span class="n">log</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">pipeline_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">pipeline_id</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
@@ -5496,6 +5503,7 @@ It waits until all inputs are set, after which it executes all pipeline steps in
 
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;execute.pipeline&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">all_job_ids</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span>
@@ -5518,6 +5526,7 @@ It waits until all inputs are set, after which it executes all pipeline steps in
                         <span class="n">job_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_step</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
                         <span class="n">job_ids</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_id</span>
                     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">all_job_ids</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span>
                         <span class="c1"># TODO: cancel running jobs?</span>
                         <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
@@ -5525,18 +5534,19 @@ It waits until all inputs are set, after which it executes all pipeline steps in
                             <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
                             <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
                         <span class="p">)</span>
-                        <span class="k">return</span> <span class="kc">False</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">set_processing_results</span><span class="p">(</span><span class="n">job_ids</span><span class="o">=</span><span class="n">job_ids</span><span class="p">)</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                     <span class="s2">&quot;execute_finished.pipeline.stage&quot;</span><span class="p">,</span>
                     <span class="n">stage</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
                 <span class="p">)</span>
+                <span class="n">all_job_ids</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">job_ids</span><span class="p">)</span>
 
         <span class="k">finally</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;execute_finished.pipeline&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">all_job_ids</span>
 </code></pre></div></td></tr></table></div>
         </details>
 
@@ -5577,7 +5587,7 @@ It waits until all inputs are set, after which it executes all pipeline steps in
 
 
 <h5 id="kiara.models.module.pipeline.controller.SinglePipelineBatchController.process_pipeline" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">process_pipeline</span><span class="p">()</span></code>
+<code class="highlight language-python"><span class="n">process_pipeline</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">]]</span></code>
 
 <a href="#kiara.models.module.pipeline.controller.SinglePipelineBatchController.process_pipeline" class="headerlink" title="Permanent link">&para;</a></h5>
 
@@ -5638,7 +5648,10 @@ It waits until all inputs are set, after which it executes all pipeline steps in
 <span class="normal">227</span>
 <span class="normal">228</span>
 <span class="normal">229</span>
-<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">]]:</span>
 
     <span class="n">log</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">pipeline_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">pipeline_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
@@ -5650,6 +5663,7 @@ It waits until all inputs are set, after which it executes all pipeline steps in
 
     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;execute.pipeline&quot;</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">all_job_ids</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span>
@@ -5672,6 +5686,7 @@ It waits until all inputs are set, after which it executes all pipeline steps in
                     <span class="n">job_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_step</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
                     <span class="n">job_ids</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_id</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">all_job_ids</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">e</span>
                     <span class="c1"># TODO: cancel running jobs?</span>
                     <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                     <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
@@ -5679,18 +5694,19 @@ It waits until all inputs are set, after which it executes all pipeline steps in
                         <span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">,</span>
                         <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="p">,</span>
                     <span class="p">)</span>
-                    <span class="k">return</span> <span class="kc">False</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">set_processing_results</span><span class="p">(</span><span class="n">job_ids</span><span class="o">=</span><span class="n">job_ids</span><span class="p">)</span>
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="s2">&quot;execute_finished.pipeline.stage&quot;</span><span class="p">,</span>
                 <span class="n">stage</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="n">all_job_ids</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">job_ids</span><span class="p">)</span>
 
     <span class="k">finally</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;execute_finished.pipeline&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">all_job_ids</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -5729,42 +5745,6 @@ It waits until all inputs are set, after which it executes all pipeline steps in
       
         <footer class="md-footer">
   
-    
-    <nav class="md-footer__inner md-grid" aria-label="Footer" >
-      
-        
-        <a href="../__init__/" class="md-footer__link md-footer__link--prev" aria-label="Previous: pipeline" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              pipeline
-            </div>
-          </div>
-        </a>
-      
-      
-        
-        <a href="../pipeline/" class="md-footer__link md-footer__link--next" aria-label="Next: pipeline" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              pipeline
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
-  
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-copyright">
@@ -5790,12 +5770,11 @@ It waits until all inputs are set, after which it executes all pipeline steps in
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../../assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      <script src="../../../../../../assets/javascripts/bundle.5cf534bf.min.js"></script>
       
-    
     
   </body>
 </html>

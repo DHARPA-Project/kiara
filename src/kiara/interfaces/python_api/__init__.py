@@ -720,29 +720,27 @@ class KiaraAPI(object):
     def store_value(
         self,
         value: Union[str, uuid.UUID, ValueLink],
-        aliases: Union[str, Iterable[str], None],
+        alias: Union[str, Iterable[str], None],
     ) -> StoreValueResult:
         """Store the specified value in the (default) value store.
 
         Arguments:
             value: the value (or a reference to it)
-            aliases: (Optional) aliases for the value
+            alias: (Optional) aliases for the value
         """
 
-        if isinstance(aliases, str):
-            aliases = [aliases]
+        if isinstance(alias, str):
+            alias = [alias]
 
         value_obj = self.get_value(value)
         persisted_data: Union[None, PersistedData] = None
         try:
             persisted_data = self.context.data_registry.store_value(value=value_obj)
-            if aliases:
-                self.context.alias_registry.register_aliases(
-                    value_obj.value_id, *aliases
-                )
+            if alias:
+                self.context.alias_registry.register_aliases(value_obj.value_id, *alias)
             result = StoreValueResult.construct(
                 value=value_obj,
-                aliases=sorted(aliases) if aliases else [],
+                aliases=sorted(alias) if alias else [],
                 error=None,
                 persisted_data=persisted_data,
             )
@@ -750,7 +748,7 @@ class KiaraAPI(object):
             log_exception(e)
             result = StoreValueResult.construct(
                 value=value_obj,
-                aliases=sorted(aliases) if aliases else [],
+                aliases=sorted(alias) if alias else [],
                 error=str(e),
                 persisted_data=persisted_data,
             )
@@ -779,7 +777,7 @@ class KiaraAPI(object):
         for field_name, value in values.items():
             aliases = alias_map.get(field_name)
             value_obj = self.get_value(value)
-            store_result = self.store_value(value=value_obj, aliases=aliases)
+            store_result = self.store_value(value=value_obj, alias=aliases)
             result[field_name] = store_result
 
         return StoreValuesResult.construct(__root__=result)

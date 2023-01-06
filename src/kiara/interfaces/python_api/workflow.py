@@ -467,6 +467,12 @@ class Workflow(object):
     def output_aliases(self) -> Mapping[str, str]:
         return self._workflow_output_aliases
 
+    def clear_current_inputs_for_step(self, step_id):
+
+        fields = self.get_current_inputs_schema_for_step(step_id)
+        for field in fields.keys():
+            self.set_inputs(**{k: None for k in fields.keys()})
+
     @property
     def current_inputs_schema(self) -> Mapping[str, ValueSchema]:
 

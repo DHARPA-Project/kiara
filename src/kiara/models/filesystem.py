@@ -48,7 +48,7 @@ class FileModel(KiaraModel):
         file_name: Union[str, None] = None,
         # import_time: Optional[datetime.datetime] = None,
     ):
-        """Utility method to read metadata of a file from disk and optionally move it into a data archive location."""
+        """Utility method to read metadata of a file from disk."""
 
         import filetype
         import mimetypes

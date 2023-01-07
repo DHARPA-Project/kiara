@@ -132,9 +132,11 @@ def cli(
     if not context:
         context = kiara_config.default_context
 
-    kiara = kiara_config.create_context(context=context, extra_pipelines=pipelines)
-    ctx.obj["kiara"] = kiara
-    ctx.obj["kiara_api"] = KiaraAPI(kiara=kiara)
+    api = KiaraAPI(kiara_config=kiara_config)
+    api.set_active_context(context)
+
+    ctx.obj["kiara_api"] = api
+    ctx.obj["kiara"] = api.context
     ctx.obj["kiara_config"] = kiara_config
     ctx.obj["kiara_context_name"] = context
 

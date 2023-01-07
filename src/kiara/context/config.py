@@ -36,7 +36,7 @@ from kiara.utils.files import get_data_from_file
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
-    from kiara.models.context import ContextSummary
+    from kiara.models.context import ContextInfo
 
 logger = structlog.getLogger()
 
@@ -493,7 +493,7 @@ class KiaraConfig(BaseSettings):
     ) -> "Kiara":
 
         if not context:
-            context = DEFAULT_CONTEXT_NAME
+            context = self.default_context
         else:
             try:
                 context = uuid.UUID(context)  # type: ignore
@@ -564,20 +564,20 @@ class KiaraConfig(BaseSettings):
 
     def delete(
         self, context_name: Union[str, None] = None, dry_run: bool = True
-    ) -> "ContextSummary":
+    ) -> "ContextInfo":
 
         if context_name is None:
             context_name = self.default_context
 
         from kiara.context import Kiara
-        from kiara.models.context import ContextSummary
+        from kiara.models.context import ContextInfo
 
         context_config = self.get_context_config(
             context_name=context_name, auto_generate=False
         )
         kiara = Kiara(config=context_config, runtime_config=self.runtime_config)
 
-        context_summary = ContextSummary.create_from_context(
+        context_summary = ContextInfo.create_from_context(
             kiara=kiara, context_name=context_name
         )
 

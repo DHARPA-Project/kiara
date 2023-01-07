@@ -5,14 +5,13 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import rich_click as click
 import sys
-from rich import box
 from rich.panel import Panel
-from rich.table import Table
 from typing import Tuple, Union
 
+from kiara import KiaraAPI
 from kiara.context import Kiara, KiaraConfig, KiaraContextConfig
 from kiara.interfaces import get_console
-from kiara.models.context import ContextSummaries, ContextSummary
+from kiara.models.context import ContextInfo, ContextInfos
 from kiara.models.values.value_metadata import ValueMetadata
 from kiara.registries.environment import EnvironmentRegistry
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
@@ -30,16 +29,9 @@ def context(ctx):
 def list_contexts(ctx) -> None:
     """List existing contexts."""
 
-    kiara_config: KiaraConfig = ctx.obj["kiara_config"]
+    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
 
-    table = Table(show_header=True, box=box.SIMPLE)
-    table.add_column("alias", style="b")
-    table.add_column("id", style="i")
-    table.add_column("summary")
-
-    summaries = ContextSummaries.create_context_summaries(
-        contexts=kiara_config.context_configs
-    )
+    summaries = kiara_api.retrieve_context_infos()
 
     terminal_print(summaries)
 
@@ -65,7 +57,7 @@ def explain_context(
     if len(contexts) == 1:
 
         kcc = kiara_config.get_context_config(contexts[0])
-        cs = ContextSummary.create_from_context_config(
+        cs = ContextInfo.create_from_context_config(
             kcc, context_name=contexts[0], runtime_config=kiara_config.runtime_config
         )
         terminal_print_model(
@@ -76,7 +68,7 @@ def explain_context(
         summaries = []
         for c in contexts:
             cc = kiara_config.get_context_config(c)
-            cs = ContextSummary.create_from_context_config(
+            cs = ContextInfo.create_from_context_config(
                 cc, context_name=c, runtime_config=kiara_config.runtime_config
             )
             summaries.append(cs)
@@ -123,7 +115,7 @@ def delete_context(
 
     if _context_name == "ALL_CONTEXTS":
         if not force:
-            summaries = ContextSummaries.create_context_summaries(
+            summaries = ContextInfos.create_context_infos(
                 contexts=kiara_config.context_configs
             )
             terminal_print_model(summaries, in_panel="All contexts:")

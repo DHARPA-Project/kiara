@@ -22,7 +22,7 @@ from kiara.interfaces.python_api.models.info import (
 )
 from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
 from kiara.models import KiaraModel
-from kiara.models.context import ContextSummary
+from kiara.models.context import ContextInfo
 from kiara.models.module.manifest import Manifest
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value import ValueMap
@@ -94,38 +94,13 @@ class Kiara(object):
     how something was created, and in which environment.
     """
 
-    _instances: Dict[str, "Kiara"] = {}
-    _instance_kiara_config = KiaraConfig()
-
     @classmethod
-    def instance(
-        cls,
-        context_name: Union[str, None] = None,
-        runtime_config: Union[None, Mapping[str, Any], KiaraRuntimeConfig] = None,
-    ) -> "Kiara":
+    def instance(cls) -> "Kiara":
         """The default *kiara* context. In most cases, it's recommended you create and manage your own, though."""
 
-        # TODO: make this thread-safe
-        if context_name is None:
-            _context_name = os.environ.get("KIARA_CONTEXT", None)
-        else:
-            _context_name = context_name
+        from kiara.interfaces.python_api import KiaraAPI
 
-        if not _context_name:
-            _context_name = cls._instance_kiara_config.default_context
-
-        if _context_name in cls._instances.keys():
-            instance = cls._instances[_context_name]
-        else:
-            instance = cls._instance_kiara_config.create_context(context=context_name)
-            cls._instances[_context_name] = instance
-
-        if runtime_config:
-            if isinstance(runtime_config, KiaraRuntimeConfig):
-                runtime_config = runtime_config.dict()
-            instance.update_runtime_config(**runtime_config)
-
-        return instance
+        return KiaraAPI.instance().context
 
     def __init__(
         self,
@@ -423,8 +398,8 @@ class Kiara(object):
 
         return StoreValuesResult.construct(__root__=stored)
 
-    def create_context_summary(self) -> ContextSummary:
-        return ContextSummary.create_from_context(kiara=self)
+    def create_context_summary(self) -> ContextInfo:
+        return ContextInfo.create_from_context(kiara=self)
 
     def get_all_archives(self) -> Dict[KiaraArchive, Set[str]]:
 

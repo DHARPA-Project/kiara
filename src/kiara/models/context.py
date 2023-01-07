@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from kiara.context import Kiara
 
 
-class ContextSummary(KiaraModel):
+class ContextInfo(KiaraModel):
     @classmethod
     def create_from_context_config(
         cls,
@@ -63,7 +63,7 @@ class ContextSummary(KiaraModel):
             for k, err in errors.items():
                 comment = f"{comment}  - {k}: {err}"
 
-        result = ContextSummary.construct(
+        result = ContextInfo.construct(
             kiara_id=kiara.id,
             value_ids=value_ids,
             aliases=aliases,
@@ -230,11 +230,11 @@ class ContextSummary(KiaraModel):
         return table
 
 
-class ContextSummaries(BaseModel):
-    __root__: Dict[str, ContextSummary]
+class ContextInfos(BaseModel):
+    __root__: Dict[str, ContextInfo]
 
     @classmethod
-    def create_context_summaries(
+    def create_context_infos(
         cls, contexts: Union[Mapping[str, "KiaraContextConfig"], None] = None
     ):
 
@@ -242,9 +242,9 @@ class ContextSummaries(BaseModel):
             kc = KiaraConfig()
             contexts = kc.context_configs
 
-        return ContextSummaries(
+        return ContextInfos(
             __root__={
-                a: ContextSummary.create_from_context_config(c, context_name=a)
+                a: ContextInfo.create_from_context_config(c, context_name=a)
                 for a, c in contexts.items()
             }
         )

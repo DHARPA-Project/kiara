@@ -28,6 +28,7 @@ from kiara.interfaces.python_api.models.info import (
 from kiara.interfaces.python_api.models.workflow import WorkflowMatcher
 from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
 from kiara.interfaces.python_api.workflow import Workflow
+from kiara.models.context import ContextInfos
 from kiara.models.module.jobs import ActiveJob
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
@@ -52,7 +53,7 @@ from kiara.utils import log_exception, log_message
 from kiara.utils.operations import create_operation
 
 if TYPE_CHECKING:
-    from kiara.context import Kiara, KiaraRuntimeConfig
+    from kiara.context import Kiara, KiaraConfig, KiaraRuntimeConfig
 
 logger = structlog.getLogger()
 yaml = YAML(typ="safe")
@@ -67,40 +68,32 @@ class KiaraAPI(object):
     Can be extended for special scenarios and augmented with scenario-specific methdos (Jupyter, web-frontend, ...)
     ."""
 
-    _instances: Dict[uuid.UUID, "KiaraAPI"] = {}
+    _instance: Union["KiaraAPI", None] = None
 
     @classmethod
     def instance(
         cls,
-        context: Union["Kiara", str, None] = None,
-        runtime_config: Union[None, Mapping[str, Any], "KiaraRuntimeConfig"] = None,
     ) -> "KiaraAPI":
 
-        from kiara.context import Kiara
+        if cls._instance is not None:
+            return cls._instance
 
-        if context is not None:
-            if isinstance(context, Kiara):
-                if context.id in cls._instances.keys():
-                    return cls._instances[context.id]
-                else:
-                    api = KiaraAPI(kiara=context)
-                    cls._instances[context.id] = api
-                    return api
+        from kiara.context import KiaraConfig
 
-        context_obj = Kiara.instance(
-            context_name=context, runtime_config=runtime_config
-        )
-        if context_obj.id in cls._instances.keys():
-            return cls._instances[context_obj.id]
-        else:
-            api = KiaraAPI(kiara=context_obj)
-            cls._instances[context_obj.id] = api
-            return api
+        config = KiaraConfig()
 
-    def __init__(self, kiara: "Kiara"):
+        api = KiaraAPI(kiara_config=config)
+        cls._instance = api
+        return api
 
-        self._kiara: Kiara = kiara
+    def __init__(self, kiara_config: "KiaraConfig"):
+
+        self._kiara_config: KiaraConfig = kiara_config
+        self._contexts: Dict[str, Kiara] = {}
         self._workflow_cache: Dict[uuid.UUID, Workflow] = {}
+
+        self._current_context: Union[None, Kiara] = None
+        self._current_context_alias: Union[None, str] = None
 
     @cached_property
     def doc(self) -> Dict[str, str]:
@@ -128,11 +121,78 @@ class KiaraAPI(object):
 
         DON"T USE THIS! This is going away in the production release.
         """
-        return self._kiara
+
+        if self._current_context is None:
+            self._current_context = self._kiara_config.create_context(
+                extra_pipelines=None
+            )
+            self._current_context_alias = self._kiara_config.default_context
+
+        return self._current_context
 
     @property
     def runtime_config(self) -> "KiaraRuntimeConfig":
         return self.context.runtime_config
+
+    # ==================================================================================================================
+    # context-management related functions
+    def list_context_names(self) -> List[str]:
+        """list the names of all available/registered contexts."""
+
+        return list(self._kiara_config.available_context_names)
+
+    def retrieve_context_infos(self) -> ContextInfos:
+        """Retrieve information about the available/registered contexts."""
+
+        return ContextInfos.create_context_infos(self._kiara_config.context_configs)
+
+    @property
+    def current_context_name(self) -> str:
+        """Retrieve the name fo the current context."""
+
+        if self._current_context_alias is None:
+            self.context  # noqa
+        return self._current_context_alias  # type: ignore
+
+    def create_new_context(self, context_name: str, set_active: bool) -> None:
+        """Create a new context.
+
+        Arguments:
+            context_name: the name of the new context
+            set_active: set the newly created context as the active one
+        """
+
+        if context_name in self.list_context_names():
+            raise Exception(
+                f"Can't create context with name '{context_name}': context already exists."
+            )
+
+        ctx = self._kiara_config.create_context(context_name, extra_pipelines=None)
+        if set_active:
+            self._current_context = ctx
+            self._current_context_alias = context_name
+
+    def set_active_context(self, context_name: str, create: bool = False) -> None:
+
+        if not context_name:
+            raise Exception("No context name provided.")
+
+        if context_name == self._current_context_alias:
+            return
+        if context_name not in self.list_context_names():
+            if create:
+                self._current_context = self._kiara_config.create_context(
+                    context=context_name, extra_pipelines=None
+                )
+                self._current_context_alias = context_name
+                return
+            else:
+                raise Exception(f"No context with name '{context_name}' available.")
+
+        self._current_context = self._kiara_config.create_context(
+            context=context_name, extra_pipelines=None
+        )
+        self._current_context_alias = context_name
 
     # ==================================================================================================================
     # methods for data_types
@@ -169,7 +229,7 @@ class KiaraAPI(object):
             title = f"Filtered data_types: {filter}"
             data_type_names: Iterable[str] = []
 
-            for m in self._kiara.type_registry.data_type_names:
+            for m in self.context.type_registry.data_type_names:
                 match = True
 
                 for f in filter:
@@ -182,10 +242,10 @@ class KiaraAPI(object):
                     data_type_names.append(m)  # type: ignore
         else:
             title = "All data types"
-            data_type_names = self._kiara.type_registry.data_type_names
+            data_type_names = self.context.type_registry.data_type_names
 
         data_types = {
-            d: self._kiara.type_registry.get_data_type_cls(d) for d in data_type_names
+            d: self.context.type_registry.get_data_type_cls(d) for d in data_type_names
         }
         data_types_info = DataTypeClassesInfo.create_from_type_items(
             kiara=self.context, group_title=title, **data_types
@@ -231,7 +291,7 @@ class KiaraAPI(object):
             title = f"Filtered modules: {filter}"
             module_types_names: Iterable[str] = []
 
-            for m in self._kiara.module_registry.get_module_type_names():
+            for m in self.context.module_registry.get_module_type_names():
                 match = True
 
                 for f in filter:
@@ -244,10 +304,10 @@ class KiaraAPI(object):
                     module_types_names.append(m)  # type: ignore
         else:
             title = "All modules"
-            module_types_names = self._kiara.module_registry.get_module_type_names()
+            module_types_names = self.context.module_registry.get_module_type_names()
 
         module_types = {
-            n: self._kiara.module_registry.get_module_class(n)
+            n: self.context.module_registry.get_module_class(n)
             for n in module_types_names
         }
 
@@ -268,7 +328,7 @@ class KiaraAPI(object):
             an object containing all information about a module type
         """
 
-        m_cls = self._kiara.module_registry.get_module_class(module_type)
+        m_cls = self.context.module_registry.get_module_class(module_type)
         info = ModuleTypeInfo.create_from_type_class(kiara=self.context, type_cls=m_cls)
         return info
 
@@ -310,7 +370,7 @@ class KiaraAPI(object):
             return operation
         else:
             mc = Manifest(module_type=module_type, module_config=module_config)
-            module_obj = self._kiara.create_module(mc)
+            module_obj = self.context.create_module(mc)
 
             return module_obj.operation
 
@@ -546,7 +606,7 @@ class KiaraAPI(object):
             values = self.list_values(**matcher_params)
             return sorted(values.keys())
         else:
-            _values = self._kiara.data_registry.retrieve_all_available_value_ids()
+            _values = self.context.data_registry.retrieve_all_available_value_ids()
             return sorted(_values)
 
     def list_values(self, **matcher_params: Any) -> Dict[uuid.UUID, Value]:
@@ -565,12 +625,12 @@ class KiaraAPI(object):
         if matcher_params:
             matcher = ValueMatcher.create_matcher(**matcher_params)
 
-            values = self._kiara.data_registry.find_values(matcher=matcher)
+            values = self.context.data_registry.find_values(matcher=matcher)
         else:
             # TODO: make that parallel?
             values = {
-                k: self._kiara.data_registry.get_value(k)
-                for k in self._kiara.data_registry.retrieve_all_available_value_ids()
+                k: self.context.data_registry.get_value(k)
+                for k in self.context.data_registry.retrieve_all_available_value_ids()
             }
 
         return values
@@ -587,7 +647,7 @@ class KiaraAPI(object):
             the Value instance
         """
 
-        return self._kiara.data_registry.get_value(value=value)
+        return self.context.data_registry.get_value(value=value)
 
     def get_value_info(self, value: Union[str, uuid.UUID, ValueLink]) -> ValueInfo:
         """Retrieve an info object for a value.
@@ -606,7 +666,7 @@ class KiaraAPI(object):
         """
 
         _value = self.get_value(value=value)
-        return ValueInfo.create_from_instance(kiara=self._kiara, instance=_value)
+        return ValueInfo.create_from_instance(kiara=self.context, instance=_value)
 
     def get_values_info(self, **matcher_params) -> ValuesInfo:
         """Retrieve information about the matching values.
@@ -629,7 +689,7 @@ class KiaraAPI(object):
         values = self.list_values(**matcher_params)
 
         infos = ValuesInfo.create_from_instances(
-            kiara=self._kiara, instances={str(k): v for k, v in values.items()}
+            kiara=self.context, instances={str(k): v for k, v in values.items()}
         )
         return infos  # type: ignore
 
@@ -653,7 +713,7 @@ class KiaraAPI(object):
             values = self.list_aliases(**matcher_params)
             return list(values.keys())
         else:
-            _values = self._kiara.alias_registry.all_aliases
+            _values = self.context.alias_registry.all_aliases
             return list(_values)
 
     def list_aliases(self, **matcher_params) -> Dict[str, Value]:
@@ -671,7 +731,7 @@ class KiaraAPI(object):
             all_values = self.list_values(**matcher_params)
             result: Dict[str, Value] = {}
             for value in all_values.values():
-                aliases = self._kiara.alias_registry.find_aliases_for_value_id(
+                aliases = self.context.alias_registry.find_aliases_for_value_id(
                     value_id=value.value_id
                 )
                 for a in aliases:
@@ -684,9 +744,9 @@ class KiaraAPI(object):
             result = {k: result[k] for k in sorted(result.keys())}
         else:
             # faster if not other matcher params
-            all_aliases = self._kiara.alias_registry.all_aliases
+            all_aliases = self.context.alias_registry.all_aliases
             result = {
-                k: self._kiara.data_registry.get_value(f"alias:{k}")
+                k: self.context.data_registry.get_value(f"alias:{k}")
                 for k in all_aliases
             }
 
@@ -713,7 +773,7 @@ class KiaraAPI(object):
         values = self.list_aliases(**matcher_params)
 
         infos = ValuesInfo.create_from_instances(
-            kiara=self._kiara, instances={str(k): v for k, v in values.items()}
+            kiara=self.context, instances={str(k): v for k, v in values.items()}
         )
         return infos  # type: ignore
 
@@ -851,7 +911,7 @@ class KiaraAPI(object):
             the (pipeline) module configuration of the filter pipeline
         """
 
-        filter_op_type: FilterOperationType = self._kiara.operation_registry.get_operation_type("filter")  # type: ignore
+        filter_op_type: FilterOperationType = self.context.operation_registry.get_operation_type("filter")  # type: ignore
         pipeline_config = filter_op_type.assemble_filter_pipeline_config(
             data_type=data_type,
             filters=filters,
@@ -891,11 +951,11 @@ class KiaraAPI(object):
 
         if use_pretty_print:
             pretty_print_op_type: PrettyPrintOperationType = (
-                self._kiara.operation_registry.get_operation_type("pretty_print")
+                self.context.operation_registry.get_operation_type("pretty_print")
             )  # type: ignore
             ops = pretty_print_op_type.get_target_types_for(data_type)
         else:
-            render_op_type: RenderValueOperationType = self._kiara.operation_registry.get_operation_type(
+            render_op_type: RenderValueOperationType = self.context.operation_registry.get_operation_type(
                 # type: ignore
                 "render_value"
             )  # type: ignore
@@ -941,7 +1001,7 @@ class KiaraAPI(object):
             manifest = Manifest(
                 module_type="pipeline", module_config=pipeline_config.dict()
             )
-            module = self._kiara.module_registry.create_module(manifest=manifest)
+            module = self.context.module_registry.create_module(manifest=manifest)
             operation = Operation.create_from_module(module, doc=pipeline_config.doc)
         else:
             operation = match

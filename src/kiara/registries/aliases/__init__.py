@@ -266,13 +266,26 @@ class AliasRegistry(object):
         return aliases
 
     def register_aliases(
-        self, value_id: Union[uuid.UUID, ValueLink, str], *aliases: str
+        self,
+        value_id: Union[uuid.UUID, ValueLink, str],
+        *aliases: str,
+        allow_overwrite: bool = False,
     ):
 
         value_id = self._get_value_id(value_id=value_id)
         store_name = self.default_alias_store
         store: AliasStore = self.get_archive(archive_id=store_name)  # type: ignore
         self.aliases  # noqu
+
+        if not allow_overwrite:
+            duplicates = []
+            for alias in aliases:
+                if alias in self.aliases.keys():
+                    duplicates.append(alias)
+
+            if duplicates:
+                raise Exception(f"Duplicate aliases: {duplicates}")
+
         store.register_aliases(value_id, *aliases)
 
         for alias in aliases:

@@ -781,12 +781,14 @@ class KiaraAPI(object):
         self,
         value: Union[str, uuid.UUID, ValueLink],
         alias: Union[str, Iterable[str], None],
+        allow_overwrite: bool = True,
     ) -> StoreValueResult:
         """Store the specified value in the (default) value store.
 
         Arguments:
             value: the value (or a reference to it)
             alias: (Optional) aliases for the value
+            allow_overwrite: whether to allow overwriting existing aliases
         """
 
         if isinstance(alias, str):
@@ -797,7 +799,9 @@ class KiaraAPI(object):
         try:
             persisted_data = self.context.data_registry.store_value(value=value_obj)
             if alias:
-                self.context.alias_registry.register_aliases(value_obj.value_id, *alias)
+                self.context.alias_registry.register_aliases(
+                    value_obj.value_id, *alias, allow_overwrite=allow_overwrite
+                )
             result = StoreValueResult.construct(
                 value=value_obj,
                 aliases=sorted(alias) if alias else [],

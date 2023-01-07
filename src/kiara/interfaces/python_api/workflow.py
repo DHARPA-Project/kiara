@@ -41,9 +41,6 @@ class WorkflowPipelineController(SinglePipelineController):
     This is the default implementation of a ``PipelineController``, and probably the most simple implementation of one.
     It waits until all inputs are set, after which it executes all pipeline steps in the required order.
 
-    Arguments:
-        pipeline: the pipeline to control
-        auto_process: whether to automatically start processing the pipeline as soon as the input set is valid
     """
 
     def __init__(

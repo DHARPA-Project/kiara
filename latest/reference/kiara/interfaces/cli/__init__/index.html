@@ -4637,7 +4637,9 @@
 <span class="normal">136</span>
 <span class="normal">137</span>
 <span class="normal">138</span>
-<span class="normal">139</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">context_settings</span><span class="o">=</span><span class="n">CLICK_CONTEXT_SETTINGS</span><span class="p">)</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">context_settings</span><span class="o">=</span><span class="n">CLICK_CONTEXT_SETTINGS</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
     <span class="s2">&quot;--config&quot;</span><span class="p">,</span>
     <span class="s2">&quot;-cnf&quot;</span><span class="p">,</span>
@@ -4723,9 +4725,11 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">context</span><span class="p">:</span>
         <span class="n">context</span> <span class="o">=</span> <span class="n">kiara_config</span><span class="o">.</span><span class="n">default_context</span>
 
-    <span class="n">kiara</span> <span class="o">=</span> <span class="n">kiara_config</span><span class="o">.</span><span class="n">create_context</span><span class="p">(</span><span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span> <span class="n">extra_pipelines</span><span class="o">=</span><span class="n">pipelines</span><span class="p">)</span>
-    <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kiara</span>
-    <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara_api&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">KiaraAPI</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
+    <span class="n">api</span> <span class="o">=</span> <span class="n">KiaraAPI</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">=</span><span class="n">kiara_config</span><span class="p">)</span>
+    <span class="n">api</span><span class="o">.</span><span class="n">set_active_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara_api&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">api</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">context</span>
     <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kiara_config</span>
     <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara_context_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span>
 </code></pre></div></td></tr></table></div>

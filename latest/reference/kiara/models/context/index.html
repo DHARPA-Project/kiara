@@ -1995,15 +1995,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.models.context.ContextSummary" class="md-nav__link">
-    ContextSummary
+  <a href="#kiara.models.context.ContextInfo" class="md-nav__link">
+    ContextInfo
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.models.context.ContextSummaries" class="md-nav__link">
-    ContextSummaries
+  <a href="#kiara.models.context.ContextInfos" class="md-nav__link">
+    ContextInfos
   </a>
   
 </li>
@@ -4494,15 +4494,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.models.context.ContextSummary" class="md-nav__link">
-    ContextSummary
+  <a href="#kiara.models.context.ContextInfo" class="md-nav__link">
+    ContextInfo
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.models.context.ContextSummaries" class="md-nav__link">
-    ContextSummaries
+  <a href="#kiara.models.context.ContextInfos" class="md-nav__link">
+    ContextInfos
   </a>
   
 </li>
@@ -4554,11 +4554,11 @@
 
 
 
-<h3 id="kiara.models.context.ContextSummary" class="doc doc-heading">
-        <code>ContextSummary</code>
+<h3 id="kiara.models.context.ContextInfo" class="doc doc-heading">
+        <code>ContextInfo</code>
 
 
-<a href="#kiara.models.context.ContextSummary" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.models.context.ContextInfo" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
@@ -4779,7 +4779,7 @@
 <span class="normal">227</span>
 <span class="normal">228</span>
 <span class="normal">229</span>
-<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ContextSummary</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ContextInfo</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_context_config</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -4825,7 +4825,7 @@
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">errors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">comment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">comment</span><span class="si">}</span><span class="s2">  - </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="n">ContextSummary</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">ContextInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
             <span class="n">kiara_id</span><span class="o">=</span><span class="n">kiara</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
             <span class="n">value_ids</span><span class="o">=</span><span class="n">value_ids</span><span class="p">,</span>
             <span class="n">aliases</span><span class="o">=</span><span class="n">aliases</span><span class="p">,</span>
@@ -5001,20 +5001,20 @@
 
 
 
-<h4 id="kiara.models.context.ContextSummary-attributes">Attributes<a href="#kiara.models.context.ContextSummary-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+<h4 id="kiara.models.context.ContextInfo-attributes">Attributes<a href="#kiara.models.context.ContextInfo-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-attribute">
 
 
 
-<h5 id="kiara.models.context.ContextSummary.kiara_id" class="doc doc-heading">
+<h5 id="kiara.models.context.ContextInfo.kiara_id" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">kiara_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The (globally unique) id of the kiara context.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#kiara.models.context.ContextSummary.kiara_id" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.context.ContextInfo.kiara_id" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5026,14 +5026,14 @@
 
 
 
-<h5 id="kiara.models.context.ContextSummary.context_name" class="doc doc-heading">
+<h5 id="kiara.models.context.ContextInfo.context_name" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The local alias for this context.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#kiara.models.context.ContextSummary.context_name" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.context.ContextInfo.context_name" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5045,14 +5045,14 @@
 
 
 
-<h5 id="kiara.models.context.ContextSummary.value_ids" class="doc doc-heading">
+<h5 id="kiara.models.context.ContextInfo.value_ids" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">value_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The ids of all stored values in this context.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#kiara.models.context.ContextSummary.value_ids" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.context.ContextInfo.value_ids" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5064,14 +5064,14 @@
 
 
 
-<h5 id="kiara.models.context.ContextSummary.aliases" class="doc doc-heading">
+<h5 id="kiara.models.context.ContextInfo.aliases" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;All available aliases within this context (and the value ids they refer to).&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#kiara.models.context.ContextSummary.aliases" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.context.ContextInfo.aliases" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5083,14 +5083,14 @@
 
 
 
-<h5 id="kiara.models.context.ContextSummary.archives" class="doc doc-heading">
+<h5 id="kiara.models.context.ContextInfo.archives" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">archives</span><span class="p">:</span> <span class="n">ArchiveGroupInfo</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The archives registered in this context.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#kiara.models.context.ContextSummary.archives" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.context.ContextInfo.archives" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5102,14 +5102,14 @@
 
 
 
-<h5 id="kiara.models.context.ContextSummary.invalid" class="doc doc-heading">
+<h5 id="kiara.models.context.ContextInfo.invalid" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">invalid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Whether this context has errors.&#39;</span><span class="p">,</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#kiara.models.context.ContextSummary.invalid" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.context.ContextInfo.invalid" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5121,14 +5121,14 @@
 
 
 
-<h5 id="kiara.models.context.ContextSummary.comment" class="doc doc-heading">
+<h5 id="kiara.models.context.ContextInfo.comment" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">comment</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;(Optional) comment about this context.&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#kiara.models.context.ContextSummary.comment" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.context.ContextInfo.comment" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5140,14 +5140,14 @@
 
 
 
-<h5 id="kiara.models.context.ContextSummary.kiara_context" class="doc doc-heading">
+<h5 id="kiara.models.context.ContextInfo.kiara_context" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">kiara_context</span><span class="p">:</span> <span class="n">Kiara</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
-<a href="#kiara.models.context.ContextSummary.kiara_context" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.context.ContextInfo.kiara_context" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5155,20 +5155,20 @@
 
 </div>
 
-<h4 id="kiara.models.context.ContextSummary-functions">Functions<a href="#kiara.models.context.ContextSummary-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+<h4 id="kiara.models.context.ContextInfo-functions">Functions<a href="#kiara.models.context.ContextInfo-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
 
 
 
-<h5 id="kiara.models.context.ContextSummary.create_from_context_config" class="doc doc-heading">
+<h5 id="kiara.models.context.ContextInfo.create_from_context_config" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_from_context_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">KiaraContextConfig</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">runtime_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">KiaraRuntimeConfig</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.models.context.ContextSummary.create_from_context_config" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.context.ContextInfo.create_from_context_config" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5208,14 +5208,14 @@
 
 
 
-<h5 id="kiara.models.context.ContextSummary.create_from_context" class="doc doc-heading">
+<h5 id="kiara.models.context.ContextInfo.create_from_context" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_from_context</span><span class="p">(</span><span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.models.context.ContextSummary.create_from_context" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.context.ContextInfo.create_from_context" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5296,7 +5296,7 @@
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">err</span> <span class="ow">in</span> <span class="n">errors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">comment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">comment</span><span class="si">}</span><span class="s2">  - </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span>
 
-    <span class="n">result</span> <span class="o">=</span> <span class="n">ContextSummary</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">ContextInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
         <span class="n">kiara_id</span><span class="o">=</span><span class="n">kiara</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
         <span class="n">value_ids</span><span class="o">=</span><span class="n">value_ids</span><span class="p">,</span>
         <span class="n">aliases</span><span class="o">=</span><span class="n">aliases</span><span class="p">,</span>
@@ -5317,10 +5317,10 @@
 
 
 
-<h5 id="kiara.models.context.ContextSummary.value_summary" class="doc doc-heading">
+<h5 id="kiara.models.context.ContextInfo.value_summary" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">value_summary</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
 
-<a href="#kiara.models.context.ContextSummary.value_summary" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.context.ContextInfo.value_summary" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5394,10 +5394,10 @@
 
 
 
-<h5 id="kiara.models.context.ContextSummary.alias_summary" class="doc doc-heading">
+<h5 id="kiara.models.context.ContextInfo.alias_summary" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">alias_summary</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
 
-<a href="#kiara.models.context.ContextSummary.alias_summary" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.context.ContextInfo.alias_summary" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5471,10 +5471,10 @@
 
 
 
-<h5 id="kiara.models.context.ContextSummary.create_renderable" class="doc doc-heading">
+<h5 id="kiara.models.context.ContextInfo.create_renderable" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span></code>
 
-<a href="#kiara.models.context.ContextSummary.create_renderable" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.context.ContextInfo.create_renderable" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5628,11 +5628,11 @@
 
 
 
-<h3 id="kiara.models.context.ContextSummaries" class="doc doc-heading">
-        <code>ContextSummaries</code>
+<h3 id="kiara.models.context.ContextInfos" class="doc doc-heading">
+        <code>ContextInfos</code>
 
 
-<a href="#kiara.models.context.ContextSummaries" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.models.context.ContextInfos" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
@@ -5698,11 +5698,11 @@
 <span class="normal">285</span>
 <span class="normal">286</span>
 <span class="normal">287</span>
-<span class="normal">288</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ContextSummaries</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">__root__</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextSummary</span><span class="p">]</span>
+<span class="normal">288</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ContextInfos</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">__root__</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextInfo</span><span class="p">]</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_context_summaries</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">create_context_infos</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">contexts</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;KiaraContextConfig&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
 
@@ -5710,9 +5710,9 @@
             <span class="n">kc</span> <span class="o">=</span> <span class="n">KiaraConfig</span><span class="p">()</span>
             <span class="n">contexts</span> <span class="o">=</span> <span class="n">kc</span><span class="o">.</span><span class="n">context_configs</span>
 
-        <span class="k">return</span> <span class="n">ContextSummaries</span><span class="p">(</span>
+        <span class="k">return</span> <span class="n">ContextInfos</span><span class="p">(</span>
             <span class="n">__root__</span><span class="o">=</span><span class="p">{</span>
-                <span class="n">a</span><span class="p">:</span> <span class="n">ContextSummary</span><span class="o">.</span><span class="n">create_from_context_config</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+                <span class="n">a</span><span class="p">:</span> <span class="n">ContextInfo</span><span class="o">.</span><span class="n">create_from_context_config</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">contexts</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="p">}</span>
         <span class="p">)</span>
@@ -5767,20 +5767,20 @@
 
 
 
-<h4 id="kiara.models.context.ContextSummaries-functions">Functions<a href="#kiara.models.context.ContextSummaries-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+<h4 id="kiara.models.context.ContextInfos-functions">Functions<a href="#kiara.models.context.ContextInfos-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
 
 
 
-<h5 id="kiara.models.context.ContextSummaries.create_context_summaries" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_context_summaries</span><span class="p">(</span><span class="n">contexts</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraContextConfig</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
+<h5 id="kiara.models.context.ContextInfos.create_context_infos" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_context_infos</span><span class="p">(</span><span class="n">contexts</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">KiaraContextConfig</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.models.context.ContextSummaries.create_context_summaries" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.context.ContextInfos.create_context_infos" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5802,7 +5802,7 @@
 <span class="normal">248</span>
 <span class="normal">249</span>
 <span class="normal">250</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
-<span class="k">def</span> <span class="nf">create_context_summaries</span><span class="p">(</span>
+<span class="k">def</span> <span class="nf">create_context_infos</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span> <span class="n">contexts</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;KiaraContextConfig&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">):</span>
 
@@ -5810,9 +5810,9 @@
         <span class="n">kc</span> <span class="o">=</span> <span class="n">KiaraConfig</span><span class="p">()</span>
         <span class="n">contexts</span> <span class="o">=</span> <span class="n">kc</span><span class="o">.</span><span class="n">context_configs</span>
 
-    <span class="k">return</span> <span class="n">ContextSummaries</span><span class="p">(</span>
+    <span class="k">return</span> <span class="n">ContextInfos</span><span class="p">(</span>
         <span class="n">__root__</span><span class="o">=</span><span class="p">{</span>
-            <span class="n">a</span><span class="p">:</span> <span class="n">ContextSummary</span><span class="o">.</span><span class="n">create_from_context_config</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+            <span class="n">a</span><span class="p">:</span> <span class="n">ContextInfo</span><span class="o">.</span><span class="n">create_from_context_config</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">context_name</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">contexts</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">}</span>
     <span class="p">)</span>
@@ -5826,10 +5826,10 @@
 
 
 
-<h5 id="kiara.models.context.ContextSummaries.create_renderable" class="doc doc-heading">
+<h5 id="kiara.models.context.ContextInfos.create_renderable" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span></code>
 
-<a href="#kiara.models.context.ContextSummaries.create_renderable" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.context.ContextInfos.create_renderable" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">

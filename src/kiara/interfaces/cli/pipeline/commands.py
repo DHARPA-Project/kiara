@@ -6,7 +6,6 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Pipeline-related subcommands for the cli."""
-
 import rich_click as click
 import typing
 from rich import box
@@ -15,6 +14,7 @@ from rich.table import Table
 from kiara.context import Kiara
 from kiara.interfaces.python_api.models.info import OperationGroupInfo
 from kiara.utils.cli import output_format_option, terminal_print_model
+from kiara.utils.cli.exceptions import handle_exception
 from kiara.utils.graphs import print_ascii_graph
 from kiara.utils.pipelines import get_pipeline_config
 
@@ -78,13 +78,13 @@ def list_pipelines(ctx, full_doc: bool, filter: typing.Iterable[str], format: st
 @click.argument("pipeline-name-or-path", nargs=1)
 @output_format_option()
 @click.pass_context
+@handle_exception()
 def explain(ctx, pipeline_name_or_path: str, format: str):
     """Print details about pipeline inputs, outputs, and overall structure."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     pc = get_pipeline_config(kiara=kiara_obj, pipeline=pipeline_name_or_path)
-
     terminal_print_model(
         pc, format=format, in_panel=f"Pipeline: [b i]{pipeline_name_or_path}[/b i]"
     )

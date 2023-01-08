@@ -5,9 +5,13 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import uuid
+from rich.markdown import Markdown
 from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Type, Union
 
+from kiara.defaults import NOT_AVAILBLE_MARKER
+
 if TYPE_CHECKING:
+    from rich.console import RenderableType
     from rich.table import Table
 
     from kiara.data_types import DataType
@@ -18,10 +22,53 @@ if TYPE_CHECKING:
 
 
 class KiaraException(Exception):
-    pass
+    def __init__(self, msg: str, parent: Union[Exception, None] = None, **kwargs):
+
+        self._parent: Union[Exception, None] = parent
+        self._properties = kwargs
+        super().__init__(msg)
+
+    @property
+    def parent(self) -> Union[Exception, None]:
+        return self._parent
+
+    @property
+    def root_cause(self) -> Exception:
+
+        current: Exception = self
+        while hasattr(current, "parent") and current.parent is not None:  # type: ignore
+            current = current.parent  # type: ignore
+
+        return current
+
+    def root_details(self) -> Union[str, None]:
+
+        current: Exception = self
+        current_details = None
+        while hasattr(current, "parent") and current.parent is not None:  # type: ignore
+            current = current.parent  # type: ignore
+
+            if hasattr(current, "details") and current.details:  # type: ignore
+                current_details = current.details  # type: ignore
+            else:
+                current_details = str(current)
+
+        return current_details
+
+    def create_renderable(self, **config) -> "RenderableType":
+
+        from rich.console import Group
+
+        rows: List[RenderableType] = [f"[red]Error[/red]: {str(self)}"]
+        root_details = self.root_details()
+        if root_details:
+            rows.append("")
+            rows.append(Markdown(root_details))
+
+        return Group(*rows)
 
 
-class KiaraModuleConfigException(Exception):
+class KiaraModuleConfigException(KiaraException):
     def __init__(
         self,
         msg: str,
@@ -33,17 +80,15 @@ class KiaraModuleConfigException(Exception):
         self._module_cls = module_cls
         self._config = config
 
-        self._parent: Union[Exception, None] = parent
-
         if not msg.endswith("."):
             _msg = msg + "."
         else:
             _msg = msg
 
-        super().__init__(_msg)
+        super().__init__(_msg, parent=parent)
 
 
-class ValueTypeConfigException(Exception):
+class ValueTypeConfigException(KiaraException):
     def __init__(
         self,
         msg: str,
@@ -55,17 +100,15 @@ class ValueTypeConfigException(Exception):
         self._type_cls = type_cls
         self._config = config
 
-        self._parent: Union[Exception, None] = parent
-
         if not msg.endswith("."):
             _msg = msg + "."
         else:
             _msg = msg
 
-        super().__init__(_msg)
+        super().__init__(_msg, parent=parent)
 
 
-class DataTypeUnknownException(Exception):
+class DataTypeUnknownException(KiaraException):
     def __init__(
         self,
         data_type: str,
@@ -111,25 +154,24 @@ class DataTypeUnknownException(Exception):
         return table
 
 
-class KiaraValueException(Exception):
+class KiaraValueException(KiaraException):
     def __init__(
         self,
         data_type: Type["DataType"],
         value_data: Any,
-        exception: Exception,
+        parent: Exception,
     ):
         self._data_type: Type["DataType"] = data_type
         self._value_data: Any = value_data
-        self._exception: Exception = exception
 
-        exc_msg = str(self._exception)
+        exc_msg = str(parent)
         if not exc_msg:
             exc_msg = "no details available"
 
-        super().__init__(f"Invalid value of type '{data_type._data_type_name}': {exc_msg}")  # type: ignore
+        super().__init__(f"Invalid value of type '{data_type._data_type_name}': {exc_msg}", parent=parent)  # type: ignore
 
 
-class NoSuchExecutionTargetException(Exception):
+class NoSuchExecutionTargetException(KiaraException):
     def __init__(
         self,
         selected_target: str,
@@ -144,7 +186,7 @@ class NoSuchExecutionTargetException(Exception):
         super().__init__(msg)
 
 
-class KiaraProcessingException(Exception):
+class KiaraProcessingException(KiaraException):
     def __init__(
         self,
         msg: Union[str, Exception],
@@ -174,7 +216,7 @@ class KiaraProcessingException(Exception):
         return self._parent
 
 
-class InvalidValuesException(Exception):
+class InvalidValuesException(KiaraException):
     def __init__(
         self,
         msg: Union[None, str, Exception] = None,
@@ -223,7 +265,7 @@ class InvalidValuesException(Exception):
         return table
 
 
-class JobConfigException(Exception):
+class JobConfigException(KiaraException):
     def __init__(
         self,
         msg: Union[str, Exception],
@@ -252,7 +294,7 @@ class JobConfigException(Exception):
         return self._inputs
 
 
-class FailedJobException(Exception):
+class FailedJobException(KiaraException):
     def __init__(self, job: "ActiveJob", msg: Union[str, None] = None):
 
         self.job: ActiveJob = job
@@ -281,7 +323,7 @@ class FailedJobException(Exception):
         return group
 
 
-class NoSuchValueException(Exception):
+class NoSuchValueException(KiaraException):
 
     pass
 
@@ -302,7 +344,7 @@ class NoSuchValueAliasException(NoSuchValueException):
         super().__init__(msg)
 
 
-class NoSuchWorkflowException(Exception):
+class NoSuchWorkflowException(KiaraException):
     def __init__(self, workflow: Union[uuid.UUID, str], msg: Union[str, None] = None):
         self._workflow: Union[str, uuid.UUID] = workflow
         if not msg:
@@ -322,7 +364,7 @@ class NoSuchWorkflowException(Exception):
             return False
 
 
-class NoSuchOperationException(Exception):
+class NoSuchOperationException(KiaraException):
     def __init__(
         self,
         operation_id: str,
@@ -345,3 +387,52 @@ class NoSuchOperationException(Exception):
     @property
     def operation_id(self) -> str:
         return self._operation_id
+
+
+class InvalidOperationException(KiaraException):
+    def __init__(self, operation_details: Mapping[str, Any]):
+
+        self._all_details: Mapping[str, Any] = operation_details
+        msg = operation_details.get("operation_id", None)
+        if msg is None:
+            msg = operation_details.get("pipeline_name", None)
+        parent = operation_details.get("parent", None)
+        super().__init__(f"Invalid operation: {msg}", parent=parent)
+
+    @property
+    def module_id(self) -> str:
+        return self._all_details.get("module_id", NOT_AVAILBLE_MARKER)
+
+    @property
+    def module_config(self) -> Union[Mapping[str, Any], str]:
+        return self._all_details.get("module_config", {})
+
+    @property
+    def details(self) -> Union[str, None]:
+        if self.parent:
+            if hasattr(self.parent, "details"):
+                return self.parent.details  # type: ignore
+            else:
+                return None
+        else:
+            return self._all_details.get("details", None)
+
+
+class InvalidPipelineConfig(KiaraException):
+    def __init__(self, msg: str, config: Mapping[str, Any], details: str):
+
+        self._config = config
+        self._details = details
+        super().__init__(msg)
+
+    @property
+    def pipeline_config(self) -> Mapping[str, Any]:
+        return self._config
+
+    @property
+    def details(self) -> Union[str, None]:
+        return self._details
+
+    @property
+    def config(self) -> Mapping[str, Any]:
+        return self._config

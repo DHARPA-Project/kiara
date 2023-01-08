@@ -25,7 +25,11 @@ from typing import (
     Union,
 )
 
-from kiara.exceptions import KiaraModuleConfigException, KiaraProcessingException
+from kiara.exceptions import (
+    KiaraException,
+    KiaraModuleConfigException,
+    KiaraProcessingException,
+)
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.jobs import JobLog
 from kiara.models.values.value_schema import ValueSchema
@@ -231,7 +235,10 @@ class InputOutputObject(abc.ABC):
                 import traceback
 
                 traceback.print_exc()
-            raise Exception(f"Can't create output schemas for instance of module '{self.alias}': {e}")  # type: ignore
+            raise KiaraException(
+                f"Can't create output schemas for instance of module '{self.alias}': {e}",
+                parent=e,
+            )
 
     @property
     def input_names(self) -> Iterable[str]:

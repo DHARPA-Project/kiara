@@ -15,6 +15,7 @@ from typing import Iterable
 
 from kiara.context import Kiara
 from kiara.utils.cli import dict_from_cli_args
+from kiara.utils.cli.exceptions import handle_exception
 from kiara.utils.cli.run import (
     _validate_save_option,
     calculate_aliases,
@@ -53,6 +54,7 @@ from kiara.utils.output import OutputDetails
 )
 @click.option("--help", "-h", help="Show this message and exit.", is_flag=True)
 @click.pass_context
+@handle_exception()
 def run(
     ctx,
     module_or_operation: str,
@@ -109,6 +111,7 @@ def run(
         module_config=module_config,
     )
     final_aliases = calculate_aliases(kiara_op=kiara_op, alias_tokens=save)
+
     set_and_validate_inputs(
         kiara_op=kiara_op,
         inputs=inputs,

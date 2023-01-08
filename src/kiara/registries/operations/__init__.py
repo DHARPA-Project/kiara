@@ -20,7 +20,7 @@ from typing import (
     Union,
 )
 
-from kiara.exceptions import NoSuchOperationException
+from kiara.exceptions import InvalidOperationException, NoSuchOperationException
 from kiara.interfaces.python_api.models.info import (
     OperationTypeClassesInfo,
     OperationTypeInfo,
@@ -34,7 +34,7 @@ from kiara.models.module.operation import (
 )
 from kiara.models.python_class import KiaraModuleInstance
 from kiara.operations import OperationType
-from kiara.utils import log_exception
+from kiara.utils import log_exception, log_message
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -69,6 +69,8 @@ class OperationRegistry(object):
         self._operations_by_type: Union[Dict[str, Iterable[str]], None] = None
 
         self._module_map: Union[Dict[str, Dict[str, Any]], None] = None
+
+        self._invalid_operations: Dict[str, Any] = {}
 
     @property
     def is_initialized(self) -> bool:
@@ -217,6 +219,23 @@ class OperationRegistry(object):
                     ).append(op_config)
                     continue
 
+            except Exception as e:
+                details: Dict[str, Any] = {}
+                module_id = op_config.retrieve_module_type(kiara=self._kiara)
+                details["module_id"] = module_id
+                if module_id == "pipeline":
+                    details["pipeline_name"] = op_config.pipeline_name  # type: ignore
+                msg: Union[str, Exception] = str(e)
+                if not msg:
+                    msg = e
+                details["details"] = msg
+                logger.error("invalid.operation", **details)
+                self._invalid_operations[op_config.pipeline_name] = details  # type: ignore
+                log_exception(e)
+                continue
+
+            try:
+
                 module_type = op_config.retrieve_module_type(kiara=self._kiara)
                 if module_type not in self._kiara.module_type_names:
                     deferred_module_names.setdefault(module_type, []).append(op_config)
@@ -245,12 +264,12 @@ class OperationRegistry(object):
                             _op.operation_id
                         )
             except Exception as e:
-                details: Dict[str, Any] = {}
+                details = {}
                 module_id = op_config.retrieve_module_type(kiara=self._kiara)
                 details["module_id"] = module_id
                 if module_id == "pipeline":
                     details["pipeline_name"] = op_config.pipeline_name  # type: ignore
-                msg: Union[str, Exception] = str(e)
+                msg = str(e)
                 if not msg:
                     msg = e
                 details["details"] = msg
@@ -349,15 +368,23 @@ class OperationRegistry(object):
                         details = {}
                         module_id = op_config.retrieve_module_type(kiara=self._kiara)
                         details["module_id"] = module_id
+                        try:
+                            details["module_config"] = op_config.retrieve_module_config(
+                                kiara=self._kiara
+                            )
+                        except Exception as xe:
+                            details["module_config"] = str(xe)
                         if module_id == "pipeline":
                             details["pipeline_name"] = op_config.pipeline_name  # type: ignore
+
                         msg = str(e)
                         if not msg:
                             msg = e
                         details["details"] = msg
                         error_details[missing_op_id] = details
                         exc_info = sys.exc_info()
-                        details["exception"] = exc_info[1]
+                        details["parent"] = exc_info[1]
+
                         continue
 
             for name, dependencies in deferred_module_names.items():
@@ -371,12 +398,15 @@ class OperationRegistry(object):
                 for mn in deferred_module_names:
                     if mn in operations.keys():
                         continue
-                    details = error_details.get(missing_op_id, {"details": "-- n/a --"})
-                    exception = details.pop("exception", None)
+                    details = error_details.get(
+                        missing_op_id, {"details": "-- n/a --"}
+                    )  # noqa
+                    exception = details.get("parent", None)
                     if exception:
                         log_exception(exception)
 
-                    logger.error(f"invalid.operation.{mn}", operation_id=mn, **details)
+                    self._invalid_operations[mn] = details
+                    log_message(f"invalid.operation.{mn}", operation_id=mn, **details)
                 break
 
         self._operations = {}
@@ -428,10 +458,13 @@ class OperationRegistry(object):
     def get_operation(self, operation_id: str) -> Operation:
 
         if operation_id not in self.operation_ids:
-            raise NoSuchOperationException(
-                operation_id=operation_id,
-                available_operations=sorted(self.operation_ids),
-            )
+            if operation_id in self._invalid_operations.keys():
+                raise InvalidOperationException(self._invalid_operations[operation_id])
+            else:
+                raise NoSuchOperationException(
+                    operation_id=operation_id,
+                    available_operations=sorted(self.operation_ids),
+                )
 
         op = self.operations[operation_id]
         return op

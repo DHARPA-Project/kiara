@@ -104,6 +104,7 @@ DEFAULT_PIPELINE_PARENT_ID = "__kiara__"
 """Default parent id for pipeline objects that are not associated with a workflow."""
 
 DEFAULT_NO_DESC_VALUE = "-- n/a --"
+NOT_AVAILBLE_MARKER = "-- n/a --"
 
 KIARA_MODULE_METADATA_ATTRIBUTE = "KIARA_METADATA"
 

@@ -440,7 +440,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
             except Exception as e:
                 raise KiaraValueException(
-                    data_type=self.__class__, value_data=data, exception=e
+                    data_type=self.__class__, value_data=data, parent=e
                 )
         else:
             value = Value(

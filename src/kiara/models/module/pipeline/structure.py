@@ -12,6 +12,7 @@ from rich.console import RenderableType
 from rich.tree import Tree
 from typing import Any, Dict, Iterable, List, Mapping, Set, Union
 
+from kiara.exceptions import InvalidPipelineConfig
 from kiara.models import KiaraModel
 from kiara.models.module.pipeline import PipelineConfig, PipelineStep
 from kiara.models.module.pipeline.value_refs import (
@@ -171,9 +172,16 @@ class PipelineStructure(KiaraModel):
             a for a in _input_aliases.keys() if a not in valid_input_names
         ]
         if invalid_input_aliases:
-            raise Exception(
-                f"Invalid input reference(s): {', '.join(invalid_input_aliases)}. Must be one of: {', '.join(valid_input_names)}"
-            )
+            msg = "Invalid input reference(s)."
+            details = "Invalid reference(s):\n"
+            for iia in invalid_input_aliases:
+                details += f" - {iia}\n"
+            details += "\nMust be one of: \n"
+            for name in valid_input_names:
+                details += f"  - {name}\n"
+
+            raise InvalidPipelineConfig(msg, values, details)
+
         valid_output_names = set()
         for step in _steps:
             for output_name in step.module.output_names:
@@ -182,9 +190,16 @@ class PipelineStructure(KiaraModel):
             a for a in _output_aliases.keys() if a not in valid_output_names
         ]
         if invalid_output_names:
-            raise Exception(
-                f"Invalid output reference(s): {', '.join(invalid_output_names)}. Must be one of: {', '.join(valid_output_names)}"
-            )
+
+            msg = "Invalid output reference(s)."
+            details = "Invalid reference(s):\n"
+            for iia in invalid_output_names:
+                details += f" - {iia}\n"
+            details += "\nMust be one of: \n"
+            for name in valid_output_names:
+                details += f"  - {name}\n"
+
+            raise InvalidPipelineConfig(msg, values, details)
 
         # stages = PipelineStage.from_pipeline_structure(stages=)
 

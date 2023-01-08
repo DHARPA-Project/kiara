@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Union
 
 from kiara.defaults import MODULE_TYPE_NAME_KEY
-from kiara.exceptions import NoSuchOperationException
+from kiara.exceptions import InvalidOperationException, NoSuchOperationException
 from kiara.models.module.pipeline.value_refs import StepValueAddress
 from kiara.utils import log_exception
 from kiara.utils.files import get_data_from_file
@@ -178,15 +178,18 @@ def get_pipeline_config(
 
         kiara = Kiara.instance()
 
-    pc: Union[PipelineConfig, None] = None
+    pc: Union["PipelineConfig", None] = None
+    error: Union[Exception, None] = None
     try:
         _operation = kiara.operation_registry.get_operation(pipeline)
 
         pipeline_module: PipelineModule = _operation.module  # type: ignore
         if pipeline_module.is_pipeline():
             pc = pipeline_module.config
-    except NoSuchOperationException:
-        pass
+    except NoSuchOperationException as nsoe:
+        error = nsoe
+    except InvalidOperationException as ioe:
+        error = ioe
 
     if pc is None:
         if os.path.isfile(pipeline):
@@ -210,6 +213,9 @@ def get_pipeline_config(
             log_exception(e)
 
     if pc is None:
-        raise Exception(f"Could not resolve pipeline reference '{pipeline}'.")
+        if error:
+            raise error
+        else:
+            raise Exception(f"Could not resolve pipeline reference '{pipeline}'.")
 
     return pc

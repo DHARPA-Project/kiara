@@ -100,7 +100,6 @@ class SinglePipelineController(PipelineController):
                 continue
             combined_outputs[step_id] = record.outputs
             for output_id in record.outputs.values():
-                assert output_id not in result.keys()
                 result[output_id] = job_id
 
         self.pipeline.set_multiple_step_outputs(

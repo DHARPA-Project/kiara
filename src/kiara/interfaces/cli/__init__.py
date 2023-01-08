@@ -28,9 +28,6 @@ from kiara.utils import is_debug
 from kiara.utils.class_loading import find_all_cli_subcommands
 from kiara.utils.cli import terminal_print
 
-# from .service.commands import service
-
-# click.rich_click.USE_MARKDOWN = True
 click.rich_click.USE_RICH_MARKUP = True
 
 

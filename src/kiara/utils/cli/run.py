@@ -160,9 +160,23 @@ def set_and_validate_inputs(
         if value_schema.type in ["list"]:
             list_keys.append(name)
 
-    inputs_dict = dict_from_cli_args(*inputs, list_keys=list_keys)
-
-    kiara_op.set_inputs(**inputs_dict)
+    try:
+        inputs_dict = dict_from_cli_args(*inputs, list_keys=list_keys)
+        kiara_op.set_inputs(**inputs_dict)
+    except Exception as e:
+        terminal_print()
+        rg = Group(
+            "",
+            f"Can't run operation: {e}",
+            "",
+            Rule(),
+            "",
+            kiara_op.create_renderable(
+                show_operation_name=True, show_inputs=True, show_outputs_schema=True
+            ),
+        )
+        terminal_print(rg, in_panel=f"Run info: [b]{kiara_op.operation_name}[/b]")
+        sys.exit(1)
 
     if print_help:
         rich_format_operation_help(

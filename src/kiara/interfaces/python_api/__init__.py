@@ -442,6 +442,7 @@ class KiaraAPI(object):
         *filters: str,
         input_types: Union[str, Iterable[str], None] = None,
         output_types: Union[str, Iterable[str], None] = None,
+        operation_types: Union[str, Iterable[str], None] = None,
         include_internal: bool = False,
     ) -> Mapping[str, Operation]:
         """List all available values, optionally filter.
@@ -450,13 +451,28 @@ class KiaraAPI(object):
             filters: the (optional) filter strings, an operation must match all of them to be included in the result
             input_types: each operation must have at least one input that matches one of the specified types
             output_types: each operation must have at least one output that matches one of the specified types
+            operation_types: only include operations of the specified type(s)
             include_internal: whether to include operations that are predominantly used internally in kiara.
 
         Returns:
             a dictionary with the operation id as key, and [kiara.models.module.operation.Operation] instance data as value
         """
 
-        operations = self.context.operation_registry.operations
+        if operation_types:
+            if isinstance(operation_types, str):
+                operation_types = [operation_types]
+            temp: Dict[str, Operation] = {}
+            for op_type_name in operation_types:
+                op_type = self.context.operation_registry.operation_types.get(
+                    op_type_name, None
+                )
+                if op_type is None:
+                    raise Exception(f"Operation type not registered: {op_type_name}")
+
+                temp.update(op_type.operations)
+            operations: Mapping[str, Operation] = temp
+        else:
+            operations = self.context.operation_registry.operations
 
         if filters:
             temp = {}
@@ -521,6 +537,7 @@ class KiaraAPI(object):
         *filters,
         input_types: Union[str, Iterable[str], None] = None,
         output_types: Union[str, Iterable[str], None] = None,
+        operation_types: Union[str, Iterable[str], None] = None,
         include_internal: bool = False,
     ) -> OperationGroupInfo:
         """Retrieve information about the matching operations.
@@ -537,6 +554,7 @@ class KiaraAPI(object):
             filters: the (optional) filter strings, an operation must match all of them to be included in the result
             include_internal: whether to include operations that are predominantly used internally in kiara.
             output_types: each operation must have at least one output that matches one of the specified types
+            operation_types: only include operations of the specified type(s)
             include_internal: whether to include operations that are predominantly used internally in kiara.
 
         Returns:
@@ -552,6 +570,7 @@ class KiaraAPI(object):
             input_types=input_types,
             output_types=output_types,
             include_internal=include_internal,
+            operation_types=operation_types,
         )
 
         ops_info = OperationGroupInfo.create_from_operations(

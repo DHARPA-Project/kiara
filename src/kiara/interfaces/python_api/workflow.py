@@ -4,7 +4,7 @@ import structlog
 import uuid
 from boltons.strutils import slugify
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Set, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, Hashable, List, Mapping, Set, Tuple, Union
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
 from kiara.exceptions import NoSuchWorkflowException
@@ -23,7 +23,7 @@ from kiara.models.module.pipeline import (
 from kiara.models.module.pipeline.controller import SinglePipelineController
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineInfo
 from kiara.models.python_class import KiaraModuleInstance
-from kiara.models.values.value import ValueMap
+from kiara.models.values.value import Value, ValueMap
 from kiara.models.values.value_schema import ValueSchema
 from kiara.models.workflow import WorkflowInfo, WorkflowMetadata, WorkflowState
 from kiara.registries.ids import ID_REGISTRY
@@ -340,7 +340,8 @@ class Workflow(object):
             WorkflowPipelineController(kiara=self._kiara)
         )
 
-        self._all_inputs: Dict[str, Any] = {}
+        self._all_inputs: Dict[str, Union[None, uuid.UUID]] = {}
+        self._all_inputs_optimistic_lookup: Dict[str, Dict[Hashable, uuid.UUID]] = {}
         self._current_pipeline_inputs: Union[Dict[str, uuid.UUID], None] = None
         self._current_pipeline_outputs: Union[Dict[str, uuid.UUID], None] = None
 
@@ -617,8 +618,8 @@ class Workflow(object):
 
         inputs_to_set = {}
         for field_name, value in self._all_inputs.items():
-            if value in [NONE_VALUE_ID, NOT_SET_VALUE_ID]:
-                continue
+            # if value in [None, NONE_VALUE_ID, NOT_SET_VALUE_ID]:
+            #     continue
             if field_name in pipeline.structure.pipeline_inputs_schema.keys():
                 inputs_to_set[field_name] = value
 
@@ -714,14 +715,34 @@ class Workflow(object):
         self._current_pipeline_inputs = None
         self._current_pipeline_outputs = None
 
-    def set_input(self, field_name: str, value: Any):
+    def set_input(self, field_name: str, value: Any) -> Union[None, uuid.UUID]:
+        """Set a single pipeline input.
 
-        self.set_inputs(**{field_name: value})
+        Arguments:
+            field_name: The name of the input field.
+            value: The value to set.
 
-    def set_inputs(self, **inputs: Any):
+        Returns:
+            None if the value for that field in the pipeline didn't change, otherwise the value_id of the new (registered) value.
+
+        """
+
+        diff = self.set_inputs(**{field_name: value})
+        return diff.get(field_name, None)
+
+    def set_inputs(self, **inputs: Any) -> Dict[str, Union[uuid.UUID, None]]:
+        """Set multiple pipeline inputs, at once.
+
+        Arguments:
+            inputs: The inputs to set.
+
+        Returns:
+            a dict containing only the newly set or changed values with field name as keys, and value_id (or None) as values.
+        """
 
         _inputs = {}
         for k, v in inputs.items():
+            # translate aliases
             match = False
             for field, alias in self._workflow_input_aliases.items():
                 if k == alias:
@@ -742,15 +763,80 @@ class Workflow(object):
                 f"Can't set pipeline inputs, invalid field(s): {', '.join(invalid)}. Available inputs: '{', '.join(self.pipeline.structure.pipeline_inputs_schema.keys())}'"
             )
 
-        changed = False
-        for k, v in inputs.items():
-            # TODO: better equality test?
-            if k == self._all_inputs.get(k, None):
-                continue
-            self._all_inputs[k] = v
-            changed = True
+        diff: Dict[str, Union[None, uuid.UUID]] = {}
+        for k, val_new in inputs.items():
 
-        if changed:
+            val_old = self._all_inputs.get(k, None)
+            if val_old is None and val_new is None:
+                continue
+
+            if val_new is None:
+                self._all_inputs[k] = None
+                diff[k] = None
+                continue
+
+            if isinstance(val_new, uuid.UUID):
+                if val_new == val_old:
+                    continue
+                else:
+                    self._all_inputs[k] = val_new
+                    diff[k] = val_new
+                    continue
+
+            if isinstance(val_new, Value):
+                if val_new.value_id == val_old:
+                    continue
+                else:
+                    self._all_inputs[k] = val_new.value_id
+                    diff[k] = val_new.value_id
+                    continue
+
+            # TODO: check for aliases?
+            try:
+                _new_item_hash = hash(val_new)
+
+                _match: Union[None, uuid.UUID] = None
+                for _item_hash, _value_id in self._all_inputs_optimistic_lookup.get(
+                    k, {}
+                ).items():
+                    if _item_hash == _new_item_hash:
+                        if _value_id == val_old:
+                            _match = val_old
+                            break
+
+                if not _match:
+                    _schema = self.current_pipeline_inputs_schema[k]
+                    val = self._kiara.data_registry.register_data(
+                        data=val_new, schema=_schema, reuse_existing=True
+                    )
+                    _match = val.value_id
+                    self._all_inputs_optimistic_lookup.setdefault(k, {})[
+                        _new_item_hash
+                    ] = _match
+
+                if _match == val_old:
+                    continue
+                else:
+                    self._all_inputs[k] = _match
+                    diff[k] = _match
+                    continue
+
+            except Exception:
+                # value can't be hashed, so we have to accept we can not re-use an existing value for this
+                _schema = self.current_pipeline_inputs_schema[k]
+                val = self._kiara.data_registry.register_data(
+                    data=val_new, schema=_schema, reuse_existing=True
+                )
+                new_value_id = val.value_id
+                if new_value_id == val_old:
+                    continue
+                else:
+                    self._all_inputs[k] = new_value_id
+                    diff[k] = new_value_id
+
+        self._all_inputs.update(diff)
+
+        if diff:
             self._current_info = None
             self._current_state = None
             self._current_pipeline_inputs = None
@@ -759,6 +845,8 @@ class Workflow(object):
             self._current_workflow_outputs = None
             self._pipeline_info = None
             self._apply_inputs()
+
+        return diff
 
     def add_steps(
         self,

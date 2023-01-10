@@ -22,6 +22,14 @@ if TYPE_CHECKING:
 
 
 class KiaraException(Exception):
+    @classmethod
+    def get_root_details(cls, e: Exception) -> Union[str, None]:
+
+        if isinstance(e, KiaraException):
+            return e.root_details()
+        else:
+            return str(e)
+
     def __init__(self, msg: str, parent: Union[Exception, None] = None, **kwargs):
 
         self._parent: Union[Exception, None] = parent
@@ -44,7 +52,10 @@ class KiaraException(Exception):
     def root_details(self) -> Union[str, None]:
 
         current: Exception = self
-        current_details = None
+        if hasattr(self, "details"):
+            current_details = self.details  # type: ignore
+        else:
+            current_details = "-- n/a --"
         while hasattr(current, "parent") and current.parent is not None:  # type: ignore
             current = current.parent  # type: ignore
 
@@ -244,6 +255,14 @@ class InvalidValuesException(KiaraException):
             _msg = msg
 
         super().__init__(_msg)
+
+    @property
+    def details(self) -> str:
+        result = ""
+        for k, v in self.invalid_inputs.items():
+            result += f" - {k}: {v}"
+
+        return result
 
     def create_renderable(self, **config: Any) -> "Table":
 

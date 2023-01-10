@@ -70,7 +70,10 @@ class CreateFromModule(KiaraModule):
         )
 
         schema = {
-            source_type: {"type": source_type, "doc": "The type of the source value."},
+            source_type: {
+                "type": source_type,
+                "doc": f"The source value (of type '{source_type}').",
+            },
         }
         if optional:
             for field, field_schema in optional.items():
@@ -100,7 +103,7 @@ class CreateFromModule(KiaraModule):
         return {
             self.get_config_value("target_type"): {
                 "type": self.get_config_value("target_type"),
-                "doc": "The result value.",
+                "doc": f"The result value (of type '{self.get_config_value('target_type')}').",
             }
         }
 

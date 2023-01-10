@@ -562,7 +562,12 @@ class KiaraAPI(object):
     # ==================================================================================================================
     # methods relating to values and data
 
-    def register_data(self, data: Any, data_type: Union[None, str] = None) -> Value:
+    def register_data(
+        self,
+        data: Any,
+        data_type: Union[None, str] = None,
+        reuse_existing: bool = False,
+    ) -> Value:
         """Register data with kiara.
 
         This will create a new value instance from the data and return it. The data/value itself won't be stored
@@ -571,6 +576,7 @@ class KiaraAPI(object):
         Arguments:
             data: the data to register
             data_type: (optional) the data type of the data. If not provided, kiara will try to infer the data type.
+            reuse_existing: whether to re-use an existing value that is already registered and has the same hash.
 
         Returns:
             a [kiara.models.values.value.Value] instance
@@ -582,7 +588,7 @@ class KiaraAPI(object):
             )
 
         value = self.context.data_registry.register_data(
-            data=data, schema=data_type, reuse_existing=False
+            data=data, schema=data_type, reuse_existing=reuse_existing
         )
         return value
 
@@ -776,6 +782,13 @@ class KiaraAPI(object):
             kiara=self.context, instances={str(k): v for k, v in values.items()}
         )
         return infos  # type: ignore
+
+    def retrieve_value_map(
+        self, values: Mapping[str, Union[uuid.UUID, None, str, ValueLink]]
+    ) -> ValueMap:
+        """Retrive a [ValueMap][TODO] object from the provided value ids or value links."""
+
+        return self.context.data_registry.load_values(values)
 
     def store_value(
         self,

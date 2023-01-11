@@ -4501,6 +4501,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#kiara.interfaces.cli.logger" class="md-nav__link">
+    logger
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#kiara.interfaces.cli.CLICK_CONTEXT_SETTINGS" class="md-nav__link">
     CLICK_CONTEXT_SETTINGS
   </a>
@@ -4582,6 +4589,25 @@
 
 
 
+<h3 id="kiara.interfaces.cli.logger" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">logger</span> <span class="o">=</span> <span class="n">structlog</span><span class="o">.</span><span class="n">get_logger</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#kiara.interfaces.cli.logger" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="kiara.interfaces.cli.CLICK_CONTEXT_SETTINGS" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">CLICK_CONTEXT_SETTINGS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">help_option_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--help&#39;</span><span class="p">])</span></code>
   
@@ -4616,8 +4642,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 46</span>
-<span class="normal"> 47</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 47</span>
 <span class="normal"> 48</span>
 <span class="normal"> 49</span>
 <span class="normal"> 50</span>
@@ -4708,7 +4733,13 @@
 <span class="normal">135</span>
 <span class="normal">136</span>
 <span class="normal">137</span>
-<span class="normal">138</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">context_settings</span><span class="o">=</span><span class="n">CLICK_CONTEXT_SETTINGS</span><span class="p">)</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">context_settings</span><span class="o">=</span><span class="n">CLICK_CONTEXT_SETTINGS</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
     <span class="s2">&quot;--config&quot;</span><span class="p">,</span>
     <span class="s2">&quot;-cnf&quot;</span><span class="p">,</span>
@@ -4796,6 +4827,11 @@
 
     <span class="n">api</span> <span class="o">=</span> <span class="n">KiaraAPI</span><span class="p">(</span><span class="n">kiara_config</span><span class="o">=</span><span class="n">kiara_config</span><span class="p">)</span>
     <span class="n">api</span><span class="o">.</span><span class="n">set_active_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">pipeline</span> <span class="ow">in</span> <span class="n">pipelines</span><span class="p">:</span>
+        <span class="n">ops</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">register_pipelines</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">op_id</span> <span class="ow">in</span> <span class="n">ops</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;register.pipeline&quot;</span><span class="p">,</span> <span class="n">operation_id</span><span class="o">=</span><span class="n">op_id</span><span class="p">)</span>
 
     <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara_api&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">api</span>
     <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">context</span>

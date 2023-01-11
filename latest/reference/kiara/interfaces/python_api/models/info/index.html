@@ -12641,7 +12641,8 @@
 <span class="normal">1550</span>
 <span class="normal">1551</span>
 <span class="normal">1552</span>
-<span class="normal">1553</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">OperationGroupInfo</span><span class="p">(</span><span class="n">InfoItemGroup</span><span class="p">):</span>
+<span class="normal">1553</span>
+<span class="normal">1554</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">OperationGroupInfo</span><span class="p">(</span><span class="n">InfoItemGroup</span><span class="p">):</span>
 
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;info.operations&quot;</span>
 
@@ -12658,6 +12659,7 @@
             <span class="n">k</span><span class="p">:</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">}</span>
+
         <span class="n">op_group_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_title</span><span class="o">=</span><span class="n">group_title</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">op_infos</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">op_group_info</span>
 
@@ -12878,7 +12880,8 @@
 <span class="normal">1423</span>
 <span class="normal">1424</span>
 <span class="normal">1425</span>
-<span class="normal">1426</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1426</span>
+<span class="normal">1427</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_from_operations</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">group_title</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">items</span><span class="p">:</span> <span class="n">Operation</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OperationGroupInfo&quot;</span><span class="p">:</span>
@@ -12887,6 +12890,7 @@
         <span class="n">k</span><span class="p">:</span> <span class="n">OperationInfo</span><span class="o">.</span><span class="n">create_from_operation</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="n">v</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="p">}</span>
+
     <span class="n">op_group_info</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span><span class="n">group_title</span><span class="o">=</span><span class="n">group_title</span><span class="p">,</span> <span class="n">item_infos</span><span class="o">=</span><span class="n">op_infos</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">op_group_info</span>
 </code></pre></div></td></tr></table></div>
@@ -12909,14 +12913,14 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/models/info.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1433</span>
-<span class="normal">1434</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1434</span>
 <span class="normal">1435</span>
 <span class="normal">1436</span>
 <span class="normal">1437</span>
 <span class="normal">1438</span>
 <span class="normal">1439</span>
-<span class="normal">1440</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+<span class="normal">1440</span>
+<span class="normal">1441</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="n">by_type</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;by_type&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 

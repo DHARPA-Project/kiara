@@ -5396,9 +5396,9 @@
     <span class="k">def</span> <span class="nf">pipeline_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">pipeline_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">pipeline_name</span>
+    <span class="c1"># @property</span>
+    <span class="c1"># def pipeline_name(self) -&gt; str:</span>
+    <span class="c1">#     return self.structure.pipeline_config.pipeline_name</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">kiara_id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
@@ -5918,25 +5918,6 @@
   </span>
 
 <a href="#kiara.models.module.pipeline.pipeline.Pipeline.pipeline_id" class="headerlink" title="Permanent link">&para;</a></h5>
-
-
-  <div class="doc doc-contents ">
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-attribute">
-
-
-
-<h5 id="kiara.models.module.pipeline.pipeline.Pipeline.pipeline_name" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">pipeline_name</span><span class="p">:</span> <span class="nb">str</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
-  </span>
-
-<a href="#kiara.models.module.pipeline.pipeline.Pipeline.pipeline_name" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">

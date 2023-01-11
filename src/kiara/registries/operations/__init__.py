@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-
-#  Copyright (c) 2021, University of Luxembourg / DHARPA project
-#  Copyright (c) 2021, Markus Binsteiner
-#
-#  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
+import json
+import os.path
 import structlog
 import sys
+from pathlib import Path
+from ruamel.yaml import YAML
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -32,14 +30,23 @@ from kiara.models.module.operation import (
     OperationConfig,
     PipelineOperationConfig,
 )
+from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.python_class import KiaraModuleInstance
 from kiara.operations import OperationType
 from kiara.utils import log_exception, log_message
+from kiara.utils.pipelines import find_pipeline_data_in_paths
+
+#  Copyright (c) 2021, University of Luxembourg / DHARPA project
+#  Copyright (c) 2021, Markus Binsteiner
+#
+#  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
+
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
 
 logger = structlog.getLogger()
+yaml = YAML(typ="safe")
 
 
 OP_TYPE = TypeVar("OP_TYPE", bound=OperationType)
@@ -66,7 +73,7 @@ class OperationRegistry(object):
         self._operation_types: Union[Dict[str, OperationType], None] = None
 
         self._operations: Union[Dict[str, Operation], None] = None
-        self._operations_by_type: Union[Dict[str, Iterable[str]], None] = None
+        self._operations_by_type: Union[Dict[str, List[str]], None] = None
 
         self._module_map: Union[Dict[str, Dict[str, Any]], None] = None
 
@@ -420,6 +427,126 @@ class OperationRegistry(object):
             )
 
         return self._operations
+
+    def register_pipelines(self, *paths: Union[str, Path]) -> Dict[str, Operation]:
+        """Register pipelines from one or more paths.
+
+        Args:
+            *paths: one or more paths to load pipelines from.
+        """
+
+        pipeline_data = find_pipeline_data_in_paths(
+            {k if isinstance(k, str) else k.as_posix(): {} for k in paths}
+        )
+        duplicates = set()
+        for op_id in pipeline_data.keys():
+            if op_id in self.operations.keys():
+                duplicates.add(op_id)
+
+        if duplicates:
+            raise Exception(
+                "Can't register pipelines from the provided path(s), duplicate operation ids found: "
+                + ", ".join(sorted(duplicates))
+            )
+
+        ops = {}
+        for op_id, op_data in pipeline_data.items():
+            # TODO: what to do with the additional data, like source and source type?
+            op = self.register_pipeline(data=op_data["data"], operation_id=op_id)
+            ops[op.operation_id] = op
+        return ops
+
+    def register_pipeline(
+        self,
+        data: Union[Path, str, Mapping[str, Any]],
+        operation_id: Union[str, None] = None,
+    ) -> Operation:
+
+        if isinstance(data, Path):
+            if not data.is_file():
+                raise Exception(
+                    f"Can't register operation from path '{data.as_posix()}: path is not a file."
+                )
+
+            pipeline_config = PipelineConfig.from_file(
+                data.as_posix(), kiara=self._kiara, pipeline_name=operation_id
+            )
+        elif isinstance(data, Mapping):
+
+            pipeline_config = PipelineConfig.from_config(
+                pipeline_name=operation_id, data=data, kiara=self._kiara
+            )
+        elif isinstance(data, str):
+            if os.path.isfile((os.path.realpath(data))):
+                pipeline_config = PipelineConfig.from_file(
+                    data, kiara=self._kiara, pipeline_name=operation_id
+                )
+            else:
+                config_data = None
+                try:
+                    config_data = json.loads(data)
+                except Exception:
+                    try:
+                        config_data = yaml.load(data)
+                    except Exception:
+                        pass
+                if config_data:
+                    pipeline_config = PipelineConfig.from_config(
+                        pipeline_name=operation_id, data=config_data, kiara=self._kiara
+                    )
+                else:
+                    raise Exception(
+                        f"Can't register pipeline with id '{operation_id}': can't parse data as file path, json or yaml."
+                    )
+        else:
+            raise Exception(
+                f"Can't register pipeline with id '{operation_id}': invalid type '{type(data)}' for pipeline data: {type(data)}"
+            )
+
+        _operation_id = pipeline_config.pipeline_name
+        if operation_id:
+            assert _operation_id == operation_id
+
+        if _operation_id in self.operation_ids:
+            raise Exception(
+                f"Can't register pipeline with id '{_operation_id}': operation id already in use."
+            )
+
+        manifest = Manifest.construct(
+            module_type="pipeline", module_config=pipeline_config.dict()
+        )
+        module = self._kiara.module_registry.create_module(manifest)
+
+        from kiara.operations.included_core_operations.pipeline import (
+            PipelineOperationDetails,
+        )
+
+        op_details = PipelineOperationDetails.create_operation_details(
+            operation_id=module.config.pipeline_name,
+            pipeline_inputs_schema=module.inputs_schema,
+            pipeline_outputs_schema=module.outputs_schema,
+            pipeline_config=module.config,
+        )
+
+        metadata: Dict[str, Any] = {}
+        operation = Operation(
+            module_type=manifest.module_type,
+            module_config=manifest.module_config,
+            operation_id=_operation_id,
+            operation_details=op_details,
+            module_details=KiaraModuleInstance.from_module(module),
+            metadata=metadata,
+            doc=pipeline_config.doc,
+        )
+        operation._module = module
+        assert self._operations is not None
+        self._operations[_operation_id] = operation
+        current_pipelines = self.operations_by_type.get("pipeline", [])
+        current_pipelines.append(_operation_id)  # type: ignore
+        assert self._operations_by_type is not None
+        self._operations_by_type["pipeline"] = sorted(current_pipelines)
+
+        return operation
 
     def _create_operations(
         self,

@@ -6,11 +6,16 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import os
+import structlog
 import typing
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Union
 
-from kiara.defaults import MODULE_TYPE_NAME_KEY
+from kiara.defaults import (
+    DEFAULT_EXCLUDE_DIRS,
+    MODULE_TYPE_NAME_KEY,
+    VALID_PIPELINE_FILE_EXTENSIONS,
+)
 from kiara.exceptions import InvalidOperationException, NoSuchOperationException
 from kiara.models.module.pipeline.value_refs import StepValueAddress
 from kiara.utils import log_exception
@@ -20,6 +25,8 @@ if typing.TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.models.module.pipeline import PipelineConfig
     from kiara.modules.included_core_modules.pipeline import PipelineModule
+
+logger = structlog.get_logger()
 
 
 def create_step_value_address(
@@ -128,11 +135,6 @@ def get_pipeline_details_from_path(
     if not isinstance(data, Mapping):
         raise Exception("Not a dictionary type.")
 
-    # filename = path.name
-    # name = data.get(MODULE_TYPE_NAME_KEY, None)
-    # if name is None:
-    #     name = filename.split(".", maxsplit=1)[0]
-
     result = {"data": data, "source": path.as_posix(), "source_type": "file"}
     if base_module:
         result["base_module"] = base_module
@@ -219,3 +221,86 @@ def get_pipeline_config(
             raise Exception(f"Could not resolve pipeline reference '{pipeline}'.")
 
     return pc
+
+
+def find_pipeline_data_in_paths(
+    pipeline_paths: Dict[str, Union[Dict[str, Any], None]]
+) -> Mapping[str, Mapping[str, Any]]:
+    """Find pipeline data in the provided paths.
+
+    The 'pipeline_paths' argument has a local path as key, and a mapping as value that contains optional metadata about the context for all the pipelines that are found under the path.
+
+    Arguments:
+        pipeline_paths: a mapping of pipeline names to paths
+    """
+
+    all_pipelines = []
+
+    for _path in pipeline_paths.keys():
+        path = Path(_path)
+        if not path.exists():
+            logger.warning(
+                "ignore.pipeline_path", path=path, reason="path does not exist"
+            )
+            continue
+
+        elif path.is_dir():
+
+            for root, dirnames, filenames in os.walk(path, topdown=True):
+
+                dirnames[:] = [d for d in dirnames if d not in DEFAULT_EXCLUDE_DIRS]
+
+                for filename in [
+                    f
+                    for f in filenames
+                    if os.path.isfile(os.path.join(root, f))
+                    and any(f.endswith(ext) for ext in VALID_PIPELINE_FILE_EXTENSIONS)
+                ]:
+
+                    full_path = os.path.join(root, filename)
+                    try:
+
+                        data = get_pipeline_details_from_path(path=full_path)
+                        data = check_doc_sidecar(full_path, data)
+                        existing_metadata = data.pop("metadata", {})
+                        _md = pipeline_paths[_path]
+                        if _md is None:
+                            md = {}
+                        else:
+                            md = dict(_md)
+                        md.update(existing_metadata)
+                        data["metadata"] = md
+
+                        all_pipelines.append(data)
+
+                    except Exception as e:
+                        log_exception(e)
+                        logger.warning(
+                            "ignore.pipeline_file", path=full_path, reason=str(e)
+                        )
+
+        elif path.is_file():
+            data = get_pipeline_details_from_path(path=path)
+            data = check_doc_sidecar(path, data)
+            existing_metadata = data.pop("metadata", {})
+            _md = pipeline_paths[_path]
+            if _md is None:
+                md = {}
+            else:
+                md = dict(_md)
+            md.update(existing_metadata)
+            data["metadata"] = md
+            all_pipelines.append(data)
+
+    pipelines = {}
+    for pipeline in all_pipelines:
+        name = pipeline["data"].get("pipeline_name", None)
+        if name is None:
+            source = pipeline["source"]
+            name = os.path.basename(source)
+            if "." in name:
+                name, _ = name.rsplit(".", maxsplit=1)
+            pipeline["data"]["pipeline_name"] = name
+        pipelines[name] = pipeline
+
+    return pipelines

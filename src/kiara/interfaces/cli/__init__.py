@@ -30,6 +30,7 @@ from kiara.utils.cli import terminal_print
 
 click.rich_click.USE_RICH_MARKUP = True
 
+logger = structlog.get_logger()
 
 if is_debug():
     structlog.configure(
@@ -131,6 +132,11 @@ def cli(
 
     api = KiaraAPI(kiara_config=kiara_config)
     api.set_active_context(context, create=True)
+
+    for pipeline in pipelines:
+        ops = api.context.operation_registry.register_pipelines(pipeline)
+        for op_id in ops.keys():
+            logger.debug("register.pipeline", operation_id=op_id)
 
     ctx.obj["kiara_api"] = api
     ctx.obj["kiara"] = api.context

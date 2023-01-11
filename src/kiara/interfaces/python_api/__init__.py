@@ -579,6 +579,27 @@ class KiaraAPI(object):
         return ops_info
 
     # ==================================================================================================================
+    # methods relating to pipelines
+    def register_pipeline(
+        self,
+        data: Union[Path, str, Mapping[str, Any]],
+        operation_id: Union[str, None] = None,
+    ) -> Operation:
+        """Register a pipelne as new operation into this context.
+
+        Arguments:
+            data: a dict or a path to a json/yaml file containing the definition
+            operation_id: the id to use for the operation (if not specified, the id will be auto-determined)
+
+        Returns:
+            the assembled operation
+        """
+
+        return self.context.operation_registry.register_pipeline(
+            data=data, operation_id=operation_id
+        )
+
+    # ==================================================================================================================
     # methods relating to values and data
 
     def register_data(

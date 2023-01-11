@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
-
-#  Copyright (c) 2021, Markus Binsteiner
-#
-#  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
 import orjson
 import os
+import uuid
 from boltons.strutils import slugify
 from enum import Enum
 from pydantic import Extra, Field, PrivateAttr, root_validator, validator
@@ -30,6 +26,11 @@ from kiara.utils.modules import module_config_is_empty
 from kiara.utils.output import create_table_from_field_schemas
 from kiara.utils.pipelines import ensure_step_value_addresses
 from kiara.utils.string_vars import replace_var_names_in_obj
+
+#  Copyright (c) 2021, Markus Binsteiner
+#
+#  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
+
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -462,19 +463,24 @@ class PipelineConfig(KiaraModuleConfig):
         cls,
         path: str,
         kiara: Union["Kiara", None] = None,
+        pipeline_name: Union[None, str] = None,
         # module_map: Optional[Mapping[str, Any]] = None,
     ):
 
         data = get_data_from_file(path)
-        pipeline_name = data.pop("pipeline_name", None)
-        if pipeline_name is None:
-            pipeline_name = os.path.basename(path)
+        _pipeline_name = data.pop("pipeline_name", None)
+
+        if pipeline_name:
+            _pipeline_name = pipeline_name
+
+        if _pipeline_name is None:
+            _pipeline_name = os.path.basename(path)
 
         pipeline_dir = os.path.abspath(os.path.dirname(path))
 
         execution_context = ExecutionContext(pipeline_dir=pipeline_dir)
         return cls.from_config(
-            pipeline_name=pipeline_name,
+            pipeline_name=_pipeline_name,
             data=data,
             kiara=kiara,
             execution_context=execution_context,
@@ -483,8 +489,8 @@ class PipelineConfig(KiaraModuleConfig):
     @classmethod
     def from_config(
         cls,
-        pipeline_name: str,
         data: Mapping[str, Any],
+        pipeline_name: Union[str, None] = None,
         kiara: Union["Kiara", None] = None,
         module_map: Union[Mapping[str, Any], None] = None,
         execution_context: Union[ExecutionContext, None] = None,
@@ -515,9 +521,9 @@ class PipelineConfig(KiaraModuleConfig):
     @classmethod
     def _from_config(
         cls,
-        pipeline_name: str,
         data: Mapping[str, Any],
         kiara: "Kiara",
+        pipeline_name: Union[str, None] = None,
         module_map: Union[Mapping[str, Any], None] = None,
         execution_context: Union[ExecutionContext, None] = None,
         auto_step_ids: bool = False,
@@ -529,6 +535,14 @@ class PipelineConfig(KiaraModuleConfig):
         repl_dict = execution_context.dict()
 
         data = dict(data)
+
+        _pipeline_name = data.pop("pipeline_name", None)
+        if pipeline_name:
+            _pipeline_name = pipeline_name
+
+        if not _pipeline_name:
+            _pipeline_name = str(uuid.uuid4())
+
         _steps = data.pop("steps")
         steps = PipelineStep.create_steps(
             *_steps, kiara=kiara, module_map=module_map, auto_step_ids=auto_step_ids
@@ -554,7 +568,7 @@ class PipelineConfig(KiaraModuleConfig):
             replaced = replace_var_names_in_obj(inputs, repl_dict=repl_dict)
             data["inputs"] = replaced
 
-        result = cls(pipeline_name=pipeline_name, **data)
+        result = cls(pipeline_name=_pipeline_name, **data)
 
         return result
 

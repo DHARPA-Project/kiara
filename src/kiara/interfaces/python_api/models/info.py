@@ -1422,6 +1422,7 @@ class OperationGroupInfo(InfoItemGroup):
             k: OperationInfo.create_from_operation(kiara=kiara, operation=v)
             for k, v in items.items()
         }
+
         op_group_info = cls.construct(group_title=group_title, item_infos=op_infos)
         return op_group_info
 

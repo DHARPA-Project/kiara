@@ -1,17 +1,10 @@
 # -*- coding: utf-8 -*-
-
-#  Copyright (c) 2021, University of Luxembourg / DHARPA project
-#  Copyright (c) 2021, Markus Binsteiner
-#
-#  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
 import os
 import structlog
-from pathlib import Path
 from pydantic import Field, PrivateAttr
+from ruamel.yaml import YAML
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Union
 
-from kiara.defaults import DEFAULT_EXCLUDE_DIRS, VALID_PIPELINE_FILE_EXTENSIONS
 from kiara.models.module.operation import (
     OperationConfig,
     OperationDetails,
@@ -23,14 +16,20 @@ from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
 from kiara.modules.included_core_modules.pipeline import PipelineModule
 from kiara.operations import OperationType
-from kiara.utils import log_exception
 from kiara.utils.class_loading import find_all_kiara_pipeline_paths
-from kiara.utils.pipelines import check_doc_sidecar, get_pipeline_details_from_path
+from kiara.utils.pipelines import find_pipeline_data_in_paths
+
+#  Copyright (c) 2021, University of Luxembourg / DHARPA project
+#  Copyright (c) 2021, Markus Binsteiner
+#
+#  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
+
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
 
 logger = structlog.getLogger()
+yaml = YAML(typ="safe")
 
 
 class PipelineOperationDetails(OperationDetails):
@@ -88,78 +87,7 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
             if ep not in pipeline_paths.keys():
                 pipeline_paths[ep] = None
 
-        all_pipelines = []
-
-        for _path in pipeline_paths.keys():
-            path = Path(_path)
-            if not path.exists():
-                logger.warning(
-                    "ignore.pipeline_path", path=path, reason="path does not exist"
-                )
-                continue
-
-            elif path.is_dir():
-
-                for root, dirnames, filenames in os.walk(path, topdown=True):
-
-                    dirnames[:] = [d for d in dirnames if d not in DEFAULT_EXCLUDE_DIRS]
-
-                    for filename in [
-                        f
-                        for f in filenames
-                        if os.path.isfile(os.path.join(root, f))
-                        and any(
-                            f.endswith(ext) for ext in VALID_PIPELINE_FILE_EXTENSIONS
-                        )
-                    ]:
-
-                        full_path = os.path.join(root, filename)
-                        try:
-
-                            data = get_pipeline_details_from_path(path=full_path)
-                            data = check_doc_sidecar(full_path, data)
-                            existing_metadata = data.pop("metadata", {})
-                            _md = pipeline_paths[_path]
-                            if _md is None:
-                                md = {}
-                            else:
-                                md = dict(_md)
-                            md.update(existing_metadata)
-                            data["metadata"] = md
-
-                            all_pipelines.append(data)
-
-                        except Exception as e:
-                            log_exception(e)
-                            logger.warning(
-                                "ignore.pipeline_file", path=full_path, reason=str(e)
-                            )
-
-            elif path.is_file():
-                data = get_pipeline_details_from_path(path=path)
-                data = check_doc_sidecar(path, data)
-                existing_metadata = data.pop("metadata", {})
-                _md = pipeline_paths[_path]
-                if _md is None:
-                    md = {}
-                else:
-                    md = dict(_md)
-                md.update(existing_metadata)
-                data["metadata"] = md
-                all_pipelines.append(data)
-
-        pipelines = {}
-        for pipeline in all_pipelines:
-            name = pipeline["data"].get("pipeline_name", None)
-            if name is None:
-                source = pipeline["source"]
-                name = os.path.basename(source)
-                if "." in name:
-                    name, _ = name.rsplit(".", maxsplit=1)
-                pipeline["data"]["pipeline_name"] = name
-            pipelines[name] = pipeline
-
-        return pipelines
+        return find_pipeline_data_in_paths(pipeline_paths)
 
     def retrieve_included_operation_configs(
         self,

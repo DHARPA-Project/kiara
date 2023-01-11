@@ -77,6 +77,7 @@ def create_operation(
         kiara = Kiara.instance()
 
     operation = None
+
     if module_or_operation in kiara.operation_registry.operation_ids:
 
         operation = kiara.operation_registry.get_operation(module_or_operation)
@@ -139,6 +140,11 @@ def create_operation(
                     data = yaml.load(module_or_operation)
                 except Exception:
                     data = None
+
+            if data and not isinstance(data, Mapping):
+                raise Exception(
+                    f"Could not parse module or operation: {module_or_operation}"
+                )
 
         if data is not None:
             d = dict(data)

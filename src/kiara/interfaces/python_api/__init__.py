@@ -412,7 +412,7 @@ class KiaraAPI(object):
         if not allow_external:
             op = self.context.operation_registry.get_operation(operation_id=operation)
         else:
-            op = create_operation(module_or_operation=operation)
+            op = create_operation(module_or_operation=operation, kiara=self.context)
         return op
 
     def get_operation_info(
@@ -598,6 +598,13 @@ class KiaraAPI(object):
         return self.context.operation_registry.register_pipeline(
             data=data, operation_id=operation_id
         )
+
+    def register_pipelines(
+        self, *pipeline_paths: Union[str, Path]
+    ) -> Dict[str, Operation]:
+        """Register all pipelines found in the specified paths."""
+
+        return self.context.operation_registry.register_pipelines(*pipeline_paths)
 
     # ==================================================================================================================
     # methods relating to values and data

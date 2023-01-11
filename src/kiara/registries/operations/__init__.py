@@ -546,6 +546,7 @@ class OperationRegistry(object):
         assert self._operations_by_type is not None
         self._operations_by_type["pipeline"] = sorted(current_pipelines)
 
+        logger.debug("pipeline.registered", operation_id=_operation_id)
         return operation
 
     def _create_operations(

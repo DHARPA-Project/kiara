@@ -169,8 +169,8 @@ def define_env(env):
             command_str = " ".join(command)
 
         if split_command_and_output and print_command:
-            _c = f"\n``` console\n{command_str}\n```\n"
-            _output = "``` console\n" + stdout_str + "\n```\n"
+            _c = f"\n```bash\n{command_str}\n```\n"
+            _output = "```\n" + stdout_str + "\n```\n"
             if max_height is not None and max_height > 0:
                 _output = f"<div style='max-height:{max_height}px;overflow:auto'>\n{_output}\n</div>"
             _stdout = _c + _output
@@ -178,7 +178,7 @@ def define_env(env):
             if print_command:
                 _stdout = f"> {command_str}\n{stdout_str}"
             if code_block:
-                _stdout = "``` console\n" + _stdout + "\n```\n"
+                _stdout = "```\n" + _stdout + "\n```\n"
 
             if max_height is not None and max_height > 0:
                 _stdout = f"<div style='max-height:{max_height}px;overflow:auto'>\n{_stdout}\n</div>"

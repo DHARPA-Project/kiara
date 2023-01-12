@@ -568,6 +568,9 @@ class PipelineConfig(KiaraModuleConfig):
             replaced = replace_var_names_in_obj(inputs, repl_dict=repl_dict)
             data["inputs"] = replaced
 
+        if "doc" not in data.keys():
+            data["doc"] = None
+
         result = cls(pipeline_name=_pipeline_name, **data)
 
         return result

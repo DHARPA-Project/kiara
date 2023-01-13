@@ -4714,7 +4714,7 @@
 
 
 <h3 id="kiara.interfaces.cli.operation.commands.list_types" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">list_types</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">full_doc</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span></code>
+<code class="highlight language-python"><span class="n">list_types</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">full_doc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span></code>
 
 <a href="#kiara.interfaces.cli.operation.commands.list_types" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -4769,7 +4769,7 @@
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;filter&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="nd">@output_format_option</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
-<span class="k">def</span> <span class="nf">list_types</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">full_doc</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="k">def</span> <span class="nf">list_types</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">full_doc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
 
     <span class="n">kiara_obj</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara&quot;</span><span class="p">]</span>
 
@@ -4852,7 +4852,7 @@
 
 
 <h3 id="kiara.interfaces.cli.operation.commands.list_operations" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">list_operations</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">by_type</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">full_doc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">include_internal</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">list_operations</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">by_type</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">full_doc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">include_internal</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span></code>
 
 <a href="#kiara.interfaces.cli.operation.commands.list_operations" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -4953,7 +4953,7 @@
 <span class="k">def</span> <span class="nf">list_operations</span><span class="p">(</span>
     <span class="n">ctx</span><span class="p">,</span>
     <span class="n">by_type</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-    <span class="nb">filter</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="nb">filter</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">full_doc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
     <span class="n">include_internal</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
     <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>

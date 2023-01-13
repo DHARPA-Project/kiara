@@ -8,7 +8,7 @@
 import os
 import rich_click as click
 import sys
-import typing
+from typing import Iterable
 
 from kiara import KiaraAPI
 from kiara.context import Kiara
@@ -36,7 +36,7 @@ def operation(ctx):
 @click.argument("filter", nargs=-1, required=False)
 @output_format_option()
 @click.pass_context
-def list_types(ctx, full_doc, format: str, filter: typing.Iterable[str]):
+def list_types(ctx, full_doc: bool, format: str, filter: Iterable[str]):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
@@ -105,7 +105,7 @@ def explain_type(ctx, operation_type: str, format: str):
 def list_operations(
     ctx,
     by_type: bool,
-    filter: typing.Iterable[str],
+    filter: Iterable[str],
     full_doc: bool,
     include_internal: bool,
     format: str,

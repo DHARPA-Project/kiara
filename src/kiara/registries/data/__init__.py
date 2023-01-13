@@ -945,18 +945,33 @@ class DataRegistry(object):
         return parsed
 
     def load_values(
-        self, values: Mapping[str, Union[uuid.UUID, None, str, ValueLink]]
+        self,
+        values: Mapping[str, Union[uuid.UUID, None, str, ValueLink]],
+        values_schema: Union[None, Mapping[str, ValueSchema]] = None,
     ) -> ValueMap:
 
         value_items = {}
-        schemas = {}
-        for field_name, value_id in values.items():
-            if value_id is None:
-                value_id = NONE_VALUE_ID
+        if values_schema:
 
-            value = self.get_value(value=value_id)
-            value_items[field_name] = value
-            schemas[field_name] = value.value_schema
+            schemas = values_schema
+            for k in schemas.keys():
+                if k not in values.keys():
+                    value_items[k] = self.get_value(NOT_SET_VALUE_ID)
+                else:
+                    value_id = values[k]
+                    if value_id is None:
+                        value_id = NONE_VALUE_ID
+
+                    value_items[k] = self.get_value(value_id)
+        else:
+            schemas = {}
+            for field_name, value_id in values.items():
+                if value_id is None:
+                    value_id = NONE_VALUE_ID
+
+                value = self.get_value(value=value_id)
+                value_items[field_name] = value
+                schemas[field_name] = value.value_schema
 
         return ValueMapReadOnly(value_items=value_items, values_schema=schemas)
 

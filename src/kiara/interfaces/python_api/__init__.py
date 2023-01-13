@@ -35,7 +35,7 @@ from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.rendering import RenderValueResult
 from kiara.models.values.matchers import ValueMatcher
-from kiara.models.values.value import PersistedData, Value, ValueMap
+from kiara.models.values.value import PersistedData, Value, ValueMap, ValueSchema
 from kiara.models.workflow import WorkflowGroupInfo, WorkflowInfo, WorkflowMetadata
 from kiara.operations import OperationType
 from kiara.operations.included_core_operations.filter import FilterOperationType
@@ -831,11 +831,15 @@ class KiaraAPI(object):
         return infos  # type: ignore
 
     def retrieve_value_map(
-        self, values: Mapping[str, Union[uuid.UUID, None, str, ValueLink]]
+        self,
+        values: Mapping[str, Union[uuid.UUID, None, str, ValueLink]],
+        values_schema: Union[None, Mapping[str, ValueSchema]] = None,
     ) -> ValueMap:
         """Retrive a [ValueMap][TODO] object from the provided value ids or value links."""
 
-        return self.context.data_registry.load_values(values)
+        return self.context.data_registry.load_values(
+            values=values, values_schema=values_schema
+        )
 
     def store_value(
         self,

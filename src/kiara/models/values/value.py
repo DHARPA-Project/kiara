@@ -1329,6 +1329,7 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
 
         invalid: Dict[str, str] = {}
         for field_name in self.values_schema.keys():
+
             item = self.get_value_obj(field_name)
             field_schema = self.values_schema[field_name]
             if not field_schema.optional:

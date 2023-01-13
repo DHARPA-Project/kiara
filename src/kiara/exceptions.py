@@ -322,6 +322,11 @@ class FailedJobException(KiaraException):
         self.msg = msg
         super().__init__(msg)
 
+    @property
+    def details(self):
+
+        return self.job.error
+
     def create_renderable(self, **config: Any):
 
         from rich import box

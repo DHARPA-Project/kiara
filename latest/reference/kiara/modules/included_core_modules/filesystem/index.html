@@ -2889,8 +2889,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.filesystem.PickFileModule" class="md-nav__link">
-    PickFileModule
+  <a href="#kiara.modules.included_core_modules.filesystem.PickFileFromFileBundleModule" class="md-nav__link">
+    PickFileFromFileBundleModule
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.modules.included_core_modules.filesystem.PickSubBundle" class="md-nav__link">
+    PickSubBundle
   </a>
   
 </li>
@@ -4656,8 +4663,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.filesystem.PickFileModule" class="md-nav__link">
-    PickFileModule
+  <a href="#kiara.modules.included_core_modules.filesystem.PickFileFromFileBundleModule" class="md-nav__link">
+    PickFileFromFileBundleModule
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.modules.included_core_modules.filesystem.PickSubBundle" class="md-nav__link">
+    PickSubBundle
   </a>
   
 </li>
@@ -5951,11 +5965,11 @@
 
 
 
-<h3 id="kiara.modules.included_core_modules.filesystem.PickFileModule" class="doc doc-heading">
-        <code>PickFileModule</code>
+<h3 id="kiara.modules.included_core_modules.filesystem.PickFileFromFileBundleModule" class="doc doc-heading">
+        <code>PickFileFromFileBundleModule</code>
 
 
-<a href="#kiara.modules.included_core_modules.filesystem.PickFileModule" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.modules.included_core_modules.filesystem.PickFileFromFileBundleModule" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
@@ -6000,10 +6014,10 @@
 <span class="normal">248</span>
 <span class="normal">249</span>
 <span class="normal">250</span>
-<span class="normal">251</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PickFileModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+<span class="normal">251</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PickFileFromFileBundleModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Pick a single file from a file_bundle value.&quot;&quot;&quot;</span>
 
-    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;file_bundle.pick_file&quot;</span>
+    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;file_bundle.pick.file&quot;</span>
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -6046,16 +6060,16 @@
 
 
 
-<h4 id="kiara.modules.included_core_modules.filesystem.PickFileModule-functions">Functions<a href="#kiara.modules.included_core_modules.filesystem.PickFileModule-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+<h4 id="kiara.modules.included_core_modules.filesystem.PickFileFromFileBundleModule-functions">Functions<a href="#kiara.modules.included_core_modules.filesystem.PickFileFromFileBundleModule-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
 
 
 
-<h5 id="kiara.modules.included_core_modules.filesystem.PickFileModule.create_inputs_schema" class="doc doc-heading">
+<h5 id="kiara.modules.included_core_modules.filesystem.PickFileFromFileBundleModule.create_inputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_inputs_schema</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span></code>
 
-<a href="#kiara.modules.included_core_modules.filesystem.PickFileModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.filesystem.PickFileFromFileBundleModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -6087,10 +6101,10 @@
 
 
 
-<h5 id="kiara.modules.included_core_modules.filesystem.PickFileModule.create_outputs_schema" class="doc doc-heading">
+<h5 id="kiara.modules.included_core_modules.filesystem.PickFileFromFileBundleModule.create_outputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_outputs_schema</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span></code>
 
-<a href="#kiara.modules.included_core_modules.filesystem.PickFileModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.filesystem.PickFileFromFileBundleModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -6116,10 +6130,10 @@
 
 
 
-<h5 id="kiara.modules.included_core_modules.filesystem.PickFileModule.process" class="doc doc-heading">
+<h5 id="kiara.modules.included_core_modules.filesystem.PickFileFromFileBundleModule.process" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span></code>
 
-<a href="#kiara.modules.included_core_modules.filesystem.PickFileModule.process" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.filesystem.PickFileFromFileBundleModule.process" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -6151,6 +6165,272 @@
     <span class="n">file</span><span class="p">:</span> <span class="n">FileModel</span> <span class="o">=</span> <span class="n">file_bundle</span><span class="o">.</span><span class="n">included_files</span><span class="p">[</span><span class="n">path</span><span class="p">]</span>
 
     <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.modules.included_core_modules.filesystem.PickSubBundle" class="doc doc-heading">
+        <code>PickSubBundle</code>
+
+
+<a href="#kiara.modules.included_core_modules.filesystem.PickSubBundle" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-internal" title="kiara.modules.KiaraModule" href="../../__init__/#kiara.modules.KiaraModule">KiaraModule</a></code></p>
+
+  
+      <p>Pick a sub-folder from a file_bundle, resulting in a new file_bundle.</p>
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PickSubBundle</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pick a sub-folder from a file_bundle, resulting in a new file_bundle.&quot;&quot;&quot;</span>
+
+    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;file_bundle.pick.sub_folder&quot;</span>
+
+    <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The file bundle.&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;sub_path&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The relative path of the sub-folder to pick.&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The picked (sub-)file_bundle.&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
+
+        <span class="n">file_bundle</span><span class="p">:</span> <span class="n">FileBundle</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">)</span>
+        <span class="n">sub_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;sub_path&quot;</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_bundle</span><span class="o">.</span><span class="n">included_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">sub_path</span><span class="p">):</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">file</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KiaraProcessingException</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Can&#39;t pick sub-folder &#39;</span><span class="si">{</span><span class="n">sub_path</span><span class="si">}</span><span class="s2">&#39; from file bundle: no matches.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">new_file_bundle</span><span class="p">:</span> <span class="n">FileBundle</span> <span class="o">=</span> <span class="n">FileBundle</span><span class="o">.</span><span class="n">create_from_file_models</span><span class="p">(</span>
+            <span class="n">result</span><span class="p">,</span> <span class="n">bundle_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_bundle</span><span class="o">.</span><span class="n">bundle_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">sub_path</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="n">new_file_bundle</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+        </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<h4 id="kiara.modules.included_core_modules.filesystem.PickSubBundle-functions">Functions<a href="#kiara.modules.included_core_modules.filesystem.PickSubBundle-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.modules.included_core_modules.filesystem.PickSubBundle.create_inputs_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_inputs_schema</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span></code>
+
+<a href="#kiara.modules.included_core_modules.filesystem.PickSubBundle.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
+
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The file bundle.&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;sub_path&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The relative path of the sub-folder to pick.&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.modules.included_core_modules.filesystem.PickSubBundle.create_outputs_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_outputs_schema</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span></code>
+
+<a href="#kiara.modules.included_core_modules.filesystem.PickSubBundle.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
+
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;file_bundle&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="s2">&quot;The picked (sub-)file_bundle.&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.modules.included_core_modules.filesystem.PickSubBundle.process" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span></code>
+
+<a href="#kiara.modules.included_core_modules.filesystem.PickSubBundle.process" class="headerlink" title="Permanent link">&para;</a></h5>
+
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>kiara/modules/included_core_modules/filesystem.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
+
+    <span class="n">file_bundle</span><span class="p">:</span> <span class="n">FileBundle</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">)</span>
+    <span class="n">sub_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_data</span><span class="p">(</span><span class="s2">&quot;sub_path&quot;</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">file_bundle</span><span class="o">.</span><span class="n">included_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">sub_path</span><span class="p">):</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">path</span><span class="p">]</span> <span class="o">=</span> <span class="n">file</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">KiaraProcessingException</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Can&#39;t pick sub-folder &#39;</span><span class="si">{</span><span class="n">sub_path</span><span class="si">}</span><span class="s2">&#39; from file bundle: no matches.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">new_file_bundle</span><span class="p">:</span> <span class="n">FileBundle</span> <span class="o">=</span> <span class="n">FileBundle</span><span class="o">.</span><span class="n">create_from_file_models</span><span class="p">(</span>
+        <span class="n">result</span><span class="p">,</span> <span class="n">bundle_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">file_bundle</span><span class="o">.</span><span class="n">bundle_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">sub_path</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+
+    <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="s2">&quot;file_bundle&quot;</span><span class="p">,</span> <span class="n">new_file_bundle</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>

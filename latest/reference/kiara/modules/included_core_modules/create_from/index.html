@@ -4640,10 +4640,10 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/create_from.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">17</span>
-<span class="normal">18</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
 <span class="normal">19</span>
-<span class="normal">20</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">CreateFromModuleConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
+<span class="normal">20</span>
+<span class="normal">21</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">CreateFromModuleConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
 
     <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the source value.&quot;</span><span class="p">)</span>
     <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the target.&quot;</span><span class="p">)</span>
@@ -4727,8 +4727,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/create_from.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 23</span>
-<span class="normal"> 24</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 24</span>
 <span class="normal"> 25</span>
 <span class="normal"> 26</span>
 <span class="normal"> 27</span>
@@ -4841,7 +4840,10 @@
 <span class="normal">134</span>
 <span class="normal">135</span>
 <span class="normal">136</span>
-<span class="normal">137</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">CreateFromModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">CreateFromModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
 
     <span class="n">_module_type_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
     <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">CreateFromModuleConfig</span>
@@ -4928,7 +4930,7 @@
             <span class="p">}</span>
         <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">job_log</span><span class="p">:</span> <span class="n">JobLog</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
         <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
         <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
@@ -4939,6 +4941,8 @@
         <span class="n">source_value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">source_type</span><span class="p">)</span>
 
         <span class="n">signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;source_value&quot;</span><span class="p">:</span> <span class="n">source_value</span><span class="p">}</span>
+
         <span class="k">if</span> <span class="s2">&quot;optional&quot;</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
             <span class="n">optional</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">op_schemas</span> <span class="o">=</span> <span class="p">{}</span>
@@ -4947,14 +4951,14 @@
                     <span class="k">continue</span>
                 <span class="n">optional</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
                 <span class="n">op_schemas</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span>
-                <span class="n">source_value</span><span class="o">=</span><span class="n">source_value</span><span class="p">,</span>
-                <span class="n">optional</span><span class="o">=</span><span class="n">ValueMapReadOnly</span><span class="p">(</span>
-                    <span class="n">value_items</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span> <span class="n">values_schema</span><span class="o">=</span><span class="n">op_schemas</span>
-                <span class="p">),</span>
+            <span class="n">args</span><span class="p">[</span><span class="s2">&quot;optional&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ValueMapReadOnly</span><span class="p">(</span>
+                <span class="n">value_items</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span> <span class="n">values_schema</span><span class="o">=</span><span class="n">op_schemas</span>
             <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">source_value</span><span class="o">=</span><span class="n">source_value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;job_log&quot;</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+            <span class="n">args</span><span class="p">[</span><span class="s2">&quot;job_log&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_log</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
         <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">target_type</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
         </details>
@@ -5008,8 +5012,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/included_core_modules/create_from.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
-<span class="normal">29</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span>
 <span class="normal">32</span>
@@ -5033,7 +5036,8 @@
 <span class="normal">50</span>
 <span class="normal">51</span>
 <span class="normal">52</span>
-<span class="normal">53</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">53</span>
+<span class="normal">54</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">retrieve_supported_create_combinations</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
@@ -5079,10 +5083,10 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/included_core_modules/create_from.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">55</span>
-<span class="normal">56</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">56</span>
 <span class="normal">57</span>
-<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_optional_inputs</span><span class="p">(</span>
+<span class="normal">58</span>
+<span class="normal">59</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_optional_inputs</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_type</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]:</span>
     <span class="k">return</span> <span class="kc">None</span>
@@ -5106,8 +5110,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/included_core_modules/create_from.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
-<span class="normal">61</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">61</span>
 <span class="normal">62</span>
 <span class="normal">63</span>
 <span class="normal">64</span>
@@ -5143,7 +5146,8 @@
 <span class="normal">94</span>
 <span class="normal">95</span>
 <span class="normal">96</span>
-<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
+<span class="normal">97</span>
+<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
 
@@ -5201,8 +5205,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/included_core_modules/create_from.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 99</span>
-<span class="normal">100</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
 <span class="normal">103</span>
@@ -5210,7 +5213,8 @@
 <span class="normal">105</span>
 <span class="normal">106</span>
 <span class="normal">107</span>
-<span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
+<span class="normal">108</span>
+<span class="normal">109</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
 
@@ -5231,7 +5235,7 @@
 
 
 <h5 id="kiara.modules.included_core_modules.create_from.CreateFromModule.process" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+<code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">job_log</span><span class="p">:</span> <span class="n">JobLog</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
 
 <a href="#kiara.modules.included_core_modules.create_from.CreateFromModule.process" class="headerlink" title="Permanent link">&para;</a></h5>
 
@@ -5240,8 +5244,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/included_core_modules/create_from.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">110</span>
-<span class="normal">111</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">111</span>
 <span class="normal">112</span>
 <span class="normal">113</span>
 <span class="normal">114</span>
@@ -5267,7 +5270,10 @@
 <span class="normal">134</span>
 <span class="normal">135</span>
 <span class="normal">136</span>
-<span class="normal">137</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">job_log</span><span class="p">:</span> <span class="n">JobLog</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
     <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
     <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
@@ -5278,6 +5284,8 @@
     <span class="n">source_value</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">source_type</span><span class="p">)</span>
 
     <span class="n">signature</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="n">args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;source_value&quot;</span><span class="p">:</span> <span class="n">source_value</span><span class="p">}</span>
+
     <span class="k">if</span> <span class="s2">&quot;optional&quot;</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
         <span class="n">optional</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">op_schemas</span> <span class="o">=</span> <span class="p">{}</span>
@@ -5286,14 +5294,14 @@
                 <span class="k">continue</span>
             <span class="n">optional</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
             <span class="n">op_schemas</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">schema</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span>
-            <span class="n">source_value</span><span class="o">=</span><span class="n">source_value</span><span class="p">,</span>
-            <span class="n">optional</span><span class="o">=</span><span class="n">ValueMapReadOnly</span><span class="p">(</span>
-                <span class="n">value_items</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span> <span class="n">values_schema</span><span class="o">=</span><span class="n">op_schemas</span>
-            <span class="p">),</span>
+        <span class="n">args</span><span class="p">[</span><span class="s2">&quot;optional&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ValueMapReadOnly</span><span class="p">(</span>
+            <span class="n">value_items</span><span class="o">=</span><span class="n">optional</span><span class="p">,</span> <span class="n">values_schema</span><span class="o">=</span><span class="n">op_schemas</span>
         <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">source_value</span><span class="o">=</span><span class="n">source_value</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;job_log&quot;</span> <span class="ow">in</span> <span class="n">signature</span><span class="o">.</span><span class="n">parameters</span><span class="p">:</span>
+        <span class="n">args</span><span class="p">[</span><span class="s2">&quot;job_log&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_log</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span>
     <span class="n">outputs</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">target_type</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>

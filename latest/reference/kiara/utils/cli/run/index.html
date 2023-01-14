@@ -4678,9 +4678,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/cli/run.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
@@ -4731,7 +4729,13 @@
 <span class="normal">88</span>
 <span class="normal">89</span>
 <span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">validate_operation_in_terminal</span><span class="p">(</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">validate_operation_in_terminal</span><span class="p">(</span>
     <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">module_or_operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">module_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraOperation</span><span class="p">:</span>
 
@@ -4782,6 +4786,10 @@
             <span class="sa">f</span><span class="s2">&quot;Error when trying to validate the operation [i]&#39;</span><span class="si">{</span><span class="n">kiara_op</span><span class="o">.</span><span class="n">operation_name</span><span class="si">}</span><span class="s2">&#39;[/i]:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
         <span class="n">terminal_print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    [red]</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red]&quot;</span><span class="p">)</span>
+        <span class="n">root_cause</span> <span class="o">=</span> <span class="n">KiaraException</span><span class="o">.</span><span class="n">get_root_details</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">root_cause</span><span class="p">:</span>
+            <span class="n">terminal_print</span><span class="p">()</span>
+            <span class="n">terminal_print</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">root_cause</span><span class="p">))</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">kiara_op</span>
@@ -4805,13 +4813,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/cli/run.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 94</span>
-<span class="normal"> 95</span>
-<span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
 <span class="normal">103</span>
@@ -4852,7 +4854,13 @@
 <span class="normal">138</span>
 <span class="normal">139</span>
 <span class="normal">140</span>
-<span class="normal">141</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_aliases</span><span class="p">(</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_aliases</span><span class="p">(</span>
     <span class="n">kiara_op</span><span class="p">:</span> <span class="n">KiaraOperation</span><span class="p">,</span> <span class="n">alias_tokens</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 
@@ -4920,13 +4928,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/cli/run.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">150</span>
 <span class="normal">151</span>
 <span class="normal">152</span>
 <span class="normal">153</span>
@@ -5010,7 +5012,13 @@
 <span class="normal">231</span>
 <span class="normal">232</span>
 <span class="normal">233</span>
-<span class="normal">234</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_and_validate_inputs</span><span class="p">(</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_and_validate_inputs</span><span class="p">(</span>
     <span class="n">kiara_op</span><span class="p">:</span> <span class="n">KiaraOperation</span><span class="p">,</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">explain</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
@@ -5123,13 +5131,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/cli/run.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">237</span>
-<span class="normal">238</span>
-<span class="normal">239</span>
-<span class="normal">240</span>
-<span class="normal">241</span>
-<span class="normal">242</span>
-<span class="normal">243</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">243</span>
 <span class="normal">244</span>
 <span class="normal">245</span>
 <span class="normal">246</span>
@@ -5176,7 +5178,17 @@
 <span class="normal">287</span>
 <span class="normal">288</span>
 <span class="normal">289</span>
-<span class="normal">290</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">execute_job</span><span class="p">(</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">execute_job</span><span class="p">(</span>
     <span class="n">kiara_op</span><span class="p">:</span> <span class="n">KiaraOperation</span><span class="p">,</span>
     <span class="n">silent</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
     <span class="n">save_results</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
@@ -5190,7 +5202,11 @@
         <span class="n">outputs</span> <span class="o">=</span> <span class="n">kiara_op</span><span class="o">.</span><span class="n">retrieve_result</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">FailedJobException</span> <span class="k">as</span> <span class="n">fje</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">()</span>
-        <span class="n">terminal_print</span><span class="p">(</span><span class="n">fje</span><span class="p">,</span> <span class="n">in_panel</span><span class="o">=</span><span class="s2">&quot;Processing error&quot;</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">:</span> <span class="n">RenderableType</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">fje</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fje</span><span class="o">.</span><span class="n">details</span><span class="p">:</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">Markdown</span><span class="p">(</span><span class="n">fje</span><span class="o">.</span><span class="n">details</span><span class="p">))</span>
+        <span class="n">terminal_print</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">in_panel</span><span class="o">=</span><span class="s2">&quot;Processing error&quot;</span><span class="p">)</span>
+
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">()</span>

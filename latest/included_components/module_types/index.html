@@ -423,8 +423,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara_info.module_types.file_bundle.pick_file" class="md-nav__link">
-    file_bundle.pick_file
+  <a href="#kiara_info.module_types.file_bundle.pick.file" class="md-nav__link">
+    file_bundle.pick.file
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.file_bundle.pick.sub_folder" class="md-nav__link">
+    file_bundle.pick.sub_folder
   </a>
   
 </li>
@@ -4650,8 +4657,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiara_info.module_types.file_bundle.pick_file" class="md-nav__link">
-    file_bundle.pick_file
+  <a href="#kiara_info.module_types.file_bundle.pick.file" class="md-nav__link">
+    file_bundle.pick.file
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.file_bundle.pick.sub_folder" class="md-nav__link">
+    file_bundle.pick.sub_folder
   </a>
   
 </li>
@@ -5389,11 +5403,11 @@
 </td>
     <td>The source code of the process method of the module.</td>
   </tr>
-</table><h3 id="kiara_info.module_types.file_bundle.pick_file"><code>file_bundle.pick_file</code><a class="headerlink" href="#kiara_info.module_types.file_bundle.pick_file" title="Permanent link">&para;</a></h3>
+</table><h3 id="kiara_info.module_types.file_bundle.pick.file"><code>file_bundle.pick.file</code><a class="headerlink" href="#kiara_info.module_types.file_bundle.pick.file" title="Permanent link">&para;</a></h3>
 <table>
   <tr>
     <td>type_name</td>
-    <td>file_bundle.pick_file</td>
+    <td>file_bundle.pick.file</td>
     <td>The registered name for this item type.</td>
   </tr>
   <tr>
@@ -5501,7 +5515,7 @@
     <td><table>
   <tr>
     <td>python_class_name</td>
-    <td>PickFileModule</td>
+    <td>PickFileFromFileBundleModule</td>
     <td>The name of the Python class.</td>
   </tr>
   <tr>
@@ -5511,7 +5525,7 @@
   </tr>
   <tr>
     <td>full_name</td>
-    <td>kiara.modules.included_core_modules.filesystem.PickFileModule</td>
+    <td>kiara.modules.included_core_modules.filesystem.PickFileFromFileBundleModule</td>
     <td>The full class namespace.</td>
   </tr>
 </table></td>
@@ -5532,6 +5546,159 @@
     file: FileModel = file_bundle.included_files[path]
 
     outputs.set_value("file", file)
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.file_bundle.pick.sub_folder"><code>file_bundle.pick.sub_folder</code><a class="headerlink" href="#kiara_info.module_types.file_bundle.pick.sub_folder" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>file_bundle.pick.sub_folder</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>Pick a sub-folder from a file_bundle, resulting in a new file_bundle.</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>PickSubBundle</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.filesystem</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.filesystem.PickSubBundle</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>process_src</td>
+    <td>def process(self, inputs: ValueMap, outputs: ValueMap):
+
+    file_bundle: FileBundle = inputs.get_value_data("file_bundle")
+    sub_path: str = inputs.get_value_data("sub_path")
+
+    result = {}
+    for path, file in file_bundle.included_files.items():
+        if path.startswith(sub_path):
+            result[path] = file
+
+    if not result:
+        raise KiaraProcessingException(
+            f"Can't pick sub-folder '{sub_path}' from file bundle: no matches."
+        )
+
+    new_file_bundle: FileBundle = FileBundle.create_from_file_models(
+        result, bundle_name=f"{file_bundle.bundle_name}_{sub_path}"
+    )
+
+    outputs.set_value("file_bundle", new_file_bundle)
 </td>
     <td>The source code of the process method of the module.</td>
   </tr>

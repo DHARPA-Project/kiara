@@ -9,14 +9,14 @@ steps:
     step_id: import_journal_csvs
   - module_type: import.file_bundle
     step_id: import_text_corpus
-  - module_type: create.table.from.csv_file
+  - module_type: create.table.from.file
     step_id: create_edges_table
     input_links:
-      csv_file: import_edges_file.file
-  - module_type: create.table.from.csv_file
+      _file: import_edges_file.file
+  - module_type: create.table.from.file
     step_id: create_nodes_table
     input_links:
-      csv_file: import_nodes_file.file
+      file: import_nodes_file.file
   - module_type: table.pick.column
     step_id: create_city_array
     input_links:

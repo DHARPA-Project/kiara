@@ -276,16 +276,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/dev/__init__/</loc>
-         <lastmod>2023-01-14</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/dev/commands/</loc>
-         <lastmod>2023-01-14</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/interfaces/cli/module/__init__/</loc>
          <lastmod>2023-01-14</lastmod>
          <changefreq>daily</changefreq>

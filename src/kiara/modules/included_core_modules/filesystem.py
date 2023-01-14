@@ -216,10 +216,10 @@ class ExportFileModule(DataExportModule):
         return {"files": target_path}
 
 
-class PickFileModule(KiaraModule):
+class PickFileFromFileBundleModule(KiaraModule):
     """Pick a single file from a file_bundle value."""
 
-    _module_type_name = "file_bundle.pick_file"
+    _module_type_name = "file_bundle.pick.file"
 
     def create_inputs_schema(
         self,
@@ -249,3 +249,50 @@ class PickFileModule(KiaraModule):
         file: FileModel = file_bundle.included_files[path]
 
         outputs.set_value("file", file)
+
+
+class PickSubBundle(KiaraModule):
+    """Pick a sub-folder from a file_bundle, resulting in a new file_bundle."""
+
+    _module_type_name = "file_bundle.pick.sub_folder"
+
+    def create_inputs_schema(
+        self,
+    ) -> ValueMapSchema:
+
+        return {
+            "file_bundle": {"type": "file_bundle", "doc": "The file bundle."},
+            "sub_path": {
+                "type": "string",
+                "doc": "The relative path of the sub-folder to pick.",
+            },
+        }
+
+    def create_outputs_schema(self) -> ValueMapSchema:
+        return {
+            "file_bundle": {
+                "type": "file_bundle",
+                "doc": "The picked (sub-)file_bundle.",
+            }
+        }
+
+    def process(self, inputs: ValueMap, outputs: ValueMap):
+
+        file_bundle: FileBundle = inputs.get_value_data("file_bundle")
+        sub_path: str = inputs.get_value_data("sub_path")
+
+        result = {}
+        for path, file in file_bundle.included_files.items():
+            if path.startswith(sub_path):
+                result[path] = file
+
+        if not result:
+            raise KiaraProcessingException(
+                f"Can't pick sub-folder '{sub_path}' from file bundle: no matches."
+            )
+
+        new_file_bundle: FileBundle = FileBundle.create_from_file_models(
+            result, bundle_name=f"{file_bundle.bundle_name}_{sub_path}"
+        )
+
+        outputs.set_value("file_bundle", new_file_bundle)

@@ -18,6 +18,7 @@ from kiara.interfaces.python_api.models.info import (
 )
 from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.utils.cli import output_format_option, terminal_print_model
+from kiara.utils.cli.exceptions import handle_exception
 
 
 @click.group()
@@ -69,6 +70,7 @@ def list_types(ctx, full_doc: bool, format: str, filter: Iterable[str]):
 @click.argument("operation_type", nargs=1, required=True)
 @output_format_option()
 @click.pass_context
+@handle_exception()
 def explain_type(ctx, operation_type: str, format: str):
 
     kiara_api: KiaraAPI = ctx.obj["kiara_api"]
@@ -163,6 +165,7 @@ def list_operations(
 )
 @output_format_option()
 @click.pass_context
+@handle_exception()
 def explain(ctx, operation_id: str, source: bool, format: str, module_info: bool):
 
     kiara_obj: Kiara = ctx.obj["kiara"]

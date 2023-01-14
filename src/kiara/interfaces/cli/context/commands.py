@@ -144,7 +144,7 @@ def delete_context(
         if not force:
 
             context_summary = kiara_config.delete(
-                context_name=context_name, dry_run=True
+                context_name=_context_name, dry_run=True
             )
             terminal_print_model(
                 context_summary,
@@ -166,7 +166,7 @@ def delete_context(
             sys.exit(0)
 
         terminal_print("Deleting context...")
-        kiara_config.delete(context_name=context_name, dry_run=False)
+        kiara_config.delete(context_name=_context_name, dry_run=False)
 
         terminal_print("Done.")
 

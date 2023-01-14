@@ -17,11 +17,11 @@ steps:
     step_id: create_nodes_table
     input_links:
       csv_file: import_nodes_file.file
-  - module_type: table.cut_column
+  - module_type: table.pick.column
     step_id: create_city_array
     input_links:
       table: create_nodes_table.table
-  - module_type: table.cut_column
+  - module_type: table.pick.column
     step_id: create_label_array
     input_links:
       table: create_nodes_table.table

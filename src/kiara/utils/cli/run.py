@@ -3,7 +3,8 @@ import sys
 import uuid
 from click import Context as ClickContext
 from pydantic import ValidationError
-from rich.console import Group
+from rich.console import Group, RenderableType
+from rich.markdown import Markdown
 from rich.rule import Rule
 from typing import Any, Dict, Iterable, List, Mapping, Union
 
@@ -11,6 +12,7 @@ from kiara.context import Kiara
 from kiara.exceptions import (
     FailedJobException,
     InvalidValuesException,
+    KiaraException,
     NoSuchExecutionTargetException,
 )
 from kiara.interfaces.python_api.operation import KiaraOperation
@@ -86,6 +88,10 @@ def validate_operation_in_terminal(
             f"Error when trying to validate the operation [i]'{kiara_op.operation_name}'[/i]:\n"
         )
         terminal_print(f"    [red]{e}[/red]")
+        root_cause = KiaraException.get_root_details(e)
+        if root_cause:
+            terminal_print()
+            terminal_print(Markdown(root_cause))
         sys.exit(1)
 
     return kiara_op
@@ -248,7 +254,11 @@ def execute_job(
         outputs = kiara_op.retrieve_result(job_id=job_id)
     except FailedJobException as fje:
         print()
-        terminal_print(fje, in_panel="Processing error")
+        error: RenderableType = str(fje)
+        if fje.details:
+            error = Group(error, "", Markdown(fje.details))
+        terminal_print(error, in_panel="Processing error")
+
         sys.exit(1)
     except Exception as e:
         print()

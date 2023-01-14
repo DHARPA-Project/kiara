@@ -155,13 +155,17 @@ class PipelineStructure(KiaraModel):
 
         invalid_input_aliases = [a for a in _input_aliases.values() if "." in a]
         if invalid_input_aliases:
-            raise Exception(
-                f"Invalid input aliases, aliases can't contain special characters: {', '.join(invalid_input_aliases)}."
+            raise InvalidPipelineConfig(
+                f"Invalid input aliases, aliases can't contain special characters: {', '.join(invalid_input_aliases)}.",
+                config=values.get("pipeline_config", None),
+                details=f"Invalid characters: {', '.join(invalid_input_aliases)}.",
             )
         invalid_output_aliases = [a for a in _input_aliases.values() if "." in a]
         if invalid_input_aliases:
-            raise Exception(
-                f"Invalid input aliases, aliases can't contain special characters: {', '.join(invalid_output_aliases)}."
+            raise InvalidPipelineConfig(
+                f"Invalid input aliases, aliases can't contain special characters: {', '.join(invalid_output_aliases)}.",
+                config=values.get("pipeline_config"),
+                details=f"Invalid characters: {', '.join(invalid_output_aliases)}.",
             )
 
         valid_input_names = set()
@@ -180,7 +184,9 @@ class PipelineStructure(KiaraModel):
             for name in valid_input_names:
                 details += f"  - {name}\n"
 
-            raise InvalidPipelineConfig(msg, values, details)
+            raise InvalidPipelineConfig(
+                msg, config=values.get("pipeline_config", {}), details=details
+            )
 
         valid_output_names = set()
         for step in _steps:
@@ -199,7 +205,7 @@ class PipelineStructure(KiaraModel):
             for name in valid_output_names:
                 details += f"  - {name}\n"
 
-            raise InvalidPipelineConfig(msg, values, details)
+            raise InvalidPipelineConfig(msg, values.get("pipeline_config", {}), details)
 
         # stages = PipelineStage.from_pipeline_structure(stages=)
 

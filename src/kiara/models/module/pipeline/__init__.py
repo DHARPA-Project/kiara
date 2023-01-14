@@ -13,6 +13,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
 
+from kiara.exceptions import InvalidPipelineStepConfig
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.jobs import ExecutionContext
@@ -80,7 +81,9 @@ class PipelineStep(Manifest):
             module_type = step.get("module_type", None)
 
             if not module_type:
-                raise ValueError("Can't create step, no 'module_type' specified.")
+                raise InvalidPipelineStepConfig(
+                    "Can't create step, no 'module_type' specified.", step_config=step
+                )
 
             module_config = step.get("module_config", {})
 
@@ -109,7 +112,9 @@ class PipelineStep(Manifest):
                         config=resolved_module_config,
                     )
                 else:
-                    raise Exception(f"Can't resolve module type: {module_type}")
+                    raise InvalidPipelineStepConfig(
+                        f"Can't resolve module type: {module_type}", step_config=step
+                    )
             else:
                 manifest = kiara.create_manifest(
                     module_or_operation=module_type, config=module_config
@@ -122,7 +127,11 @@ class PipelineStep(Manifest):
             step_id = step.get("step_id", None)
             if not step_id:
                 if not auto_step_id:
-                    raise ValueError("Can't create step, no 'step_id' specified.")
+                    raise InvalidPipelineStepConfig(
+                        "Can't create step, no 'step_id' specified in config.",
+                        step_config=step,
+                    )
+
                 else:
                     step_id = find_free_id(
                         slugify(manifest.module_type, delim="_"),

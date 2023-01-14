@@ -200,7 +200,7 @@ class InputOutputObject(abc.ABC):
             )
 
         except Exception as e:
-            raise Exception(f"Can't create input schemas for instance '{self.alias}': {e}")  # type: ignore
+            raise KiaraException(f"Can't create input schemas for instance of '{self.alias}'.", parent=e)  # type: ignore
 
     @property
     def outputs_schema(self) -> Mapping[str, ValueSchema]:

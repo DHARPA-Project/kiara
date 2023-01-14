@@ -72,7 +72,7 @@ def is_jupyter() -> bool:
 def log_exception(exc: Exception):
 
     if is_debug():
-        logger.exception(exc)
+        logger.error(exc)
 
     if is_develop():
         from kiara.utils.develop import DetailLevel
@@ -88,16 +88,15 @@ def log_exception(exc: Exception):
 
         exc_info = sys.exc_info()
 
-        if not exc_info:
+        if not exc_info or not exc_info[0]:
             # TODO: create exc_info from exception?
             if not is_debug():
-                logger.exception(exc)
+                logger.error(exc)
         else:
             console = get_console()
-
             log_dev_message(
                 Traceback.from_exception(
-                    *exc_info, show_locals=show_locals, width=console.width - 4  # type: ignore
+                    type(exc_info[0]), exc_info[1], traceback=exc_info[2], show_locals=show_locals, width=console.width - 4  # type: ignore
                 ),
                 title="Exception details",
             )

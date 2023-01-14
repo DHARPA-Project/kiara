@@ -1161,7 +1161,7 @@ class KiaraAPI(object):
     def run_job(
         self,
         operation: Union[str, Path, Manifest, OperationInfo],
-        inputs: Mapping[str, Any],
+        inputs: Union[Mapping[str, Any]] = None,
         operation_config: Union[None, Mapping[str, Any]] = None,
     ) -> ValueMap:
         """Run a job from a operation id, module_name (and config), or pipeline file, wait for the job to finish and retrieve the result.
@@ -1180,6 +1180,9 @@ class KiaraAPI(object):
             the job result value map
 
         """
+
+        if inputs is None:
+            inputs = {}
         job_id = self.queue_job(
             operation=operation, inputs=inputs, operation_config=operation_config
         )

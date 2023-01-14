@@ -9,6 +9,7 @@ from pydantic import Field
 from typing import Any, Dict, Iterable, Mapping, Union
 
 from kiara.models.module import KiaraModuleConfig
+from kiara.models.module.jobs import JobLog
 from kiara.models.values.value import Value, ValueMap, ValueMapReadOnly
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
@@ -107,7 +108,7 @@ class CreateFromModule(KiaraModule):
             }
         }
 
-    def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
+    def process(self, inputs: ValueMap, outputs: ValueMap, job_log: JobLog) -> None:
 
         source_type = self.get_config_value("source_type")
         target_type = self.get_config_value("target_type")
@@ -118,6 +119,8 @@ class CreateFromModule(KiaraModule):
         source_value = inputs.get_value_obj(source_type)
 
         signature = inspect.signature(func)
+        args: Dict[str, Any] = {"source_value": source_value}
+
         if "optional" in signature.parameters:
             optional: Dict[str, Value] = {}
             op_schemas = {}
@@ -126,12 +129,12 @@ class CreateFromModule(KiaraModule):
                     continue
                 optional[field] = inputs.get_value_obj(field)
                 op_schemas[field] = schema
-            result = func(
-                source_value=source_value,
-                optional=ValueMapReadOnly(
-                    value_items=optional, values_schema=op_schemas
-                ),
+            args["optional"] = ValueMapReadOnly(
+                value_items=optional, values_schema=op_schemas
             )
-        else:
-            result = func(source_value=source_value)
+
+        if "job_log" in signature.parameters:
+            args["job_log"] = job_log
+
+        result = func(**args)
         outputs.set_value(target_type, result)

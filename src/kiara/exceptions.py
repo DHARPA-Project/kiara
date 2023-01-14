@@ -5,10 +5,12 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import uuid
+from orjson import orjson
 from rich.markdown import Markdown
 from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Type, Union
 
 from kiara.defaults import NOT_AVAILBLE_MARKER
+from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from rich.console import RenderableType
@@ -17,6 +19,7 @@ if TYPE_CHECKING:
     from kiara.data_types import DataType
     from kiara.models.module.jobs import ActiveJob
     from kiara.models.module.manifest import Manifest
+    from kiara.models.module.pipeline import PipelineConfig
     from kiara.models.values.value import Value
     from kiara.modules import KiaraModule
 
@@ -55,7 +58,7 @@ class KiaraException(Exception):
         if hasattr(self, "details"):
             current_details = self.details  # type: ignore
         else:
-            current_details = "-- n/a --"
+            current_details = None
         while hasattr(current, "parent") and current.parent is not None:  # type: ignore
             current = current.parent  # type: ignore
 
@@ -323,9 +326,8 @@ class FailedJobException(KiaraException):
         super().__init__(msg)
 
     @property
-    def details(self):
-
-        return self.job.error
+    def details(self) -> Union[str, None]:
+        return None
 
     def create_renderable(self, **config: Any):
 
@@ -400,7 +402,7 @@ class NoSuchOperationException(KiaraException):
         self._available_operations: Iterable[str] = available_operations
 
         if not msg:
-            msg = f"No operation with id: {operation_id} available."
+            msg = f"No operation with id '{operation_id}' available."
 
         super().__init__(msg)
 
@@ -442,21 +444,32 @@ class InvalidOperationException(KiaraException):
             return self._all_details.get("details", None)
 
 
+class InvalidPipelineStepConfig(KiaraException):
+    def __init__(self, msg: str, step_config: Mapping[str, Any]):
+
+        self._step_config: Mapping[str, Any] = step_config
+        super().__init__(msg)
+
+    @property
+    def details(self) -> str:
+        config = orjson_dumps(self._step_config, option=orjson.OPT_INDENT_2)
+
+        details = f"Invalid step config:\n\n```\n{config}\n```"
+        return details
+
+
 class InvalidPipelineConfig(KiaraException):
-    def __init__(self, msg: str, config: Mapping[str, Any], details: str):
+    def __init__(self, msg: str, config: "PipelineConfig", details: str):
 
         self._config = config
         self._details = details
         super().__init__(msg)
 
     @property
-    def pipeline_config(self) -> Mapping[str, Any]:
+    def pipeline_config(self) -> "PipelineConfig":
         return self._config
 
     @property
     def details(self) -> Union[str, None]:
-        return self._details
 
-    @property
-    def config(self) -> Mapping[str, Any]:
-        return self._config
+        return self._details

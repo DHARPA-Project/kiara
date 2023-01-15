@@ -66,6 +66,12 @@ class KiaraAPI(object):
     typically done by a frontend. The return types of each method are json seriable in most cases.
 
     Can be extended for special scenarios and augmented with scenario-specific methdos (Jupyter, web-frontend, ...)
+
+    The naming of the API endpoints follows a (loose-ish) convention:
+    - list_*: return a list of ids or items, if items, filtering is supported
+    - get_*: get specific instances of a type (operation, value, etc.)
+    - retrieve_*: get augmented information about an instance or type of something. This usually implies that there is some overhead,
+    so before you use this, make sure that there is not 'get_*' or 'list_*' endpoint that could give you what you need.
     ."""
 
     _instance: Union["KiaraAPI", None] = None

@@ -6,10 +6,10 @@
       "step_id": "import_file"
     },
     {
-      "module_type": "create.table.from.csv_file",
+      "module_type": "create.table.from.file",
       "step_id": "create_table_from_files",
       "input_links": {
-        "csv_file": "import_file.file"
+        "file": "import_file.file"
       }
     }]
 }

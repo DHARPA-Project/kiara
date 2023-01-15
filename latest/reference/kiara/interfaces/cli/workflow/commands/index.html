@@ -4791,9 +4791,9 @@
     <span class="n">kiara_api</span><span class="p">:</span> <span class="n">KiaraAPI</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara_api&quot;</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="nb">all</span><span class="p">:</span>
-        <span class="n">workflows</span> <span class="o">=</span> <span class="n">kiara_api</span><span class="o">.</span><span class="n">get_workflows_info</span><span class="p">()</span>
+        <span class="n">workflows</span> <span class="o">=</span> <span class="n">kiara_api</span><span class="o">.</span><span class="n">retrieve_workflows_info</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">workflows</span> <span class="o">=</span> <span class="n">kiara_api</span><span class="o">.</span><span class="n">get_workflow_aliases_info</span><span class="p">()</span>
+        <span class="n">workflows</span> <span class="o">=</span> <span class="n">kiara_api</span><span class="o">.</span><span class="n">retrieve_workflow_aliases_info</span><span class="p">()</span>
 
     <span class="n">terminal_print_model</span><span class="p">(</span><span class="n">workflows</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -4951,7 +4951,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Explain the workflow with the specified id/alias.&quot;&quot;&quot;</span>
 
     <span class="n">kiara_api</span><span class="p">:</span> <span class="n">KiaraAPI</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara_api&quot;</span><span class="p">]</span>
-    <span class="n">workflow_info</span> <span class="o">=</span> <span class="n">kiara_api</span><span class="o">.</span><span class="n">get_workflow_info</span><span class="p">(</span><span class="n">workflow</span><span class="o">=</span><span class="n">workflow</span><span class="p">)</span>
+    <span class="n">workflow_info</span> <span class="o">=</span> <span class="n">kiara_api</span><span class="o">.</span><span class="n">retrieve_workflow_info</span><span class="p">(</span><span class="n">workflow</span><span class="o">=</span><span class="n">workflow</span><span class="p">)</span>
     <span class="n">terminal_print</span><span class="p">(</span>
         <span class="n">workflow_info</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(),</span>
         <span class="n">in_panel</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Workflow: [b i]</span><span class="si">{</span><span class="n">workflow</span><span class="si">}</span><span class="s2">[/b i]&quot;</span><span class="p">,</span>

@@ -75,7 +75,7 @@ def explain_type(ctx, operation_type: str, format: str):
 
     kiara_api: KiaraAPI = ctx.obj["kiara_api"]
 
-    op_type = kiara_api.get_operation_type_info(operation_type)
+    op_type = kiara_api.retrieve_operation_type_info(operation_type)
 
     terminal_print_model(
         op_type, format=format, in_panel=f"Operation type: [b i]{operation_type}[/b i]"

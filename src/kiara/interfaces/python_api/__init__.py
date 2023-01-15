@@ -130,8 +130,8 @@ class KiaraAPI(object):
 
         return self._current_context
 
-    @property
-    def runtime_config(self) -> "KiaraRuntimeConfig":
+    def get_runtime_config(self) -> "KiaraRuntimeConfig":
+        """Retrieve the current runtime configuration."""
         return self.context.runtime_config
 
     # ==================================================================================================================
@@ -146,8 +146,7 @@ class KiaraAPI(object):
 
         return ContextInfos.create_context_infos(self._kiara_config.context_configs)
 
-    @property
-    def current_context_name(self) -> str:
+    def get_current_context_name(self) -> str:
         """Retrieve the name fo the current context."""
 
         if self._current_context_alias is None:
@@ -197,8 +196,7 @@ class KiaraAPI(object):
     # ==================================================================================================================
     # methods for data_types
 
-    @property
-    def data_type_names(self) -> List[str]:
+    def list_data_type_names(self) -> List[str]:
         """Get a list of all registered data types."""
 
         return self.context.type_registry.data_type_names
@@ -374,12 +372,7 @@ class KiaraAPI(object):
 
             return module_obj.operation
 
-    @property
-    def operation_ids(self) -> List[str]:
-        """Get a list of all available operation ids."""
-        return self.get_operation_ids()
-
-    def get_operation_ids(
+    def list_operation_ids(
         self, *filters: str, include_internal: bool = False
     ) -> List[str]:
         """Get a list of all operation ids that match the specified filter.
@@ -414,28 +407,6 @@ class KiaraAPI(object):
         else:
             op = create_operation(module_or_operation=operation, kiara=self.context)
         return op
-
-    def get_operation_info(
-        self, operation: str, allow_external: bool = False
-    ) -> OperationInfo:
-        """Return the full information for the specified operation id.
-
-        This is similar to the 'get_operation' method, but returns additional information. Only use this instead of
-        'get_operation' if you need the additional info, as it's more expensive to get.
-
-        Arguments:
-            operation: the operation id
-
-        Returns:
-            augmented operation instance data
-        """
-
-        if not allow_external:
-            op = self.context.operation_registry.get_operation(operation_id=operation)
-        else:
-            op = create_operation(module_or_operation=operation)
-        op_info = OperationInfo.create_from_operation(kiara=self.context, operation=op)
-        return op_info
 
     def list_operations(
         self,
@@ -532,7 +503,29 @@ class KiaraAPI(object):
 
         return operations
 
-    def get_operations_info(
+    def retrieve_operation_info(
+        self, operation: str, allow_external: bool = False
+    ) -> OperationInfo:
+        """Return the full information for the specified operation id.
+
+        This is similar to the 'get_operation' method, but returns additional information. Only use this instead of
+        'get_operation' if you need the additional info, as it's more expensive to get.
+
+        Arguments:
+            operation: the operation id
+
+        Returns:
+            augmented operation instance data
+        """
+
+        if not allow_external:
+            op = self.context.operation_registry.get_operation(operation_id=operation)
+        else:
+            op = create_operation(module_or_operation=operation)
+        op_info = OperationInfo.create_from_operation(kiara=self.context, operation=op)
+        return op_info
+
+    def retrieve_operations_info(
         self,
         *filters,
         input_types: Union[str, Iterable[str], None] = None,
@@ -639,7 +632,7 @@ class KiaraAPI(object):
         )
         return value
 
-    def get_value_ids(self, **matcher_params) -> List[uuid.UUID]:
+    def list_value_ids(self, **matcher_params) -> List[uuid.UUID]:
         """List all available value ids for this kiara context.
 
         This method exists mainly so frontend can retrieve a list of all value_ids that exists on the backend without
@@ -702,7 +695,7 @@ class KiaraAPI(object):
 
         return self.context.data_registry.get_value(value=value)
 
-    def get_value_info(self, value: Union[str, uuid.UUID, ValueLink]) -> ValueInfo:
+    def retrieve_value_info(self, value: Union[str, uuid.UUID, ValueLink]) -> ValueInfo:
         """Retrieve an info object for a value.
 
         'ValueInfo' objects contains augmented information on top of what 'normal' [Value][kiara.models.values.value.Value] objects
@@ -721,7 +714,7 @@ class KiaraAPI(object):
         _value = self.get_value(value=value)
         return ValueInfo.create_from_instance(kiara=self.context, instance=_value)
 
-    def get_values_info(self, **matcher_params) -> ValuesInfo:
+    def retrieve_values_info(self, **matcher_params) -> ValuesInfo:
         """Retrieve information about the matching values.
 
         This retrieves the same list of values as [list_values][kiara.interfaces.python_api.KiaraAPI.list_values],
@@ -746,7 +739,7 @@ class KiaraAPI(object):
         )
         return infos  # type: ignore
 
-    def get_alias_names(self, **matcher_params) -> List[str]:
+    def list_alias_names(self, **matcher_params) -> List[str]:
         """List all available alias keys.
 
         This method exists mainly so frontend can retrieve a list of all value_ids that exists on the backend without
@@ -805,7 +798,7 @@ class KiaraAPI(object):
 
         return result
 
-    def get_aliases_info(self, **matcher_params) -> ValuesInfo:
+    def retrieve_aliases_info(self, **matcher_params) -> ValuesInfo:
         """Retrieve information about the matching values.
 
         This retrieves the same list of values as [list_values][kiara.interfaces.python_api.KiaraAPI.list_values],
@@ -830,7 +823,7 @@ class KiaraAPI(object):
         )
         return infos  # type: ignore
 
-    def retrieve_value_map(
+    def assemble_value_map(
         self,
         values: Mapping[str, Union[uuid.UUID, None, str, ValueLink]],
         values_schema: Union[None, Mapping[str, ValueSchema]] = None,
@@ -918,7 +911,7 @@ class KiaraAPI(object):
 
         return self.context.operation_registry.get_operation_type(op_type=op_type)
 
-    def get_operation_type_info(
+    def retrieve_operation_type_info(
         self, op_type: Union[str, Type[OP_TYPE]]
     ) -> OperationTypeInfo:
         """Get an info object for the specified operation type."""
@@ -1197,7 +1190,7 @@ class KiaraAPI(object):
         job_status = self.context.job_registry.get_job(job_id=job_id)
         return job_status
 
-    def retrieve_job_result(self, job_id: Union[str, uuid.UUID]) -> ValueMap:
+    def get_job_result(self, job_id: Union[str, uuid.UUID]) -> ValueMap:
         """Retrieve the result(s) of the specified job."""
 
         if isinstance(job_id, str):
@@ -1322,14 +1315,13 @@ class KiaraAPI(object):
 
     # ------------------------------------------------------------------------------------------------------------------
     # workflow-related methods
-    @property
-    def workflow_ids(self) -> List[uuid.UUID]:
+
+    def list_workflow_ids(self) -> List[uuid.UUID]:
         """List all available workflow ids."""
 
         return list(self.context.workflow_registry.all_workflow_ids)
 
-    @property
-    def workflow_aliases(self) -> List[str]:
+    def list_workflow_alias_names(self) -> List[str]:
         """ "List all available workflow aliases."""
 
         return list(self.context.workflow_registry.workflow_aliases.keys())
@@ -1383,7 +1375,7 @@ class KiaraAPI(object):
 
         return workflow_obj
 
-    def get_workflow_info(self, workflow: Union[str, uuid.UUID, Workflow]):
+    def retrieve_workflow_info(self, workflow: Union[str, uuid.UUID, Workflow]):
 
         if isinstance(workflow, Workflow):
             _workflow: Workflow = workflow
@@ -1440,7 +1432,7 @@ class KiaraAPI(object):
             }
         return result
 
-    def get_workflows_info(self, **matcher_params: Any) -> WorkflowGroupInfo:
+    def retrieve_workflows_info(self, **matcher_params: Any) -> WorkflowGroupInfo:
         """Get a map info instances for all available workflows, indexed by (stringified) workflow-id."""
 
         workflows = self.list_workflows(**matcher_params)
@@ -1452,7 +1444,9 @@ class KiaraAPI(object):
         )
         return workflow_infos
 
-    def get_workflow_aliases_info(self, **matcher_params: Any) -> WorkflowGroupInfo:
+    def retrieve_workflow_aliases_info(
+        self, **matcher_params: Any
+    ) -> WorkflowGroupInfo:
         """Get a map info instances for all available workflows, indexed by alias."""
 
         workflows = self.list_workflow_aliases(**matcher_params)

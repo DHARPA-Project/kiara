@@ -38,9 +38,9 @@ def list(ctx, all) -> None:
     kiara_api: KiaraAPI = ctx.obj["kiara_api"]
 
     if all:
-        workflows = kiara_api.get_workflows_info()
+        workflows = kiara_api.retrieve_workflows_info()
     else:
-        workflows = kiara_api.get_workflow_aliases_info()
+        workflows = kiara_api.retrieve_workflow_aliases_info()
 
     terminal_print_model(workflows)
 
@@ -101,7 +101,7 @@ def explain(ctx, workflow: str):
     """Explain the workflow with the specified id/alias."""
 
     kiara_api: KiaraAPI = ctx.obj["kiara_api"]
-    workflow_info = kiara_api.get_workflow_info(workflow=workflow)
+    workflow_info = kiara_api.retrieve_workflow_info(workflow=workflow)
     terminal_print(
         workflow_info.create_renderable(),
         in_panel=f"Workflow: [b i]{workflow}[/b i]",

@@ -257,7 +257,8 @@ class InfoItemGroup(KiaraModel, Generic[INFO_ITEM_TYPE]):
 
         info_cls = cls.base_info_class()
         items = {}
-        for k, v in instances.items():
+        for k in sorted(instances.keys()):
+            v = instances[k]
             items[k] = info_cls.create_from_instance(kiara=kiara, instance=v, **kwargs)
 
         group_title = kwargs.pop("group_title", None)

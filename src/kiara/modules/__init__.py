@@ -26,6 +26,7 @@ from typing import (
 )
 
 from kiara.exceptions import (
+    InvalidValuesException,
     KiaraException,
     KiaraModuleConfigException,
     KiaraProcessingException,
@@ -43,6 +44,7 @@ from kiara.utils.values import (
 from kiara.utils.yaml import StringYAML
 
 if TYPE_CHECKING:
+    from kiara.context import Kiara
     from kiara.models.module.manifest import Manifest
     from kiara.models.values.value import ValueMap
     from kiara.operations import Operation
@@ -444,6 +446,56 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
             raise Exception(
                 f"Error accessing config value '{key}' in module {self.__class__._module_type_name}."  # type: ignore
             )
+
+    def run(self, kiara: "Kiara", **inputs: Any) -> "ValueMap":
+        """Run the module ad-hoc.
+
+        This is mostly used in unit tests, you typically want to run a module via the KiaraAPI instance.
+
+        Arguments:
+            kiara: the kiara context
+            inputs: the inputs for this module
+
+        Returns:
+            the outputs of this module run as a ValueMap instance
+        """
+
+        from kiara.models.values.value import ValueMap, ValueMapWritable, ValuePedigree
+
+        _inputs: ValueMap = kiara.data_registry.create_valuemap(
+            data=inputs, schema=self.inputs_schema
+        )
+
+        if _inputs.check_invalid():
+            raise InvalidValuesException(
+                msg=f"Invalid inputs for module '{self.module_type_name}'.",
+                invalid_values=_inputs.check_invalid(),
+            )
+        environments = {
+            env_name: env.instance_id
+            for env_name, env in kiara.current_environments.items()
+        }
+
+        result_pedigree = ValuePedigree(
+            kiara_id=kiara.id,
+            module_type=self.module_type_name,
+            module_config=self.config.dict(),
+            inputs={k: v.value_id for k, v in _inputs.items()},
+            environments=environments,
+        )
+
+        unique_result_values = self.characteristics.unique_result_values
+
+        outputs = ValueMapWritable.create_from_schema(
+            kiara=kiara,
+            schema=self.outputs_schema,
+            pedigree=result_pedigree,
+            unique_value_ids=unique_result_values,
+        )
+        job_log = JobLog()
+        self.process_step(inputs=_inputs, outputs=outputs, job_log=job_log)
+
+        return outputs
 
     def process_step(
         self, inputs: "ValueMap", outputs: "ValueMap", job_log: JobLog

@@ -39,7 +39,7 @@ class Destiny(Manifest):
         result_field_name: Union[str, None] = None,
     ):
 
-        module = kiara.create_module(manifest=manifest)
+        module = kiara.module_registry.create_module(manifest=manifest)
 
         if result_field_name is None:
             if len(module.outputs_schema) != 1:

@@ -374,7 +374,7 @@ class KiaraAPI(object):
             return operation
         else:
             mc = Manifest(module_type=module_type, module_config=module_config)
-            module_obj = self.context.create_module(mc)
+            module_obj = self.context.module_registry.create_module(mc)
 
             return module_obj.operation
 

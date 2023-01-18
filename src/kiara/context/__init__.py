@@ -106,7 +106,7 @@ class Kiara(object):
         self,
         config: Union[KiaraContextConfig, None] = None,
         runtime_config: Union[KiaraRuntimeConfig, None] = None,
-    ):
+    ) -> None:
 
         kc: Union[KiaraConfig, None] = None
         if not config:
@@ -325,14 +325,14 @@ class Kiara(object):
 
         return manifest
 
-    def create_module(self, manifest: Union[Manifest, str]) -> "KiaraModule":
-        """Create a [KiaraModule][kiara.module.KiaraModule] object from a module configuration.
-
-        Arguments:
-            manifest: the module configuration
-        """
-
-        return self._module_registry.create_module(manifest=manifest)
+    # def create_module(self, manifest: Union[Manifest, str]) -> "KiaraModule":
+    #     """Create a [KiaraModule][kiara.module.KiaraModule] object from a module configuration.
+    #
+    #     Arguments:
+    #         manifest: the module configuration
+    #     """
+    #
+    #     return self._module_registry.create_module(manifest=manifest)
 
     def queue(
         self, manifest: Manifest, inputs: Mapping[str, Any], wait: bool = False

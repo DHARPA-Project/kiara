@@ -399,7 +399,7 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
         manifest = Manifest(
             module_type="pipeline", module_config=pipeline_config.dict()
         )
-        module = self._kiara.create_module(manifest=manifest)
+        module = self._kiara.module_registry.create_module(manifest=manifest)
 
         op_details = PipelineOperationDetails.create_operation_details(
             operation_id=module.config.pipeline_name,

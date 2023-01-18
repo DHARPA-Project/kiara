@@ -122,7 +122,7 @@ class PipelineStep(Manifest):
                 resolved_module_type = module_type
                 resolved_module_config = module_config
 
-            module = kiara.create_module(manifest=manifest)
+            module = kiara.module_registry.create_module(manifest=manifest)
 
             step_id = step.get("step_id", None)
             if not step_id:

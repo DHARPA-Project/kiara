@@ -11,6 +11,7 @@ import structlog
 from multiformats import CID
 from typing import TYPE_CHECKING, Dict, Iterable, Mapping, Type, Union
 
+from kiara.exceptions import InvalidManifestException
 from kiara.interfaces.python_api.models.info import ModuleTypeInfo, ModuleTypesInfo
 from kiara.models.module.manifest import Manifest
 
@@ -46,7 +47,11 @@ class ModuleRegistry(object):
 
         cls = self._module_classes.get(module_type, None)
         if cls is None:
-            raise ValueError(f"No module of type '{module_type}' available.")
+            raise InvalidManifestException(
+                f"No module of type '{module_type}' available.",
+                module_type=module_type,
+                available_module_types=self._module_classes.keys(),
+            )
         return cls
 
     def get_module_type_names(self) -> Iterable[str]:
@@ -90,7 +95,15 @@ class ModuleRegistry(object):
         m_cls: Type[KiaraModule] = self.get_module_class(manifest.module_type)
 
         if not manifest.is_resolved:
-            resolved = m_cls._resolve_module_config(**manifest.module_config)
+            try:
+                resolved = m_cls._resolve_module_config(**manifest.module_config)
+            except Exception as e:
+                raise InvalidManifestException(
+                    f"Error while resolving module config for module '{manifest.module_type}': {e}",
+                    module_type=manifest.module_type,
+                    module_config=manifest.module_config,
+                    parent=e,
+                )
             manifest.module_config = resolved.dict()
             manifest.is_resolved = True
 

@@ -20,6 +20,7 @@ import tempfile
 import uuid
 from pathlib import Path
 
+from kiara import KiaraAPI
 from kiara.context import Kiara
 from kiara.context.config import KiaraConfig
 from kiara.interfaces.python_api.batch import BatchOperation
@@ -90,6 +91,15 @@ def kiara() -> Kiara:
     kc = KiaraConfig.create_in_folder(instance_path)
     kiara = kc.create_context()
     return kiara
+
+
+@pytest.fixture
+def kiaraAPI() -> KiaraAPI:
+
+    instance_path = create_temp_dir()
+    kc = KiaraConfig.create_in_folder(instance_path)
+    api = KiaraAPI(kc)
+    return api
 
 
 @pytest.fixture(scope="module")

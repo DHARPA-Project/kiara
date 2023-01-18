@@ -428,7 +428,7 @@ class JobRegistry(object):
         self, manifest: Manifest, inputs: Mapping[str, Any]
     ) -> JobConfig:
 
-        module = self._kiara.create_module(manifest=manifest)
+        module = self._kiara.module_registry.create_module(manifest=manifest)
 
         job_config = JobConfig.create_from_module(
             data_registry=self._kiara.data_registry, module=module, inputs=inputs

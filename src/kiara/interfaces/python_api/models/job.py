@@ -21,7 +21,7 @@ class JobDesc(BaseModel):
         manifest = Manifest(
             module_type=self.module_type, module_config=self.module_config
         )
-        module = kiara.create_module(manifest=manifest)
+        module = kiara.module_registry.create_module(manifest=manifest)
         job_config = JobConfig.create_from_module(
             data_registry=kiara.data_registry, module=module, inputs=self.inputs
         )

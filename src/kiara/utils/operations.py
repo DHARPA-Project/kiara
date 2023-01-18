@@ -86,7 +86,7 @@ def create_operation(
                 manifest = Manifest(
                     module_type=module_or_operation, module_config=operation_config
                 )
-                module = kiara.create_module(manifest=manifest)
+                module = kiara.module_registry.create_module(manifest=manifest)
                 operation = Operation.create_from_module(module)
             else:
                 raise Exception(
@@ -101,7 +101,7 @@ def create_operation(
         manifest = Manifest(
             module_type=module_or_operation, module_config=operation_config
         )
-        module = kiara.create_module(manifest=manifest)
+        module = kiara.module_registry.create_module(manifest=manifest)
         operation = Operation.create_from_module(module)
 
     elif os.path.isfile(module_or_operation):
@@ -123,7 +123,7 @@ def create_operation(
         )
 
         manifest = kiara.create_manifest("pipeline", config=pipeline_config.dict())
-        module = kiara.create_module(manifest=manifest)
+        module = kiara.module_registry.create_module(manifest=manifest)
 
         operation = Operation.create_from_module(module, doc=pipeline_config.doc)
 
@@ -167,7 +167,7 @@ def create_operation(
                     manifest = kiara.create_manifest(
                         "pipeline", config=pipeline_config.dict()
                     )
-                    module = kiara.create_module(manifest=manifest)
+                    module = kiara.module_registry.create_module(manifest=manifest)
 
                     operation = Operation.create_from_module(
                         module, doc=pipeline_config.doc

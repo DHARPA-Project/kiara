@@ -65,3 +65,4 @@ ci/conda/**/build_*
 ci/conda/kiara/meta.yaml
 test.*
 .ipynb_checkpoints/
+environment.yaml

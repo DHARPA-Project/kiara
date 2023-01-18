@@ -6,15 +6,6 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 
-# def test_pipeline_default_controller(kiara: Kiara):
-#
-#     pipeline = kiara.create_pipeline("logic.nand")
-#
-#     pipeline.inputs.set_values(logic_nand__a=True, logic_nand__b=True)
-#
-#     result = pipeline.outputs.get_all_value_data()
-#     assert result == {"logic_nand__y": False}
-#
 #
 # def test_pipeline_default_controller_invalid_inputs(kiara: Kiara):
 #

@@ -24,7 +24,7 @@ from kiara.utils.cli.exceptions import handle_exception
 @click.group()
 @click.pass_context
 def operation(ctx):
-    """Metadata-related sub-commands."""
+    """Operation-related sub-commands."""
 
 
 @operation.command("list-types")

@@ -102,6 +102,34 @@ class KiaraModuleConfigException(KiaraException):
         super().__init__(_msg, parent=parent)
 
 
+class InvalidManifestException(KiaraException):
+    def __init__(
+        self,
+        msg: str,
+        module_type: str,
+        module_config: Union[None, Mapping[str, Any]] = None,
+        available_module_types: Union[None, Iterable[str]] = None,
+        parent: Union[Exception, None] = None,
+    ):
+
+        self._module_type = module_type
+        self._module_config = module_config
+        self._available_module_types = available_module_types
+        super().__init__(msg, parent=parent)
+
+    @property
+    def details(self) -> Union[str, None]:
+
+        if not self._available_module_types:
+            return None
+
+        else:
+            msg = "Available module types:\n\n"
+            for module_type in self._available_module_types:
+                msg += f"- {module_type}\n"
+            return msg
+
+
 class ValueTypeConfigException(KiaraException):
     def __init__(
         self,

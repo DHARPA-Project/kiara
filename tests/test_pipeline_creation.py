@@ -14,8 +14,7 @@
 #         assert len(c.steps) > 0
 #         assert c.steps[0].step_id
 #         assert c.steps[0].module_type
-#
-#
+
 # def test_workflow_obj_attributes(pipeline_configs: typing.Mapping[str, PipelineConfig]):
 #
 #     logic_1 = pipeline_configs["logic_1"]

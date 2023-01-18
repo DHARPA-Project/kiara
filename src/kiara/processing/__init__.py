@@ -124,7 +124,7 @@ class ModuleProcessor(abc.ABC):
             environments=environments,
         )
 
-        module = self._kiara.create_module(manifest=job_config)
+        module = self._kiara.module_registry.create_module(manifest=job_config)
         unique_result_values = module.characteristics.unique_result_values
 
         outputs = ValueMapWritable.create_from_schema(

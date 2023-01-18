@@ -889,7 +889,7 @@ class DataRegistry(object):
                 f"No deserialize operation found for data type: {value.data_type_name}"
             )
 
-        module = self._kiara.create_module(manifest=manifest)
+        module = self._kiara.module_registry.create_module(manifest=manifest)
         op = Operation.create_from_module(module=module)
 
         input_field_match: Union[str, None] = None
@@ -1045,6 +1045,7 @@ class DataRegistry(object):
                     data=value_data, schema=value_schema, reuse_existing=True
                 )
                 values[input_name] = value
+
             except Exception as e:
 
                 log_exception(e)

@@ -989,7 +989,7 @@ class Workflow(object):
         manifest = self._kiara.create_manifest(
             module_or_operation=operation, config=module_config
         )
-        module = self._kiara.create_module(manifest=manifest)
+        module = self._kiara.module_registry.create_module(manifest=manifest)
         manifest_src = Manifest(
             module_type=manifest.module_type, module_config=manifest.module_config
         )

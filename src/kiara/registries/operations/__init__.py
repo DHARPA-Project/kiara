@@ -556,7 +556,7 @@ class OperationRegistry(object):
         metadata: Union[Mapping[str, Any], None] = None,
     ) -> Dict[str, Operation]:
 
-        module = self._kiara.create_module(manifest)
+        module = self._kiara.module_registry.create_module(manifest)
         op_types = {}
 
         if metadata is None:

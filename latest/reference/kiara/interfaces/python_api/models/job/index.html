@@ -4608,7 +4608,7 @@
         <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
             <span class="n">module_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_config</span>
         <span class="p">)</span>
-        <span class="n">module</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">module_registry</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
         <span class="n">job_config</span> <span class="o">=</span> <span class="n">JobConfig</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span>
             <span class="n">data_registry</span><span class="o">=</span><span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span>
         <span class="p">)</span>
@@ -4713,7 +4713,7 @@
     <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
         <span class="n">module_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_config</span>
     <span class="p">)</span>
-    <span class="n">module</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">module_registry</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
     <span class="n">job_config</span> <span class="o">=</span> <span class="n">JobConfig</span><span class="o">.</span><span class="n">create_from_module</span><span class="p">(</span>
         <span class="n">data_registry</span><span class="o">=</span><span class="n">kiara</span><span class="o">.</span><span class="n">data_registry</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inputs</span>
     <span class="p">)</span>

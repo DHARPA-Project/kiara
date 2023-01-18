@@ -6373,7 +6373,7 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
             <span class="k">return</span> <span class="n">operation</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">mc</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span><span class="n">module_type</span><span class="o">=</span><span class="n">module_type</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">module_config</span><span class="p">)</span>
-            <span class="n">module_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">mc</span><span class="p">)</span>
+            <span class="n">module_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">module_registry</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">mc</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="n">module_obj</span><span class="o">.</span><span class="n">operation</span>
 
@@ -8597,7 +8597,7 @@ building block for processing pipelines. Module types are not used directly by u
         <span class="k">return</span> <span class="n">operation</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">mc</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span><span class="n">module_type</span><span class="o">=</span><span class="n">module_type</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">module_config</span><span class="p">)</span>
-        <span class="n">module_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">mc</span><span class="p">)</span>
+        <span class="n">module_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">module_registry</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">mc</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">module_obj</span><span class="o">.</span><span class="n">operation</span>
 </code></pre></div></td></tr></table></div>

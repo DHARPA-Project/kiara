@@ -5073,7 +5073,7 @@
                 <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">module_type</span>
                 <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">module_config</span>
 
-            <span class="n">module</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">module_registry</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
 
             <span class="n">step_id</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;step_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">step_id</span><span class="p">:</span>
@@ -5764,7 +5764,7 @@
             <span class="n">resolved_module_type</span> <span class="o">=</span> <span class="n">module_type</span>
             <span class="n">resolved_module_config</span> <span class="o">=</span> <span class="n">module_config</span>
 
-        <span class="n">module</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">module_registry</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
 
         <span class="n">step_id</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;step_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">step_id</span><span class="p">:</span>

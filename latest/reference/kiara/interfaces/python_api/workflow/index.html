@@ -7254,7 +7254,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
         <span class="n">manifest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
             <span class="n">module_or_operation</span><span class="o">=</span><span class="n">operation</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">module_config</span>
         <span class="p">)</span>
-        <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_registry</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
         <span class="n">manifest_src</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
             <span class="n">module_type</span><span class="o">=</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_config</span>
         <span class="p">)</span>
@@ -9323,7 +9323,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
     <span class="n">manifest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_manifest</span><span class="p">(</span>
         <span class="n">module_or_operation</span><span class="o">=</span><span class="n">operation</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">module_config</span>
     <span class="p">)</span>
-    <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
+    <span class="n">module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">module_registry</span><span class="o">.</span><span class="n">create_module</span><span class="p">(</span><span class="n">manifest</span><span class="o">=</span><span class="n">manifest</span><span class="p">)</span>
     <span class="n">manifest_src</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
         <span class="n">module_type</span><span class="o">=</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">manifest</span><span class="o">.</span><span class="n">module_config</span>
     <span class="p">)</span>

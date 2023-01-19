@@ -349,7 +349,7 @@ class FailedJobException(KiaraException):
         self,
         job: "ActiveJob",
         msg: Union[str, None] = None,
-        parent: Union[Exception] = None,
+        parent: Union[Exception, None] = None,
     ):
 
         self.job: ActiveJob = job

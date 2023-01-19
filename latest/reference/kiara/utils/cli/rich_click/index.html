@@ -4598,11 +4598,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/cli/rich_click.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 70</span>
-<span class="normal"> 71</span>
-<span class="normal"> 72</span>
-<span class="normal"> 73</span>
-<span class="normal"> 74</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 74</span>
 <span class="normal"> 75</span>
 <span class="normal"> 76</span>
 <span class="normal"> 77</span>
@@ -4659,7 +4655,11 @@
 <span class="normal">128</span>
 <span class="normal">129</span>
 <span class="normal">130</span>
-<span class="normal">131</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rich_format_filter_operation_help</span><span class="p">(</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rich_format_filter_operation_help</span><span class="p">(</span>
     <span class="n">api</span><span class="p">:</span> <span class="n">KiaraAPI</span><span class="p">,</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">click</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">click</span><span class="o">.</span><span class="n">Group</span><span class="p">],</span>
     <span class="n">ctx</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span>
@@ -4732,7 +4732,7 @@
 
 
 <h3 id="kiara.utils.cli.rich_click.rich_format_operation_help" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">rich_format_operation_help</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">click</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">click</span><span class="o">.</span><span class="n">Group</span><span class="p">],</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="n">KiaraOperation</span><span class="p">,</span> <span class="n">cmd_help</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+<code class="highlight language-python"><span class="n">rich_format_operation_help</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">click</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">click</span><span class="o">.</span><span class="n">Group</span><span class="p">],</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span> <span class="n">op_inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">cmd_help</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
 
 <a href="#kiara.utils.cli.rich_click.rich_format_operation_help" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -4790,11 +4790,7 @@ Takes a command or group and builds the help text output.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/cli/rich_click.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">134</span>
-<span class="normal">135</span>
-<span class="normal">136</span>
-<span class="normal">137</span>
-<span class="normal">138</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">138</span>
 <span class="normal">139</span>
 <span class="normal">140</span>
 <span class="normal">141</span>
@@ -5098,10 +5094,27 @@ Takes a command or group and builds the help text output.</p>
 <span class="normal">439</span>
 <span class="normal">440</span>
 <span class="normal">441</span>
-<span class="normal">442</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rich_format_operation_help</span><span class="p">(</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span>
+<span class="normal">447</span>
+<span class="normal">448</span>
+<span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span>
+<span class="normal">452</span>
+<span class="normal">453</span>
+<span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span>
+<span class="normal">457</span>
+<span class="normal">458</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rich_format_operation_help</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">click</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">click</span><span class="o">.</span><span class="n">Group</span><span class="p">],</span>
     <span class="n">ctx</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span>
-    <span class="n">operation</span><span class="p">:</span> <span class="n">KiaraOperation</span><span class="p">,</span>
+    <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span>
+    <span class="n">op_inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span>
     <span class="n">cmd_help</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Print nicely formatted help text using rich.</span>
@@ -5133,7 +5146,7 @@ Takes a command or group and builds the help text output.</p>
     <span class="c1"># renderables.append(Panel(Padding(highlighter(obj.get_usage(ctx)), 1), style=STYLE_USAGE_COMMAND, box=box.MINIMAL))</span>
 
     <span class="c1"># Print command / group help if we have some</span>
-    <span class="n">desc</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">full_doc</span>
+    <span class="n">desc</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">full_doc</span>
     <span class="n">renderables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
         <span class="n">Padding</span><span class="p">(</span>
             <span class="n">Align</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">desc</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="n">MAX_WIDTH</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
@@ -5373,13 +5386,24 @@ Takes a command or group and builds the help text output.</p>
                     <span class="p">)</span>
                 <span class="p">)</span>
 
-    <span class="n">inputs_table</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span>
-        <span class="n">show_operation_name</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">show_operation_doc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">show_inputs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">show_outputs_schema</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">show_headers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">inputs_table</span> <span class="o">=</span> <span class="n">create_operation_status_renderable</span><span class="p">(</span>
+        <span class="n">operation</span><span class="o">=</span><span class="n">operation</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="o">=</span><span class="n">op_inputs</span><span class="p">,</span>
+        <span class="n">render_config</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;show_operation_name&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;show_inputs&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;show_outputs_schema&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;show_headers&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="s2">&quot;show_operation_doc&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">},</span>
     <span class="p">)</span>
+    <span class="c1"># inputs_table = operation.create_renderable(</span>
+    <span class="c1">#     show_operation_name=False,</span>
+    <span class="c1">#     show_operation_doc=False,</span>
+    <span class="c1">#     show_inputs=True,</span>
+    <span class="c1">#     show_outputs_schema=False,</span>
+    <span class="c1">#     show_headers=False,</span>
+    <span class="c1"># )</span>
 
     <span class="n">inputs_panel</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span>
         <span class="n">inputs_table</span><span class="p">,</span>

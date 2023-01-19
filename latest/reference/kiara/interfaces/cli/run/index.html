@@ -4685,7 +4685,17 @@
 <span class="normal">125</span>
 <span class="normal">126</span>
 <span class="normal">127</span>
-<span class="normal">128</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;module_or_operation&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;MODULE_OR_OPERATION&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
@@ -4759,20 +4769,28 @@
             <span class="p">)</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="n">kiara_obj</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara&quot;</span><span class="p">]</span>
+    <span class="c1"># kiara_obj: Kiara = ctx.obj[&quot;kiara&quot;]</span>
+    <span class="n">api</span><span class="p">:</span> <span class="n">KiaraAPI</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara_api&quot;</span><span class="p">]</span>
 
     <span class="n">cmd_arg</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;module_or_operation&quot;</span><span class="p">]</span>
     <span class="n">cmd_help</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[yellow bold]Usage: [/yellow bold][bold]kiara run [OPTIONS] [i]</span><span class="si">{</span><span class="n">cmd_arg</span><span class="si">}</span><span class="s2">[/i] [INPUTS][/bold]&quot;</span>
 
-    <span class="n">kiara_op</span> <span class="o">=</span> <span class="n">validate_operation_in_terminal</span><span class="p">(</span>
-        <span class="n">kiara</span><span class="o">=</span><span class="n">kiara_obj</span><span class="p">,</span>
-        <span class="n">module_or_operation</span><span class="o">=</span><span class="n">module_or_operation</span><span class="p">,</span>
-        <span class="n">module_config</span><span class="o">=</span><span class="n">module_config</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">final_aliases</span> <span class="o">=</span> <span class="n">calculate_aliases</span><span class="p">(</span><span class="n">kiara_op</span><span class="o">=</span><span class="n">kiara_op</span><span class="p">,</span> <span class="n">alias_tokens</span><span class="o">=</span><span class="n">save</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">module_config</span><span class="p">:</span>
+        <span class="n">op</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="n">module_or_operation</span><span class="p">,</span>
+            <span class="s2">&quot;module_config&quot;</span><span class="p">:</span> <span class="n">module_config</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">module_or_operation</span>
 
-    <span class="n">set_and_validate_inputs</span><span class="p">(</span>
-        <span class="n">kiara_op</span><span class="o">=</span><span class="n">kiara_op</span><span class="p">,</span>
+    <span class="n">kiara_op</span> <span class="o">=</span> <span class="n">validate_operation_in_terminal</span><span class="p">(</span>
+        <span class="n">api</span><span class="o">=</span><span class="n">api</span><span class="p">,</span> <span class="n">module_or_operation</span><span class="o">=</span><span class="n">op</span><span class="p">,</span> <span class="n">allow_external</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+    <span class="n">final_aliases</span> <span class="o">=</span> <span class="n">calculate_aliases</span><span class="p">(</span><span class="n">operation</span><span class="o">=</span><span class="n">kiara_op</span><span class="p">,</span> <span class="n">alias_tokens</span><span class="o">=</span><span class="n">save</span><span class="p">)</span>
+
+    <span class="n">inputs_value_map</span> <span class="o">=</span> <span class="n">set_and_validate_inputs</span><span class="p">(</span>
+        <span class="n">api</span><span class="o">=</span><span class="n">api</span><span class="p">,</span>
+        <span class="n">operation</span><span class="o">=</span><span class="n">kiara_op</span><span class="p">,</span>
         <span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">,</span>
         <span class="n">explain</span><span class="o">=</span><span class="n">explain</span><span class="p">,</span>
         <span class="n">print_help</span><span class="o">=</span><span class="n">help</span><span class="p">,</span>
@@ -4780,7 +4798,9 @@
         <span class="n">cmd_help</span><span class="o">=</span><span class="n">cmd_help</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">execute_job</span><span class="p">(</span>
-        <span class="n">kiara_op</span><span class="o">=</span><span class="n">kiara_op</span><span class="p">,</span>
+        <span class="n">api</span><span class="o">=</span><span class="n">api</span><span class="p">,</span>
+        <span class="n">operation</span><span class="o">=</span><span class="n">kiara_op</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="o">=</span><span class="n">inputs_value_map</span><span class="p">,</span>
         <span class="n">silent</span><span class="o">=</span><span class="n">silent</span><span class="p">,</span>
         <span class="n">save_results</span><span class="o">=</span><span class="n">save_results</span><span class="p">,</span>
         <span class="n">aliases</span><span class="o">=</span><span class="n">final_aliases</span><span class="p">,</span>

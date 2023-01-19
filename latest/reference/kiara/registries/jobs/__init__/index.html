@@ -6210,7 +6210,7 @@
                     <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
                         <span class="n">msg</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="n">FailedJobException</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">FailedJobException</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve job with id &#39;</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&#39;: no such job.&quot;</span><span class="p">)</span>
 
@@ -6242,7 +6242,7 @@
             <span class="k">return</span> <span class="n">results</span>
         <span class="k">elif</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failed_jobs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processor</span><span class="o">.</span><span class="n">get_job</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">FailedJobException</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">j</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">FailedJobException</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">j</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">j</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find job with id: </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -7141,7 +7141,7 @@
                 <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
                     <span class="n">msg</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">FailedJobException</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">FailedJobException</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t retrieve job with id &#39;</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&#39;: no such job.&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -7273,7 +7273,7 @@
         <span class="k">return</span> <span class="n">results</span>
     <span class="k">elif</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failed_jobs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="n">j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processor</span><span class="o">.</span><span class="n">get_job</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">FailedJobException</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">j</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">FailedJobException</span><span class="p">(</span><span class="n">job</span><span class="o">=</span><span class="n">j</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">j</span><span class="o">.</span><span class="n">_exception</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find job with id: </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>

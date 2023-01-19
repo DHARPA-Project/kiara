@@ -5525,7 +5525,16 @@
 <span class="normal">460</span>
 <span class="normal">461</span>
 <span class="normal">462</span>
-<span class="normal">463</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@data</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;filter&quot;</span><span class="p">)</span>
+<span class="normal">463</span>
+<span class="normal">464</span>
+<span class="normal">465</span>
+<span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span>
+<span class="normal">471</span>
+<span class="normal">472</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@data</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;filter&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;__no_value__&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;filters&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;__no_filters__&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -5613,11 +5622,12 @@
     <span class="n">all_inputs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
 
     <span class="n">kiara_op</span> <span class="o">=</span> <span class="n">validate_operation_in_terminal</span><span class="p">(</span>
-        <span class="n">kiara</span><span class="o">=</span><span class="n">kiara_obj</span><span class="p">,</span> <span class="n">module_or_operation</span><span class="o">=</span><span class="s2">&quot;pipeline&quot;</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">module_config</span>
+        <span class="n">api</span><span class="o">=</span><span class="n">api</span><span class="p">,</span> <span class="n">module_or_operation</span><span class="o">=</span><span class="n">op</span><span class="o">.</span><span class="n">module_config</span>
     <span class="p">)</span>
-    <span class="n">final_aliases</span> <span class="o">=</span> <span class="n">calculate_aliases</span><span class="p">(</span><span class="n">kiara_op</span><span class="o">=</span><span class="n">kiara_op</span><span class="p">,</span> <span class="n">alias_tokens</span><span class="o">=</span><span class="n">save</span><span class="p">)</span>
-    <span class="n">set_and_validate_inputs</span><span class="p">(</span>
-        <span class="n">kiara_op</span><span class="o">=</span><span class="n">kiara_op</span><span class="p">,</span>
+    <span class="n">final_aliases</span> <span class="o">=</span> <span class="n">calculate_aliases</span><span class="p">(</span><span class="n">operation</span><span class="o">=</span><span class="n">kiara_op</span><span class="p">,</span> <span class="n">alias_tokens</span><span class="o">=</span><span class="n">save</span><span class="p">)</span>
+    <span class="n">inputs_value_map</span> <span class="o">=</span> <span class="n">set_and_validate_inputs</span><span class="p">(</span>
+        <span class="n">api</span><span class="o">=</span><span class="n">api</span><span class="p">,</span>
+        <span class="n">operation</span><span class="o">=</span><span class="n">kiara_op</span><span class="p">,</span>
         <span class="n">inputs</span><span class="o">=</span><span class="n">all_inputs</span><span class="p">,</span>
         <span class="n">explain</span><span class="o">=</span><span class="n">explain</span><span class="p">,</span>
         <span class="n">print_help</span><span class="o">=</span><span class="n">help</span><span class="p">,</span>
@@ -5625,14 +5635,18 @@
         <span class="n">cmd_help</span><span class="o">=</span><span class="n">cmd_help</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">job_id</span> <span class="o">=</span> <span class="n">execute_job</span><span class="p">(</span>
-        <span class="n">kiara_op</span><span class="o">=</span><span class="n">kiara_op</span><span class="p">,</span>
+        <span class="n">api</span><span class="o">=</span><span class="n">api</span><span class="p">,</span>
+        <span class="n">operation</span><span class="o">=</span><span class="n">kiara_op</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="o">=</span><span class="n">inputs_value_map</span><span class="p">,</span>
         <span class="n">silent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">save_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">aliases</span><span class="o">=</span><span class="n">final_aliases</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span><span class="p">:</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">kiara_op</span><span class="o">.</span><span class="n">retrieve_result</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_job_result</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+        <span class="c1"># result = kiara_op.retrieve_result(job_id=job_id)</span>
+
         <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[b]Value &#39;[i]</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">[/i]&#39;[/b], filtered with: </span><span class="si">{</span><span class="n">filters</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">filtered</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;filtered_value&quot;</span><span class="p">]</span>
         <span class="k">try</span><span class="p">:</span>
@@ -5649,7 +5663,11 @@
 
     <span class="k">if</span> <span class="n">save_results</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">saved_results</span> <span class="o">=</span> <span class="n">kiara_op</span><span class="o">.</span><span class="n">save_result</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="n">final_aliases</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_job_result</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+            <span class="n">saved_results</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">store_values</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">alias_map</span><span class="o">=</span><span class="n">final_aliases</span><span class="p">)</span>
+
+            <span class="n">api</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">job_registry</span><span class="o">.</span><span class="n">store_job_record</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
+
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">saved_results</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;[b]Stored result value[/b]&quot;</span>
             <span class="k">else</span><span class="p">:</span>

@@ -94,7 +94,7 @@ def kiara() -> Kiara:
 
 
 @pytest.fixture
-def kiaraAPI() -> KiaraAPI:
+def api() -> KiaraAPI:
 
     instance_path = create_temp_dir()
     kc = KiaraConfig.create_in_folder(instance_path)

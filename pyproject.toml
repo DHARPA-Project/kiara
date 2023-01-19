@@ -63,6 +63,79 @@ dependencies = [
 ]
 dynamic = ["version"]
 
+[project.optional-dependencies]
+all_plugins = [
+    "kiara_plugin.network_analysis",
+    "kiara_plugin.language_processing",
+    "kiara_plugin.onboarding"
+]
+
+dev_documentation = [
+    "icecream>=2.1.0",
+    "jupyter",
+    "mike>=1.0.1",
+    "mkdocs-awesome-pages-plugin>=2.5.0",
+    "mkdocs-literate-nav>=0.4.0",
+    "mkdocs-macros-plugin>=0.5.0,<0.6.0",
+    "mkdocs-material>=8.0.0",
+    "mkdocs-section-index>0.3.0",
+    "mkdocstrings[python]>=0.18",
+    "mkdocs-gen-files>=0.3.1;python_version>='3.7'"
+]
+
+dev_testing = [
+    "coveralls>=3.2.0",
+    "flake8>=3.8.4",
+    "jsonschema>=4.0.0",
+    "mypy>=0.800",
+    "pytest>=6.2.2",
+    "pytest-cov>=2.11.1",
+    "pytest-html>=3.1.0",
+    "tox>=3.21.2",
+    "types-Deprecated",
+    "types-PyYAML",
+    "types-pkg-resources",
+    "types-python-dateutil",
+    "types-pytz",
+    "types-tzlocal",
+    "types-orjson"
+]
+
+dev_utils = [
+    "kiara_plugin.core_types",
+    "kiara_plugin.tabular",
+    "build",
+    "flake8>=3.8.4",
+    "ipython",
+    "mypy>=0.800",
+    "pip-licenses>=3.3.0",
+    "pre-commit>=2.9.3",
+    "pytest>=6.2.2",
+    "setup-cfg-fmt>=1.16.0",
+    "types-Deprecated",
+    "types-PyYAML",
+    "types-pkg-resources",
+    "types-python-dateutil",
+    "types-pytz",
+    "types-tzlocal",
+    "types-orjson",
+    "watchgod>=0.6",
+    "wheel"
+]
+
+doc = [
+    "airium>=0.2.5",
+    "black>=22.3.0",
+    "jupytext>=1.14.0",
+    "mkdocstrings>=0.18.0"
+]
+
+jupyter = [
+    "jupyterlab",
+    "pygraphviz",
+    "ipydagred3"
+]
+
 [project.urls]
 homepage = "https://github.com/DHARPA-Project/kiara"
 documentation = "https://dharpa.org/kiara.documentation"

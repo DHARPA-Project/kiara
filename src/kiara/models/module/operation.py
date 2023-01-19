@@ -312,7 +312,7 @@ class Operation(Manifest):
         )
         return job_config
 
-    def run(self, kiara: "Kiara", inputs: Any) -> ValueMap:
+    def run(self, kiara: "Kiara", inputs: Mapping[str, Any]) -> ValueMap:
 
         logger.debug("run.operation", operation_id=self.operation_id)
         job_config = self.prepare_job_config(kiara=kiara, inputs=inputs)

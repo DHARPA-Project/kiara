@@ -230,6 +230,9 @@ class KiaraAPI(object):
         """
 
         if filter:
+            if isinstance(filter, str):
+                filter = [filter]
+
             title = f"Filtered data_types: {filter}"
             data_type_names: Iterable[str] = []
 
@@ -275,6 +278,12 @@ class KiaraAPI(object):
 
     # ==================================================================================================================
     # methods for module and operations info
+
+    def list_module_type_names(self) -> List[str]:
+        """Get a list of all registered module types."""
+
+        return list(self.context.module_registry.get_module_type_names())
+
     def retrieve_module_types_info(
         self, filter: Union[None, str, Iterable[str]] = None
     ) -> ModuleTypesInfo:
@@ -292,6 +301,9 @@ class KiaraAPI(object):
         """
 
         if filter:
+
+            if isinstance(filter, str):
+                filter = [filter]
             title = f"Filtered modules: {filter}"
             module_types_names: Iterable[str] = []
 
@@ -379,21 +391,25 @@ class KiaraAPI(object):
             return module_obj.operation
 
     def list_operation_ids(
-        self, *filters: str, include_internal: bool = False
+        self,
+        filter: Union[str, None, Iterable[str]] = None,
+        include_internal: bool = False,
     ) -> List[str]:
         """Get a list of all operation ids that match the specified filter.
 
         Arguments:
-            filters: a list of filters (all filters must match the operation id for the operation to be included)
+            filter: an optional single or list of filters (all filters must match the operation id for the operation to be included)
             include_internal: also return internal operations
         """
 
-        if not filters and include_internal:
+        if not filter and include_internal:
             return sorted(self.context.operation_registry.operation_ids)
 
         else:
             return sorted(
-                self.list_operations(*filters, include_internal=include_internal).keys()
+                self.list_operations(
+                    filter=filter, include_internal=include_internal
+                ).keys()
             )
 
     def get_operation(self, operation: str, allow_external: bool = False) -> Operation:
@@ -416,7 +432,7 @@ class KiaraAPI(object):
 
     def list_operations(
         self,
-        *filters: str,
+        filter: Union[str, None, Iterable[str]] = None,
         input_types: Union[str, Iterable[str], None] = None,
         output_types: Union[str, Iterable[str], None] = None,
         operation_types: Union[str, Iterable[str], None] = None,
@@ -425,7 +441,7 @@ class KiaraAPI(object):
         """List all available values, optionally filter.
 
         Arguments:
-            filters: the (optional) filter strings, an operation must match all of them to be included in the result
+            filter: the (optional) filter string(s), an operation must match all of them to be included in the result
             input_types: each operation must have at least one input that matches one of the specified types
             output_types: each operation must have at least one output that matches one of the specified types
             operation_types: only include operations of the specified type(s)
@@ -451,11 +467,13 @@ class KiaraAPI(object):
         else:
             operations = self.context.operation_registry.operations
 
-        if filters:
+        if filter:
+            if isinstance(filter, str):
+                filter = [filter]
             temp = {}
             for op_id, op in operations.items():
                 match = True
-                for f in filters:
+                for f in filter:
                     if not f:
                         continue
                     if f.lower() not in op_id.lower():
@@ -565,7 +583,7 @@ class KiaraAPI(object):
             title = "Filtered operations"
 
         operations = self.list_operations(
-            *filters,
+            filters,
             input_types=input_types,
             output_types=output_types,
             include_internal=include_internal,

@@ -33,7 +33,7 @@ from kiara.interfaces.python_api.models.info import (
 from kiara.interfaces.python_api.models.workflow import WorkflowMatcher
 from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
 from kiara.interfaces.python_api.workflow import Workflow
-from kiara.models.context import ContextInfos
+from kiara.models.context import ContextInfo, ContextInfos
 from kiara.models.module.jobs import ActiveJob
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
@@ -145,6 +145,20 @@ class KiaraAPI(object):
     def get_runtime_config(self) -> "KiaraRuntimeConfig":
         """Retrieve the current runtime configuration."""
         return self.context.runtime_config
+
+    def get_context_info(self) -> ContextInfo:
+        """Retrieve information about the current kiara context."""
+
+        context_config = self._kiara_config.get_context_config(
+            self.get_current_context_name()
+        )
+        info = ContextInfo.create_from_context_config(
+            context_config,
+            context_name=self.get_current_context_name(),
+            runtime_config=self._kiara_config.runtime_config,
+        )
+
+        return info
 
     # ==================================================================================================================
     # context-management related functions
@@ -1663,3 +1677,10 @@ class KiaraAPI(object):
             workflow_obj.save()
 
         return workflow_obj
+
+    def _repr_html_(self):
+
+        info = self.get_context_info()
+        r = info.create_renderable()
+        mime_bundle = r._repr_mimebundle_(include=[], exclude=[])  # type: ignore
+        return mime_bundle["text/html"]

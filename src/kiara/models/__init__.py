@@ -310,7 +310,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         return self.__repr__()
 
     def _repr_html_(self):
-        return self.create_html()
+        return str(self.create_html())
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions

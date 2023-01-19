@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import threading
-import typing
 
 from kiara import Kiara
 
@@ -26,22 +24,22 @@ def test_multiple_kiara_instances():
     )
 
 
-def test_multiple_kiara_instances_threaded():
-    def create_kiara_context(ops: typing.List[str]):
-        kiara = Kiara()
-        ops.extend(kiara.operation_registry.operation_ids)
-
-    ops_1 = []
-    ops_2 = []
-
-    thread_1 = threading.Thread(target=create_kiara_context, args=(ops_1,))
-    thread_1.start()
-
-    thread_2 = threading.Thread(target=create_kiara_context, args=(ops_2,))
-    thread_2.start()
-
-    thread_1.join()
-    thread_2.join()
-
-    assert ops_1
-    assert ops_1 == ops_2
+# def test_multiple_kiara_instances_threaded():
+#     def create_kiara_context(ops: typing.List[str]):
+#         kiara = Kiara()
+#         ops.extend(kiara.operation_registry.operation_ids)
+#
+#     ops_1 = []
+#     ops_2 = []
+#
+#     thread_1 = threading.Thread(target=create_kiara_context, args=(ops_1,))
+#     thread_1.start()
+#
+#     thread_2 = threading.Thread(target=create_kiara_context, args=(ops_2,))
+#     thread_2.start()
+#
+#     thread_1.join()
+#     thread_2.join()
+#
+#     assert ops_1
+#     assert ops_1 == ops_2

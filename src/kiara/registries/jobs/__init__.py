@@ -514,7 +514,7 @@ class JobRegistry(object):
                     msg = str(job._exception)
                     if not msg:
                         msg = repr(job._exception)
-                raise FailedJobException(job=job, msg=msg)
+                raise FailedJobException(job=job, msg=msg, parent=job._exception)
             else:
                 raise Exception(f"Can't retrieve job with id '{job_id}': no such job.")
 
@@ -546,7 +546,7 @@ class JobRegistry(object):
             return results
         elif job_id in self._failed_jobs.values():
             j = self._processor.get_job(job_id=job_id)
-            raise FailedJobException(job=j)
+            raise FailedJobException(job=j, parent=j._exception)
         else:
             raise Exception(f"Could not find job with id: {job_id}")
 

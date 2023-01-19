@@ -23,7 +23,7 @@ def test_run_without_args():
     result = runner.invoke(cli, "run logic.and")
     print(result.stdout)
     assert result.exit_code == 1
-    assert "invalid or insufficient inputs" in result.stdout
+    assert "invalid or insufficient input" in result.stdout
     assert "not set" in result.stdout
 
 
@@ -34,7 +34,7 @@ def test_run_with_missing_arg():
     assert result.exit_code == 1
     assert "not set" in result.stdout
     assert "valid" in result.stdout
-    assert "invalid or insufficient inputs." in result.stdout
+    assert "invalid or insufficient input" in result.stdout
 
 
 def test_run_with_valid_inputs():

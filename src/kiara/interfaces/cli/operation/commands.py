@@ -16,7 +16,8 @@ from kiara.interfaces.python_api.models.info import (
     OperationGroupInfo,
     OperationTypeClassesInfo,
 )
-from kiara.interfaces.python_api.operation import KiaraOperation
+
+# from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.utils.cli import output_format_option, terminal_print_model
 from kiara.utils.cli.exceptions import handle_exception
 
@@ -169,20 +170,20 @@ def list_operations(
 def explain(ctx, operation_id: str, source: bool, format: str, module_info: bool):
 
     kiara_obj: Kiara = ctx.obj["kiara"]
+    api: KiaraAPI = ctx.obj["kiara_api"]
 
     if os.path.isfile(os.path.realpath(operation_id)):
-        kiara_op = KiaraOperation(kiara=kiara_obj, operation_name=operation_id)
-        op_config = kiara_op.operation
+        operation = api.get_operation(operation_id, allow_external=True)
     else:
-        op_config = kiara_obj.operation_registry.get_operation(operation_id)
+        operation = kiara_obj.operation_registry.get_operation(operation_id)
 
-    if not op_config:
+    if not operation:
         print()
         print(f"No operation with id '{operation_id}' registered.")
         sys.exit(1)
 
     terminal_print_model(
-        op_config,
+        operation,
         format=format,
         in_panel=f"Operation: [b i]{operation_id}[/b i]",
         include_src=source,

@@ -415,11 +415,12 @@ def filter_value(
     all_inputs.extend(inputs)
 
     kiara_op = validate_operation_in_terminal(
-        kiara=kiara_obj, module_or_operation="pipeline", module_config=op.module_config
+        api=api, module_or_operation=op.module_config
     )
-    final_aliases = calculate_aliases(kiara_op=kiara_op, alias_tokens=save)
-    set_and_validate_inputs(
-        kiara_op=kiara_op,
+    final_aliases = calculate_aliases(operation=kiara_op, alias_tokens=save)
+    inputs_value_map = set_and_validate_inputs(
+        api=api,
+        operation=kiara_op,
         inputs=all_inputs,
         explain=explain,
         print_help=help,
@@ -427,14 +428,18 @@ def filter_value(
         cmd_help=cmd_help,
     )
     job_id = execute_job(
-        kiara_op=kiara_op,
+        api=api,
+        operation=kiara_op,
+        inputs=inputs_value_map,
         silent=True,
         save_results=False,
         aliases=final_aliases,
     )
 
     if not silent:
-        result = kiara_op.retrieve_result(job_id=job_id)
+        result = api.get_job_result(job_id=job_id)
+        # result = kiara_op.retrieve_result(job_id=job_id)
+
         title = f"[b]Value '[i]{value}[/i]'[/b], filtered with: {filters}"
         filtered = result["filtered_value"]
         try:
@@ -451,7 +456,11 @@ def filter_value(
 
     if save_results:
         try:
-            saved_results = kiara_op.save_result(job_id=job_id, aliases=final_aliases)
+            result = api.get_job_result(job_id=job_id)
+            saved_results = api.store_values(result, alias_map=final_aliases)
+
+            api.context.job_registry.store_job_record(job_id=job_id)
+
             if len(saved_results) == 1:
                 title = "[b]Stored result value[/b]"
             else:
@@ -461,3 +470,16 @@ def filter_value(
             log_exception(e)
             terminal_print(f"[red]Error saving results[/red]: {e}")
             sys.exit(1)
+
+    # if save_results:
+    #     try:
+    #         saved_results = kiara_op.save_result(job_id=job_id, aliases=final_aliases)
+    #         if len(saved_results) == 1:
+    #             title = "[b]Stored result value[/b]"
+    #         else:
+    #             title = "[b]Stored result values[/b]"
+    #         terminal_print(saved_results, in_panel=title, empty_line_before=True)
+    #     except Exception as e:
+    #         log_exception(e)
+    #         terminal_print(f"[red]Error saving results[/red]: {e}")
+    #         sys.exit(1)

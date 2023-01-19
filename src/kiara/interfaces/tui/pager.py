@@ -2,6 +2,7 @@
 import structlog
 from textual import events
 from textual.app import App, ComposeResult
+from textual.binding import Binding
 from textual.widgets import Footer, Header
 from typing import Any, Mapping, Union
 
@@ -25,7 +26,7 @@ DataViewControl {
     padding: 1 0;
 }
 """
-    BINDINGS = [("q", "quit", "Quit")]
+    BINDINGS = [Binding(key="q", action="quit", description="Quit")]
 
     def __init__(
         self,

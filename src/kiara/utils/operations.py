@@ -5,18 +5,29 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import os
+from rich.console import Group, RenderableType
+from rich.markdown import Markdown
 from ruamel.yaml import YAML
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
 
-from kiara.exceptions import NoSuchExecutionTargetException, NoSuchOperationException
+from kiara.exceptions import (
+    InvalidValuesException,
+    NoSuchExecutionTargetException,
+    NoSuchOperationException,
+)
 from kiara.interfaces.python_api.models.info import OperationGroupInfo, OperationInfo
 from kiara.models.module.jobs import ExecutionContext
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.utils.files import get_data_from_file
+from kiara.utils.output import (
+    create_table_from_field_schemas,
+    create_value_map_status_renderable,
+)
 
 if TYPE_CHECKING:
+    from kiara import ValueMap
     from kiara.context import Kiara
 
 yaml = YAML(typ="safe")
@@ -151,29 +162,24 @@ def create_operation(
             pipeline_name = d.pop("pipeline_name", None)
             if pipeline_name is not None:
 
-                try:
-                    execution_context = ExecutionContext(
-                        pipeline_dir=os.path.abspath(
-                            os.path.dirname(module_or_operation)
-                        )
-                    )
-                    pipeline_config = PipelineConfig.from_config(
-                        pipeline_name=pipeline_name,
-                        data=d,
-                        kiara=kiara,
-                        execution_context=execution_context,
-                    )
+                execution_context = ExecutionContext(
+                    pipeline_dir=os.path.abspath(os.path.dirname(module_or_operation))
+                )
+                pipeline_config = PipelineConfig.from_config(
+                    pipeline_name=pipeline_name,
+                    data=d,
+                    kiara=kiara,
+                    execution_context=execution_context,
+                )
 
-                    manifest = kiara.create_manifest(
-                        "pipeline", config=pipeline_config.dict()
-                    )
-                    module = kiara.module_registry.create_module(manifest=manifest)
+                manifest = kiara.create_manifest(
+                    "pipeline", config=pipeline_config.dict()
+                )
+                module = kiara.module_registry.create_module(manifest=manifest)
 
-                    operation = Operation.create_from_module(
-                        module, doc=pipeline_config.doc
-                    )
-                except Exception:
-                    pass
+                operation = Operation.create_from_module(
+                    module, doc=pipeline_config.doc
+                )
 
         if operation is None:
             raise NoSuchOperationException(
@@ -192,3 +198,50 @@ def create_operation(
             available_targets=sorted(merged),
         )
     return operation
+
+
+def create_operation_status_renderable(
+    operation: Operation, inputs: Union["ValueMap", None], render_config: Any
+) -> RenderableType:
+
+    show_operation_name = render_config.get("show_operation_name", True)
+    show_operation_doc = render_config.get("show_operation_doc", True)
+    show_inputs = render_config.get("show_inputs", False)
+    show_outputs_schema = render_config.get("show_outputs_schema", False)
+    show_headers = render_config.get("show_headers", True)
+
+    items: List[Any] = []
+
+    if show_operation_name:
+        items.append(f"Operation: [bold]{operation.operation_id}[/bold]")
+    if show_operation_doc and operation.doc.is_set:
+        items.append("")
+        items.append(Markdown(operation.doc.full_doc, style="i"))
+
+    if show_inputs:
+        assert inputs is not None
+        if show_headers:
+            items.append("\nInputs:")
+        try:
+            _inputs: Any = create_value_map_status_renderable(
+                inputs, render_config=render_config
+            )
+        except InvalidValuesException as ive:
+            _inputs = ive.create_renderable(**render_config)
+        except Exception as e:
+            _inputs = f"[red bold]{e}[/red bold]"
+        finally:
+            items.append(_inputs)
+    if show_outputs_schema:
+        if show_headers:
+            items.append("\nOutputs:")
+        outputs_schema = create_table_from_field_schemas(
+            _add_default=False,
+            _add_required=False,
+            _show_header=True,
+            _constants=None,
+            fields=operation.outputs_schema,
+        )
+        items.append(outputs_schema)
+
+    return Group(*items)

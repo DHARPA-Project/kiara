@@ -147,7 +147,14 @@ def augment_values(
                 f"Duplicate field '{field_name}', this is most likely a bug."
             )
 
-        if field_name not in values.keys():
+        val = values.get(field_name, None)
+        use_default = False
+        if val is None:
+            use_default = True
+        elif hasattr(val, "is_set"):
+            if not val.is_set:  # type: ignore
+                use_default = True
+        if use_default:
             if schema.default != SpecialValue.NOT_SET:
                 if callable(schema.default):
                     values_new[field_name] = schema.default()
@@ -157,8 +164,8 @@ def augment_values(
                 values_new[field_name] = SpecialValue.NOT_SET
         else:
             value = values[field_name]
-            if value is None:
-                value = SpecialValue.NO_VALUE
+            assert value is not None
+
             values_new[field_name] = value
 
     return values_new

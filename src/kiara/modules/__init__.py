@@ -254,9 +254,11 @@ class InputOutputObject(abc.ABC):
 
     def augment_module_inputs(self, inputs: Mapping[str, Any]) -> Dict[str, Any]:
 
-        return augment_values(
+        augmented = augment_values(
             values=inputs, schemas=self.inputs_schema, constants=self.constants
         )
+
+        return augmented
 
     # def augment_outputs(self, outputs: Mapping[str, Any]) -> Dict[str, Any]:
     #     return augment_values(values=outputs, schemas=self.outputs_schema)

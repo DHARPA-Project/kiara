@@ -345,13 +345,18 @@ class JobConfigException(KiaraException):
 
 
 class FailedJobException(KiaraException):
-    def __init__(self, job: "ActiveJob", msg: Union[str, None] = None):
+    def __init__(
+        self,
+        job: "ActiveJob",
+        msg: Union[str, None] = None,
+        parent: Union[Exception] = None,
+    ):
 
         self.job: ActiveJob = job
         if msg is None:
             msg = "Job failed."
         self.msg = msg
-        super().__init__(msg)
+        super().__init__(msg, parent=parent)
 
     @property
     def details(self) -> Union[str, None]:

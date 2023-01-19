@@ -2,23 +2,27 @@
 import sys
 import uuid
 from click import Context as ClickContext
+from pathlib import Path
 from pydantic import ValidationError
-from rich.console import Group, RenderableType
+from rich.console import Group
 from rich.markdown import Markdown
 from rich.rule import Rule
 from typing import Any, Dict, Iterable, List, Mapping, Union
 
-from kiara.context import Kiara
+from kiara import KiaraAPI, ValueMap
 from kiara.exceptions import (
     FailedJobException,
-    InvalidValuesException,
     KiaraException,
     NoSuchExecutionTargetException,
 )
-from kiara.interfaces.python_api.operation import KiaraOperation
+from kiara.interfaces.python_api.utils import create_save_config
+from kiara.models.module.operation import Operation
+
+# from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.utils import log_exception
 from kiara.utils.cli import dict_from_cli_args, terminal_print
 from kiara.utils.cli.rich_click import rich_format_operation_help
+from kiara.utils.operations import create_operation_status_renderable
 from kiara.utils.output import create_table_from_base_model_cls
 
 
@@ -38,17 +42,22 @@ def _validate_save_option(save: Iterable[str]) -> bool:
 
 
 def validate_operation_in_terminal(
-    kiara: Kiara, module_or_operation: str, module_config: Mapping[str, Any]
-) -> KiaraOperation:
+    api: KiaraAPI,
+    module_or_operation: Union[str, Path, Mapping[str, Any]],
+    allow_external=False,
+) -> Operation:
 
-    kiara_op = KiaraOperation(
-        kiara=kiara,
-        operation_name=module_or_operation,
-        operation_config=module_config,
-    )
+    # kiara_op = KiaraOperation(
+    #     kiara=kiara,
+    #     operation_name=module_or_operation,
+    #     operation_config=module_config,
+    # )
     try:
+        operation = api.get_operation(
+            operation=module_or_operation, allow_external=allow_external
+        )
         # validate that operation config is valid, ignoring inputs for now
-        kiara_op.operation  # noqa
+        # kiara_op.operation  # noqa
     except NoSuchExecutionTargetException as nset:
         print()
         terminal_print(nset)
@@ -68,12 +77,13 @@ def validate_operation_in_terminal(
             renderables.append(f"  [b]{loc}[/b]: [red]{error['msg']}[/red]")
 
         try:
-            m = kiara.module_registry.get_module_class(kiara_op.operation_name)
-            schema = create_table_from_base_model_cls(m._config_cls)
-            renderables.append("")
-            renderables.append(f"Module configuration schema for '[b i]{m._module_type_name}[/b i]':")  # type: ignore
-            renderables.append("")
-            renderables.append(schema)
+            if isinstance(module_or_operation, str):
+                m = api.context.module_registry.get_module_class(module_or_operation)
+                schema = create_table_from_base_model_cls(m._config_cls)
+                renderables.append("")
+                renderables.append(f"Module configuration schema for '[b i]{m._module_type_name}[/b i]':")  # type: ignore
+                renderables.append("")
+                renderables.append(schema)
         except Exception:
             pass
 
@@ -85,7 +95,7 @@ def validate_operation_in_terminal(
         log_exception(e)
         terminal_print()
         terminal_print(
-            f"Error when trying to validate the operation [i]'{kiara_op.operation_name}'[/i]:\n"
+            f"Error when trying to validate the operation [i]'{module_or_operation}'[/i]:\n"
         )
         terminal_print(f"    [red]{e}[/red]")
         root_cause = KiaraException.get_root_details(e)
@@ -94,11 +104,11 @@ def validate_operation_in_terminal(
             terminal_print(Markdown(root_cause))
         sys.exit(1)
 
-    return kiara_op
+    return operation
 
 
 def calculate_aliases(
-    kiara_op: KiaraOperation, alias_tokens: Iterable[str]
+    operation: Operation, alias_tokens: Iterable[str]
 ) -> Mapping[str, List[str]]:
 
     if not alias_tokens:
@@ -123,7 +133,7 @@ def calculate_aliases(
     # check save user input
     final_aliases = {}
     if alias_tokens:
-        op_output_names = kiara_op.operation.outputs_schema.keys()
+        op_output_names = operation.outputs_schema.keys()
         invalid_fields = []
         for field_name, alias in aliases.items():
             if field_name not in op_output_names:
@@ -148,13 +158,14 @@ def calculate_aliases(
 
 
 def set_and_validate_inputs(
-    kiara_op: KiaraOperation,
+    api: KiaraAPI,
+    operation: Operation,
     inputs: Iterable[str],
     explain: bool,
     print_help: bool,
     click_context: ClickContext,
     cmd_help: str,
-):
+) -> ValueMap:
 
     # =========================================================================
     # prepare inputs
@@ -162,13 +173,19 @@ def set_and_validate_inputs(
     for (
         name,
         value_schema,
-    ) in kiara_op.operation.operation_details.inputs_schema.items():
+    ) in operation.operation_details.inputs_schema.items():
         if value_schema.type in ["list"]:
             list_keys.append(name)
 
     try:
         inputs_dict = dict_from_cli_args(*inputs, list_keys=list_keys)
-        kiara_op.set_inputs(**inputs_dict)
+
+        value_map = api.assemble_value_map(
+            values=inputs_dict,
+            values_schema=operation.inputs_schema,
+            register_data=True,
+            reuse_existing_data=False,
+        )
     except Exception as e:
         terminal_print()
         rg = Group(
@@ -177,18 +194,46 @@ def set_and_validate_inputs(
             "",
             Rule(),
             "",
-            kiara_op.create_renderable(
-                show_operation_name=True, show_inputs=True, show_outputs_schema=True
+            create_operation_status_renderable(
+                operation=operation,
+                inputs=None,
+                render_config={
+                    "show_operation_name": True,
+                    "show_inputs": False,
+                    "show_outputs_schema": True,
+                },
             ),
         )
-        terminal_print(rg, in_panel=f"Run info: [b]{kiara_op.operation_name}[/b]")
+        terminal_print(rg, in_panel=f"Run info: [b]{operation.operation_id}[/b]")
+        sys.exit(1)
+
+    if value_map.check_invalid():
+        terminal_print()
+        rg = Group(
+            "",
+            "Can't run operation: invalid or insufficient input(s)",
+            "",
+            Rule(),
+            "",
+            create_operation_status_renderable(
+                operation=operation,
+                inputs=value_map,
+                render_config={
+                    "show_operation_name": True,
+                    "show_inputs": True,
+                    "show_outputs_schema": True,
+                },
+            ),
+        )
+        terminal_print(rg, in_panel=f"Run info: [b]{operation.operation_id}[/b]")
         sys.exit(1)
 
     if print_help:
         rich_format_operation_help(
             obj=click_context.command,
             ctx=click_context,
-            operation=kiara_op,
+            operation=operation,
+            op_inputs=value_map,
             cmd_help=cmd_help,
         )
         sys.exit(0)
@@ -197,67 +242,92 @@ def set_and_validate_inputs(
         terminal_print()
         rg = Group(
             "",
-            kiara_op.create_renderable(
-                show_operation_name=True, show_inputs=True, show_outputs_schema=True
+            create_operation_status_renderable(
+                operation=operation,
+                inputs=value_map,
+                render_config={
+                    "show_operation_name": True,
+                    "show_inputs": True,
+                    "show_outputs_schema": True,
+                },
             ),
         )
-        terminal_print(rg, in_panel=f"Operation info: [b]{kiara_op.operation_name}[/b]")
+        terminal_print(rg, in_panel=f"Operation info: [b]{operation.operation_id}[/b]")
         sys.exit(0)
 
-    try:
-        operation_inputs = kiara_op.operation_inputs
-    except InvalidValuesException as ive:
+    # try:
+    #     operation_inputs = kiara_op.operation_inputs
+    # except InvalidValuesException as ive:
+    #
+    #     terminal_print()
+    #     rg = Group(
+    #         "",
+    #         f"Can't run operation: {ive}",
+    #         "",
+    #         Rule(),
+    #         "",
+    #         kiara_op.create_renderable(
+    #             show_operation_name=True, show_inputs=True, show_outputs_schema=True
+    #         ),
+    #     )
+    #     terminal_print(rg, in_panel=f"Run info: [b]{kiara_op.operation_name}[/b]")
+    #     sys.exit(1)
 
+    if value_map.check_invalid():
         terminal_print()
         rg = Group(
             "",
-            f"Can't run operation: {ive}",
+            "Can't run operation: invalid or insufficient input(s)",
             "",
             Rule(),
             "",
-            kiara_op.create_renderable(
-                show_operation_name=True, show_inputs=True, show_outputs_schema=True
+            create_operation_status_renderable(
+                operation=operation,
+                inputs=value_map,
+                render_config={
+                    "show_operation_name": True,
+                    "show_inputs": True,
+                    "show_outputs_schema": True,
+                },
             ),
         )
-        terminal_print(rg, in_panel=f"Run info: [b]{kiara_op.operation_name}[/b]")
+        terminal_print(rg, in_panel=f"Run info: [b]{operation.operation_id}[/b]")
         sys.exit(1)
 
-    invalid = operation_inputs.check_invalid()
-    if invalid:
-
-        terminal_print()
-        rg = Group(
-            "",
-            "Can't run operation, invalid or insufficient inputs.",
-            "",
-            Rule(),
-            "",
-            kiara_op.create_renderable(
-                show_operation_name=True, show_inputs=True, show_outputs_schema=True
-            ),
+    if print_help:
+        rich_format_operation_help(
+            obj=click_context.command,
+            ctx=click_context,
+            operation=operation,
+            op_inputs=value_map,
+            cmd_help=cmd_help,
         )
-        terminal_print(rg, in_panel=f"Run info: [b]{kiara_op.operation_name}[/b]")
-        sys.exit(1)
+        sys.exit(0)
+
+    return value_map
 
 
 def execute_job(
-    kiara_op: KiaraOperation,
+    api: KiaraAPI,
+    operation: Operation,
+    inputs: ValueMap,
     silent: bool,
     save_results: bool,
     aliases: Union[None, Mapping[str, List[str]]],
 ) -> uuid.UUID:
     """Execute the job"""
 
-    job_id = kiara_op.queue_job()
+    job_id = api.queue_job(operation=operation, inputs=inputs)
 
     try:
-        outputs = kiara_op.retrieve_result(job_id=job_id)
+        outputs = api.get_job_result(job_id=job_id)
     except FailedJobException as fje:
         print()
-        error: RenderableType = str(fje)
-        if fje.details:
-            error = Group(error, "", Markdown(fje.details))
-        terminal_print(error, in_panel="Processing error")
+        error: Union[str, None] = KiaraException.get_root_details(fje)
+        if not error:
+            error = str(fje)
+        _error = Markdown(error)
+        terminal_print(_error, in_panel="Processing error")
 
         sys.exit(1)
     except Exception as e:
@@ -286,7 +356,15 @@ def execute_job(
 
     if save_results:
         try:
-            saved_results = kiara_op.save_result(job_id=job_id, aliases=aliases)
+
+            alias_map = create_save_config(
+                field_names=outputs.field_names, aliases=aliases
+            )
+
+            saved_results = api.store_values(outputs, alias_map=alias_map)
+
+            api.context.job_registry.store_job_record(job_id=job_id)
+
             if len(saved_results) == 1:
                 title = "[b]Stored result value[/b]"
             else:

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import inspect
 import json
+import os.path
 
 #  Copyright (c) 2021, Markus Binsteiner
 #
@@ -13,7 +14,11 @@ from pathlib import Path
 from ruamel.yaml import YAML
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
-from kiara.exceptions import DataTypeUnknownException, NoSuchWorkflowException
+from kiara.exceptions import (
+    DataTypeUnknownException,
+    NoSuchExecutionTargetException,
+    NoSuchWorkflowException,
+)
 from kiara.interfaces.python_api.models.info import (
     DataTypeClassesInfo,
     DataTypeClassInfo,
@@ -50,6 +55,7 @@ from kiara.registries.data import ValueLink
 from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.operations import OP_TYPE
 from kiara.utils import log_exception, log_message
+from kiara.utils.files import get_data_from_file
 from kiara.utils.operations import create_operation
 
 if TYPE_CHECKING:
@@ -412,22 +418,80 @@ class KiaraAPI(object):
                 ).keys()
             )
 
-    def get_operation(self, operation: str, allow_external: bool = False) -> Operation:
+    def get_operation(
+        self,
+        operation: Union[Mapping[str, Any], str, Path],
+        allow_external: bool = False,
+    ) -> Operation:
         """Return the operation instance with the specified id.
 
         This can be used to get information about a specific operation, like inputs/outputs scheman, documentation, etc.
 
+        The order in which the operation argument is resolved:
+        - if it's a string, and an existing, registered operation_id, the associated operation is returned
+        - if it's a path to an existing file, the content of the file is loaded into a dict and depending on the content a pipeline module will be created, or a 'normal' manifest (if module_type is a key in the dict)
+
         Arguments:
-            operation: the operation id
+            operation: the operation id, module_type_name, path to a file, or url
 
         Returns:
             operation instance data
         """
 
-        if not allow_external:
-            op = self.context.operation_registry.get_operation(operation_id=operation)
+        _module_type = None
+        _module_config = None
+
+        if isinstance(operation, Path):
+            operation = operation.as_posix()
+
+        if isinstance(operation, str):
+
+            if operation in self.list_operation_ids(include_internal=True):
+                _operation = self.context.operation_registry.get_operation(operation)
+                return _operation
+
+            if not allow_external:
+                raise NoSuchExecutionTargetException(
+                    selected_target=operation,
+                    available_targets=self.context.operation_registry.operation_ids,
+                    msg=f"Can't find operation with id '{operation}', and external operations are not allowed.",
+                )
+
+            if os.path.isfile(operation):
+                try:
+                    # we use the 'from_file' here, because that will resolve any relative paths in the pipeline
+                    # if this doesn't work, we just assume the file is not a pipeline configuration but
+                    # a manifest file with 'module_type' and optional 'module_config' keys
+                    pipeline_conf = PipelineConfig.from_file(
+                        path=operation, kiara=self.context
+                    )
+                    _module_config = pipeline_conf.dict()
+                except Exception as e:
+                    log_exception(e)
+                    _module_config = get_data_from_file(operation)
+
+            else:
+                try:
+                    _module_config = json.load(operation)  # type: ignore
+                except Exception:
+                    try:
+                        _module_config = yaml.load(operation)  # type: ignore
+                    except Exception:
+                        raise Exception(
+                            f"Can't parse configuration string: {operation}."
+                        )
         else:
-            op = create_operation(module_or_operation=operation, kiara=self.context)
+            _module_config = dict(operation)
+
+        if "module_type" in _module_config.keys():
+            _module_type = _module_config["module_type"]
+            _module_config = _module_config.get("module_config", {})
+        else:
+            _module_type = "pipeline"
+
+        op = self.create_operation(
+            module_type=_module_type, module_config=_module_config
+        )
         return op
 
     def list_operations(
@@ -851,8 +915,66 @@ class KiaraAPI(object):
         self,
         values: Mapping[str, Union[uuid.UUID, None, str, ValueLink]],
         values_schema: Union[None, Mapping[str, ValueSchema]] = None,
+        register_data: bool = False,
+        reuse_existing_data: bool = False,
     ) -> ValueMap:
-        """Retrive a [ValueMap][TODO] object from the provided value ids or value links."""
+        """Retrive a [ValueMap][TODO] object from the provided value ids or value links.
+
+        By default, this method can only use values/datasets that are already registered in *kiara*. If you want to
+        auto-register 'raw' data, you need to set the 'register_data' flag to 'True', and provide a schema for each of the fields that are not yet registered.
+
+        Arguments:
+            values: a dictionary with the values in question
+            values_schema: an optional dictionary with the schema for each of the values that are not yet registered
+            register_data: whether to allow auto-registration of 'raw' data
+            reuse_existing_data: whether to reuse existing data with the same hash as the 'raw' data that is being registered
+
+        Returns:
+            a value map instance
+        """
+
+        if register_data:
+            temp: Dict[str, Union[str, ValueLink, uuid.UUID, None]] = {}
+            for k, v in values.items():
+
+                if isinstance(v, (Value, uuid.UUID)):
+                    temp[k] = v
+                    continue
+
+                if isinstance(v, str):
+                    try:
+                        v = uuid.UUID(v)
+                        temp[k] = v
+                        continue
+                    except Exception:
+                        if v.startswith("alias:"):  # type: ignore
+                            _v = v.replace("alias:", "")  # type: ignore
+                        else:
+                            _v = v
+                        if _v in self.list_aliases():
+                            temp[k] = f"alias:{_v}"
+                            continue
+
+                if not values_schema:
+                    raise Exception(
+                        f"Can't assemble value map field without schema: '{k}' -- {str(v)}"
+                    )
+
+                if k not in values_schema.keys():
+                    raise Exception(
+                        f"Can't assemble value map field without schema key: '{k}' -- {str(v)}"
+                    )
+
+                if v is None:
+                    temp[k] = None
+                else:
+                    _v = self.register_data(
+                        data=v,
+                        data_type=values_schema[k].type,
+                        reuse_existing=reuse_existing_data,
+                    )
+                    temp[k] = _v
+            values = temp
 
         return self.context.data_registry.load_values(
             values=values, values_schema=values_schema
@@ -1110,6 +1232,7 @@ class KiaraAPI(object):
 
         if inputs is None:
             inputs = {}
+
         job_config = self.context.job_registry.prepare_job_config(
             manifest=manifest, inputs=inputs
         )
@@ -1255,9 +1378,11 @@ class KiaraAPI(object):
                 data_type=_value.data_type_name,
                 target_format=target_format,
                 filters=filters,
-                use_pretty_print=True,
+                use_pretty_print=use_pretty_print,
             )
+
         except Exception as e:
+
             log_message(
                 "create_render_pipeline.failure",
                 source_type=_value.data_type_name,

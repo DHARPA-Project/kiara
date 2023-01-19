@@ -11,9 +11,9 @@ import os.path
 import rich_click as click
 import sys
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable, Mapping, Union
 
-from kiara.context import Kiara
+from kiara import KiaraAPI
 from kiara.utils.cli import dict_from_cli_args
 from kiara.utils.cli.exceptions import handle_exception
 from kiara.utils.cli.run import (
@@ -100,20 +100,28 @@ def run(
             )
             sys.exit(1)
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    # kiara_obj: Kiara = ctx.obj["kiara"]
+    api: KiaraAPI = ctx.obj["kiara_api"]
 
     cmd_arg = ctx.params["module_or_operation"]
     cmd_help = f"[yellow bold]Usage: [/yellow bold][bold]kiara run [OPTIONS] [i]{cmd_arg}[/i] [INPUTS][/bold]"
 
-    kiara_op = validate_operation_in_terminal(
-        kiara=kiara_obj,
-        module_or_operation=module_or_operation,
-        module_config=module_config,
-    )
-    final_aliases = calculate_aliases(kiara_op=kiara_op, alias_tokens=save)
+    if module_config:
+        op: Union[str, Mapping[str, Any]] = {
+            "module_type": module_or_operation,
+            "module_config": module_config,
+        }
+    else:
+        op = module_or_operation
 
-    set_and_validate_inputs(
-        kiara_op=kiara_op,
+    kiara_op = validate_operation_in_terminal(
+        api=api, module_or_operation=op, allow_external=True
+    )
+    final_aliases = calculate_aliases(operation=kiara_op, alias_tokens=save)
+
+    inputs_value_map = set_and_validate_inputs(
+        api=api,
+        operation=kiara_op,
         inputs=inputs,
         explain=explain,
         print_help=help,
@@ -121,7 +129,9 @@ def run(
         cmd_help=cmd_help,
     )
     execute_job(
-        kiara_op=kiara_op,
+        api=api,
+        operation=kiara_op,
+        inputs=inputs_value_map,
         silent=silent,
         save_results=save_results,
         aliases=final_aliases,

@@ -57,10 +57,14 @@ from rich_click.rich_click import (
 )
 from typing import List, Union
 
+from kiara import ValueMap
 from kiara.interfaces.python_api import KiaraAPI, OperationGroupInfo
-from kiara.interfaces.python_api.operation import KiaraOperation
+from kiara.models.module.operation import Operation
+
+# from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.operations.included_core_operations.filter import FilterOperationType
 from kiara.utils.cli import terminal_print
+from kiara.utils.operations import create_operation_status_renderable
 
 # MIT License
 # Copyright (c) 2022 Phil Ewels
@@ -134,7 +138,8 @@ def rich_format_filter_operation_help(
 def rich_format_operation_help(
     obj: Union[click.Command, click.Group],
     ctx: click.Context,
-    operation: KiaraOperation,
+    operation: Operation,
+    op_inputs: ValueMap,
     cmd_help: str,
 ) -> None:
     """Print nicely formatted help text using rich.
@@ -166,7 +171,7 @@ def rich_format_operation_help(
     # renderables.append(Panel(Padding(highlighter(obj.get_usage(ctx)), 1), style=STYLE_USAGE_COMMAND, box=box.MINIMAL))
 
     # Print command / group help if we have some
-    desc = operation.operation.doc.full_doc
+    desc = operation.doc.full_doc
     renderables.append(
         Padding(
             Align(Markdown(desc), width=MAX_WIDTH, pad=False),
@@ -406,13 +411,24 @@ def rich_format_operation_help(
                     )
                 )
 
-    inputs_table = operation.create_renderable(
-        show_operation_name=False,
-        show_operation_doc=False,
-        show_inputs=True,
-        show_outputs_schema=False,
-        show_headers=False,
+    inputs_table = create_operation_status_renderable(
+        operation=operation,
+        inputs=op_inputs,
+        render_config={
+            "show_operation_name": False,
+            "show_inputs": True,
+            "show_outputs_schema": False,
+            "show_headers": False,
+            "show_operation_doc": False,
+        },
     )
+    # inputs_table = operation.create_renderable(
+    #     show_operation_name=False,
+    #     show_operation_doc=False,
+    #     show_inputs=True,
+    #     show_outputs_schema=False,
+    #     show_headers=False,
+    # )
 
     inputs_panel = Panel(
         inputs_table,

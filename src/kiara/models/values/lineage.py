@@ -259,7 +259,7 @@ class ValueLineage(JupyterMixin):
 
     def create_renderable(self, **config: Any) -> RenderableType:
 
-        include_ids: bool = config.get("include_ids", False)
+        include_ids: bool = config.get("include_ids", True)
         tree = fill_renderable_lineage_tree(
             kiara=self._kiara, pedigree=self._value.pedigree, include_ids=include_ids
         )

@@ -4044,6 +4044,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../../utils/downloads/" class="md-nav__link">
+        downloads
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../../utils/files/" class="md-nav__link">
         files
       </a>
@@ -5019,7 +5033,7 @@
     <span class="n">api</span><span class="p">:</span> <span class="n">KiaraAPI</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara_api&quot;</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">operation_id</span><span class="p">)):</span>
-        <span class="n">operation</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="p">,</span> <span class="n">allow_external</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">operation</span> <span class="o">=</span> <span class="n">kiara_obj</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation_id</span><span class="p">)</span>
 

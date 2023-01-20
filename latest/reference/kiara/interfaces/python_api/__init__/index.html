@@ -3950,6 +3950,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../utils/downloads/" class="md-nav__link">
+        downloads
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../utils/files/" class="md-nav__link">
         files
       </a>
@@ -4598,8 +4612,7 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">  72</span>
-<span class="normal">  73</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">  73</span>
 <span class="normal">  74</span>
 <span class="normal">  75</span>
 <span class="normal">  76</span>
@@ -6320,7 +6333,11 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 <span class="normal">1791</span>
 <span class="normal">1792</span>
 <span class="normal">1793</span>
-<span class="normal">1794</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraAPI</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="normal">1794</span>
+<span class="normal">1795</span>
+<span class="normal">1796</span>
+<span class="normal">1797</span>
+<span class="normal">1798</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraAPI</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Public API for clients</span>
 
 <span class="sd">    This class wraps a [Kiara][kiara.context.kiara.Kiara] instance, and allows easy a access to tasks that are</span>
@@ -6794,7 +6811,7 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
     <span class="k">def</span> <span class="nf">get_operation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-        <span class="n">allow_external</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">allow_external</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the operation instance with the specified id.</span>
 
@@ -6806,6 +6823,7 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            operation: the operation id, module_type_name, path to a file, or url</span>
+<span class="sd">            allow_external: if True, allow loading operations from external sources (e.g. a URL), if &#39;None&#39; is provided, the configured value in the runtime configuration is used.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            operation instance data</span>
@@ -6813,6 +6831,9 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 
         <span class="n">_module_type</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">_module_config</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">allow_external</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">allow_external</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_runtime_config</span><span class="p">()</span><span class="o">.</span><span class="n">allow_external</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
             <span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
@@ -6842,7 +6863,8 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                     <span class="n">_module_config</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span>
-
+            <span class="k">elif</span> <span class="n">operation</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;http&quot;</span><span class="p">):</span>
+                <span class="n">_module_config</span> <span class="o">=</span> <span class="n">get_data_from_url</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">_module_config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
@@ -8008,9 +8030,7 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
             <span class="n">workflow_obj</span><span class="o">.</span><span class="n">_pending_aliases</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">workflow_alias</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">initial_pipeline</span><span class="p">:</span>
-            <span class="n">operation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span>
-                <span class="n">operation</span><span class="o">=</span><span class="n">initial_pipeline</span><span class="p">,</span> <span class="n">allow_external</span><span class="o">=</span><span class="kc">True</span>
-            <span class="p">)</span>
+            <span class="n">operation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation</span><span class="o">=</span><span class="n">initial_pipeline</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">operation</span><span class="o">.</span><span class="n">module_type</span> <span class="o">==</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span>
                 <span class="n">pipeline_details</span><span class="p">:</span> <span class="n">PipelineOperationDetails</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">operation_details</span>  <span class="c1"># type: ignore</span>
                 <span class="n">workflow_obj</span><span class="o">.</span><span class="n">add_steps</span><span class="p">(</span><span class="o">*</span><span class="n">pipeline_details</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span>
@@ -8120,8 +8140,7 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 89</span>
-<span class="normal"> 90</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 90</span>
 <span class="normal"> 91</span>
 <span class="normal"> 92</span>
 <span class="normal"> 93</span>
@@ -8134,7 +8153,8 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 <span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
-<span class="normal">103</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">103</span>
+<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">instance</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraAPI&quot;</span><span class="p">:</span>
@@ -8171,9 +8191,9 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_runtime_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraRuntimeConfig&quot;</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_runtime_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraRuntimeConfig&quot;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the current runtime configuration.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">runtime_config</span>
 </code></pre></div></td></tr></table></div>
@@ -8198,8 +8218,7 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">153</span>
-<span class="normal">154</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">154</span>
 <span class="normal">155</span>
 <span class="normal">156</span>
 <span class="normal">157</span>
@@ -8210,7 +8229,8 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 <span class="normal">162</span>
 <span class="normal">163</span>
 <span class="normal">164</span>
-<span class="normal">165</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_context_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextInfo</span><span class="p">:</span>
+<span class="normal">165</span>
+<span class="normal">166</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_context_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve information about the current kiara context.&quot;&quot;&quot;</span>
 
     <span class="n">context_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara_config</span><span class="o">.</span><span class="n">get_context_config</span><span class="p">(</span>
@@ -8297,8 +8317,7 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">167</span>
-<span class="normal">168</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">168</span>
 <span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span>
@@ -8399,7 +8418,8 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 <span class="normal">266</span>
 <span class="normal">267</span>
 <span class="normal">268</span>
-<span class="normal">269</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ensure_plugin_packages</span><span class="p">(</span>
+<span class="normal">269</span>
+<span class="normal">270</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ensure_plugin_packages</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">package_names</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">update</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Ensure that the specified packages are installed.</span>
@@ -8524,10 +8544,10 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">273</span>
-<span class="normal">274</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">274</span>
 <span class="normal">275</span>
-<span class="normal">276</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_context_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">276</span>
+<span class="normal">277</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_context_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;list the names of all available/registered contexts.&quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara_config</span><span class="o">.</span><span class="n">available_context_names</span><span class="p">)</span>
@@ -8553,10 +8573,10 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">278</span>
-<span class="normal">279</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">279</span>
 <span class="normal">280</span>
-<span class="normal">281</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_context_infos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextInfos</span><span class="p">:</span>
+<span class="normal">281</span>
+<span class="normal">282</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_context_infos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextInfos</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve information about the available/registered contexts.&quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="n">ContextInfos</span><span class="o">.</span><span class="n">create_context_infos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara_config</span><span class="o">.</span><span class="n">context_configs</span><span class="p">)</span>
@@ -8582,12 +8602,12 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">283</span>
-<span class="normal">284</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">284</span>
 <span class="normal">285</span>
 <span class="normal">286</span>
 <span class="normal">287</span>
-<span class="normal">288</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_current_context_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="normal">288</span>
+<span class="normal">289</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_current_context_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the name fo the current context.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_context_alias</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -8649,8 +8669,7 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">290</span>
-<span class="normal">291</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">291</span>
 <span class="normal">292</span>
 <span class="normal">293</span>
 <span class="normal">294</span>
@@ -8665,7 +8684,8 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 <span class="normal">303</span>
 <span class="normal">304</span>
 <span class="normal">305</span>
-<span class="normal">306</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_new_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">set_active</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">306</span>
+<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_new_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">set_active</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a new context.</span>
 
 <span class="sd">    Arguments:</span>
@@ -8702,8 +8722,7 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">308</span>
-<span class="normal">309</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">309</span>
 <span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
@@ -8722,7 +8741,8 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 <span class="normal">325</span>
 <span class="normal">326</span>
 <span class="normal">327</span>
-<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_active_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">create</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">328</span>
+<span class="normal">329</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_active_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">create</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">context_name</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No context name provided.&quot;</span><span class="p">)</span>
@@ -8765,10 +8785,10 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">333</span>
-<span class="normal">334</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">334</span>
 <span class="normal">335</span>
-<span class="normal">336</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_data_type_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">336</span>
+<span class="normal">337</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_data_type_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a list of all registered data types.&quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">data_type_names</span>
@@ -8794,12 +8814,12 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">338</span>
-<span class="normal">339</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">339</span>
 <span class="normal">340</span>
 <span class="normal">341</span>
 <span class="normal">342</span>
-<span class="normal">343</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">is_internal_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">343</span>
+<span class="normal">344</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">is_internal_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if the data type is repdominantly used internally by kiara, or whether it should be exposed to the user.&quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">is_internal_type</span><span class="p">(</span>
@@ -8871,8 +8891,7 @@ Python class that holds the actual data and provides metadata and convenience me
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">345</span>
-<span class="normal">346</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">346</span>
 <span class="normal">347</span>
 <span class="normal">348</span>
 <span class="normal">349</span>
@@ -8915,7 +8934,8 @@ Python class that holds the actual data and provides metadata and convenience me
 <span class="normal">386</span>
 <span class="normal">387</span>
 <span class="normal">388</span>
-<span class="normal">389</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_data_types_info</span><span class="p">(</span>
+<span class="normal">389</span>
+<span class="normal">390</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_data_types_info</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataTypeClassesInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve information about all data types.</span>
@@ -9023,8 +9043,7 @@ Python class that holds the actual data and provides metadata and convenience me
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">391</span>
-<span class="normal">392</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">392</span>
 <span class="normal">393</span>
 <span class="normal">394</span>
 <span class="normal">395</span>
@@ -9037,7 +9056,8 @@ Python class that holds the actual data and provides metadata and convenience me
 <span class="normal">402</span>
 <span class="normal">403</span>
 <span class="normal">404</span>
-<span class="normal">405</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_data_type_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataTypeClassInfo</span><span class="p">:</span>
+<span class="normal">405</span>
+<span class="normal">406</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_data_type_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataTypeClassInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve information about a specific data type.</span>
 
 <span class="sd">    Arguments:</span>
@@ -9074,10 +9094,10 @@ Python class that holds the actual data and provides metadata and convenience me
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">410</span>
-<span class="normal">411</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">411</span>
 <span class="normal">412</span>
-<span class="normal">413</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_module_type_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">413</span>
+<span class="normal">414</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_module_type_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a list of all registered module types.&quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">module_registry</span><span class="o">.</span><span class="n">get_module_type_names</span><span class="p">())</span>
@@ -9148,8 +9168,7 @@ building block for processing pipelines. Module types are not used directly by u
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">415</span>
-<span class="normal">416</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">416</span>
 <span class="normal">417</span>
 <span class="normal">418</span>
 <span class="normal">419</span>
@@ -9194,7 +9213,8 @@ building block for processing pipelines. Module types are not used directly by u
 <span class="normal">458</span>
 <span class="normal">459</span>
 <span class="normal">460</span>
-<span class="normal">461</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_module_types_info</span><span class="p">(</span>
+<span class="normal">461</span>
+<span class="normal">462</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_module_types_info</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleTypesInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve information for all available module types (or a filtered subset thereof).</span>
@@ -9306,8 +9326,7 @@ building block for processing pipelines. Module types are not used directly by u
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">463</span>
-<span class="normal">464</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">464</span>
 <span class="normal">465</span>
 <span class="normal">466</span>
 <span class="normal">467</span>
@@ -9320,7 +9339,8 @@ building block for processing pipelines. Module types are not used directly by u
 <span class="normal">474</span>
 <span class="normal">475</span>
 <span class="normal">476</span>
-<span class="normal">477</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_module_type_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleTypeInfo</span><span class="p">:</span>
+<span class="normal">477</span>
+<span class="normal">478</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_module_type_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModuleTypeInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve information about a specific module type.</span>
 
 <span class="sd">    This can be used to retrieve information like module documentation and configuration options.</span>
@@ -9410,8 +9430,7 @@ building block for processing pipelines. Module types are not used directly by u
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">479</span>
-<span class="normal">480</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">480</span>
 <span class="normal">481</span>
 <span class="normal">482</span>
 <span class="normal">483</span>
@@ -9450,7 +9469,8 @@ building block for processing pipelines. Module types are not used directly by u
 <span class="normal">516</span>
 <span class="normal">517</span>
 <span class="normal">518</span>
-<span class="normal">519</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_operation</span><span class="p">(</span>
+<span class="normal">519</span>
+<span class="normal">520</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">module_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -9547,8 +9567,7 @@ building block for processing pipelines. Module types are not used directly by u
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">521</span>
-<span class="normal">522</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">522</span>
 <span class="normal">523</span>
 <span class="normal">524</span>
 <span class="normal">525</span>
@@ -9567,7 +9586,8 @@ building block for processing pipelines. Module types are not used directly by u
 <span class="normal">538</span>
 <span class="normal">539</span>
 <span class="normal">540</span>
-<span class="normal">541</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_operation_ids</span><span class="p">(</span>
+<span class="normal">541</span>
+<span class="normal">542</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_operation_ids</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="nb">filter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">include_internal</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -9599,7 +9619,7 @@ building block for processing pipelines. Module types are not used directly by u
 
 
 <h5 id="kiara.interfaces.python_api.KiaraAPI.get_operation" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_operation</span><span class="p">(</span><span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">allow_external</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span></code>
+<code class="highlight language-python"><span class="n">get_operation</span><span class="p">(</span><span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">allow_external</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span></code>
 
 <a href="#kiara.interfaces.python_api.KiaraAPI.get_operation" class="headerlink" title="Permanent link">&para;</a></h5>
 
@@ -9633,6 +9653,16 @@ building block for processing pipelines. Module types are not used directly by u
               <em>required</em>
           </td>
         </tr>
+        <tr>
+          <td><code>allow_external</code></td>
+          <td>
+                <code><span title="typing.Union">Union</span>[bool, None]</code>
+          </td>
+          <td><p>if True, allow loading operations from external sources (e.g. a URL), if 'None' is provided, the configured value in the runtime configuration is used.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -9656,8 +9686,7 @@ building block for processing pipelines. Module types are not used directly by u
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">543</span>
-<span class="normal">544</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">544</span>
 <span class="normal">545</span>
 <span class="normal">546</span>
 <span class="normal">547</span>
@@ -9730,10 +9759,16 @@ building block for processing pipelines. Module types are not used directly by u
 <span class="normal">614</span>
 <span class="normal">615</span>
 <span class="normal">616</span>
-<span class="normal">617</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_operation</span><span class="p">(</span>
+<span class="normal">617</span>
+<span class="normal">618</span>
+<span class="normal">619</span>
+<span class="normal">620</span>
+<span class="normal">621</span>
+<span class="normal">622</span>
+<span class="normal">623</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
-    <span class="n">allow_external</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">allow_external</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Operation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the operation instance with the specified id.</span>
 
@@ -9745,6 +9780,7 @@ building block for processing pipelines. Module types are not used directly by u
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        operation: the operation id, module_type_name, path to a file, or url</span>
+<span class="sd">        allow_external: if True, allow loading operations from external sources (e.g. a URL), if &#39;None&#39; is provided, the configured value in the runtime configuration is used.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        operation instance data</span>
@@ -9752,6 +9788,9 @@ building block for processing pipelines. Module types are not used directly by u
 
     <span class="n">_module_type</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_module_config</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">allow_external</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">allow_external</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_runtime_config</span><span class="p">()</span><span class="o">.</span><span class="n">allow_external</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">operation</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
         <span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span>
@@ -9781,7 +9820,8 @@ building block for processing pipelines. Module types are not used directly by u
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="n">_module_config</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span>
-
+        <span class="k">elif</span> <span class="n">operation</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;http&quot;</span><span class="p">):</span>
+            <span class="n">_module_config</span> <span class="o">=</span> <span class="n">get_data_from_url</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">_module_config</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
@@ -9909,13 +9949,7 @@ building block for processing pipelines. Module types are not used directly by u
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">619</span>
-<span class="normal">620</span>
-<span class="normal">621</span>
-<span class="normal">622</span>
-<span class="normal">623</span>
-<span class="normal">624</span>
-<span class="normal">625</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">625</span>
 <span class="normal">626</span>
 <span class="normal">627</span>
 <span class="normal">628</span>
@@ -10004,7 +10038,13 @@ building block for processing pipelines. Module types are not used directly by u
 <span class="normal">711</span>
 <span class="normal">712</span>
 <span class="normal">713</span>
-<span class="normal">714</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_operations</span><span class="p">(</span>
+<span class="normal">714</span>
+<span class="normal">715</span>
+<span class="normal">716</span>
+<span class="normal">717</span>
+<span class="normal">718</span>
+<span class="normal">719</span>
+<span class="normal">720</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_operations</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="nb">filter</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">input_types</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -10166,13 +10206,7 @@ building block for processing pipelines. Module types are not used directly by u
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">716</span>
-<span class="normal">717</span>
-<span class="normal">718</span>
-<span class="normal">719</span>
-<span class="normal">720</span>
-<span class="normal">721</span>
-<span class="normal">722</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">722</span>
 <span class="normal">723</span>
 <span class="normal">724</span>
 <span class="normal">725</span>
@@ -10186,7 +10220,13 @@ building block for processing pipelines. Module types are not used directly by u
 <span class="normal">733</span>
 <span class="normal">734</span>
 <span class="normal">735</span>
-<span class="normal">736</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_operation_info</span><span class="p">(</span>
+<span class="normal">736</span>
+<span class="normal">737</span>
+<span class="normal">738</span>
+<span class="normal">739</span>
+<span class="normal">740</span>
+<span class="normal">741</span>
+<span class="normal">742</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_operation_info</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">allow_external</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the full information for the specified operation id.</span>
@@ -10316,13 +10356,7 @@ instead.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">738</span>
-<span class="normal">739</span>
-<span class="normal">740</span>
-<span class="normal">741</span>
-<span class="normal">742</span>
-<span class="normal">743</span>
-<span class="normal">744</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">744</span>
 <span class="normal">745</span>
 <span class="normal">746</span>
 <span class="normal">747</span>
@@ -10360,7 +10394,13 @@ instead.</p>
 <span class="normal">779</span>
 <span class="normal">780</span>
 <span class="normal">781</span>
-<span class="normal">782</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_operations_info</span><span class="p">(</span>
+<span class="normal">782</span>
+<span class="normal">783</span>
+<span class="normal">784</span>
+<span class="normal">785</span>
+<span class="normal">786</span>
+<span class="normal">787</span>
+<span class="normal">788</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_operations_info</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="n">filters</span><span class="p">,</span>
     <span class="n">input_types</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -10479,13 +10519,7 @@ instead.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">786</span>
-<span class="normal">787</span>
-<span class="normal">788</span>
-<span class="normal">789</span>
-<span class="normal">790</span>
-<span class="normal">791</span>
-<span class="normal">792</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">792</span>
 <span class="normal">793</span>
 <span class="normal">794</span>
 <span class="normal">795</span>
@@ -10496,7 +10530,13 @@ instead.</p>
 <span class="normal">800</span>
 <span class="normal">801</span>
 <span class="normal">802</span>
-<span class="normal">803</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">register_pipeline</span><span class="p">(</span>
+<span class="normal">803</span>
+<span class="normal">804</span>
+<span class="normal">805</span>
+<span class="normal">806</span>
+<span class="normal">807</span>
+<span class="normal">808</span>
+<span class="normal">809</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">register_pipeline</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
     <span class="n">operation_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -10536,12 +10576,12 @@ instead.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">805</span>
-<span class="normal">806</span>
-<span class="normal">807</span>
-<span class="normal">808</span>
-<span class="normal">809</span>
-<span class="normal">810</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">register_pipelines</span><span class="p">(</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">811</span>
+<span class="normal">812</span>
+<span class="normal">813</span>
+<span class="normal">814</span>
+<span class="normal">815</span>
+<span class="normal">816</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">register_pipelines</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">pipeline_paths</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Register all pipelines found in the specified paths.&quot;&quot;&quot;</span>
@@ -10633,13 +10673,7 @@ in a store, you have to use the 'store_value' function for that.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">815</span>
-<span class="normal">816</span>
-<span class="normal">817</span>
-<span class="normal">818</span>
-<span class="normal">819</span>
-<span class="normal">820</span>
-<span class="normal">821</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">821</span>
 <span class="normal">822</span>
 <span class="normal">823</span>
 <span class="normal">824</span>
@@ -10661,7 +10695,13 @@ in a store, you have to use the 'store_value' function for that.</p>
 <span class="normal">840</span>
 <span class="normal">841</span>
 <span class="normal">842</span>
-<span class="normal">843</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">register_data</span><span class="p">(</span>
+<span class="normal">843</span>
+<span class="normal">844</span>
+<span class="normal">845</span>
+<span class="normal">846</span>
+<span class="normal">847</span>
+<span class="normal">848</span>
+<span class="normal">849</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">register_data</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="n">data_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -10758,13 +10798,7 @@ having to look up value details is gone.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">845</span>
-<span class="normal">846</span>
-<span class="normal">847</span>
-<span class="normal">848</span>
-<span class="normal">849</span>
-<span class="normal">850</span>
-<span class="normal">851</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">851</span>
 <span class="normal">852</span>
 <span class="normal">853</span>
 <span class="normal">854</span>
@@ -10779,7 +10813,13 @@ having to look up value details is gone.</p>
 <span class="normal">863</span>
 <span class="normal">864</span>
 <span class="normal">865</span>
-<span class="normal">866</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_value_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+<span class="normal">866</span>
+<span class="normal">867</span>
+<span class="normal">868</span>
+<span class="normal">869</span>
+<span class="normal">870</span>
+<span class="normal">871</span>
+<span class="normal">872</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_value_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;List all available value ids for this kiara context.</span>
 
 <span class="sd">    This method exists mainly so frontend can retrieve a list of all value_ids that exists on the backend without</span>
@@ -10867,13 +10907,7 @@ and non-stored).</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">868</span>
-<span class="normal">869</span>
-<span class="normal">870</span>
-<span class="normal">871</span>
-<span class="normal">872</span>
-<span class="normal">873</span>
-<span class="normal">874</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">874</span>
 <span class="normal">875</span>
 <span class="normal">876</span>
 <span class="normal">877</span>
@@ -10891,7 +10925,13 @@ and non-stored).</p>
 <span class="normal">889</span>
 <span class="normal">890</span>
 <span class="normal">891</span>
-<span class="normal">892</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
+<span class="normal">892</span>
+<span class="normal">893</span>
+<span class="normal">894</span>
+<span class="normal">895</span>
+<span class="normal">896</span>
+<span class="normal">897</span>
+<span class="normal">898</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;List all available values, optionally filter.</span>
 
 <span class="sd">    Retrieve information about all values that are available in the current kiara context session (both stored</span>
@@ -10981,19 +11021,19 @@ and non-stored).</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">894</span>
-<span class="normal">895</span>
-<span class="normal">896</span>
-<span class="normal">897</span>
-<span class="normal">898</span>
-<span class="normal">899</span>
-<span class="normal">900</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">900</span>
 <span class="normal">901</span>
 <span class="normal">902</span>
 <span class="normal">903</span>
 <span class="normal">904</span>
 <span class="normal">905</span>
-<span class="normal">906</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueLink</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span>
+<span class="normal">906</span>
+<span class="normal">907</span>
+<span class="normal">908</span>
+<span class="normal">909</span>
+<span class="normal">910</span>
+<span class="normal">911</span>
+<span class="normal">912</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueLink</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve a value instance with the specified id or alias.</span>
 
 <span class="sd">    Raises an exception if no value could be found.</span>
@@ -11074,13 +11114,7 @@ instead.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">908</span>
-<span class="normal">909</span>
-<span class="normal">910</span>
-<span class="normal">911</span>
-<span class="normal">912</span>
-<span class="normal">913</span>
-<span class="normal">914</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">914</span>
 <span class="normal">915</span>
 <span class="normal">916</span>
 <span class="normal">917</span>
@@ -11091,7 +11125,13 @@ instead.</p>
 <span class="normal">922</span>
 <span class="normal">923</span>
 <span class="normal">924</span>
-<span class="normal">925</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_value_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">ValueLink</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ValueInfo</span><span class="p">:</span>
+<span class="normal">925</span>
+<span class="normal">926</span>
+<span class="normal">927</span>
+<span class="normal">928</span>
+<span class="normal">929</span>
+<span class="normal">930</span>
+<span class="normal">931</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_value_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">ValueLink</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ValueInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve an info object for a value.</span>
 
 <span class="sd">    &#39;ValueInfo&#39; objects contains augmented information on top of what &#39;normal&#39; [Value][kiara.models.values.value.Value] objects</span>
@@ -11178,13 +11218,7 @@ instead.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">927</span>
-<span class="normal">928</span>
-<span class="normal">929</span>
-<span class="normal">930</span>
-<span class="normal">931</span>
-<span class="normal">932</span>
-<span class="normal">933</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">933</span>
 <span class="normal">934</span>
 <span class="normal">935</span>
 <span class="normal">936</span>
@@ -11201,7 +11235,13 @@ instead.</p>
 <span class="normal">947</span>
 <span class="normal">948</span>
 <span class="normal">949</span>
-<span class="normal">950</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_values_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValuesInfo</span><span class="p">:</span>
+<span class="normal">950</span>
+<span class="normal">951</span>
+<span class="normal">952</span>
+<span class="normal">953</span>
+<span class="normal">954</span>
+<span class="normal">955</span>
+<span class="normal">956</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_values_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValuesInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve information about the matching values.</span>
 
 <span class="sd">    This retrieves the same list of values as [list_values][kiara.interfaces.python_api.KiaraAPI.list_values],</span>
@@ -11293,13 +11333,7 @@ having to look up value details is gone.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">952</span>
-<span class="normal">953</span>
-<span class="normal">954</span>
-<span class="normal">955</span>
-<span class="normal">956</span>
-<span class="normal">957</span>
-<span class="normal">958</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">958</span>
 <span class="normal">959</span>
 <span class="normal">960</span>
 <span class="normal">961</span>
@@ -11314,7 +11348,13 @@ having to look up value details is gone.</p>
 <span class="normal">970</span>
 <span class="normal">971</span>
 <span class="normal">972</span>
-<span class="normal">973</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_alias_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">973</span>
+<span class="normal">974</span>
+<span class="normal">975</span>
+<span class="normal">976</span>
+<span class="normal">977</span>
+<span class="normal">978</span>
+<span class="normal">979</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_alias_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;List all available alias keys.</span>
 
 <span class="sd">    This method exists mainly so frontend can retrieve a list of all value_ids that exists on the backend without</span>
@@ -11399,13 +11439,7 @@ having to look up value details is gone.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 975</span>
-<span class="normal"> 976</span>
-<span class="normal"> 977</span>
-<span class="normal"> 978</span>
-<span class="normal"> 979</span>
-<span class="normal"> 980</span>
-<span class="normal"> 981</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 981</span>
 <span class="normal"> 982</span>
 <span class="normal"> 983</span>
 <span class="normal"> 984</span>
@@ -11433,7 +11467,13 @@ having to look up value details is gone.</p>
 <span class="normal">1006</span>
 <span class="normal">1007</span>
 <span class="normal">1008</span>
-<span class="normal">1009</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
+<span class="normal">1009</span>
+<span class="normal">1010</span>
+<span class="normal">1011</span>
+<span class="normal">1012</span>
+<span class="normal">1013</span>
+<span class="normal">1014</span>
+<span class="normal">1015</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;List all available values that have an alias assigned, optionally filter.</span>
 
 <span class="sd">    Arguments:</span>
@@ -11537,13 +11577,7 @@ instead.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1011</span>
-<span class="normal">1012</span>
-<span class="normal">1013</span>
-<span class="normal">1014</span>
-<span class="normal">1015</span>
-<span class="normal">1016</span>
-<span class="normal">1017</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1017</span>
 <span class="normal">1018</span>
 <span class="normal">1019</span>
 <span class="normal">1020</span>
@@ -11560,7 +11594,13 @@ instead.</p>
 <span class="normal">1031</span>
 <span class="normal">1032</span>
 <span class="normal">1033</span>
-<span class="normal">1034</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_aliases_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValuesInfo</span><span class="p">:</span>
+<span class="normal">1034</span>
+<span class="normal">1035</span>
+<span class="normal">1036</span>
+<span class="normal">1037</span>
+<span class="normal">1038</span>
+<span class="normal">1039</span>
+<span class="normal">1040</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_aliases_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValuesInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve information about the matching values.</span>
 
 <span class="sd">    This retrieves the same list of values as [list_values][kiara.interfaces.python_api.KiaraAPI.list_values],</span>
@@ -11680,13 +11720,7 @@ auto-register 'raw' data, you need to set the 'register_data' flag to 'True', an
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1036</span>
-<span class="normal">1037</span>
-<span class="normal">1038</span>
-<span class="normal">1039</span>
-<span class="normal">1040</span>
-<span class="normal">1041</span>
-<span class="normal">1042</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1042</span>
 <span class="normal">1043</span>
 <span class="normal">1044</span>
 <span class="normal">1045</span>
@@ -11747,7 +11781,13 @@ auto-register 'raw' data, you need to set the 'register_data' flag to 'True', an
 <span class="normal">1100</span>
 <span class="normal">1101</span>
 <span class="normal">1102</span>
-<span class="normal">1103</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assemble_value_map</span><span class="p">(</span>
+<span class="normal">1103</span>
+<span class="normal">1104</span>
+<span class="normal">1105</span>
+<span class="normal">1106</span>
+<span class="normal">1107</span>
+<span class="normal">1108</span>
+<span class="normal">1109</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assemble_value_map</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ValueLink</span><span class="p">]],</span>
     <span class="n">values_schema</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -11881,13 +11921,7 @@ auto-register 'raw' data, you need to set the 'register_data' flag to 'True', an
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1105</span>
-<span class="normal">1106</span>
-<span class="normal">1107</span>
-<span class="normal">1108</span>
-<span class="normal">1109</span>
-<span class="normal">1110</span>
-<span class="normal">1111</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1111</span>
 <span class="normal">1112</span>
 <span class="normal">1113</span>
 <span class="normal">1114</span>
@@ -11921,7 +11955,13 @@ auto-register 'raw' data, you need to set the 'register_data' flag to 'True', an
 <span class="normal">1142</span>
 <span class="normal">1143</span>
 <span class="normal">1144</span>
-<span class="normal">1145</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">store_value</span><span class="p">(</span>
+<span class="normal">1145</span>
+<span class="normal">1146</span>
+<span class="normal">1147</span>
+<span class="normal">1148</span>
+<span class="normal">1149</span>
+<span class="normal">1150</span>
+<span class="normal">1151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">store_value</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">ValueLink</span><span class="p">],</span>
     <span class="n">alias</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
@@ -12038,13 +12078,7 @@ the 'values' argument.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1147</span>
-<span class="normal">1148</span>
-<span class="normal">1149</span>
-<span class="normal">1150</span>
-<span class="normal">1151</span>
-<span class="normal">1152</span>
-<span class="normal">1153</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1153</span>
 <span class="normal">1154</span>
 <span class="normal">1155</span>
 <span class="normal">1156</span>
@@ -12063,7 +12097,13 @@ the 'values' argument.</p>
 <span class="normal">1169</span>
 <span class="normal">1170</span>
 <span class="normal">1171</span>
-<span class="normal">1172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">store_values</span><span class="p">(</span>
+<span class="normal">1172</span>
+<span class="normal">1173</span>
+<span class="normal">1174</span>
+<span class="normal">1175</span>
+<span class="normal">1176</span>
+<span class="normal">1177</span>
+<span class="normal">1178</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">store_values</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">values</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">ValueLink</span><span class="p">]],</span>
     <span class="n">alias_map</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
@@ -12111,10 +12151,10 @@ the 'values' argument.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1177</span>
-<span class="normal">1178</span>
-<span class="normal">1179</span>
-<span class="normal">1180</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_operation_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">OP_TYPE</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">OperationType</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1183</span>
+<span class="normal">1184</span>
+<span class="normal">1185</span>
+<span class="normal">1186</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_operation_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">op_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">OP_TYPE</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">OperationType</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the management object for the specified operation type.&quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">get_operation_type</span><span class="p">(</span><span class="n">op_type</span><span class="o">=</span><span class="n">op_type</span><span class="p">)</span>
@@ -12140,15 +12180,15 @@ the 'values' argument.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1182</span>
-<span class="normal">1183</span>
-<span class="normal">1184</span>
-<span class="normal">1185</span>
-<span class="normal">1186</span>
-<span class="normal">1187</span>
-<span class="normal">1188</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1188</span>
 <span class="normal">1189</span>
-<span class="normal">1190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_operation_type_info</span><span class="p">(</span>
+<span class="normal">1190</span>
+<span class="normal">1191</span>
+<span class="normal">1192</span>
+<span class="normal">1193</span>
+<span class="normal">1194</span>
+<span class="normal">1195</span>
+<span class="normal">1196</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_operation_type_info</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">op_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">OP_TYPE</span><span class="p">]]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OperationTypeInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get an info object for the specified operation type.&quot;&quot;&quot;</span>
@@ -12231,13 +12271,7 @@ the 'values' argument.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1192</span>
-<span class="normal">1193</span>
-<span class="normal">1194</span>
-<span class="normal">1195</span>
-<span class="normal">1196</span>
-<span class="normal">1197</span>
-<span class="normal">1198</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1198</span>
 <span class="normal">1199</span>
 <span class="normal">1200</span>
 <span class="normal">1201</span>
@@ -12247,7 +12281,13 @@ the 'values' argument.</p>
 <span class="normal">1205</span>
 <span class="normal">1206</span>
 <span class="normal">1207</span>
-<span class="normal">1208</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_operation_id</span><span class="p">(</span>
+<span class="normal">1208</span>
+<span class="normal">1209</span>
+<span class="normal">1210</span>
+<span class="normal">1211</span>
+<span class="normal">1212</span>
+<span class="normal">1213</span>
+<span class="normal">1214</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_operation_id</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">module_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Try to find the registered operation id for the specified module type and configuration.</span>
@@ -12393,13 +12433,7 @@ the 'values' argument.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1210</span>
-<span class="normal">1211</span>
-<span class="normal">1212</span>
-<span class="normal">1213</span>
-<span class="normal">1214</span>
-<span class="normal">1215</span>
-<span class="normal">1216</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1216</span>
 <span class="normal">1217</span>
 <span class="normal">1218</span>
 <span class="normal">1219</span>
@@ -12437,7 +12471,13 @@ the 'values' argument.</p>
 <span class="normal">1251</span>
 <span class="normal">1252</span>
 <span class="normal">1253</span>
-<span class="normal">1254</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assemble_filter_pipeline_config</span><span class="p">(</span>
+<span class="normal">1254</span>
+<span class="normal">1255</span>
+<span class="normal">1256</span>
+<span class="normal">1257</span>
+<span class="normal">1258</span>
+<span class="normal">1259</span>
+<span class="normal">1260</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assemble_filter_pipeline_config</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">filters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
@@ -12577,13 +12617,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1256</span>
-<span class="normal">1257</span>
-<span class="normal">1258</span>
-<span class="normal">1259</span>
-<span class="normal">1260</span>
-<span class="normal">1261</span>
-<span class="normal">1262</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1262</span>
 <span class="normal">1263</span>
 <span class="normal">1264</span>
 <span class="normal">1265</span>
@@ -12659,7 +12693,13 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">1335</span>
 <span class="normal">1336</span>
 <span class="normal">1337</span>
-<span class="normal">1338</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assemble_render_pipeline</span><span class="p">(</span>
+<span class="normal">1338</span>
+<span class="normal">1339</span>
+<span class="normal">1340</span>
+<span class="normal">1341</span>
+<span class="normal">1342</span>
+<span class="normal">1343</span>
+<span class="normal">1344</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assemble_render_pipeline</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">target_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
@@ -12816,13 +12856,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1342</span>
-<span class="normal">1343</span>
-<span class="normal">1344</span>
-<span class="normal">1345</span>
-<span class="normal">1346</span>
-<span class="normal">1347</span>
-<span class="normal">1348</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1348</span>
 <span class="normal">1349</span>
 <span class="normal">1350</span>
 <span class="normal">1351</span>
@@ -12839,7 +12873,13 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">1362</span>
 <span class="normal">1363</span>
 <span class="normal">1364</span>
-<span class="normal">1365</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">queue_manifest</span><span class="p">(</span>
+<span class="normal">1365</span>
+<span class="normal">1366</span>
+<span class="normal">1367</span>
+<span class="normal">1368</span>
+<span class="normal">1369</span>
+<span class="normal">1370</span>
+<span class="normal">1371</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">queue_manifest</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Queue a job using the provided manifest to describe the module and config that should be executed.</span>
@@ -12937,13 +12977,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1367</span>
-<span class="normal">1368</span>
-<span class="normal">1369</span>
-<span class="normal">1370</span>
-<span class="normal">1371</span>
-<span class="normal">1372</span>
-<span class="normal">1373</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1373</span>
 <span class="normal">1374</span>
 <span class="normal">1375</span>
 <span class="normal">1376</span>
@@ -12951,7 +12985,13 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">1378</span>
 <span class="normal">1379</span>
 <span class="normal">1380</span>
-<span class="normal">1381</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run_manifest</span><span class="p">(</span>
+<span class="normal">1381</span>
+<span class="normal">1382</span>
+<span class="normal">1383</span>
+<span class="normal">1384</span>
+<span class="normal">1385</span>
+<span class="normal">1386</span>
+<span class="normal">1387</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run_manifest</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Run a job using the provided manifest to describe the module and config that should be executed.</span>
@@ -13051,13 +13091,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1383</span>
-<span class="normal">1384</span>
-<span class="normal">1385</span>
-<span class="normal">1386</span>
-<span class="normal">1387</span>
-<span class="normal">1388</span>
-<span class="normal">1389</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1389</span>
 <span class="normal">1390</span>
 <span class="normal">1391</span>
 <span class="normal">1392</span>
@@ -13089,7 +13123,13 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">1418</span>
 <span class="normal">1419</span>
 <span class="normal">1420</span>
-<span class="normal">1421</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">queue_job</span><span class="p">(</span>
+<span class="normal">1421</span>
+<span class="normal">1422</span>
+<span class="normal">1423</span>
+<span class="normal">1424</span>
+<span class="normal">1425</span>
+<span class="normal">1426</span>
+<span class="normal">1427</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">queue_job</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">OperationInfo</span><span class="p">],</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
@@ -13215,13 +13255,7 @@ since this is a blocking operation.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1423</span>
-<span class="normal">1424</span>
-<span class="normal">1425</span>
-<span class="normal">1426</span>
-<span class="normal">1427</span>
-<span class="normal">1428</span>
-<span class="normal">1429</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1429</span>
 <span class="normal">1430</span>
 <span class="normal">1431</span>
 <span class="normal">1432</span>
@@ -13243,7 +13277,13 @@ since this is a blocking operation.</p>
 <span class="normal">1448</span>
 <span class="normal">1449</span>
 <span class="normal">1450</span>
-<span class="normal">1451</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run_job</span><span class="p">(</span>
+<span class="normal">1451</span>
+<span class="normal">1452</span>
+<span class="normal">1453</span>
+<span class="normal">1454</span>
+<span class="normal">1455</span>
+<span class="normal">1456</span>
+<span class="normal">1457</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run_job</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">OperationInfo</span><span class="p">],</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -13294,14 +13334,14 @@ since this is a blocking operation.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1453</span>
-<span class="normal">1454</span>
-<span class="normal">1455</span>
-<span class="normal">1456</span>
-<span class="normal">1457</span>
-<span class="normal">1458</span>
-<span class="normal">1459</span>
-<span class="normal">1460</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ActiveJob</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1459</span>
+<span class="normal">1460</span>
+<span class="normal">1461</span>
+<span class="normal">1462</span>
+<span class="normal">1463</span>
+<span class="normal">1464</span>
+<span class="normal">1465</span>
+<span class="normal">1466</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ActiveJob</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the status of the job with the provided id.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -13331,14 +13371,14 @@ since this is a blocking operation.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1462</span>
-<span class="normal">1463</span>
-<span class="normal">1464</span>
-<span class="normal">1465</span>
-<span class="normal">1466</span>
-<span class="normal">1467</span>
-<span class="normal">1468</span>
-<span class="normal">1469</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_job_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1468</span>
+<span class="normal">1469</span>
+<span class="normal">1470</span>
+<span class="normal">1471</span>
+<span class="normal">1472</span>
+<span class="normal">1473</span>
+<span class="normal">1474</span>
+<span class="normal">1475</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_job_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the result(s) of the specified job.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -13462,13 +13502,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1471</span>
-<span class="normal">1472</span>
-<span class="normal">1473</span>
-<span class="normal">1474</span>
-<span class="normal">1475</span>
-<span class="normal">1476</span>
-<span class="normal">1477</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1477</span>
 <span class="normal">1478</span>
 <span class="normal">1479</span>
 <span class="normal">1480</span>
@@ -13576,7 +13610,13 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">1582</span>
 <span class="normal">1583</span>
 <span class="normal">1584</span>
-<span class="normal">1585</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">render_value</span><span class="p">(</span>
+<span class="normal">1585</span>
+<span class="normal">1586</span>
+<span class="normal">1587</span>
+<span class="normal">1588</span>
+<span class="normal">1589</span>
+<span class="normal">1590</span>
+<span class="normal">1591</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">render_value</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">ValueLink</span><span class="p">],</span>
     <span class="n">target_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
@@ -13713,10 +13753,10 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1590</span>
-<span class="normal">1591</span>
-<span class="normal">1592</span>
-<span class="normal">1593</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflow_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1596</span>
+<span class="normal">1597</span>
+<span class="normal">1598</span>
+<span class="normal">1599</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflow_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;List all available workflow ids.&quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">workflow_registry</span><span class="o">.</span><span class="n">all_workflow_ids</span><span class="p">)</span>
@@ -13742,10 +13782,10 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1595</span>
-<span class="normal">1596</span>
-<span class="normal">1597</span>
-<span class="normal">1598</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflow_alias_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1601</span>
+<span class="normal">1602</span>
+<span class="normal">1603</span>
+<span class="normal">1604</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflow_alias_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;List all available workflow aliases.&quot;&quot;&quot;</span>
 
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">workflow_registry</span><span class="o">.</span><span class="n">workflow_aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -13771,13 +13811,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1600</span>
-<span class="normal">1601</span>
-<span class="normal">1602</span>
-<span class="normal">1603</span>
-<span class="normal">1604</span>
-<span class="normal">1605</span>
-<span class="normal">1606</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1606</span>
 <span class="normal">1607</span>
 <span class="normal">1608</span>
 <span class="normal">1609</span>
@@ -13818,7 +13852,13 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">1644</span>
 <span class="normal">1645</span>
 <span class="normal">1646</span>
-<span class="normal">1647</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_workflow</span><span class="p">(</span>
+<span class="normal">1647</span>
+<span class="normal">1648</span>
+<span class="normal">1649</span>
+<span class="normal">1650</span>
+<span class="normal">1651</span>
+<span class="normal">1652</span>
+<span class="normal">1653</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_workflow</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="n">create_if_necessary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Workflow</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the workflow instance with the specified id or alias.&quot;&quot;&quot;</span>
@@ -13886,14 +13926,14 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1649</span>
-<span class="normal">1650</span>
-<span class="normal">1651</span>
-<span class="normal">1652</span>
-<span class="normal">1653</span>
-<span class="normal">1654</span>
-<span class="normal">1655</span>
-<span class="normal">1656</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflow_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Workflow</span><span class="p">]):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1655</span>
+<span class="normal">1656</span>
+<span class="normal">1657</span>
+<span class="normal">1658</span>
+<span class="normal">1659</span>
+<span class="normal">1660</span>
+<span class="normal">1661</span>
+<span class="normal">1662</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflow_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Workflow</span><span class="p">]):</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">Workflow</span><span class="p">):</span>
         <span class="n">_workflow</span><span class="p">:</span> <span class="n">Workflow</span> <span class="o">=</span> <span class="n">workflow</span>
@@ -13923,13 +13963,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1658</span>
-<span class="normal">1659</span>
-<span class="normal">1660</span>
-<span class="normal">1661</span>
-<span class="normal">1662</span>
-<span class="normal">1663</span>
-<span class="normal">1664</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1664</span>
 <span class="normal">1665</span>
 <span class="normal">1666</span>
 <span class="normal">1667</span>
@@ -13942,7 +13976,13 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">1674</span>
 <span class="normal">1675</span>
 <span class="normal">1676</span>
-<span class="normal">1677</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Workflow</span><span class="p">]:</span>
+<span class="normal">1677</span>
+<span class="normal">1678</span>
+<span class="normal">1679</span>
+<span class="normal">1680</span>
+<span class="normal">1681</span>
+<span class="normal">1682</span>
+<span class="normal">1683</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Workflow</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;List all available workflow sessions, indexed by their unique id.&quot;&quot;&quot;</span>
 
     <span class="n">workflows</span> <span class="o">=</span> <span class="p">{}</span>
@@ -13984,13 +14024,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1679</span>
-<span class="normal">1680</span>
-<span class="normal">1681</span>
-<span class="normal">1682</span>
-<span class="normal">1683</span>
-<span class="normal">1684</span>
-<span class="normal">1685</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1685</span>
 <span class="normal">1686</span>
 <span class="normal">1687</span>
 <span class="normal">1688</span>
@@ -14009,7 +14043,13 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">1701</span>
 <span class="normal">1702</span>
 <span class="normal">1703</span>
-<span class="normal">1704</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflow_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Workflow</span><span class="p">]:</span>
+<span class="normal">1704</span>
+<span class="normal">1705</span>
+<span class="normal">1706</span>
+<span class="normal">1707</span>
+<span class="normal">1708</span>
+<span class="normal">1709</span>
+<span class="normal">1710</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflow_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Workflow</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;List all available workflow sessions that have an alias, indexed by alias.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">matcher_params</span><span class="p">:</span>
@@ -14057,17 +14097,17 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1706</span>
-<span class="normal">1707</span>
-<span class="normal">1708</span>
-<span class="normal">1709</span>
-<span class="normal">1710</span>
-<span class="normal">1711</span>
-<span class="normal">1712</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1712</span>
 <span class="normal">1713</span>
 <span class="normal">1714</span>
 <span class="normal">1715</span>
-<span class="normal">1716</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflows_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowGroupInfo</span><span class="p">:</span>
+<span class="normal">1716</span>
+<span class="normal">1717</span>
+<span class="normal">1718</span>
+<span class="normal">1719</span>
+<span class="normal">1720</span>
+<span class="normal">1721</span>
+<span class="normal">1722</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflows_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowGroupInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a map info instances for all available workflows, indexed by (stringified) workflow-id.&quot;&quot;&quot;</span>
 
     <span class="n">workflows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_workflows</span><span class="p">(</span><span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span>
@@ -14100,18 +14140,18 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1718</span>
-<span class="normal">1719</span>
-<span class="normal">1720</span>
-<span class="normal">1721</span>
-<span class="normal">1722</span>
-<span class="normal">1723</span>
-<span class="normal">1724</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1724</span>
 <span class="normal">1725</span>
 <span class="normal">1726</span>
 <span class="normal">1727</span>
 <span class="normal">1728</span>
-<span class="normal">1729</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflow_aliases_info</span><span class="p">(</span>
+<span class="normal">1729</span>
+<span class="normal">1730</span>
+<span class="normal">1731</span>
+<span class="normal">1732</span>
+<span class="normal">1733</span>
+<span class="normal">1734</span>
+<span class="normal">1735</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflow_aliases_info</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">:</span> <span class="n">Any</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowGroupInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a map info instances for all available workflows, indexed by alias.&quot;&quot;&quot;</span>
@@ -14143,13 +14183,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1731</span>
-<span class="normal">1732</span>
-<span class="normal">1733</span>
-<span class="normal">1734</span>
-<span class="normal">1735</span>
-<span class="normal">1736</span>
-<span class="normal">1737</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1737</span>
 <span class="normal">1738</span>
 <span class="normal">1739</span>
 <span class="normal">1740</span>
@@ -14199,7 +14233,11 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">1784</span>
 <span class="normal">1785</span>
 <span class="normal">1786</span>
-<span class="normal">1787</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_workflow</span><span class="p">(</span>
+<span class="normal">1787</span>
+<span class="normal">1788</span>
+<span class="normal">1789</span>
+<span class="normal">1790</span>
+<span class="normal">1791</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_workflow</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">workflow_alias</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">initial_pipeline</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -14228,9 +14266,7 @@ the value type of the source value, and the provided target format.</p>
         <span class="n">workflow_obj</span><span class="o">.</span><span class="n">_pending_aliases</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">workflow_alias</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">initial_pipeline</span><span class="p">:</span>
-        <span class="n">operation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span>
-            <span class="n">operation</span><span class="o">=</span><span class="n">initial_pipeline</span><span class="p">,</span> <span class="n">allow_external</span><span class="o">=</span><span class="kc">True</span>
-        <span class="p">)</span>
+        <span class="n">operation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">operation</span><span class="o">=</span><span class="n">initial_pipeline</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">operation</span><span class="o">.</span><span class="n">module_type</span> <span class="o">==</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">:</span>
             <span class="n">pipeline_details</span><span class="p">:</span> <span class="n">PipelineOperationDetails</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">operation_details</span>  <span class="c1"># type: ignore</span>
             <span class="n">workflow_obj</span><span class="o">.</span><span class="n">add_steps</span><span class="p">(</span><span class="o">*</span><span class="n">pipeline_details</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span>

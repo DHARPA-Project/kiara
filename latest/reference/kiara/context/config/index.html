@@ -4094,6 +4094,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../utils/downloads/" class="md-nav__link">
+        downloads
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../utils/files/" class="md-nav__link">
         files
       </a>
@@ -5490,7 +5504,10 @@
 <span class="normal">134</span>
 <span class="normal">135</span>
 <span class="normal">136</span>
-<span class="normal">137</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraRuntimeConfig</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraRuntimeConfig</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
         <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
         <span class="n">validate_assignment</span> <span class="o">=</span> <span class="kc">True</span>
@@ -5499,6 +5516,9 @@
     <span class="n">job_cache</span><span class="p">:</span> <span class="n">JobCacheStrategy</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Name of the strategy that determines when to re-run jobs or use cached results.&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="n">JobCacheStrategy</span><span class="o">.</span><span class="n">data_hash</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">allow_external</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether to allow external external pipelines.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
         </details>
@@ -5525,6 +5545,25 @@
   </span>
 
 <a href="#kiara.context.config.KiaraRuntimeConfig.job_cache" class="headerlink" title="Permanent link">&para;</a></h5>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.context.config.KiaraRuntimeConfig.allow_external" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">allow_external</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Whether to allow external external pipelines.&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#kiara.context.config.KiaraRuntimeConfig.allow_external" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5665,10 +5704,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/context/config.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">147</span>
 <span class="normal">148</span>
 <span class="normal">149</span>
 <span class="normal">150</span>
@@ -6121,7 +6157,10 @@
 <span class="normal">597</span>
 <span class="normal">598</span>
 <span class="normal">599</span>
-<span class="normal">600</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraConfig</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+<span class="normal">600</span>
+<span class="normal">601</span>
+<span class="normal">602</span>
+<span class="normal">603</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraConfig</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
         <span class="n">env_prefix</span> <span class="o">=</span> <span class="s2">&quot;kiara_&quot;</span>
         <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
@@ -6761,10 +6800,10 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/context/config.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">env_prefix</span> <span class="o">=</span> <span class="s2">&quot;kiara_&quot;</span>
     <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
     <span class="n">use_enum_values</span> <span class="o">=</span> <span class="kc">True</span>
@@ -6867,10 +6906,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">150</span>
-<span class="normal">151</span>
-<span class="normal">152</span>
-<span class="normal">153</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">153</span>
 <span class="normal">154</span>
 <span class="normal">155</span>
 <span class="normal">156</span>
@@ -6883,7 +6919,10 @@
 <span class="normal">163</span>
 <span class="normal">164</span>
 <span class="normal">165</span>
-<span class="normal">166</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_in_folder</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraConfig&quot;</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -6924,10 +6963,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
-<span class="normal">171</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">171</span>
 <span class="normal">172</span>
 <span class="normal">173</span>
 <span class="normal">174</span>
@@ -6947,7 +6983,10 @@
 <span class="normal">188</span>
 <span class="normal">189</span>
 <span class="normal">190</span>
-<span class="normal">191</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">load_from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraConfig&quot;</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -6991,13 +7030,13 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">221</span>
-<span class="normal">222</span>
-<span class="normal">223</span>
-<span class="normal">224</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">224</span>
 <span class="normal">225</span>
 <span class="normal">226</span>
-<span class="normal">227</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;context_search_paths&quot;</span><span class="p">)</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;context_search_paths&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">validate_context_search_paths</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
@@ -7024,10 +7063,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">274</span>
-<span class="normal">275</span>
-<span class="normal">276</span>
-<span class="normal">277</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">277</span>
 <span class="normal">278</span>
 <span class="normal">279</span>
 <span class="normal">280</span>
@@ -7075,7 +7111,10 @@
 <span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
-<span class="normal">325</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_context_config</span><span class="p">(</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_context_config</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">auto_generate</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -7147,10 +7186,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">446</span>
-<span class="normal">447</span>
-<span class="normal">448</span>
-<span class="normal">449</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">449</span>
 <span class="normal">450</span>
 <span class="normal">451</span>
 <span class="normal">452</span>
@@ -7188,7 +7224,10 @@
 <span class="normal">484</span>
 <span class="normal">485</span>
 <span class="normal">486</span>
-<span class="normal">487</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_context_config</span><span class="p">(</span>
+<span class="normal">487</span>
+<span class="normal">488</span>
+<span class="normal">489</span>
+<span class="normal">490</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_context_config</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">context_alias</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraContextConfig</span><span class="p">:</span>
 
@@ -7250,10 +7289,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">489</span>
-<span class="normal">490</span>
-<span class="normal">491</span>
-<span class="normal">492</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">492</span>
 <span class="normal">493</span>
 <span class="normal">494</span>
 <span class="normal">495</span>
@@ -7293,7 +7329,10 @@
 <span class="normal">529</span>
 <span class="normal">530</span>
 <span class="normal">531</span>
-<span class="normal">532</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_context</span><span class="p">(</span>
+<span class="normal">532</span>
+<span class="normal">533</span>
+<span class="normal">534</span>
+<span class="normal">535</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_context</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">extra_pipelines</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -7357,8 +7396,8 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">534</span>
-<span class="normal">535</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_context_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraContextConfig</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">537</span>
+<span class="normal">538</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_context_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraContextConfig</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -7380,10 +7419,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">537</span>
-<span class="normal">538</span>
-<span class="normal">539</span>
-<span class="normal">540</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">540</span>
 <span class="normal">541</span>
 <span class="normal">542</span>
 <span class="normal">543</span>
@@ -7406,7 +7442,10 @@
 <span class="normal">560</span>
 <span class="normal">561</span>
 <span class="normal">562</span>
-<span class="normal">563</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="normal">563</span>
+<span class="normal">564</span>
+<span class="normal">565</span>
+<span class="normal">566</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">KIARA_MAIN_CONFIG_FILE</span><span class="p">)</span>
 
@@ -7453,10 +7492,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">565</span>
-<span class="normal">566</span>
-<span class="normal">567</span>
-<span class="normal">568</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">568</span>
 <span class="normal">569</span>
 <span class="normal">570</span>
 <span class="normal">571</span>
@@ -7481,7 +7517,10 @@
 <span class="normal">590</span>
 <span class="normal">591</span>
 <span class="normal">592</span>
-<span class="normal">593</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">delete</span><span class="p">(</span>
+<span class="normal">593</span>
+<span class="normal">594</span>
+<span class="normal">595</span>
+<span class="normal">596</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">delete</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dry_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ContextInfo&quot;</span><span class="p">:</span>
 
@@ -7530,12 +7569,12 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">595</span>
-<span class="normal">596</span>
-<span class="normal">597</span>
-<span class="normal">598</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">598</span>
 <span class="normal">599</span>
-<span class="normal">600</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<span class="normal">600</span>
+<span class="normal">601</span>
+<span class="normal">602</span>
+<span class="normal">603</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
     <span class="kn">from</span> <span class="nn">kiara.utils.output</span> <span class="kn">import</span> <span class="n">create_recursive_table_from_model_object</span>
 
     <span class="k">return</span> <span class="n">create_recursive_table_from_model_object</span><span class="p">(</span>

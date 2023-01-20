@@ -86,16 +86,23 @@ class PythonRuntimeEnvironment(RuntimeEnvironment):
     @classmethod
     def retrieve_environment_data(cls) -> Dict[str, Any]:
 
-        packages = []
+        packages: Dict[str, str] = {}
         all_packages = find_all_distributions()
         for name, pkgs in all_packages.items():
             for pkg in pkgs:
                 dist = distribution(pkg)
-                packages.append({"name": pkg, "version": dist.version})
+                if pkg in packages.keys() and packages[pkg] != dist.version:
+                    raise Exception(
+                        f"Multiple versions of package '{pkg}' available: {packages[pkg]} and {dist.version}."
+                    )
+                packages[pkg] = dist.version
 
         result: Dict[str, Any] = {
             "python_version": sys.version,
-            "packages": sorted(packages, key=lambda x: x["name"]),
+            "packages": [
+                {"name": p, "version": packages[p]}
+                for p in sorted(packages.keys(), key=lambda x: x.lower())
+            ],
         }
 
         # if config.include_all_info:

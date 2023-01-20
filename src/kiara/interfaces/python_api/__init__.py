@@ -7,6 +7,7 @@ import os.path
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import structlog
+import sys
 import textwrap
 import uuid
 from functools import cached_property
@@ -14,6 +15,7 @@ from pathlib import Path
 from ruamel.yaml import YAML
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
+from kiara.defaults import OFFICIAL_KIARA_PLUGINS
 from kiara.exceptions import (
     DataTypeUnknownException,
     NoSuchExecutionTargetException,
@@ -39,6 +41,7 @@ from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.rendering import RenderValueResult
+from kiara.models.runtime_environment.python import PythonRuntimeEnvironment
 from kiara.models.values.matchers import ValueMatcher
 from kiara.models.values.value import PersistedData, Value, ValueMap, ValueSchema
 from kiara.models.workflow import WorkflowGroupInfo, WorkflowInfo, WorkflowMetadata
@@ -52,6 +55,7 @@ from kiara.operations.included_core_operations.render_value import (
     RenderValueOperationType,
 )
 from kiara.registries.data import ValueLink
+from kiara.registries.environment import EnvironmentRegistry
 from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.operations import OP_TYPE
 from kiara.utils import log_exception, log_message
@@ -159,6 +163,110 @@ class KiaraAPI(object):
         )
 
         return info
+
+    def ensure_plugin_packages(
+        self, *package_names: str, update: bool = False
+    ) -> Union[bool, None]:
+        """Ensure that the specified packages are installed.
+
+        Arguments:
+          package_names: The names of the packages to install.
+          update: If True, update the packages if they are already installed
+
+        Returns:
+            'None' if run in jupyter, 'True' if any packages were installed, 'False' otherwise.
+        """
+
+        env_reg = EnvironmentRegistry.instance()
+        python_env: PythonRuntimeEnvironment = env_reg.environments[  # type: ignore
+            "python"
+        ]  # type: ignore
+
+        if not package_names:
+            package_names = OFFICIAL_KIARA_PLUGINS  # type: ignore
+
+        if not update:
+            plugin_packages: List[str] = []
+            pkgs = [p.name.replace("_", "-") for p in python_env.packages]
+            for package_name in package_names:
+                if package_name.startswith("git:"):
+                    package_name = package_name.replace("git:", "")
+                    git = True
+                else:
+                    git = False
+                package_name = package_name.replace("_", "-")
+                if not package_name.startswith("kiara-plugin."):
+                    package_name = f"kiara-plugin.{package_name}"
+
+                if git or package_name.replace("_", "-") not in pkgs:
+                    if git:
+                        package_name = package_name.replace("-", "_")
+                        plugin_packages.append(
+                            f"git+https://x:x@github.com/DHARPA-project/{package_name}@develop"
+                        )
+                    else:
+                        plugin_packages.append(package_name)
+        else:
+            plugin_packages = package_names  # type: ignore
+
+        in_jupyter = "google.colab" in sys.modules or "jupyter_client" in sys.modules
+
+        if not plugin_packages:
+            if in_jupyter:
+                return None
+            else:
+                # nothing to do
+                return False
+
+        class DummyContext(object):
+            def __getattribute__(self, item):
+                raise Exception(
+                    "Currently installing plugins, no other operations are allowed."
+                )
+
+        current_context_name = self._current_context_alias
+        for k in self._contexts.keys():
+            self._contexts[k] = DummyContext()  # type: ignore
+        self._current_context = DummyContext()  # type: ignore
+
+        cmd = ["-q", "--isolated", "install"]
+        if update:
+            cmd.append("--upgrade")
+        cmd.extend(plugin_packages)
+
+        if in_jupyter:
+            from IPython import get_ipython
+
+            ipython = get_ipython()
+            cmd_str = f"sc -l stdout = {sys.executable} -m pip {' '.join(cmd)}"
+            ipython.magic(cmd_str)
+            exit_code = 100
+        else:
+            import pip._internal.cli.main as pip
+
+            log_message(
+                "install.python_packages", packages=plugin_packages, update=update
+            )
+            exit_code = pip.main(cmd)
+
+        self._contexts.clear()
+        self._current_context = None
+        self._current_context_alias = None
+
+        EnvironmentRegistry._instance = None
+        if current_context_name:
+            self.set_active_context(context_name=current_context_name)
+
+        if exit_code == 100:
+            raise SystemExit(
+                f"Please manually re-run all cells. Updated or newly installed plugin packages: {', '.join(plugin_packages)}."
+            )
+        elif exit_code != 0:
+            raise Exception(
+                f"Failed to install plugin packages: {', '.join(plugin_packages)}"
+            )
+
+        return True
 
     # ==================================================================================================================
     # context-management related functions

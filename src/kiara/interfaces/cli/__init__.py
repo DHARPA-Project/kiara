@@ -24,7 +24,7 @@ from kiara.defaults import (
     SYMLINK_ISSUE_MSG,
 )
 from kiara.interfaces.python_api import KiaraAPI
-from kiara.utils import is_debug
+from kiara.utils import is_debug, log_message
 from kiara.utils.class_loading import find_all_cli_subcommands
 from kiara.utils.cli import terminal_print
 
@@ -65,9 +65,18 @@ CLICK_CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
     multiple=True,
     required=False,
 )
+@click.option(
+    "--plugin",
+    "-P",
+    help="Ensure the provided plugin package(s) are installed in the virtual environment.",
+)
 @click.pass_context
 def cli(
-    ctx, config: Union[str, None], context: Union[str, None], pipelines: Tuple[str]
+    ctx,
+    config: Union[str, None],
+    context: Union[str, None],
+    pipelines: Tuple[str],
+    plugin: Union[str, None],
 ):
     """[i b]kiara[/b i] ia a data-orchestration framework; this is the command-line frontend for it.
 
@@ -131,6 +140,16 @@ def cli(
         context = kiara_config.default_context
 
     api = KiaraAPI(kiara_config=kiara_config)
+
+    if plugin:
+        installed = api.ensure_plugin_packages(plugin, update=False)
+        if installed:
+            log_message(
+                "replacing.process",
+                reason="reloading this process, in order to pick up new plugin packages",
+            )
+            os.execvp(sys.executable, (sys.executable,) + tuple(sys.argv))
+
     api.set_active_context(context, create=True)
 
     for pipeline in pipelines:

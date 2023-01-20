@@ -250,3 +250,12 @@ For more information, please visit:
 - https://dharpa.org/kiara.documentation/latest/installation/#enable-developer-mode
 - https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development
 """
+
+
+OFFICIAL_KIARA_PLUGINS = [
+    "core_types",
+    "tabular",
+    "onboarding",
+    "network_analysis",
+    "language_processing",
+]

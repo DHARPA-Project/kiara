@@ -59,6 +59,7 @@ from kiara.registries.environment import EnvironmentRegistry
 from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.operations import OP_TYPE
 from kiara.utils import log_exception, log_message
+from kiara.utils.downloads import get_data_from_url
 from kiara.utils.files import get_data_from_file
 from kiara.utils.operations import create_operation
 
@@ -543,7 +544,7 @@ class KiaraAPI(object):
     def get_operation(
         self,
         operation: Union[Mapping[str, Any], str, Path],
-        allow_external: bool = False,
+        allow_external: Union[bool, None] = None,
     ) -> Operation:
         """Return the operation instance with the specified id.
 
@@ -555,6 +556,7 @@ class KiaraAPI(object):
 
         Arguments:
             operation: the operation id, module_type_name, path to a file, or url
+            allow_external: if True, allow loading operations from external sources (e.g. a URL), if 'None' is provided, the configured value in the runtime configuration is used.
 
         Returns:
             operation instance data
@@ -562,6 +564,9 @@ class KiaraAPI(object):
 
         _module_type = None
         _module_config = None
+
+        if allow_external is None:
+            allow_external = self.get_runtime_config().allow_external
 
         if isinstance(operation, Path):
             operation = operation.as_posix()
@@ -591,7 +596,8 @@ class KiaraAPI(object):
                 except Exception as e:
                     log_exception(e)
                     _module_config = get_data_from_file(operation)
-
+            elif operation.startswith("http"):
+                _module_config = get_data_from_url(operation)
             else:
                 try:
                     _module_config = json.load(operation)  # type: ignore
@@ -1757,9 +1763,7 @@ class KiaraAPI(object):
             workflow_obj._pending_aliases.add(workflow_alias)
 
         if initial_pipeline:
-            operation = self.get_operation(
-                operation=initial_pipeline, allow_external=True
-            )
+            operation = self.get_operation(operation=initial_pipeline)
             if operation.module_type == "pipeline":
                 pipeline_details: PipelineOperationDetails = operation.operation_details  # type: ignore
                 workflow_obj.add_steps(*pipeline_details.pipeline_config.steps)

@@ -173,7 +173,7 @@ def explain(ctx, operation_id: str, source: bool, format: str, module_info: bool
     api: KiaraAPI = ctx.obj["kiara_api"]
 
     if os.path.isfile(os.path.realpath(operation_id)):
-        operation = api.get_operation(operation_id, allow_external=True)
+        operation = api.get_operation(operation_id)
     else:
         operation = kiara_obj.operation_registry.get_operation(operation_id)
 

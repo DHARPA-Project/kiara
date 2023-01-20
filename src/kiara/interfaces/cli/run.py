@@ -114,9 +114,7 @@ def run(
     else:
         op = module_or_operation
 
-    kiara_op = validate_operation_in_terminal(
-        api=api, module_or_operation=op, allow_external=True
-    )
+    kiara_op = validate_operation_in_terminal(api=api, module_or_operation=op)
     final_aliases = calculate_aliases(operation=kiara_op, alias_tokens=save)
 
     inputs_value_map = set_and_validate_inputs(

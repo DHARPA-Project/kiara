@@ -2,7 +2,7 @@
   "pipeline_name": "table_import",
   "steps": [
     {
-      "module_type": "import.file",
+      "module_type": "import.local.file",
       "step_id": "import_file"
     },
     {

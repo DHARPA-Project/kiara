@@ -24,10 +24,10 @@ from kiara.modules.included_core_modules.export_as import DataExportModule
 from kiara.modules.included_core_modules.serialization import DeserializeValueModule
 
 
-class ImportFileModule(KiaraModule):
+class ImportLocalFileModule(KiaraModule):
     """Import a file from the local filesystem."""
 
-    _module_type_name = "import.file"
+    _module_type_name = "import.local.file"
 
     def create_inputs_schema(
         self,
@@ -106,10 +106,10 @@ class ImportFileBundleConfig(KiaraModuleConfig):
     )
 
 
-class ImportFileBundleModule(KiaraModule):
+class ImportLocalFileBundleModule(KiaraModule):
     """Import a folder (file_bundle) from the local filesystem."""
 
-    _module_type_name = "import.file_bundle"
+    _module_type_name = "import.local.file_bundle"
     _config_cls = ImportFileBundleConfig
 
     def create_inputs_schema(

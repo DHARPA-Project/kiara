@@ -42,7 +42,7 @@ else:
         wrapper_class=structlog.make_filtering_bound_logger(logging.WARNING),
     )
 
-CLICK_CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
+CLICK_CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
 
 
 @click.group(context_settings=CLICK_CONTEXT_SETTINGS)

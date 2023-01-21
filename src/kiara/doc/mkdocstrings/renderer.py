@@ -20,9 +20,9 @@ class KiaraInfoRenderer(BaseRenderer):
     def get_anchors(self, data: CollectorItem) -> typing.List[str]:
 
         if data is None:
-            return list()
+            return []
 
-        return list([data["identifier"], data["kiara_id"], data["obj"].get_id()])
+        return [data["identifier"], data["kiara_id"], data["obj"].get_id()]
 
     def render(self, data: typing.Dict[str, typing.Any], config: dict) -> str:
 

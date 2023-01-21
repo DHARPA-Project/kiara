@@ -254,7 +254,7 @@ class AliasRegistry(object):
 
         value_id = self._get_value_id(value_id=value_id)
 
-        aliases = set([a.full_alias for a in self.aliases_by_id.get(value_id, [])])
+        aliases = {a.full_alias for a in self.aliases_by_id.get(value_id, [])}
 
         if search_dynamic_archives:
             for archive_alias, archive in self._alias_archives.items():

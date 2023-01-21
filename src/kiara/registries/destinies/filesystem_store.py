@@ -146,7 +146,7 @@ class FileSystemDestinyArchive(DestinyArchive):
 
         aliases = value_id_path.glob("*.json")
 
-        return set(a.name[0:-5] for a in aliases)
+        return {a.name[0:-5] for a in aliases}
 
     def get_destiny(self, value_id: uuid.UUID, destiny_alias: str) -> Destiny:
 

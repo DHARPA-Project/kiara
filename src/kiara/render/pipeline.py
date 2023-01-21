@@ -128,7 +128,7 @@ class JinjaPipelineRenderer(KiaraRenderer[Pipeline, JinjaPipelineRenderConfig]):
         #     env: Environment = Environment(loader=loader)
         #     _template = env.get_template(path.name)
         # else:
-        env = Environment(loader=loader)
+        env = Environment(loader=loader, autoescape=True)
 
         env.filters["extract_raw_data"] = partial(extract_raw_value, self._kiara)
 

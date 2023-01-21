@@ -541,7 +541,7 @@ class DataRegistry(object):
             if stored:
                 self._values_by_hash[value_hash] = stored
 
-        return set((self.get_value(value=v_id) for v_id in stored))
+        return {self.get_value(value=v_id) for v_id in stored}
 
     def find_destinies_for_value(
         self, value_id: uuid.UUID, alias_filter: Union[str, None] = None

@@ -28,7 +28,7 @@ def get_jina_env():
             package_path=os.path.join("resources", "templates", "doc_gen"),
             encoding="utf8",
         )
-        _jinja_env = Environment(loader=_loader)
+        _jinja_env = Environment(loader=_loader, autoescape=True)
         # _jinja_env = Environment(
         #     loader=FileSystemLoader(
         #         os.path.join(KIARA_RESOURCES_FOLDER, "templates", "doc_gen"),

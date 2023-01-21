@@ -31,7 +31,7 @@ def fix_windows_symlink(source: Path, target: Path) -> None:
             import traceback
 
             raise Exception(
-                "Operating system does not support symbolic " "links.",
+                "Operating system does not support symbolic links.",
                 "link",
                 (source, target),
                 traceback.format_exc(),

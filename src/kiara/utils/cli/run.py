@@ -4,7 +4,7 @@ import uuid
 from click import Context as ClickContext
 from pathlib import Path
 from pydantic import ValidationError
-from rich.console import Group
+from rich.console import Group, RenderableType
 from rich.markdown import Markdown
 from rich.rule import Rule
 from typing import Any, Dict, Iterable, List, Mapping, Union
@@ -67,7 +67,7 @@ def validate_operation_in_terminal(
         sys.exit(1)
     except ValidationError as ve:
 
-        renderables = [""]
+        renderables: List[RenderableType] = [""]
         renderables.append("Invalid module configuration:")
         renderables.append("")
         for error in ve.errors():

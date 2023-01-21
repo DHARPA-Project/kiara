@@ -113,7 +113,7 @@ def replace_var_names_in_string(
         if key not in repl_dict.keys():
             if not ignore_missing_keys:
                 raise Exception(
-                    msg=f"Can't insert variable '{key}'. Key not in provided input values, available keys: {', '.join(repl_dict.keys())}",
+                    f"Can't insert variable '{key}'. Key not in provided input values, available keys: {', '.join(repl_dict.keys())}"
                 )
             else:
                 return match[0]

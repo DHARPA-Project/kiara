@@ -25,7 +25,7 @@ F = TypeVar("F", bound=Callable[..., Any])
 FC = TypeVar("FC", bound=Union[Callable[..., Any], Command])
 
 
-def _param_memo(f: FC, param: Parameter) -> None:
+def _param_memo(f: Union[Callable[..., Any], Command], param: Parameter) -> None:
     if isinstance(f, Command):
         f.params.append(param)
     else:

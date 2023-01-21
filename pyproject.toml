@@ -210,3 +210,14 @@ max-complexity = 10
 
 [tool.ruff.pydocstyle]
 convention = "google"
+
+[tool.pyright]
+include = ["src"]
+exclude = ["**/__pycache__"]
+ignore = []
+
+reportMissingImports = true
+reportMissingTypeStubs = false
+
+executionEnvironments = [
+]

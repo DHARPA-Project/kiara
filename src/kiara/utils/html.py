@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-from airium import Airium
 from pydantic import BaseModel
-from typing import Any, Iterable, Mapping, Union
+from typing import Any, Iterable, Mapping, Union, TYPE_CHECKING
 
 from kiara.registries.templates import TemplateRegistry
+
+if TYPE_CHECKING:
+    from airium import Airium  # type: ignore
 
 
 def generate_html(
@@ -11,8 +13,10 @@ def generate_html(
     render_config: Union[None, Mapping[str, Any]] = None,
     add_header: bool = False,
     add_type_column: bool = False,
-) -> Airium:
+) -> "Airium":
     """Create html representing this models data."""
+
+    from airium import Airium  # type: ignore
 
     doc = Airium()
 
@@ -64,7 +68,10 @@ def generate_html(
             data = getattr(item, field_name)
             row.append(generate_html(data, render_config=render_config))
 
-            desc = p.get("description", "")
+            if p is not None:
+                desc = p.get("description", "")
+            else:
+                desc = ""
             row.append(desc)
 
             rows.append(row)

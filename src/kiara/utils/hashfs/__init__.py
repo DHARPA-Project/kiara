@@ -471,7 +471,7 @@ class Stream(object):
         except Exception:
             buffer_size = 8192
 
-        self._obj = obj
+        self._obj: BinaryIO = obj  # type: ignore
         self._pos = pos
         self._buffer_size = buffer_size
 

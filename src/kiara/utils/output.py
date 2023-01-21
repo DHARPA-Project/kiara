@@ -408,14 +408,16 @@ def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
         row = [field_name]
         p = props.get(field_name, None)
         p_type = None
+        desc = ""
         if p is not None:
             p_type = p.get("type", None)
             # TODO: check 'anyOf' keys
+            desc = p.get("description", "")
 
         if p_type is None:
             p_type = "-- check source --"
         row.append(p_type)
-        desc = p.get("description", "")
+
         row.append(desc)
         row.append("yes" if field.required else "no")
         default = field.default
@@ -665,9 +667,11 @@ def create_table_from_model_object(
 
         p = props.get(field_name, None)
         p_type = None
+        desc = ""
         if p is not None:
             p_type = p.get("type", None)
             # TODO: check 'anyOf' keys
+            desc = p.get("description", "")
 
         if p_type is None:
             p_type = "-- check source --"
@@ -676,7 +680,6 @@ def create_table_from_model_object(
         data = getattr(model, field_name)
         row.append(extract_renderable(data, render_config=render_config))
 
-        desc = p.get("description", "")
         row.append(desc)
         table.add_row(*row)
 
@@ -836,14 +839,14 @@ def create_recursive_table_from_model_object(
         data = getattr(model, field_name)
         p = props.get(field_name, None)
         p_type = None
+        desc = None
         if p is not None:
             p_type = p.get("type", None)
             # TODO: check 'anyOf' keys
+            desc = p.get("description", None)
 
         if p_type is not None:
             p_type = f"[i]{p_type}[/i]"
-
-        desc = p.get("description", None)
 
         if not isinstance(data, BaseModel):
             data_renderable = extract_renderable(data, render_config=render_config)

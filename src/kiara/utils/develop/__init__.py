@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import os.path
 from enum import Enum
 from pydantic import BaseModel, BaseSettings, Extra, Field

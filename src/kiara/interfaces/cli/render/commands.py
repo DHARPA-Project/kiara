@@ -65,7 +65,7 @@ def as_graph_images(
     output_dir: Union[None, str],
 ) -> None:
 
-    from kiara.utils.jupyter import save_image
+    from kiara.utils.graphs import save_image
 
     pipeline_obj: Pipeline = ctx.obj["pipeline"]
 

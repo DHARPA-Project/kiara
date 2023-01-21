@@ -109,6 +109,8 @@ def create_operation(
         and module_or_operation in kiara.module_type_names
     ):
 
+        if operation_config is None:
+            operation_config = {}
         manifest = Manifest(
             module_type=module_or_operation, module_config=operation_config
         )
@@ -222,8 +224,9 @@ def create_operation_status_renderable(
         assert inputs is not None
         if show_headers:
             items.append("\nInputs:")
+        _inputs: Union[None, RenderableType] = None
         try:
-            _inputs: Any = create_value_map_status_renderable(
+            _inputs = create_value_map_status_renderable(
                 inputs, render_config=render_config
             )
         except InvalidValuesException as ive:
@@ -231,6 +234,7 @@ def create_operation_status_renderable(
         except Exception as e:
             _inputs = f"[red bold]{e}[/red bold]"
         finally:
+            assert _inputs is not None
             items.append(_inputs)
     if show_outputs_schema:
         if show_headers:

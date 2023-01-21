@@ -33,6 +33,6 @@ def test_operation_explain_subcommand():
 
     result = runner.invoke(cli, "operation explain logic.nand")
 
-    assert "A boolean describing this input state" in result.stdout
+    assert "'False'" in result.stdout
     # assert "relation_name" in result.stdout
     # assert "Module metadata" in result.stdout

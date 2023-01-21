@@ -6,10 +6,11 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Data-related sub-commands for the cli."""
-import rich_click as click
-import structlog
 import sys
 from typing import Iterable, Tuple
+
+import rich_click as click
+import structlog
 
 from kiara.context import Kiara
 from kiara.interfaces.python_api import KiaraAPI

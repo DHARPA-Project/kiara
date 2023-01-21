@@ -6,10 +6,11 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
-import structlog
 import uuid
-from rich.console import RenderableType
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Set, Union
+
+import structlog
+from rich.console import RenderableType
 
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.matchers import ValueMatcher

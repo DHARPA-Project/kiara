@@ -6,11 +6,12 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
-import structlog
 import uuid
 from datetime import datetime
-from pydantic import BaseModel
 from typing import Any, Dict, List, Mapping, Protocol, Union
+
+import structlog
+from pydantic import BaseModel
 
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.module.jobs import ActiveJob, JobConfig, JobLog, JobRecord, JobStatus

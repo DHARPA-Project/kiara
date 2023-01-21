@@ -4,11 +4,12 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Type, Union
+
 import networkx as nx
 from pydantic.main import BaseModel
 from rich.panel import Panel
 from rich.tree import Tree
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Type, Union
 
 from kiara.defaults import KIARA_DEFAULT_ROOT_NODE_ID, PYDANTIC_USE_CONSTRUCT
 from kiara.utils import log_message

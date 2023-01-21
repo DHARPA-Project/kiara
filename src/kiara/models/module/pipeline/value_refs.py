@@ -6,8 +6,9 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import uuid
-from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
 from typing import Any, Dict, List, Union
+
+from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
 
 from kiara.defaults import PIPELINE_PARENT_MARKER
 from kiara.models.values.value_schema import ValueSchema

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+from typing import TYPE_CHECKING, Iterable, Mapping, Union
+
 import structlog
 from pydantic import Field
-from typing import TYPE_CHECKING, Iterable, Mapping, Union
 
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.operation import (

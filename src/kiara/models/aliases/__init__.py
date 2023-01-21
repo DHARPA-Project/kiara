@@ -5,11 +5,12 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import copy
 import datetime
-import structlog
 import uuid
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
+
+import structlog
 from pydantic import Field, PrivateAttr
 from rich.tree import Tree
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
 from kiara.defaults import NONE_VALUE_ID, SpecialValue
 from kiara.models.values.value import Value, ValueMap

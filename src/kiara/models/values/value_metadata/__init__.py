@@ -6,6 +6,8 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Literal, Mapping, Type, Union
+
 import orjson
 from pydantic import Field
 from rich import box
@@ -13,7 +15,6 @@ from rich.console import RenderableType
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Literal, Mapping, Type, Union
 
 from kiara.interfaces.python_api.models.info import TypeInfo, TypeInfoItemGroup
 from kiara.models import KiaraModel

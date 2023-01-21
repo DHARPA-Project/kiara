@@ -7,9 +7,10 @@
 
 import abc
 from functools import partial
+from typing import TYPE_CHECKING, Any, Generic, Mapping, Type, TypeVar, Union
+
 from jinja2 import Environment, FileSystemLoader, PackageLoader
 from pydantic import BaseModel, Field, PrivateAttr
-from typing import TYPE_CHECKING, Any, Generic, Mapping, Type, TypeVar, Union
 
 from kiara.models import KiaraModel
 from kiara.models.module.pipeline.pipeline import Pipeline

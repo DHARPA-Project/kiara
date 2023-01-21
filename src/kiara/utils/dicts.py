@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import copy
-import dpath
 from typing import Any, Dict, Mapping
+
+import dpath
 
 
 def merge_dicts(*dicts: Mapping[str, Any]) -> Dict[str, Any]:

@@ -5,8 +5,9 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from bidict import bidict
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Set, Type, Union
+
+from bidict import bidict
 
 from kiara.data_types import DataType
 from kiara.defaults import KIARA_ROOT_TYPE_NAME

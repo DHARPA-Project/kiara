@@ -5,12 +5,13 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import mmh3
 import os
 import typing
 import uuid
-from appdirs import AppDirs
 from enum import Enum
+
+import mmh3
+from appdirs import AppDirs
 
 kiara_app_dirs = AppDirs("kiara", "DHARPA")
 

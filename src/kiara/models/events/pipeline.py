@@ -5,10 +5,11 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import orjson
 import uuid
-from sortedcontainers import SortedDict
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, MutableMapping, Set, Union
+
+import orjson
+from sortedcontainers import SortedDict
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
 from kiara.models import KiaraModel

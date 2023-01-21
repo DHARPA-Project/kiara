@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+
 from click.testing import CliRunner
 
 from kiara.interfaces.cli import cli

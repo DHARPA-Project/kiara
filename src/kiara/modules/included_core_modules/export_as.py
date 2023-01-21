@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
 from pathlib import Path
-from pydantic import BaseModel, Field, validator
 from typing import Any, Dict, Iterable, List, Mapping, Union
+
+from pydantic import BaseModel, Field, validator
 
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.module import KiaraModuleConfig

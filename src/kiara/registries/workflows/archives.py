@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import orjson
 import shutil
 import uuid
 from pathlib import Path
 from typing import Dict, Iterable, Mapping, Union
+
+import orjson
 
 from kiara.exceptions import NoSuchWorkflowException
 from kiara.models.workflow import WorkflowMetadata, WorkflowState

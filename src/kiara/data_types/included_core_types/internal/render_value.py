@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+from typing import TYPE_CHECKING, Any, Mapping, Type, Union
+
 import orjson.orjson
 from pydantic import Field
 from rich import box
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Mapping, Type, Union
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types.internal import InternalType

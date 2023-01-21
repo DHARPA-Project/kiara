@@ -172,12 +172,12 @@ line-length = 88
 
 src = ["src", "tests"]
 
-select = ["E", "F", "RUF100"]
+select = ["E", "F", "RUF100", "I001"]
 #select = ["E", "F", "RUF100", "W", "I001"]
 ignore = ["E501"]
 
 fix = true
-fixable = ["E", "F", "RUF100"]
+fixable = ["E", "F", "RUF100", "I001"]
 
 
 #fixable = ["E", "F", "RUF100", "I001"]

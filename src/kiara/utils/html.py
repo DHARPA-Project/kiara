@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Union
+
 from pydantic import BaseModel
-from typing import Any, Iterable, Mapping, Union, TYPE_CHECKING
 
 from kiara.registries.templates import TemplateRegistry
 

@@ -6,10 +6,11 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import abc
 import datetime
-import pytz
-import structlog
 import uuid
 from typing import TYPE_CHECKING, Callable, Dict, Iterable, List, Mapping, Union
+
+import pytz
+import structlog
 
 from kiara.exceptions import NoSuchWorkflowException
 from kiara.models.events.workflow_registry import WorkflowArchiveAddedEvent

@@ -10,12 +10,13 @@
 
 import logging
 import os
-import rich_click as click
-import structlog
 import sys
 from pathlib import Path
-from rich.markdown import Markdown
 from typing import Tuple, Union
+
+import rich_click as click
+import structlog
+from rich.markdown import Markdown
 
 from kiara.context.config import KiaraConfig
 from kiara.defaults import (

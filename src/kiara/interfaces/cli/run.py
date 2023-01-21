@@ -8,10 +8,11 @@
 """The 'run' subcommand for the cli."""
 
 import os.path
-import rich_click as click
 import sys
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Union
+
+import rich_click as click
 
 from kiara import KiaraAPI
 from kiara.utils.cli import dict_from_cli_args

@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-import humanfriendly
 import uuid
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
+
+import humanfriendly
 from humanfriendly import format_size
 from pydantic import BaseModel, Field, PrivateAttr
 from rich import box
 from rich.console import Group, RenderableType
 from rich.markdown import Markdown
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
 
 from kiara.context import KiaraConfig, KiaraContextConfig, KiaraRuntimeConfig
 from kiara.models import KiaraModel

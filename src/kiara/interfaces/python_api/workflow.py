@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-import pytz
-import structlog
 import uuid
-from boltons.strutils import slugify
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, Dict, Hashable, List, Mapping, Set, Tuple, Union
+
+import pytz
+import structlog
+from boltons.strutils import slugify
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
 from kiara.exceptions import NoSuchWorkflowException

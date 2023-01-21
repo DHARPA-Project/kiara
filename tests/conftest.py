@@ -13,12 +13,12 @@
     Read more about conftest.py under:
     https://pytest.org/latest/plugins.html
 """
-import pytest
-
 import os
 import tempfile
 import uuid
 from pathlib import Path
+
+import pytest
 
 from kiara import KiaraAPI
 from kiara.context import Kiara

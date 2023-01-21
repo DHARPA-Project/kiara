@@ -5,9 +5,10 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import orjson
 import os
 from typing import Any, Mapping
+
+import orjson
 
 from kiara.utils.json import orjson_dumps
 

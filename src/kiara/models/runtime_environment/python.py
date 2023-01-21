@@ -6,11 +6,12 @@
 
 import sys
 from functools import lru_cache
+from typing import Any, Dict, List, Literal, Mapping, Union
+
 from pydantic import BaseModel, Field
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
-from typing import Any, Dict, List, Literal, Mapping, Union
 
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.utils.output import extract_renderable

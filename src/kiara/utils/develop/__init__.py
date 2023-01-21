@@ -2,10 +2,11 @@
 import os
 import os.path
 from enum import Enum
+from typing import Any, ClassVar, Dict, Union
+
 from pydantic import BaseModel, BaseSettings, Extra, Field
 from rich.console import Group, RenderableType
 from rich.panel import Panel
-from typing import Any, ClassVar, Dict, Union
 
 from kiara.defaults import KIARA_DEV_CONFIG_FILE
 from kiara.utils import is_develop

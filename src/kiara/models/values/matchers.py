@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from pydantic import Field
 from typing import TYPE_CHECKING, Any, List, Union
+
+from pydantic import Field
 
 from kiara.models import KiaraModel
 from kiara.models.values.value import Value

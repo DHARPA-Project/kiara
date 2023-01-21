@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from typing import Any, Dict, List, Union
+
 import humanfriendly
 import structlog
 from pydantic import BaseModel, Field
@@ -6,7 +8,6 @@ from rich import box
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.panel import Panel
 from rich.table import Table
-from typing import Any, Dict, List, Union
 
 from kiara.models.values.value import PersistedData, Value
 

@@ -5,14 +5,15 @@
 #  Mozilla Public License Version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import copy
-import orjson
 import os
 import sys
-from deepdiff import DeepHash
 from pathlib import Path
 from subprocess import PIPE, Popen
 from timeit import default_timer as timer
 from typing import Dict, Mapping, Union
+
+import orjson
+from deepdiff import DeepHash
 
 from kiara.defaults import kiara_app_dirs
 

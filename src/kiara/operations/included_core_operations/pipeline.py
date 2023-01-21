@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Union
+
 import structlog
 from pydantic import Field, PrivateAttr
 from ruamel.yaml import YAML
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Union
 
 from kiara.models.module.operation import (
     OperationConfig,

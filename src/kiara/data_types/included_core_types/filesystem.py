@@ -4,11 +4,12 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Type, Union
+
 import orjson.orjson
 import structlog
 from pydantic import Field
 from rich.console import Group
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Type, Union
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types import AnyType, KiaraModelValueType

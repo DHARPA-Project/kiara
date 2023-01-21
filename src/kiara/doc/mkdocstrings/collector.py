@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import builtins
+
 from mkdocstrings.handlers.base import BaseCollector, CollectionError, CollectorItem
 from mkdocstrings.loggers import get_logger
 

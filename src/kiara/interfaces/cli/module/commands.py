@@ -7,8 +7,9 @@
 
 """Module related subcommands for the cli."""
 
-import rich_click as click
 from typing import Any, Iterable
+
+import rich_click as click
 
 # from kiara.interfaces.cli.utils import _create_module_instance
 from kiara.interfaces.python_api import KiaraAPI

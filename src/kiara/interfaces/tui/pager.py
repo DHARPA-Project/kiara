@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+from typing import Any, Mapping, Union
+
 import structlog
 from textual import events
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.widgets import Footer, Header
-from typing import Any, Mapping, Union
 
 from kiara.interfaces import get_console
 from kiara.interfaces.python_api import KiaraAPI

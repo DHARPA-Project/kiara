@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+from typing import Any, Mapping, Union
+
 import httpx
 from ruamel.yaml import YAML
-from typing import Any, Mapping, Union
 
 yaml = YAML(typ="safe")
 

@@ -6,9 +6,10 @@
 
 import builtins
 import inspect
-from pydantic import BaseModel
 from pydoc import locate
 from typing import Any, Type, Union
+
+from pydantic import BaseModel
 
 from kiara.context import Kiara, KiaraContextInfo
 from kiara.utils.yaml import StringYAML

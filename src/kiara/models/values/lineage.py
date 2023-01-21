@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+from typing import TYPE_CHECKING, Any, Union
+
 from networkx import DiGraph
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.jupyter import JupyterMixin
 from rich.tree import Tree
-from typing import TYPE_CHECKING, Any, Union
 
 from kiara.models.values.value import ORPHAN, Value, ValuePedigree
 

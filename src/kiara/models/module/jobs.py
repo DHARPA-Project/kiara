@@ -10,13 +10,14 @@ import os
 import uuid
 from datetime import datetime
 from enum import Enum
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
+
 from pydantic import validator
 from pydantic.fields import Field, PrivateAttr
 from pydantic.main import BaseModel
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
 
 from kiara.exceptions import InvalidValuesException
 from kiara.models import KiaraModel

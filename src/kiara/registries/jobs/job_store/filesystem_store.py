@@ -5,12 +5,13 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import datetime
-import orjson
 import shutil
-import structlog
 import uuid
 from pathlib import Path
 from typing import Any, Dict, Iterable, Union
+
+import orjson
+import structlog
 
 from kiara.models.module.jobs import JobRecord
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig

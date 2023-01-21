@@ -5,11 +5,12 @@
 # as well as
 # Parity Public License, version 7.0.0 (see https://paritylicense.com/)
 
+import typing
+from typing import Any, Mapping, Sequence, Set, Union
+
 import regex as re
 import structlog
-import typing
 from regex.regex import Pattern
-from typing import Any, Mapping, Sequence, Set, Union
 
 log = structlog.getLogger()
 

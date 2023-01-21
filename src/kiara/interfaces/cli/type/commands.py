@@ -7,8 +7,9 @@
 
 """Type-related subcommands for the cli."""
 
-import rich_click as click
 from typing import Dict, Iterable, Type
+
+import rich_click as click
 
 from kiara.context import Kiara
 from kiara.data_types import DataType

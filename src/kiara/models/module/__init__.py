@@ -5,6 +5,8 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
+
 import orjson.orjson
 from pydantic import Extra, PrivateAttr
 from pydantic.fields import Field
@@ -12,7 +14,6 @@ from pydantic.main import BaseModel
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
 from kiara.models import KiaraModel
 

@@ -7,16 +7,17 @@
 import atexit
 import os
 import shutil
-import structlog
 import tempfile
+from pathlib import Path
+from typing import Any, Dict, List, Mapping, Union
+
+import structlog
 from deepdiff import DeepHash
 from multiformats import CID
-from pathlib import Path
 from pydantic import BaseModel, Field, PrivateAttr
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
-from typing import Any, Dict, List, Mapping, Union
 
 from kiara.defaults import DEFAULT_EXCLUDE_FILES, KIARA_HASH_FUNCTION
 from kiara.models import KiaraModel
@@ -50,8 +51,9 @@ class FileModel(KiaraModel):
     ):
         """Utility method to read metadata of a file from disk."""
 
-        import filetype
         import mimetypes
+
+        import filetype
 
         if not source:
             raise ValueError("No source path provided.")

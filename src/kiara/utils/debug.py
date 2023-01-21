@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import uuid
+from typing import TYPE_CHECKING, Any, List, Mapping
+
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, List, Mapping
 
 from kiara.models.module.jobs import ActiveJob, JobConfig
 from kiara.models.module.manifest import Manifest

@@ -5,9 +5,10 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import structlog
 import uuid
 from typing import TYPE_CHECKING, Any, Union
+
+import structlog
 
 from kiara.models.module.operation import Operation
 from kiara.operations.included_core_operations.pretty_print import (

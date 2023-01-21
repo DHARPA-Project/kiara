@@ -7,12 +7,8 @@
 
 import abc
 import inspect
-import structlog
 import uuid
 from abc import abstractmethod
-from multiformats import CID
-from pydantic import BaseModel, Field, ValidationError
-from rich.console import RenderableType
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -24,6 +20,11 @@ from typing import (
     TypeVar,
     Union,
 )
+
+import structlog
+from multiformats import CID
+from pydantic import BaseModel, Field, ValidationError
+from rich.console import RenderableType
 
 from kiara.exceptions import (
     InvalidValuesException,

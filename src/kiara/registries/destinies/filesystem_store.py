@@ -5,12 +5,13 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import orjson
 import os
-import structlog
 import uuid
 from pathlib import Path
 from typing import Set, Tuple, Union
+
+import orjson
+import structlog
 
 from kiara.models.module.destiny import Destiny
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig

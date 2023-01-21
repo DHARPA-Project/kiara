@@ -5,9 +5,11 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
+from abc import ABC
+from typing import Any, ClassVar, Dict, Iterable, List, Mapping, Union
+
 import networkx as nx
 import orjson
-from abc import ABC
 from dag_cbor.encoding import EncodableType
 from deepdiff import DeepHash
 from multiformats import CID
@@ -20,7 +22,6 @@ from rich.jupyter import JupyterMixin
 from rich.panel import Panel
 from rich.table import Table
 from rich.tree import Tree
-from typing import Any, ClassVar, Dict, Iterable, List, Mapping, Union
 
 from kiara.defaults import KIARA_HASH_FUNCTION
 from kiara.registries.templates import TemplateRegistry

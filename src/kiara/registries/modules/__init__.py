@@ -7,9 +7,10 @@
 
 """Base module for code that handles the import and management of [KiaraModule][kiara.module.KiaraModule] sub-classes."""
 
+from typing import TYPE_CHECKING, Dict, Iterable, Mapping, Type, Union
+
 import structlog
 from multiformats import CID
-from typing import TYPE_CHECKING, Dict, Iterable, Mapping, Type, Union
 
 from kiara.exceptions import InvalidManifestException
 from kiara.interfaces.python_api.models.info import ModuleTypeInfo, ModuleTypesInfo

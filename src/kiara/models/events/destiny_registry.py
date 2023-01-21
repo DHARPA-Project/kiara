@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import uuid
-from pydantic import Field
 from typing import Literal
+
+from pydantic import Field
 
 from kiara.models.events import RegistryEvent
 

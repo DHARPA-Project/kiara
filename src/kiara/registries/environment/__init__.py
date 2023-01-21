@@ -7,10 +7,11 @@
 
 
 import inspect
+from typing import Any, Dict, Iterable, Mapping, Type, Union
+
 from pydantic import BaseModel, Field, create_model
 from rich import box
 from rich.table import Table
-from typing import Any, Dict, Iterable, Mapping, Type, Union
 
 from kiara.models.runtime_environment import RuntimeEnvironment, logger
 from kiara.utils import _get_all_subclasses, is_debug, to_camel_case

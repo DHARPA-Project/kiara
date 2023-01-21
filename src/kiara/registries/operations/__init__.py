@@ -7,10 +7,8 @@
 
 import json
 import os.path
-import structlog
 import sys
 from pathlib import Path
-from ruamel.yaml import YAML
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -23,6 +21,9 @@ from typing import (
     TypeVar,
     Union,
 )
+
+import structlog
+from ruamel.yaml import YAML
 
 from kiara.exceptions import InvalidOperationException, NoSuchOperationException
 from kiara.interfaces.python_api.models.info import (

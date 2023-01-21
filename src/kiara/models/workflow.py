@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import datetime
 import uuid
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Type, Union
+
 from dag_cbor.encoding import EncodableType
 from pydantic import Field, PrivateAttr, validator
 from rich import box
@@ -8,7 +10,6 @@ from rich.console import RenderableType
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Type, Union
 
 from kiara.interfaces.python_api.models.info import InfoItemGroup, ItemInfo
 from kiara.models import KiaraModel

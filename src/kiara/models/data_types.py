@@ -9,9 +9,10 @@ Metadata models must be a sub-class of [kiara.metadata.MetadataModel][kiara.meta
 sub-class a pydantic BaseModel or implement custom base classes.
 """
 
+from typing import Any, Dict, Mapping
+
 import orjson
 from pydantic import BaseModel, Field, PrivateAttr
-from typing import Any, Dict, Mapping
 
 from kiara.models.python_class import PythonClass
 from kiara.utils.hashing import compute_cid

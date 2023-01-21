@@ -6,8 +6,9 @@
 
 import copy
 import uuid
-from pydantic import Field, PrivateAttr
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
+
+from pydantic import Field, PrivateAttr
 
 from kiara.defaults import SpecialValue
 from kiara.models.module.manifest import Manifest

@@ -3,6 +3,8 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
+from typing import TYPE_CHECKING, Any, Generic, Iterable, Mapping, Type, Union
+
 import orjson
 import structlog
 from pydantic import Field, PrivateAttr
@@ -10,7 +12,6 @@ from rich import box
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Generic, Iterable, Mapping, Type, Union
 
 from kiara.data_types import TYPE_CONFIG_CLS, TYPE_PYTHON_CLS, DataType, DataTypeConfig
 from kiara.defaults import NO_SERIALIZATION_MARKER

@@ -4,14 +4,15 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-import orjson
 import shutil
-import structlog
 import uuid
 from enum import Enum
 from io import BytesIO
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, Mapping, Set, Union
+
+import orjson
+import structlog
 
 from kiara.models.module.jobs import JobRecord
 from kiara.models.values.value import (

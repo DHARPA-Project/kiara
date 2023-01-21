@@ -6,9 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import abc
 import copy
-import structlog
 import uuid
-from rich.console import RenderableType
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -21,6 +19,9 @@ from typing import (
     Tuple,
     Union,
 )
+
+import structlog
+from rich.console import RenderableType
 
 from kiara.data_types import DataType
 from kiara.data_types.included_core_types import NoneType

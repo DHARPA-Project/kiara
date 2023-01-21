@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import structlog
 from typing import Any, Dict, Iterable, List, Mapping, Union
+
+import structlog
 
 logger = structlog.getLogger()
 

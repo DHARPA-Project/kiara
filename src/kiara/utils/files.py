@@ -2,8 +2,9 @@
 import json
 import os
 from pathlib import Path
-from ruamel.yaml import YAML
 from typing import Any, Union
+
+from ruamel.yaml import YAML
 
 yaml = YAML(typ="safe")
 

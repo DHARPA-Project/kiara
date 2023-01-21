@@ -5,12 +5,13 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import networkx as nx
 from functools import lru_cache
+from typing import Any, Dict, Iterable, List, Mapping, Set, Union
+
+import networkx as nx
 from pydantic import Field, PrivateAttr, root_validator
 from rich.console import RenderableType
 from rich.tree import Tree
-from typing import Any, Dict, Iterable, List, Mapping, Set, Union
 
 from kiara.exceptions import InvalidPipelineConfig
 from kiara.models import KiaraModel

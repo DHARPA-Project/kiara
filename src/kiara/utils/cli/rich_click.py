@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-import click
 import inspect
 import textwrap
+from typing import List, Union
+
+import click
 from rich import box
 from rich.align import Align
 from rich.console import Group, RenderableType
@@ -55,7 +57,6 @@ from rich_click.rich_click import (
     _make_rich_rext,
     highlighter,
 )
-from typing import List, Union
 
 from kiara import ValueMap
 from kiara.interfaces.python_api import KiaraAPI, OperationGroupInfo

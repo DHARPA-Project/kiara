@@ -5,9 +5,10 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import structlog
 import uuid
 from typing import Dict, Mapping, Union
+
+import structlog
 
 from kiara.models.events.pipeline import PipelineEvent, PipelineState
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineListener

@@ -7,9 +7,10 @@
 
 """Pipeline-related subcommands for the cli."""
 import os.path
-import rich_click as click
 import sys
 from typing import Tuple, Union
+
+import rich_click as click
 
 from kiara.context import Kiara
 from kiara.models.module.pipeline.pipeline import Pipeline

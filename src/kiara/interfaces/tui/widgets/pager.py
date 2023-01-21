@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from typing import Dict, Iterable, List, Mapping, Tuple, Union
+
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
@@ -6,7 +8,6 @@ from rich.text import Text
 from rich.tree import Tree
 from textual.reactive import reactive
 from textual.widgets import Static
-from typing import Dict, Iterable, List, Mapping, Tuple, Union
 
 from kiara.models.rendering import RenderScene
 

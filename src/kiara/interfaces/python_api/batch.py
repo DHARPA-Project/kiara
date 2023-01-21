@@ -5,8 +5,9 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import os
 import uuid
-from pydantic import BaseModel, Field, PrivateAttr, root_validator, validator
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
+
+from pydantic import BaseModel, Field, PrivateAttr, root_validator, validator
 
 from kiara.context import Kiara
 from kiara.interfaces.python_api.utils import create_save_config

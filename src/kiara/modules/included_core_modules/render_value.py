@@ -5,8 +5,9 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from pydantic import Field
 from typing import Any, Iterable, Mapping, Tuple, Union
+
+from pydantic import Field
 
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.data_types import DictModel

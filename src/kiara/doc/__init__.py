@@ -7,10 +7,11 @@
 
 """Main module for code that helps with documentation auto-generation in supported projects."""
 
-import mkdocs.utils
 import os
 import tempfile
 import urllib.parse
+
+import mkdocs.utils
 from mkdocs.config import Config, config_options  # noqa
 from mkdocs.plugins import BasePlugin
 from mkdocs.structure.files import File, Files

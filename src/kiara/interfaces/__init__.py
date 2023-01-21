@@ -7,11 +7,12 @@
 """Implementation of interfaces for *Kiara*."""
 
 import os
+import sys
+from typing import Union
+
 import rich
 import structlog
-import sys
 from rich.console import Console
-from typing import Union
 
 log = structlog.getLogger()
 

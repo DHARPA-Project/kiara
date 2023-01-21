@@ -5,8 +5,9 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from pydantic import Field
 from typing import TYPE_CHECKING, Iterable
+
+from pydantic import Field
 
 from kiara.models.filesystem import FileBundle, FileModel
 from kiara.models.python_class import PythonClass

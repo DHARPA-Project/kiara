@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from kiara_plugin.core_types.modules.boolean import AndModule
-
 from kiara import Kiara
 from kiara.exceptions import (
     InvalidManifestException,
@@ -10,6 +8,7 @@ from kiara.exceptions import (
     KiaraException,
 )
 from kiara.models.module.manifest import Manifest
+from kiara_plugin.core_types.modules.boolean import AndModule
 
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #  Copyright (c) 2021, Markus Binsteiner

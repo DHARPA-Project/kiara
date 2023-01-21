@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-import orjson
 import os
 import uuid
-from boltons.strutils import slugify
 from enum import Enum
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
+
+import orjson
+from boltons.strutils import slugify
 from pydantic import Extra, Field, PrivateAttr, root_validator, validator
 from rich import box
 from rich.console import RenderableType
@@ -11,7 +13,6 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
 
 from kiara.exceptions import InvalidPipelineStepConfig
 from kiara.models.documentation import DocumentationMetadataModel

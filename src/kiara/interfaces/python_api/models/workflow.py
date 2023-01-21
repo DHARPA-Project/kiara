@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import uuid
-from pydantic import Field
 from typing import TYPE_CHECKING, Any
+
+from pydantic import Field
 
 from kiara.models import KiaraModel
 

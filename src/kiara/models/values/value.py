@@ -9,22 +9,9 @@ import abc
 import atexit
 import hashlib
 import logging
-import orjson
 import os
 import tempfile
 import uuid
-from humanfriendly import format_size
-from multiformats import CID, multihash
-from multiformats.multihash import Multihash
-from multiformats.varint import BytesLike
-from pydantic import BaseModel, Extra, PrivateAttr, root_validator
-from pydantic.fields import Field
-from rich import box
-from rich.console import Group, RenderableType
-from rich.panel import Panel
-from rich.rule import Rule
-from rich.syntax import Syntax
-from rich.table import Table
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -38,6 +25,20 @@ from typing import (
     Set,
     Union,
 )
+
+import orjson
+from humanfriendly import format_size
+from multiformats import CID, multihash
+from multiformats.multihash import Multihash
+from multiformats.varint import BytesLike
+from pydantic import BaseModel, Extra, PrivateAttr, root_validator
+from pydantic.fields import Field
+from rich import box
+from rich.console import Group, RenderableType
+from rich.panel import Panel
+from rich.rule import Rule
+from rich.syntax import Syntax
+from rich.table import Table
 
 from kiara.defaults import (
     NO_MODULE_TYPE,

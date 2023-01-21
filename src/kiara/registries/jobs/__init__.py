@@ -6,10 +6,11 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
-import structlog
 import uuid
-from bidict import bidict
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Type, Union
+
+import structlog
+from bidict import bidict
 
 from kiara.context.config import JobCacheStrategy
 from kiara.exceptions import FailedJobException

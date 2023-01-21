@@ -6,9 +6,10 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
+from typing import Any, Mapping, Type, Union
+
 import orjson
 from pydantic import Field, validator
-from typing import Any, Mapping, Type, Union
 
 from kiara.models import KiaraModel
 from kiara.models.module import KiaraModuleConfig

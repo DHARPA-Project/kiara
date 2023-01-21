@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from abc import abstractmethod
-from pydantic import Field
 from typing import Any, Dict, List, Union
+
+from pydantic import Field
 
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.values.value import ValueMap

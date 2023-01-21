@@ -6,15 +6,16 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
+import uuid
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
+
 import dpath
 import networkx as nx
-import uuid
 from pydantic import Field, PrivateAttr
 from rich import box
 from rich.console import RenderableType
 from rich.panel import Panel
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID, SpecialValue
 from kiara.exceptions import InvalidValuesException

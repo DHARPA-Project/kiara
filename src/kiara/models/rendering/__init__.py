@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import uuid
+from typing import TYPE_CHECKING, Any, Dict, Mapping, TypeVar, Union
+
 from dag_cbor.encoding import EncodableType
 from pydantic import Field, validator
-from typing import TYPE_CHECKING, Any, Dict, Mapping, TypeVar, Union
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.models import KiaraModel

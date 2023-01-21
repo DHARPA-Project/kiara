@@ -5,10 +5,11 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import os
+from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
+
 from rich.console import Group, RenderableType
 from rich.markdown import Markdown
 from ruamel.yaml import YAML
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
 
 from kiara.exceptions import (
     InvalidValuesException,

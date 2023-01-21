@@ -5,14 +5,16 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import networkx as nx
 import typing
 from typing import Literal, Union
 
+import networkx as nx
+
 if typing.TYPE_CHECKING:
+    from IPython.core.display import Image
+
     from kiara.models.module.pipeline import PipelineConfig, PipelineStructure
     from kiara.models.module.pipeline.pipeline import Pipeline
-    from IPython.core.display import Image
 
 
 def print_ascii_graph(graph: nx.Graph):

@@ -24,9 +24,11 @@ be discouraged, since this might not be trivial and there are quite a few things
 
 """
 import abc
+import uuid
+from typing import TYPE_CHECKING, Any, Generic, Mapping, Tuple, Type, TypeVar, Union
+
 import orjson
 import structlog
-import uuid
 from deepdiff import DeepHash
 from pydantic import BaseModel, Extra, PrivateAttr, ValidationError
 from rich import box
@@ -34,7 +36,6 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.rule import Rule
 from rich.syntax import Syntax
 from rich.table import Table
-from typing import TYPE_CHECKING, Any, Generic, Mapping, Tuple, Type, TypeVar, Union
 
 from kiara.defaults import (
     INVALID_HASH_MARKER,

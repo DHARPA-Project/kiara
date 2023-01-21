@@ -10,8 +10,6 @@ import inspect
 import os
 import sys
 from pkgutil import iter_modules
-from rich.markdown import Markdown
-from stevedore import ExtensionManager
 from types import ModuleType
 from typing import (
     TYPE_CHECKING,
@@ -27,6 +25,9 @@ from typing import (
     Union,
 )
 
+from rich.markdown import Markdown
+from stevedore import ExtensionManager
+
 from kiara.utils import (
     _get_all_subclasses,
     camel_case_to_snake_case,
@@ -38,13 +39,14 @@ from kiara.utils import (
 from kiara.utils.develop import log_dev_message
 
 if TYPE_CHECKING:
+    from kiara.data_types import DataType
+    from kiara.models import KiaraModel
     from kiara.modules import KiaraModule
     from kiara.operations import OperationType
-    from kiara.data_types import DataType
     from kiara.registries import KiaraArchive
-    from kiara.models import KiaraModel
 
 import logging
+
 import structlog
 
 logger = structlog.getLogger()

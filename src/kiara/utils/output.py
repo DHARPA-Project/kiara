@@ -6,15 +6,8 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import json
-import orjson
-import structlog
 from abc import ABC, abstractmethod
 from enum import Enum
-from pydantic import BaseModel, Field, root_validator
-from rich import box
-from rich.console import ConsoleRenderable, Group, RenderableType, RichCast
-from rich.table import Table as RichTable
-from rich.tree import Tree
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -27,6 +20,14 @@ from typing import (
     Type,
     Union,
 )
+
+import orjson
+import structlog
+from pydantic import BaseModel, Field, root_validator
+from rich import box
+from rich.console import ConsoleRenderable, Group, RenderableType, RichCast
+from rich.table import Table as RichTable
+from rich.tree import Tree
 
 from kiara.defaults import SpecialValue
 from kiara.models.values.value import ORPHAN, Value, ValueMap

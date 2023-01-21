@@ -6,11 +6,12 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
+import uuid
+from typing import TYPE_CHECKING, Generic, Iterable, Type, TypeVar, Union
+
 import orjson
 import structlog
-import uuid
 from pydantic import BaseModel, Field
-from typing import TYPE_CHECKING, Generic, Iterable, Type, TypeVar, Union
 
 from kiara.utils.json import orjson_dumps
 

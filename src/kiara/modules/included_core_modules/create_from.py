@@ -5,8 +5,9 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import inspect
-from pydantic import Field
 from typing import Any, Dict, Iterable, Mapping, Union
+
+from pydantic import Field
 
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.jobs import JobLog

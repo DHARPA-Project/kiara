@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from pydantic import BaseModel, Field
 from typing import Any, Dict
+
+from pydantic import BaseModel, Field
 
 from kiara.context import Kiara
 from kiara.models.module.jobs import JobConfig

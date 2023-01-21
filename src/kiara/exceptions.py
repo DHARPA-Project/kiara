@@ -5,9 +5,10 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import uuid
+from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Type, Union
+
 from orjson import orjson
 from rich.markdown import Markdown
-from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Type, Union
 
 from kiara.defaults import NOT_AVAILBLE_MARKER
 from kiara.utils.json import orjson_dumps

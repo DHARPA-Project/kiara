@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import importlib
-import mistune
 import os
 import pkgutil
-import structlog
 from functools import partial
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, List, Mapping, Union
+
+import mistune
+import structlog
 from jinja2 import (
     Environment,
     FileSystemLoader,
@@ -13,8 +16,6 @@ from jinja2 import (
     Template,
     select_autoescape,
 )
-from pathlib import Path
-from typing import TYPE_CHECKING, Any, List, Mapping, Union
 
 from kiara.defaults import SpecialValue
 from kiara.utils import log_exception

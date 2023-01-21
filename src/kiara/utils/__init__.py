@@ -8,10 +8,11 @@
 import inspect
 import os
 import re
-import structlog
 import sys
-from rich.traceback import Traceback
 from typing import TYPE_CHECKING, Dict, Iterable, List, Type, TypeVar
+
+import structlog
+from rich.traceback import Traceback
 
 from kiara.defaults import INVALID_VALUE_NAMES
 

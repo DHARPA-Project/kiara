@@ -6,11 +6,10 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Pipeline-related subcommands for the cli."""
-import importlib.resources
 import os.path
 import rich_click as click
 import sys
-from typing import Tuple
+from typing import Tuple, Union
 
 from kiara.context import Kiara
 from kiara.models.module.pipeline.pipeline import Pipeline
@@ -25,7 +24,7 @@ def render(ctx) -> None:
 
 
 @render.group()
-@click.argument("pipeline", nargs=1)
+@click.argument("pipeline", nargs=1, metavar="PIPELINE_NAME_OR_PATH")
 @click.pass_context
 def pipeline(ctx, pipeline: str) -> None:
     kiara: Kiara = ctx.obj["kiara"]
@@ -40,22 +39,60 @@ def pipeline(ctx, pipeline: str) -> None:
 
 
 @pipeline.command()
-@click.argument("base_name", nargs=1)
+@click.argument("base_name", nargs=1, required=False)
+@click.option("--execution-graph", is_flag=True, help="Render the execution graph.")
+@click.option(
+    "--data-flow-graph", is_flag=True, help="Render the data-flow-graph graph."
+)
+@click.option(
+    "--data-flow-graph-simple",
+    is_flag=True,
+    help="Render the simplified data-flow-graph graph.",
+)
+@click.option(
+    "--output-dir",
+    type=click.Path(dir_okay=True, file_okay=False),
+    help="Output directory.",
+    required=False,
+)
 @click.pass_context
-def as_graph_images(ctx, base_name: str) -> None:
+def as_graph_images(
+    ctx,
+    base_name: Union[str, None],
+    execution_graph: bool,
+    data_flow_graph: bool,
+    data_flow_graph_simple: bool,
+    output_dir: Union[None, str],
+) -> None:
 
     from kiara.utils.jupyter import save_image
 
     pipeline_obj: Pipeline = ctx.obj["pipeline"]
 
-    path = os.path.join(os.getcwd(), f"{base_name}-execution-graph.png")
-    save_image(graph=pipeline_obj.execution_graph, path=path)
+    if base_name is None:
+        base_name = pipeline_obj.structure.pipeline_config.pipeline_name
 
-    path = os.path.join(os.getcwd(), f"{base_name}-data-flow-graph.png")
-    save_image(graph=pipeline_obj.data_flow_graph, path=path)
+    if not execution_graph and not data_flow_graph and not data_flow_graph_simple:
+        execution_graph = True
+        data_flow_graph = True
+        data_flow_graph_simple = True
 
-    path = os.path.join(os.getcwd(), f"{base_name}-data-flow-graph-simplified.png")
-    save_image(graph=pipeline_obj.data_flow_graph_simple, path=path)
+    if output_dir is None:
+        output_dir = os.getcwd()
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    if execution_graph:
+        path = os.path.join(output_dir, f"{base_name}-execution-graph.png")
+        save_image(graph=pipeline_obj.execution_graph, path=path)
+
+    if data_flow_graph:
+        path = os.path.join(output_dir, f"{base_name}-data-flow-graph.png")
+        save_image(graph=pipeline_obj.data_flow_graph, path=path)
+
+    if data_flow_graph_simple:
+        path = os.path.join(output_dir, f"{base_name}-data-flow-graph-simplified.png")
+        save_image(graph=pipeline_obj.data_flow_graph_simple, path=path)
 
 
 @pipeline.command()
@@ -70,33 +107,30 @@ def from_template(ctx, template: str, inputs: Tuple[str]):
 
     kiara: Kiara = ctx.obj["kiara"]
 
-    if template == "notebook":
-        template_path = importlib.resources.read_text(
-            "kiara",
-            os.path.join(
-                "templates",
-                "render",
-                "pipeline",
-                "workflow_tutorial",
-                "jupyter_notebook.ipynb.j2",
-            ),
-        )
-        # template_path = os.path.join(
-        #     KIARA_RESOURCES_FOLDER,
-        #     "templates",
-        #     "render",
-        #     "pipeline",
-        #     "workflow_tutorial",
-        #     "jupyter_notebook.ipynb.j2",
-        # )
-    elif os.path.isfile(template):
-        template_path = template
-    else:
-        terminal_print()
-        terminal_print(
-            "Invalid value for 'template': must be one of 'notebook', 'script', or a path to a jinja template file."
-        )
-        sys.exit(1)
+    # if template == "notebook":
+    #
+    #     my_resources = importlib_resources.files("kiara")
+    #     template_path = (
+    #         my_resources
+    #         / "resources"
+    #         / "templates"
+    #         / "render"
+    #         / "pipeline"
+    #         / "workflow_tutorial"
+    #         / "jupyter_notebook.ipynb.j2"
+    #     )
+    #
+    #     template_content = template_path.read_text()
+    #
+    # elif os.path.isfile(template):
+    #     template_path = Path(template)
+    #     # template_content = template_path.read_text()
+    # else:
+    #     terminal_print()
+    #     terminal_print(
+    #         "Invalid value for 'template': must be one of 'notebook', 'script', or a path to a jinja template file."
+    #     )
+    #     sys.exit(1)
 
     pipeline_obj = ctx.obj["pipeline"]
     # controller = SinglePipelineBatchController(pipeline=pipeline, job_registry=kiara.job_registry)
@@ -115,8 +149,26 @@ def from_template(ctx, template: str, inputs: Tuple[str]):
 
     pipeline_obj.set_pipeline_inputs(inputs=pipeline_inputs)
 
-    render_config = {"template": template_path}
-    renderer = JinjaPipelineRenderer(config=render_config, kiara=kiara)
+    if template == "notebook":
+
+        pkg_path = os.path.join(
+            "resources", "templates", "render", "pipeline", "workflow_tutorial"
+        )
+        loader = {
+            "loader_type": "package",
+            "loader_conf": {"package_name": "kiara", "package_path": pkg_path},
+        }
+
+        config = {"template": "jupyter_notebook.ipynb.j2", "loader": loader}
+        renderer = JinjaPipelineRenderer(config=config, kiara=kiara)
+    elif os.path.isfile(template):
+        raise NotImplementedError()
+    else:
+        terminal_print()
+        terminal_print(
+            "Invalid value for 'template': must be one of 'notebook', 'script', or a path to a jinja template file."
+        )
+        sys.exit(1)
 
     rendered = renderer.render(pipeline_obj)
 

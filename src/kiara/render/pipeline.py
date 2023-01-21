@@ -6,11 +6,9 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
-import os
 from functools import partial
-from jinja2 import BaseLoader, Environment, FileSystemLoader
-from pathlib import Path
-from pydantic import Field
+from jinja2 import Environment, FileSystemLoader, PackageLoader
+from pydantic import BaseModel, Field, PrivateAttr
 from typing import TYPE_CHECKING, Any, Generic, Mapping, Type, TypeVar, Union
 
 from kiara.models import KiaraModel
@@ -79,10 +77,35 @@ class KiaraRenderer(abc.ABC, Generic[RENDER_SOURCE_TYPE, RENDER_CONFIG]):
         return post_processed
 
 
+class JinjaLoader(BaseModel):
+
+    loader_type: str = Field(description="The type of the loader to use.")
+    loader_conf: Mapping[str, Any] = Field(
+        description="The arguments to pass to the loader on creation."
+    )
+
+    _loader_obj = PrivateAttr(default=None)
+
+    @property
+    def instance(self):
+
+        if self._loader_obj is None:
+            if self.loader_type == "filesystem":
+                self._loader_obj = FileSystemLoader(**self.loader_conf)
+            elif self.loader_type == "package":
+                self._loader_obj = PackageLoader(**self.loader_conf)
+            else:
+                raise Exception(f"Invalid loader type: {self.loader_type}")
+        return self._loader_obj
+
+
 class JinjaPipelineRenderConfig(KiaraRendererConfig):
 
+    loader: JinjaLoader = Field(
+        description="The loader to use for the jinja environment."
+    )
     template: str = Field(
-        description="The template to use to render the pipeline. Either a path to a template file, or the template string directly."
+        description="The name of the template to use to render the pipeline."
     )
 
 
@@ -96,16 +119,20 @@ class JinjaPipelineRenderer(KiaraRenderer[Pipeline, JinjaPipelineRenderConfig]):
     def _render_object(self, object: Pipeline) -> Any:
 
         template = self.config.template
+        loader = self.config.loader.instance
 
-        if os.path.isfile(template):
-            path = Path(template)
-            loader = FileSystemLoader(path.parent)
-            env: Environment = Environment(loader=loader)
-            env.filters["extract_raw_data"] = partial(extract_raw_value, self._kiara)
-            _template = env.get_template(path.name)
-        else:
-            env = Environment(loader=BaseLoader())
-            _template = env.from_string(template)
+        # if os.path.isfile(template):
+        #     path = Path(template)
+        #     loader = FileSystemLoader(path.parent)
+        #     env: Environment = Environment(loader=loader)
+        #     _template = env.get_template(path.name)
+        # else:
+        env = Environment(loader=loader)
+
+        env.filters["extract_raw_data"] = partial(extract_raw_value, self._kiara)
+
+        _template = env.get_template(template)
+        # _template = env.from_string(template)
 
         rendered = _template.render(pipeline=object, config=self.config)
         return rendered

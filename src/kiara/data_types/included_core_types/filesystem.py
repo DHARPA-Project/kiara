@@ -112,12 +112,12 @@ class FileValueType(KiaraModelValueType[FileModel, FileTypeConfig]):
         try:
             lines = []
             with open(data.path, "r", encoding="utf-8") as f:
-                for idx, l in enumerate(f):
+                for idx, line in enumerate(f):
                     if idx > max_lines:
                         lines.append("...\n")
                         lines.append("...")
                         break
-                    lines.append(l)
+                    lines.append(line)
 
             # TODO: syntax highlighting
             return "\n".join(lines)
@@ -141,12 +141,12 @@ class FileValueType(KiaraModelValueType[FileModel, FileTypeConfig]):
         try:
             lines = []
             with open(data.path, "r", encoding="utf-8") as f:
-                for idx, l in enumerate(f):
+                for idx, line in enumerate(f):
                     if idx > max_lines:
                         lines.append("...\n")
                         lines.append("...")
                         break
-                    lines.append(l.rstrip())
+                    lines.append(line.rstrip())
 
             return Group(*lines)
         except UnicodeDecodeError:

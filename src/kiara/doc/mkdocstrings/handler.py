@@ -7,7 +7,7 @@
 import typing
 from mkdocstrings.handlers.base import BaseHandler
 
-__all__ = ["get_handler"]  # noqa: WPS410
+__all__ = ["get_handler"]
 
 
 # from kiara.defaults import KIARA_RESOURCES_FOLDER
@@ -54,12 +54,12 @@ class KiaraHandler(BaseHandler):
     #
     #     for item in Inventory.parse_sphinx(
     #         in_file, domain_filter=("py",)
-    #     ).values():  # noqa: WPS526
+    #     ).values():
     #         yield item.name, posixpath.join(base_url, item.uri)
 
 
 def get_handler(
-    theme: str,  # noqa: W0613 (unused argument config)
+    theme: str,
     custom_templates: typing.Union[str, None] = None,
     **config: typing.Any,
 ) -> KiaraHandler:

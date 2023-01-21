@@ -288,7 +288,7 @@ class WorkflowRegistry(object):
             return self._cached_workflow_metadata_items[workflow_id]
 
         if self._all_workflow_ids is None:
-            self.all_workflow_ids  # noqa
+            self.all_workflow_ids
 
         store_alias = self._all_workflow_ids[workflow_id]  # type: ignore
         store = self._workflow_archives[store_alias]
@@ -360,7 +360,7 @@ class WorkflowRegistry(object):
             workflow_metadata._kiara = self._kiara
 
         if self._all_workflow_ids is None:
-            self.all_workflow_ids  # noqa
+            self.all_workflow_ids
 
         store.register_workflow(
             workflow_metadata=workflow_metadata, workflow_aliases=workflow_aliases
@@ -407,7 +407,7 @@ class WorkflowRegistry(object):
             )
 
         if self._all_workflow_ids is None:
-            self.all_workflow_ids  # noqa
+            self.all_workflow_ids
         archive_alias = self._all_workflow_ids[workflow_details.workflow_id]  # type: ignore
 
         archive = self.get_archive(archive_alias)
@@ -429,7 +429,7 @@ class WorkflowRegistry(object):
         workflow_details = self.get_workflow_metadata(workflow=workflow)
 
         if self._all_workflow_ids is None:
-            self.all_workflow_ids  # noqa
+            self.all_workflow_ids
         archive_alias = self._all_workflow_ids[workflow_details.workflow_id]  # type: ignore
 
         archive = self.get_archive(archive_alias)

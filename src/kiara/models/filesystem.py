@@ -498,7 +498,7 @@ class FileBundle(KiaraModel):
             files = list(self.included_files.keys())
             half = int((max_no_included_files - 1) / 2)
             head = files[0:half]
-            tail = files[-1 * half :]  # noqa
+            tail = files[-1 * half :]
             for rel_path in head:
                 model = self.included_files[rel_path]
                 row = [rel_path, str(model.size)]

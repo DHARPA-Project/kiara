@@ -153,7 +153,7 @@ def delete_context(
             )
             terminal_print()
             user_input = get_console().input(
-                f"Deleting context '[b i]{_context_name}[/b i]', are you sure? \[yes/no]: "  # noqa
+                f"Deleting context '[b i]{_context_name}[/b i]', are you sure? \[yes/no]: "
             )
 
             if user_input.lower() == "yes":

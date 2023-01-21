@@ -5,4 +5,4 @@
 
 from kiara.doc.mkdocstrings.handler import get_handler
 
-__all__ = ["get_handler"]  # noqa: WPS410
+__all__ = ["get_handler"]

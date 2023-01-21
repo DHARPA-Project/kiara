@@ -55,7 +55,7 @@ def validate_operation_in_terminal(
     try:
         operation = api.get_operation(operation=module_or_operation)
         # validate that operation config is valid, ignoring inputs for now
-        # kiara_op.operation  # noqa
+        # kiara_op.operation
     except NoSuchExecutionTargetException as nset:
         print()
         terminal_print(nset)

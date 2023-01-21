@@ -285,7 +285,7 @@ class KiaraAPI(object):
         """Retrieve the name fo the current context."""
 
         if self._current_context_alias is None:
-            self.context  # noqa
+            self.context
         return self._current_context_alias  # type: ignore
 
     def create_new_context(self, context_name: str, set_active: bool) -> None:

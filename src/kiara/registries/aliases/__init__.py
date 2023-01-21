@@ -161,7 +161,7 @@ class AliasRegistry(object):
     @property
     def aliases_by_id(self) -> Mapping[uuid.UUID, Set[AliasItem]]:
         if self._cached_aliases_by_id is None:
-            self.aliases  # noqa
+            self.aliases
         return self._cached_aliases_by_id  # type: ignore
 
     @property

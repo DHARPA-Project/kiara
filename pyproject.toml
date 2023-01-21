@@ -170,9 +170,18 @@ pythonpath = [
 [tool.ruff]
 line-length = 88
 
-# Enable Pyflakes `E` and `F` codes by default.
-select = ["E", "F"]
+src = ["src", "tests"]
+
+select = ["E", "F", "RUF100"]
+#select = ["E", "F", "RUF100", "W", "I001"]
 ignore = ["E501"]
+
+fix = true
+fixable = ["E", "F", "RUF100"]
+
+
+#fixable = ["E", "F", "RUF100", "I001"]
+# Enable Pyflakes `E` and `F` codes by default.
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
@@ -207,6 +216,9 @@ target-version = "py310"
 [tool.ruff.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
+
+[tool.ruff.isort]
+known-first-party = ["kiara", "kiara_plugin"]
 
 [tool.ruff.pydocstyle]
 convention = "google"

@@ -63,13 +63,11 @@ class DataViewControl(Static):
                 command_key.lower() not in self.reserved_keys
                 and command_key.lower() not in (x.lower() for x in scene_keys.keys())
             ):
-                replaced = last_token.replace(
-                    command_key, f"\[{command_key}]", 1  # noqa
-                )  # noqa
+                replaced = last_token.replace(command_key, f"\[{command_key}]", 1)
                 if scene is None or scene.disabled:
                     title = Text.from_markup(f"[grey46]{replaced}[/grey46]")
                 else:
-                    title = Text.from_markup(replaced)  # noqa
+                    title = Text.from_markup(replaced)
                 found_key = command_key
                 break
 

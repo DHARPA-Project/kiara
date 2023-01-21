@@ -405,9 +405,7 @@ class OperationRegistry(object):
                 for mn in deferred_module_names:
                     if mn in operations.keys():
                         continue
-                    details = error_details.get(
-                        missing_op_id, {"details": "-- n/a --"}
-                    )  # noqa
+                    details = error_details.get(missing_op_id, {"details": "-- n/a --"})
                     exception = details.get("parent", None)
                     if exception:
                         log_exception(exception)
@@ -610,7 +608,7 @@ class OperationRegistry(object):
     def operations_by_type(self) -> Mapping[str, Iterable[str]]:
 
         if self._operations_by_type is None:
-            self.operations  # noqa
+            self.operations
         return self._operations_by_type  # type: ignore
 
     def find_operation_id(self, manifest: Manifest) -> Union[str, None]:

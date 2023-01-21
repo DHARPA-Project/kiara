@@ -98,7 +98,7 @@ class TypeRegistry(object):
     def data_type_profiles(self) -> Mapping[str, Mapping[str, Any]]:
 
         if self._type_profiles is None:
-            self.data_type_classes  # noqa
+            self.data_type_classes
         assert self._type_profiles is not None
         return self._type_profiles
 

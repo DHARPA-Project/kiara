@@ -16,9 +16,7 @@ class KiaraInfoRenderer(BaseRenderer):
 
     default_config: dict = {}
 
-    def get_anchors(
-        self, data: CollectorItem
-    ) -> typing.List[str]:  # noqa: D102 (ignore missing docstring)
+    def get_anchors(self, data: CollectorItem) -> typing.List[str]:
 
         if data is None:
             return list()

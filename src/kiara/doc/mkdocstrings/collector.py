@@ -37,7 +37,7 @@ class KiaraCollector(BaseCollector):
 
         self._kiara: Kiara = Kiara.instance()
 
-    def collect(self, identifier: str, config: dict) -> CollectorItem:  # noqa: WPS231
+    def collect(self, identifier: str, config: dict) -> CollectorItem:
         """Collect the documentation tree given an identifier and selection options.
         Arguments:
             identifier: The dotted-path of a Python object available in the Python path.

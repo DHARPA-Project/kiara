@@ -268,7 +268,7 @@ def rich_format_operation_help(
                 metavar.append(metavar_str)
 
             # Range - from
-            # https://github.com/pallets/click/blob/c63c70dabd3f86ca68678b4f00951f78f52d0270/src/click/core.py#L2698-L2706  # noqa: E501
+            # https://github.com/pallets/click/blob/c63c70dabd3f86ca68678b4f00951f78f52d0270/src/click/core.py#L2698-L2706
             try:
                 # skip count with default range type
                 if isinstance(param.type, click.types._NumberRangeBase) and not (

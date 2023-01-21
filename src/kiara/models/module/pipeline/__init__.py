@@ -512,7 +512,7 @@ class PipelineConfig(KiaraModuleConfig):
             kiara = Kiara.instance()
 
         if not kiara.operation_registry.is_initialized:
-            kiara.operation_registry.operations  # noqa
+            kiara.operation_registry.operations
 
         if execution_context is None:
             execution_context = ExecutionContext()

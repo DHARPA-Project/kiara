@@ -672,7 +672,7 @@ class Workflow(object):
         self, *step_ids: str
     ) -> Tuple[Mapping[uuid.UUID, uuid.UUID], Mapping[str, ActiveJob]]:
 
-        self.pipeline  # noqa
+        self.pipeline
 
         if not step_ids:
             output_job_map, errors = self._pipeline_controller.process_pipeline()

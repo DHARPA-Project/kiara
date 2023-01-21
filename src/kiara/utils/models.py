@@ -67,7 +67,7 @@ def get_subcomponent_from_model(data: "KiaraModel", path: str) -> "KiaraModel":
                 matches = {}
                 for k in data.__root__.keys():  # type: ignore
                     if k.startswith(f"{path}."):
-                        rest = k[len(path) + 1 :]  # noqa
+                        rest = k[len(path) + 1 :]
                         matches[rest] = data.__root__[k]  # type: ignore
 
                 if not matches:

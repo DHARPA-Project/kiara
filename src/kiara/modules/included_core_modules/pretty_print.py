@@ -51,7 +51,7 @@ class PrettyPrintModule(KiaraModule):
             attr = attr[14:]
             end_start_type = attr.find("__as__")
             source_type = attr[0:end_start_type]
-            target_type = attr[end_start_type + 6 :]  # noqa
+            target_type = attr[end_start_type + 6 :]
             result.append((source_type, target_type))
         return result
 

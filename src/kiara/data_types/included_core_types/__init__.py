@@ -162,7 +162,7 @@ class AnyType(
         if not hasattr(self, "_render_as__terminal_renderable"):
 
             try:
-                value.data  # noqa
+                value.data
                 return self.render_as__string(
                     value=value, render_config=render_config, manifest=manifest
                 )
@@ -434,7 +434,7 @@ class DictValueType(AnyType[DictModel, DataTypeConfig]):
                 new_lines = []
                 for line in json_string.split("\n"):
                     if len(line) > width:
-                        new_lines.append(line[0 : width - 3] + "...")  # noqa
+                        new_lines.append(line[0 : width - 3] + "...")
                     else:
                         new_lines.append(line)
 

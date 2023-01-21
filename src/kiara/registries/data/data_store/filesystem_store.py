@@ -205,7 +205,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
     #         full_output_name = output_file.name[8:]
     #         start_value_id = full_output_name.find("__value_id__")
     #         output_name = full_output_name[0:start_value_id]
-    #         value_id_str = full_output_name[start_value_id + 12 : -5]  # noqa
+    #         value_id_str = full_output_name[start_value_id + 12 : -5]
     #
     #         value_id = uuid.UUID(value_id_str)
     #         outputs[output_name] = value_id

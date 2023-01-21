@@ -57,7 +57,7 @@
 #
 #     def validate(self):
 #
-#         self.job_config  # noqa
+#         self.job_config
 #
 #     def _invalidate(self):
 #

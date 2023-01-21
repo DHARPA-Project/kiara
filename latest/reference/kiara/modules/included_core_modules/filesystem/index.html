@@ -2793,8 +2793,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.filesystem.ImportFileModule" class="md-nav__link">
-    ImportFileModule
+  <a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileModule" class="md-nav__link">
+    ImportLocalFileModule
   </a>
   
 </li>
@@ -2814,8 +2814,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule" class="md-nav__link">
-    ImportFileBundleModule
+  <a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule" class="md-nav__link">
+    ImportLocalFileBundleModule
   </a>
   
 </li>
@@ -3062,6 +3062,20 @@
     <li class="md-nav__item">
       <a href="../../../operations/included_core_operations/filter/" class="md-nav__link">
         filter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../operations/included_core_operations/import_from/" class="md-nav__link">
+        import_from
       </a>
     </li>
   
@@ -4581,8 +4595,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.filesystem.ImportFileModule" class="md-nav__link">
-    ImportFileModule
+  <a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileModule" class="md-nav__link">
+    ImportLocalFileModule
   </a>
   
 </li>
@@ -4602,8 +4616,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule" class="md-nav__link">
-    ImportFileBundleModule
+  <a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule" class="md-nav__link">
+    ImportLocalFileBundleModule
   </a>
   
 </li>
@@ -4683,11 +4697,11 @@
 
 
 
-<h3 id="kiara.modules.included_core_modules.filesystem.ImportFileModule" class="doc doc-heading">
-        <code>ImportFileModule</code>
+<h3 id="kiara.modules.included_core_modules.filesystem.ImportLocalFileModule" class="doc doc-heading">
+        <code>ImportLocalFileModule</code>
 
 
-<a href="#kiara.modules.included_core_modules.filesystem.ImportFileModule" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileModule" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
@@ -4725,10 +4739,10 @@
 <span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
-<span class="normal">52</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ImportFileModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+<span class="normal">52</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ImportLocalFileModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Import a file from the local filesystem.&quot;&quot;&quot;</span>
 
-    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;import.file&quot;</span>
+    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;import.local.file&quot;</span>
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -4764,16 +4778,16 @@
 
 
 
-<h4 id="kiara.modules.included_core_modules.filesystem.ImportFileModule-functions">Functions<a href="#kiara.modules.included_core_modules.filesystem.ImportFileModule-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+<h4 id="kiara.modules.included_core_modules.filesystem.ImportLocalFileModule-functions">Functions<a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileModule-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
 
 
 
-<h5 id="kiara.modules.included_core_modules.filesystem.ImportFileModule.create_inputs_schema" class="doc doc-heading">
+<h5 id="kiara.modules.included_core_modules.filesystem.ImportLocalFileModule.create_inputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_inputs_schema</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span></code>
 
-<a href="#kiara.modules.included_core_modules.filesystem.ImportFileModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -4799,10 +4813,10 @@
 
 
 
-<h5 id="kiara.modules.included_core_modules.filesystem.ImportFileModule.create_outputs_schema" class="doc doc-heading">
+<h5 id="kiara.modules.included_core_modules.filesystem.ImportLocalFileModule.create_outputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_outputs_schema</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span></code>
 
-<a href="#kiara.modules.included_core_modules.filesystem.ImportFileModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -4828,10 +4842,10 @@
 
 
 
-<h5 id="kiara.modules.included_core_modules.filesystem.ImportFileModule.process" class="doc doc-heading">
+<h5 id="kiara.modules.included_core_modules.filesystem.ImportLocalFileModule.process" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span></code>
 
-<a href="#kiara.modules.included_core_modules.filesystem.ImportFileModule.process" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileModule.process" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5245,11 +5259,11 @@
 
 
 
-<h3 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule" class="doc doc-heading">
-        <code>ImportFileBundleModule</code>
+<h3 id="kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule" class="doc doc-heading">
+        <code>ImportLocalFileBundleModule</code>
 
 
-<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
@@ -5297,10 +5311,10 @@
 <span class="normal">141</span>
 <span class="normal">142</span>
 <span class="normal">143</span>
-<span class="normal">144</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ImportFileBundleModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+<span class="normal">144</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ImportLocalFileBundleModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Import a folder (file_bundle) from the local filesystem.&quot;&quot;&quot;</span>
 
-    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;import.file_bundle&quot;</span>
+    <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;import.local.file_bundle&quot;</span>
     <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">ImportFileBundleConfig</span>
 
     <span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
@@ -5344,20 +5358,20 @@
 
 
 
-<h4 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule-attributes">Attributes<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+<h4 id="kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule-attributes">Attributes<a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-attribute">
 
 
 
-<h5 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule._config_cls" class="doc doc-heading">
+<h5 id="kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule._config_cls" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">_config_cls</span> <span class="o">=</span> <span class="n">ImportFileBundleConfig</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule._config_cls" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule._config_cls" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5365,16 +5379,16 @@
 
 </div>
 
-<h4 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule-functions">Functions<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+<h4 id="kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule-functions">Functions<a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
 
 
 
-<h5 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule.create_inputs_schema" class="doc doc-heading">
+<h5 id="kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule.create_inputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_inputs_schema</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span></code>
 
-<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule.create_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5404,10 +5418,10 @@
 
 
 
-<h5 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule.create_outputs_schema" class="doc doc-heading">
+<h5 id="kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule.create_outputs_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">create_outputs_schema</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ValueMapSchema</span></code>
 
-<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule.create_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5437,10 +5451,10 @@
 
 
 
-<h5 id="kiara.modules.included_core_modules.filesystem.ImportFileBundleModule.process" class="doc doc-heading">
+<h5 id="kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule.process" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span></code>
 
-<a href="#kiara.modules.included_core_modules.filesystem.ImportFileBundleModule.process" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule.process" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">

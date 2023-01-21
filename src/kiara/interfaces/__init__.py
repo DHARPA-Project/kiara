@@ -27,7 +27,7 @@ def get_console() -> Console:
         Console: A console instance.
     """
     global _console
-    if _console is None or True:
+    if _console is None:
         console_width = os.environ.get("CONSOLE_WIDTH", None)
         width = None
 

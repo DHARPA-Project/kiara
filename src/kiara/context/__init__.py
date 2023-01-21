@@ -491,7 +491,7 @@ class KiaraContextInfo(KiaraModel):
 
     def get_info(self, item_type: str, item_id: str) -> ItemInfo:
 
-        if "data_type" == item_type or "data_types" == item_type:
+        if item_type == "data_type" or item_type == "data_types":
             group_info: InfoItemGroup = self.data_types
         elif "module" in item_type:
             group_info = self.module_types

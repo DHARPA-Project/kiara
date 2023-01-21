@@ -21,7 +21,6 @@ def test_run_without_args():
 
     runner = CliRunner()
     result = runner.invoke(cli, "run logic.and")
-    print(result.stdout)
     assert result.exit_code == 1
     assert "invalid or insufficient input" in result.stdout
     assert "not set" in result.stdout

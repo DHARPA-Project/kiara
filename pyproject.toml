@@ -10,12 +10,12 @@ build-backend = 'setuptools.build_meta'
 name = "kiara"
 description = "Data-centric workflow orchestration."
 authors = [
-    {name = "Markus Binsteiner", email = "markus@frkl.io"}
+    { name = "Markus Binsteiner", email = "markus@frkl.io" }
 ]
 readme = "README.md"
 requires-python = ">=3.8"
 keywords = ["kiara"]
-license = {text = "MPL-2.0"}
+license = { text = "MPL-2.0" }
 classifiers = [
     "Framework :: Django",
     "Programming Language :: Python :: 3",
@@ -164,7 +164,7 @@ write_to = "src/kiara/version.txt"
 
 [tool.pytest.ini_options]
 pythonpath = [
-  "src"
+    "src"
 ]
 
 [tool.ruff]
@@ -172,12 +172,32 @@ line-length = 88
 
 src = ["src", "tests"]
 
-select = ["E", "F", "RUF100", "I001", "YTT", "S", "C4", "T10", "ISC", "ICN", "T20"]
+select = [
+    "E",
+    "F",
+    "RUF",
+    "I001",
+    "YTT",
+    "S",
+    "C4",
+    "T10",
+    "ISC",
+    "ICN",
+    "T20",
+    "Q",
+    "TID",
+    "PD",
+    "PLC",
+    "PLE",
+    "PLR",
+    "PLW",
+    "PIE",
+]
 #select = ["E", "F", "RUF100", "W", "I001"]
-ignore = ["E501", "S101"]
+ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004"]
 
 fix = true
-fixable = ["E", "F", "RUF100", "I001"]
+fixable = ["E", "F", "RUF100", "I001", "Q"]
 
 
 #fixable = ["E", "F", "RUF100", "I001"]
@@ -205,7 +225,7 @@ exclude = [
     "node_modules",
     "venv",
 ]
-per-file-ignores = {}
+per-file-ignores = { }
 
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"

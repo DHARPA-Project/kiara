@@ -37,7 +37,7 @@ def gen_pages_for_module(
         if page_name == main_module:
             title = page_name
         else:
-            title = page_name.replace(f"{main_module}.", "➜ ")
+            title = page_name.replace(f"{main_module}.", "➜ ")  # noqa
 
         result[doc_path] = {
             "python_src": path,

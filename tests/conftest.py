@@ -147,6 +147,6 @@ def preseeded_data_store() -> Kiara:
 
     batch_op.run(inputs=inputs, save="preseed")
 
-    print(f"kiara data store: {kiara.data_registry.get_archive()}")
+    print(f"kiara data store: {kiara.data_registry.get_archive()}")  # noqa
 
     return kiara

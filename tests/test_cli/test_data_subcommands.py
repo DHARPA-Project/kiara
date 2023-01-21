@@ -24,7 +24,7 @@ def _run_command(kiara_ctx: Kiara, cmd):
     config_path = kiara_ctx.context_config._context_config_path
 
     cmd = f"--context '{config_path}' {cmd}"
-    print(f"Running command:\n\nkiara {cmd}")
+    print(f"Running command:\n\nkiara {cmd}")  # noqa
 
     runner = CliRunner()
     result = runner.invoke(cli, cmd)

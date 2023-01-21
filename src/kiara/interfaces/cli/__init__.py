@@ -149,7 +149,7 @@ def cli(
                 "replacing.process",
                 reason="reloading this process, in order to pick up new plugin packages",
             )
-            os.execvp(sys.executable, (sys.executable,) + tuple(sys.argv))
+            os.execvp(sys.executable, (sys.executable,) + tuple(sys.argv))  # noqa
 
     api.set_active_context(context, create=True)
 

@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
+import contextlib
 
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
-
 import os
 import uuid
 from enum import Enum
@@ -499,10 +498,8 @@ class KiaraConfig(BaseSettings):
         if not context:
             context = self.default_context
         else:
-            try:
+            with contextlib.suppress(Exception):
                 context = uuid.UUID(context)  # type: ignore
-            except Exception:
-                pass
 
         if isinstance(context, str) and os.path.exists(context):
             context = Path(context)

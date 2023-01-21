@@ -173,4 +173,4 @@ def from_template(ctx, template: str, inputs: Tuple[str]):
 
     rendered = renderer.render(pipeline_obj)
 
-    print(rendered)
+    print(rendered)  # noqa

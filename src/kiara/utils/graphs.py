@@ -10,6 +10,8 @@ from typing import Literal, Union
 
 import networkx as nx
 
+from kiara.utils.cli import terminal_print
+
 if typing.TYPE_CHECKING:
     from IPython.core.display import Image
 
@@ -22,7 +24,7 @@ def print_ascii_graph(graph: nx.Graph):
     try:
         from asciinet import graph_to_ascii  # type: ignore
     except:  # noqa
-        print(
+        terminal_print(
             "\nCan't print graph on terminal, package 'asciinet' not available. Please install it into the current virtualenv using:\n\npip install 'git+https://github.com/cosminbasca/asciinet.git#egg=asciinet&subdirectory=pyasciinet'"
         )
         return
@@ -31,14 +33,14 @@ def print_ascii_graph(graph: nx.Graph):
         from asciinet._libutil import check_java  # type: ignore
 
         check_java("Java ")
-    except Exception as e:
-        print(e)
-        print(
+    except Exception:
+        terminal_print()
+        terminal_print(
             "\nJava is currently necessary to print ascii graph. This might change in the future, but to use this functionality please install a JRE."
         )
         return
 
-    print(graph_to_ascii(graph))
+    print(graph_to_ascii(graph))  # noqa
 
 
 def create_image(graph: nx.Graph) -> bytes:

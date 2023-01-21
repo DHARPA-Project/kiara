@@ -17,7 +17,7 @@ from kiara.interfaces.python_api.models.info import (
     DataTypeClassesInfo,
     DataTypeClassInfo,
 )
-from kiara.utils.cli import output_format_option, terminal_print_model
+from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
 from kiara.utils.graphs import print_ascii_graph
 
 
@@ -96,7 +96,7 @@ def hierarchy(ctx, include_internal) -> None:
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     type_mgmt = kiara_obj.type_registry
-    print()
+    terminal_print()
 
     if include_internal:
         print_ascii_graph(type_mgmt.data_type_hierarchy)

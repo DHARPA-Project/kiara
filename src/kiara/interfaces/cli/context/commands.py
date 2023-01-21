@@ -199,7 +199,7 @@ def config_help(ctx):
     """Print available configuration options and information about them."""
 
     table = create_table_from_base_model_cls(model_cls=KiaraContextConfig)
-    print()
+    terminal_print()
     terminal_print(Panel(table))
 
 
@@ -301,8 +301,8 @@ def explain_metadata(ctx, metadata_key, format) -> None:
     metadata_types = kiara_obj.kiara_model_registry.get_models_of_type(ValueMetadata)
 
     if metadata_key not in metadata_types.item_infos.keys():
-        print()
-        print(f"No metadata schema for key '{metadata_key}' found...")
+        terminal_print()
+        terminal_print(f"No metadata schema for key '{metadata_key}' found...")
         sys.exit(1)
 
     info_obj = metadata_types.item_infos[metadata_key]

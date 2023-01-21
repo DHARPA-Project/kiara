@@ -11,7 +11,9 @@ def orjson_dumps(v, *, default=None, **args):
         return orjson.dumps(v, default=default, **args).decode()
     except Exception as e:
         if is_debug():
-            print(f"Error dumping json data: {e}")
+            from kiara.utils.cli import terminal_print
+
+            terminal_print(f"Error dumping json data: {e}")
             from kiara import dbg
 
             dbg(v)

@@ -15,7 +15,7 @@ from typing import Any, Iterable, Mapping, Union
 import rich_click as click
 
 from kiara import KiaraAPI
-from kiara.utils.cli import dict_from_cli_args
+from kiara.utils.cli import dict_from_cli_args, terminal_print
 from kiara.utils.cli.exceptions import handle_exception
 from kiara.utils.cli.run import (
     _validate_save_option,
@@ -95,8 +95,8 @@ def run(
             )
 
         if target_file.exists() and not force_overwrite:
-            print()
-            print(
+            terminal_print()
+            terminal_print(
                 f"Can't run workflow, the target files already exist, and '--output force=true' not specified: {target_file}"
             )
             sys.exit(1)

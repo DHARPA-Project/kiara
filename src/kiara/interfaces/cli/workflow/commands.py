@@ -141,7 +141,7 @@ def set_input(ctx, workflow: str, inputs: Tuple[str], process: bool):
         try:
             workflow_obj.process_steps()
         except Exception as e:
-            print(e)
+            terminal_print(e)
 
     workflow_obj.snapshot(save=True)
     terminal_print_model(workflow_obj.info, in_panel=f"Workflow: [b i]{workflow}[/b i]")

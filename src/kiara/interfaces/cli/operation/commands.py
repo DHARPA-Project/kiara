@@ -19,7 +19,7 @@ from kiara.interfaces.python_api.models.info import (
 )
 
 # from kiara.interfaces.python_api.operation import KiaraOperation
-from kiara.utils.cli import output_format_option, terminal_print_model
+from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
 from kiara.utils.cli.exceptions import handle_exception
 
 
@@ -179,8 +179,8 @@ def explain(ctx, operation_id: str, source: bool, format: str, module_info: bool
         operation = kiara_obj.operation_registry.get_operation(operation_id)
 
     if not operation:
-        print()
-        print(f"No operation with id '{operation_id}' registered.")
+        terminal_print()
+        terminal_print(f"No operation with id '{operation_id}' registered.")
         sys.exit(1)
 
     terminal_print_model(

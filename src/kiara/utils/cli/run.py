@@ -34,8 +34,10 @@ def _validate_save_option(save: Iterable[str]) -> bool:
             if "=" in a:
                 tokens = a.split("=")
                 if len(tokens) != 2:
-                    print()
-                    print(f"Invalid alias format, can only contain a single '=': {a}")
+                    terminal_print()
+                    terminal_print(
+                        f"Invalid alias format, can only contain a single '=': {a}"
+                    )
                     sys.exit(1)
         return True
     else:
@@ -58,11 +60,11 @@ def validate_operation_in_terminal(
         # validate that operation config is valid, ignoring inputs for now
         # kiara_op.operation
     except NoSuchExecutionTargetException as nset:
-        print()
+        terminal_print()
         terminal_print(nset)
-        print()
-        print("Existing operations:")
-        print()
+        terminal_print()
+        terminal_print("Existing operations:")
+        terminal_print()
         for n in nset.avaliable_targets:
             terminal_print(f"  - [i]{n}[/i]")
         sys.exit(1)
@@ -122,8 +124,10 @@ def calculate_aliases(
             else:
                 tokens = a.split("=")
                 if len(tokens) != 2:
-                    print()
-                    print(f"Invalid alias format, can only contain a single '=': {a}")
+                    terminal_print()
+                    terminal_print(
+                        f"Invalid alias format, can only contain a single '=': {a}"
+                    )
                     sys.exit(1)
 
                 aliases.setdefault(tokens[0], []).append(tokens[1])
@@ -147,8 +151,8 @@ def calculate_aliases(
                 )
 
         if invalid_fields:
-            print()
-            print(
+            terminal_print()
+            terminal_print(
                 f"Can't run workflow, invalid field name(s) when specifying aliases: {', '.join(invalid_fields)}. Valid field names: {', '.join(op_output_names)}"
             )
             sys.exit(1)
@@ -321,7 +325,7 @@ def execute_job(
     try:
         outputs = api.get_job_result(job_id=job_id)
     except FailedJobException as fje:
-        print()
+        terminal_print()
         error: Union[str, None] = KiaraException.get_root_details(fje)
         if not error:
             error = str(fje)
@@ -330,7 +334,7 @@ def execute_job(
 
         sys.exit(1)
     except Exception as e:
-        print()
+        terminal_print()
         terminal_print(e)
         sys.exit(1)
 

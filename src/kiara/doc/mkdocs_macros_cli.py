@@ -28,6 +28,10 @@ os_env_vars["KAIRA_DATA_STORE"] = os.path.join(
 )
 
 
+def log_msg(msg: str):
+    print(msg)  # noqa
+
+
 def define_env(env):
     """
     Helper macros for Python project documentation.
@@ -99,7 +103,8 @@ def define_env(env):
                 "repl_dict": repl_dict,
             }
 
-            print(f"RUNNING: {' '.join(command)}")
+            log_msg(f"RUNNING: {' '.join(command)}")
+
             p = Popen(command, stdout=PIPE, stderr=PIPE, env=_run_env)
             stdout, stderr = p.communicate()
 
@@ -111,10 +116,10 @@ def define_env(env):
                     stdout_str = stdout_str.replace(k, v)
                     stderr_str = stderr_str.replace(k, v)
 
-            print("stdout:")
-            print(stdout_str)
-            print("stderr:")
-            print(stderr_str)
+            log_msg("stdout:")
+            log_msg(stdout_str)
+            log_msg("stderr:")
+            log_msg(stderr_str)
 
             cache_info["exit_code"] = p.returncode
 

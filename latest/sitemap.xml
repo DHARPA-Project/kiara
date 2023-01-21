@@ -946,11 +946,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/jupyter/</loc>
-         <lastmod>2023-01-21</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/metadata/</loc>
          <lastmod>2023-01-21</lastmod>
          <changefreq>daily</changefreq>

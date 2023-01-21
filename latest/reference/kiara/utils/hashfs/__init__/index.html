@@ -4193,20 +4193,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../jupyter/" class="md-nav__link">
-        jupyter
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../metadata/" class="md-nav__link">
         metadata
       </a>
@@ -6968,7 +6954,7 @@ set it's position back to <code>0</code>.</p>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">buffer_size</span> <span class="o">=</span> <span class="mi">8192</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span> <span class="o">=</span> <span class="n">obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="p">:</span> <span class="n">BinaryIO</span> <span class="o">=</span> <span class="n">obj</span>  <span class="c1"># type: ignore</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">=</span> <span class="n">pos</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer_size</span> <span class="o">=</span> <span class="n">buffer_size</span>
 

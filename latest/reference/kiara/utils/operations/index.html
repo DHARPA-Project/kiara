@@ -4074,20 +4074,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../jupyter/" class="md-nav__link">
-        jupyter
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../metadata/" class="md-nav__link">
         metadata
       </a>
@@ -4915,7 +4901,9 @@
 <span class="normal">197</span>
 <span class="normal">198</span>
 <span class="normal">199</span>
-<span class="normal">200</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_operation</span><span class="p">(</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_operation</span><span class="p">(</span>
     <span class="n">module_or_operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">operation_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">kiara</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -4950,6 +4938,8 @@
         <span class="ow">and</span> <span class="n">module_or_operation</span> <span class="ow">in</span> <span class="n">kiara</span><span class="o">.</span><span class="n">module_type_names</span>
     <span class="p">):</span>
 
+        <span class="k">if</span> <span class="n">operation_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">operation_config</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
             <span class="n">module_type</span><span class="o">=</span><span class="n">module_or_operation</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="n">operation_config</span>
         <span class="p">)</span>
@@ -5059,9 +5049,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/operations.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">203</span>
-<span class="normal">204</span>
-<span class="normal">205</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">205</span>
 <span class="normal">206</span>
 <span class="normal">207</span>
 <span class="normal">208</span>
@@ -5103,7 +5091,11 @@
 <span class="normal">244</span>
 <span class="normal">245</span>
 <span class="normal">246</span>
-<span class="normal">247</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_operation_status_renderable</span><span class="p">(</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_operation_status_renderable</span><span class="p">(</span>
     <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;ValueMap&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Any</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
@@ -5125,8 +5117,9 @@
         <span class="k">assert</span> <span class="n">inputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">show_headers</span><span class="p">:</span>
             <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Inputs:&quot;</span><span class="p">)</span>
+        <span class="n">_inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderableType</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">_inputs</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">create_value_map_status_renderable</span><span class="p">(</span>
+            <span class="n">_inputs</span> <span class="o">=</span> <span class="n">create_value_map_status_renderable</span><span class="p">(</span>
                 <span class="n">inputs</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="n">render_config</span>
             <span class="p">)</span>
         <span class="k">except</span> <span class="n">InvalidValuesException</span> <span class="k">as</span> <span class="n">ive</span><span class="p">:</span>
@@ -5134,6 +5127,7 @@
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="n">_inputs</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[red bold]</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">[/red bold]&quot;</span>
         <span class="k">finally</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">_inputs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_inputs</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">show_outputs_schema</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">show_headers</span><span class="p">:</span>

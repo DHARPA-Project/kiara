@@ -4673,8 +4673,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/destinies/filesystem_store.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 23</span>
-<span class="normal"> 24</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 24</span>
 <span class="normal"> 25</span>
 <span class="normal"> 26</span>
 <span class="normal"> 27</span>
@@ -4810,7 +4809,8 @@
 <span class="normal">157</span>
 <span class="normal">158</span>
 <span class="normal">159</span>
-<span class="normal">160</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FileSystemDestinyArchive</span><span class="p">(</span><span class="n">DestinyArchive</span><span class="p">):</span>
+<span class="normal">160</span>
+<span class="normal">161</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FileSystemDestinyArchive</span><span class="p">(</span><span class="n">DestinyArchive</span><span class="p">):</span>
 
     <span class="n">_archive_type_name</span> <span class="o">=</span> <span class="s2">&quot;filesystem_destiny_archive&quot;</span>
     <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">FileSystemArchiveConfig</span>  <span class="c1"># type: ignore</span>
@@ -4935,7 +4935,7 @@
 
         <span class="n">aliases</span> <span class="o">=</span> <span class="n">value_id_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.json&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">get_destiny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">destiny_alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Destiny</span><span class="p">:</span>
 
@@ -5057,9 +5057,9 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/destinies/filesystem_store.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
-<span class="normal">29</span>
-<span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">is_writeable</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">return</span> <span class="kc">False</span>
 </code></pre></div></td></tr></table></div>
@@ -5082,14 +5082,14 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/destinies/filesystem_store.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">71</span>
-<span class="normal">72</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">72</span>
 <span class="normal">73</span>
 <span class="normal">74</span>
 <span class="normal">75</span>
 <span class="normal">76</span>
 <span class="normal">77</span>
-<span class="normal">78</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveDetails</span><span class="p">:</span>
+<span class="normal">78</span>
+<span class="normal">79</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveDetails</span><span class="p">:</span>
 
     <span class="n">size</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
         <span class="n">f</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span>
@@ -5117,8 +5117,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/destinies/filesystem_store.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">127</span>
-<span class="normal">128</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">128</span>
 <span class="normal">129</span>
 <span class="normal">130</span>
 <span class="normal">131</span>
@@ -5129,7 +5128,8 @@
 <span class="normal">136</span>
 <span class="normal">137</span>
 <span class="normal">138</span>
-<span class="normal">139</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_all_value_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+<span class="normal">139</span>
+<span class="normal">140</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_all_value_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
 
     <span class="n">all_root_folders</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_id_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*/*/*/*/*&quot;</span><span class="p">)</span>
 
@@ -5162,21 +5162,21 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/destinies/filesystem_store.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">141</span>
-<span class="normal">142</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">142</span>
 <span class="normal">143</span>
 <span class="normal">144</span>
 <span class="normal">145</span>
 <span class="normal">146</span>
 <span class="normal">147</span>
-<span class="normal">148</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_destiny_aliases_for_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">148</span>
+<span class="normal">149</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_destiny_aliases_for_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 
     <span class="n">tokens</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value_id</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
     <span class="n">value_id_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_id_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="o">*</span><span class="n">tokens</span><span class="p">)</span>
 
     <span class="n">aliases</span> <span class="o">=</span> <span class="n">value_id_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.json&quot;</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">aliases</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -5197,8 +5197,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/destinies/filesystem_store.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">150</span>
-<span class="normal">151</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">151</span>
 <span class="normal">152</span>
 <span class="normal">153</span>
 <span class="normal">154</span>
@@ -5207,7 +5206,8 @@
 <span class="normal">157</span>
 <span class="normal">158</span>
 <span class="normal">159</span>
-<span class="normal">160</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_destiny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">destiny_alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Destiny</span><span class="p">:</span>
+<span class="normal">160</span>
+<span class="normal">161</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_destiny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">destiny_alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Destiny</span><span class="p">:</span>
 
     <span class="n">tokens</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value_id</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
     <span class="n">value_id_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_id_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="o">*</span><span class="n">tokens</span><span class="p">)</span>
@@ -5251,8 +5251,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/destinies/filesystem_store.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">163</span>
-<span class="normal">164</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">164</span>
 <span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span>
@@ -5278,7 +5277,8 @@
 <span class="normal">187</span>
 <span class="normal">188</span>
 <span class="normal">189</span>
-<span class="normal">190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FileSystemDestinyStore</span><span class="p">(</span><span class="n">FileSystemDestinyArchive</span><span class="p">,</span> <span class="n">DestinyStore</span><span class="p">):</span>
+<span class="normal">190</span>
+<span class="normal">191</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FileSystemDestinyStore</span><span class="p">(</span><span class="n">FileSystemDestinyArchive</span><span class="p">,</span> <span class="n">DestinyStore</span><span class="p">):</span>
 
     <span class="n">_archive_type_name</span> <span class="o">=</span> <span class="s2">&quot;filesystem_destiny_store&quot;</span>
 
@@ -5339,9 +5339,9 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/destinies/filesystem_store.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">is_writeable</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">return</span> <span class="kc">True</span>
 </code></pre></div></td></tr></table></div>
@@ -5364,8 +5364,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/destinies/filesystem_store.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">171</span>
-<span class="normal">172</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">172</span>
 <span class="normal">173</span>
 <span class="normal">174</span>
 <span class="normal">175</span>
@@ -5383,7 +5382,8 @@
 <span class="normal">187</span>
 <span class="normal">188</span>
 <span class="normal">189</span>
-<span class="normal">190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">persist_destiny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destiny</span><span class="p">:</span> <span class="n">Destiny</span><span class="p">):</span>
+<span class="normal">190</span>
+<span class="normal">191</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">persist_destiny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destiny</span><span class="p">:</span> <span class="n">Destiny</span><span class="p">):</span>
 
     <span class="n">destiny_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_translate_destiny_id_to_path</span><span class="p">(</span><span class="n">destiny_id</span><span class="o">=</span><span class="n">destiny</span><span class="o">.</span><span class="n">destiny_id</span><span class="p">)</span>
     <span class="n">destiny_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

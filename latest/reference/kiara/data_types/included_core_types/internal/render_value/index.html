@@ -4630,12 +4630,12 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
-<span class="normal">20</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">20</span>
 <span class="normal">21</span>
 <span class="normal">22</span>
 <span class="normal">23</span>
-<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RenderSceneTypeConfig</span><span class="p">(</span><span class="n">DataTypeConfig</span><span class="p">):</span>
+<span class="normal">24</span>
+<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RenderSceneTypeConfig</span><span class="p">(</span><span class="n">DataTypeConfig</span><span class="p">):</span>
 
     <span class="n">kiara_model_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the model backing this render (Python class must sub-class &#39;RenderScene&#39;).&quot;</span><span class="p">,</span>
@@ -4704,8 +4704,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">27</span>
-<span class="normal">28</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span>
@@ -4768,7 +4767,8 @@
 <span class="normal">88</span>
 <span class="normal">89</span>
 <span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RenderSceneDataType</span><span class="p">(</span><span class="n">InternalType</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">,</span> <span class="n">RenderSceneTypeConfig</span><span class="p">]):</span>
+<span class="normal">91</span>
+<span class="normal">92</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RenderSceneDataType</span><span class="p">(</span><span class="n">InternalType</span><span class="p">[</span><span class="n">RenderScene</span><span class="p">,</span> <span class="n">RenderSceneTypeConfig</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A value type to contain information about how to render a value in a specific render scenario.&quot;&quot;&quot;</span>
 
     <span class="n">_data_type_name</span> <span class="o">=</span> <span class="s2">&quot;render_scene&quot;</span>
@@ -4885,9 +4885,9 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">37</span>
-<span class="normal">38</span>
-<span class="normal">39</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">python_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">RenderScene</span>
 </code></pre></div></td></tr></table></div>
@@ -4914,9 +4914,9 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">RenderSceneTypeConfig</span><span class="p">]:</span>
     <span class="k">return</span> <span class="n">RenderSceneTypeConfig</span>
 </code></pre></div></td></tr></table></div>
@@ -4939,8 +4939,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">68</span>
-<span class="normal">69</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">69</span>
 <span class="normal">70</span>
 <span class="normal">71</span>
 <span class="normal">72</span>
@@ -4948,7 +4947,8 @@
 <span class="normal">74</span>
 <span class="normal">75</span>
 <span class="normal">76</span>
-<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderScene</span><span class="p">:</span>
+<span class="normal">77</span>
+<span class="normal">78</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderScene</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">data</span>
@@ -4993,8 +4993,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 94</span>
-<span class="normal"> 95</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 95</span>
 <span class="normal"> 96</span>
 <span class="normal"> 97</span>
 <span class="normal"> 98</span>
@@ -5041,7 +5040,8 @@
 <span class="normal">139</span>
 <span class="normal">140</span>
 <span class="normal">141</span>
-<span class="normal">142</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RenderValueResultDataType</span><span class="p">(</span><span class="n">InternalType</span><span class="p">[</span><span class="n">RenderValueResult</span><span class="p">,</span> <span class="n">DataTypeConfig</span><span class="p">]):</span>
+<span class="normal">142</span>
+<span class="normal">143</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RenderValueResultDataType</span><span class="p">(</span><span class="n">InternalType</span><span class="p">[</span><span class="n">RenderValueResult</span><span class="p">,</span> <span class="n">DataTypeConfig</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A value type to contain information about how to render a value in a specific render scenario.&quot;&quot;&quot;</span>
 
     <span class="n">_data_type_name</span> <span class="o">=</span> <span class="s2">&quot;render_value_result&quot;</span>
@@ -5123,9 +5123,9 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">python_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">RenderValueResult</span>
 </code></pre></div></td></tr></table></div>
@@ -5148,8 +5148,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/data_types/included_core_types/internal/render_value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
-<span class="normal">109</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span>
 <span class="normal">112</span>
@@ -5161,7 +5160,8 @@
 <span class="normal">118</span>
 <span class="normal">119</span>
 <span class="normal">120</span>
-<span class="normal">121</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderValueResult</span><span class="p">:</span>
+<span class="normal">121</span>
+<span class="normal">122</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderValueResult</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>

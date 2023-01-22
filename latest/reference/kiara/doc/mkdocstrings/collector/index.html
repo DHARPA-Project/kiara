@@ -4663,8 +4663,7 @@ and overrides the <code>update_env</code> method of the [<code>BaseRenderer</cod
 
         <details class="quote">
           <summary>Source code in <code>kiara/doc/mkdocstrings/collector.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
-<span class="normal">20</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">20</span>
 <span class="normal">21</span>
 <span class="normal">22</span>
 <span class="normal">23</span>
@@ -4712,7 +4711,8 @@ and overrides the <code>update_env</code> method of the [<code>BaseRenderer</cod
 <span class="normal">65</span>
 <span class="normal">66</span>
 <span class="normal">67</span>
-<span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraCollector</span><span class="p">(</span><span class="n">BaseCollector</span><span class="p">):</span>
+<span class="normal">68</span>
+<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraCollector</span><span class="p">(</span><span class="n">BaseCollector</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The class responsible for loading Jinja templates and rendering them.</span>
 <span class="sd">    It defines some configuration options, implements the `render` method,</span>
 <span class="sd">    and overrides the `update_env` method of the [`BaseRenderer` class][mkdocstrings.handlers.base.BaseRenderer].</span>
@@ -4733,7 +4733,7 @@ and overrides the <code>update_env</code> method of the [<code>BaseRenderer</cod
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">Kiara</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">collect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CollectorItem</span><span class="p">:</span>  <span class="c1"># noqa: WPS231</span>
+    <span class="k">def</span> <span class="nf">collect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CollectorItem</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Collect the documentation tree given an identifier and selection options.</span>
 <span class="sd">        Arguments:</span>
 <span class="sd">            identifier: The dotted-path of a Python object available in the Python path.</span>
@@ -4907,8 +4907,7 @@ Option | Type | Description | Default
 
       <details class="quote">
         <summary>Source code in <code>kiara/doc/mkdocstrings/collector.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
-<span class="normal">41</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
@@ -4935,7 +4934,8 @@ Option | Type | Description | Default
 <span class="normal">65</span>
 <span class="normal">66</span>
 <span class="normal">67</span>
-<span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">collect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CollectorItem</span><span class="p">:</span>  <span class="c1"># noqa: WPS231</span>
+<span class="normal">68</span>
+<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">collect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CollectorItem</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Collect the documentation tree given an identifier and selection options.</span>
 <span class="sd">    Arguments:</span>
 <span class="sd">        identifier: The dotted-path of a Python object available in the Python path.</span>

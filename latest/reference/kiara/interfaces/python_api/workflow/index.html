@@ -4691,8 +4691,7 @@ It waits until all inputs are set, after which it executes all pipeline steps in
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 38</span>
-<span class="normal"> 39</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 39</span>
 <span class="normal"> 40</span>
 <span class="normal"> 41</span>
 <span class="normal"> 42</span>
@@ -4788,7 +4787,8 @@ It waits until all inputs are set, after which it executes all pipeline steps in
 <span class="normal">132</span>
 <span class="normal">133</span>
 <span class="normal">134</span>
-<span class="normal">135</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowPipelineController</span><span class="p">(</span><span class="n">SinglePipelineController</span><span class="p">):</span>
+<span class="normal">135</span>
+<span class="normal">136</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowPipelineController</span><span class="p">(</span><span class="n">SinglePipelineController</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A [PipelineController][kiara.models.modules.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.</span>
 
 <span class="sd">    This is the default implementation of a ``PipelineController``, and probably the most simple implementation of one.</span>
@@ -4915,8 +4915,7 @@ It waits until all inputs are set, after which it executes all pipeline steps in
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 61</span>
-<span class="normal"> 62</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 62</span>
 <span class="normal"> 63</span>
 <span class="normal"> 64</span>
 <span class="normal"> 65</span>
@@ -4989,7 +4988,8 @@ It waits until all inputs are set, after which it executes all pipeline steps in
 <span class="normal">132</span>
 <span class="normal">133</span>
 <span class="normal">134</span>
-<span class="normal">135</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_pipeline</span><span class="p">(</span>
+<span class="normal">135</span>
+<span class="normal">136</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_pipeline</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActiveJob</span><span class="p">]]:</span>
 
@@ -5097,8 +5097,8 @@ It waits until all inputs are set, after which it executes all pipeline steps in
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">138</span>
-<span class="normal">139</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowStatus</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">139</span>
+<span class="normal">140</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowStatus</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
     <span class="k">pass</span>
 </code></pre></div></td></tr></table></div>
         </details>
@@ -5182,8 +5182,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 142</span>
-<span class="normal"> 143</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 143</span>
 <span class="normal"> 144</span>
 <span class="normal"> 145</span>
 <span class="normal"> 146</span>
@@ -6418,7 +6417,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">1375</span>
 <span class="normal">1376</span>
 <span class="normal">1377</span>
-<span class="normal">1378</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Workflow</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="normal">1378</span>
+<span class="normal">1379</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Workflow</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A wrapper object to make working with workflows easier for frontend code.</span>
 
 <span class="sd">    This is the type of class everyone advises you against creating in Object-Oriented code, all it contains is basically</span>
@@ -6951,7 +6951,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">step_ids</span><span class="p">:</span> <span class="nb">str</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActiveJob</span><span class="p">]]:</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span>  <span class="c1"># noqa</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">step_ids</span><span class="p">:</span>
             <span class="n">output_job_map</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_controller</span><span class="o">.</span><span class="n">process_pipeline</span><span class="p">()</span>
@@ -7718,8 +7718,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <code class="highlight language-python"><span class="n">documentation</span><span class="p">:</span> <span class="n">DocumentationMetadataModel</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.workflow.Workflow.documentation" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -8193,8 +8193,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">163</span>
-<span class="normal">164</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">164</span>
 <span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span>
@@ -8227,7 +8226,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">194</span>
 <span class="normal">195</span>
 <span class="normal">196</span>
-<span class="normal">197</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">197</span>
+<span class="normal">198</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">load</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">workflow</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
@@ -8288,8 +8288,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">199</span>
-<span class="normal">200</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">200</span>
 <span class="normal">201</span>
 <span class="normal">202</span>
 <span class="normal">203</span>
@@ -8309,7 +8308,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">217</span>
 <span class="normal">218</span>
 <span class="normal">219</span>
-<span class="normal">220</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">220</span>
+<span class="normal">221</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">alias</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -8351,11 +8351,11 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">468</span>
-<span class="normal">469</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">469</span>
 <span class="normal">470</span>
 <span class="normal">471</span>
-<span class="normal">472</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">clear_current_inputs_for_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">):</span>
+<span class="normal">472</span>
+<span class="normal">473</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">clear_current_inputs_for_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">):</span>
 
     <span class="n">fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_current_inputs_schema_for_step</span><span class="p">(</span><span class="n">step_id</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -8380,12 +8380,12 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">490</span>
-<span class="normal">491</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">491</span>
 <span class="normal">492</span>
 <span class="normal">493</span>
 <span class="normal">494</span>
-<span class="normal">495</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_current_inputs_schema_for_step</span><span class="p">(</span>
+<span class="normal">495</span>
+<span class="normal">496</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_current_inputs_schema_for_step</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">get_pipeline_inputs_schema_for_step</span><span class="p">(</span>
@@ -8411,12 +8411,12 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">497</span>
-<span class="normal">498</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">498</span>
 <span class="normal">499</span>
 <span class="normal">500</span>
 <span class="normal">501</span>
-<span class="normal">502</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_current_outputs_schema_for_step</span><span class="p">(</span>
+<span class="normal">502</span>
+<span class="normal">503</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_current_outputs_schema_for_step</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">get_pipeline_outputs_schema_for_step</span><span class="p">(</span>
@@ -8442,8 +8442,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">671</span>
-<span class="normal">672</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">672</span>
 <span class="normal">673</span>
 <span class="normal">674</span>
 <span class="normal">675</span>
@@ -8475,11 +8474,12 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">701</span>
 <span class="normal">702</span>
 <span class="normal">703</span>
-<span class="normal">704</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_steps</span><span class="p">(</span>
+<span class="normal">704</span>
+<span class="normal">705</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_steps</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">step_ids</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActiveJob</span><span class="p">]]:</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span>  <span class="c1"># noqa</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">step_ids</span><span class="p">:</span>
         <span class="n">output_job_map</span><span class="p">,</span> <span class="n">errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_controller</span><span class="o">.</span><span class="n">process_pipeline</span><span class="p">()</span>
@@ -8583,8 +8583,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">718</span>
-<span class="normal">719</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">719</span>
 <span class="normal">720</span>
 <span class="normal">721</span>
 <span class="normal">722</span>
@@ -8596,7 +8595,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">728</span>
 <span class="normal">729</span>
 <span class="normal">730</span>
-<span class="normal">731</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+<span class="normal">731</span>
+<span class="normal">732</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set a single pipeline input.</span>
 
 <span class="sd">    Arguments:</span>
@@ -8674,8 +8674,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">733</span>
-<span class="normal">734</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">734</span>
 <span class="normal">735</span>
 <span class="normal">736</span>
 <span class="normal">737</span>
@@ -8790,7 +8789,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">846</span>
 <span class="normal">847</span>
 <span class="normal">848</span>
-<span class="normal">849</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">inputs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
+<span class="normal">849</span>
+<span class="normal">850</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">inputs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set multiple pipeline inputs, at once.</span>
 
 <span class="sd">    Arguments:</span>
@@ -8927,8 +8927,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">851</span>
-<span class="normal">852</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">852</span>
 <span class="normal">853</span>
 <span class="normal">854</span>
 <span class="normal">855</span>
@@ -8971,7 +8970,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">892</span>
 <span class="normal">893</span>
 <span class="normal">894</span>
-<span class="normal">895</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_steps</span><span class="p">(</span>
+<span class="normal">895</span>
+<span class="normal">896</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_steps</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="n">pipeline_steps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
     <span class="n">replace_existing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -9036,15 +9036,15 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">897</span>
-<span class="normal">898</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">898</span>
 <span class="normal">899</span>
 <span class="normal">900</span>
 <span class="normal">901</span>
 <span class="normal">902</span>
 <span class="normal">903</span>
 <span class="normal">904</span>
-<span class="normal">905</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">clear_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">step_ids</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="normal">905</span>
+<span class="normal">906</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">clear_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">step_ids</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">step_ids</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
@@ -9073,8 +9073,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">907</span>
-<span class="normal">908</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">908</span>
 <span class="normal">909</span>
 <span class="normal">910</span>
 <span class="normal">911</span>
@@ -9087,7 +9086,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">918</span>
 <span class="normal">919</span>
 <span class="normal">920</span>
-<span class="normal">921</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_input_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="normal">921</span>
+<span class="normal">922</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_input_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">input_field</span><span class="p">:</span>
         <span class="n">tokens</span> <span class="o">=</span> <span class="n">input_field</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
@@ -9122,8 +9122,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">923</span>
-<span class="normal">924</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">924</span>
 <span class="normal">925</span>
 <span class="normal">926</span>
 <span class="normal">927</span>
@@ -9136,7 +9135,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">934</span>
 <span class="normal">935</span>
 <span class="normal">936</span>
-<span class="normal">937</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_output_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="normal">937</span>
+<span class="normal">938</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_output_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="s2">&quot;.&quot;</span> <span class="ow">in</span> <span class="n">output_field</span><span class="p">:</span>
         <span class="n">tokens</span> <span class="o">=</span> <span class="n">output_field</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
@@ -9238,8 +9238,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 953</span>
-<span class="normal"> 954</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 954</span>
 <span class="normal"> 955</span>
 <span class="normal"> 956</span>
 <span class="normal"> 957</span>
@@ -9298,7 +9297,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">1010</span>
 <span class="normal">1011</span>
 <span class="normal">1012</span>
-<span class="normal">1013</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_step</span><span class="p">(</span>
+<span class="normal">1013</span>
+<span class="normal">1014</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_step</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">step_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -9379,8 +9379,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1015</span>
-<span class="normal">1016</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1016</span>
 <span class="normal">1017</span>
 <span class="normal">1018</span>
 <span class="normal">1019</span>
@@ -9420,7 +9419,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">1053</span>
 <span class="normal">1054</span>
 <span class="normal">1055</span>
-<span class="normal">1056</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">connect_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">fields</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]):</span>
+<span class="normal">1056</span>
+<span class="normal">1057</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">connect_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">fields</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]):</span>
 
     <span class="n">pairs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">current_pair</span> <span class="o">=</span> <span class="kc">None</span>
@@ -9482,8 +9482,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1058</span>
-<span class="normal">1059</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1059</span>
 <span class="normal">1060</span>
 <span class="normal">1061</span>
 <span class="normal">1062</span>
@@ -9540,7 +9539,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">1113</span>
 <span class="normal">1114</span>
 <span class="normal">1115</span>
-<span class="normal">1116</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">connect_steps</span><span class="p">(</span>
+<span class="normal">1116</span>
+<span class="normal">1117</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">connect_steps</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">source_step</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
     <span class="n">source_field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -9619,8 +9619,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1118</span>
-<span class="normal">1119</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1119</span>
 <span class="normal">1120</span>
 <span class="normal">1121</span>
 <span class="normal">1122</span>
@@ -9669,7 +9668,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">1165</span>
 <span class="normal">1166</span>
 <span class="normal">1167</span>
-<span class="normal">1168</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">connect_to_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">input_fields</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="normal">1168</span>
+<span class="normal">1169</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">connect_to_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">input_fields</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
     <span class="n">source_tokens</span> <span class="o">=</span> <span class="n">source_field</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_tokens</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
@@ -9740,8 +9740,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1170</span>
-<span class="normal">1171</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1171</span>
 <span class="normal">1172</span>
 <span class="normal">1173</span>
 <span class="normal">1174</span>
@@ -9749,7 +9748,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">1176</span>
 <span class="normal">1177</span>
 <span class="normal">1178</span>
-<span class="normal">1179</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineStep</span><span class="p">:</span>
+<span class="normal">1179</span>
+<span class="normal">1180</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineStep</span><span class="p">:</span>
 
     <span class="n">step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">step_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -9800,8 +9800,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1181</span>
-<span class="normal">1182</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1182</span>
 <span class="normal">1183</span>
 <span class="normal">1184</span>
 <span class="normal">1185</span>
@@ -9851,7 +9850,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">1229</span>
 <span class="normal">1230</span>
 <span class="normal">1231</span>
-<span class="normal">1232</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span>
+<span class="normal">1232</span>
+<span class="normal">1233</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">load_state</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">workflow_state_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">WorkflowState</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a past state.</span>
@@ -9923,8 +9923,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1278</span>
-<span class="normal">1279</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1279</span>
 <span class="normal">1280</span>
 <span class="normal">1281</span>
 <span class="normal">1282</span>
@@ -9933,7 +9932,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">1285</span>
 <span class="normal">1286</span>
 <span class="normal">1287</span>
-<span class="normal">1288</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">aliases</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="normal">1288</span>
+<span class="normal">1289</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">aliases</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_pending_aliases</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">aliases</span><span class="p">)</span>
 
@@ -9964,8 +9964,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1290</span>
-<span class="normal">1291</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1291</span>
 <span class="normal">1292</span>
 <span class="normal">1293</span>
 <span class="normal">1294</span>
@@ -9987,7 +9986,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">1310</span>
 <span class="normal">1311</span>
 <span class="normal">1312</span>
-<span class="normal">1313</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowState</span><span class="p">:</span>
+<span class="normal">1313</span>
+<span class="normal">1314</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowState</span><span class="p">:</span>
 
     <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_state</span>
 
@@ -10031,8 +10031,7 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1315</span>
-<span class="normal">1316</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1316</span>
 <span class="normal">1317</span>
 <span class="normal">1318</span>
 <span class="normal">1319</span>
@@ -10087,7 +10086,8 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 <span class="normal">1368</span>
 <span class="normal">1369</span>
 <span class="normal">1370</span>
-<span class="normal">1371</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">register_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">datetime</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+<span class="normal">1371</span>
+<span class="normal">1372</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">register_snapshot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snapshot</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">datetime</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
 
     <span class="n">timestamps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">snapshot</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -10164,12 +10164,12 @@ complexity-wise. I'm happy to be proven wrong, though.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1373</span>
-<span class="normal">1374</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1374</span>
 <span class="normal">1375</span>
 <span class="normal">1376</span>
 <span class="normal">1377</span>
-<span class="normal">1378</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<span class="normal">1378</span>
+<span class="normal">1379</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_steps</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;Invalid workflow: no steps set yet.&quot;</span>

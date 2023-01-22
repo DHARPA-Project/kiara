@@ -4586,8 +4586,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/events/workflow_registry.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">14</span>
-<span class="normal">15</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">15</span>
 <span class="normal">16</span>
 <span class="normal">17</span>
 <span class="normal">18</span>
@@ -4600,7 +4599,8 @@
 <span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
-<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowArchiveAddedEvent</span><span class="p">(</span><span class="n">RegistryEvent</span><span class="p">):</span>
+<span class="normal">28</span>
+<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowArchiveAddedEvent</span><span class="p">(</span><span class="n">RegistryEvent</span><span class="p">):</span>
 
     <span class="n">event_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;workflow_archive_added&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;workflow_archive_added&quot;</span>
     <span class="n">workflow_archive_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>

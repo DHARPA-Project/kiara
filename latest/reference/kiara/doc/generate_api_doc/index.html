@@ -4653,7 +4653,7 @@
         <span class="k">if</span> <span class="n">page_name</span> <span class="o">==</span> <span class="n">main_module</span><span class="p">:</span>
             <span class="n">title</span> <span class="o">=</span> <span class="n">page_name</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">title</span> <span class="o">=</span> <span class="n">page_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">main_module</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="s2">&quot;➜ &quot;</span><span class="p">)</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">page_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">main_module</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="s2">&quot;➜ &quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
 
         <span class="n">result</span><span class="p">[</span><span class="n">doc_path</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;python_src&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span>

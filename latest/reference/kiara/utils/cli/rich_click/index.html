@@ -4612,8 +4612,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/cli/rich_click.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 74</span>
-<span class="normal"> 75</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 75</span>
 <span class="normal"> 76</span>
 <span class="normal"> 77</span>
 <span class="normal"> 78</span>
@@ -4673,7 +4672,8 @@
 <span class="normal">132</span>
 <span class="normal">133</span>
 <span class="normal">134</span>
-<span class="normal">135</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rich_format_filter_operation_help</span><span class="p">(</span>
+<span class="normal">135</span>
+<span class="normal">136</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rich_format_filter_operation_help</span><span class="p">(</span>
     <span class="n">api</span><span class="p">:</span> <span class="n">KiaraAPI</span><span class="p">,</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">click</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">click</span><span class="o">.</span><span class="n">Group</span><span class="p">],</span>
     <span class="n">ctx</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span>
@@ -4804,8 +4804,7 @@ Takes a command or group and builds the help text output.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/cli/rich_click.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">138</span>
-<span class="normal">139</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">139</span>
 <span class="normal">140</span>
 <span class="normal">141</span>
 <span class="normal">142</span>
@@ -5124,7 +5123,8 @@ Takes a command or group and builds the help text output.</p>
 <span class="normal">455</span>
 <span class="normal">456</span>
 <span class="normal">457</span>
-<span class="normal">458</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rich_format_operation_help</span><span class="p">(</span>
+<span class="normal">458</span>
+<span class="normal">459</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">rich_format_operation_help</span><span class="p">(</span>
     <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">click</span><span class="o">.</span><span class="n">Command</span><span class="p">,</span> <span class="n">click</span><span class="o">.</span><span class="n">Group</span><span class="p">],</span>
     <span class="n">ctx</span><span class="p">:</span> <span class="n">click</span><span class="o">.</span><span class="n">Context</span><span class="p">,</span>
     <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span>
@@ -5257,7 +5257,7 @@ Takes a command or group and builds the help text output.</p>
                 <span class="n">metavar</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metavar_str</span><span class="p">)</span>
 
             <span class="c1"># Range - from</span>
-            <span class="c1"># https://github.com/pallets/click/blob/c63c70dabd3f86ca68678b4f00951f78f52d0270/src/click/core.py#L2698-L2706  # noqa: E501</span>
+            <span class="c1"># https://github.com/pallets/click/blob/c63c70dabd3f86ca68678b4f00951f78f52d0270/src/click/core.py#L2698-L2706</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="c1"># skip count with default range type</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">click</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">_NumberRangeBase</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span>

@@ -4821,13 +4821,13 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/data_store/filesystem_store.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
-<span class="normal">41</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span>
-<span class="normal">46</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">EntityType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="normal">46</span>
+<span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">EntityType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
 
     <span class="n">VALUE</span> <span class="o">=</span> <span class="s2">&quot;values&quot;</span>
     <span class="n">VALUE_DATA</span> <span class="o">=</span> <span class="s2">&quot;value_data&quot;</span>
@@ -4973,8 +4973,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/data_store/filesystem_store.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 54</span>
-<span class="normal"> 55</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 55</span>
 <span class="normal"> 56</span>
 <span class="normal"> 57</span>
 <span class="normal"> 58</span>
@@ -5259,7 +5258,8 @@
 <span class="normal">337</span>
 <span class="normal">338</span>
 <span class="normal">339</span>
-<span class="normal">340</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FileSystemDataArchive</span><span class="p">(</span><span class="n">DataArchive</span><span class="p">,</span> <span class="n">JobArchive</span><span class="p">):</span>
+<span class="normal">340</span>
+<span class="normal">341</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FileSystemDataArchive</span><span class="p">(</span><span class="n">DataArchive</span><span class="p">,</span> <span class="n">JobArchive</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Data store that loads data from the local filesystem.&quot;&quot;&quot;</span>
 
     <span class="n">_archive_type_name</span> <span class="o">=</span> <span class="s2">&quot;filesystem_data_archive&quot;</span>
@@ -5413,7 +5413,7 @@
     <span class="c1">#         full_output_name = output_file.name[8:]</span>
     <span class="c1">#         start_value_id = full_output_name.find(&quot;__value_id__&quot;)</span>
     <span class="c1">#         output_name = full_output_name[0:start_value_id]</span>
-    <span class="c1">#         value_id_str = full_output_name[start_value_id + 12 : -5]  # noqa</span>
+    <span class="c1">#         value_id_str = full_output_name[start_value_id + 12 : -5]</span>
     <span class="c1">#</span>
     <span class="c1">#         value_id = uuid.UUID(value_id_str)</span>
     <span class="c1">#         outputs[output_name] = value_id</span>
@@ -5655,9 +5655,9 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/data/data_store/filesystem_store.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">is_writeable</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">return</span> <span class="kc">False</span>
 </code></pre></div></td></tr></table></div>
@@ -5680,12 +5680,12 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/data/data_store/filesystem_store.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">79</span>
-<span class="normal">80</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">80</span>
 <span class="normal">81</span>
 <span class="normal">82</span>
 <span class="normal">83</span>
-<span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveDetails</span><span class="p">:</span>
+<span class="normal">84</span>
+<span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveDetails</span><span class="p">:</span>
 
     <span class="n">size</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
         <span class="n">f</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_store_path</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;**/*&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
@@ -5711,8 +5711,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/data/data_store/filesystem_store.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">119</span>
-<span class="normal">120</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">120</span>
 <span class="normal">121</span>
 <span class="normal">122</span>
 <span class="normal">123</span>
@@ -5728,7 +5727,8 @@
 <span class="normal">133</span>
 <span class="normal">134</span>
 <span class="normal">135</span>
-<span class="normal">136</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span>
+<span class="normal">136</span>
+<span class="normal">137</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_path</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">entity_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">EntityType</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">base_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -5766,13 +5766,13 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/data/data_store/filesystem_store.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">153</span>
-<span class="normal">154</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">154</span>
 <span class="normal">155</span>
 <span class="normal">156</span>
 <span class="normal">157</span>
 <span class="normal">158</span>
-<span class="normal">159</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_all_job_hashes</span><span class="p">(</span>
+<span class="normal">159</span>
+<span class="normal">160</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_all_job_hashes</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">manifest_hash</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">inputs_hash</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -5844,8 +5844,7 @@ way to quickly determine whether a value id is valid for this data store.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/data/data_store/filesystem_store.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">284</span>
-<span class="normal">285</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">285</span>
 <span class="normal">286</span>
 <span class="normal">287</span>
 <span class="normal">288</span>
@@ -5859,7 +5858,8 @@ way to quickly determine whether a value id is valid for this data store.</p>
 <span class="normal">296</span>
 <span class="normal">297</span>
 <span class="normal">298</span>
-<span class="normal">299</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">has_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">299</span>
+<span class="normal">300</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">has_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether the specific value_id is persisted in this data store.</span>
 <span class="sd">    way to quickly determine whether a value id is valid for this data store.</span>
 
@@ -5895,8 +5895,7 @@ way to quickly determine whether a value id is valid for this data store.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/data/data_store/filesystem_store.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">326</span>
-<span class="normal">327</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">327</span>
 <span class="normal">328</span>
 <span class="normal">329</span>
 <span class="normal">330</span>
@@ -5909,7 +5908,8 @@ way to quickly determine whether a value id is valid for this data store.</p>
 <span class="normal">337</span>
 <span class="normal">338</span>
 <span class="normal">339</span>
-<span class="normal">340</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_chunk</span><span class="p">(</span>
+<span class="normal">340</span>
+<span class="normal">341</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_chunk</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">chunk_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">as_file</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -5959,8 +5959,7 @@ way to quickly determine whether a value id is valid for this data store.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/data/data_store/filesystem_store.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">343</span>
-<span class="normal">344</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">344</span>
 <span class="normal">345</span>
 <span class="normal">346</span>
 <span class="normal">347</span>
@@ -6111,7 +6110,8 @@ way to quickly determine whether a value id is valid for this data store.</p>
 <span class="normal">492</span>
 <span class="normal">493</span>
 <span class="normal">494</span>
-<span class="normal">495</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FilesystemDataStore</span><span class="p">(</span><span class="n">FileSystemDataArchive</span><span class="p">,</span> <span class="n">BaseDataStore</span><span class="p">):</span>
+<span class="normal">495</span>
+<span class="normal">496</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FilesystemDataStore</span><span class="p">(</span><span class="n">FileSystemDataArchive</span><span class="p">,</span> <span class="n">BaseDataStore</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Data store that stores data as files on the local filesystem.&quot;&quot;&quot;</span>
 
     <span class="n">_archive_type_name</span> <span class="o">=</span> <span class="s2">&quot;filesystem_data_store&quot;</span>

@@ -4614,8 +4614,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/events/job_registry.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">15</span>
-<span class="normal">16</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">16</span>
 <span class="normal">17</span>
 <span class="normal">18</span>
 <span class="normal">19</span>
@@ -4627,7 +4626,8 @@
 <span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
-<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobArchiveAddedEvent</span><span class="p">(</span><span class="n">RegistryEvent</span><span class="p">):</span>
+<span class="normal">28</span>
+<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobArchiveAddedEvent</span><span class="p">(</span><span class="n">RegistryEvent</span><span class="p">):</span>
 
     <span class="n">event_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;job_archive_added&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;job_archive_added&quot;</span>
 
@@ -4778,10 +4778,10 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/events/job_registry.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
-<span class="normal">32</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">32</span>
 <span class="normal">33</span>
-<span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobRecordPreStoreEvent</span><span class="p">(</span><span class="n">RegistryEvent</span><span class="p">):</span>
+<span class="normal">34</span>
+<span class="normal">35</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobRecordPreStoreEvent</span><span class="p">(</span><span class="n">RegistryEvent</span><span class="p">):</span>
 
     <span class="n">event_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;job_record_pre_store&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;job_record_pre_store&quot;</span>
     <span class="n">job_record</span><span class="p">:</span> <span class="n">JobRecord</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The job record.&quot;</span><span class="p">)</span>
@@ -4865,10 +4865,10 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/events/job_registry.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">37</span>
-<span class="normal">38</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">38</span>
 <span class="normal">39</span>
-<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobRecordStoredEvent</span><span class="p">(</span><span class="n">RegistryEvent</span><span class="p">):</span>
+<span class="normal">40</span>
+<span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobRecordStoredEvent</span><span class="p">(</span><span class="n">RegistryEvent</span><span class="p">):</span>
 
     <span class="n">event_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;job_record_stored&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;job_record_stored&quot;</span>
     <span class="n">job_record</span><span class="p">:</span> <span class="n">JobRecord</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The job record.&quot;</span><span class="p">)</span>

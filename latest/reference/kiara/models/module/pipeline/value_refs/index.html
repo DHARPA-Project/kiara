@@ -4714,8 +4714,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
-<span class="normal">22</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
 <span class="normal">23</span>
 <span class="normal">24</span>
 <span class="normal">25</span>
@@ -4758,7 +4757,8 @@
 <span class="normal">62</span>
 <span class="normal">63</span>
 <span class="normal">64</span>
-<span class="normal">65</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StepValueAddress</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">65</span>
+<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StepValueAddress</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Small model to describe the address of a value of a step, within a Pipeline/PipelineStructure.&quot;&quot;&quot;</span>
 
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
@@ -4912,8 +4912,8 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">24</span>
-<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
+<span class="normal">26</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
 </code></pre></div></td></tr></table></div>
         </details>
@@ -4998,8 +4998,7 @@ reference the same <code>Value</code> (in most cases)..</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 68</span>
-<span class="normal"> 69</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 69</span>
 <span class="normal"> 70</span>
 <span class="normal"> 71</span>
 <span class="normal"> 72</span>
@@ -5041,7 +5040,8 @@ reference the same <code>Value</code> (in most cases)..</p>
 <span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
-<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueRef</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">111</span>
+<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueRef</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An object that holds information about the location of a value within a pipeline (or other structure).</span>
 
 <span class="sd">    Basically, a `ValueRef` helps the containing object where in its structure the value belongs (for example so</span>
@@ -5154,9 +5154,9 @@ reference the same <code>Value</code> (in most cases)..</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">allow_mutation</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
 </code></pre></div></td></tr></table></div>
@@ -5251,8 +5251,7 @@ reference the same <code>Value</code> (in most cases)..</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">114</span>
-<span class="normal">115</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">115</span>
 <span class="normal">116</span>
 <span class="normal">117</span>
 <span class="normal">118</span>
@@ -5289,7 +5288,8 @@ reference the same <code>Value</code> (in most cases)..</p>
 <span class="normal">149</span>
 <span class="normal">150</span>
 <span class="normal">151</span>
-<span class="normal">152</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StepInputRef</span><span class="p">(</span><span class="n">ValueRef</span><span class="p">):</span>
+<span class="normal">152</span>
+<span class="normal">153</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StepInputRef</span><span class="p">(</span><span class="n">ValueRef</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An input to a step.</span>
 
 <span class="sd">    This object can either have a &#39;connected_outputs&#39; set, or a &#39;connected_pipeline_input&#39;, not both.</span>
@@ -5471,15 +5471,15 @@ reference the same <code>Value</code> (in most cases)..</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/module/pipeline/value_refs.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">132</span>
-<span class="normal">133</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">133</span>
 <span class="normal">134</span>
 <span class="normal">135</span>
 <span class="normal">136</span>
 <span class="normal">137</span>
 <span class="normal">138</span>
 <span class="normal">139</span>
-<span class="normal">140</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@root_validator</span><span class="p">(</span><span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="normal">140</span>
+<span class="normal">141</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@root_validator</span><span class="p">(</span><span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">ensure_single_connected_item</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;connected_outputs&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
@@ -5523,8 +5523,7 @@ reference the same <code>Value</code> (in most cases)..</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">155</span>
-<span class="normal">156</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">156</span>
 <span class="normal">157</span>
 <span class="normal">158</span>
 <span class="normal">159</span>
@@ -5548,7 +5547,8 @@ reference the same <code>Value</code> (in most cases)..</p>
 <span class="normal">177</span>
 <span class="normal">178</span>
 <span class="normal">179</span>
-<span class="normal">180</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StepOutputRef</span><span class="p">(</span><span class="n">ValueRef</span><span class="p">):</span>
+<span class="normal">180</span>
+<span class="normal">181</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StepOutputRef</span><span class="p">(</span><span class="n">ValueRef</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An output to a step.&quot;&quot;&quot;</span>
 
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
@@ -5700,8 +5700,8 @@ reference the same <code>Value</code> (in most cases)..</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">158</span>
-<span class="normal">159</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">159</span>
+<span class="normal">160</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">allow_mutation</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre></div></td></tr></table></div>
         </details>
@@ -5775,8 +5775,7 @@ reference the same <code>Value</code> (in most cases)..</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">183</span>
-<span class="normal">184</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">184</span>
 <span class="normal">185</span>
 <span class="normal">186</span>
 <span class="normal">187</span>
@@ -5788,7 +5787,8 @@ reference the same <code>Value</code> (in most cases)..</p>
 <span class="normal">193</span>
 <span class="normal">194</span>
 <span class="normal">195</span>
-<span class="normal">196</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineInputRef</span><span class="p">(</span><span class="n">ValueRef</span><span class="p">):</span>
+<span class="normal">196</span>
+<span class="normal">197</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineInputRef</span><span class="p">(</span><span class="n">ValueRef</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An input to a pipeline.&quot;&quot;&quot;</span>
 
     <span class="n">connected_inputs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StepValueAddress</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -5903,14 +5903,14 @@ reference the same <code>Value</code> (in most cases)..</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">199</span>
-<span class="normal">200</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">200</span>
 <span class="normal">201</span>
 <span class="normal">202</span>
 <span class="normal">203</span>
 <span class="normal">204</span>
 <span class="normal">205</span>
-<span class="normal">206</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineOutputRef</span><span class="p">(</span><span class="n">ValueRef</span><span class="p">):</span>
+<span class="normal">206</span>
+<span class="normal">207</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineOutputRef</span><span class="p">(</span><span class="n">ValueRef</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An output to a pipeline.&quot;&quot;&quot;</span>
 
     <span class="n">connected_output</span><span class="p">:</span> <span class="n">StepValueAddress</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Connected step outputs.&quot;</span><span class="p">)</span>
@@ -5994,8 +5994,8 @@ reference the same <code>Value</code> (in most cases)..</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/module/pipeline/value_refs.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">17</span>
-<span class="normal">18</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">generate_step_alias</span><span class="p">(</span><span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_name</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
+<span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">generate_step_alias</span><span class="p">(</span><span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_name</span><span class="p">):</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">value_name</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre></div></td></tr></table></div>
       </details>

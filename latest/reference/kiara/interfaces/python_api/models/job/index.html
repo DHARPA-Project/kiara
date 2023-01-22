@@ -4590,8 +4590,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/models/job.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">10</span>
-<span class="normal">11</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">11</span>
 <span class="normal">12</span>
 <span class="normal">13</span>
 <span class="normal">14</span>
@@ -4608,7 +4607,8 @@
 <span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
-<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobDesc</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">28</span>
+<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobDesc</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An object describing a compute job with both raw or referenced inputs.&quot;&quot;&quot;</span>
 
     <span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The module type.&quot;</span><span class="p">)</span>
@@ -4713,8 +4713,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/models/job.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
-<span class="normal">20</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">20</span>
 <span class="normal">21</span>
 <span class="normal">22</span>
 <span class="normal">23</span>
@@ -4722,7 +4721,8 @@
 <span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
-<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_job_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JobConfig</span><span class="p">:</span>
+<span class="normal">28</span>
+<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_job_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JobConfig</span><span class="p">:</span>
 
     <span class="n">manifest</span> <span class="o">=</span> <span class="n">Manifest</span><span class="p">(</span>
         <span class="n">module_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span> <span class="n">module_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_config</span>

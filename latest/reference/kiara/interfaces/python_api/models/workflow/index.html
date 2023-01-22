@@ -4590,8 +4590,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/interfaces/python_api/models/workflow.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">12</span>
-<span class="normal">13</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">13</span>
 <span class="normal">14</span>
 <span class="normal">15</span>
 <span class="normal">16</span>
@@ -4610,7 +4609,8 @@
 <span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span>
-<span class="normal">32</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowMatcher</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+<span class="normal">32</span>
+<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">WorkflowMatcher</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An object describing requirements values should satisfy in order to be included in a query result.&quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
@@ -4683,11 +4683,11 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/models/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">15</span>
-<span class="normal">16</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">16</span>
 <span class="normal">17</span>
 <span class="normal">18</span>
-<span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">19</span>
+<span class="normal">20</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_matcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">match_options</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 
     <span class="n">m</span> <span class="o">=</span> <span class="n">WorkflowMatcher</span><span class="p">(</span><span class="o">**</span><span class="n">match_options</span><span class="p">)</span>
@@ -4712,14 +4712,14 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/python_api/models/workflow.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
-<span class="normal">26</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">26</span>
 <span class="normal">27</span>
 <span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span>
-<span class="normal">32</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">is_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">32</span>
+<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">is_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_alias</span><span class="p">:</span>
         <span class="n">aliases</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">workflow_registry</span><span class="o">.</span><span class="n">get_aliases</span><span class="p">(</span><span class="n">workflow_id</span><span class="o">=</span><span class="n">workflow_id</span><span class="p">)</span>

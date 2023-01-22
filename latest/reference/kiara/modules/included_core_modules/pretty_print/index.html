@@ -4656,8 +4656,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
-<span class="normal">23</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
 <span class="normal">24</span>
 <span class="normal">25</span>
 <span class="normal">26</span>
@@ -4665,7 +4664,8 @@
 <span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
-<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PrettyPrintConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
+<span class="normal">31</span>
+<span class="normal">32</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PrettyPrintConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
 
     <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the source value.&quot;</span><span class="p">)</span>
     <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The value type of the rendered value.&quot;</span><span class="p">)</span>
@@ -4742,11 +4742,11 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">27</span>
-<span class="normal">28</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
-<span class="normal">31</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
+<span class="normal">31</span>
+<span class="normal">32</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">validate_source_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;render_config&quot;</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid source type: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
@@ -4784,8 +4784,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 34</span>
-<span class="normal"> 35</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 35</span>
 <span class="normal"> 36</span>
 <span class="normal"> 37</span>
 <span class="normal"> 38</span>
@@ -4861,7 +4860,8 @@
 <span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
-<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PrettyPrintModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+<span class="normal">111</span>
+<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PrettyPrintModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
 
     <span class="n">_module_type_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
     <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">PrettyPrintConfig</span>
@@ -4881,7 +4881,7 @@
             <span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="mi">14</span><span class="p">:]</span>
             <span class="n">end_start_type</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;__as__&quot;</span><span class="p">)</span>
             <span class="n">source_type</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">end_start_type</span><span class="p">]</span>
-            <span class="n">target_type</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="n">end_start_type</span> <span class="o">+</span> <span class="mi">6</span> <span class="p">:]</span>  <span class="c1"># noqa</span>
+            <span class="n">target_type</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="n">end_start_type</span> <span class="o">+</span> <span class="mi">6</span> <span class="p">:]</span>
             <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">source_type</span><span class="p">,</span> <span class="n">target_type</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">result</span>
 
@@ -4991,8 +4991,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
-<span class="normal">40</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
@@ -5008,7 +5007,8 @@
 <span class="normal">53</span>
 <span class="normal">54</span>
 <span class="normal">55</span>
-<span class="normal">56</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">56</span>
+<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">retrieve_supported_render_combinations</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
@@ -5023,7 +5023,7 @@
         <span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="mi">14</span><span class="p">:]</span>
         <span class="n">end_start_type</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;__as__&quot;</span><span class="p">)</span>
         <span class="n">source_type</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">end_start_type</span><span class="p">]</span>
-        <span class="n">target_type</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="n">end_start_type</span> <span class="o">+</span> <span class="mi">6</span> <span class="p">:]</span>  <span class="c1"># noqa</span>
+        <span class="n">target_type</span> <span class="o">=</span> <span class="n">attr</span><span class="p">[</span><span class="n">end_start_type</span> <span class="o">+</span> <span class="mi">6</span> <span class="p">:]</span>
         <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">source_type</span><span class="p">,</span> <span class="n">target_type</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div></td></tr></table></div>
@@ -5046,8 +5046,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">64</span>
-<span class="normal">65</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">65</span>
 <span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span>
@@ -5062,7 +5061,8 @@
 <span class="normal">77</span>
 <span class="normal">78</span>
 <span class="normal">79</span>
-<span class="normal">80</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
+<span class="normal">80</span>
+<span class="normal">81</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
 
@@ -5099,8 +5099,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">82</span>
-<span class="normal">83</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">83</span>
 <span class="normal">84</span>
 <span class="normal">85</span>
 <span class="normal">86</span>
@@ -5108,7 +5107,8 @@
 <span class="normal">88</span>
 <span class="normal">89</span>
 <span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
+<span class="normal">91</span>
+<span class="normal">92</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
 
@@ -5138,8 +5138,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 93</span>
-<span class="normal"> 94</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 94</span>
 <span class="normal"> 95</span>
 <span class="normal"> 96</span>
 <span class="normal"> 97</span>
@@ -5156,7 +5155,8 @@
 <span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
-<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
+<span class="normal">111</span>
+<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
 
     <span class="n">source_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;source_type&quot;</span><span class="p">)</span>
     <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
@@ -5208,8 +5208,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">114</span>
-<span class="normal">115</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">115</span>
 <span class="normal">116</span>
 <span class="normal">117</span>
 <span class="normal">118</span>
@@ -5281,7 +5280,8 @@
 <span class="normal">184</span>
 <span class="normal">185</span>
 <span class="normal">186</span>
-<span class="normal">187</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueTypePrettyPrintModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+<span class="normal">187</span>
+<span class="normal">188</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueTypePrettyPrintModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
 
     <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;pretty_print.value&quot;</span>
     <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">PrettyPrintConfig</span>
@@ -5403,8 +5403,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">122</span>
-<span class="normal">123</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">123</span>
 <span class="normal">124</span>
 <span class="normal">125</span>
 <span class="normal">126</span>
@@ -5423,7 +5422,8 @@
 <span class="normal">139</span>
 <span class="normal">140</span>
 <span class="normal">141</span>
-<span class="normal">142</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
+<span class="normal">142</span>
+<span class="normal">143</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_inputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
 
@@ -5464,8 +5464,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">144</span>
-<span class="normal">145</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
 <span class="normal">146</span>
 <span class="normal">147</span>
 <span class="normal">148</span>
@@ -5473,7 +5472,8 @@
 <span class="normal">150</span>
 <span class="normal">151</span>
 <span class="normal">152</span>
-<span class="normal">153</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
+<span class="normal">153</span>
+<span class="normal">154</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_outputs_schema</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueSchema</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
 
@@ -5503,8 +5503,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">155</span>
-<span class="normal">156</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">156</span>
 <span class="normal">157</span>
 <span class="normal">158</span>
 <span class="normal">159</span>
@@ -5535,7 +5534,8 @@
 <span class="normal">184</span>
 <span class="normal">185</span>
 <span class="normal">186</span>
-<span class="normal">187</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
+<span class="normal">187</span>
+<span class="normal">188</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">):</span>
 
     <span class="c1"># source_type = self.get_config_value(&quot;source_type&quot;)</span>
     <span class="n">target_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_config_value</span><span class="p">(</span><span class="s2">&quot;target_type&quot;</span><span class="p">)</span>
@@ -5601,9 +5601,9 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/included_core_modules/pretty_print.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">190</span>
-<span class="normal">191</span>
-<span class="normal">192</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PrettyPrintAnyValueModule</span><span class="p">(</span><span class="n">PrettyPrintModule</span><span class="p">):</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PrettyPrintAnyValueModule</span><span class="p">(</span><span class="n">PrettyPrintModule</span><span class="p">):</span>
 
     <span class="n">_module_type_name</span> <span class="o">=</span> <span class="s2">&quot;pretty_print.any.value&quot;</span>
 </code></pre></div></td></tr></table></div>

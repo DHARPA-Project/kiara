@@ -4606,8 +4606,7 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/data_types.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
-<span class="normal">22</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
 <span class="normal">23</span>
 <span class="normal">24</span>
 <span class="normal">25</span>
@@ -4665,7 +4664,8 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 <span class="normal">77</span>
 <span class="normal">78</span>
 <span class="normal">79</span>
-<span class="normal">80</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">DictModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+<span class="normal">80</span>
+<span class="normal">81</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">DictModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A dict implentation that contains (optional) schema information of the dicts items.&quot;&quot;&quot;</span>
 
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
@@ -4889,9 +4889,9 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/data_types.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">24</span>
-<span class="normal">25</span>
-<span class="normal">26</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">json_loads</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span>
     <span class="n">json_dumps</span> <span class="o">=</span> <span class="n">orjson_dumps</span>
 </code></pre></div></td></tr></table></div>

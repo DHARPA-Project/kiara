@@ -4592,14 +4592,18 @@
 <span class="normal">16</span>
 <span class="normal">17</span>
 <span class="normal">18</span>
-<span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">orjson_dumps</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">orjson_dumps</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">):</span>
     <span class="c1"># orjson.dumps returns bytes, to match standard json.dumps we need to decode</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span> <span class="o">**</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">is_debug</span><span class="p">():</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error dumping json data: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="kn">from</span> <span class="nn">kiara.utils.cli</span> <span class="kn">import</span> <span class="n">terminal_print</span>
+
+            <span class="n">terminal_print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error dumping json data: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="kn">from</span> <span class="nn">kiara</span> <span class="kn">import</span> <span class="n">dbg</span>
 
             <span class="n">dbg</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>

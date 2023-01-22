@@ -4749,8 +4749,7 @@ will be used if no user input was given (yet) for a value.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/values/value_schema.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">17</span>
-<span class="normal">18</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
 <span class="normal">19</span>
 <span class="normal">20</span>
 <span class="normal">21</span>
@@ -4829,7 +4828,8 @@ will be used if no user input was given (yet) for a value.</p>
 <span class="normal">94</span>
 <span class="normal">95</span>
 <span class="normal">96</span>
-<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueSchema</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+<span class="normal">97</span>
+<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueSchema</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The schema of a value.</span>
 
 <span class="sd">    The schema contains the [ValueTypeOrm][kiara.data.values.ValueTypeOrm] of a value, as well as an optional default that</span>
@@ -5055,8 +5055,8 @@ will be used if no user input was given (yet) for a value.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/values/value_schema.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
-<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">29</span>
+<span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">use_enum_values</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre></div></td></tr></table></div>
         </details>
@@ -5115,10 +5115,10 @@ will be used if no user input was given (yet) for a value.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value_schema.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">54</span>
-<span class="normal">55</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">55</span>
 <span class="normal">56</span>
-<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="normal">57</span>
+<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">validate_doc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="n">doc</span> <span class="o">=</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">doc</span>
@@ -5142,15 +5142,15 @@ will be used if no user input was given (yet) for a value.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value_schema.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">63</span>
-<span class="normal">64</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">64</span>
 <span class="normal">65</span>
 <span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span>
-<span class="normal">71</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">is_required</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">71</span>
+<span class="normal">72</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">is_required</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">optional</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
@@ -5203,8 +5203,7 @@ will be used if no user input was given (yet) for a value.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
-<span class="normal">24</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">24</span>
 <span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
@@ -5272,7 +5271,8 @@ will be used if no user input was given (yet) for a value.</p>
 <span class="normal">89</span>
 <span class="normal">90</span>
 <span class="normal">91</span>
-<span class="normal">92</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraModuleConfig</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+<span class="normal">92</span>
+<span class="normal">93</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraModuleConfig</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class that describes the configuration a [``KiaraModule``][kiara.module.KiaraModule] class accepts.</span>
 
 <span class="sd">    This is stored in the ``_config_cls`` class attribute in each ``KiaraModule`` class.</span>
@@ -5411,9 +5411,9 @@ will be used if no user input was given (yet) for a value.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
     <span class="n">validate_assignment</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre></div></td></tr></table></div>
@@ -5498,8 +5498,7 @@ will be used if no user input was given (yet) for a value.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
-<span class="normal">41</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
@@ -5509,7 +5508,8 @@ will be used if no user input was given (yet) for a value.</p>
 <span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
-<span class="normal">51</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">51</span>
+<span class="normal">52</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">requires_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return whether this class can be used as-is, or requires configuration before an instance can be created.&quot;&quot;&quot;</span>
 
@@ -5543,15 +5543,15 @@ will be used if no user input was given (yet) for a value.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">65</span>
-<span class="normal">66</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">66</span>
 <span class="normal">67</span>
 <span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span>
 <span class="normal">71</span>
 <span class="normal">72</span>
-<span class="normal">73</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="normal">73</span>
+<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the value for the specified configuation key.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__fields__</span><span class="p">:</span>
@@ -5580,8 +5580,7 @@ will be used if no user input was given (yet) for a value.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/module/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">75</span>
-<span class="normal">76</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">76</span>
 <span class="normal">77</span>
 <span class="normal">78</span>
 <span class="normal">79</span>
@@ -5597,7 +5596,8 @@ will be used if no user input was given (yet) for a value.</p>
 <span class="normal">89</span>
 <span class="normal">90</span>
 <span class="normal">91</span>
-<span class="normal">92</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+<span class="normal">92</span>
+<span class="normal">93</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="n">my_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">MINIMAL</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">my_table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Field name&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
@@ -7599,7 +7599,7 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the name fo the current context.&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_context_alias</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">context</span>  <span class="c1"># noqa</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">context</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_context_alias</span>  <span class="c1"># type: ignore</span>
 
     <span class="k">def</span> <span class="nf">create_new_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">set_active</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -9658,7 +9658,7 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the name fo the current context.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_context_alias</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">context</span>  <span class="c1"># noqa</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">context</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_context_alias</span>  <span class="c1"># type: ignore</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -15390,8 +15390,7 @@ how something was created, and in which environment.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/context/__init__.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 75</span>
-<span class="normal"> 76</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 76</span>
 <span class="normal"> 77</span>
 <span class="normal"> 78</span>
 <span class="normal"> 79</span>
@@ -15735,7 +15734,8 @@ how something was created, and in which environment.</p>
 <span class="normal">417</span>
 <span class="normal">418</span>
 <span class="normal">419</span>
-<span class="normal">420</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Kiara</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="normal">420</span>
+<span class="normal">421</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Kiara</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The core context of a kiara session.</span>
 
 <span class="sd">    The `Kiara` object holds all information related to the current environment the user does works in. This includes:</span>
@@ -16496,13 +16496,13 @@ how something was created, and in which environment.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 97</span>
-<span class="normal"> 98</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 98</span>
 <span class="normal"> 99</span>
 <span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
-<span class="normal">103</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">103</span>
+<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The default *kiara* context. In most cases, it&#39;s recommended you create and manage your own, though.&quot;&quot;&quot;</span>
 
@@ -16529,12 +16529,12 @@ how something was created, and in which environment.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">205</span>
-<span class="normal">206</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">206</span>
 <span class="normal">207</span>
 <span class="normal">208</span>
 <span class="normal">209</span>
-<span class="normal">210</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">update_runtime_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">settings</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraRuntimeConfig</span><span class="p">:</span>
+<span class="normal">210</span>
+<span class="normal">211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">update_runtime_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">settings</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraRuntimeConfig</span><span class="p">:</span>
 
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">runtime_config</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
@@ -16560,8 +16560,7 @@ how something was created, and in which environment.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">297</span>
-<span class="normal">298</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">298</span>
 <span class="normal">299</span>
 <span class="normal">300</span>
 <span class="normal">301</span>
@@ -16589,7 +16588,8 @@ how something was created, and in which environment.</p>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
-<span class="normal">326</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_manifest</span><span class="p">(</span>
+<span class="normal">326</span>
+<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_manifest</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">module_or_operation</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Manifest</span><span class="p">:</span>
 
@@ -16703,8 +16703,7 @@ how something was created, and in which environment.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">337</span>
-<span class="normal">338</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">338</span>
 <span class="normal">339</span>
 <span class="normal">340</span>
 <span class="normal">341</span>
@@ -16717,7 +16716,8 @@ how something was created, and in which environment.</p>
 <span class="normal">348</span>
 <span class="normal">349</span>
 <span class="normal">350</span>
-<span class="normal">351</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">queue</span><span class="p">(</span>
+<span class="normal">351</span>
+<span class="normal">352</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">queue</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Queue a job with the specified manifest and inputs.</span>
@@ -16798,8 +16798,7 @@ how something was created, and in which environment.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">353</span>
-<span class="normal">354</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">354</span>
 <span class="normal">355</span>
 <span class="normal">356</span>
 <span class="normal">357</span>
@@ -16809,7 +16808,8 @@ how something was created, and in which environment.</p>
 <span class="normal">361</span>
 <span class="normal">362</span>
 <span class="normal">363</span>
-<span class="normal">364</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
+<span class="normal">364</span>
+<span class="normal">365</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manifest</span><span class="p">:</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Queue a job with the specified manifest and inputs.</span>
 
 <span class="sd">    Arguments:</span>
@@ -16841,8 +16841,7 @@ how something was created, and in which environment.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">366</span>
-<span class="normal">367</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">367</span>
 <span class="normal">368</span>
 <span class="normal">369</span>
 <span class="normal">370</span>
@@ -16874,7 +16873,8 @@ how something was created, and in which environment.</p>
 <span class="normal">396</span>
 <span class="normal">397</span>
 <span class="normal">398</span>
-<span class="normal">399</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save_values</span><span class="p">(</span>
+<span class="normal">399</span>
+<span class="normal">400</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save_values</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">alias_map</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StoreValuesResult</span><span class="p">:</span>
 
@@ -16928,8 +16928,8 @@ how something was created, and in which environment.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">401</span>
-<span class="normal">402</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_context_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextInfo</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">402</span>
+<span class="normal">403</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_context_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ContextInfo</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">ContextInfo</span><span class="o">.</span><span class="n">create_from_context</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -16951,8 +16951,7 @@ how something was created, and in which environment.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/context/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">404</span>
-<span class="normal">405</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">405</span>
 <span class="normal">406</span>
 <span class="normal">407</span>
 <span class="normal">408</span>
@@ -16967,7 +16966,8 @@ how something was created, and in which environment.</p>
 <span class="normal">417</span>
 <span class="normal">418</span>
 <span class="normal">419</span>
-<span class="normal">420</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_all_archives</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">KiaraArchive</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="normal">420</span>
+<span class="normal">421</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_all_archives</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">KiaraArchive</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 
     <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">KiaraArchive</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -17058,8 +17058,7 @@ how something was created, and in which environment.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/modules/__init__.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">294</span>
-<span class="normal">295</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">295</span>
 <span class="normal">296</span>
 <span class="normal">297</span>
 <span class="normal">298</span>
@@ -17322,7 +17321,8 @@ how something was created, and in which environment.</p>
 <span class="normal">555</span>
 <span class="normal">556</span>
 <span class="normal">557</span>
-<span class="normal">558</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraModule</span><span class="p">(</span><span class="n">InputOutputObject</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">KIARA_CONFIG</span><span class="p">]):</span>
+<span class="normal">558</span>
+<span class="normal">559</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraModule</span><span class="p">(</span><span class="n">InputOutputObject</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">KIARA_CONFIG</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The base class that every custom module in *Kiara* needs to inherit from.</span>
 
 <span class="sd">    The core of every ``KiaraModule`` is a ``process`` method, which should be a &#39;pure&#39;,</span>
@@ -17796,10 +17796,10 @@ how something was created, and in which environment.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">325</span>
-<span class="normal">326</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">326</span>
 <span class="normal">327</span>
-<span class="normal">328</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">328</span>
+<span class="normal">329</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">is_pipeline</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether this module type is a pipeline, or not.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="kc">False</span>
@@ -17867,8 +17867,7 @@ how something was created, and in which environment.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">435</span>
-<span class="normal">436</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">436</span>
 <span class="normal">437</span>
 <span class="normal">438</span>
 <span class="normal">439</span>
@@ -17882,7 +17881,8 @@ how something was created, and in which environment.</p>
 <span class="normal">447</span>
 <span class="normal">448</span>
 <span class="normal">449</span>
-<span class="normal">450</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_config_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="normal">450</span>
+<span class="normal">451</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_config_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the value for a specific configuration option.</span>
 
 <span class="sd">    Arguments:</span>
@@ -17973,8 +17973,7 @@ how something was created, and in which environment.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">452</span>
-<span class="normal">453</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">453</span>
 <span class="normal">454</span>
 <span class="normal">455</span>
 <span class="normal">456</span>
@@ -18021,7 +18020,8 @@ how something was created, and in which environment.</p>
 <span class="normal">497</span>
 <span class="normal">498</span>
 <span class="normal">499</span>
-<span class="normal">500</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">inputs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueMap&quot;</span><span class="p">:</span>
+<span class="normal">500</span>
+<span class="normal">501</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">inputs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueMap&quot;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the module ad-hoc.</span>
 
 <span class="sd">    This is mostly used in unit tests, you typically want to run a module via the KiaraAPI instance.</span>
@@ -18128,8 +18128,7 @@ as well as wrapping input/output-data related functionality.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">502</span>
-<span class="normal">503</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">503</span>
 <span class="normal">504</span>
 <span class="normal">505</span>
 <span class="normal">506</span>
@@ -18158,7 +18157,8 @@ as well as wrapping input/output-data related functionality.</p>
 <span class="normal">529</span>
 <span class="normal">530</span>
 <span class="normal">531</span>
-<span class="normal">532</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_step</span><span class="p">(</span>
+<span class="normal">532</span>
+<span class="normal">533</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_step</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="s2">&quot;ValueMap&quot;</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="s2">&quot;ValueMap&quot;</span><span class="p">,</span> <span class="n">job_log</span><span class="p">:</span> <span class="n">JobLog</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Kick off processing for a specific set of input/outputs.</span>
@@ -18209,9 +18209,9 @@ as well as wrapping input/output-data related functionality.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/modules/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">556</span>
-<span class="normal">557</span>
-<span class="normal">558</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">557</span>
+<span class="normal">558</span>
+<span class="normal">559</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -18247,8 +18247,7 @@ as well as wrapping input/output-data related functionality.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 759</span>
-<span class="normal"> 760</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 760</span>
 <span class="normal"> 761</span>
 <span class="normal"> 762</span>
 <span class="normal"> 763</span>
@@ -18769,7 +18768,8 @@ as well as wrapping input/output-data related functionality.</p>
 <span class="normal">1278</span>
 <span class="normal">1279</span>
 <span class="normal">1280</span>
-<span class="normal">1281</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Value</span><span class="p">(</span><span class="n">ValueDetails</span><span class="p">):</span>
+<span class="normal">1281</span>
+<span class="normal">1282</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Value</span><span class="p">(</span><span class="n">ValueDetails</span><span class="p">):</span>
 
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.value&quot;</span>
 
@@ -19568,8 +19568,7 @@ as well as wrapping input/output-data related functionality.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">788</span>
-<span class="normal">789</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">789</span>
 <span class="normal">790</span>
 <span class="normal">791</span>
 <span class="normal">792</span>
@@ -19614,7 +19613,8 @@ as well as wrapping input/output-data related functionality.</p>
 <span class="normal">831</span>
 <span class="normal">832</span>
 <span class="normal">833</span>
-<span class="normal">834</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_property</span><span class="p">(</span>
+<span class="normal">834</span>
+<span class="normal">835</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_property</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">value_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">],</span>
     <span class="n">property_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -19681,14 +19681,14 @@ as well as wrapping input/output-data related functionality.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">836</span>
-<span class="normal">837</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">837</span>
 <span class="normal">838</span>
 <span class="normal">839</span>
 <span class="normal">840</span>
 <span class="normal">841</span>
 <span class="normal">842</span>
-<span class="normal">843</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_destiny_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">destiny_alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="normal">843</span>
+<span class="normal">844</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">add_destiny_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">destiny_alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_stored</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
@@ -19716,14 +19716,14 @@ as well as wrapping input/output-data related functionality.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">965</span>
-<span class="normal">966</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">966</span>
 <span class="normal">967</span>
 <span class="normal">968</span>
 <span class="normal">969</span>
 <span class="normal">970</span>
 <span class="normal">971</span>
-<span class="normal">972</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_property_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">property_key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Value&quot;</span><span class="p">:</span>
+<span class="normal">972</span>
+<span class="normal">973</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_property_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">property_key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Value&quot;</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="n">property_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_links</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
@@ -19751,13 +19751,13 @@ as well as wrapping input/output-data related functionality.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">974</span>
-<span class="normal">975</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">975</span>
 <span class="normal">976</span>
 <span class="normal">977</span>
 <span class="normal">978</span>
 <span class="normal">979</span>
-<span class="normal">980</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_property_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">property_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="normal">980</span>
+<span class="normal">981</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_property_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">property_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_property_value</span><span class="p">(</span><span class="n">property_key</span><span class="o">=</span><span class="n">property_key</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
@@ -19784,9 +19784,9 @@ as well as wrapping input/output-data related functionality.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">982</span>
-<span class="normal">983</span>
-<span class="normal">984</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_all_property_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">983</span>
+<span class="normal">984</span>
+<span class="normal">985</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_all_property_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_property_data</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">property_names</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
@@ -19809,14 +19809,14 @@ as well as wrapping input/output-data related functionality.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">986</span>
-<span class="normal">987</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">987</span>
 <span class="normal">988</span>
 <span class="normal">989</span>
 <span class="normal">990</span>
 <span class="normal">991</span>
 <span class="normal">992</span>
-<span class="normal">993</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">lookup_self_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="normal">993</span>
+<span class="normal">994</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">lookup_self_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
@@ -19844,14 +19844,14 @@ as well as wrapping input/output-data related functionality.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 995</span>
-<span class="normal"> 996</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 996</span>
 <span class="normal"> 997</span>
 <span class="normal"> 998</span>
 <span class="normal"> 999</span>
 <span class="normal">1000</span>
 <span class="normal">1001</span>
-<span class="normal">1002</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueInfo&quot;</span><span class="p">:</span>
+<span class="normal">1002</span>
+<span class="normal">1003</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueInfo&quot;</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_registry</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
@@ -19879,8 +19879,7 @@ as well as wrapping input/output-data related functionality.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1004</span>
-<span class="normal">1005</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1005</span>
 <span class="normal">1006</span>
 <span class="normal">1007</span>
 <span class="normal">1008</span>
@@ -19995,7 +19994,8 @@ as well as wrapping input/output-data related functionality.</p>
 <span class="normal">1117</span>
 <span class="normal">1118</span>
 <span class="normal">1119</span>
-<span class="normal">1120</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_info_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="normal">1120</span>
+<span class="normal">1121</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_info_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
     <span class="n">show_pedigree</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_pedigree&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">show_lineage</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_lineage&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -20132,8 +20132,7 @@ as well as wrapping input/output-data related functionality.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1122</span>
-<span class="normal">1123</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1123</span>
 <span class="normal">1124</span>
 <span class="normal">1125</span>
 <span class="normal">1126</span>
@@ -20291,7 +20290,8 @@ as well as wrapping input/output-data related functionality.</p>
 <span class="normal">1278</span>
 <span class="normal">1279</span>
 <span class="normal">1280</span>
-<span class="normal">1281</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+<span class="normal">1281</span>
+<span class="normal">1282</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="kn">from</span> <span class="nn">kiara.utils.output</span> <span class="kn">import</span> <span class="n">extract_renderable</span>
 
@@ -20484,8 +20484,7 @@ as well as wrapping input/output-data related functionality.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1300</span>
-<span class="normal">1301</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1301</span>
 <span class="normal">1302</span>
 <span class="normal">1303</span>
 <span class="normal">1304</span>
@@ -20672,7 +20671,8 @@ as well as wrapping input/output-data related functionality.</p>
 <span class="normal">1485</span>
 <span class="normal">1486</span>
 <span class="normal">1487</span>
-<span class="normal">1488</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueMap</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]):</span>  <span class="c1"># type: ignore</span>
+<span class="normal">1488</span>
+<span class="normal">1489</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueMap</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">,</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Value</span><span class="p">]):</span>  <span class="c1"># type: ignore</span>
 
     <span class="n">values_schema</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The schemas for all the values in this set.&quot;</span>
@@ -20951,9 +20951,9 @@ as well as wrapping input/output-data related functionality.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1310</span>
-<span class="normal">1311</span>
-<span class="normal">1312</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1311</span>
+<span class="normal">1312</span>
+<span class="normal">1313</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
 <span class="k">def</span> <span class="nf">get_value_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Value</span><span class="p">:</span>
     <span class="k">pass</span>
 </code></pre></div></td></tr></table></div>
@@ -20978,8 +20978,7 @@ as well as wrapping input/output-data related functionality.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1327</span>
-<span class="normal">1328</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1328</span>
 <span class="normal">1329</span>
 <span class="normal">1330</span>
 <span class="normal">1331</span>
@@ -21000,7 +20999,8 @@ as well as wrapping input/output-data related functionality.</p>
 <span class="normal">1346</span>
 <span class="normal">1347</span>
 <span class="normal">1348</span>
-<span class="normal">1349</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">check_invalid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="normal">1349</span>
+<span class="normal">1350</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">check_invalid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether the value set is invalid, if it is, return a description of what&#39;s wrong.&quot;&quot;&quot;</span>
 
     <span class="n">invalid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -21047,8 +21047,7 @@ in which case an Exception will be raised (obviously).</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1351</span>
-<span class="normal">1352</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1352</span>
 <span class="normal">1353</span>
 <span class="normal">1354</span>
 <span class="normal">1355</span>
@@ -21075,7 +21074,8 @@ in which case an Exception will be raised (obviously).</p>
 <span class="normal">1376</span>
 <span class="normal">1377</span>
 <span class="normal">1378</span>
-<span class="normal">1379</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_value_data_for_fields</span><span class="p">(</span>
+<span class="normal">1379</span>
+<span class="normal">1380</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_value_data_for_fields</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">field_names</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">raise_exception_when_unset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the data for a one or several fields of this ValueMap.</span>
@@ -21124,12 +21124,12 @@ in which case an Exception will be raised (obviously).</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1381</span>
-<span class="normal">1382</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1382</span>
 <span class="normal">1383</span>
 <span class="normal">1384</span>
 <span class="normal">1385</span>
-<span class="normal">1386</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_value_data</span><span class="p">(</span>
+<span class="normal">1386</span>
+<span class="normal">1387</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_value_data</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">raise_exception_when_unset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_data_for_fields</span><span class="p">(</span>
@@ -21155,8 +21155,8 @@ in which case an Exception will be raised (obviously).</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1388</span>
-<span class="normal">1389</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_all_value_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1389</span>
+<span class="normal">1390</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_all_value_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">value_id</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_names</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -21178,13 +21178,13 @@ in which case an Exception will be raised (obviously).</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1391</span>
-<span class="normal">1392</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1392</span>
 <span class="normal">1393</span>
 <span class="normal">1394</span>
 <span class="normal">1395</span>
 <span class="normal">1396</span>
-<span class="normal">1397</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_all_value_data</span><span class="p">(</span>
+<span class="normal">1397</span>
+<span class="normal">1398</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_all_value_data</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">raise_exception_when_unset</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value_data_for_fields</span><span class="p">(</span>
@@ -21211,10 +21211,10 @@ in which case an Exception will be raised (obviously).</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1399</span>
-<span class="normal">1400</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1400</span>
 <span class="normal">1401</span>
-<span class="normal">1402</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1402</span>
+<span class="normal">1403</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">values</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
@@ -21238,10 +21238,10 @@ in which case an Exception will be raised (obviously).</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1404</span>
-<span class="normal">1405</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1405</span>
 <span class="normal">1406</span>
-<span class="normal">1407</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="normal">1407</span>
+<span class="normal">1408</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;The value set implementation &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; is read-only, and does not support the setting or changing of values.&quot;</span>
     <span class="p">)</span>
@@ -21265,8 +21265,7 @@ in which case an Exception will be raised (obviously).</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1434</span>
-<span class="normal">1435</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1435</span>
 <span class="normal">1436</span>
 <span class="normal">1437</span>
 <span class="normal">1438</span>
@@ -21278,7 +21277,8 @@ in which case an Exception will be raised (obviously).</p>
 <span class="normal">1444</span>
 <span class="normal">1445</span>
 <span class="normal">1446</span>
-<span class="normal">1447</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_invalid_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="normal">1447</span>
+<span class="normal">1448</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_invalid_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="n">inv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_invalid</span><span class="p">()</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">inv</span><span class="p">:</span>
@@ -21312,8 +21312,7 @@ in which case an Exception will be raised (obviously).</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1449</span>
-<span class="normal">1450</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1450</span>
 <span class="normal">1451</span>
 <span class="normal">1452</span>
 <span class="normal">1453</span>
@@ -21351,7 +21350,8 @@ in which case an Exception will be raised (obviously).</p>
 <span class="normal">1485</span>
 <span class="normal">1486</span>
 <span class="normal">1487</span>
-<span class="normal">1488</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+<span class="normal">1488</span>
+<span class="normal">1489</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="n">in_panel</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;in_panel&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">in_panel</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -21491,7 +21491,7 @@ in which case an Exception will be raised (obviously).</p>
 <span class="p">):</span>
 
     <span class="n">objs</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="p">[</span><span class="s2">&quot;[green]----------------------------------------------[/green]&quot;</span><span class="p">]</span>
+        <span class="p">[</span><span class="s2">&quot;[green]----------------------------------------------[/green]&quot;</span><span class="p">]</span>  <span class="c1"># noqa</span>
         <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span>
         <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;[green]----------------------------------------------[/green]&quot;</span><span class="p">]</span>
     <span class="p">)</span>

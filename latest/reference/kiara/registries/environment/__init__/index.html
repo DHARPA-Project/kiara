@@ -4612,8 +4612,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/registries/environment/__init__.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 19</span>
-<span class="normal"> 20</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 20</span>
 <span class="normal"> 21</span>
 <span class="normal"> 22</span>
 <span class="normal"> 23</span>
@@ -4747,7 +4746,8 @@
 <span class="normal">151</span>
 <span class="normal">152</span>
 <span class="normal">153</span>
-<span class="normal">154</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">EnvironmentRegistry</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="normal">154</span>
+<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">EnvironmentRegistry</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -4798,8 +4798,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_environments</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_environments</span>
 
-        <span class="kn">import</span> <span class="nn">kiara.models.runtime_environment.kiara</span>  <span class="c1"># noqa</span>
-        <span class="kn">import</span> <span class="nn">kiara.models.runtime_environment.operating_system</span>  <span class="c1"># noqa</span>
+        <span class="kn">import</span> <span class="nn">kiara.models.runtime_environment.kiara</span>
+        <span class="kn">import</span> <span class="nn">kiara.models.runtime_environment.operating_system</span>
         <span class="kn">import</span> <span class="nn">kiara.models.runtime_environment.python</span>  <span class="c1"># noqa</span>
 
         <span class="n">subclasses</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">RuntimeEnvironment</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_get_all_subclasses</span><span class="p">(</span>
@@ -4979,13 +4979,13 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/environment/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
-<span class="normal">24</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">24</span>
 <span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
 <span class="normal">28</span>
-<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">29</span>
+<span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;EnvironmentRegistry&quot;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The default *kiara* context. In most cases, it&#39;s recommended you create and manage your own, though.&quot;&quot;&quot;</span>
 
@@ -5012,8 +5012,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/environment/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
-<span class="normal">40</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
@@ -5021,7 +5020,8 @@
 <span class="normal">45</span>
 <span class="normal">46</span>
 <span class="normal">47</span>
-<span class="normal">48</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_environment_for_cid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_cid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RuntimeEnvironment</span><span class="p">:</span>
+<span class="normal">48</span>
+<span class="normal">49</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_environment_for_cid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env_cid</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RuntimeEnvironment</span><span class="p">:</span>
 
     <span class="n">envs</span> <span class="o">=</span> <span class="p">[</span><span class="n">env</span> <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">env</span><span class="o">.</span><span class="n">instance_id</span> <span class="o">==</span> <span class="n">env_cid</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">envs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -5051,8 +5051,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/registries/environment/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">142</span>
-<span class="normal">143</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">143</span>
 <span class="normal">144</span>
 <span class="normal">145</span>
 <span class="normal">146</span>
@@ -5063,7 +5062,8 @@
 <span class="normal">151</span>
 <span class="normal">152</span>
 <span class="normal">153</span>
-<span class="normal">154</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<span class="normal">154</span>
+<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
 
     <span class="n">full_details</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;full_details&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 

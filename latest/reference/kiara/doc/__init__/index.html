@@ -4544,8 +4544,7 @@ Python module in your package.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/doc/__init__.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 28</span>
-<span class="normal"> 29</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 29</span>
 <span class="normal"> 30</span>
 <span class="normal"> 31</span>
 <span class="normal"> 32</span>
@@ -4623,7 +4622,8 @@ Python module in your package.</p>
 <span class="normal">104</span>
 <span class="normal">105</span>
 <span class="normal">106</span>
-<span class="normal">107</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FrklDocumentationPlugin</span><span class="p">(</span><span class="n">BasePlugin</span><span class="p">):</span>
+<span class="normal">107</span>
+<span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FrklDocumentationPlugin</span><span class="p">(</span><span class="n">BasePlugin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;[mkdocs](https://www.mkdocs.org/) plugin to render API documentation for a project.</span>
 
 <span class="sd">    To add to a project, add this to the &#39;plugins&#39; section of a mkdocs config file:</span>
@@ -4751,8 +4751,7 @@ Python module in your package.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/doc/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">50</span>
-<span class="normal">51</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">51</span>
 <span class="normal">52</span>
 <span class="normal">53</span>
 <span class="normal">54</span>
@@ -4773,7 +4772,8 @@ Python module in your package.</p>
 <span class="normal">69</span>
 <span class="normal">70</span>
 <span class="normal">71</span>
-<span class="normal">72</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Files</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Files</span><span class="p">:</span>
+<span class="normal">72</span>
+<span class="normal">73</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Files</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Files</span><span class="p">:</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_doc_paths</span> <span class="o">=</span> <span class="n">gen_pages_for_module</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;main_module&quot;</span><span class="p">])</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_doc_files</span> <span class="o">=</span> <span class="p">{}</span>
@@ -4816,8 +4816,7 @@ Python module in your package.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/doc/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">74</span>
-<span class="normal">75</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">75</span>
 <span class="normal">76</span>
 <span class="normal">77</span>
 <span class="normal">78</span>
@@ -4826,7 +4825,8 @@ Python module in your package.</p>
 <span class="normal">81</span>
 <span class="normal">82</span>
 <span class="normal">83</span>
-<span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_page_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="p">,</span> <span class="n">page</span><span class="p">:</span> <span class="n">Page</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Files</span><span class="p">):</span>
+<span class="normal">84</span>
+<span class="normal">85</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_page_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html</span><span class="p">,</span> <span class="n">page</span><span class="p">:</span> <span class="n">Page</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Files</span><span class="p">):</span>
 
     <span class="n">repo_url</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;repo_url&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="n">python_src</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;edit_uri&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -4857,8 +4857,7 @@ Python module in your package.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/doc/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 86</span>
-<span class="normal"> 87</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 87</span>
 <span class="normal"> 88</span>
 <span class="normal"> 89</span>
 <span class="normal"> 90</span>
@@ -4874,7 +4873,8 @@ Python module in your package.</p>
 <span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
-<span class="normal">103</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_nav</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nav</span><span class="p">:</span> <span class="n">Navigation</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Files</span><span class="p">):</span>
+<span class="normal">103</span>
+<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_nav</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nav</span><span class="p">:</span> <span class="n">Navigation</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Files</span><span class="p">):</span>
 
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">nav</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">title</span> <span class="ow">and</span> <span class="s2">&quot;Api reference&quot;</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">title</span><span class="p">:</span>
@@ -4912,9 +4912,9 @@ Python module in your package.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/doc/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_post_build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">on_post_build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Config</span><span class="p">):</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_dir</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>

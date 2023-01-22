@@ -4796,10 +4796,10 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/context/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
-<span class="normal">22</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
 <span class="normal">23</span>
-<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;context&quot;</span><span class="p">)</span>
+<span class="normal">24</span>
+<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;context&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">context</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Kiara context related sub-commands.&quot;&quot;&quot;</span>
@@ -4825,8 +4825,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/context/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">27</span>
-<span class="normal">28</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span>
@@ -4834,7 +4833,8 @@
 <span class="normal">33</span>
 <span class="normal">34</span>
 <span class="normal">35</span>
-<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@context</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;list&quot;</span><span class="p">)</span>
+<span class="normal">36</span>
+<span class="normal">37</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@context</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;list&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">list_contexts</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;List existing contexts.&quot;&quot;&quot;</span>
@@ -4866,8 +4866,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/context/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
-<span class="normal">40</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
@@ -4904,7 +4903,8 @@
 <span class="normal">74</span>
 <span class="normal">75</span>
 <span class="normal">76</span>
-<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@context</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;explain&quot;</span><span class="p">)</span>
+<span class="normal">77</span>
+<span class="normal">78</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@context</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;explain&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;context_name&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--value-ids&quot;</span><span class="p">,</span> <span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Show value ids.&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="nd">@output_format_option</span><span class="p">()</span>
@@ -4965,8 +4965,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/context/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 80</span>
-<span class="normal"> 81</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 81</span>
 <span class="normal"> 82</span>
 <span class="normal"> 83</span>
 <span class="normal"> 84</span>
@@ -5056,7 +5055,8 @@
 <span class="normal">168</span>
 <span class="normal">169</span>
 <span class="normal">170</span>
-<span class="normal">171</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@context</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;delete&quot;</span><span class="p">)</span>
+<span class="normal">171</span>
+<span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@context</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;delete&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;context_name&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
     <span class="s2">&quot;--force&quot;</span><span class="p">,</span> <span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Delete without prompt.&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
@@ -5132,7 +5132,7 @@
             <span class="p">)</span>
             <span class="n">terminal_print</span><span class="p">()</span>
             <span class="n">user_input</span> <span class="o">=</span> <span class="n">get_console</span><span class="p">()</span><span class="o">.</span><span class="n">input</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Deleting context &#39;[b i]</span><span class="si">{</span><span class="n">_context_name</span><span class="si">}</span><span class="s2">[/b i]&#39;, are you sure? \[yes/no]: &quot;</span>  <span class="c1"># noqa</span>
+                <span class="sa">f</span><span class="s2">&quot;Deleting context &#39;[b i]</span><span class="si">{</span><span class="n">_context_name</span><span class="si">}</span><span class="s2">[/b i]&#39;, are you sure? \[yes/no]: &quot;</span>
             <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">user_input</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;yes&quot;</span><span class="p">:</span>
@@ -5170,10 +5170,10 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/context/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">174</span>
-<span class="normal">175</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">175</span>
 <span class="normal">176</span>
-<span class="normal">177</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@context</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;config&quot;</span><span class="p">)</span>
+<span class="normal">177</span>
+<span class="normal">178</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@context</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;config&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">config</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Config-related sub-commands.&quot;&quot;&quot;</span>
@@ -5199,8 +5199,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/context/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">180</span>
-<span class="normal">181</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">181</span>
 <span class="normal">182</span>
 <span class="normal">183</span>
 <span class="normal">184</span>
@@ -5211,7 +5210,8 @@
 <span class="normal">189</span>
 <span class="normal">190</span>
 <span class="normal">191</span>
-<span class="normal">192</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@config</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;print&quot;</span><span class="p">)</span>
+<span class="normal">192</span>
+<span class="normal">193</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@config</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;print&quot;</span><span class="p">)</span>
 <span class="nd">@output_format_option</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">print_config</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -5246,20 +5246,20 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/context/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">195</span>
-<span class="normal">196</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">196</span>
 <span class="normal">197</span>
 <span class="normal">198</span>
 <span class="normal">199</span>
 <span class="normal">200</span>
 <span class="normal">201</span>
-<span class="normal">202</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@config</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;help&quot;</span><span class="p">)</span>
+<span class="normal">202</span>
+<span class="normal">203</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@config</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;help&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">config_help</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Print available configuration options and information about them.&quot;&quot;&quot;</span>
 
     <span class="n">table</span> <span class="o">=</span> <span class="n">create_table_from_base_model_cls</span><span class="p">(</span><span class="n">model_cls</span><span class="o">=</span><span class="n">KiaraContextConfig</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
+    <span class="n">terminal_print</span><span class="p">()</span>
     <span class="n">terminal_print</span><span class="p">(</span><span class="n">Panel</span><span class="p">(</span><span class="n">table</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -5283,10 +5283,10 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/context/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">205</span>
-<span class="normal">206</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">206</span>
 <span class="normal">207</span>
-<span class="normal">208</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@context</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;runtime-info&quot;</span><span class="p">)</span>
+<span class="normal">208</span>
+<span class="normal">209</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@context</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;runtime-info&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">runtime</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Information about runtime models, etc.&quot;&quot;&quot;</span>
@@ -5312,8 +5312,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/context/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">211</span>
-<span class="normal">212</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">212</span>
 <span class="normal">213</span>
 <span class="normal">214</span>
 <span class="normal">215</span>
@@ -5324,7 +5323,8 @@
 <span class="normal">220</span>
 <span class="normal">221</span>
 <span class="normal">222</span>
-<span class="normal">223</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@runtime</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;print&quot;</span><span class="p">)</span>
+<span class="normal">223</span>
+<span class="normal">224</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@runtime</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;print&quot;</span><span class="p">)</span>
 <span class="nd">@output_format_option</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">print_context</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -5359,10 +5359,10 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/context/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">226</span>
-<span class="normal">227</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">227</span>
 <span class="normal">228</span>
-<span class="normal">229</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@context</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;environment&quot;</span><span class="p">)</span>
+<span class="normal">229</span>
+<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@context</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;environment&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">env_group</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Environment-related sub-commands.&quot;&quot;&quot;</span>
@@ -5388,14 +5388,14 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/context/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">232</span>
-<span class="normal">233</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">233</span>
 <span class="normal">234</span>
 <span class="normal">235</span>
 <span class="normal">236</span>
 <span class="normal">237</span>
 <span class="normal">238</span>
-<span class="normal">239</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@env_group</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;list&quot;</span><span class="p">)</span>
+<span class="normal">239</span>
+<span class="normal">240</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@env_group</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;list&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">list_envs</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;List available runtime environment information.&quot;&quot;&quot;</span>
@@ -5423,8 +5423,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/context/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">242</span>
-<span class="normal">243</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">243</span>
 <span class="normal">244</span>
 <span class="normal">245</span>
 <span class="normal">246</span>
@@ -5444,7 +5443,8 @@
 <span class="normal">260</span>
 <span class="normal">261</span>
 <span class="normal">262</span>
-<span class="normal">263</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@env_group</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;explain&quot;</span><span class="p">)</span>
+<span class="normal">263</span>
+<span class="normal">264</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@env_group</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;explain&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;env_type&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;ENVIRONMENT_TYPE&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nd">@output_format_option</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
@@ -5488,10 +5488,10 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/context/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">266</span>
-<span class="normal">267</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">267</span>
 <span class="normal">268</span>
-<span class="normal">269</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@context</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+<span class="normal">269</span>
+<span class="normal">270</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@context</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Metadata-related sub-commands.&quot;&quot;&quot;</span>
@@ -5517,8 +5517,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/context/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">272</span>
-<span class="normal">273</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">273</span>
 <span class="normal">274</span>
 <span class="normal">275</span>
 <span class="normal">276</span>
@@ -5528,7 +5527,8 @@
 <span class="normal">280</span>
 <span class="normal">281</span>
 <span class="normal">282</span>
-<span class="normal">283</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@metadata</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">)</span>
+<span class="normal">283</span>
+<span class="normal">284</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@metadata</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">)</span>
 <span class="nd">@output_format_option</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">list_metadata</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="nb">format</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -5562,8 +5562,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/context/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">286</span>
-<span class="normal">287</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">287</span>
 <span class="normal">288</span>
 <span class="normal">289</span>
 <span class="normal">290</span>
@@ -5589,7 +5588,8 @@
 <span class="normal">310</span>
 <span class="normal">311</span>
 <span class="normal">312</span>
-<span class="normal">313</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@metadata</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;explain&quot;</span><span class="p">)</span>
+<span class="normal">313</span>
+<span class="normal">314</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@metadata</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;explain&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;metadata_key&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="c1"># @click.option(</span>
 <span class="c1">#     &quot;--details&quot;,</span>
@@ -5606,8 +5606,8 @@
     <span class="n">metadata_types</span> <span class="o">=</span> <span class="n">kiara_obj</span><span class="o">.</span><span class="n">kiara_model_registry</span><span class="o">.</span><span class="n">get_models_of_type</span><span class="p">(</span><span class="n">ValueMetadata</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">metadata_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">metadata_types</span><span class="o">.</span><span class="n">item_infos</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="nb">print</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No metadata schema for key &#39;</span><span class="si">{</span><span class="n">metadata_key</span><span class="si">}</span><span class="s2">&#39; found...&quot;</span><span class="p">)</span>
+        <span class="n">terminal_print</span><span class="p">()</span>
+        <span class="n">terminal_print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No metadata schema for key &#39;</span><span class="si">{</span><span class="n">metadata_key</span><span class="si">}</span><span class="s2">&#39; found...&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="n">info_obj</span> <span class="o">=</span> <span class="n">metadata_types</span><span class="o">.</span><span class="n">item_infos</span><span class="p">[</span><span class="n">metadata_key</span><span class="p">]</span>

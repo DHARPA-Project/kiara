@@ -4569,7 +4569,7 @@
 
 
 <h3 id="kiara.interfaces.cli.CLICK_CONTEXT_SETTINGS" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">CLICK_CONTEXT_SETTINGS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">help_option_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--help&#39;</span><span class="p">])</span></code>
+<code class="highlight language-python"><span class="n">CLICK_CONTEXT_SETTINGS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;help_option_names&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--help&#39;</span><span class="p">]}</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -4602,8 +4602,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/interfaces/cli/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 47</span>
-<span class="normal"> 48</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 48</span>
 <span class="normal"> 49</span>
 <span class="normal"> 50</span>
 <span class="normal"> 51</span>
@@ -4718,7 +4717,8 @@
 <span class="normal">160</span>
 <span class="normal">161</span>
 <span class="normal">162</span>
-<span class="normal">163</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">context_settings</span><span class="o">=</span><span class="n">CLICK_CONTEXT_SETTINGS</span><span class="p">)</span>
+<span class="normal">163</span>
+<span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">context_settings</span><span class="o">=</span><span class="n">CLICK_CONTEXT_SETTINGS</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
     <span class="s2">&quot;--config&quot;</span><span class="p">,</span>
     <span class="s2">&quot;-cnf&quot;</span><span class="p">,</span>
@@ -4822,7 +4822,7 @@
                 <span class="s2">&quot;replacing.process&quot;</span><span class="p">,</span>
                 <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;reloading this process, in order to pick up new plugin packages&quot;</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">execvp</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">))</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">execvp</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,)</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">))</span>  <span class="c1"># noqa</span>
 
     <span class="n">api</span><span class="o">.</span><span class="n">set_active_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">create</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 

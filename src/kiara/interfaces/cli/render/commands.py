@@ -140,8 +140,8 @@ def value(ctx, value: str) -> None:
 @value.command("as")
 @click.argument("renderer", nargs=1, metavar="RENDERER_NAME", required=False)
 @click.argument("render_config", nargs=-1, required=False)
-# @click.option("--output", "-o", help="Write the rendered output to a file.")
-# @click.option("--force", "-f", help="Overwrite existing output file.", is_flag=True)
+@click.option("--output", "-o", help="Write the rendered output to a file.")
+@click.option("--force", "-f", help="Overwrite existing output file.", is_flag=True)
 @click.option(
     "--metadata",
     "-m",
@@ -160,6 +160,8 @@ def render_func_value(
     renderer: Union[str, None],
     metadata: bool,
     no_data: bool,
+    output: Union[str, None],
+    force: bool,
 ) -> None:
 
     kiara_api: KiaraAPI = ctx.obj["kiara_api"]
@@ -175,10 +177,13 @@ def render_func_value(
         render_config=render_config_dict,
     )
 
-    conf = {"show_render_result": True, "show_render_metadata": False}
-    if metadata:
-        conf["show_render_metadata"] = True
-    if no_data:
-        conf["show_render_result"] = False
+    if output:
+        result_wrapper(result=result.rendered, output=output, force=force)
+    else:
+        conf = {"show_render_result": True, "show_render_metadata": False}
+        if metadata:
+            conf["show_render_metadata"] = True
+        if no_data:
+            conf["show_render_result"] = False
 
-    terminal_print(result.create_renderable(**conf))
+        terminal_print(result.create_renderable(**conf))

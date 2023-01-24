@@ -1107,13 +1107,11 @@ class OperationTypeInfo(TypeInfo[Type["OperationType"]]):
         properties_md = ContextMetadataModel.from_class(type_cls)
 
         return OperationTypeInfo.construct(
-            **{
-                "type_name": type_cls._operation_type_name,  # type: ignore
-                "documentation": doc,
-                "authors": authors_md,
-                "context": properties_md,
-                "python_class": python_class,
-            }
+            type_name=type_cls._operation_type_name,  # type: ignore
+            documentation=doc,
+            authors=authors_md,
+            context=properties_md,
+            python_class=python_class,
         )
 
     @classmethod

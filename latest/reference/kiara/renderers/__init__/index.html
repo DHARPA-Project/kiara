@@ -3769,6 +3769,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../included_renderers/value/" class="md-nav__link">
+        value
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -4654,7 +4668,7 @@
 
 
 <h3 id="kiara.renderers.SOURCE_TYPE" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">SOURCE_TYPE</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;SOURCE_TYPE&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Type</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">SOURCE_TYPE</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;SOURCE_TYPE&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -4853,7 +4867,8 @@
 <span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
-<span class="normal">103</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraRenderer</span><span class="p">(</span>
+<span class="normal">103</span>
+<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraRenderer</span><span class="p">(</span>
     <span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">,</span> <span class="n">Generic</span><span class="p">[</span><span class="n">SOURCE_TYPE</span><span class="p">,</span> <span class="n">INPUTS_SCHEMA</span><span class="p">,</span> <span class="n">TARGET_TYPE</span><span class="p">,</span> <span class="n">RENDERER_CONFIG</span><span class="p">]</span>
 <span class="p">):</span>
 
@@ -4872,6 +4887,7 @@
     <span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span> <span class="o">=</span> <span class="n">kiara</span>
+
         <span class="k">if</span> <span class="n">renderer_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">:</span> <span class="n">RENDERER_CONFIG</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_renderer_config_cls</span><span class="p">()</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">renderer_config</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
@@ -4965,8 +4981,8 @@
 <code class="highlight language-python"><span class="n">retrieve_supported_source_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Type</span><span class="p">]</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
   </span>
 
 <a href="#kiara.renderers.KiaraRenderer.retrieve_supported_source_types" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5003,8 +5019,8 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">68</span>
-<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">transform_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SOURCE_TYPE</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">69</span>
+<span class="normal">70</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">transform_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SOURCE_TYPE</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">source_obj</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -5026,8 +5042,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/renderers/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 80</span>
-<span class="normal"> 81</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 81</span>
 <span class="normal"> 82</span>
 <span class="normal"> 83</span>
 <span class="normal"> 84</span>
@@ -5049,7 +5064,8 @@
 <span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
-<span class="normal">103</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">object</span><span class="p">:</span> <span class="n">SOURCE_TYPE</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">INPUTS_SCHEMA</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="normal">103</span>
+<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">object</span><span class="p">:</span> <span class="n">SOURCE_TYPE</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">INPUTS_SCHEMA</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">transformed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_source</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>

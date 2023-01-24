@@ -18,7 +18,7 @@
         <link rel="prev" href="../__init__/">
       
       
-        <link rel="next" href="../../jinja/">
+        <link rel="next" href="../value/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.6">
@@ -3808,8 +3808,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.renderers.included_renderers.pipeline.PipelineRenderer" class="md-nav__link">
-    PipelineRenderer
+  <a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererHtml" class="md-nav__link">
+    PipelineRendererHtml
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererPngConfig" class="md-nav__link">
+    PipelineRendererPngConfig
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererPng" class="md-nav__link">
+    PipelineRendererPng
   </a>
   
 </li>
@@ -3819,10 +3833,31 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#kiara.renderers.included_renderers.pipeline-functions" class="md-nav__link">
+    Functions
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../value/" class="md-nav__link">
+        value
+      </a>
     </li>
   
 
@@ -4586,14 +4621,35 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.renderers.included_renderers.pipeline.PipelineRenderer" class="md-nav__link">
-    PipelineRenderer
+  <a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererHtml" class="md-nav__link">
+    PipelineRendererHtml
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererPngConfig" class="md-nav__link">
+    PipelineRendererPngConfig
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererPng" class="md-nav__link">
+    PipelineRendererPng
   </a>
   
 </li>
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.renderers.included_renderers.pipeline-functions" class="md-nav__link">
+    Functions
+  </a>
   
 </li>
       
@@ -4639,11 +4695,11 @@
 
 
 
-<h3 id="kiara.renderers.included_renderers.pipeline.PipelineRenderer" class="doc doc-heading">
-        <code>PipelineRenderer</code>
+<h3 id="kiara.renderers.included_renderers.pipeline.PipelineRendererHtml" class="doc doc-heading">
+        <code>PipelineRendererHtml</code>
 
 
-<a href="#kiara.renderers.included_renderers.pipeline.PipelineRenderer" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererHtml" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
@@ -4654,9 +4710,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/renderers/included_renderers/pipeline.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">13</span>
 <span class="normal">14</span>
 <span class="normal">15</span>
 <span class="normal">16</span>
@@ -4679,9 +4733,11 @@
 <span class="normal">33</span>
 <span class="normal">34</span>
 <span class="normal">35</span>
-<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineRenderer</span><span class="p">(</span><span class="n">BaseJinjaRenderer</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">],</span> <span class="n">RenderInputsSchema</span><span class="p">]):</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineRendererHtml</span><span class="p">(</span><span class="n">BaseJinjaRenderer</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">],</span> <span class="n">RenderInputsSchema</span><span class="p">]):</span>
 
-    <span class="n">_renderer_name</span> <span class="o">=</span> <span class="s2">&quot;pipeline_renderer&quot;</span>
+    <span class="n">_renderer_name</span> <span class="o">=</span> <span class="s2">&quot;pipeline_to_html&quot;</span>
 
     <span class="n">_render_profiles</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;html&quot;</span><span class="p">:</span> <span class="p">{}}</span>
 
@@ -4718,26 +4774,26 @@
 
 
 
-<h4 id="kiara.renderers.included_renderers.pipeline.PipelineRenderer-functions">Functions<a href="#kiara.renderers.included_renderers.pipeline.PipelineRenderer-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+<h4 id="kiara.renderers.included_renderers.pipeline.PipelineRendererHtml-functions">Functions<a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererHtml-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
 
 
 
-<h5 id="kiara.renderers.included_renderers.pipeline.PipelineRenderer.retrieve_jinja_env" class="doc doc-heading">
+<h5 id="kiara.renderers.included_renderers.pipeline.PipelineRendererHtml.retrieve_jinja_env" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">retrieve_jinja_env</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">JinjaEnv</span></code>
 
-<a href="#kiara.renderers.included_renderers.pipeline.PipelineRenderer.retrieve_jinja_env" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererHtml.retrieve_jinja_env" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
 
       <details class="quote">
         <summary>Source code in <code>kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_jinja_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JinjaEnv</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_jinja_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JinjaEnv</span><span class="p">:</span>
 
     <span class="n">jinja_env</span> <span class="o">=</span> <span class="n">JinjaEnv</span><span class="p">(</span><span class="n">template_base</span><span class="o">=</span><span class="s2">&quot;kiara&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">jinja_env</span>
@@ -4751,19 +4807,19 @@
 
 
 
-<h5 id="kiara.renderers.included_renderers.pipeline.PipelineRenderer.get_template" class="doc doc-heading">
+<h5 id="kiara.renderers.included_renderers.pipeline.PipelineRendererHtml.get_template" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_template</span><span class="p">(</span><span class="n">render_config</span><span class="p">:</span> <span class="n">RenderInputsSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span></code>
 
-<a href="#kiara.renderers.included_renderers.pipeline.PipelineRenderer.get_template" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererHtml.get_template" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
 
       <details class="quote">
         <summary>Source code in <code>kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">RenderInputsSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">RenderInputsSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_jinja_env</span><span class="p">()</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="s2">&quot;pipeline/static_page/page.html.j2&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -4776,23 +4832,23 @@
 
 
 
-<h5 id="kiara.renderers.included_renderers.pipeline.PipelineRenderer.assemble_render_inputs" class="doc doc-heading">
+<h5 id="kiara.renderers.included_renderers.pipeline.PipelineRendererHtml.assemble_render_inputs" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">assemble_render_inputs</span><span class="p">(</span><span class="n">instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">RenderInputsSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
 
-<a href="#kiara.renderers.included_renderers.pipeline.PipelineRenderer.assemble_render_inputs" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererHtml.assemble_render_inputs" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
 
       <details class="quote">
         <summary>Source code in <code>kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">26</span>
-<span class="normal">27</span>
-<span class="normal">28</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span>
-<span class="normal">32</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assemble_render_inputs</span><span class="p">(</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assemble_render_inputs</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">RenderInputsSchema</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
@@ -4809,23 +4865,23 @@
 
 
 
-<h5 id="kiara.renderers.included_renderers.pipeline.PipelineRenderer.retrieve_supported_source_types" class="doc doc-heading">
+<h5 id="kiara.renderers.included_renderers.pipeline.PipelineRendererHtml.retrieve_supported_source_types" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">retrieve_supported_source_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
-<a href="#kiara.renderers.included_renderers.pipeline.PipelineRenderer.retrieve_supported_source_types" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererHtml.retrieve_supported_source_types" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
 
       <details class="quote">
         <summary>Source code in <code>kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
-<span class="normal">35</span>
-<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">retrieve_supported_source_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">Pipeline</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
@@ -4842,6 +4898,206 @@
 
 </div>
 
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.renderers.included_renderers.pipeline.PipelineRendererPngConfig" class="doc doc-heading">
+        <code>PipelineRendererPngConfig</code>
+
+
+<a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererPngConfig" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-internal" title="kiara.renderers.RenderInputsSchema" href="../../__init__/#kiara.renderers.RenderInputsSchema">RenderInputsSchema</a></code></p>
+
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/renderers/included_renderers/pipeline.py</code></summary>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineRendererPngConfig</span><span class="p">(</span><span class="n">RenderInputsSchema</span><span class="p">):</span>
+
+    <span class="n">graph_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;execution&quot;</span><span class="p">,</span> <span class="s2">&quot;data-flow&quot;</span><span class="p">,</span> <span class="s2">&quot;data-flow-simple&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The type of graph to render.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;execution&quot;</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+        </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+<h4 id="kiara.renderers.included_renderers.pipeline.PipelineRendererPngConfig-attributes">Attributes<a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererPngConfig-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h5 id="kiara.renderers.included_renderers.pipeline.PipelineRendererPngConfig.graph_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">graph_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;execution&#39;</span><span class="p">,</span> <span class="s1">&#39;data-flow&#39;</span><span class="p">,</span> <span class="s1">&#39;data-flow-simple&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The type of graph to render.&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;execution&#39;</span><span class="p">)</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererPngConfig.graph_type" class="headerlink" title="Permanent link">&para;</a></h5>
+
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+
+
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h3 id="kiara.renderers.included_renderers.pipeline.PipelineRendererPng" class="doc doc-heading">
+        <code>PipelineRendererPng</code>
+
+
+<a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererPng" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-internal" title="kiara.renderers.KiaraRenderer" href="../../__init__/#kiara.renderers.KiaraRenderer">KiaraRenderer</a></code></p>
+
+
+
+        <details class="quote">
+          <summary>Source code in <code>kiara/renderers/included_renderers/pipeline.py</code></summary>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineRendererPng</span><span class="p">(</span><span class="n">KiaraRenderer</span><span class="p">):</span>
+
+    <span class="n">_renderer_name</span> <span class="o">=</span> <span class="s2">&quot;pipeline_to_png&quot;</span>
+    <span class="n">_renderer_config_cls</span> <span class="o">=</span> <span class="n">PipelineRendererPngConfig</span>  <span class="c1"># type: ignore</span>
+
+    <span class="n">_render_profiles</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;execution-graph-image&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;graph_type&quot;</span><span class="p">:</span> <span class="s2">&quot;execution&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;data-flow-graph-image&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;graph_type&quot;</span><span class="p">:</span> <span class="s2">&quot;data-flow&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;data-flow-simple-graph-image&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;graph_type&quot;</span><span class="p">:</span> <span class="s2">&quot;data-flow-simple&quot;</span><span class="p">},</span>
+    <span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">retrieve_supported_source_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Pipeline</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Pipeline</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">RenderInputsSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+
+        <span class="n">graph_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">renderer_config</span><span class="o">.</span><span class="n">graph_type</span>
+
+        <span class="k">if</span> <span class="n">graph_type</span> <span class="o">==</span> <span class="s2">&quot;execution&quot;</span><span class="p">:</span>
+            <span class="n">graph</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">execution_graph</span>
+        <span class="k">elif</span> <span class="n">graph_type</span> <span class="o">==</span> <span class="s2">&quot;data-flow&quot;</span><span class="p">:</span>
+            <span class="n">graph</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">data_flow_graph</span>
+        <span class="k">elif</span> <span class="n">graph_type</span> <span class="o">==</span> <span class="s2">&quot;data-flow-simple&quot;</span><span class="p">:</span>
+            <span class="n">graph</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">data_flow_graph_simple</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid graph type: </span><span class="si">{</span><span class="n">graph_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">image</span> <span class="o">=</span> <span class="n">create_image</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">image</span>
+</code></pre></div></td></tr></table></div>
+        </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<h4 id="kiara.renderers.included_renderers.pipeline.PipelineRendererPng-functions">Functions<a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererPng-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.renderers.included_renderers.pipeline.PipelineRendererPng.retrieve_supported_source_types" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">retrieve_supported_source_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererPng.retrieve_supported_source_types" class="headerlink" title="Permanent link">&para;</a></h5>
+
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>kiara/renderers/included_renderers/pipeline.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="k">def</span> <span class="nf">retrieve_supported_source_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">Pipeline</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+<h2 id="kiara.renderers.included_renderers.pipeline-functions">Functions<a href="#kiara.renderers.included_renderers.pipeline-functions" class="headerlink" title="Permanent link">&para;</a></h2>
 
 
 

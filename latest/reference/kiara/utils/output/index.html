@@ -3767,6 +3767,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../renderers/included_renderers/value/" class="md-nav__link">
+        value
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -7547,11 +7561,11 @@
         <span class="n">rg</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="o">*</span><span class="n">_all</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">rg</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="n">details</span> <span class="o">=</span> <span class="n">KiaraException</span><span class="o">.</span><span class="n">get_root_details</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">details</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">details</span> <span class="ow">and</span> <span class="n">details</span> <span class="o">!=</span> <span class="n">msg</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Group</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">Markdown</span><span class="p">(</span><span class="n">details</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">msg</span>

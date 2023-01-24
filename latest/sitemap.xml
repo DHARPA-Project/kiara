@@ -886,6 +886,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://dharpa.org/kiara/latest/reference/kiara/renderers/included_renderers/value/</loc>
+         <lastmod>2023-01-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://dharpa.org/kiara/latest/reference/kiara/utils/__init__/</loc>
          <lastmod>2023-01-24</lastmod>
          <changefreq>daily</changefreq>

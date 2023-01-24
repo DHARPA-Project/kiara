@@ -202,7 +202,13 @@ dev_testing = [
     "types-python-dateutil",
     "types-pytz",
     "types-tzlocal",
-    "types-orjson"
+    "types-orjson",
+    "types-Pygments",
+    "types-Markdown",
+    "types-humanfriendly",
+    "types-setuptools",
+    "sqlalchemy-stubs"
+
 ]
 
 dev_utils = [
@@ -223,6 +229,12 @@ dev_utils = [
     "types-pytz",
     "types-tzlocal",
     "types-orjson",
+    "types-Pygments",
+    "types-Markdown",
+    "types-humanfriendly",
+    "types-humanfriendly",
+    "types-setuptools",
+    "sqlalchemy-stubs",
     "watchgod>=0.6",
     "wheel"
 ]

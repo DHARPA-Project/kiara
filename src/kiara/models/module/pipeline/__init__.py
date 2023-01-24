@@ -582,7 +582,6 @@ class PipelineConfig(KiaraModuleConfig):
             data["doc"] = None
 
         result = cls(pipeline_name=_pipeline_name, **data)
-
         return result
 
     class Config:
@@ -636,6 +635,31 @@ class PipelineConfig(KiaraModuleConfig):
 
         self._structure = PipelineStructure(pipeline_config=self)  # type: ignore
         return self._structure
+
+    def get_raw_config(self) -> Dict[str, Any]:
+
+        steps = []
+        for step in self.steps:
+            src: Dict[str, Any] = {
+                "module_type": step.manifest_src.module_type,
+            }
+            if step.manifest_src.module_config:
+                src["module_config"] = step.manifest_src.module_config
+            src["step_id"] = step.step_id
+            for field, links in step.input_links.items():
+                for link in links:
+                    src.setdefault("input_links", {})[
+                        field
+                    ] = f"{link.step_id}.{link.value_name}"
+            steps.append(src)
+
+        return {
+            "pipeline_name": self.pipeline_name,
+            "doc": self.doc.full_doc,
+            "steps": steps,
+            "input_aliases": self.input_aliases,
+            "output_aliases": self.output_aliases,
+        }
 
     def create_renderable(self, **config: Any) -> RenderableType:
 

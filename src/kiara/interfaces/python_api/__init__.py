@@ -1763,7 +1763,7 @@ class KiaraAPI(object):
     def create_workflow(
         self,
         workflow_alias: Union[None, str] = None,
-        initial_pipeline: Union[None, str] = None,
+        initial_pipeline: Union[None, Path, str, Mapping[str, Any]] = None,
         initial_inputs: Union[None, Mapping[str, Any]] = None,
         documentation: Union[Any, None] = None,
         save: bool = False,

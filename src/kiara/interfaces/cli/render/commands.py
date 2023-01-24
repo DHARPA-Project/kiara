@@ -38,7 +38,12 @@ def render_wrapper(
         terminal_print(Markdown(msg), in_panel="Missing renderer")
         sys.exit(1)
 
-    result = kiara_api.render(item, renderer_name=renderer, render_config=render_config)
+    result = kiara_api.render(
+        render_type=item_type,
+        item=item,
+        renderer_name=renderer,
+        render_config=render_config,
+    )
     return result
 
 
@@ -93,9 +98,9 @@ def list_renderers(ctx):
         source_type,
         renderers,
     ) in kiara_api.context.render_registry.registered_renderers.items():
-        source_node = tree.add(f"Source type: [b]{source_type.__name__}[/b]")
+        source_node = tree.add(f"source type: [b]{source_type}[/b]")
         for renderer_name, renderer in renderers.items():
-            source_node.add(f"renderer: [i]{renderer_name}[/i]")
+            source_node.add(f"render target: [i]{renderer_name}[/i]")
 
     terminal_print()
     terminal_print(tree)

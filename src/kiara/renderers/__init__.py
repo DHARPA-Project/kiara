@@ -40,7 +40,12 @@ class KiaraRenderer(
 
     @classmethod
     @abc.abstractmethod
-    def retrieve_supported_source_types(self) -> Iterable[Type]:
+    def retrieve_supported_render_source(cls) -> str:
+        pass
+
+    @classmethod
+    @abc.abstractmethod
+    def retrieve_supported_python_classes(self) -> Iterable[Type]:
         pass
 
     def __init__(

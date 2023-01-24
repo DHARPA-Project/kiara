@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Any, List, Literal, Mapping, Type
+from typing import Any, Iterable, Literal, Mapping, Type
 
 from jinja2 import Template
 from pydantic import Field
@@ -15,6 +15,14 @@ class PipelineRendererHtml(BaseJinjaRenderer[Type[Pipeline], RenderInputsSchema]
     _renderer_name = "pipeline_to_html"
 
     _render_profiles: Mapping[str, Mapping[str, Any]] = {"html": {}}
+
+    @classmethod
+    def retrieve_supported_render_source(cls) -> str:
+        return "pipeline"
+
+    @classmethod
+    def retrieve_supported_python_classes(cls) -> Iterable[Type]:
+        return [Pipeline]
 
     def retrieve_jinja_env(self) -> JinjaEnv:
 
@@ -32,10 +40,6 @@ class PipelineRendererHtml(BaseJinjaRenderer[Type[Pipeline], RenderInputsSchema]
         inputs = render_config.dict()
         inputs["pipeline"] = instance
         return inputs
-
-    @classmethod
-    def retrieve_supported_source_types(cls) -> List[Type[Any]]:
-        return [Pipeline]
 
 
 class PipelineRendererPngConfig(RenderInputsSchema):
@@ -57,7 +61,11 @@ class PipelineRendererPng(KiaraRenderer):
     }
 
     @classmethod
-    def retrieve_supported_source_types(cls) -> List[Type[Any]]:
+    def retrieve_supported_render_source(cls) -> str:
+        return "pipeline"
+
+    @classmethod
+    def retrieve_supported_python_classes(self) -> Iterable[Type]:
         return [Pipeline]
 
     def _render(self, instance: Pipeline, render_config: RenderInputsSchema) -> bytes:

@@ -22,7 +22,7 @@ class ValueRendererConfig(KiaraRendererConfig):
     target_type: str = Field(description="The target type to render the value as.")
 
 
-class ValueRendererTerminal(
+class ValueRenderer(
     KiaraRenderer[
         Value, ValueRenderInputsSchema, RenderValueResult, ValueRendererConfig
     ]
@@ -32,7 +32,11 @@ class ValueRendererTerminal(
     _renderer_config_cls = ValueRendererConfig
 
     @classmethod
-    def retrieve_supported_source_types(self) -> Iterable[Type]:
+    def retrieve_supported_render_source(cls) -> str:
+        return "value"
+
+    @classmethod
+    def retrieve_supported_python_classes(self) -> Iterable[Type]:
         return [Value]
 
     _render_profiles: Mapping[str, Mapping[str, Any]] = {

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import importlib
 import os
 from functools import partial
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Type, Union
@@ -68,16 +68,16 @@ class RenderRegistry(object):
         self._kiara: Kiara = kiara
 
         self._renderer_types: Union[Mapping[str, Type[KiaraRenderer]], None] = None
-        self._registered_renderers: Dict[type, Dict[str, KiaraRenderer]] = {}
+        self._registered_renderers: Dict[str, Dict[str, KiaraRenderer]] = {}
 
         self._template_pkg_locations: Dict[str, PackageLoader] = {}
         self._template_dirs: Dict[str, FileSystemLoader] = {}
         self._template_loader: Union[None, PrefixLoader] = None
         self._default_jinja_env: Union[None, Environment] = None
 
-        self._init_template_pkg_locations()
+        self._init_plugins_and_templates()
 
-    def _init_template_pkg_locations(self) -> Mapping[str, PackageLoader]:
+    def _init_plugins_and_templates(self) -> Mapping[str, PackageLoader]:
 
         self.register_template_pkg_location(
             "kiara", "kiara", "resources/templates/render"
@@ -94,6 +94,20 @@ class RenderRegistry(object):
                 # means no templates directory exists
                 pass
 
+            try:
+                module = importlib.import_module(value.value)
+                if hasattr(module, "renderer_profiles"):
+                    for source_type, profiles in module.renderer_profiles.items():
+                        for profile_name, details in profiles.items():
+                            self.register_renderer(
+                                source_type,
+                                profile_name,
+                                details["renderer"],
+                                details.get("config", {}),
+                            )
+            except Exception as e:
+                log_message("register_renderer.error", error=e, module=value.value)
+
         return self._template_pkg_locations
 
     def register_renderer_cls(self, renderer_cls: Type[KiaraRenderer]):
@@ -106,20 +120,20 @@ class RenderRegistry(object):
             )
             return
 
-        for source_type in renderer_cls.retrieve_supported_source_types():
+        source_type = renderer_cls.retrieve_supported_render_source()
 
-            for alias, config in renderer_cls._render_profiles.items():  # type: ignore
-                try:
-                    self.register_renderer(source_type, alias, renderer_cls._renderer_name, config)  # type: ignore
-                except Exception as e:
-                    import traceback
+        for alias, config in renderer_cls._render_profiles.items():  # type: ignore
+            try:
+                self.register_renderer(source_type, alias, renderer_cls._renderer_name, config)  # type: ignore
+            except Exception as e:
+                import traceback
 
-                    traceback.print_exc()
-                    log_message("ignore.renderer", error=e, renderer_cls=renderer_cls)
+                traceback.print_exc()
+                log_message("ignore.renderer", error=e, renderer_cls=renderer_cls)
 
     def register_renderer(
         self,
-        source_type: Type,
+        source_type: str,
         alias: str,
         renderer_type: str,
         renderer_config: Union[Mapping[str, Any], None] = None,
@@ -131,7 +145,7 @@ class RenderRegistry(object):
 
         if alias in self._registered_renderers.setdefault(source_type, {}).keys():
             raise Exception(
-                f"Duplicate renderer alias for source type '{source_type.__name__}': {alias}"
+                f"Duplicate renderer alias for source type '{source_type}': {alias}"
             )
 
         if renderer_config is None:
@@ -214,30 +228,25 @@ class RenderRegistry(object):
         self.renderer_types
         return self._registered_renderers  # type: ignore
 
-    def retrieve_renderers_for_type(self, item: Any) -> List[str]:
-
-        if not isinstance(item, type):
-            item_type = item.__class__
-        else:
-            item_type = item
+    def retrieve_renderers_for_type(self, source_type: str) -> List[str]:
 
         self.renderer_types
 
-        return list(self._registered_renderers.get(item_type, {}).keys())
+        return list(self._registered_renderers.get(source_type, {}).keys())
 
     def render(
         self,
+        render_type: str,
         item: Any,
         renderer_alias: str,
         render_config: Union[Mapping[str, Any], None] = None,
     ) -> Any:
-        renderers = self.retrieve_renderers_for_type(item.__class__)
-        if not renderers:
-            raise Exception(
-                f"No renderer(s) available for Python type: {type(item).__name__}"
-            )
 
-        renderer_instance = self._registered_renderers.get(item.__class__, {}).get(
+        renderers = self.retrieve_renderers_for_type(render_type)
+        if not renderers:
+            raise Exception(f"No renderer(s) available for render type: {render_type}")
+
+        renderer_instance = self._registered_renderers.get(render_type, {}).get(
             renderer_alias, None
         )
         if renderer_instance is None:
@@ -245,9 +254,11 @@ class RenderRegistry(object):
             for r in renderers:
                 msg += f" - {r}\n"
             raise KiaraException(
-                f"No renderer with alias '{renderer_alias}' registered for Python type: {type(item).__name__}",
+                f"No renderer with alias '{renderer_alias}' registered for source type: {render_type}",
                 details=msg,
             )
+
+        # TODO: validate source type is supported
 
         rc = renderer_instance.__class__._inputs_schema(**render_config)
 

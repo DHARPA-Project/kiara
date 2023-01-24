@@ -1262,12 +1262,15 @@ class KiaraAPI(object):
     # ------------------------------------------------------------------------------------------------------------------
     # render-related methods
 
-    def retrieve_renderer_names_for(self, item: Any) -> List[str]:
+    def retrieve_renderer_names_for(self, source_type: str) -> List[str]:
 
-        return self.context.render_registry.retrieve_renderers_for_type(item=item)
+        return self.context.render_registry.retrieve_renderers_for_type(
+            source_type=source_type
+        )
 
     def render(
         self,
+        render_type: str,
         item: Any,
         renderer_name: str,
         render_config: Union[Mapping[str, Any], None] = None,
@@ -1275,7 +1278,10 @@ class KiaraAPI(object):
 
         registry = self.context.render_registry
         result = registry.render(
-            item, renderer_alias=renderer_name, render_config=render_config
+            render_type=render_type,
+            item=item,
+            renderer_alias=renderer_name,
+            render_config=render_config,
         )
         return result
 

@@ -39,6 +39,7 @@ from kiara.registries.jobs import JobRegistry
 from kiara.registries.models import ModelRegistry
 from kiara.registries.modules import ModuleRegistry
 from kiara.registries.operations import OperationRegistry
+from kiara.registries.rendering import RenderRegistry
 from kiara.registries.types import TypeRegistry
 from kiara.registries.workflows import WorkflowRegistry
 from kiara.utils import log_exception
@@ -139,6 +140,8 @@ class Kiara(object):
         self._destiny_registry: DestinyRegistry = DestinyRegistry(kiara=self)
 
         self._workflow_registry: WorkflowRegistry = WorkflowRegistry(kiara=self)
+
+        self._render_registry = RenderRegistry(kiara=self)
 
         self._env_mgmt: Union[EnvironmentRegistry, None] = None
 
@@ -268,6 +271,10 @@ class Kiara(object):
     @property
     def event_registry(self) -> EventRegistry:
         return self._event_registry
+
+    @property
+    def render_registry(self) -> RenderRegistry:
+        return self._render_registry
 
     # ===================================================================================================
     # context specific types & instances

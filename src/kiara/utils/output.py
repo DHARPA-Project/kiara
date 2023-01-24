@@ -26,10 +26,12 @@ import structlog
 from pydantic import BaseModel, Field, root_validator
 from rich import box
 from rich.console import ConsoleRenderable, Group, RenderableType, RichCast
+from rich.markdown import Markdown
 from rich.table import Table as RichTable
 from rich.tree import Tree
 
 from kiara.defaults import SpecialValue
+from kiara.exceptions import KiaraException
 from kiara.models.values.value import ORPHAN, Value, ValueMap
 from kiara.utils.json import orjson_dumps
 
@@ -731,6 +733,13 @@ def extract_renderable(
         return rg
     elif isinstance(item, Enum):
         return item.value
+    elif isinstance(item, Exception):
+        msg = str(item)
+        details = KiaraException.get_root_details(item)
+        if details:
+            return Group(msg, "", Markdown(details))
+        else:
+            return msg
     else:
         return str(item)
 

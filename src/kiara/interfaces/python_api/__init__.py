@@ -1259,6 +1259,26 @@ class KiaraAPI(object):
 
         return pipeline_config
 
+    # ------------------------------------------------------------------------------------------------------------------
+    # render-related methods
+
+    def retrieve_renderer_names_for(self, item: Any) -> List[str]:
+
+        return self.context.render_registry.retrieve_renderers_for_type(item=item)
+
+    def render(
+        self,
+        item: Any,
+        renderer_name: str,
+        render_config: Union[Mapping[str, Any], None] = None,
+    ) -> Any:
+
+        registry = self.context.render_registry
+        result = registry.render(
+            item, renderer_alias=renderer_name, render_config=render_config
+        )
+        return result
+
     def assemble_render_pipeline(
         self,
         data_type: str,

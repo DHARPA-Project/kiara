@@ -1,0 +1,7 @@
+<h1>pipeline</h1>
+
+{% for step_id in pipeline.step_ids %}
+  <h2>{{ step_id }}</h2>
+  {% include 'pipeline/static_page/step.html.j2' %}
+
+{% endfor %}

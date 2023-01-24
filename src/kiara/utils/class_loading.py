@@ -44,6 +44,7 @@ if TYPE_CHECKING:
     from kiara.modules import KiaraModule
     from kiara.operations import OperationType
     from kiara.registries import KiaraArchive
+    from kiara.renderers import KiaraRenderer
 
 import logging
 
@@ -676,6 +677,37 @@ def find_all_cli_subcommands():
     )
 
     return [plugin.plugin for plugin in mgr]
+
+
+def find_all_kiara_renderers() -> Dict[str, Type["KiaraRenderer"]]:
+    """Find all [KiaraComponent][kiara_plugin.streamilt.components.KiaraComponent] subclasses via package entry points.
+
+    TODO
+    """
+
+    from kiara.renderers import KiaraRenderer
+
+    components = load_all_subclasses_for_entry_point(
+        entry_point_name="kiara.renderers",
+        base_class=KiaraRenderer,  # type: ignore
+        type_id_key="_renderer_name",
+        type_id_func=_cls_name_id_func,
+        attach_python_metadata=True,
+    )
+
+    return components
+
+
+def find_kiara_streamlit_components_under(
+    module: Union[str, ModuleType],
+) -> List[Type["KiaraRenderer"]]:
+
+    from kiara.renderers import KiaraRenderer
+
+    return find_subclasses_under(
+        base_class=KiaraRenderer,  # type: ignore
+        python_module=module,
+    )
 
 
 # def _find_pipeline_folders_using_callable(

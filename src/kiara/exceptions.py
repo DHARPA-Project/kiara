@@ -41,6 +41,11 @@ class KiaraException(Exception):
         super().__init__(msg)
 
     @property
+    def details(self) -> Union[str, None]:
+
+        return self._properties.get("details", None)
+
+    @property
     def parent(self) -> Union[Exception, None]:
         return self._parent
 

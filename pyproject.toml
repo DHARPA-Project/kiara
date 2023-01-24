@@ -68,9 +68,6 @@ dependencies = [
 ]
 dynamic = ["version"]
 
-
-
-#[project.entry-points."console_scripts"]
 [project.scripts]
 kiara = "kiara.interfaces.cli:cli"
 

@@ -75,10 +75,26 @@ class RenderRegistry(object):
         self._template_loader: Union[None, PrefixLoader] = None
         self._default_jinja_env: Union[None, Environment] = None
 
-        # TODO: make this lazy
+        self._init_template_pkg_locations()
+
+    def _init_template_pkg_locations(self) -> Mapping[str, PackageLoader]:
+
         self.register_template_pkg_location(
             "kiara", "kiara", "resources/templates/render"
         )
+
+        from importlib_metadata import entry_points
+
+        for name, value in entry_points(group="kiara.plugin"):
+            try:
+                self.register_template_pkg_location(
+                    value.value, value.value, "resources/templates"
+                )
+            except ValueError:
+                # means no templates directory exists
+                pass
+
+        return self._template_pkg_locations
 
     def register_renderer_cls(self, renderer_cls: Type[KiaraRenderer]):
 

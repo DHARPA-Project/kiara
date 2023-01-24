@@ -12,6 +12,7 @@ from typing import Any, Mapping, Tuple, Union
 
 import rich_click as click
 from rich.markdown import Markdown
+from rich.tree import Tree
 
 from kiara import KiaraAPI
 from kiara.models.module.pipeline.pipeline import Pipeline
@@ -78,6 +79,26 @@ def result_wrapper(result: Any, output: Union[str, None], force: bool = False):
 @click.pass_context
 def render(ctx) -> None:
     """Rendering-related sub-commands."""
+
+
+@render.command()
+@click.pass_context
+def list_renderers(ctx):
+    """List all available renderers."""
+
+    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+
+    tree = Tree("[b i]Renderers[/b i]")
+    for (
+        source_type,
+        renderers,
+    ) in kiara_api.context.render_registry.registered_renderers.items():
+        source_node = tree.add(f"Source type: [b]{source_type.__name__}[/b]")
+        for renderer_name, renderer in renderers.items():
+            source_node.add(f"renderer: [i]{renderer_name}[/i]")
+
+    terminal_print()
+    terminal_print(tree)
 
 
 @render.group()

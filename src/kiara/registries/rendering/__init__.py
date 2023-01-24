@@ -191,6 +191,13 @@ class RenderRegistry(object):
 
         return env
 
+    @property
+    def registered_renderers(self) -> Mapping[str, Mapping[str, KiaraRenderer]]:
+
+        # make sure all the renderers are registered
+        self.renderer_types
+        return self._registered_renderers  # type: ignore
+
     def retrieve_renderers_for_type(self, item: Any) -> List[str]:
 
         if not isinstance(item, type):

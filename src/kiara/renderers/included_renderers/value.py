@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import uuid
 from typing import Any, Iterable, Mapping, Type
 
 from pydantic import Field
@@ -34,7 +33,7 @@ class ValueRendererTerminal(
 
     @classmethod
     def retrieve_supported_source_types(self) -> Iterable[Type]:
-        return [Value, str, uuid.UUID]
+        return [Value]
 
     _render_profiles: Mapping[str, Mapping[str, Any]] = {
         "terminal_renderable": {"target_type": "terminal_renderable"},

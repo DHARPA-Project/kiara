@@ -4696,10 +4696,10 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/renderers/included_renderers/value.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">15</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">14</span>
+<span class="normal">15</span>
 <span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueRenderInputsSchema</span><span class="p">(</span><span class="n">RenderInputsSchema</span><span class="p">):</span>
+<span class="normal">17</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueRenderInputsSchema</span><span class="p">(</span><span class="n">RenderInputsSchema</span><span class="p">):</span>
     <span class="n">render_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The render config data.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span>
     <span class="p">)</span>
@@ -4764,9 +4764,9 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/renderers/included_renderers/value.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueRendererConfig</span><span class="p">(</span><span class="n">KiaraRendererConfig</span><span class="p">):</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueRendererConfig</span><span class="p">(</span><span class="n">KiaraRendererConfig</span><span class="p">):</span>
 
     <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The target type to render the value as.&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -4830,7 +4830,8 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/renderers/included_renderers/value.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">26</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
+<span class="normal">26</span>
 <span class="normal">27</span>
 <span class="normal">28</span>
 <span class="normal">29</span>
@@ -4868,8 +4869,7 @@
 <span class="normal">61</span>
 <span class="normal">62</span>
 <span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueRendererTerminal</span><span class="p">(</span>
+<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueRendererTerminal</span><span class="p">(</span>
     <span class="n">KiaraRenderer</span><span class="p">[</span>
         <span class="n">Value</span><span class="p">,</span> <span class="n">ValueRenderInputsSchema</span><span class="p">,</span> <span class="n">RenderValueResult</span><span class="p">,</span> <span class="n">ValueRendererConfig</span>
     <span class="p">]</span>
@@ -4880,7 +4880,7 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">retrieve_supported_source_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Type</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Value</span><span class="p">]</span>
 
     <span class="n">_render_profiles</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;terminal_renderable&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;target_type&quot;</span><span class="p">:</span> <span class="s2">&quot;terminal_renderable&quot;</span><span class="p">},</span>
@@ -4942,11 +4942,11 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/renderers/included_renderers/value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">35</span>
-<span class="normal">36</span>
-<span class="normal">37</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">retrieve_supported_source_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Type</span><span class="p">]:</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">Value</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">Value</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>

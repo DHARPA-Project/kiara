@@ -6652,7 +6652,31 @@ to the shortest possible names for each case.</p>
 <span class="normal">645</span>
 <span class="normal">646</span>
 <span class="normal">647</span>
-<span class="normal">648</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
+<span class="normal">648</span>
+<span class="normal">649</span>
+<span class="normal">650</span>
+<span class="normal">651</span>
+<span class="normal">652</span>
+<span class="normal">653</span>
+<span class="normal">654</span>
+<span class="normal">655</span>
+<span class="normal">656</span>
+<span class="normal">657</span>
+<span class="normal">658</span>
+<span class="normal">659</span>
+<span class="normal">660</span>
+<span class="normal">661</span>
+<span class="normal">662</span>
+<span class="normal">663</span>
+<span class="normal">664</span>
+<span class="normal">665</span>
+<span class="normal">666</span>
+<span class="normal">667</span>
+<span class="normal">668</span>
+<span class="normal">669</span>
+<span class="normal">670</span>
+<span class="normal">671</span>
+<span class="normal">672</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineConfig</span><span class="p">(</span><span class="n">KiaraModuleConfig</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A class to hold the configuration for a [PipelineModule][kiara.pipeline.module.PipelineModule].</span>
 
 <span class="sd">    If you want to control the pipeline input and output names, you need to have to provide a map that uses the</span>
@@ -6834,7 +6858,6 @@ to the shortest possible names for each case.</p>
             <span class="n">data</span><span class="p">[</span><span class="s2">&quot;doc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">pipeline_name</span><span class="o">=</span><span class="n">_pipeline_name</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span>
-
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
@@ -6888,6 +6911,31 @@ to the shortest possible names for each case.</p>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span> <span class="o">=</span> <span class="n">PipelineStructure</span><span class="p">(</span><span class="n">pipeline_config</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_structure</span>
+
+    <span class="k">def</span> <span class="nf">get_raw_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+
+        <span class="n">steps</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
+            <span class="n">src</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">manifest_src</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">manifest_src</span><span class="o">.</span><span class="n">module_config</span><span class="p">:</span>
+                <span class="n">src</span><span class="p">[</span><span class="s2">&quot;module_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">manifest_src</span><span class="o">.</span><span class="n">module_config</span>
+            <span class="n">src</span><span class="p">[</span><span class="s2">&quot;step_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">step_id</span>
+            <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">links</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">input_links</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">links</span><span class="p">:</span>
+                    <span class="n">src</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;input_links&quot;</span><span class="p">,</span> <span class="p">{})[</span>
+                        <span class="n">field</span>
+                    <span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">link</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">link</span><span class="o">.</span><span class="n">value_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;pipeline_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_name</span><span class="p">,</span>
+            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">full_doc</span><span class="p">,</span>
+            <span class="s2">&quot;steps&quot;</span><span class="p">:</span> <span class="n">steps</span><span class="p">,</span>
+            <span class="s2">&quot;input_aliases&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">,</span>
+            <span class="s2">&quot;output_aliases&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">,</span>
+        <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
@@ -7062,9 +7110,9 @@ to the shortest possible names for each case.</p>
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/pipeline/__init__.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">588</span>
-<span class="normal">589</span>
-<span class="normal">590</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">587</span>
+<span class="normal">588</span>
+<span class="normal">589</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">ignore</span>
     <span class="n">validate_assignment</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre></div></td></tr></table></div>
@@ -7305,11 +7353,78 @@ to the shortest possible names for each case.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/module/pipeline/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">610</span>
-<span class="normal">611</span>
-<span class="normal">612</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">609</span>
+<span class="normal">610</span>
+<span class="normal">611</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;doc&quot;</span><span class="p">,</span> <span class="n">pre</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">validate_doc</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.models.module.pipeline.PipelineConfig.get_raw_config" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_raw_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
+
+<a href="#kiara.models.module.pipeline.PipelineConfig.get_raw_config" class="headerlink" title="Permanent link">&para;</a></h5>
+
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>kiara/models/module/pipeline/__init__.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">639</span>
+<span class="normal">640</span>
+<span class="normal">641</span>
+<span class="normal">642</span>
+<span class="normal">643</span>
+<span class="normal">644</span>
+<span class="normal">645</span>
+<span class="normal">646</span>
+<span class="normal">647</span>
+<span class="normal">648</span>
+<span class="normal">649</span>
+<span class="normal">650</span>
+<span class="normal">651</span>
+<span class="normal">652</span>
+<span class="normal">653</span>
+<span class="normal">654</span>
+<span class="normal">655</span>
+<span class="normal">656</span>
+<span class="normal">657</span>
+<span class="normal">658</span>
+<span class="normal">659</span>
+<span class="normal">660</span>
+<span class="normal">661</span>
+<span class="normal">662</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_raw_config</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+
+    <span class="n">steps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
+        <span class="n">src</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;module_type&quot;</span><span class="p">:</span> <span class="n">step</span><span class="o">.</span><span class="n">manifest_src</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">step</span><span class="o">.</span><span class="n">manifest_src</span><span class="o">.</span><span class="n">module_config</span><span class="p">:</span>
+            <span class="n">src</span><span class="p">[</span><span class="s2">&quot;module_config&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">manifest_src</span><span class="o">.</span><span class="n">module_config</span>
+        <span class="n">src</span><span class="p">[</span><span class="s2">&quot;step_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">step_id</span>
+        <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">links</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">input_links</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">links</span><span class="p">:</span>
+                <span class="n">src</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;input_links&quot;</span><span class="p">,</span> <span class="p">{})[</span>
+                    <span class="n">field</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">link</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">link</span><span class="o">.</span><span class="n">value_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;pipeline_name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_name</span><span class="p">,</span>
+        <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">doc</span><span class="o">.</span><span class="n">full_doc</span><span class="p">,</span>
+        <span class="s2">&quot;steps&quot;</span><span class="p">:</span> <span class="n">steps</span><span class="p">,</span>
+        <span class="s2">&quot;input_aliases&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_aliases</span><span class="p">,</span>
+        <span class="s2">&quot;output_aliases&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_aliases</span><span class="p">,</span>
+    <span class="p">}</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -7330,15 +7445,15 @@ to the shortest possible names for each case.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/module/pipeline/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">640</span>
-<span class="normal">641</span>
-<span class="normal">642</span>
-<span class="normal">643</span>
-<span class="normal">644</span>
-<span class="normal">645</span>
-<span class="normal">646</span>
-<span class="normal">647</span>
-<span class="normal">648</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">664</span>
+<span class="normal">665</span>
+<span class="normal">666</span>
+<span class="normal">667</span>
+<span class="normal">668</span>
+<span class="normal">669</span>
+<span class="normal">670</span>
+<span class="normal">671</span>
+<span class="normal">672</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
     <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
@@ -7466,9 +7581,9 @@ to the shortest possible names for each case.</p>
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/module/pipeline/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">687</span>
-<span class="normal">688</span>
-<span class="normal">689</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">generate_pipeline_endpoint_name</span><span class="p">(</span><span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">711</span>
+<span class="normal">712</span>
+<span class="normal">713</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">generate_pipeline_endpoint_name</span><span class="p">(</span><span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">value_name</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre></div></td></tr></table></div>

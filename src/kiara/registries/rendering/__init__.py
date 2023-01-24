@@ -80,10 +80,6 @@ class RenderRegistry(object):
             "kiara", "kiara", "resources/templates/render"
         )
 
-        from kiara.renderers.included_renderers.pipeline import PipelineRenderer
-
-        self.register_renderer_cls(PipelineRenderer)
-
     def register_renderer_cls(self, renderer_cls: Type[KiaraRenderer]):
 
         if not hasattr(renderer_cls, "_render_profiles"):
@@ -145,6 +141,8 @@ class RenderRegistry(object):
             return self._renderer_types
 
         self._renderer_types = find_all_kiara_renderers()
+        for value in self._renderer_types.values():
+            self.register_renderer_cls(value)
         return self._renderer_types
 
     @property
@@ -199,6 +197,8 @@ class RenderRegistry(object):
             item_type = item.__class__
         else:
             item_type = item
+
+        self.renderer_types
 
         return list(self._registered_renderers.get(item_type, {}).keys())
 

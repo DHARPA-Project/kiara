@@ -26,7 +26,7 @@ class RenderInputsSchema(KiaraModel):
 
 
 RENDERER_CONFIG = TypeVar("RENDERER_CONFIG", bound=KiaraRendererConfig)
-SOURCE_TYPE = TypeVar("SOURCE_TYPE", bound=Type)
+SOURCE_TYPE = TypeVar("SOURCE_TYPE")
 INPUTS_SCHEMA = TypeVar("INPUTS_SCHEMA", bound=RenderInputsSchema)
 TARGET_TYPE = TypeVar("TARGET_TYPE")
 
@@ -50,6 +50,7 @@ class KiaraRenderer(
     ):
 
         self._kiara: "Kiara" = kiara
+
         if renderer_config is None:
             self._config: RENDERER_CONFIG = self.__class__._renderer_config_cls()
         elif isinstance(renderer_config, Mapping):

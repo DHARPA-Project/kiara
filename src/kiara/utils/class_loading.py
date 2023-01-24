@@ -698,7 +698,7 @@ def find_all_kiara_renderers() -> Dict[str, Type["KiaraRenderer"]]:
     return components
 
 
-def find_kiara_streamlit_components_under(
+def find_kiara_renderers_under(
     module: Union[str, ModuleType],
 ) -> List[Type["KiaraRenderer"]]:
 

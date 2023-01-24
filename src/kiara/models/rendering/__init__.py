@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, Mapping, TypeVar, Union
+from typing import Any, Dict, Mapping, TypeVar, Union
 
+import orjson
 from dag_cbor.encoding import EncodableType
 from pydantic import Field, validator
+from rich.console import RenderableType
+from rich.syntax import Syntax
+from rich.table import Table
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.models import KiaraModel
 from kiara.models.module.manifest import Manifest
-
-if TYPE_CHECKING:
-    pass
+from kiara.utils.json import orjson_dumps
+from kiara.utils.output import extract_renderable
 
 DataT = TypeVar("DataT")
 
@@ -77,6 +80,47 @@ class RenderValueResult(KiaraModel):
             "render_config": self.render_config,
             "render_manifest": self.render_manifest,
         }
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        show_render_result = config.get("show_render_result", True)
+        show_render_metadata = config.get("show_render_metadata", False)
+        if show_render_metadata:
+
+            table: Table = Table(show_header=False)
+            table.add_column("key")
+            table.add_column("value")
+
+            table.add_row("value_id", str(self.value_id))
+
+            rc_data = orjson_dumps(self.render_config, option=orjson.OPT_INDENT_2)
+            render_config = Syntax(rc_data, "json", background_color="default")
+            table.add_row("applied render config", render_config)
+
+            applied_module = self.manifest_lookup[self.render_manifest]
+            table.add_row("applied module", applied_module.create_renderable(**config))  # type: ignore
+
+            related_scenes: Dict[str, Union[str, Dict[str, Any]]] = {}
+            for k, v in self.related_scenes.items():
+                if v is None:
+                    related_scenes[k] = "-- disabled --"
+                else:
+                    related_scenes[k] = v.dict()
+            rel_scenes_json = orjson_dumps(related_scenes, option=orjson.OPT_INDENT_2)
+            table.add_row(
+                "related scenes",
+                Syntax(rel_scenes_json, "json", background_color="default"),
+            )
+            if show_render_result:
+                table.add_row(
+                    "rendered", extract_renderable(self.rendered, render_config=config)
+                )
+
+            result: RenderableType = table
+        else:
+            result = extract_renderable(self.rendered, render_config=config)
+
+        return result
 
 
 # class ValueRenderSceneString(RenderScene[str]):

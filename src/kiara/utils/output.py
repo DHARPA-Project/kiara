@@ -732,11 +732,11 @@ def extract_renderable(
         rg = Group(*_all)
         return rg
     elif isinstance(item, Enum):
-        return item.value
+        return str(item.value)
     elif isinstance(item, Exception):
         msg = str(item)
         details = KiaraException.get_root_details(item)
-        if details:
+        if details and details != msg:
             return Group(msg, "", Markdown(details))
         else:
             return msg

@@ -7,7 +7,8 @@
 
 """Pipeline-related subcommands for the cli."""
 import sys
-from typing import Tuple, Union
+from pathlib import Path
+from typing import Any, Mapping, Tuple, Union
 
 import rich_click as click
 from rich.markdown import Markdown
@@ -16,6 +17,61 @@ from kiara import KiaraAPI
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.utils.cli import dict_from_cli_args, terminal_print
 from kiara.utils.cli.exceptions import handle_exception
+
+
+def render_wrapper(
+    kiara_api: KiaraAPI,
+    item_type: str,
+    item: Any,
+    renderer: Union[str, None],
+    render_config: Mapping[str, Any],
+):
+
+    if not renderer:
+        avaialable_renderers = kiara_api.retrieve_renderer_names_for(item)
+
+        msg = f"No renderer specified. Available renderers for '{item_type}':\n\n"
+        for renderer in avaialable_renderers:
+            msg += f" - {renderer}\n"
+        terminal_print()
+        terminal_print(Markdown(msg), in_panel="Missing renderer")
+        sys.exit(1)
+
+    result = kiara_api.render(item, renderer_name=renderer, render_config=render_config)
+    return result
+
+
+def result_wrapper(result: Any, output: Union[str, None], force: bool = False):
+
+    if output:
+        output_file = Path(output)
+        if output_file.exists() and not force:
+            terminal_print()
+            terminal_print(
+                f"Output file '{output_file}' already exists, use '--force' to overwrite.",
+            )
+        output_file.parent.mkdir(parents=True, exist_ok=True)
+        if isinstance(result, str):
+            output_file.write_text(result)
+        elif isinstance(result, bytes):
+            output_file.write_bytes(result)
+        else:
+            terminal_print()
+            terminal_print(
+                f"Render output if type '{type(result)}', can't write to file."
+            )
+
+    else:
+
+        if isinstance(result, str):
+            print(result)  # noqa
+        elif isinstance(result, bytes):
+            terminal_print()
+            terminal_print(
+                "Render result is binary data, can't print to terminal. Use the '--output' option to write to a file."
+            )
+        else:
+            terminal_print(result)
 
 
 @click.group()
@@ -42,166 +98,87 @@ def pipeline(ctx, pipeline: str) -> None:
 @pipeline.command("as")
 @click.argument("renderer", nargs=1, metavar="RENDERER_NAME", required=False)
 @click.argument("render_config", nargs=-1, required=False)
+@click.option("--output", "-o", help="Write the rendered output to a file.")
+@click.option("--force", "-f", help="Overwrite existing output file.", is_flag=True)
 @click.pass_context
 @handle_exception()
-def render_func(
-    ctx, render_config: Tuple[str, ...], renderer: Union[str, None]
+def render_func_pipeline(
+    ctx,
+    render_config: Tuple[str, ...],
+    renderer: Union[str, None],
+    output: Union[str, None],
+    force: bool,
 ) -> None:
 
     kiara_api: KiaraAPI = ctx.obj["kiara_api"]
     item = ctx.obj["item"]
 
-    if not renderer:
-        avaialable_renderers = kiara_api.retrieve_renderer_names_for(item)
-
-        msg = "No renderer specified. Available renderers for 'pipeline':\n\n"
-        for renderer in avaialable_renderers:
-            msg += f" - {renderer}\n"
-        terminal_print()
-        terminal_print(Markdown(msg), in_panel="Missing rendererl")
-        sys.exit(1)
-
     render_config_dict = dict_from_cli_args(*render_config)
 
-    result = kiara_api.render(
-        item, renderer_name=renderer, render_config=render_config_dict
+    result = render_wrapper(
+        kiara_api=kiara_api,
+        item_type="pipeline",
+        item=item,
+        renderer=renderer,
+        render_config=render_config_dict,
     )
 
-    print(result)  # noqa
+    result_wrapper(result=result, output=output, force=force)
 
 
-# @pipeline.command()
-# @click.argument("base_name", nargs=1, required=False)
-# @click.option("--execution-graph", is_flag=True, help="Render the execution graph.")
-# @click.option(
-#     "--data-flow-graph", is_flag=True, help="Render the data-flow-graph graph."
-# )
-# @click.option(
-#     "--data-flow-graph-simple",
-#     is_flag=True,
-#     help="Render the simplified data-flow-graph graph.",
-# )
-# @click.option(
-#     "--output-dir",
-#     type=click.Path(dir_okay=True, file_okay=False),
-#     help="Output directory.",
-#     required=False,
-# )
-# @click.pass_context
-# def as_graph_images(
-#     ctx,
-#     base_name: Union[str, None],
-#     execution_graph: bool,
-#     data_flow_graph: bool,
-#     data_flow_graph_simple: bool,
-#     output_dir: Union[None, str],
-# ) -> None:
-#
-#     from kiara.utils.graphs import save_image
-#
-#     pipeline_obj: Pipeline = ctx.obj["pipeline"]
-#
-#     if base_name is None:
-#         base_name = pipeline_obj.structure.pipeline_config.pipeline_name
-#
-#     if not execution_graph and not data_flow_graph and not data_flow_graph_simple:
-#         execution_graph = True
-#         data_flow_graph = True
-#         data_flow_graph_simple = True
-#
-#     if output_dir is None:
-#         output_dir = os.getcwd()
-#
-#     os.makedirs(output_dir, exist_ok=True)
-#
-#     if execution_graph:
-#         path = os.path.join(output_dir, f"{base_name}-execution-graph.png")
-#         save_image(graph=pipeline_obj.execution_graph, path=path)
-#
-#     if data_flow_graph:
-#         path = os.path.join(output_dir, f"{base_name}-data-flow-graph.png")
-#         save_image(graph=pipeline_obj.data_flow_graph, path=path)
-#
-#     if data_flow_graph_simple:
-#         path = os.path.join(output_dir, f"{base_name}-data-flow-graph-simplified.png")
-#         save_image(graph=pipeline_obj.data_flow_graph_simple, path=path)
-#
-#
-# @pipeline.command()
-# @click.argument("inputs", nargs=-1, required=False)
-# @click.option("--template", "-t", default="notebook")
-# @click.pass_context
-# def from_template(ctx, template: str, inputs: Tuple[str]):
-#     """Render a pipeline into a notebook, streamlit app, etc...
-#
-#     This command is still work in progress, and its interface will likely change in the future.
-#     """
-#
-#     kiara: Kiara = ctx.obj["kiara"]
-#
-#     # if template == "notebook":
-#     #
-#     #     my_resources = importlib_resources.files("kiara")
-#     #     template_path = (
-#     #         my_resources
-#     #         / "resources"
-#     #         / "templates"
-#     #         / "render"
-#     #         / "pipeline"
-#     #         / "workflow_tutorial"
-#     #         / "jupyter_notebook.ipynb.j2"
-#     #     )
-#     #
-#     #     template_content = template_path.read_text()
-#     #
-#     # elif os.path.isfile(template):
-#     #     template_path = Path(template)
-#     #     # template_content = template_path.read_text()
-#     # else:
-#     #     terminal_print()
-#     #     terminal_print(
-#     #         "Invalid value for 'template': must be one of 'notebook', 'script', or a path to a jinja template file."
-#     #     )
-#     #     sys.exit(1)
-#
-#     pipeline_obj = ctx.obj["pipeline"]
-#     # controller = SinglePipelineBatchController(pipeline=pipeline, job_registry=kiara.job_registry)
-#     pipeline_defaults = pipeline_obj.structure.pipeline_config.defaults
-#
-#     pipeline_inputs = dict(pipeline_defaults)
-#     if inputs:
-#         # prepare inputs
-#         list_keys = []
-#         for name, value_schema in pipeline_obj.structure.pipeline_inputs_schema.items():
-#             if value_schema.type in ["list"]:
-#                 list_keys.append(name)
-#
-#         inputs_dict = dict_from_cli_args(*inputs, list_keys=list_keys)
-#         pipeline_inputs.update(inputs_dict)
-#
-#     pipeline_obj.set_pipeline_inputs(inputs=pipeline_inputs)
-#
-#     if template == "notebook":
-#
-#         pkg_path = os.path.join(
-#             "resources", "templates", "render", "pipeline", "workflow_tutorial"
-#         )
-#         loader = {
-#             "loader_type": "package",
-#             "loader_conf": {"package_name": "kiara", "package_path": pkg_path},
-#         }
-#
-#         config = {"template": "jupyter_notebook.ipynb.j2", "loader": loader}
-#         renderer = JinjaPipelineRenderer(config=config, kiara=kiara)
-#     elif os.path.isfile(template):
-#         raise NotImplementedError()
-#     else:
-#         terminal_print()
-#         terminal_print(
-#             "Invalid value for 'template': must be one of 'notebook', 'script', or a path to a jinja template file."
-#         )
-#         sys.exit(1)
-#
-#     rendered = renderer.render(pipeline_obj)
-#
-#     print(rendered)
+@render.group()
+@click.argument("value", nargs=1, metavar="VALUE_ID_OR_ALIAS")
+@click.pass_context
+def value(ctx, value: str) -> None:
+    api: KiaraAPI = ctx.obj["kiara_api"]
+
+    value_obj = api.get_value(value)
+
+    ctx.obj["item"] = value_obj
+
+
+@value.command("as")
+@click.argument("renderer", nargs=1, metavar="RENDERER_NAME", required=False)
+@click.argument("render_config", nargs=-1, required=False)
+# @click.option("--output", "-o", help="Write the rendered output to a file.")
+# @click.option("--force", "-f", help="Overwrite existing output file.", is_flag=True)
+@click.option(
+    "--metadata",
+    "-m",
+    help="Also show the render metadata.",
+    is_flag=True,
+    default=False,
+)
+@click.option(
+    "--no-data", "-n", help="Show the rendered data.", is_flag=True, default=False
+)
+@click.pass_context
+@handle_exception()
+def render_func_value(
+    ctx,
+    render_config: Tuple[str, ...],
+    renderer: Union[str, None],
+    metadata: bool,
+    no_data: bool,
+) -> None:
+
+    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+    item = ctx.obj["item"]
+
+    render_config_dict = dict_from_cli_args(*render_config)
+    render_config_dict = {"render_config": render_config_dict}
+    result = render_wrapper(
+        kiara_api=kiara_api,
+        item_type="value",
+        item=item,
+        renderer=renderer,
+        render_config=render_config_dict,
+    )
+
+    conf = {"show_render_result": True, "show_render_metadata": False}
+    if metadata:
+        conf["show_render_metadata"] = True
+    if no_data:
+        conf["show_render_result"] = False
+
+    terminal_print(result.create_renderable(**conf))

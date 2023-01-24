@@ -25,7 +25,11 @@ import sys
 import structlog
 import typing
 
-from .utils.class_loading import KiaraEntryPointItem, find_kiara_model_classes_under
+from .utils.class_loading import (
+    KiaraEntryPointItem,
+    find_kiara_model_classes_under,
+    find_kiara_renderers_under,
+)
 from .context import Kiara
 from .interfaces.python_api import KiaraAPI
 from .modules import KiaraModule, ValueMapSchema, KiaraModuleConfig
@@ -130,6 +134,10 @@ find_model_classes: KiaraEntryPointItem = (
 find_model_classes_api: KiaraEntryPointItem = (
     find_kiara_model_classes_under,
     "kiara.interfaces.python_api.models",
+)
+find_renderer_classes: KiaraEntryPointItem = (
+    find_kiara_renderers_under,
+    "kiara.renderers.included_renderers",
 )
 
 

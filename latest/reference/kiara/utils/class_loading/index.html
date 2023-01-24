@@ -3590,6 +3590,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../registries/rendering/__init__/" class="md-nav__link">
+        rendering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../registries/templates/__init__/" class="md-nav__link">
         templates
       </a>
@@ -3623,7 +3637,7 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4_1_11_13" type="checkbox" id="__nav_4_1_11_13" >
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4_1_11_14" type="checkbox" id="__nav_4_1_11_14" >
       
       
       
@@ -3632,14 +3646,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../registries/workflows/__init__/">workflows</a>
           
-            <label for="__nav_4_1_11_13">
+            <label for="__nav_4_1_11_14">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="workflows" data-md-level="4">
-        <label class="md-nav__title" for="__nav_4_1_11_13">
+        <label class="md-nav__title" for="__nav_4_1_11_14">
           <span class="md-nav__icon md-icon"></span>
           workflows
         </label>
@@ -3691,7 +3705,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../render/__init__/">render</a>
+          <a href="../../renderers/__init__/">renderers</a>
           
             <label for="__nav_4_1_12">
               <span class="md-nav__icon md-icon"></span>
@@ -3699,10 +3713,43 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="render" data-md-level="3">
+      <nav class="md-nav" aria-label="renderers" data-md-level="3">
         <label class="md-nav__title" for="__nav_4_1_12">
           <span class="md-nav__icon md-icon"></span>
-          render
+          renderers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4_1_12_1" type="checkbox" id="__nav_4_1_12_1" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../renderers/included_renderers/__init__/">included_renderers</a>
+          
+            <label for="__nav_4_1_12_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="included_renderers" data-md-level="4">
+        <label class="md-nav__title" for="__nav_4_1_12_1">
+          <span class="md-nav__icon md-icon"></span>
+          included_renderers
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -3712,8 +3759,29 @@
   
   
     <li class="md-nav__item">
-      <a href="../../render/pipeline/" class="md-nav__link">
+      <a href="../../renderers/included_renderers/pipeline/" class="md-nav__link">
         pipeline
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../renderers/jinja/" class="md-nav__link">
+        jinja
       </a>
     </li>
   
@@ -3954,6 +4022,20 @@
           <li class="md-nav__item">
   <a href="#kiara.utils.class_loading.find_all_cli_subcommands" class="md-nav__link">
     find_all_cli_subcommands()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.class_loading.find_all_kiara_renderers" class="md-nav__link">
+    find_all_kiara_renderers()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.class_loading.find_kiara_streamlit_components_under" class="md-nav__link">
+    find_kiara_streamlit_components_under()
   </a>
   
 </li>
@@ -4800,6 +4882,20 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kiara.utils.class_loading.find_all_kiara_renderers" class="md-nav__link">
+    find_all_kiara_renderers()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.class_loading.find_kiara_streamlit_components_under" class="md-nav__link">
+    find_kiara_streamlit_components_under()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4988,8 +5084,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 87</span>
-<span class="normal"> 88</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 88</span>
 <span class="normal"> 89</span>
 <span class="normal"> 90</span>
 <span class="normal"> 91</span>
@@ -5025,7 +5120,8 @@
 <span class="normal">121</span>
 <span class="normal">122</span>
 <span class="normal">123</span>
-<span class="normal">124</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_subclasses_under</span><span class="p">(</span>
+<span class="normal">124</span>
+<span class="normal">125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_subclasses_under</span><span class="p">(</span>
     <span class="n">base_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">SUBCLASS_TYPE</span><span class="p">],</span>
     <span class="n">python_module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModuleType</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">SUBCLASS_TYPE</span><span class="p">]]:</span>
@@ -5169,8 +5265,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">230</span>
-<span class="normal">231</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">231</span>
 <span class="normal">232</span>
 <span class="normal">233</span>
 <span class="normal">234</span>
@@ -5298,7 +5393,8 @@
 <span class="normal">356</span>
 <span class="normal">357</span>
 <span class="normal">358</span>
-<span class="normal">359</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">load_all_subclasses_for_entry_point</span><span class="p">(</span>
+<span class="normal">359</span>
+<span class="normal">360</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">load_all_subclasses_for_entry_point</span><span class="p">(</span>
     <span class="n">entry_point_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">base_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">SUBCLASS_TYPE</span><span class="p">],</span>
     <span class="n">ignore_abstract_classes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -5451,8 +5547,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">362</span>
-<span class="normal">363</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">363</span>
 <span class="normal">364</span>
 <span class="normal">365</span>
 <span class="normal">366</span>
@@ -5485,7 +5580,8 @@
 <span class="normal">393</span>
 <span class="normal">394</span>
 <span class="normal">395</span>
-<span class="normal">396</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_kiara_modules</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]]:</span>
+<span class="normal">396</span>
+<span class="normal">397</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_kiara_modules</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.</span>
 
 <span class="sd">    TODO</span>
@@ -5543,8 +5639,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">399</span>
-<span class="normal">400</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">400</span>
 <span class="normal">401</span>
 <span class="normal">402</span>
 <span class="normal">403</span>
@@ -5557,7 +5652,8 @@
 <span class="normal">410</span>
 <span class="normal">411</span>
 <span class="normal">412</span>
-<span class="normal">413</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_kiara_model_classes</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModel&quot;</span><span class="p">]]:</span>
+<span class="normal">413</span>
+<span class="normal">414</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_kiara_model_classes</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModel&quot;</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.</span>
 
 <span class="sd">    TODO</span>
@@ -5594,8 +5690,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">433</span>
-<span class="normal">434</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">434</span>
 <span class="normal">435</span>
 <span class="normal">436</span>
 <span class="normal">437</span>
@@ -5605,7 +5700,8 @@
 <span class="normal">441</span>
 <span class="normal">442</span>
 <span class="normal">443</span>
-<span class="normal">444</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_archive_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraArchive&quot;</span><span class="p">]]:</span>
+<span class="normal">444</span>
+<span class="normal">445</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_archive_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraArchive&quot;</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find all [KiaraArchive][kiara.registries.KiaraArchive] subclasses via package entry points.&quot;&quot;&quot;</span>
 
     <span class="kn">from</span> <span class="nn">kiara.registries</span> <span class="kn">import</span> <span class="n">KiaraArchive</span>
@@ -5640,8 +5736,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">447</span>
-<span class="normal">448</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">448</span>
 <span class="normal">449</span>
 <span class="normal">450</span>
 <span class="normal">451</span>
@@ -5661,7 +5756,8 @@
 <span class="normal">465</span>
 <span class="normal">466</span>
 <span class="normal">467</span>
-<span class="normal">468</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_data_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;DataType&quot;</span><span class="p">]]:</span>
+<span class="normal">468</span>
+<span class="normal">469</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_data_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;DataType&quot;</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.</span>
 
 <span class="sd">    TODO</span>
@@ -5703,8 +5799,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">471</span>
-<span class="normal">472</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">472</span>
 <span class="normal">473</span>
 <span class="normal">474</span>
 <span class="normal">475</span>
@@ -5712,7 +5807,8 @@
 <span class="normal">477</span>
 <span class="normal">478</span>
 <span class="normal">479</span>
-<span class="normal">480</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_operation_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;OperationType&quot;</span><span class="p">]]:</span>
+<span class="normal">480</span>
+<span class="normal">481</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_operation_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;OperationType&quot;</span><span class="p">]]:</span>
 
     <span class="kn">from</span> <span class="nn">kiara.operations</span> <span class="kn">import</span> <span class="n">OperationType</span>
 
@@ -5742,8 +5838,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">483</span>
-<span class="normal">484</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">484</span>
 <span class="normal">485</span>
 <span class="normal">486</span>
 <span class="normal">487</span>
@@ -5751,7 +5846,8 @@
 <span class="normal">489</span>
 <span class="normal">490</span>
 <span class="normal">491</span>
-<span class="normal">492</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_kiara_modules_under</span><span class="p">(</span>
+<span class="normal">492</span>
+<span class="normal">493</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_kiara_modules_under</span><span class="p">(</span>
     <span class="n">module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModuleType</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModule&quot;</span><span class="p">]]:</span>
 
@@ -5781,8 +5877,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">495</span>
-<span class="normal">496</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">496</span>
 <span class="normal">497</span>
 <span class="normal">498</span>
 <span class="normal">499</span>
@@ -5792,7 +5887,8 @@
 <span class="normal">503</span>
 <span class="normal">504</span>
 <span class="normal">505</span>
-<span class="normal">506</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_kiara_model_classes_under</span><span class="p">(</span>
+<span class="normal">506</span>
+<span class="normal">507</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_kiara_model_classes_under</span><span class="p">(</span>
     <span class="n">module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModuleType</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraModel&quot;</span><span class="p">]]:</span>
 
@@ -5824,14 +5920,14 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">523</span>
-<span class="normal">524</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">524</span>
 <span class="normal">525</span>
 <span class="normal">526</span>
 <span class="normal">527</span>
 <span class="normal">528</span>
 <span class="normal">529</span>
-<span class="normal">530</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_data_types_under</span><span class="p">(</span><span class="n">module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModuleType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;DataType&quot;</span><span class="p">]]:</span>
+<span class="normal">530</span>
+<span class="normal">531</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_data_types_under</span><span class="p">(</span><span class="n">module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModuleType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;DataType&quot;</span><span class="p">]]:</span>
 
     <span class="kn">from</span> <span class="nn">kiara.data_types</span> <span class="kn">import</span> <span class="n">DataType</span>
 
@@ -5859,8 +5955,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">533</span>
-<span class="normal">534</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">534</span>
 <span class="normal">535</span>
 <span class="normal">536</span>
 <span class="normal">537</span>
@@ -5868,7 +5963,8 @@
 <span class="normal">539</span>
 <span class="normal">540</span>
 <span class="normal">541</span>
-<span class="normal">542</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_operations_under</span><span class="p">(</span>
+<span class="normal">542</span>
+<span class="normal">543</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_operations_under</span><span class="p">(</span>
     <span class="n">module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModuleType</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;OperationType&quot;</span><span class="p">]]:</span>
 
@@ -5898,8 +5994,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">545</span>
-<span class="normal">546</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">546</span>
 <span class="normal">547</span>
 <span class="normal">548</span>
 <span class="normal">549</span>
@@ -5916,7 +6011,8 @@
 <span class="normal">560</span>
 <span class="normal">561</span>
 <span class="normal">562</span>
-<span class="normal">563</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_pipeline_base_path_for_module</span><span class="p">(</span>
+<span class="normal">563</span>
+<span class="normal">564</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_pipeline_base_path_for_module</span><span class="p">(</span>
     <span class="n">module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModuleType</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
@@ -5955,8 +6051,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">566</span>
-<span class="normal">567</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">567</span>
 <span class="normal">568</span>
 <span class="normal">569</span>
 <span class="normal">570</span>
@@ -6038,7 +6133,8 @@
 <span class="normal">646</span>
 <span class="normal">647</span>
 <span class="normal">648</span>
-<span class="normal">649</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_kiara_pipeline_paths</span><span class="p">(</span>
+<span class="normal">649</span>
+<span class="normal">650</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_kiara_pipeline_paths</span><span class="p">(</span>
     <span class="n">skip_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]:</span>
 
@@ -6142,8 +6238,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">652</span>
-<span class="normal">653</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">653</span>
 <span class="normal">654</span>
 <span class="normal">655</span>
 <span class="normal">656</span>
@@ -6168,7 +6263,8 @@
 <span class="normal">675</span>
 <span class="normal">676</span>
 <span class="normal">677</span>
-<span class="normal">678</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_cli_subcommands</span><span class="p">():</span>
+<span class="normal">678</span>
+<span class="normal">679</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_cli_subcommands</span><span class="p">():</span>
 
     <span class="n">entry_point_name</span> <span class="o">=</span> <span class="s2">&quot;kiara.cli_subcommands&quot;</span>
     <span class="n">log2</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;stevedore&quot;</span><span class="p">)</span>
@@ -6195,6 +6291,101 @@
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="p">[</span><span class="n">plugin</span><span class="o">.</span><span class="n">plugin</span> <span class="k">for</span> <span class="n">plugin</span> <span class="ow">in</span> <span class="n">mgr</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="kiara.utils.class_loading.find_all_kiara_renderers" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_all_kiara_renderers</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">KiaraRenderer</span><span class="p">]]</span></code>
+
+<a href="#kiara.utils.class_loading.find_all_kiara_renderers" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Find all [KiaraComponent][kiara_plugin.streamilt.components.KiaraComponent] subclasses via package entry points.</p>
+<p>TODO</p>
+
+      <details class="quote">
+        <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">682</span>
+<span class="normal">683</span>
+<span class="normal">684</span>
+<span class="normal">685</span>
+<span class="normal">686</span>
+<span class="normal">687</span>
+<span class="normal">688</span>
+<span class="normal">689</span>
+<span class="normal">690</span>
+<span class="normal">691</span>
+<span class="normal">692</span>
+<span class="normal">693</span>
+<span class="normal">694</span>
+<span class="normal">695</span>
+<span class="normal">696</span>
+<span class="normal">697</span>
+<span class="normal">698</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_all_kiara_renderers</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraRenderer&quot;</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find all [KiaraComponent][kiara_plugin.streamilt.components.KiaraComponent] subclasses via package entry points.</span>
+
+<span class="sd">    TODO</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">kiara.renderers</span> <span class="kn">import</span> <span class="n">KiaraRenderer</span>
+
+    <span class="n">components</span> <span class="o">=</span> <span class="n">load_all_subclasses_for_entry_point</span><span class="p">(</span>
+        <span class="n">entry_point_name</span><span class="o">=</span><span class="s2">&quot;kiara.renderers&quot;</span><span class="p">,</span>
+        <span class="n">base_class</span><span class="o">=</span><span class="n">KiaraRenderer</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">type_id_key</span><span class="o">=</span><span class="s2">&quot;_renderer_name&quot;</span><span class="p">,</span>
+        <span class="n">type_id_func</span><span class="o">=</span><span class="n">_cls_name_id_func</span><span class="p">,</span>
+        <span class="n">attach_python_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">components</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="kiara.utils.class_loading.find_kiara_streamlit_components_under" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_kiara_streamlit_components_under</span><span class="p">(</span><span class="n">module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModuleType</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">KiaraRenderer</span><span class="p">]]</span></code>
+
+<a href="#kiara.utils.class_loading.find_kiara_streamlit_components_under" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>kiara/utils/class_loading.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">701</span>
+<span class="normal">702</span>
+<span class="normal">703</span>
+<span class="normal">704</span>
+<span class="normal">705</span>
+<span class="normal">706</span>
+<span class="normal">707</span>
+<span class="normal">708</span>
+<span class="normal">709</span>
+<span class="normal">710</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_kiara_streamlit_components_under</span><span class="p">(</span>
+    <span class="n">module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ModuleType</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;KiaraRenderer&quot;</span><span class="p">]]:</span>
+
+    <span class="kn">from</span> <span class="nn">kiara.renderers</span> <span class="kn">import</span> <span class="n">KiaraRenderer</span>
+
+    <span class="k">return</span> <span class="n">find_subclasses_under</span><span class="p">(</span>
+        <span class="n">base_class</span><span class="o">=</span><span class="n">KiaraRenderer</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">python_module</span><span class="o">=</span><span class="n">module</span><span class="p">,</span>
+    <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>

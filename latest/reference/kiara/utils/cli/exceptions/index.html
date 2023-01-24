@@ -3590,6 +3590,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../registries/rendering/__init__/" class="md-nav__link">
+        rendering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../registries/templates/__init__/" class="md-nav__link">
         templates
       </a>
@@ -3623,7 +3637,7 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4_1_11_13" type="checkbox" id="__nav_4_1_11_13" >
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4_1_11_14" type="checkbox" id="__nav_4_1_11_14" >
       
       
       
@@ -3632,14 +3646,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../../registries/workflows/__init__/">workflows</a>
           
-            <label for="__nav_4_1_11_13">
+            <label for="__nav_4_1_11_14">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="workflows" data-md-level="4">
-        <label class="md-nav__title" for="__nav_4_1_11_13">
+        <label class="md-nav__title" for="__nav_4_1_11_14">
           <span class="md-nav__icon md-icon"></span>
           workflows
         </label>
@@ -3691,7 +3705,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../render/__init__/">render</a>
+          <a href="../../../renderers/__init__/">renderers</a>
           
             <label for="__nav_4_1_12">
               <span class="md-nav__icon md-icon"></span>
@@ -3699,10 +3713,43 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="render" data-md-level="3">
+      <nav class="md-nav" aria-label="renderers" data-md-level="3">
         <label class="md-nav__title" for="__nav_4_1_12">
           <span class="md-nav__icon md-icon"></span>
-          render
+          renderers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4_1_12_1" type="checkbox" id="__nav_4_1_12_1" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../renderers/included_renderers/__init__/">included_renderers</a>
+          
+            <label for="__nav_4_1_12_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="included_renderers" data-md-level="4">
+        <label class="md-nav__title" for="__nav_4_1_12_1">
+          <span class="md-nav__icon md-icon"></span>
+          included_renderers
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -3712,8 +3759,29 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../render/pipeline/" class="md-nav__link">
+      <a href="../../../renderers/included_renderers/pipeline/" class="md-nav__link">
         pipeline
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../renderers/jinja/" class="md-nav__link">
+        jinja
       </a>
     </li>
   
@@ -4582,8 +4650,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/cli/exceptions.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 7</span>
-<span class="normal"> 8</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 8</span>
 <span class="normal"> 9</span>
 <span class="normal">10</span>
 <span class="normal">11</span>
@@ -4598,7 +4665,12 @@
 <span class="normal">20</span>
 <span class="normal">21</span>
 <span class="normal">22</span>
-<span class="normal">23</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">handle_exception</span><span class="p">(</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">handle_exception</span><span class="p">(</span>
     <span class="n">func</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 
@@ -4611,6 +4683,10 @@
             <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
 
+            <span class="k">if</span> <span class="n">is_debug</span><span class="p">()</span> <span class="ow">or</span> <span class="n">is_develop</span><span class="p">():</span>
+                <span class="kn">import</span> <span class="nn">traceback</span>
+
+                <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
             <span class="n">terminal_print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="n">terminal_print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
 

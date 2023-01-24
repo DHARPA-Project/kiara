@@ -1422,15 +1422,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.interfaces.cli.render.commands.as_graph_images" class="md-nav__link">
-    as_graph_images()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.interfaces.cli.render.commands.from_template" class="md-nav__link">
-    from_template()
+  <a href="#kiara.interfaces.cli.render.commands.render_func" class="md-nav__link">
+    render_func()
   </a>
   
 </li>
@@ -3681,6 +3674,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../../registries/rendering/__init__/" class="md-nav__link">
+        rendering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../../registries/templates/__init__/" class="md-nav__link">
         templates
       </a>
@@ -3714,7 +3721,7 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4_1_11_13" type="checkbox" id="__nav_4_1_11_13" >
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4_1_11_14" type="checkbox" id="__nav_4_1_11_14" >
       
       
       
@@ -3723,14 +3730,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="../../../../registries/workflows/__init__/">workflows</a>
           
-            <label for="__nav_4_1_11_13">
+            <label for="__nav_4_1_11_14">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="workflows" data-md-level="4">
-        <label class="md-nav__title" for="__nav_4_1_11_13">
+        <label class="md-nav__title" for="__nav_4_1_11_14">
           <span class="md-nav__icon md-icon"></span>
           workflows
         </label>
@@ -3782,7 +3789,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../../render/__init__/">render</a>
+          <a href="../../../../renderers/__init__/">renderers</a>
           
             <label for="__nav_4_1_12">
               <span class="md-nav__icon md-icon"></span>
@@ -3790,10 +3797,43 @@
           
         </div>
       
-      <nav class="md-nav" aria-label="render" data-md-level="3">
+      <nav class="md-nav" aria-label="renderers" data-md-level="3">
         <label class="md-nav__title" for="__nav_4_1_12">
           <span class="md-nav__icon md-icon"></span>
-          render
+          renderers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_4_1_12_1" type="checkbox" id="__nav_4_1_12_1" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../../renderers/included_renderers/__init__/">included_renderers</a>
+          
+            <label for="__nav_4_1_12_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="included_renderers" data-md-level="4">
+        <label class="md-nav__title" for="__nav_4_1_12_1">
+          <span class="md-nav__icon md-icon"></span>
+          included_renderers
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -3803,8 +3843,29 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../render/pipeline/" class="md-nav__link">
+      <a href="../../../../renderers/included_renderers/pipeline/" class="md-nav__link">
         pipeline
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../renderers/jinja/" class="md-nav__link">
+        jinja
       </a>
     </li>
   
@@ -4569,15 +4630,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#kiara.interfaces.cli.render.commands.as_graph_images" class="md-nav__link">
-    as_graph_images()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#kiara.interfaces.cli.render.commands.from_template" class="md-nav__link">
-    from_template()
+  <a href="#kiara.interfaces.cli.render.commands.render_func" class="md-nav__link">
+    render_func()
   </a>
   
 </li>
@@ -4687,15 +4741,15 @@
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;pipeline&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;PIPELINE_NAME_OR_PATH&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">pipeline</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara&quot;</span><span class="p">]</span>
+    <span class="n">api</span><span class="p">:</span> <span class="n">KiaraAPI</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara_api&quot;</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;workflow:&quot;</span><span class="p">):</span>
         <span class="c1"># pipeline_defaults = {}</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">pipeline_obj</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="o">.</span><span class="n">create_pipeline</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span> <span class="n">pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">)</span>
+        <span class="n">pipeline_obj</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="o">.</span><span class="n">create_pipeline</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="n">api</span><span class="o">.</span><span class="n">context</span><span class="p">,</span> <span class="n">pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">)</span>
 
-    <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;pipeline&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pipeline_obj</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;item&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pipeline_obj</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -4706,10 +4760,10 @@
 
 
 
-<h3 id="kiara.interfaces.cli.render.commands.as_graph_images" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">as_graph_images</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">base_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">execution_graph</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">data_flow_graph</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">data_flow_graph_simple</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+<h3 id="kiara.interfaces.cli.render.commands.render_func" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">render_func</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">renderer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
 
-<a href="#kiara.interfaces.cli.render.commands.as_graph_images" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.interfaces.cli.render.commands.render_func" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
@@ -4744,265 +4798,35 @@
 <span class="normal">67</span>
 <span class="normal">68</span>
 <span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span>
-<span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span>
-<span class="normal">94</span>
-<span class="normal">95</span>
-<span class="normal">96</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;base_name&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--execution-graph&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Render the execution graph.&quot;</span><span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-    <span class="s2">&quot;--data-flow-graph&quot;</span><span class="p">,</span> <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Render the data-flow-graph graph.&quot;</span>
-<span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-    <span class="s2">&quot;--data-flow-graph-simple&quot;</span><span class="p">,</span>
-    <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Render the simplified data-flow-graph graph.&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-    <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span>
-    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">dir_okay</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">file_okay</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output directory.&quot;</span><span class="p">,</span>
-    <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="normal">70</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;as&quot;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;renderer&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;RENDERER_NAME&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;render_config&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
-<span class="k">def</span> <span class="nf">as_graph_images</span><span class="p">(</span>
-    <span class="n">ctx</span><span class="p">,</span>
-    <span class="n">base_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
-    <span class="n">execution_graph</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-    <span class="n">data_flow_graph</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-    <span class="n">data_flow_graph_simple</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
-    <span class="n">output_dir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+<span class="nd">@handle_exception</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">render_func</span><span class="p">(</span>
+    <span class="n">ctx</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">renderer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
-    <span class="kn">from</span> <span class="nn">kiara.utils.graphs</span> <span class="kn">import</span> <span class="n">save_image</span>
+    <span class="n">kiara_api</span><span class="p">:</span> <span class="n">KiaraAPI</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara_api&quot;</span><span class="p">]</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;item&quot;</span><span class="p">]</span>
 
-    <span class="n">pipeline_obj</span><span class="p">:</span> <span class="n">Pipeline</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;pipeline&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">renderer</span><span class="p">:</span>
+        <span class="n">avaialable_renderers</span> <span class="o">=</span> <span class="n">kiara_api</span><span class="o">.</span><span class="n">retrieve_renderer_names_for</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">base_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">base_name</span> <span class="o">=</span> <span class="n">pipeline_obj</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">pipeline_name</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">execution_graph</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">data_flow_graph</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">data_flow_graph_simple</span><span class="p">:</span>
-        <span class="n">execution_graph</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">data_flow_graph</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">data_flow_graph_simple</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="k">if</span> <span class="n">output_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
-
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">execution_graph</span><span class="p">:</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">-execution-graph.png&quot;</span><span class="p">)</span>
-        <span class="n">save_image</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">pipeline_obj</span><span class="o">.</span><span class="n">execution_graph</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">data_flow_graph</span><span class="p">:</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">-data-flow-graph.png&quot;</span><span class="p">)</span>
-        <span class="n">save_image</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">pipeline_obj</span><span class="o">.</span><span class="n">data_flow_graph</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">data_flow_graph_simple</span><span class="p">:</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_name</span><span class="si">}</span><span class="s2">-data-flow-graph-simplified.png&quot;</span><span class="p">)</span>
-        <span class="n">save_image</span><span class="p">(</span><span class="n">graph</span><span class="o">=</span><span class="n">pipeline_obj</span><span class="o">.</span><span class="n">data_flow_graph_simple</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-      </details>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="kiara.interfaces.cli.render.commands.from_template" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">from_template</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span></code>
-
-<a href="#kiara.interfaces.cli.render.commands.from_template" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Render a pipeline into a notebook, streamlit app, etc...</p>
-<p>This command is still work in progress, and its interface will likely change in the future.</p>
-
-      <details class="quote">
-        <summary>Source code in <code>kiara/interfaces/cli/render/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
-<span class="normal">123</span>
-<span class="normal">124</span>
-<span class="normal">125</span>
-<span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span>
-<span class="normal">136</span>
-<span class="normal">137</span>
-<span class="normal">138</span>
-<span class="normal">139</span>
-<span class="normal">140</span>
-<span class="normal">141</span>
-<span class="normal">142</span>
-<span class="normal">143</span>
-<span class="normal">144</span>
-<span class="normal">145</span>
-<span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span>
-<span class="normal">152</span>
-<span class="normal">153</span>
-<span class="normal">154</span>
-<span class="normal">155</span>
-<span class="normal">156</span>
-<span class="normal">157</span>
-<span class="normal">158</span>
-<span class="normal">159</span>
-<span class="normal">160</span>
-<span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
-<span class="normal">171</span>
-<span class="normal">172</span>
-<span class="normal">173</span>
-<span class="normal">174</span>
-<span class="normal">175</span>
-<span class="normal">176</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">&quot;--template&quot;</span><span class="p">,</span> <span class="s2">&quot;-t&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;notebook&quot;</span><span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
-<span class="k">def</span> <span class="nf">from_template</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render a pipeline into a notebook, streamlit app, etc...</span>
-
-<span class="sd">    This command is still work in progress, and its interface will likely change in the future.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;kiara&quot;</span><span class="p">]</span>
-
-    <span class="c1"># if template == &quot;notebook&quot;:</span>
-    <span class="c1">#</span>
-    <span class="c1">#     my_resources = importlib_resources.files(&quot;kiara&quot;)</span>
-    <span class="c1">#     template_path = (</span>
-    <span class="c1">#         my_resources</span>
-    <span class="c1">#         / &quot;resources&quot;</span>
-    <span class="c1">#         / &quot;templates&quot;</span>
-    <span class="c1">#         / &quot;render&quot;</span>
-    <span class="c1">#         / &quot;pipeline&quot;</span>
-    <span class="c1">#         / &quot;workflow_tutorial&quot;</span>
-    <span class="c1">#         / &quot;jupyter_notebook.ipynb.j2&quot;</span>
-    <span class="c1">#     )</span>
-    <span class="c1">#</span>
-    <span class="c1">#     template_content = template_path.read_text()</span>
-    <span class="c1">#</span>
-    <span class="c1"># elif os.path.isfile(template):</span>
-    <span class="c1">#     template_path = Path(template)</span>
-    <span class="c1">#     # template_content = template_path.read_text()</span>
-    <span class="c1"># else:</span>
-    <span class="c1">#     terminal_print()</span>
-    <span class="c1">#     terminal_print(</span>
-    <span class="c1">#         &quot;Invalid value for &#39;template&#39;: must be one of &#39;notebook&#39;, &#39;script&#39;, or a path to a jinja template file.&quot;</span>
-    <span class="c1">#     )</span>
-    <span class="c1">#     sys.exit(1)</span>
-
-    <span class="n">pipeline_obj</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="p">[</span><span class="s2">&quot;pipeline&quot;</span><span class="p">]</span>
-    <span class="c1"># controller = SinglePipelineBatchController(pipeline=pipeline, job_registry=kiara.job_registry)</span>
-    <span class="n">pipeline_defaults</span> <span class="o">=</span> <span class="n">pipeline_obj</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_config</span><span class="o">.</span><span class="n">defaults</span>
-
-    <span class="n">pipeline_inputs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">pipeline_defaults</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">inputs</span><span class="p">:</span>
-        <span class="c1"># prepare inputs</span>
-        <span class="n">list_keys</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value_schema</span> <span class="ow">in</span> <span class="n">pipeline_obj</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">pipeline_inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">value_schema</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;list&quot;</span><span class="p">]:</span>
-                <span class="n">list_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-
-        <span class="n">inputs_dict</span> <span class="o">=</span> <span class="n">dict_from_cli_args</span><span class="p">(</span><span class="o">*</span><span class="n">inputs</span><span class="p">,</span> <span class="n">list_keys</span><span class="o">=</span><span class="n">list_keys</span><span class="p">)</span>
-        <span class="n">pipeline_inputs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">inputs_dict</span><span class="p">)</span>
-
-    <span class="n">pipeline_obj</span><span class="o">.</span><span class="n">set_pipeline_inputs</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">pipeline_inputs</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">template</span> <span class="o">==</span> <span class="s2">&quot;notebook&quot;</span><span class="p">:</span>
-
-        <span class="n">pkg_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="s2">&quot;resources&quot;</span><span class="p">,</span> <span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="s2">&quot;render&quot;</span><span class="p">,</span> <span class="s2">&quot;pipeline&quot;</span><span class="p">,</span> <span class="s2">&quot;workflow_tutorial&quot;</span>
-        <span class="p">)</span>
-        <span class="n">loader</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;loader_type&quot;</span><span class="p">:</span> <span class="s2">&quot;package&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;loader_conf&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;package_name&quot;</span><span class="p">:</span> <span class="s2">&quot;kiara&quot;</span><span class="p">,</span> <span class="s2">&quot;package_path&quot;</span><span class="p">:</span> <span class="n">pkg_path</span><span class="p">},</span>
-        <span class="p">}</span>
-
-        <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;template&quot;</span><span class="p">:</span> <span class="s2">&quot;jupyter_notebook.ipynb.j2&quot;</span><span class="p">,</span> <span class="s2">&quot;loader&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
-        <span class="n">renderer</span> <span class="o">=</span> <span class="n">JinjaPipelineRenderer</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">template</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;No renderer specified. Available renderers for &#39;pipeline&#39;:</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="k">for</span> <span class="n">renderer</span> <span class="ow">in</span> <span class="n">avaialable_renderers</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="n">renderer</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">terminal_print</span><span class="p">()</span>
-        <span class="n">terminal_print</span><span class="p">(</span>
-            <span class="s2">&quot;Invalid value for &#39;template&#39;: must be one of &#39;notebook&#39;, &#39;script&#39;, or a path to a jinja template file.&quot;</span>
-        <span class="p">)</span>
+        <span class="n">terminal_print</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span> <span class="n">in_panel</span><span class="o">=</span><span class="s2">&quot;Missing rendererl&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="n">rendered</span> <span class="o">=</span> <span class="n">renderer</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="n">pipeline_obj</span><span class="p">)</span>
+    <span class="n">render_config_dict</span> <span class="o">=</span> <span class="n">dict_from_cli_args</span><span class="p">(</span><span class="o">*</span><span class="n">render_config</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="n">rendered</span><span class="p">)</span>  <span class="c1"># noqa</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">kiara_api</span><span class="o">.</span><span class="n">render</span><span class="p">(</span>
+        <span class="n">item</span><span class="p">,</span> <span class="n">renderer_name</span><span class="o">=</span><span class="n">renderer</span><span class="p">,</span> <span class="n">render_config</span><span class="o">=</span><span class="n">render_config_dict</span>
+    <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>  <span class="c1"># noqa</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>

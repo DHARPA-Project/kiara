@@ -29,6 +29,10 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11"
 ]
+
+
+
+
 dependencies = [
     "alembic>=1.7.0",
     "appdirs>=1.4.4,<2.0.0",
@@ -63,6 +67,108 @@ dependencies = [
     "tzlocal>=2.1,<5.0",
 ]
 dynamic = ["version"]
+
+
+
+#[project.entry-points."console_scripts"]
+[project.scripts]
+kiara = "kiara.interfaces.cli:cli"
+
+[project.entry-points."kiara.archive_type"]
+
+filesystem_data_archive = "kiara.registries.data.data_store.filesystem_store:FileSystemDataArchive"
+filesystem_data_store = "kiara.registries.data.data_store.filesystem_store:FilesystemDataStore"
+filesystem_job_archive = "kiara.registries.jobs.job_store.filesystem_store:FileSystemJobArchive"
+filesystem_job_store = "kiara.registries.jobs.job_store.filesystem_store:FileSystemJobStore"
+filesystem_alias_archive = "kiara.registries.aliases.archives:FileSystemAliasArchive"
+filesystem_alias_store = "kiara.registries.aliases.archives:FileSystemAliasStore"
+filesystem_destiny_archive = "kiara.registries.destinies.filesystem_store:FileSystemDestinyArchive"
+filesystem_destiny_store = "kiara.registries.destinies.filesystem_store:FileSystemDestinyStore"
+filesystem_workflow_archive = "kiara.registries.workflows.archives:FileSystemWorkflowArchive"
+filesystem_workflow_store = "kiara.registries.workflows.archives:FileSystemWorkflowStore"
+
+[project.entry-points."kiara.cli_subcommands"]
+
+run = "kiara.interfaces.cli.run:run"
+config = "kiara.interfaces.cli.config.commands:config"
+context = "kiara.interfaces.cli.context.commands:context"
+data = "kiara.interfaces.cli.data.commands:data"
+module = "kiara.interfaces.cli.module.commands:module"
+operation = "kiara.interfaces.cli.operation.commands:operation"
+pipeline = "kiara.interfaces.cli.pipeline.commands:pipeline"
+data-type = "kiara.interfaces.cli.type.commands:type_group"
+workflow = "kiara.interfaces.cli.workflow.commands:workflow"
+render = "kiara.interfaces.cli.render.commands:render"
+
+[project.entry-points."kiara.data_types"]
+
+none = "kiara.data_types.included_core_types:NoneType"
+any = "kiara.data_types.included_core_types:AnyType"
+bytes = "kiara.data_types.included_core_types:BytesType"
+string = "kiara.data_types.included_core_types:StringType"
+boolean = "kiara.data_types.included_core_types:BooleanType"
+dict = "kiara.data_types.included_core_types:DictValueType"
+terminal_renderable = "kiara.data_types.included_core_types.internal:TerminalRenderable"
+doc = "kiara.data_types.included_core_types.internal:DocumentationModelValueType"
+file = "kiara.data_types.included_core_types.filesystem:FileValueType"
+file_bundle = "kiara.data_types.included_core_types.filesystem:FileBundleValueType"
+internal = "kiara.data_types.included_core_types.internal:InternalType"
+internal_model = "kiara.data_types.included_core_types.internal:InternalModelValueType"
+python_object = "kiara.data_types.included_core_types.serialization:PythonObjectType"
+render_scene = "kiara.data_types.included_core_types.internal.render_value:RenderSceneDataType"
+render_value_result = "kiara.data_types.included_core_types.internal.render_value:RenderValueResultDataType"
+
+[project.entry-points."kiara.metadata_models"]
+
+python_class = "kiara.models.values.value_metadata.included_metadata_types:PythonClassMetadata"
+file = "kiara.models.values.value_metadata.included_metadata_types:FileMetadata"
+file_bundle = "kiara.models.values.value_metadata.included_metadata_types:FileBundleMetadata"
+
+[project.entry-points."kiara.model_classes"]
+
+default = "kiara:find_model_classes"
+python_api = "kiara:find_model_classes_api"
+
+[project.entry-points."kiara.modules"]
+
+"pipeline" = "kiara.modules.included_core_modules.pipeline:PipelineModule"
+"unpickle.value" = "kiara.modules.included_core_modules.serialization:UnpickleModule"
+"load.bytes" = "kiara.modules.included_core_modules.serialization:LoadBytesModule"
+"load.string" = "kiara.modules.included_core_modules.serialization:LoadStringModule"
+"load.internal_model" = "kiara.modules.included_core_modules.serialization:LoadInternalModel"
+"deserialize.from_json" = "kiara.modules.included_core_modules.serialization:DeserializeFromJsonModule"
+"value.extract_metadata" = "kiara.modules.included_core_modules.metadata:ExtractMetadataModule"
+"pretty_print.value" = "kiara.modules.included_core_modules.pretty_print:ValueTypePrettyPrintModule"
+"pretty_print.any.value" = "kiara.modules.included_core_modules.pretty_print:PrettyPrintAnyValueModule"
+"import.local.file" = "kiara.modules.included_core_modules.filesystem:ImportLocalFileModule"
+"import.local.file_bundle" = "kiara.modules.included_core_modules.filesystem:ImportLocalFileBundleModule"
+"deserialize.file" = "kiara.modules.included_core_modules.filesystem:DeserializeFileModule"
+"deserialize.file_bundle" = "kiara.modules.included_core_modules.filesystem:DeserializeFileBundleModule"
+"file_bundle.pick.file" = "kiara.modules.included_core_modules.filesystem:PickFileFromFileBundleModule"
+"file_bundle.pick.sub_folder" = "kiara.modules.included_core_modules.filesystem:PickSubBundle"
+"export.file" = "kiara.modules.included_core_modules.filesystem:ExportFileModule"
+"render.value" = "kiara.modules.included_core_modules.render_value:ValueTypeRenderModule"
+
+[project.entry-points."kiara.operation_types"]
+
+custom_module = "kiara.operations.included_core_operations:CustomModuleOperationType"
+pipeline = "kiara.operations.included_core_operations.pipeline:PipelineOperationType"
+deserialize = "kiara.operations.included_core_operations.serialize:DeSerializeOperationType"
+extract_metadata = "kiara.operations.included_core_operations.metadata:ExtractMetadataOperationType"
+pretty_print = "kiara.operations.included_core_operations.pretty_print:PrettyPrintOperationType"
+create_from = "kiara.operations.included_core_operations.create_from:CreateFromOperationType"
+export_as = "kiara.operations.included_core_operations.export_as:ExportAsOperationType"
+render_value = "kiara.operations.included_core_operations.render_value:RenderValueOperationType"
+filter = "kiara.operations.included_core_operations.filter:FilterOperationType"
+
+[project.entry-points."kiara.renderers"]
+
+default = "kiara:find_renderer_classes"
+
+[project.entry-points."mkdocs.plugins"]
+
+"frkl-docgen" = "kiara.doc:FrklDocumentationPlugin"
+
 
 [project.optional-dependencies]
 all_plugins = [

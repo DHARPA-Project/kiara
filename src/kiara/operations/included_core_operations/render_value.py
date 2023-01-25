@@ -209,6 +209,38 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
 
         return result
 
+    def get_render_operations_for_target_type(
+        self, target_type: str
+    ) -> Mapping[str, Operation]:
+        """Return all render operations that renders to the specified data type.
+
+        Arguments:
+            target_type: the result data type
+
+        Returns:
+            a mapping with the source type as key, and the operation as value
+        """
+
+        # TODO: consider type lineages
+
+        if target_type not in self._kiara.data_type_names:
+            raise Exception(f"Invalid target data type: {target_type}")
+
+        result: Dict[str, Operation] = {}
+
+        for op_id, op in self.operations.items():
+            op_details = self.retrieve_operation_details(op)
+            match = op_details.target_data_type == target_type
+            if not match:
+                continue
+            source_type = op_details.source_data_type
+            if source_type in result.keys():
+                continue
+
+            result[source_type] = op
+
+        return result
+
     def get_render_operation(
         self, source_type: str, target_type: str
     ) -> Union[Operation, None]:

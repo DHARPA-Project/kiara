@@ -63,6 +63,7 @@ from kiara.models.values.value import (
 )
 from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import KiaraModule
+from kiara.renderers import KiaraRenderer
 from kiara.utils import log_exception, log_message
 from kiara.utils.class_loading import find_all_kiara_model_classes
 from kiara.utils.json import orjson_dumps
@@ -1550,5 +1551,124 @@ class OperationGroupInfo(InfoItemGroup):
 
                 table.add_row(*row)
                 first_line_value = False
+
+        return table
+
+
+class RendererInfo(ItemInfo[KiaraRenderer]):
+
+    renderer_config: Mapping[str, Any] = Field(description="The renderer config.")
+    renderer_cls: PythonClass = Field(
+        description="The Python class that implements the renderer."
+    )
+    supported_inputs: List[str] = Field(
+        description="Descriptions of the supported inputs."
+    )
+    supported_source_types: List[str] = Field(
+        description="Descriptions of the supported source types."
+    )
+    supported_target_types: List[str] = Field(
+        description="Descriptions of the supported target types."
+    )
+    supported_python_classes: List[PythonClass] = Field(
+        description="A list of supported Python types that are acceptable as inputs."
+    )
+
+    @classmethod
+    def base_instance_class(cls) -> Type[KiaraRenderer]:
+        return KiaraRenderer
+
+    @classmethod
+    def create_from_instance(cls, kiara: "Kiara", instance: KiaraRenderer, **kwargs):
+
+        doc = instance.doc
+        authors = AuthorsMetadataModel.from_class(instance.__class__)
+        properties_md = ContextMetadataModel.from_class(instance.__class__)
+
+        renderer_name = instance._renderer_name  # type: ignore
+        renderer_config = instance.renderer_config.dict()
+        renderer_cls = PythonClass.from_class(item_cls=instance.__class__)
+        supported_inputs = list(instance.supported_inputs_descs)
+        supported_python_classes = [
+            PythonClass.from_class(x)
+            for x in instance.retrieve_supported_python_classes()
+        ]
+
+        supported_input_types = instance.retrieve_supported_render_sources()
+        if isinstance(supported_input_types, str):
+            supported_input_types = [supported_input_types]
+        supported_target_types = instance.retrieve_supported_render_targets()
+        if isinstance(supported_target_types, str):
+            supported_target_types = [supported_target_types]
+
+        return cls(
+            type_name=renderer_name,
+            documentation=doc,
+            authors=authors,
+            context=properties_md,
+            renderer_config=renderer_config,
+            renderer_cls=renderer_cls,
+            supported_inputs=supported_inputs,
+            supported_python_classes=supported_python_classes,
+            supported_source_types=supported_input_types,
+            supported_target_types=supported_target_types,
+        )
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        show_metadata = config.get("show_metadata", False)
+
+        table = Table(box=box.SIMPLE, show_header=False)
+        table.add_column("key", style="i")
+        table.add_column("value")
+
+        table.add_row("Documentation", self.documentation.create_renderable(**config))
+        inputs_md = ""
+        for inp in self.supported_inputs:
+            inputs_md += f"- {inp}\n"
+        table.add_row("Supported inputs", Markdown(inputs_md))
+
+        if show_metadata:
+            table.add_row("Renderer name", self.type_name)
+            if self.renderer_config:
+                json = orjson_dumps(self.renderer_config, option=orjson.OPT_INDENT_2)
+                table.add_row(
+                    "Renderer config", Syntax(json, "json", background_color="default")
+                )
+
+            table.add_row(
+                "Renderer class", self.renderer_cls.create_renderable(**config)
+            )
+            table.add_row("Author(s)", self.authors.create_renderable(**config))
+            table.add_row("Context", self.context.create_renderable(**config))
+
+        python_cls_md = ""
+        for inp_cls in self.supported_python_classes:
+            python_cls_md += f"- {inp_cls.full_name}\n"
+        table.add_row(python_cls_md)
+
+        return table
+
+
+class RendererInfos(InfoItemGroup[RendererInfo]):
+    @classmethod
+    def base_info_class(cls) -> Type[RendererInfo]:
+        return RendererInfo
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        table = Table(show_header=True, box=box.SIMPLE, show_lines=True)
+        table.add_column("Source type(s)")
+        table.add_column("Target type(s)")
+        table.add_column("Description")
+
+        for info in self.item_infos.values():
+            row: List[RenderableType] = []
+
+            row.append("\n".join(info.supported_source_types))  # type: ignore
+            row.append("\n".join(info.supported_target_types))  # type: ignore
+            row.append(info.documentation.create_renderable(**config))
+
+            table.add_row(*row)
 
         return table

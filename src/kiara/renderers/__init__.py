@@ -6,12 +6,25 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
-from typing import TYPE_CHECKING, Any, Generic, Iterable, Mapping, Type, TypeVar, Union
+import inspect
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Generic,
+    Iterable,
+    List,
+    Mapping,
+    Set,
+    Type,
+    TypeVar,
+    Union,
+)
 
 from jinja2 import TemplateNotFound
 
 from kiara.exceptions import KiaraException
 from kiara.models import KiaraModel
+from kiara.models.documentation import DocumentationMetadataModel
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -31,22 +44,40 @@ INPUTS_SCHEMA = TypeVar("INPUTS_SCHEMA", bound=RenderInputsSchema)
 TARGET_TYPE = TypeVar("TARGET_TYPE")
 
 
+class SourceTransformer(Generic[SOURCE_TYPE]):
+    def __init__(self) -> None:
+        self._doc: Union[DocumentationMetadataModel, None] = None
+
+    @abc.abstractmethod
+    def retrieve_supported_python_classes(self) -> Iterable[Type]:
+        pass
+
+    @abc.abstractmethod
+    def validate_and_transform(self, source: Any) -> Union[SOURCE_TYPE, None]:
+        pass
+
+    @abc.abstractmethod
+    def retrieve_supported_inputs_descs(self) -> Union[str, Iterable[str]]:
+        pass
+
+
+class NoOpSourceTransformer(SourceTransformer):
+    def retrieve_supported_python_classes(self) -> Iterable[Type]:
+        return [object]
+
+    def validate_and_transform(self, source: Any) -> Any:
+        return source
+
+    def retrieve_supported_inputs_descs(self) -> Union[str, Iterable[str]]:
+        return "any Python input, unchecked"
+
+
 class KiaraRenderer(
     abc.ABC, Generic[SOURCE_TYPE, INPUTS_SCHEMA, TARGET_TYPE, RENDERER_CONFIG]
 ):
 
     _renderer_config_cls: Type[RENDERER_CONFIG] = KiaraRendererConfig  # type: ignore
     _inputs_schema: Type[INPUTS_SCHEMA] = RenderInputsSchema  # type: ignore
-
-    @classmethod
-    @abc.abstractmethod
-    def retrieve_supported_render_source(cls) -> str:
-        pass
-
-    @classmethod
-    @abc.abstractmethod
-    def retrieve_supported_python_classes(self) -> Iterable[Type]:
-        pass
 
     def __init__(
         self,
@@ -55,6 +86,9 @@ class KiaraRenderer(
     ):
 
         self._kiara: "Kiara" = kiara
+        self._source_transformers: Union[None, Iterable[SourceTransformer]] = None
+        self._doc: Union[DocumentationMetadataModel, None] = None
+        self._supported_inputs_desc: Union[None, Iterable[str]] = None
 
         if renderer_config is None:
             self._config: RENDERER_CONFIG = self.__class__._renderer_config_cls()
@@ -71,8 +105,71 @@ class KiaraRenderer(
     def renderer_config(self) -> RENDERER_CONFIG:
         return self._config
 
-    def transform_source(self, source_obj: Any) -> SOURCE_TYPE:
-        return source_obj
+    @property
+    def supported_inputs_descs(self) -> Iterable[str]:
+
+        if self._supported_inputs_desc is not None:
+            return self._supported_inputs_desc
+
+        transformers: List[str] = []
+        for transformer in self.source_transformers:
+            descs = transformer.retrieve_supported_inputs_descs()
+            if isinstance(descs, str):
+                descs = [descs]
+            transformers.extend(descs)
+        return transformers
+
+    def retrieve_doc(self) -> Union[str, None]:
+        return None
+
+    @property
+    def doc(self) -> DocumentationMetadataModel:
+        if self._doc is not None:
+            return self._doc
+
+        doc = self.retrieve_doc()
+        if doc is None:
+            doc = self.__class__.__doc__
+            if not doc:
+                doc = ""
+            doc = f"{inspect.cleandoc(doc)}\n\n"
+
+        transformers_list = "Supported inputs:\n\n"
+        for transformer in self.supported_inputs_descs:
+            transformers_list += f"- {transformer}\n"
+
+        doc = f"{doc}\n\n{transformers_list}"
+
+        self._doc = DocumentationMetadataModel.create(doc)
+        return self._doc
+
+    @property
+    def source_transformers(self) -> Iterable[SourceTransformer]:
+        if self._source_transformers is None:
+            self._source_transformers = self.retrieve_source_transformers()
+        return self._source_transformers
+
+    def retrieve_source_transformers(self) -> Iterable[SourceTransformer]:
+        return [NoOpSourceTransformer()]
+
+    def retrieve_supported_python_classes(self) -> Set[Type]:
+        """Retrieve the set of Python classes that this renderer supports as inputs."""
+
+        result: Set[Type] = set()
+        for x in self.source_transformers:
+            result.update(x.retrieve_supported_python_classes())
+        return result
+
+    def get_renderer_alias(self) -> str:
+        return self.__class__._renderer_name  # type: ignore
+
+    @abc.abstractmethod
+    def retrieve_supported_render_sources(self) -> Union[Iterable[str], str]:
+        pass
+
+    @abc.abstractmethod
+    def retrieve_supported_render_targets(self) -> Union[Iterable[str], str]:
+        pass
 
     @abc.abstractmethod
     def _render(
@@ -83,12 +180,23 @@ class KiaraRenderer(
     def _post_process(self, rendered: Any) -> TARGET_TYPE:
         return rendered
 
-    def render(self, object: SOURCE_TYPE, render_config: INPUTS_SCHEMA) -> Any:
+    def render(self, instance: SOURCE_TYPE, render_config: INPUTS_SCHEMA) -> Any:
 
-        try:
-            transformed = self.transform_source(object)
-        except Exception as e:
-            raise KiaraException("Error transforming source object.", parent=e)
+        transformed = None
+        for transformer in self.source_transformers:
+            try:
+
+                for cls in transformer.retrieve_supported_python_classes():
+                    if isinstance(instance, cls):
+                        transformed = transformer.validate_and_transform(instance)
+                        if transformed is not None:
+                            break
+            except Exception as e:
+                raise KiaraException("Error transforming source object.", parent=e)
+
+        if not transformed:
+            raise Exception(f"Can't transform input object: {instance}.")
+
         try:
             rendered: TARGET_TYPE = self._render(
                 instance=transformed, render_config=render_config

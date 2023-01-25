@@ -29,6 +29,7 @@ from kiara.interfaces.python_api.models.info import (
     OperationGroupInfo,
     OperationInfo,
     OperationTypeInfo,
+    RendererInfos,
     ValueInfo,
     ValuesInfo,
 )
@@ -58,6 +59,7 @@ from kiara.registries.data import ValueLink
 from kiara.registries.environment import EnvironmentRegistry
 from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.operations import OP_TYPE
+from kiara.renderers import KiaraRenderer
 from kiara.utils import log_exception, log_message
 from kiara.utils.downloads import get_data_from_url
 from kiara.utils.files import get_data_from_file
@@ -1262,25 +1264,40 @@ class KiaraAPI(object):
     # ------------------------------------------------------------------------------------------------------------------
     # render-related methods
 
-    def retrieve_renderer_names_for(self, source_type: str) -> List[str]:
+    def retrieve_renderer_infos(
+        self, source_type: Union[str, None] = None
+    ) -> RendererInfos:
 
-        return self.context.render_registry.retrieve_renderers_for_type(
+        if not source_type:
+            renderers = self.context.render_registry.registered_renderers
+        else:
+            renderers = self.context.render_registry.retrieve_renderers_for_source_type(
+                source_type=source_type
+            )
+
+        group = {k.get_renderer_alias(): k for k in renderers}
+        infos = RendererInfos.create_from_instances(kiara=self.context, instances=group)
+        return infos  # type: ignore
+
+    def retrieve_renderers_for(self, source_type: str) -> List[KiaraRenderer]:
+
+        return self.context.render_registry.retrieve_renderers_for_source_type(
             source_type=source_type
         )
 
     def render(
         self,
-        render_type: str,
         item: Any,
-        renderer_name: str,
+        source_type: str,
+        target_type: str,
         render_config: Union[Mapping[str, Any], None] = None,
     ) -> Any:
 
         registry = self.context.render_registry
         result = registry.render(
-            render_type=render_type,
             item=item,
-            renderer_alias=renderer_name,
+            source_type=source_type,
+            target_type=target_type,
             render_config=render_config,
         )
         return result

@@ -8,40 +8,45 @@
 """Pipeline-related subcommands for the cli."""
 import sys
 from pathlib import Path
-from typing import Any, Mapping, Tuple, Union
+from typing import Any, Mapping, Set, Tuple, Union
 
 import rich_click as click
 from rich.markdown import Markdown
-from rich.tree import Tree
 
 from kiara import KiaraAPI
 from kiara.models.module.pipeline.pipeline import Pipeline
-from kiara.utils.cli import dict_from_cli_args, terminal_print
+from kiara.utils.cli import dict_from_cli_args, terminal_print, terminal_print_model
 from kiara.utils.cli.exceptions import handle_exception
 
 
 def render_wrapper(
     kiara_api: KiaraAPI,
-    item_type: str,
+    source_type: str,
     item: Any,
-    renderer: Union[str, None],
+    target_type: Union[str, None],
     render_config: Mapping[str, Any],
 ):
 
-    if not renderer:
-        avaialable_renderers = kiara_api.retrieve_renderer_names_for(item)
+    if target_type is None:
+        renderers = kiara_api.retrieve_renderers_for(source_type=source_type)
+        all_targets: Set[str] = set()
+        for renderer in renderers:
+            targets = renderer.retrieve_supported_render_targets()
+            if isinstance(targets, str):
+                targets = [targets]
+            all_targets.update(targets)
 
-        msg = f"No renderer specified. Available renderers for '{item_type}':\n\n"
-        for renderer in avaialable_renderers:
-            msg += f" - {renderer}\n"
         terminal_print()
-        terminal_print(Markdown(msg), in_panel="Missing renderer")
+        msg = "No target type specified, available targets:\n\n"
+        for target in all_targets:
+            msg += f"- {target}\n"
+        terminal_print(Markdown(msg))
         sys.exit(1)
 
     result = kiara_api.render(
-        render_type=item_type,
+        source_type=source_type,
         item=item,
-        renderer_name=renderer,
+        target_type=target_type,
         render_config=render_config,
     )
     return result
@@ -88,28 +93,22 @@ def render(ctx) -> None:
 
 @render.command()
 @click.pass_context
-def list_renderers(ctx):
+def list_renderers(ctx) -> None:
     """List all available renderers."""
 
     kiara_api: KiaraAPI = ctx.obj["kiara_api"]
 
-    tree = Tree("[b i]Renderers[/b i]")
-    for (
-        source_type,
-        renderers,
-    ) in kiara_api.context.render_registry.registered_renderers.items():
-        source_node = tree.add(f"source type: [b]{source_type}[/b]")
-        for renderer_name, renderer in renderers.items():
-            source_node.add(f"render target: [i]{renderer_name}[/i]")
-
+    infos = kiara_api.retrieve_renderer_infos()
     terminal_print()
-    terminal_print(tree)
+    terminal_print_model(infos)
 
 
 @render.group()
 @click.argument("pipeline", nargs=1, metavar="PIPELINE_NAME_OR_PATH")
 @click.pass_context
 def pipeline(ctx, pipeline: str) -> None:
+    """Render a kiara pipeline."""
+
     api: KiaraAPI = ctx.obj["kiara_api"]
 
     if pipeline.startswith("workflow:"):
@@ -122,7 +121,7 @@ def pipeline(ctx, pipeline: str) -> None:
 
 
 @pipeline.command("as")
-@click.argument("renderer", nargs=1, metavar="RENDERER_NAME", required=False)
+@click.argument("target_type", nargs=1, metavar="TARGET_TYPE", required=False)
 @click.argument("render_config", nargs=-1, required=False)
 @click.option("--output", "-o", help="Write the rendered output to a file.")
 @click.option("--force", "-f", help="Overwrite existing output file.", is_flag=True)
@@ -131,7 +130,7 @@ def pipeline(ctx, pipeline: str) -> None:
 def render_func_pipeline(
     ctx,
     render_config: Tuple[str, ...],
-    renderer: Union[str, None],
+    target_type: Union[str, None],
     output: Union[str, None],
     force: bool,
 ) -> None:
@@ -143,9 +142,9 @@ def render_func_pipeline(
 
     result = render_wrapper(
         kiara_api=kiara_api,
-        item_type="pipeline",
+        source_type="pipeline",
         item=item,
-        renderer=renderer,
+        target_type=target_type,
         render_config=render_config_dict,
     )
 
@@ -156,6 +155,8 @@ def render_func_pipeline(
 @click.argument("value", nargs=1, metavar="VALUE_ID_OR_ALIAS")
 @click.pass_context
 def value(ctx, value: str) -> None:
+    """Render a kiara value."""
+
     api: KiaraAPI = ctx.obj["kiara_api"]
 
     value_obj = api.get_value(value)
@@ -164,7 +165,7 @@ def value(ctx, value: str) -> None:
 
 
 @value.command("as")
-@click.argument("renderer", nargs=1, metavar="RENDERER_NAME", required=False)
+@click.argument("target_type", nargs=1, metavar="TARGET_TYPE", required=False)
 @click.argument("render_config", nargs=-1, required=False)
 @click.option("--output", "-o", help="Write the rendered output to a file.")
 @click.option("--force", "-f", help="Overwrite existing output file.", is_flag=True)
@@ -183,7 +184,7 @@ def value(ctx, value: str) -> None:
 def render_func_value(
     ctx,
     render_config: Tuple[str, ...],
-    renderer: Union[str, None],
+    target_type: Union[str, None],
     metadata: bool,
     no_data: bool,
     output: Union[str, None],
@@ -197,9 +198,9 @@ def render_func_value(
     render_config_dict = {"render_config": render_config_dict}
     result = render_wrapper(
         kiara_api=kiara_api,
-        item_type="value",
+        source_type="value",
         item=item,
-        renderer=renderer,
+        target_type=target_type,
         render_config=render_config_dict,
     )
 

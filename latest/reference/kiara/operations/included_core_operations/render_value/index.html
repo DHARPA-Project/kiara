@@ -5046,7 +5046,39 @@
 <span class="normal">214</span>
 <span class="normal">215</span>
 <span class="normal">216</span>
-<span class="normal">217</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RenderValueOperationType</span><span class="p">(</span><span class="n">OperationType</span><span class="p">[</span><span class="n">RenderValueDetails</span><span class="p">]):</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RenderValueOperationType</span><span class="p">(</span><span class="n">OperationType</span><span class="p">[</span><span class="n">RenderValueDetails</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An operation that renders a value.</span>
 
 <span class="sd">    A &#39;render_value&#39; operation typically is named follwing the pattern:</span>
@@ -5220,6 +5252,38 @@
                 <span class="k">if</span> <span class="n">target_type</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                     <span class="k">continue</span>
                 <span class="n">result</span><span class="p">[</span><span class="n">target_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">op</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">get_render_operations_for_target_type</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all render operations that renders to the specified data type.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            target_type: the result data type</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a mapping with the source type as key, and the operation as value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: consider type lineages</span>
+
+        <span class="k">if</span> <span class="n">target_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_type_names</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid target data type: </span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">op_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_operation_details</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">op_details</span><span class="o">.</span><span class="n">target_data_type</span> <span class="o">==</span> <span class="n">target_type</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">source_type</span> <span class="o">=</span> <span class="n">op_details</span><span class="o">.</span><span class="n">source_data_type</span>
+            <span class="k">if</span> <span class="n">source_type</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">continue</span>
+
+            <span class="n">result</span><span class="p">[</span><span class="n">source_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">op</span>
 
         <span class="k">return</span> <span class="n">result</span>
 
@@ -5639,6 +5703,131 @@
 
 
 
+<h5 id="kiara.operations.included_core_operations.render_value.RenderValueOperationType.get_render_operations_for_target_type" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_render_operations_for_target_type</span><span class="p">(</span><span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]</span></code>
+
+<a href="#kiara.operations.included_core_operations.render_value.RenderValueOperationType.get_render_operations_for_target_type" class="headerlink" title="Permanent link">&para;</a></h5>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Return all render operations that renders to the specified data type.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>target_type</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>the result data type</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="typing.Mapping">Mapping</span>[str, <a class="autorefs autorefs-internal" title="kiara.models.module.operation.Operation" href="../../../models/module/operation/#kiara.models.module.operation.Operation">Operation</a>]</code>
+          </td>
+          <td><p>a mapping with the source type as key, and the operation as value</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>kiara/operations/included_core_operations/render_value.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_render_operations_for_target_type</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return all render operations that renders to the specified data type.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        target_type: the result data type</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a mapping with the source type as key, and the operation as value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># TODO: consider type lineages</span>
+
+    <span class="k">if</span> <span class="n">target_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="o">.</span><span class="n">data_type_names</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid target data type: </span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Operation</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">operations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">op_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrieve_operation_details</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">op_details</span><span class="o">.</span><span class="n">target_data_type</span> <span class="o">==</span> <span class="n">target_type</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">source_type</span> <span class="o">=</span> <span class="n">op_details</span><span class="o">.</span><span class="n">source_data_type</span>
+        <span class="k">if</span> <span class="n">source_type</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">continue</span>
+
+        <span class="n">result</span><span class="p">[</span><span class="n">source_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">op</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h5 id="kiara.operations.included_core_operations.render_value.RenderValueOperationType.get_render_operation" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get_render_operation</span><span class="p">(</span><span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Operation</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span></code>
 
@@ -5649,12 +5838,12 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/operations/included_core_operations/render_value.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">212</span>
-<span class="normal">213</span>
-<span class="normal">214</span>
-<span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_render_operation</span><span class="p">(</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_render_operation</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Operation</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 

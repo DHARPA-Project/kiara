@@ -52,6 +52,13 @@ class ValueRenderInputsSchema(RenderInputsSchema):
     render_config: Mapping[str, Any] = Field(
         description="The render config data.", default_factory=dict
     )
+    include_metadata: bool = Field(
+        description="Whether to include metadata.", default=False
+    )
+    include_data: bool = Field(
+        description="Whether to include data (only applies when 'include_metadata' is set to 'True').",
+        default=True,
+    )
 
 
 class ValueRendererConfig(KiaraRendererConfig):
@@ -92,9 +99,7 @@ class ValueRenderer(
 
         return f"Render a value (of a supported type) to a value of type '{self.renderer_config.target_type}'."
 
-    def _render(
-        self, instance: Value, render_config: ValueRenderInputsSchema
-    ) -> RenderValueResult:
+    def _render(self, instance: Value, render_config: ValueRenderInputsSchema) -> Any:
 
         target_type = self.renderer_config.target_type
         op_type: RenderValueOperationType = (
@@ -108,9 +113,17 @@ class ValueRenderer(
                 f"Can't find render operation for source type '{instance.data_type_name}' to '{target_type}'."
             )
 
-        result = render_op.run(
+        result: Any = render_op.run(
             self._kiara,
             inputs={"value": instance, "render_config": render_config.render_config},
         )
         rendered: RenderValueResult = result["render_value_result"].data  # type: ignore
-        return rendered
+
+        if not render_config.include_metadata:
+            result = rendered.rendered
+        else:
+            if not render_config.include_data:
+                rendered.rendered = None
+            result = rendered
+
+        return result

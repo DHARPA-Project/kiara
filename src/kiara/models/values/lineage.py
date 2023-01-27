@@ -227,16 +227,16 @@ def create_lineage_graph_modules(
 
 
 class ValueLineage(JupyterMixin):
-    # @classmethod
-    # def from_value(cls, value: Value) -> "ValueLineage":
-    #     pass
-
     def __init__(self, kiara: "Kiara", value: Value) -> None:
 
         self._value: Value = value
         self._kiara: Kiara = kiara
         self._full_graph: Union[None, DiGraph] = None
         self._module_graph: Union[None, DiGraph] = None
+
+    @property
+    def value(self) -> Value:
+        return self._value
 
     @property
     def full_graph(self) -> DiGraph:

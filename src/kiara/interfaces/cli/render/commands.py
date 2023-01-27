@@ -52,7 +52,12 @@ def render_wrapper(
     return result
 
 
-def result_wrapper(result: Any, output: Union[str, None], force: bool = False):
+def result_wrapper(
+    result: Any,
+    output: Union[str, None],
+    force: bool = False,
+    terminal_render_config: Union[Mapping[str, Any]] = None,
+):
 
     if output:
         output_file = Path(output)
@@ -82,7 +87,9 @@ def result_wrapper(result: Any, output: Union[str, None], force: bool = False):
                 "Render result is binary data, can't print to terminal. Use the '--output' option to write to a file."
             )
         else:
-            terminal_print(result)
+            if terminal_render_config is None:
+                terminal_render_config = {}
+            terminal_print(result, **terminal_render_config)
 
 
 @click.group()
@@ -169,24 +176,22 @@ def value(ctx, value: str) -> None:
 @click.argument("render_config", nargs=-1, required=False)
 @click.option("--output", "-o", help="Write the rendered output to a file.")
 @click.option("--force", "-f", help="Overwrite existing output file.", is_flag=True)
-@click.option(
-    "--metadata",
-    "-m",
-    help="Also show the render metadata.",
-    is_flag=True,
-    default=False,
-)
-@click.option(
-    "--no-data", "-n", help="Show the rendered data.", is_flag=True, default=False
-)
+# @click.option(
+#     "--metadata",
+#     "-m",
+#     help="Also show the render metadata.",
+#     is_flag=True,
+#     default=False,
+# )
+# @click.option(
+#     "--no-data", "-n", help="Show the rendered data.", is_flag=True, default=False
+# )
 @click.pass_context
 @handle_exception()
 def render_func_value(
     ctx,
     render_config: Tuple[str, ...],
     target_type: Union[str, None],
-    metadata: bool,
-    no_data: bool,
     output: Union[str, None],
     force: bool,
 ) -> None:
@@ -195,7 +200,7 @@ def render_func_value(
     item = ctx.obj["item"]
 
     render_config_dict = dict_from_cli_args(*render_config)
-    render_config_dict = {"render_config": render_config_dict}
+
     result = render_wrapper(
         kiara_api=kiara_api,
         source_type="value",
@@ -204,13 +209,14 @@ def render_func_value(
         render_config=render_config_dict,
     )
 
-    if output:
-        result_wrapper(result=result.rendered, output=output, force=force)
-    else:
-        conf = {"show_render_result": True, "show_render_metadata": False}
-        if metadata:
-            conf["show_render_metadata"] = True
-        if no_data:
-            conf["show_render_result"] = False
+    # in case we have a rendervalue result, and we want to terminal print, we need to forward some of the render config
+    show_render_metadata = render_config_dict.get("include_metadata", False)
+    show_render_result = render_config_dict.get("include_data", True)
+    cnf = {
+        "show_render_metadata": show_render_metadata,
+        "show_render_result": show_render_result,
+    }
 
-        terminal_print(result.create_renderable(**conf))
+    result_wrapper(
+        result=result, output=output, force=force, terminal_render_config=cnf
+    )

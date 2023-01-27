@@ -156,6 +156,7 @@ pretty_print = "kiara.operations.included_core_operations.pretty_print:PrettyPri
 create_from = "kiara.operations.included_core_operations.create_from:CreateFromOperationType"
 export_as = "kiara.operations.included_core_operations.export_as:ExportAsOperationType"
 render_value = "kiara.operations.included_core_operations.render_value:RenderValueOperationType"
+render_data = "kiara.operations.included_core_operations.render_data:RenderDataOperationType"
 filter = "kiara.operations.included_core_operations.filter:FilterOperationType"
 
 [project.entry-points."kiara.renderers"]

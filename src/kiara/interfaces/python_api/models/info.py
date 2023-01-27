@@ -1388,7 +1388,8 @@ class OperationInfo(ItemInfo):
 
     def create_renderable(self, **config: Any) -> RenderableType:
 
-        include_doc = config.get("include_doc", True)
+        include_doc = config.get("include_doc", False)
+        include_op_details = config.get("include_op_details", True)
 
         table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
         table.add_column("property", style="i")
@@ -1402,7 +1403,10 @@ class OperationInfo(ItemInfo):
         table.add_row("Author(s)", self.authors.create_renderable(**config))
         table.add_row("Context", self.context.create_renderable(**config))
 
-        table.add_row("Operation details", self.operation.create_renderable(**config))
+        if include_op_details:
+            table.add_row(
+                "Operation details", self.operation.create_renderable(**config)
+            )
         return table
 
 

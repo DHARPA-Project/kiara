@@ -101,6 +101,10 @@ class FileModel(KiaraModel):
     mime_type: str = Field(description="The mime type of the file.")
     file_name: str = Field("The name of the file.")
     size: int = Field(description="The size of the file.")
+    metadata: Dict[str, Any] = Field(
+        description="Additional, ustructured, user-defined metadata.",
+        default_factory=dict,
+    )
 
     _path: Union[str, None] = PrivateAttr(default=None)
     _file_hash: Union[str, None] = PrivateAttr(default=None)
@@ -361,6 +365,11 @@ class FileBundle(KiaraModel):
         description="A map of all the included files, incl. their properties. Uses the relative path of each file as key."
     )
     size: int = Field(description="The size of all files in this folder, combined.")
+    metadata: Dict[str, Any] = Field(
+        description="Additional, ustructured, user-defined metadata.",
+        default_factory=dict,
+    )
+
     _path: Union[str, None] = PrivateAttr(default=None)
 
     @property

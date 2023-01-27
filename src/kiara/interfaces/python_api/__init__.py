@@ -630,6 +630,7 @@ class KiaraAPI(object):
         input_types: Union[str, Iterable[str], None] = None,
         output_types: Union[str, Iterable[str], None] = None,
         operation_types: Union[str, Iterable[str], None] = None,
+        python_packages: Union[str, Iterable[str], None] = None,
         include_internal: bool = False,
     ) -> Mapping[str, Operation]:
         """List all available values, optionally filter.
@@ -640,7 +641,7 @@ class KiaraAPI(object):
             output_types: each operation must have at least one output that matches one of the specified types
             operation_types: only include operations of the specified type(s)
             include_internal: whether to include operations that are predominantly used internally in kiara.
-
+            python_packages: only include operations that are contained in one of the provided python packages
         Returns:
             a dictionary with the operation id as key, and [kiara.models.module.operation.Operation] instance data as value
         """
@@ -719,6 +720,19 @@ class KiaraAPI(object):
 
             operations = temp
 
+        if python_packages:
+            temp = {}
+            if isinstance(python_packages, str):
+                python_packages = [python_packages]
+            for op_id, op in operations.items():
+                info = OperationInfo.create_from_instance(
+                    kiara=self.context, instance=op
+                )
+                pkg = info.context.labels.get("package", None)
+                if pkg in python_packages:
+                    temp[pkg] = op
+            operations = temp
+
         return operations
 
     def retrieve_operation_info(
@@ -749,6 +763,7 @@ class KiaraAPI(object):
         input_types: Union[str, Iterable[str], None] = None,
         output_types: Union[str, Iterable[str], None] = None,
         operation_types: Union[str, Iterable[str], None] = None,
+        python_packages: Union[str, Iterable[str], None] = None,
         include_internal: bool = False,
     ) -> OperationGroupInfo:
         """Retrieve information about the matching operations.
@@ -767,7 +782,7 @@ class KiaraAPI(object):
             output_types: each operation must have at least one output that matches one of the specified types
             operation_types: only include operations of the specified type(s)
             include_internal: whether to include operations that are predominantly used internally in kiara.
-
+            python_packages: only include operations that are contained in one of the provided python packages
         Returns:
             a wrapper object containing a dictionary of items with value_id as key, and [kiara.interfaces.python_api.models.info.OperationInfo] as value
         """
@@ -782,6 +797,7 @@ class KiaraAPI(object):
             output_types=output_types,
             include_internal=include_internal,
             operation_types=operation_types,
+            python_packages=python_packages,
         )
 
         ops_info = OperationGroupInfo.create_from_operations(

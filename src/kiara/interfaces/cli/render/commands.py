@@ -56,7 +56,7 @@ def result_wrapper(
     result: Any,
     output: Union[str, None],
     force: bool = False,
-    terminal_render_config: Union[Mapping[str, Any]] = None,
+    terminal_render_config: Union[None, Mapping[str, Any]] = None,
 ):
 
     if output:

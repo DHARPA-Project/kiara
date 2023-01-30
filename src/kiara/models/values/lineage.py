@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any, Dict, Union
 
 from networkx import DiGraph
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
@@ -61,6 +61,49 @@ def fill_renderable_lineage_tree(
                 node=input_node,
                 level=level + 1,
                 include_ids=include_ids,
+            )
+
+    return main
+
+
+def fill_dict_with_lineage(
+    kiara: "Kiara",
+    pedigree: ValuePedigree,
+    node: Union[Dict[str, Any], None] = None,
+    include_preview: bool = False,
+    level: int = 0,
+):
+
+    title = pedigree.module_type
+    if node is None:
+        main = {}
+    else:
+        main = node[title] = {}
+
+    for input_name in sorted(pedigree.inputs.keys()):
+
+        child_value_id = pedigree.inputs[input_name]
+        child_value = kiara.data_registry.get_value(child_value_id)
+
+        value_type = child_value.data_type_name
+        main[input_name] = {"type": value_type, "id": str(child_value.value_id)}
+        if include_preview:
+            preview = kiara.render_registry.render(
+                source_type="value",
+                item=child_value,
+                target_type="string",
+                render_config={},
+            )
+            main[input_name]["preview"] = preview
+
+        if child_value.pedigree != ORPHAN:
+            main[input_name]["module"] = {}
+            fill_dict_with_lineage(
+                kiara=kiara,
+                pedigree=child_value.pedigree,
+                node=main[input_name]["module"],
+                level=level + 1,
+                include_preview=include_preview,
             )
 
     return main
@@ -257,6 +300,14 @@ class ValueLineage(JupyterMixin):
             kiara=self._kiara, value=self._value
         ).reverse()
         return self._module_graph
+
+    def as_dict(self, include_preview: bool = False) -> Dict[str, Any]:
+
+        return fill_dict_with_lineage(
+            kiara=self._kiara,
+            pedigree=self._value.pedigree,
+            include_preview=include_preview,
+        )
 
     def create_renderable(self, **config: Any) -> RenderableType:
 

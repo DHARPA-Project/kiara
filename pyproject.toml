@@ -154,6 +154,7 @@ deserialize = "kiara.operations.included_core_operations.serialize:DeSerializeOp
 extract_metadata = "kiara.operations.included_core_operations.metadata:ExtractMetadataOperationType"
 pretty_print = "kiara.operations.included_core_operations.pretty_print:PrettyPrintOperationType"
 create_from = "kiara.operations.included_core_operations.create_from:CreateFromOperationType"
+import_data = "kiara.operations.included_core_operations.import_data:ImportDataOperationType"
 export_as = "kiara.operations.included_core_operations.export_as:ExportAsOperationType"
 render_value = "kiara.operations.included_core_operations.render_value:RenderValueOperationType"
 #render_data = "kiara.operations.included_core_operations.render_data:RenderDataOperationType"
@@ -228,6 +229,7 @@ dev_utils = [
     "pre-commit>=2.9.3",
     "pytest>=6.2.2",
     "setup-cfg-fmt>=1.16.0",
+    "ruff>=0.0.237",
     "types-Deprecated",
     "types-PyYAML",
     "types-pkg-resources",

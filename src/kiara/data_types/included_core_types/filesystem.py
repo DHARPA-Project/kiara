@@ -6,6 +6,7 @@
 
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Type, Union
 
+import humanfriendly
 import orjson.orjson
 import structlog
 from pydantic import Field
@@ -250,3 +251,17 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
         bundle: FileBundle = value.data
         renderable = bundle.create_renderable(**render_config)
         return renderable
+
+    def _pretty_print_as__string(
+        self, value: "Value", render_config: Mapping[str, Any]
+    ) -> Any:
+
+        bundle: FileBundle = value.data
+        result = []
+        result.append(f"File bundle '{bundle.bundle_name}")
+        result.append(f"  size: {humanfriendly.format_size(bundle.size)}")
+        result.append("  contents:")
+        for rel_path, file in bundle.included_files.items():
+            result.append(f"    - {rel_path}: {file.file_name}")
+
+        return "\n".join(result)

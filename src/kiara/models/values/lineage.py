@@ -72,11 +72,12 @@ def fill_dict_with_lineage(
     node: Union[Dict[str, Any], None] = None,
     include_preview: bool = False,
     level: int = 0,
-):
+) -> Dict[str, Any]:
 
     title = pedigree.module_type
     if node is None:
-        main = {}
+        root: Dict[str, Any] = {title: {}}
+        main: Dict[str, Any] = root[title]
     else:
         main = node[title] = {}
 
@@ -106,7 +107,10 @@ def fill_dict_with_lineage(
                 include_preview=include_preview,
             )
 
-    return main
+    if node is None:
+        return root  # type: ignore
+    else:
+        return node
 
 
 def create_lineage_graph(

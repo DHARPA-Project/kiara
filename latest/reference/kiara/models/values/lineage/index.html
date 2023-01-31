@@ -4837,8 +4837,7 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/values/lineage.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">290</span>
-<span class="normal">291</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">291</span>
 <span class="normal">292</span>
 <span class="normal">293</span>
 <span class="normal">294</span>
@@ -4892,7 +4891,16 @@
 <span class="normal">342</span>
 <span class="normal">343</span>
 <span class="normal">344</span>
-<span class="normal">345</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueLineage</span><span class="p">(</span><span class="n">JupyterMixin</span><span class="p">):</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ValueLineage</span><span class="p">(</span><span class="n">JupyterMixin</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">:</span> <span class="n">Value</span> <span class="o">=</span> <span class="n">value</span>
@@ -4925,15 +4933,23 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_module_graph</span>
 
     <span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">include_preview</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">include_module_info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">include_preview</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">include_module_info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ensure_json_serializable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
-        <span class="k">return</span> <span class="n">fill_dict_with_lineage</span><span class="p">(</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">fill_dict_with_lineage</span><span class="p">(</span>
             <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
             <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span>
             <span class="n">include_preview</span><span class="o">=</span><span class="n">include_preview</span><span class="p">,</span>
             <span class="n">include_module_info</span><span class="o">=</span><span class="n">include_module_info</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ensure_json_serializable</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
@@ -5025,7 +5041,7 @@
 
 
 <h5 id="kiara.models.values.lineage.ValueLineage.as_dict" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">as_dict</span><span class="p">(</span><span class="n">include_preview</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">include_module_info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
+<code class="highlight language-python"><span class="n">as_dict</span><span class="p">(</span><span class="n">include_preview</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">include_module_info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ensure_json_serializable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></code>
 
 <a href="#kiara.models.values.lineage.ValueLineage.as_dict" class="headerlink" title="Permanent link">&para;</a></h5>
 
@@ -5034,8 +5050,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/lineage.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">322</span>
-<span class="normal">323</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
@@ -5043,16 +5058,33 @@
 <span class="normal">328</span>
 <span class="normal">329</span>
 <span class="normal">330</span>
-<span class="normal">331</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">include_preview</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">include_module_info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">as_dict</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">include_preview</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">include_module_info</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">ensure_json_serializable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
-    <span class="k">return</span> <span class="n">fill_dict_with_lineage</span><span class="p">(</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">fill_dict_with_lineage</span><span class="p">(</span>
         <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">,</span>
         <span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span>
         <span class="n">include_preview</span><span class="o">=</span><span class="n">include_preview</span><span class="p">,</span>
         <span class="n">include_module_info</span><span class="o">=</span><span class="n">include_module_info</span><span class="p">,</span>
     <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ensure_json_serializable</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">orjson</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">data</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -5073,13 +5105,13 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/lineage.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">333</span>
-<span class="normal">334</span>
-<span class="normal">335</span>
-<span class="normal">336</span>
-<span class="normal">337</span>
-<span class="normal">338</span>
-<span class="normal">339</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="n">include_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_ids&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">tree</span> <span class="o">=</span> <span class="n">fill_renderable_lineage_tree</span><span class="p">(</span>
@@ -5115,8 +5147,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/lineage.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
-<span class="normal">29</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span>
 <span class="normal">32</span>
@@ -5153,7 +5184,8 @@
 <span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span>
-<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fill_renderable_lineage_tree</span><span class="p">(</span>
+<span class="normal">66</span>
+<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fill_renderable_lineage_tree</span><span class="p">(</span>
     <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
     <span class="n">pedigree</span><span class="p">:</span> <span class="n">ValuePedigree</span><span class="p">,</span>
     <span class="n">node</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tree</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -5212,8 +5244,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/lineage.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 69</span>
-<span class="normal"> 70</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 70</span>
 <span class="normal"> 71</span>
 <span class="normal"> 72</span>
 <span class="normal"> 73</span>
@@ -5270,7 +5301,8 @@
 <span class="normal">124</span>
 <span class="normal">125</span>
 <span class="normal">126</span>
-<span class="normal">127</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fill_dict_with_lineage</span><span class="p">(</span>
+<span class="normal">127</span>
+<span class="normal">128</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fill_dict_with_lineage</span><span class="p">(</span>
     <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span>
     <span class="n">node</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -5283,9 +5315,9 @@
     <span class="n">title</span> <span class="o">=</span> <span class="n">pedigree</span><span class="o">.</span><span class="n">module_type</span>
     <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">root</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">title</span><span class="p">:</span> <span class="p">{},</span> <span class="s2">&quot;output_name&quot;</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">pedigree_output_name</span><span class="p">}</span>
+            <span class="s2">&quot;pedigree&quot;</span><span class="p">:</span> <span class="p">{</span><span class="n">title</span><span class="p">:</span> <span class="p">{},</span> <span class="s2">&quot;output_name&quot;</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">pedigree_output_name</span><span class="p">}</span>
         <span class="p">}</span>
-        <span class="n">main</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="s2">&quot;module&quot;</span><span class="p">][</span><span class="n">title</span><span class="p">]</span>
+        <span class="n">main</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="s2">&quot;pedigree&quot;</span><span class="p">][</span><span class="n">title</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">main</span> <span class="o">=</span> <span class="n">node</span><span class="p">[</span><span class="n">title</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -5315,11 +5347,11 @@
             <span class="n">main</span><span class="p">[</span><span class="s2">&quot;inputs&quot;</span><span class="p">][</span><span class="n">input_name</span><span class="p">][</span><span class="s2">&quot;preview&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">preview</span>
 
         <span class="k">if</span> <span class="n">child_value</span><span class="o">.</span><span class="n">pedigree</span> <span class="o">!=</span> <span class="n">ORPHAN</span><span class="p">:</span>
-            <span class="n">main</span><span class="p">[</span><span class="s2">&quot;inputs&quot;</span><span class="p">][</span><span class="n">input_name</span><span class="p">][</span><span class="s2">&quot;module&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">main</span><span class="p">[</span><span class="s2">&quot;inputs&quot;</span><span class="p">][</span><span class="n">input_name</span><span class="p">][</span><span class="s2">&quot;pedigree&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="n">fill_dict_with_lineage</span><span class="p">(</span>
                 <span class="n">kiara</span><span class="o">=</span><span class="n">kiara</span><span class="p">,</span>
                 <span class="n">value</span><span class="o">=</span><span class="n">child_value</span><span class="p">,</span>
-                <span class="n">node</span><span class="o">=</span><span class="n">main</span><span class="p">[</span><span class="s2">&quot;inputs&quot;</span><span class="p">][</span><span class="n">input_name</span><span class="p">][</span><span class="s2">&quot;module&quot;</span><span class="p">],</span>
+                <span class="n">node</span><span class="o">=</span><span class="n">main</span><span class="p">[</span><span class="s2">&quot;inputs&quot;</span><span class="p">][</span><span class="n">input_name</span><span class="p">][</span><span class="s2">&quot;pedigree&quot;</span><span class="p">],</span>
                 <span class="n">level</span><span class="o">=</span><span class="n">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
                 <span class="n">include_preview</span><span class="o">=</span><span class="n">include_preview</span><span class="p">,</span>
                 <span class="n">include_module_info</span><span class="o">=</span><span class="n">include_module_info</span><span class="p">,</span>
@@ -5349,8 +5381,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/lineage.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">130</span>
-<span class="normal">131</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">131</span>
 <span class="normal">132</span>
 <span class="normal">133</span>
 <span class="normal">134</span>
@@ -5419,7 +5450,8 @@
 <span class="normal">197</span>
 <span class="normal">198</span>
 <span class="normal">199</span>
-<span class="normal">200</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_lineage_graph</span><span class="p">(</span>
+<span class="normal">200</span>
+<span class="normal">201</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_lineage_graph</span><span class="p">(</span>
     <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span>
     <span class="n">graph</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DiGraph</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -5510,8 +5542,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/models/values/lineage.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">203</span>
-<span class="normal">204</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">204</span>
 <span class="normal">205</span>
 <span class="normal">206</span>
 <span class="normal">207</span>
@@ -5594,7 +5625,8 @@
 <span class="normal">284</span>
 <span class="normal">285</span>
 <span class="normal">286</span>
-<span class="normal">287</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_lineage_graph_modules</span><span class="p">(</span>
+<span class="normal">287</span>
+<span class="normal">288</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_lineage_graph_modules</span><span class="p">(</span>
     <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Value</span><span class="p">,</span>
     <span class="n">graph</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DiGraph</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

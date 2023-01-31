@@ -81,7 +81,7 @@ def fill_dict_with_lineage(
     if node is None:
         root: Dict[str, Any] = {
             "pedigree": {
-                "module": {"name": title},
+                "module": {"name": title, "module_config": pedigree.module_config},
                 "output_name": value.pedigree_output_name,
                 "inputs": {},
             },
@@ -99,7 +99,7 @@ def fill_dict_with_lineage(
         main: Dict[str, Any] = root["pedigree"]
     else:
         node["inputs"] = {}
-        node["module"] = {"name": title}
+        node["module"] = {"name": title, "module_config": pedigree.module_config}
         main = node
 
     if include_module_info:

@@ -1016,7 +1016,8 @@ class ModuleTypeInfo(TypeInfo[Type["KiaraModule"]]):
 
         if not hasattr(module_cls, "process"):
             raise Exception(f"Module class '{module_cls}' misses 'process' method.")
-        proc_src = textwrap.dedent(inspect.getsource(module_cls.process))  # type: ignore
+
+        module_src = textwrap.dedent(inspect.getsource(module_cls))  # type: ignore
 
         authors_md = AuthorsMetadataModel.from_class(module_cls)
         doc = DocumentationMetadataModel.from_class_doc(module_cls)
@@ -1031,10 +1032,10 @@ class ModuleTypeInfo(TypeInfo[Type["KiaraModule"]]):
             "context": properties_md,
             "python_class": python_class,
             "config": config,
-            "process_src": proc_src,
+            "module_src": module_src,
         }
 
-    process_src: str = Field(
+    module_src: str = Field(
         description="The source code of the process method of the module."
     )
 
@@ -1070,7 +1071,7 @@ class ModuleTypeInfo(TypeInfo[Type["KiaraModule"]]):
             from kiara.context.config import KIARA_SETTINGS
 
             _config = Syntax(
-                self.process_src,
+                self.module_src,
                 "python",
                 background_color=KIARA_SETTINGS.syntax_highlight_background,
             )

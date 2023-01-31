@@ -68,18 +68,28 @@ def fill_renderable_lineage_tree(
 
 def fill_dict_with_lineage(
     kiara: "Kiara",
-    pedigree: ValuePedigree,
+    value: Value,
     node: Union[Dict[str, Any], None] = None,
     include_preview: bool = False,
+    include_module_info: bool = False,
     level: int = 0,
 ) -> Dict[str, Any]:
 
+    pedigree = value.pedigree
     title = pedigree.module_type
     if node is None:
-        root: Dict[str, Any] = {title: {}}
-        main: Dict[str, Any] = root[title]
+        root: Dict[str, Any] = {
+            "module": {title: {}, "output_name": value.pedigree_output_name}
+        }
+        main: Dict[str, Any] = root["module"][title]
     else:
         main = node[title] = {}
+
+    if include_module_info:
+        info = kiara.module_registry.get_module_type_metadata(title)
+        main["module_info"] = info.dict()
+
+    main.setdefault("inputs", {})
 
     for input_name in sorted(pedigree.inputs.keys()):
 
@@ -87,7 +97,10 @@ def fill_dict_with_lineage(
         child_value = kiara.data_registry.get_value(child_value_id)
 
         value_type = child_value.data_type_name
-        main[input_name] = {"type": value_type, "id": str(child_value.value_id)}
+        main["inputs"][input_name] = {
+            "type": value_type,
+            "id": str(child_value.value_id),
+        }
         if include_preview:
             preview = kiara.render_registry.render(
                 source_type="value",
@@ -95,16 +108,17 @@ def fill_dict_with_lineage(
                 target_type="string",
                 render_config={},
             )
-            main[input_name]["preview"] = preview
+            main["inputs"][input_name]["preview"] = preview
 
         if child_value.pedigree != ORPHAN:
-            main[input_name]["module"] = {}
+            main["inputs"][input_name]["module"] = {}
             fill_dict_with_lineage(
                 kiara=kiara,
-                pedigree=child_value.pedigree,
-                node=main[input_name]["module"],
+                value=child_value,
+                node=main["inputs"][input_name]["module"],
                 level=level + 1,
                 include_preview=include_preview,
+                include_module_info=include_module_info,
             )
 
     if node is None:
@@ -305,12 +319,15 @@ class ValueLineage(JupyterMixin):
         ).reverse()
         return self._module_graph
 
-    def as_dict(self, include_preview: bool = False) -> Dict[str, Any]:
+    def as_dict(
+        self, include_preview: bool = False, include_module_info: bool = False
+    ) -> Dict[str, Any]:
 
         return fill_dict_with_lineage(
             kiara=self._kiara,
-            pedigree=self._value.pedigree,
+            value=self._value,
             include_preview=include_preview,
+            include_module_info=include_module_info,
         )
 
     def create_renderable(self, **config: Any) -> RenderableType:

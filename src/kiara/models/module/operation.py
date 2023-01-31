@@ -429,7 +429,7 @@ class Operation(Manifest):
             table.add_row("Module metadata", m_md)
 
         if include_src:
-            table.add_row("Source code", module_type_md.process_src)
+            table.add_row("Source code", module_type_md.module_src)
 
         return table
 

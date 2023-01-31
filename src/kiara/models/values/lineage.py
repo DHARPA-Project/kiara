@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, Any, Dict, Union
 
+import orjson
 from networkx import DiGraph
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.jupyter import JupyterMixin
@@ -79,9 +80,9 @@ def fill_dict_with_lineage(
     title = pedigree.module_type
     if node is None:
         root: Dict[str, Any] = {
-            "module": {title: {}, "output_name": value.pedigree_output_name}
+            "pedigree": {title: {}, "output_name": value.pedigree_output_name}
         }
-        main: Dict[str, Any] = root["module"][title]
+        main: Dict[str, Any] = root["pedigree"][title]
     else:
         main = node[title] = {}
 
@@ -111,11 +112,11 @@ def fill_dict_with_lineage(
             main["inputs"][input_name]["preview"] = preview
 
         if child_value.pedigree != ORPHAN:
-            main["inputs"][input_name]["module"] = {}
+            main["inputs"][input_name]["pedigree"] = {}
             fill_dict_with_lineage(
                 kiara=kiara,
                 value=child_value,
-                node=main["inputs"][input_name]["module"],
+                node=main["inputs"][input_name]["pedigree"],
                 level=level + 1,
                 include_preview=include_preview,
                 include_module_info=include_module_info,
@@ -320,15 +321,23 @@ class ValueLineage(JupyterMixin):
         return self._module_graph
 
     def as_dict(
-        self, include_preview: bool = False, include_module_info: bool = False
+        self,
+        include_preview: bool = False,
+        include_module_info: bool = False,
+        ensure_json_serializable: bool = False,
     ) -> Dict[str, Any]:
 
-        return fill_dict_with_lineage(
+        data = fill_dict_with_lineage(
             kiara=self._kiara,
             value=self._value,
             include_preview=include_preview,
             include_module_info=include_module_info,
         )
+
+        if ensure_json_serializable:
+            data = orjson.loads(orjson.dumps(data))
+
+        return data
 
     def create_renderable(self, **config: Any) -> RenderableType:
 

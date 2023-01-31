@@ -80,8 +80,21 @@ def fill_dict_with_lineage(
     title = pedigree.module_type
     if node is None:
         root: Dict[str, Any] = {
-            "pedigree": {title: {}, "output_name": value.pedigree_output_name}
+            "pedigree": {
+                title: {},
+                "output_name": value.pedigree_output_name,
+                "type": value.data_type_name,
+            },
+            "id": str(value.value_id),
         }
+        if include_preview:
+            preview = kiara.render_registry.render(
+                source_type="value",
+                item=value,
+                target_type="string",
+                render_config={},
+            )
+            root["preview"] = preview
         main: Dict[str, Any] = root["pedigree"][title]
     else:
         main = node[title] = {}

@@ -81,10 +81,11 @@ def fill_dict_with_lineage(
     if node is None:
         root: Dict[str, Any] = {
             "pedigree": {
-                title: {},
+                "module": {"name": title},
                 "output_name": value.pedigree_output_name,
-                "type": value.data_type_name,
+                "inputs": {},
             },
+            "type": value.data_type_name,
             "id": str(value.value_id),
         }
         if include_preview:
@@ -95,15 +96,15 @@ def fill_dict_with_lineage(
                 render_config={},
             )
             root["preview"] = preview
-        main: Dict[str, Any] = root["pedigree"][title]
+        main: Dict[str, Any] = root["pedigree"]
     else:
-        main = node[title] = {}
+        node["inputs"] = {}
+        node["module"] = {"name": title}
+        main = node
 
     if include_module_info:
         info = kiara.module_registry.get_module_type_metadata(title)
-        main["module_info"] = info.dict()
-
-    main.setdefault("inputs", {})
+        main["module"]["info"] = info.dict()
 
     for input_name in sorted(pedigree.inputs.keys()):
 

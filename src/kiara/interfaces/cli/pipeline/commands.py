@@ -102,7 +102,9 @@ def execution_graph(ctx, pipeline_name_or_path: str):
     pc = get_pipeline_config(kiara=kiara_obj, pipeline=pipeline_name_or_path)
 
     structure = pc.structure
-    print_ascii_graph(structure.execution_graph)
+    print_ascii_graph(
+        structure.execution_graph, restart_interpreter_if_asciinet_installed=True
+    )
 
 
 @pipeline.command()
@@ -124,9 +126,14 @@ def data_flow_graph(ctx, pipeline_name_or_path: str, full: bool):
     structure = pc.structure
 
     if full:
-        print_ascii_graph(structure.data_flow_graph)
+        print_ascii_graph(
+            structure.data_flow_graph, restart_interpreter_if_asciinet_installed=True
+        )
     else:
-        print_ascii_graph(structure.data_flow_graph_simple)
+        print_ascii_graph(
+            structure.data_flow_graph_simple,
+            restart_interpreter_if_asciinet_installed=True,
+        )
 
 
 # @pipeline.command()

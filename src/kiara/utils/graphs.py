@@ -5,11 +5,14 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
+import os
+import sys
 import typing
 from typing import Literal, Union
 
 import networkx as nx
 
+from kiara.utils import log_message
 from kiara.utils.cli import terminal_print
 
 if typing.TYPE_CHECKING:
@@ -19,15 +22,33 @@ if typing.TYPE_CHECKING:
     from kiara.models.module.pipeline.pipeline import Pipeline
 
 
-def print_ascii_graph(graph: nx.Graph):
+def print_ascii_graph(
+    graph: nx.Graph, restart_interpreter_if_asciinet_installed: bool = False
+):
 
     try:
         from asciinet import graph_to_ascii  # type: ignore
     except:  # noqa
-        terminal_print(
-            "\nCan't print graph on terminal, package 'asciinet' not available. Please install it into the current virtualenv using:\n\npip install 'git+https://github.com/cosminbasca/asciinet.git#egg=asciinet&subdirectory=pyasciinet'"
-        )
-        return
+        import pip._internal.cli.main as pip
+
+        cmd = ["-q", "--isolated", "install"]
+        cmd.append("asciinet")
+
+        log_message("install.python_package", packages="asciinet")
+        exit_code = pip.main(cmd)
+        try:
+            from asciinet import graph_to_ascii  # type: ignore
+        except:  # noqa:
+            exit_code = 1
+
+        if restart_interpreter_if_asciinet_installed:
+            os.execvp(sys.executable, (sys.executable,) + tuple(sys.argv))  # noqa
+
+        if exit_code != 0:
+            terminal_print(
+                "\nCan't print graph on terminal, package 'asciinet' not available. Please install it into the current virtualenv using:\n\npip install 'git+https://github.com/cosminbasca/asciinet.git#egg=asciinet&subdirectory=pyasciinet'"
+            )
+            return
 
     try:
         from asciinet._libutil import check_java  # type: ignore

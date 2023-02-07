@@ -31,15 +31,13 @@ classifiers = [
 ]
 
 
-
-
 dependencies = [
     "alembic>=1.7.0",
     "appdirs>=1.4.4,<2.0.0",
     "bidict>=0.21.0",
     "boltons>=21.0.0",
     "click>=7.0.0",
-    "dag-cbor>=0.2.2",
+    "dag-cbor>=0.3.0,<0.4.0",
     "deepdiff>=6.0.0,<7.0.0",
     "distro>=1.6.0",
     "dpath>=2.0.0",
@@ -50,7 +48,7 @@ dependencies = [
     "jinja2>=3.0.1",
     "mistune>=2.0.3,<3",
     "mmhash3>=3.0.1",
-    "multiformats>=0.1.4.post2",
+    "multiformats>=0.2.0,<0.3.0",
     "networkx>=3.0,<4.0",
     "orjson>=3.6.0",
     "pp-ez>=0.2.0",

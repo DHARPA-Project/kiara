@@ -8,7 +8,7 @@ import hashlib
 from typing import Tuple, Union
 
 import dag_cbor
-from dag_cbor.encoding import EncodableType
+from dag_cbor import Kind
 from multiformats import CID, multihash
 from multiformats.multicodec import Multicodec
 from multiformats.multihash import Multihash
@@ -16,7 +16,7 @@ from multiformats.varint import BytesLike
 
 
 def compute_cid(
-    data: EncodableType,
+    data: Kind,
     hash_codec: str = "sha2-256",
     encode: str = "base58btc",
 ) -> Tuple[bytes, CID]:

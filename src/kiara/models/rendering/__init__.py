@@ -3,7 +3,7 @@ import uuid
 from typing import Any, Dict, Mapping, TypeVar, Union
 
 import orjson
-from dag_cbor.encoding import EncodableType
+from dag_cbor import Kind
 from pydantic import Field, validator
 from rich.console import RenderableType
 from rich.syntax import Syntax
@@ -74,10 +74,10 @@ class RenderValueResult(KiaraModel):
     )
     rendered: Any = Field(description="The rendered object.")
 
-    def _retrieve_data_to_hash(self) -> EncodableType:
+    def _retrieve_data_to_hash(self) -> Kind:
         return {
             "value_id": str(self.value_id),
-            "render_config": self.render_config,
+            "render_config": self.render_config,  # type: ignore
             "render_manifest": self.render_manifest,
         }
 

@@ -39,7 +39,7 @@ repos:
     files: "^src/kiara"
     pass_filenames: true
     args: ["--config-file", "setup.cfg"]
-    additional_dependencies: [pydantic>=1.8.0, rich>=10.0.0, ruamel.yaml, anyio>=3.0.0, pyzmq>=22.0.3, bidict, sqlalchemy-stubs, types-python-slugify, types-setuptools, types-python-dateutil, dag_cbor, multiformats, textual, regex, types-pytz, types-orjson]
+    additional_dependencies: [pydantic>=1.8.0, rich>=10.0.0, ruamel.yaml, anyio>=3.0.0, pyzmq>=22.0.3, bidict, sqlalchemy-stubs, types-python-slugify, types-setuptools, types-python-dateutil, dag_cbor>=0.3.0, multiformats>=0.2.0, textual, regex, types-pytz, types-orjson]
 
 - repo: https://github.com/charliermarsh/ruff-pre-commit
   # Ruff version.

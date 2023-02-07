@@ -3,7 +3,7 @@ import datetime
 import uuid
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Type, Union
 
-from dag_cbor.encoding import EncodableType
+from dag_cbor import Kind
 from pydantic import Field, PrivateAttr, validator
 from rich import box
 from rich.console import RenderableType
@@ -59,7 +59,7 @@ class WorkflowState(KiaraModel):
     _pipeline: Union[Pipeline, None] = PrivateAttr(default=None)
     _kiara: "Kiara" = PrivateAttr(default=None)
 
-    def _retrieve_data_to_hash(self) -> EncodableType:
+    def _retrieve_data_to_hash(self) -> Kind:
         return {
             "steps": [s.instance_cid for s in self.steps],
             "inputs": {k: str(v) for k, v in self.inputs.items()},

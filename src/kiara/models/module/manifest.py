@@ -6,9 +6,10 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import uuid
-from typing import TYPE_CHECKING, Any, Mapping, Union
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
 import orjson
+from dag_cbor import Kind
 from multiformats import CID
 from pydantic import Extra, Field, PrivateAttr, validator
 from rich.console import RenderableType
@@ -135,7 +136,7 @@ class InputsManifest(Manifest):
         if self._jobs_cid is not None:
             return self._jobs_cid
 
-        obj = {"manifest": self.manifest_cid, "inputs": self.inputs_cid}
+        obj: Kind = {"manifest": self.manifest_cid, "inputs": self.inputs_cid}
         _, self._jobs_cid = compute_cid(data=obj)
         return self._jobs_cid
 
@@ -161,7 +162,7 @@ class InputsManifest(Manifest):
                 return None
             return self._inputs_data_cid  # type: ignore
 
-        data_hashes = {}
+        data_hashes: Dict[str, Any] = {}
         invalid = False
 
         for k, v in self.inputs.items():

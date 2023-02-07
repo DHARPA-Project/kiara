@@ -49,6 +49,7 @@ dependencies = [
     "mistune>=2.0.3,<3",
     "mmhash3>=3.0.1",
     "multiformats>=0.2.0,<0.3.0",
+    "multiformats-config>=0.2.0,<0.3.0",
     "networkx>=3.0,<4.0",
     "orjson>=3.6.0",
     "pp-ez>=0.2.0",
@@ -315,7 +316,7 @@ select = [
     "PIE",
 ]
 #select = ["E", "F", "RUF100", "W", "I001"]
-ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110"]
+ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110", "PLR0911", "PLR0915", "PLR0912"]
 
 fix = true
 fixable = ["E", "F", "RUF100", "I001", "Q"]

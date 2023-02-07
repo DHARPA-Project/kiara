@@ -160,7 +160,7 @@ def create_operation(
                     f"Could not parse module or operation: {module_or_operation}"
                 )
 
-        if data is not None:
+        if data:
             d = dict(data)
             pipeline_name = d.pop("pipeline_name", None)
             if pipeline_name is not None:
@@ -183,10 +183,17 @@ def create_operation(
                 operation = Operation.create_from_module(
                     module, doc=pipeline_config.doc
                 )
+            else:
+                raise Exception("Invalid pipeline config, missing 'pipeline_name' key.")
 
         if operation is None:
+
+            if module_or_operation == "pipeline":
+                msg = "Can't assemble pipeline."
+            else:
+                msg = f"Can't assemble operation, invalid operation/module name: {module_or_operation}. Must be registered module or operation name, or file."
             raise NoSuchOperationException(
-                msg=f"Can't assemble operation, invalid operation/module name: {module_or_operation}. Must be registered module or operation name, or file.",
+                msg=msg,
                 operation_id=module_or_operation,
                 available_operations=sorted(kiara.operation_registry.operation_ids),
             )

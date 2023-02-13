@@ -119,7 +119,7 @@ class KiaraAPIWrap(object):
         return context
 
     @property
-    def context(self) -> "Kiara":
+    def kiara(self) -> "Kiara":
         return self.kiara_api.context
 
     @property

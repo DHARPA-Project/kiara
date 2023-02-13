@@ -95,7 +95,7 @@ def delete_context(
 ):
     """Delete a context and all its stored values."""
 
-    kiara_config: KiaraConfig = ctx.kiara_config
+    kiara_config: KiaraConfig = ctx.obj.kiara_config
 
     if not context_name:
         if all_contexts:

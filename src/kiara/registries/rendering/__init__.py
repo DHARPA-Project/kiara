@@ -91,11 +91,12 @@ class RenderRegistry(object):
             )
 
         if hasattr(renderer_cls, "_renderer_profiles"):
+
             try:
                 profiles = renderer_cls._renderer_profiles  # type: ignore
                 if callable(profiles):
                     profiles = profiles()
-                for config in profiles:  # type: ignore
+                for config in profiles.values():  # type: ignore
                     try:
                         self.register_renderer(renderer_cls, config)  # type: ignore
                     except Exception as e:

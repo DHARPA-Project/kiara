@@ -32,6 +32,7 @@ from kiara.exceptions import (
     KiaraModuleConfigException,
     KiaraProcessingException,
 )
+from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.jobs import JobLog
 from kiara.models.values.value_schema import ValueSchema
@@ -49,6 +50,7 @@ if TYPE_CHECKING:
     from kiara.models.module.manifest import Manifest
     from kiara.models.values.value import ValueMap
     from kiara.operations import Operation
+
 
 yaml = StringYAML()
 
@@ -376,6 +378,7 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         self._module_cid: Union[CID, None] = None
         self._characteristics: Union[ModuleCharacteristics, None] = None
 
+        self._doc: Union[None, DocumentationMetadataModel] = None
         super().__init__(alias=self.__class__._module_type_name, config=self._config)  # type: ignore
 
         self._operation: Union[Operation, None] = None
@@ -391,6 +394,13 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
                 is_resolved=True,
             )
         return self._manifest_cache
+
+    @property
+    def doc(self) -> "DocumentationMetadataModel":
+        if self._doc is None:
+
+            self._doc = DocumentationMetadataModel.from_class_doc(self.__class__)
+        return self._doc
 
     @property
     def module_id(self) -> uuid.UUID:

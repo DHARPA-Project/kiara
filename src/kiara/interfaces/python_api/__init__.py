@@ -55,7 +55,6 @@ from kiara.operations.included_core_operations.pretty_print import (
 from kiara.operations.included_core_operations.render_value import (
     RenderValueOperationType,
 )
-from kiara.registries.data import ValueLink
 from kiara.registries.environment import EnvironmentRegistry
 from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.operations import OP_TYPE
@@ -168,7 +167,7 @@ class KiaraAPI(object):
         return info
 
     def ensure_plugin_packages(
-        self, *package_names: str, update: bool = False
+        self, package_names: Union[str, Iterable[str]], update: bool = False
     ) -> Union[bool, None]:
         """Ensure that the specified packages are installed.
 
@@ -179,6 +178,9 @@ class KiaraAPI(object):
         Returns:
             'None' if run in jupyter, 'True' if any packages were installed, 'False' otherwise.
         """
+
+        if isinstance(package_names, str):
+            package_names = [package_names]
 
         env_reg = EnvironmentRegistry.instance()
         python_env: PythonRuntimeEnvironment = env_reg.environments[  # type: ignore
@@ -915,7 +917,7 @@ class KiaraAPI(object):
 
         return values
 
-    def get_value(self, value: Union[str, ValueLink, uuid.UUID]) -> Value:
+    def get_value(self, value: Union[str, Value, uuid.UUID]) -> Value:
         """Retrieve a value instance with the specified id or alias.
 
         Raises an exception if no value could be found.
@@ -929,7 +931,7 @@ class KiaraAPI(object):
 
         return self.context.data_registry.get_value(value=value)
 
-    def retrieve_value_info(self, value: Union[str, uuid.UUID, ValueLink]) -> ValueInfo:
+    def retrieve_value_info(self, value: Union[str, uuid.UUID, Value]) -> ValueInfo:
         """Retrieve an info object for a value.
 
         'ValueInfo' objects contains augmented information on top of what 'normal' [Value][kiara.models.values.value.Value] objects
@@ -1059,7 +1061,7 @@ class KiaraAPI(object):
 
     def assemble_value_map(
         self,
-        values: Mapping[str, Union[uuid.UUID, None, str, ValueLink]],
+        values: Mapping[str, Union[uuid.UUID, None, str, Value]],
         values_schema: Union[None, Mapping[str, ValueSchema]] = None,
         register_data: bool = False,
         reuse_existing_data: bool = False,
@@ -1080,7 +1082,7 @@ class KiaraAPI(object):
         """
 
         if register_data:
-            temp: Dict[str, Union[str, ValueLink, uuid.UUID, None]] = {}
+            temp: Dict[str, Union[str, Value, uuid.UUID, None]] = {}
             for k, v in values.items():
 
                 if isinstance(v, (Value, uuid.UUID)):
@@ -1128,7 +1130,7 @@ class KiaraAPI(object):
 
     def store_value(
         self,
-        value: Union[str, uuid.UUID, ValueLink],
+        value: Union[str, uuid.UUID, Value],
         alias: Union[str, Iterable[str], None],
         allow_overwrite: bool = True,
     ) -> StoreValueResult:
@@ -1170,7 +1172,7 @@ class KiaraAPI(object):
 
     def store_values(
         self,
-        values: Mapping[str, Union[str, uuid.UUID, ValueLink]],
+        values: Mapping[str, Union[str, uuid.UUID, Value]],
         alias_map: Mapping[str, Iterable[str]],
     ) -> StoreValuesResult:
         """Store multiple values into the (default) kiara value store.
@@ -1535,7 +1537,7 @@ class KiaraAPI(object):
 
     def render_value(
         self,
-        value: Union[str, uuid.UUID, ValueLink],
+        value: Union[str, uuid.UUID, Value],
         target_format: Union[str, Iterable[str]] = "string",
         filters: Union[None, Iterable[str], Mapping[str, str]] = None,
         render_config: Union[Mapping[str, str], None] = None,

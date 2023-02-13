@@ -194,6 +194,10 @@ class Pipeline(object):
         return self._structure
 
     @property
+    def config(self) -> PipelineConfig:
+        return self._structure.pipeline_config
+
+    @property
     def doc(self) -> DocumentationMetadataModel:
         return self.structure.pipeline_config.doc
 

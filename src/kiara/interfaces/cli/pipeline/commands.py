@@ -14,6 +14,7 @@ from rich.table import Table
 
 from kiara.context import Kiara
 from kiara.interfaces.python_api.models.info import OperationGroupInfo
+from kiara.models.module.pipeline.stages import PipelineStages
 from kiara.utils.cli import output_format_option, terminal_print_model
 from kiara.utils.cli.exceptions import handle_exception
 from kiara.utils.graphs import print_ascii_graph
@@ -77,17 +78,58 @@ def list_pipelines(ctx, full_doc: bool, filter: typing.Iterable[str], format: st
 
 @pipeline.command()
 @click.argument("pipeline-name-or-path", nargs=1)
+@click.option(
+    "--stages-extraction-type",
+    "-s",
+    default="late",
+    help="How to extract the stages from the pipeline structure. Available: 'late', 'early', as well as pipeline specific profiles (if in pipeline metadata).",
+)
 @output_format_option()
 @click.pass_context
 @handle_exception()
-def explain(ctx, pipeline_name_or_path: str, format: str):
+def explain(ctx, pipeline_name_or_path: str, format: str, stages_extraction_type: str):
     """Print details about pipeline inputs, outputs, and overall structure."""
 
     kiara_obj: Kiara = ctx.obj["kiara"]
 
     pc = get_pipeline_config(kiara=kiara_obj, pipeline=pipeline_name_or_path)
     terminal_print_model(
-        pc, format=format, in_panel=f"Pipeline: [b i]{pipeline_name_or_path}[/b i]"
+        pc,
+        format=format,
+        in_panel=f"Pipeline: [b i]{pipeline_name_or_path}[/b i]",
+        stages_extraction_type=stages_extraction_type,
+        show_pipeline_inputs_for_steps=False,
+    )
+
+
+@pipeline.command()
+@click.argument("pipeline-name-or-path", nargs=1)
+@click.option(
+    "--stages-extraction-type",
+    "-s",
+    default="late",
+    help="How to extract the stages from the pipeline structure. Available: 'late', 'early', as well as pipeline specific profiles (if in pipeline metadata).",
+)
+@output_format_option()
+@click.pass_context
+@handle_exception()
+def explain_stages(
+    ctx, pipeline_name_or_path: str, format: str, stages_extraction_type: str
+):
+    """Print details about pipeline inputs, outputs, and overall structure."""
+
+    kiara_obj: Kiara = ctx.obj["kiara"]
+
+    pc = get_pipeline_config(kiara=kiara_obj, pipeline=pipeline_name_or_path)
+    structure = pc.structure
+
+    stages = PipelineStages.create(
+        structure=structure, stages_extraction_type=stages_extraction_type
+    )
+    terminal_print_model(
+        stages,
+        format=format,
+        in_panel=f"Stages for pipeline: [b i]{pipeline_name_or_path}[/b i]",
     )
 
 
@@ -134,6 +176,33 @@ def data_flow_graph(ctx, pipeline_name_or_path: str, full: bool):
             structure.data_flow_graph_simple,
             restart_interpreter_if_asciinet_installed=True,
         )
+
+
+@pipeline.command()
+@click.argument("pipeline-name-or-path", nargs=1)
+@click.option(
+    "--stages-extraction-type",
+    "-s",
+    default="late",
+    help="How to extract the stages from the pipeline structure. Available: 'late', 'early', as well as pipeline specific profiles (if in pipeline metadata).",
+)
+@click.pass_context
+def stages_graph(ctx, pipeline_name_or_path: str, stages_extraction_type: str):
+    """Print the data flow graph for a pipeline structure."""
+
+    kiara_obj = ctx.obj["kiara"]
+
+    pc = get_pipeline_config(kiara=kiara_obj, pipeline=pipeline_name_or_path)
+
+    structure = pc.structure
+    stages_graph = structure.get_stages_graph(
+        stages_extraction_type=stages_extraction_type
+    )
+
+    print_ascii_graph(
+        stages_graph,
+        restart_interpreter_if_asciinet_installed=True,
+    )
 
 
 # @pipeline.command()

@@ -115,7 +115,10 @@ def graph_to_image(
 
 def pipeline_graph_to_image(
     pipeline: Union["Pipeline", "PipelineConfig", "PipelineStructure"],
-    graph_type: Literal["data-flow", "data-flow-simple", "execution"] = "execution",
+    graph_type: Literal[
+        "data-flow", "data-flow-simple", "execution", "stages"
+    ] = "execution",
+    stages_extraction_type: str = "late",
     return_bytes: bool = False,
 ):
 
@@ -128,9 +131,11 @@ def pipeline_graph_to_image(
         graph = pipeline.data_flow_graph_simple  # type: ignore
     elif graph_type == "execution":
         graph = pipeline.execution_graph  # type: ignore
+    elif graph_type == "stages":
+        graph = pipeline.get_stages_graph(stages_extraction_type=stages_extraction_type)  # type: ignore
     else:
         raise Exception(
-            f"Invalid graph type '{graph_type}': must be one of 'data-flow', 'data-flow-simple', 'execution'"
+            f"Invalid graph type '{graph_type}': must be one of 'data-flow', 'data-flow-simple', 'execution', 'stages'."
         )
 
     return graph_to_image(graph=graph, return_bytes=return_bytes)

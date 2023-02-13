@@ -1,1 +1,5 @@
-STEP
+<h2>{{ step_id }}</h2>
+
+{% if pipeline.get_step(step_id).doc.is_set %}
+{{ pipeline.get_step(step_id).doc.full_doc }}
+{% endif %}

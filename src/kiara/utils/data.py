@@ -8,17 +8,20 @@
 import uuid
 from typing import TYPE_CHECKING, Any, Union
 
+import orjson
 import structlog
-
-from kiara.models.module.operation import Operation
-from kiara.operations.included_core_operations.pretty_print import (
-    PrettyPrintOperationType,
-)
+from ruamel.yaml import YAML
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+    from kiara.models.module.operation import Operation
+    from kiara.operations.included_core_operations.pretty_print import (
+        PrettyPrintOperationType,
+    )
+
 
 logger = structlog.getLogger()
+yaml = YAML(typ="safe")
 
 
 def pretty_print_data(
@@ -66,3 +69,28 @@ def pretty_print_data(
     result = op.run(kiara=kiara, inputs={"value": value})
     rendered = result.get_value_data("rendered_value")
     return rendered
+
+
+def get_data_from_string(
+    string_data: str, content_type: Union[str, None] = None
+) -> Any:
+
+    if content_type:
+        assert content_type in ["json", "yaml"]
+
+    if content_type == "json":
+        data = orjson.loads(string_data.encode())
+    elif content_type == "yaml":
+        data = yaml.load(string_data)
+    else:
+        try:
+            data = orjson.loads(string_data.encode())
+        except Exception:
+            try:
+                data = yaml.load(string_data)
+            except Exception:
+                raise ValueError(
+                    "Invalid data format, only 'json' or 'yaml' are supported currently."
+                )
+
+    return data

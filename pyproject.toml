@@ -41,6 +41,7 @@ dependencies = [
     "deepdiff>=6.0.0,<7.0.0",
     "distro>=1.6.0",
     "dpath>=2.0.0",
+    "docstring_parser>=0.15.0",
     "filetype>=1.0.0,<2.0.0",
     "httpx>=0.23.0",
     "humanfriendly>=10.0",

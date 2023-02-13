@@ -36,7 +36,7 @@ def construct_valuemap(
         if value_id is None:
             value_id = NONE_VALUE_ID
 
-        value = kiara_api.get_value(value=value_id)
+        value = kiara_api.get_value(value=value_id)  # type: ignore
         value_items[field_name] = value
         schemas[field_name] = value.value_schema
 

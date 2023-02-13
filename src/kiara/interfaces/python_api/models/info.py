@@ -45,7 +45,6 @@ from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig, PipelineStep
 from kiara.models.module.pipeline.structure import (
-    PipelineStage,
     PipelineStructure,
     StepInfo,
 )
@@ -1225,7 +1224,7 @@ class PipelineStructureInfo(ItemInfo):
             data_flow_graph=data_flow_graph,
             data_flow_graph_simple=data_flow_graph_simple,
             processing_stages=instance.processing_stages,
-            processing_stages_info=instance.processing_stages_info,
+            # processing_stages_info=instance.processing_stages_info,
         )
 
     pipeline_config: PipelineConfig = Field(
@@ -1273,9 +1272,9 @@ class PipelineStructureInfo(ItemInfo):
     processing_stages: List[List[str]] = Field(
         description="A list of lists, containing all the step_ids per stage, in the order of execution."
     )
-    processing_stages_info: Mapping[int, PipelineStage] = Field(
-        description="More detailed information about each step of this pipelines execution graph."
-    )
+    # processing_stages_info: Mapping[int, PipelineStage] = Field(
+    #     description="More detailed information about each step of this pipelines execution graph."
+    # )
 
     def get_step(self, step_id) -> PipelineStep:
         return self.steps[step_id]

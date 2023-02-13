@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #  Copyright (c) 2021, Markus Binsteiner
 #
@@ -16,6 +15,7 @@ from rich.tree import Tree
 from kiara.exceptions import InvalidPipelineConfig
 from kiara.models import KiaraModel
 from kiara.models.module.pipeline import PipelineConfig, PipelineStep
+from kiara.models.module.pipeline.stages import PipelineStage
 from kiara.models.module.pipeline.value_refs import (
     PipelineInputRef,
     PipelineOutputRef,
@@ -46,79 +46,38 @@ class StepInfo(KiaraModel):
     required: bool = Field(
         description="Whether this step is always required or whether all his outputs feed into optional input fields."
     )
-    processing_stage: int = Field(
-        description="The index of the processing stage of this step."
-    )
+    # processing_stage: int = Field(
+    #     description="The index of the processing stage of this step."
+    # )
+    _processing_stage: Union[None, int] = PrivateAttr(default=None)
+    _structure: Union[None, "PipelineStructure"] = PrivateAttr(default=None)
 
     @property
     def step_id(self) -> str:
         return self.step.step_id
 
+    @property
+    def processing_stage(self) -> int:
 
-class PipelineStage(KiaraModel):
+        if self._processing_stage is not None:
+            return self._processing_stage
 
-    _kiara_model_id = "info.pipeline_stage"
-
-    @classmethod
-    def from_pipeline_structure(
-        cls, structure: "PipelineStructure"
-    ) -> Dict[int, "PipelineStage"]:
-        used_pipeline_inputs: Set[str] = set()
-        used_pipeline_outputs: Set[str] = set()
-        result = {}
-        for idx, stage in enumerate(structure.processing_stages, start=1):
-            stage_steps = []
-            inputs = []
-            outputs = []
-
-            for step_id in stage:
-                step = structure.get_step(step_id=step_id)
-                stage_steps.append(step.step_id)
-                for pipeline_input, ref in structure.pipeline_input_refs.items():
-                    if pipeline_input in used_pipeline_inputs:
-                        continue
-                    for con_inp in ref.connected_inputs:
-                        if con_inp.step_id == step_id and pipeline_input not in inputs:
-                            inputs.append(pipeline_input)
-                for pipeline_output, out_ref in structure.pipeline_output_refs.items():
-                    if pipeline_output in used_pipeline_outputs:
-                        continue
-                    if out_ref.connected_output.step_id == step_id:
-                        outputs.append(pipeline_output)
-
-            stage_used_inputs = list(used_pipeline_inputs)
-            stage_used_outputs = list(used_pipeline_outputs)
-
-            result[idx] = PipelineStage(
-                stage_index=idx,
-                steps=stage_steps,
-                pipeline_inputs=inputs,
-                pipeline_outputs=outputs,
-                previous_inputs=stage_used_inputs,
-                previous_outputs=stage_used_outputs,
+        if not self._structure:
+            raise Exception(
+                f"Can't look up processing stage for step '{self.step_id}': no structure assigned for those step details, set for this step info."
             )
 
-            used_pipeline_inputs.update(inputs)
-            used_pipeline_outputs.update(outputs)
+        for idx, stage in enumerate(self._structure.processing_stages, start=1):
+            if self.step_id in stage:
+                self._processing_stage = idx
+                return idx
 
-        return result
+        raise Exception(
+            f"Can't look up processing stage for step '{self.step_id}': pipeline structure does not contain step."
+        )
 
-    stage_index: int = Field(description="The index of this stage.")
-    steps: List[str] = Field(
-        description="The pipeline steps that are executed in this stage."
-    )
-    pipeline_inputs: List[str] = Field(
-        description="The pipeline inputs required for this stage."
-    )
-    pipeline_outputs: List[str] = Field(
-        description="The pipeline outputs that are ready once this stage is processed."
-    )
-    previous_inputs: List[str] = Field(
-        description="Pipeline inputs that are already set by this stage."
-    )
-    previous_outputs: List[str] = Field(
-        description="Pipeline outputs that are already computed by this stage."
-    )
+    def create_renderable(self, **config: Any) -> RenderableType:
+        return self.step.create_renderable(**config)
 
 
 class PipelineStructure(KiaraModel):
@@ -226,7 +185,7 @@ class PipelineStructure(KiaraModel):
     _data_flow_graph_simple: nx.DiGraph = PrivateAttr(None)  # type: ignore
 
     _processing_stages: List[List[str]] = PrivateAttr(None)  # type: ignore
-    _stages_info: Mapping[int, PipelineStage] = PrivateAttr(None)  # type: ignore
+    # _stages_info: Mapping[int, PipelineStage] = PrivateAttr(None)  # type: ignore
 
     # holds details about the (current) processing steps contained in this workflow
     _steps_details: Dict[str, StepInfo] = PrivateAttr(None)  # type: ignore
@@ -321,17 +280,85 @@ class PipelineStructure(KiaraModel):
 
     @property
     def processing_stages(self) -> List[List[str]]:
-        if self._steps_details is None:
-            self._process_steps()
+        if self._processing_stages is not None:
+            return self._processing_stages
+
+        # calculate execution order
+        # process_late = self.pipeline_config.pipeline_name == "topic_modeling"
+        processing_stages = []
+
+        processing_stages = PipelineStage.extract_stages(self)
+        self._processing_stages = processing_stages
         return self._processing_stages
 
-    @property
-    def processing_stages_info(self) -> Mapping[int, PipelineStage]:
-        if self._stages_info is not None:
-            return self._stages_info
+    def extract_processing_stages(
+        self, stages_extraction_type: str = "late"
+    ) -> List[List[str]]:
+        """Extract a list of lists of steps, representing the order of groups in which they will be executed.
 
-        self._stages_info = PipelineStage.from_pipeline_structure(self)
-        return self._stages_info
+        It is possible to extract the stages in different ways, depending on the use-case you have in mind. For most cases,
+        'late' will be appropriate. Currently available:
+        - 'late': process steps as late in the process as possible
+        - 'early': process steps as early in the process as possible
+        """
+
+        return PipelineStage.extract_stages(
+            self, stages_extraction_type=stages_extraction_type
+        )
+
+    def extract_processing_stages_info(
+        self, stages_extraction_type: str = "late"
+    ) -> List[PipelineStage]:
+
+        stages = self.extract_processing_stages(
+            stages_extraction_type=stages_extraction_type
+        )
+        return PipelineStage.stages_info_from_pipeline_structure(self, stages)
+
+    def get_stages_graph(
+        self, stages_extraction_type: str = "late", flatten: bool = True
+    ) -> nx.DiGraph:
+        """Creates a networx graph that represents the processing stages of the pipeline and how they are connecte.
+
+        Arguments:
+            stages_extraction_type: how to extract the stages
+            flatten: if True, the nodes representing connections between stages will be removed, leaving only the edge
+
+        Returns:
+            a networkx graph object
+        """
+
+        stages = self.extract_processing_stages_info(
+            stages_extraction_type=stages_extraction_type
+        )
+
+        graph = nx.DiGraph()
+        for stage in stages:
+            fragment = stage.get_graph_fragment()
+            graph = nx.compose(graph, fragment)
+
+        if flatten:
+            to_flatten = []
+            for node_id in graph.nodes:
+                if graph.nodes[node_id]["type"] in ["stage_output", "connected_output"]:
+                    to_flatten.append(node_id)
+
+            for f in to_flatten:
+
+                in_edges = tuple(graph.in_edges(f))[0]
+                out_edges = tuple(graph.out_edges(f))[0]
+                assert in_edges[1] == out_edges[0]
+                graph.remove_edge(in_edges[0], in_edges[1])
+                graph.remove_edge(out_edges[0], out_edges[1])
+                graph.remove_node(f)
+                graph.add_edge(
+                    in_edges[0],
+                    out_edges[1],
+                    type="stage_connection",
+                    output_name=in_edges[1],
+                )
+
+        return graph
 
     @lru_cache()
     def _get_node_of_type(self, node_type: str):
@@ -436,7 +463,6 @@ class PipelineStructure(KiaraModel):
         execution_graph.add_node("__root__")
         data_flow_graph = nx.DiGraph()
         data_flow_graph_simple = nx.DiGraph()
-        processing_stages = []
         constants = {}
         structure_defaults = {}
 
@@ -665,53 +691,41 @@ class PipelineStructure(KiaraModel):
             else:
                 execution_graph.add_edge("__root__", step.step_id)
 
-        # calculate execution order
-        path_lengths: Dict[str, int] = {}
-
-        for step in self.steps:
-
-            step_id = step.step_id
-
-            paths = list(nx.all_simple_paths(execution_graph, "__root__", step_id))
-
-            max_steps = max(paths, key=lambda x: len(x))
-            path_lengths[step_id] = len(max_steps) - 1
-
-        if path_lengths.values():
-            max_length = max(path_lengths.values())
-
-            for i in range(1, max_length + 1):
-                stage: List[str] = [
-                    m for m, length in path_lengths.items() if length == i
-                ]
-                processing_stages.append(stage)
-                for _step_id in stage:
-                    steps_details[_step_id]["processing_stage"] = i
-                    # steps_details[_step_id]["step"].processing_stage = i
-
         self._constants = constants
         self._defaults = structure_defaults
-        self._steps_details = {
-            step_id: StepInfo(**data) for step_id, data in steps_details.items()
-        }
+        self._steps_details = {}
+        for step_id, data in steps_details.items():
+            _step = StepInfo(**data)
+            _step._structure = self
+            self._steps_details[step_id] = _step
+
         self._execution_graph = execution_graph
         self._data_flow_graph = data_flow_graph
         self._data_flow_graph_simple = data_flow_graph_simple
-        self._processing_stages = processing_stages
+        self._processing_stages = None  # type: ignore
 
         self._get_node_of_type.cache_clear()
 
-    # def info(self) -> "PipelineStructureInfo":
-    #
-    #     if self._info is not None:
-    #         return self._info
-    #
-    #     from kiara.interfaces.python_api.models.info import PipelineStructureInfo
-    #
-    #     self._info = PipelineStructureInfo.create_from_instance(kiara=None, instance=self)  # type: ignore
-    #     return self._info
+    def export_stages(self):
+
+        # TODO: implement different processing stages possibilities
+        processing_stages = self.processing_stages
+
+        for stage in processing_stages:
+
+            input_links = []
+
+            for step_id in stage:
+                step = self.get_step(step_id=step_id)
+                for input_link in step.input_links:
+                    input_links.append(input_link)
 
     def create_renderable(self, **config: Any) -> RenderableType:
+
+        show_pipeline_inputs_for_steps = config.get(
+            "show_pipeline_inputs_for_steps", False
+        )
+        stages_extraction_type = config.get("stages_extraction_type", "late")
 
         tree = Tree("pipeline")
         inputs = tree.add("inputs")
@@ -719,11 +733,22 @@ class PipelineStructure(KiaraModel):
             inputs.add(f"[i]{field_name}[i] (type: {schema.type})")
 
         steps = tree.add("steps")
-        for idx, stage in enumerate(self.processing_stages, start=1):
+        processing_stages = PipelineStage.extract_stages(
+            structure=self, stages_extraction_type=stages_extraction_type
+        )
+        for idx, stage in enumerate(processing_stages, start=1):
             stage_node = steps.add(f"stage {idx}")
             for step_id in stage:
                 step_node = stage_node.add(f"step: {step_id}")
                 step = self.get_step(step_id=step_id)
+                if show_pipeline_inputs_for_steps:
+                    pipeline_inputs = self.get_pipeline_inputs_schema_for_step(
+                        step_id=step_id
+                    )
+                    if pipeline_inputs:
+                        inps = step_node.add("pipeline inputs")
+                        for pi in pipeline_inputs:
+                            inps.add(f"[i]{pi}[i]")
                 if step.doc.is_set:
                     step_node.add(f"desc: {step.doc.description}")
                 step_node.add(f"module: {step.manifest_src.module_type}")

@@ -220,3 +220,49 @@ def render_func_value(
     result_wrapper(
         result=result, output=output, force=force, terminal_render_config=cnf
     )
+
+
+@render.group("kiara_api")
+@click.pass_context
+def kiara_api(ctx) -> None:
+    """Render a kiara value."""
+
+
+@kiara_api.command("as")
+@click.argument("target_type", nargs=1, metavar="TARGET_TYPE", required=False)
+@click.argument("render_config", nargs=-1, required=False)
+@click.option("--output", "-o", help="Write the rendered output to a file.")
+@click.option("--force", "-f", help="Overwrite existing output file.", is_flag=True)
+@click.pass_context
+@handle_exception()
+def render_func_api(
+    ctx,
+    render_config: Tuple[str, ...],
+    target_type: Union[str, None],
+    output: Union[str, None],
+    force: bool,
+) -> None:
+
+    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+
+    render_config_dict = dict_from_cli_args(*render_config)
+
+    result = render_wrapper(
+        kiara_api=kiara_api,
+        source_type="kiara_api",
+        item=kiara_api,
+        target_type=target_type,
+        render_config=render_config_dict,
+    )
+
+    # in case we have a rendervalue result, and we want to terminal print, we need to forward some of the render config
+    show_render_metadata = render_config_dict.get("include_metadata", False)
+    show_render_result = render_config_dict.get("include_data", True)
+    cnf = {
+        "show_render_metadata": show_render_metadata,
+        "show_render_result": show_render_result,
+    }
+
+    result_wrapper(
+        result=result, output=output, force=force, terminal_render_config=cnf
+    )

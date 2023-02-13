@@ -22,6 +22,7 @@ from kiara.models.module.manifest import Manifest
 from kiara.models.module.pipeline.value_refs import StepValueAddress
 from kiara.models.python_class import KiaraModuleInstance
 from kiara.utils import find_free_id, is_jupyter
+from kiara.utils.data import get_data_from_string
 from kiara.utils.files import get_data_from_file
 from kiara.utils.json import orjson_dumps
 from kiara.utils.modules import module_config_is_empty
@@ -497,6 +498,27 @@ class PipelineConfig(KiaraModuleConfig):
         )
 
     @classmethod
+    def from_string(
+        cls,
+        string_data: str,
+        kiara: Union["Kiara", None] = None,
+        pipeline_name: Union[None, str] = None,
+        # module_map: Optional[Mapping[str, Any]] = None,
+    ):
+
+        data = get_data_from_string(string_data)
+        _pipeline_name = data.pop("pipeline_name", None)
+
+        if pipeline_name:
+            _pipeline_name = pipeline_name
+
+        return cls.from_config(
+            pipeline_name=_pipeline_name,
+            data=data,
+            kiara=kiara,
+        )
+
+    @classmethod
     def from_config(
         cls,
         data: Mapping[str, Any],
@@ -668,7 +690,7 @@ class PipelineConfig(KiaraModuleConfig):
         table.add_column("value")
 
         table.add_row("doc", self.doc.full_doc)
-        table.add_row("structure", self.structure)
+        table.add_row("structure", self.structure.create_renderable(**config))
         return table
 
         # return create_table_from_model_object(self, exclude_fields={"steps"})

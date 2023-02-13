@@ -78,9 +78,10 @@ class WorkflowPipelineController(SinglePipelineController):
         errors: Dict[str, ActiveJob] = {}
 
         try:
-            for idx, stage in enumerate(
-                self.pipeline.structure.processing_stages, start=1
-            ):
+            stages = self.pipeline.structure.extract_processing_stages(
+                stages_extraction_type="late"
+            )
+            for idx, stage in enumerate(stages, start=1):
 
                 log.debug(
                     "execute.pipeline.stage",

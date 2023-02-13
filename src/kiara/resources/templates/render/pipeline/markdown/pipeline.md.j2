@@ -1,0 +1,15 @@
+# pipeline: **{{ pipeline.config.pipeline_name }}**
+{% for stage in pipeline.structure.processing_stages %}
+## *Stag {{ loop.index }}**
+{%  for step_id in stage %}
+### *Step*: {{ step_id }}
+{% if pipeline.get_step(step_id).doc.is_set %}
+#### Step documentation:
+
+{{ pipeline.get_step(step_id).doc.full_doc }}{% else %}
+#### Module documentation
+
+{{ pipeline.get_step(step_id).module.doc.full_doc }}
+{% endif %}
+{% endfor %}
+{% endfor %}

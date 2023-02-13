@@ -286,6 +286,12 @@ def dict_from_cli_args(
     for arg in args:
         if "=" in arg:
             key, value = arg.split("=", maxsplit=1)
+            if value.startswith("alias:"):
+                if key in config.keys():
+                    raise Exception(f"alias key already set: {key} : {value}")
+                config[key] = value
+                continue
+
             try:
                 _v = json.loads(value)
             except Exception:

@@ -126,7 +126,7 @@ def list_values(
 ) -> None:
     """List all data items that are stored in kiara."""
 
-    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
 
     if include_internal:
         all_values = True
@@ -240,7 +240,7 @@ def explain_value(
     All of the 'show-additional-information' flags are only applied when the 'terminal' output format is selected. This might change in the future.
     """
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    kiara_obj: Kiara = ctx.obj.kiara
 
     render_config = {
         "show_pedigree": pedigree,
@@ -292,7 +292,7 @@ def load_value(ctx, value: str, single_page: bool):
     """Load a stored value and print it in a format suitable for the terminal."""
 
     # kiara_obj: Kiara = ctx.obj["kiara"]
-    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
 
     try:
         _value = kiara_api.get_value(value=value)
@@ -372,8 +372,8 @@ def filter_value(
     if output_details.format == "silent":
         silent = True
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
-    api: KiaraAPI = ctx.obj["kiara_api"]
+    kiara_obj: Kiara = ctx.obj.kiara
+    api: KiaraAPI = ctx.obj.kiara_api
 
     cmd_help = "[yellow bold]Usage: [/yellow bold][bold]kiara data filter VALUE FILTER_1:FILTER_2 [FILTER ARGS...][/bold]"
 

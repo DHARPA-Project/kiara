@@ -101,8 +101,7 @@ def run(
             )
             sys.exit(1)
 
-    # kiara_obj: Kiara = ctx.obj["kiara"]
-    api: KiaraAPI = ctx.obj["kiara_api"]
+    api: KiaraAPI = ctx.obj.kiara_api  # type: ignore
 
     cmd_arg = ctx.params["module_or_operation"]
     cmd_help = f"[yellow bold]Usage: [/yellow bold][bold]kiara run [OPTIONS] [i]{cmd_arg}[/i] [INPUTS][/bold]"

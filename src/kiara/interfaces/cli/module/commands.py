@@ -39,7 +39,7 @@ def module(ctx):
 def list_modules(ctx, full_doc: bool, filter: Iterable[str], format: str):
     """List available module data_types."""
 
-    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
     module_types_info = kiara_api.retrieve_module_types_info(filter=filter)
 
     if filter:
@@ -64,7 +64,7 @@ def explain_module_type(ctx, module_type: str, format: str):
     input/output data_types).
     """
 
-    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
     info = kiara_api.retrieve_module_type_info(module_type=module_type)
 
     terminal_print_model(
@@ -91,7 +91,7 @@ def explain_module(ctx, module_type: str, module_config: Iterable[Any], format: 
     else:
         module_config = {}
 
-    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
 
     operation = kiara_api.create_operation(
         module_type=module_type, module_config=module_config

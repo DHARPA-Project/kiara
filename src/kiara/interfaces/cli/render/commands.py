@@ -103,7 +103,7 @@ def render(ctx) -> None:
 def list_renderers(ctx) -> None:
     """List all available renderers."""
 
-    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
 
     infos = kiara_api.retrieve_renderer_infos()
     terminal_print()
@@ -116,7 +116,7 @@ def list_renderers(ctx) -> None:
 def pipeline(ctx, pipeline: str) -> None:
     """Render a kiara pipeline."""
 
-    api: KiaraAPI = ctx.obj["kiara_api"]
+    api: KiaraAPI = ctx.obj.kiara_api
 
     if pipeline.startswith("workflow:"):
         # pipeline_defaults = {}
@@ -142,7 +142,7 @@ def render_func_pipeline(
     force: bool,
 ) -> None:
 
-    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
     item = ctx.obj["item"]
 
     render_config_dict = dict_from_cli_args(*render_config)
@@ -164,7 +164,7 @@ def render_func_pipeline(
 def value(ctx, value: str) -> None:
     """Render a kiara value."""
 
-    api: KiaraAPI = ctx.obj["kiara_api"]
+    api: KiaraAPI = ctx.obj.kiara_api
 
     value_obj = api.get_value(value)
 
@@ -196,7 +196,7 @@ def render_func_value(
     force: bool,
 ) -> None:
 
-    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
     item = ctx.obj["item"]
 
     render_config_dict = dict_from_cli_args(*render_config)
@@ -243,7 +243,7 @@ def render_func_api(
     force: bool,
 ) -> None:
 
-    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
 
     render_config_dict = dict_from_cli_args(*render_config)
 

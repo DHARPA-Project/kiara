@@ -48,7 +48,7 @@ def list_types(
 ):
     """List available data_types."""
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    kiara_obj: Kiara = ctx.obj.kiara
 
     if not include_internal:
         type_classes: Dict[str, Type[DataType]] = {}
@@ -93,7 +93,7 @@ def list_types(
 def hierarchy(ctx, include_internal) -> None:
     """Show the current runtime environments' type hierarchy."""
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    kiara_obj: Kiara = ctx.obj.kiara
 
     type_mgmt = kiara_obj.type_registry
     terminal_print()
@@ -112,7 +112,7 @@ def hierarchy(ctx, include_internal) -> None:
 def explain_data_type(ctx, type_name: str, format: str):
     """Print details of a data type."""
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    kiara_obj: Kiara = ctx.obj.kiara
 
     data_type = kiara_obj.type_registry.retrieve_data_type(
         data_type_name=type_name, data_type_config=None

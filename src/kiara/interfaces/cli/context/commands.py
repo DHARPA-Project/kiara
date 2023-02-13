@@ -30,7 +30,7 @@ def context(ctx):
 def list_contexts(ctx) -> None:
     """List existing contexts."""
 
-    kiara_api: KiaraAPI = ctx.obj["kiara_api"]
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
 
     summaries = kiara_api.retrieve_context_infos()
 
@@ -47,10 +47,10 @@ def explain_context(
 ):
     """Print details for one or several contexts."""
 
-    kiara_config: KiaraConfig = ctx.obj["kiara_config"]
+    kiara_config: KiaraConfig = ctx.obj.kiara_config
 
     if not context_name:
-        cn = ctx.obj["kiara_context_name"]
+        cn = ctx.obj.kiara_context_name
         contexts = [cn]
     else:
         contexts = list(context_name)
@@ -95,13 +95,13 @@ def delete_context(
 ):
     """Delete a context and all its stored values."""
 
-    kiara_config: KiaraConfig = ctx.obj["kiara_config"]
+    kiara_config: KiaraConfig = ctx.kiara_config
 
     if not context_name:
         if all_contexts:
             _context_name = "ALL_CONTEXTS"
         else:
-            _context_name = ctx.obj["kiara_context_name"]
+            _context_name = ctx.obj.kiara_context_name
     else:
         if all_contexts:
             if context_name != "ALL_CONTEXTS":
@@ -184,7 +184,7 @@ def config(ctx):
 def print_config(ctx, format) -> None:
     """Print the (current) kiara context configuration."""
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    kiara_obj: Kiara = ctx.obj.kiara
 
     terminal_print_model(
         kiara_obj.context_config,
@@ -215,7 +215,7 @@ def runtime(ctx):
 def print_context(ctx, format: str):
     """Print all relevant models within the current runtime environment."""
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    kiara_obj: Kiara = ctx.obj.kiara
 
     terminal_print_model(
         kiara_obj.context_info,
@@ -276,7 +276,7 @@ def metadata(ctx):
 def list_metadata(ctx, format) -> None:
     """List available metadata schemas."""
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    kiara_obj: Kiara = ctx.obj.kiara
     metadata_types = kiara_obj.kiara_model_registry.get_models_of_type(ValueMetadata)
 
     terminal_print_model(
@@ -297,7 +297,7 @@ def list_metadata(ctx, format) -> None:
 def explain_metadata(ctx, metadata_key, format) -> None:
     """Print details for a specific metadata schema."""
 
-    kiara_obj: Kiara = ctx.obj["kiara"]
+    kiara_obj: Kiara = ctx.obj.kiara
     metadata_types = kiara_obj.kiara_model_registry.get_models_of_type(ValueMetadata)
 
     if metadata_key not in metadata_types.item_infos.keys():

@@ -93,7 +93,7 @@ class ApiEndpoint(object):
 
         for p in self.parsed_doc.params:
             if p.arg_name == arg_name:
-                return p.description
+                return p.description if p.description else ""
 
         return ""
 

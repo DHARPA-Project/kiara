@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import rich_click as click
 
-from kiara.context import KiaraConfig
 from kiara.utils.cli import output_format_option, terminal_print_model
 
 if TYPE_CHECKING:
@@ -24,6 +23,8 @@ def config(ctx):
 @output_format_option()
 @click.pass_context
 def print_config(ctx, format: str):
+
+    from kiara.context import KiaraConfig
 
     wrap: "KiaraAPIWrap" = ctx.obj
     config: KiaraConfig = wrap.kiara_config

@@ -10,7 +10,7 @@ from rich.console import Group, RenderableType
 from rich.markdown import Markdown
 from rich.rule import Rule
 
-from kiara import KiaraAPI, ValueMap
+from kiara.api import KiaraAPI, ValueMap
 from kiara.exceptions import (
     FailedJobException,
     KiaraException,

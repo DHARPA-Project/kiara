@@ -6,20 +6,18 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Data-related sub-commands for the cli."""
+import typing
 from typing import Any, Dict, Tuple, Union
 
 import rich_click as click
 import structlog
 
-from kiara import KiaraAPI
-from kiara.context import Kiara
-from kiara.interfaces.python_api.workflow import Workflow
 from kiara.utils.cli import dict_from_cli_args, terminal_print, terminal_print_model
-from kiara.utils.yaml import StringYAML
+
+if typing.TYPE_CHECKING:
+    from kiara.api import Kiara, KiaraAPI
 
 logger = structlog.getLogger()
-
-yaml = StringYAML()
 
 
 @click.group()
@@ -122,6 +120,8 @@ def explain(ctx, workflow: str):
 @click.pass_context
 def set_input(ctx, workflow: str, inputs: Tuple[str], process: bool):
     """Set one or several inputs on the specified workflow."""
+
+    from kiara.interfaces.python_api import Workflow
 
     kiara: Kiara = ctx.obj.kiara
 

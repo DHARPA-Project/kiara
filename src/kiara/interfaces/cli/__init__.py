@@ -10,11 +10,10 @@
 
 import logging
 import sys
-from typing import TYPE_CHECKING, Tuple, Union
+from typing import Tuple, Union
 
 import rich_click as click
 import structlog
-from rich.markdown import Markdown
 
 from kiara.defaults import (
     SYMLINK_ISSUE_MSG,
@@ -23,9 +22,6 @@ from kiara.interfaces import KiaraAPIWrap
 from kiara.utils import is_debug
 from kiara.utils.class_loading import find_all_cli_subcommands
 from kiara.utils.cli import terminal_print
-
-if TYPE_CHECKING:
-    pass
 
 click.rich_click.USE_RICH_MARKUP = True
 
@@ -91,6 +87,8 @@ def cli(
     if not check_symlink_works():
 
         terminal_print()
+        from rich.markdown import Markdown
+
         terminal_print(Markdown(SYMLINK_ISSUE_MSG))
         sys.exit(1)
 

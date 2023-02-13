@@ -4,19 +4,16 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import sys
-from typing import Tuple, Union
+from typing import TYPE_CHECKING, Tuple, Union
 
 import rich_click as click
 from rich.panel import Panel
 
-from kiara import KiaraAPI
-from kiara.context import Kiara, KiaraConfig, KiaraContextConfig
 from kiara.interfaces import get_console
-from kiara.models.context import ContextInfo, ContextInfos
-from kiara.models.values.value_metadata import ValueMetadata
-from kiara.registries.environment import EnvironmentRegistry
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
-from kiara.utils.output import create_table_from_base_model_cls
+
+if TYPE_CHECKING:
+    from kiara.api import Kiara, KiaraAPI, KiaraConfig
 
 
 @click.group("context")
@@ -55,9 +52,12 @@ def explain_context(
     else:
         contexts = list(context_name)
 
+    from kiara.models.context import ContextInfo
+
     if len(contexts) == 1:
 
         kcc = kiara_config.get_context_config(contexts[0])
+
         cs = ContextInfo.create_from_context_config(
             kcc, context_name=contexts[0], runtime_config=kiara_config.runtime_config
         )
@@ -116,6 +116,8 @@ def delete_context(
 
     if _context_name == "ALL_CONTEXTS":
         if not force:
+            from kiara.models.context import ContextInfos
+
             summaries = ContextInfos.create_context_infos(
                 contexts=kiara_config.context_configs
             )
@@ -198,6 +200,9 @@ def print_config(ctx, format) -> None:
 def config_help(ctx):
     """Print available configuration options and information about them."""
 
+    from kiara.context import KiaraContextConfig
+    from kiara.utils.output import create_table_from_base_model_cls
+
     table = create_table_from_base_model_cls(model_cls=KiaraContextConfig)
     terminal_print()
     terminal_print(Panel(table))
@@ -235,6 +240,8 @@ def env_group(ctx):
 def list_envs(ctx):
     """List available runtime environment information."""
 
+    from kiara.registries.environment import EnvironmentRegistry
+
     env_reg = EnvironmentRegistry.instance()
 
     terminal_print(env_reg)
@@ -245,6 +252,8 @@ def list_envs(ctx):
 @output_format_option()
 @click.pass_context
 def explain_env(ctx, env_type: str, format: str) -> None:
+
+    from kiara.registries.environment import EnvironmentRegistry
 
     env_reg = EnvironmentRegistry.instance()
 
@@ -277,6 +286,8 @@ def list_metadata(ctx, format) -> None:
     """List available metadata schemas."""
 
     kiara_obj: Kiara = ctx.obj.kiara
+    from kiara.models.values.value_metadata import ValueMetadata
+
     metadata_types = kiara_obj.kiara_model_registry.get_models_of_type(ValueMetadata)
 
     terminal_print_model(
@@ -298,6 +309,8 @@ def explain_metadata(ctx, metadata_key, format) -> None:
     """Print details for a specific metadata schema."""
 
     kiara_obj: Kiara = ctx.obj.kiara
+    from kiara.models.values.value_metadata import ValueMetadata
+
     metadata_types = kiara_obj.kiara_model_registry.get_models_of_type(ValueMetadata)
 
     if metadata_key not in metadata_types.item_infos.keys():

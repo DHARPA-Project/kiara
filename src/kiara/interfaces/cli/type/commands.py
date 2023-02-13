@@ -6,19 +6,15 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Type-related subcommands for the cli."""
-
+import typing
 from typing import Dict, Iterable, Type
 
 import rich_click as click
 
-from kiara.context import Kiara
-from kiara.data_types import DataType
-from kiara.interfaces.python_api.models.info import (
-    DataTypeClassesInfo,
-    DataTypeClassInfo,
-)
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
-from kiara.utils.graphs import print_ascii_graph
+
+if typing.TYPE_CHECKING:
+    from kiara.api import Kiara
 
 
 @click.group(name="data-type")
@@ -47,6 +43,9 @@ def list_types(
     ctx, full_doc, include_internal: bool, filter: Iterable[str], format: str
 ):
     """List available data_types."""
+
+    from kiara.data_types import DataType
+    from kiara.interfaces.python_api import DataTypeClassesInfo
 
     kiara_obj: Kiara = ctx.obj.kiara
 
@@ -93,6 +92,8 @@ def list_types(
 def hierarchy(ctx, include_internal) -> None:
     """Show the current runtime environments' type hierarchy."""
 
+    from kiara.utils.graphs import print_ascii_graph
+
     kiara_obj: Kiara = ctx.obj.kiara
 
     type_mgmt = kiara_obj.type_registry
@@ -111,6 +112,8 @@ def hierarchy(ctx, include_internal) -> None:
 @click.pass_context
 def explain_data_type(ctx, type_name: str, format: str):
     """Print details of a data type."""
+
+    from kiara.interfaces.python_api import DataTypeClassInfo
 
     kiara_obj: Kiara = ctx.obj.kiara
 

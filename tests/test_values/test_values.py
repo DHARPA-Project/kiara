@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from kiara import Kiara, ValueSchema
+from kiara.api import Kiara, ValueSchema
 from kiara.defaults import SpecialValue
 
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project

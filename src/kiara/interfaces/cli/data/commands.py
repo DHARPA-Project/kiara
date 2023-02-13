@@ -7,32 +7,36 @@
 
 """Data-related sub-commands for the cli."""
 import sys
-from typing import Iterable, Tuple
+from typing import TYPE_CHECKING, Iterable, Tuple
 
 import rich_click as click
 import structlog
 
-from kiara.context import Kiara
-from kiara.interfaces.python_api import KiaraAPI
-from kiara.interfaces.python_api.models.info import RENDER_FIELDS, ValueInfo, ValuesInfo
-from kiara.interfaces.tui.pager import PagerApp
-from kiara.operations.included_core_operations.filter import FilterOperationType
 from kiara.utils import log_exception, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
-from kiara.utils.cli.rich_click import rich_format_filter_operation_help
-from kiara.utils.cli.run import (
-    _validate_save_option,
-    calculate_aliases,
-    execute_job,
-    set_and_validate_inputs,
-    validate_operation_in_terminal,
-)
-from kiara.utils.output import OutputDetails
-from kiara.utils.yaml import StringYAML
+
+# from kiara.interfaces.python_api.models.info import RENDER_FIELDS, ValueInfo, ValuesInfo
+# from kiara.interfaces.tui.pager import PagerApp
+# from kiara.operations.included_core_operations.filter import FilterOperationType
+
+
+# from kiara.utils.cli.rich_click import rich_format_filter_operation_help
+# from kiara.utils.cli.run import (
+#     _validate_save_option,
+#     calculate_aliases,
+#     execute_job,
+#     set_and_validate_inputs,
+#     validate_operation_in_terminal,
+# )
+# from kiara.utils.output import OutputDetails
+
+
+if TYPE_CHECKING:
+    from kiara.api import Kiara, KiaraAPI
+    from kiara.operations.included_core_operations.filter import FilterOperationType
+
 
 logger = structlog.getLogger()
-
-yaml = StringYAML()
 
 
 @click.group()
@@ -125,6 +129,9 @@ def list_values(
     lineage,
 ) -> None:
     """List all data items that are stored in kiara."""
+
+    from kiara.interfaces.python_api import ValuesInfo
+    from kiara.interfaces.python_api.models.info import RENDER_FIELDS
 
     kiara_api: KiaraAPI = ctx.obj.kiara_api
 
@@ -240,6 +247,8 @@ def explain_value(
     All of the 'show-additional-information' flags are only applied when the 'terminal' output format is selected. This might change in the future.
     """
 
+    from kiara.interfaces.python_api import ValueInfo
+
     kiara_obj: Kiara = ctx.obj.kiara
 
     render_config = {
@@ -324,6 +333,8 @@ def load_value(ctx, value: str, single_page: bool):
         terminal_print(renderable)
         sys.exit(0)
     else:
+        from kiara.interfaces.tui.pager import PagerApp
+
         app = PagerApp(api=kiara_api, value=str(_value.value_id))
         app.run()
 
@@ -364,6 +375,16 @@ def filter_value(
 
     Filters must be provided as a single string, where filters are seperated using ":".
     """
+
+    from kiara.utils.cli.rich_click import rich_format_filter_operation_help
+    from kiara.utils.cli.run import (
+        _validate_save_option,
+        calculate_aliases,
+        execute_job,
+        set_and_validate_inputs,
+        validate_operation_in_terminal,
+    )
+    from kiara.utils.output import OutputDetails
 
     save_results = _validate_save_option(save)
 
@@ -407,7 +428,9 @@ def filter_value(
     for fn in _filter_names:
         filter_names.extend(fn.split(":"))
 
-    filter_op_type: FilterOperationType = kiara_obj.operation_registry.get_operation_type("filter")  # type: ignore
+    filter_op_type: FilterOperationType = (
+        kiara_obj.operation_registry.get_operation_type("filter")
+    )
     op = filter_op_type.create_filter_operation(
         data_type=_value.data_type_name, filters=filter_names
     )
@@ -428,6 +451,7 @@ def filter_value(
         click_context=ctx,
         cmd_help=cmd_help,
     )
+
     job_id = execute_job(
         api=api,
         operation=kiara_op,

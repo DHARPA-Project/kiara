@@ -7,17 +7,18 @@
 
 """Module related subcommands for the cli."""
 
-from typing import Any, Iterable
+from typing import TYPE_CHECKING, Any, Iterable
 
 import rich_click as click
 
-# from kiara.interfaces.cli.utils import _create_module_instance
-from kiara.interfaces.python_api import KiaraAPI
 from kiara.utils.cli import (
     dict_from_cli_args,
     output_format_option,
     terminal_print_model,
 )
+
+if TYPE_CHECKING:
+    from kiara.api import KiaraAPI
 
 
 @click.group()

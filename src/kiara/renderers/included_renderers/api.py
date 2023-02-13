@@ -18,7 +18,7 @@ from pydantic import BaseModel
 from pydantic.decorator import ValidatedFunction
 from pydantic.fields import ModelField
 
-from kiara import KiaraAPI
+from kiara.api import KiaraAPI
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.rendering import RenderValueResult
 from kiara.renderers import (

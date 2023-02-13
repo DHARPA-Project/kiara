@@ -7,20 +7,15 @@
 
 import os
 import sys
-from typing import Iterable
+from typing import TYPE_CHECKING, Iterable
 
 import rich_click as click
 
-from kiara import KiaraAPI
-from kiara.context import Kiara
-from kiara.interfaces.python_api.models.info import (
-    OperationGroupInfo,
-    OperationTypeClassesInfo,
-)
-
-# from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
 from kiara.utils.cli.exceptions import handle_exception
+
+if TYPE_CHECKING:
+    from kiara.api import Kiara, KiaraAPI
 
 
 @click.group()
@@ -60,6 +55,8 @@ def list_types(ctx, full_doc: bool, format: str, filter: Iterable[str]):
             if match:
                 temp[k] = v
         op_types = temp
+
+    from kiara.interfaces.python_api.models.info import OperationTypeClassesInfo
 
     operation_types_info = OperationTypeClassesInfo.create_from_type_items(
         kiara=kiara_obj, group_title="all_items", **op_types
@@ -139,6 +136,8 @@ def list_operations(
                 temp[op_id] = op
 
         operations = temp
+
+    from kiara.interfaces.python_api import OperationGroupInfo
 
     ops_info = OperationGroupInfo.create_from_operations(
         kiara=kiara_obj, group_title=title, **operations

@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pytest
 
-from kiara import KiaraAPI
+from kiara.api import KiaraAPI
 from kiara.context import Kiara
 from kiara.context.config import KiaraConfig
 from kiara.interfaces.python_api.batch import BatchOperation

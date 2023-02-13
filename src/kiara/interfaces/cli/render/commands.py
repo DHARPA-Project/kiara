@@ -7,20 +7,22 @@
 
 """Pipeline-related subcommands for the cli."""
 import sys
+import typing
 from pathlib import Path
 from typing import Any, Mapping, Set, Tuple, Union
 
 import rich_click as click
 from rich.markdown import Markdown
 
-from kiara import KiaraAPI
-from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.utils.cli import dict_from_cli_args, terminal_print, terminal_print_model
 from kiara.utils.cli.exceptions import handle_exception
 
+if typing.TYPE_CHECKING:
+    from kiara.api import KiaraAPI
+
 
 def render_wrapper(
-    kiara_api: KiaraAPI,
+    kiara_api: "KiaraAPI",
     source_type: str,
     item: Any,
     target_type: Union[str, None],
@@ -122,6 +124,8 @@ def pipeline(ctx, pipeline: str) -> None:
         # pipeline_defaults = {}
         raise NotImplementedError()
     else:
+        from kiara.models.module.pipeline.pipeline import Pipeline
+
         pipeline_obj = Pipeline.create_pipeline(kiara=api.context, pipeline=pipeline)
 
     ctx.obj["item"] = pipeline_obj

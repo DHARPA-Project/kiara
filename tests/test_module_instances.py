@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from kiara import Kiara
+from kiara.api import Kiara
 from kiara.exceptions import (
     InvalidManifestException,
     InvalidValuesException,

@@ -12,7 +12,6 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Type, Union
 import structlog
 from bidict import bidict
 
-from kiara.context.config import JobCacheStrategy
 from kiara.exceptions import FailedJobException
 from kiara.models.events import KiaraEvent
 from kiara.models.events.job_registry import (
@@ -30,7 +29,7 @@ from kiara.utils import get_dev_config, is_develop
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
-
+    from kiara.context.config import JobCacheStrategy
 
 logger = structlog.getLogger()
 
@@ -203,6 +202,8 @@ class JobRegistry(object):
 
     @property
     def job_matcher(self) -> JobMatcher:
+
+        from kiara.context.config import JobCacheStrategy
 
         strategy = self._kiara.runtime_config.job_cache
         if is_develop():

@@ -25,9 +25,6 @@ from typing import (
     Union,
 )
 
-from rich.markdown import Markdown
-from stevedore import ExtensionManager
-
 from kiara.utils import (
     _get_all_subclasses,
     camel_case_to_snake_case,
@@ -36,7 +33,6 @@ from kiara.utils import (
     log_exception,
     log_message,
 )
-from kiara.utils.develop import log_dev_message
 
 if TYPE_CHECKING:
     from kiara.data_types import DataType
@@ -178,6 +174,10 @@ def _process_subclass(
                 for m in missing:
                     msg = f"{msg}\n- *{m}*"
 
+                from rich.markdown import Markdown
+
+                from kiara.utils.develop import log_dev_message
+
                 log_dev_message(msg=Markdown(msg), title=title)
 
         log_message(
@@ -265,6 +265,8 @@ def load_all_subclasses_for_entry_point(
         log2.setLevel(logging.INFO)
 
     log_message("events.loading.entry_points", entry_point_name=entry_point_name)
+
+    from stevedore import ExtensionManager
 
     mgr = ExtensionManager(
         namespace=entry_point_name,
@@ -381,7 +383,11 @@ def find_all_kiara_modules() -> Dict[str, Type["KiaraModule"]]:
 
         if not hasattr(cls, "process"):
             if is_develop():
+                from rich.markdown import Markdown
+
                 msg = f"Invalid kiara module: **{cls.__module__}.{cls.__name__}**\n\nMissing method(s):\n- *process*"
+                from kiara.utils.develop import log_dev_message
+
                 log_dev_message(msg=Markdown(msg))
 
             # TODO: check signature of process method
@@ -581,6 +587,8 @@ def find_all_kiara_pipeline_paths(
 
     log_message("events.loading.pipelines")
 
+    from stevedore import ExtensionManager
+
     mgr = ExtensionManager(
         namespace="kiara.pipelines", invoke_on_load=False, propagate_map_exceptions=True
     )
@@ -669,6 +677,7 @@ def find_all_cli_subcommands():
         log2.setLevel(logging.INFO)
 
     log_message("events.loading.entry_points", entry_point_name=entry_point_name)
+    from stevedore import ExtensionManager
 
     mgr = ExtensionManager(
         namespace=entry_point_name,

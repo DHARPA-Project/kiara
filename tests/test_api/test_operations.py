@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from kiara import KiaraAPI
+from kiara.api import KiaraAPI
 
 #  Copyright (c) 2023, Markus Binsteiner
 #

@@ -58,7 +58,7 @@ from rich_click.rich_click import (
     highlighter,
 )
 
-from kiara import ValueMap
+from kiara.api import ValueMap
 from kiara.interfaces.python_api import KiaraAPI, OperationGroupInfo
 from kiara.models.module.operation import Operation
 

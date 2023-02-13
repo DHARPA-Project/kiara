@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from kiara import Kiara
+from kiara.api import Kiara
 
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #  Copyright (c) 2021, Markus Binsteiner

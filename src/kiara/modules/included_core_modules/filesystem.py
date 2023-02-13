@@ -11,7 +11,7 @@ from typing import Any, List, Mapping, Type, Union
 import orjson
 from pydantic import Field
 
-from kiara import KiaraModuleConfig
+from kiara.api import KiaraModuleConfig
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.filesystem import FileBundle, FileModel, FolderImportConfig
 from kiara.models.values.value import SerializedData, ValueMap

@@ -12,7 +12,6 @@ import sys
 from typing import TYPE_CHECKING, Dict, Iterable, List, Type, TypeVar
 
 import structlog
-from rich.traceback import Traceback
 
 from kiara.defaults import INVALID_VALUE_NAMES
 
@@ -95,6 +94,8 @@ def log_exception(exc: Exception):
                 logger.error(exc)
         else:
             console = get_console()
+            from rich.traceback import Traceback
+
             log_dev_message(
                 Traceback.from_exception(
                     type(exc_info[0]), exc_info[1], traceback=exc_info[2], show_locals=show_locals, width=console.width - 4  # type: ignore

@@ -9,22 +9,17 @@
 
 import os.path
 import sys
+import typing
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Union
 
 import rich_click as click
 
-from kiara import KiaraAPI
 from kiara.utils.cli import dict_from_cli_args, terminal_print
 from kiara.utils.cli.exceptions import handle_exception
-from kiara.utils.cli.run import (
-    _validate_save_option,
-    calculate_aliases,
-    execute_job,
-    set_and_validate_inputs,
-    validate_operation_in_terminal,
-)
-from kiara.utils.output import OutputDetails
+
+if typing.TYPE_CHECKING:
+    from kiara.api import KiaraAPI
 
 
 @click.command()
@@ -67,6 +62,15 @@ def run(
     help: bool,
 ):
     """Run a kiara operation."""
+
+    from kiara.utils.cli.run import (
+        _validate_save_option,
+        calculate_aliases,
+        execute_job,
+        set_and_validate_inputs,
+        validate_operation_in_terminal,
+    )
+    from kiara.utils.output import OutputDetails
 
     # =========================================================================
     # initialize a few variables

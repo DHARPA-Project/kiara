@@ -28,7 +28,7 @@ from kiara.utils.output import (
 )
 
 if TYPE_CHECKING:
-    from kiara import ValueMap
+    from kiara.api import ValueMap
     from kiara.context import Kiara
 
 yaml = YAML(typ="safe")

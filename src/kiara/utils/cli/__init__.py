@@ -2,12 +2,10 @@
 import json
 import os
 from enum import Enum
-from typing import Any, Callable, Dict, Iterable, Mapping, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Mapping, TypeVar, Union
 
-import orjson
 import rich_click as click
 from click import Command, Option, Parameter
-from pydantic import BaseModel
 from rich.console import ConsoleRenderable, Group, RichCast
 from rich.panel import Panel
 from rich.rule import Rule
@@ -18,9 +16,9 @@ from kiara.interfaces import get_console
 # ======================================================================================================================
 # click helper methods
 from kiara.utils import logger
-from kiara.utils.files import get_data_from_file
-from kiara.utils.json import orjson_dumps
-from kiara.utils.output import extract_renderable
+
+if TYPE_CHECKING:
+    from pydantic import BaseModel
 
 F = TypeVar("F", bound=Callable[..., Any])
 FC = TypeVar("FC", bound=Union[Callable[..., Any], Command])
@@ -44,6 +42,8 @@ def terminal_print(
     empty_line_before: bool = False,
     **config: Any,
 ) -> None:
+
+    from kiara.utils.output import extract_renderable
 
     if msg is None:
         msg = ""
@@ -117,7 +117,9 @@ def output_format_option(*param_decls: str) -> Callable[[FC], FC]:
     return decorator
 
 
-def render_json_str(model: BaseModel):
+def render_json_str(model: "BaseModel"):
+
+    import orjson
 
     try:
         json_str = model.json(option=orjson.OPT_INDENT_2 | orjson.OPT_NON_STR_KEYS)
@@ -127,7 +129,9 @@ def render_json_str(model: BaseModel):
     return json_str
 
 
-def render_json_schema_str(model: BaseModel):
+def render_json_schema_str(model: "BaseModel"):
+
+    import orjson
 
     try:
         json_str = model.schema_json(option=orjson.OPT_INDENT_2)
@@ -138,12 +142,17 @@ def render_json_schema_str(model: BaseModel):
 
 
 def terminal_print_model(
-    *models: BaseModel,
+    *models: "BaseModel",
     format: Union[None, OutputFormat, str] = None,
     empty_line_before: Union[bool, None] = None,
     in_panel: Union[str, None] = None,
     **render_config: Any,
 ):
+
+    import orjson
+
+    from kiara.utils.json import orjson_dumps
+    from kiara.utils.output import extract_renderable
 
     if format is None:
         format = OutputFormat.TERMINAL
@@ -284,6 +293,8 @@ def dict_from_cli_args(
             part_config = {key: _v}
         elif os.path.isfile(os.path.realpath(os.path.expanduser(arg))):
             path = os.path.realpath(os.path.expanduser(arg))
+            from kiara.utils.files import get_data_from_file
+
             part_config = get_data_from_file(path)
             assert isinstance(part_config, Mapping)
         else:

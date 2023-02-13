@@ -12,13 +12,11 @@ import rich_click as click
 from rich import box
 from rich.table import Table
 
-from kiara.context import Kiara
-from kiara.interfaces.python_api.models.info import OperationGroupInfo
-from kiara.models.module.pipeline.stages import PipelineStages
 from kiara.utils.cli import output_format_option, terminal_print_model
 from kiara.utils.cli.exceptions import handle_exception
-from kiara.utils.graphs import print_ascii_graph
-from kiara.utils.pipelines import get_pipeline_config
+
+if typing.TYPE_CHECKING:
+    from kiara.api import Kiara
 
 
 @click.group()
@@ -70,6 +68,8 @@ def list_pipelines(ctx, full_doc: bool, filter: typing.Iterable[str], format: st
             op_id: kiara_obj.operation_registry.get_operation(op_id) for op_id in op_ids
         }
 
+    from kiara.interfaces.python_api import OperationGroupInfo
+
     ops_info = OperationGroupInfo.create_from_operations(
         kiara=kiara_obj, group_title=title, **operations
     )
@@ -91,6 +91,8 @@ def explain(ctx, pipeline_name_or_path: str, format: str, stages_extraction_type
     """Print details about pipeline inputs, outputs, and overall structure."""
 
     kiara_obj: Kiara = ctx.obj.kiara
+
+    from kiara.utils.pipelines import get_pipeline_config
 
     pc = get_pipeline_config(kiara=kiara_obj, pipeline=pipeline_name_or_path)
     terminal_print_model(
@@ -118,6 +120,9 @@ def explain_stages(
 ):
     """Print details about pipeline inputs, outputs, and overall structure."""
 
+    from kiara.models.module.pipeline.stages import PipelineStages
+    from kiara.utils.pipelines import get_pipeline_config
+
     kiara_obj: Kiara = ctx.obj.kiara
 
     pc = get_pipeline_config(kiara=kiara_obj, pipeline=pipeline_name_or_path)
@@ -139,11 +144,15 @@ def explain_stages(
 def execution_graph(ctx, pipeline_name_or_path: str):
     """Print the execution graph for a pipeline structure."""
 
+    from kiara.utils.graphs import print_ascii_graph
+    from kiara.utils.pipelines import get_pipeline_config
+
     kiara_obj = ctx.obj.kiara
 
     pc = get_pipeline_config(kiara=kiara_obj, pipeline=pipeline_name_or_path)
 
     structure = pc.structure
+
     print_ascii_graph(
         structure.execution_graph, restart_interpreter_if_asciinet_installed=True
     )
@@ -160,6 +169,9 @@ def execution_graph(ctx, pipeline_name_or_path: str):
 @click.pass_context
 def data_flow_graph(ctx, pipeline_name_or_path: str, full: bool):
     """Print the data flow graph for a pipeline structure."""
+
+    from kiara.utils.graphs import print_ascii_graph
+    from kiara.utils.pipelines import get_pipeline_config
 
     kiara_obj = ctx.obj.kiara
 
@@ -189,6 +201,9 @@ def data_flow_graph(ctx, pipeline_name_or_path: str, full: bool):
 @click.pass_context
 def stages_graph(ctx, pipeline_name_or_path: str, stages_extraction_type: str):
     """Print the data flow graph for a pipeline structure."""
+
+    from kiara.utils.graphs import print_ascii_graph
+    from kiara.utils.pipelines import get_pipeline_config
 
     kiara_obj = ctx.obj.kiara
 

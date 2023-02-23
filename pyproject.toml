@@ -229,7 +229,7 @@ dev_utils = [
     "pre-commit>=2.9.3",
     "pytest>=6.2.2",
     "setup-cfg-fmt>=1.16.0",
-    "ruff==0.0.238",
+    "ruff==0.0.252",
     "types-Deprecated",
     "types-PyYAML",
     "types-pkg-resources",

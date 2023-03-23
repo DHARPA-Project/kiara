@@ -9,7 +9,7 @@ import uuid
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
 
 import orjson
-from dag_cbor import Kind
+from dag_cbor import IPLDKind
 from multiformats import CID
 from pydantic import Extra, Field, PrivateAttr, validator
 from rich.console import RenderableType
@@ -136,7 +136,7 @@ class InputsManifest(Manifest):
         if self._jobs_cid is not None:
             return self._jobs_cid
 
-        obj: Kind = {"manifest": self.manifest_cid, "inputs": self.inputs_cid}
+        obj: IPLDKind = {"manifest": self.manifest_cid, "inputs": self.inputs_cid}
         _, self._jobs_cid = compute_cid(data=obj)
         return self._jobs_cid
 

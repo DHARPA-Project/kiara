@@ -10,7 +10,7 @@ from typing import Any, ClassVar, Dict, Iterable, List, Mapping, Union
 
 import networkx as nx
 import orjson
-from dag_cbor import Kind
+from dag_cbor import IPLDKind
 from deepdiff import DeepHash
 from multiformats import CID
 from pydantic import Extra
@@ -76,7 +76,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     _dag_cache: Union[bytes, None] = PrivateAttr(default=None)
     _size_cache: Union[int, None] = PrivateAttr(default=None)
 
-    def _retrieve_data_to_hash(self) -> Kind:
+    def _retrieve_data_to_hash(self) -> IPLDKind:
         """Return data important for hashing this model instance. Implemented by sub-classes.
 
         This returns the relevant data that makes this model unique, excluding any secondary metadata that is not

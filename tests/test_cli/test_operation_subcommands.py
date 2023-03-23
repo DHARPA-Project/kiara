@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pytest
 
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #
@@ -8,6 +9,7 @@ from click.testing import CliRunner
 from kiara.interfaces.cli import cli
 
 
+@pytest.mark.serial
 def test_operation_list_subcommand():
 
     runner = CliRunner()
@@ -17,6 +19,7 @@ def test_operation_list_subcommand():
     assert "logic.nand" in result.stdout
 
 
+@pytest.mark.serial
 def test_operation_list_by_group_subcommand():
 
     runner = CliRunner()
@@ -26,6 +29,7 @@ def test_operation_list_by_group_subcommand():
     assert "logic.nand" in result.stdout
 
 
+@pytest.mark.serial
 def test_operation_explain_subcommand():
 
     os_env_vars = {"CONSOLE_WIDTH": "400"}

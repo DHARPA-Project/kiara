@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pytest
 from click.testing import CliRunner
 
 from kiara.interfaces.cli import cli
@@ -9,6 +10,7 @@ from kiara.interfaces.cli import cli
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 
+@pytest.mark.serial
 def test_run_without_module():
 
     runner = CliRunner()
@@ -17,6 +19,7 @@ def test_run_without_module():
     assert "Missing argument" in result.stdout
 
 
+@pytest.mark.serial
 def test_run_without_args():
 
     runner = CliRunner()
@@ -26,6 +29,7 @@ def test_run_without_args():
     assert "not set" in result.stdout
 
 
+@pytest.mark.serial
 def test_run_with_missing_arg():
 
     runner = CliRunner()
@@ -36,6 +40,7 @@ def test_run_with_missing_arg():
     assert "invalid or insufficient input" in result.stdout
 
 
+@pytest.mark.serial
 def test_run_with_valid_inputs():
 
     runner = CliRunner()
@@ -44,6 +49,7 @@ def test_run_with_valid_inputs():
     assert "True" in result.stdout
 
 
+@pytest.mark.serial
 def test_run_with_save():
 
     runner = CliRunner(env={"KIARA_CONTEXT": "_unit_tests_run"})

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
+import pytest
 from click.testing import CliRunner
 
 from kiara.interfaces.cli import cli
@@ -11,6 +12,7 @@ from kiara.interfaces.cli import cli
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 
+@pytest.mark.serial
 def test_pipeline_subcommand():
 
     runner = CliRunner()
@@ -19,6 +21,7 @@ def test_pipeline_subcommand():
     assert "Pipeline-related sub-commands" in result.stdout
 
 
+@pytest.mark.serial
 def test_pipeline_explain_subcommand():
 
     runner = CliRunner()

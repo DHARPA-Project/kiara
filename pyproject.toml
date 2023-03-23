@@ -203,6 +203,7 @@ dev_testing = [
     "pytest>=6.2.2",
     "pytest-cov>=2.11.1",
     "pytest-html>=3.1.0",
+    "pytest-xdist>=3.2.1",
     "tox>=3.21.2",
     "types-Deprecated",
     "types-PyYAML",
@@ -229,6 +230,7 @@ dev_utils = [
     "pip-licenses>=3.3.0",
     "pre-commit>=2.9.3",
     "pytest>=6.2.2",
+    "pytest-xdist>=3.2.1",
     "setup-cfg-fmt>=1.16.0",
     "ruff==0.0.257",
     "types-Deprecated",
@@ -289,6 +291,9 @@ write_to = "src/kiara/version.txt"
 [tool.pytest.ini_options]
 pythonpath = [
     "src"
+]
+markers = [
+    "serial"
 ]
 
 [tool.ruff]

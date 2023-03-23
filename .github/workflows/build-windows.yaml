@@ -28,5 +28,7 @@ jobs:
         run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.tabular@develop
       - name: install kiara
         run: pip install  --prefer-binary -U --extra-index-url https://pypi.fury.io/dharpa/ .[dev_testing]
-      - name: test with pytest
-        run: make test
+      - name: test with pytest (1)
+        run: py.test  -n auto -m "not serial"
+      - name: test with pytest (2)
+        run: py.test  -n0 -m "serial"

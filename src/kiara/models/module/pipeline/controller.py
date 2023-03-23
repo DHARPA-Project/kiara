@@ -61,7 +61,6 @@ class SinglePipelineController(PipelineController):
 
     def can_be_processed(self, step_id: str) -> bool:
         """Check whether the step with the provided id is ready to be processed."""
-
         pipeline_state = self.current_pipeline_state()
         step_state = pipeline_state.step_states[step_id]
 
@@ -69,7 +68,6 @@ class SinglePipelineController(PipelineController):
 
     def can_be_skipped(self, step_id: str) -> bool:
         """Check whether the processing of a step can be skipped."""
-
         required = self.pipeline.structure.step_is_required(step_id=step_id)
         if required:
             required = self.can_be_processed(step_id)
@@ -85,12 +83,13 @@ class SinglePipelineController(PipelineController):
     def set_processing_results(
         self, job_ids: Mapping[str, uuid.UUID]
     ) -> Mapping[uuid.UUID, uuid.UUID]:
-        """Set the processing results as values of the approrpiate step outputs.
+        """
+        Set the processing results as values of the approrpiate step outputs.
 
         Returns:
+        -------
             a dict with the result value id as key, and the id of the job that produced it as value
         """
-
         self._job_registry.wait_for(*job_ids.values())
 
         result: Dict[uuid.UUID, uuid.UUID] = {}
@@ -110,26 +109,28 @@ class SinglePipelineController(PipelineController):
         return result
 
     def pipeline_is_ready(self) -> bool:
-        """Return whether the pipeline is ready to be processed.
+        """
+        Return whether the pipeline is ready to be processed.
 
         A ``True`` result means that all pipeline inputs are set with valid values, and therefore every step within the
         pipeline can be processed.
 
         Returns:
+        -------
             whether the pipeline can be processed as a whole (``True``) or not (``False``)
         """
-
         pipeline_inputs = self.pipeline._all_values.get_alias("pipeline.inputs")
         assert pipeline_inputs is not None
         return pipeline_inputs.all_items_valid
 
     def process_step(self, step_id: str, wait: bool = False) -> uuid.UUID:
-        """Kick off processing for the step with the provided id.
+        """
+        Kick off processing for the step with the provided id.
 
         Arguments:
+        ---------
             step_id: the id of the step that should be started
         """
-
         job_config = self.pipeline.create_job_config_for_step(step_id)
 
         job_metadata = {"is_pipeline_step": True, "step_id": step_id}
@@ -146,12 +147,15 @@ class SinglePipelineController(PipelineController):
 
 
 class SinglePipelineBatchController(SinglePipelineController):
-    """A [PipelineController][kiara.models.modules.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.
+
+    """
+    A [PipelineController][kiara.models.modules.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.
 
     This is the default implementation of a ``PipelineController``, and probably the most simple implementation of one.
     It waits until all inputs are set, after which it executes all pipeline steps in the required order.
 
     Arguments:
+    ---------
         pipeline: the pipeline to control
         auto_process: whether to automatically start processing the pipeline as soon as the input set is valid
     """

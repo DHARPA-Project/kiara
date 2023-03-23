@@ -38,6 +38,7 @@ FILE_BUNDLE_IMPORT_AVAILABLE_COLUMNS = [
 
 
 class FileModel(KiaraModel):
+
     """Describes properties for the 'file' value type."""
 
     _kiara_model_id = "instance.data.file"
@@ -50,7 +51,6 @@ class FileModel(KiaraModel):
         # import_time: Optional[datetime.datetime] = None,
     ):
         """Utility method to read metadata of a file from disk."""
-
         import mimetypes
 
         import filetype
@@ -172,7 +172,6 @@ class FileModel(KiaraModel):
 
     def read_text(self, max_lines: int = -1) -> str:
         """Read the content of a file."""
-
         with open(self.path, "rt") as f:
             if max_lines <= 0:
                 content = f.read()
@@ -182,7 +181,6 @@ class FileModel(KiaraModel):
 
     def read_bytes(self, length: int = -1) -> bytes:
         """Read the content of a file."""
-
         with open(self.path, "rb") as f:
             if length <= 0:
                 content = f.read()
@@ -214,6 +212,7 @@ class FolderImportConfig(BaseModel):
 
 
 class FileBundle(KiaraModel):
+
     """Describes properties for the 'file_bundle' value type."""
 
     _kiara_model_id = "instance.data.file_bundle"
@@ -221,7 +220,6 @@ class FileBundle(KiaraModel):
     @classmethod
     def create_tmp_dir(self) -> Path:
         """Utility method to create a temp folder that gets deleted when kiara exits."""
-
         temp_f = tempfile.mkdtemp()
 
         def cleanup():

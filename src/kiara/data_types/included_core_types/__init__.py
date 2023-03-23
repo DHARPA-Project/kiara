@@ -46,7 +46,8 @@ SCALAR_CHARACTERISTICS = DataTypeCharacteristics(
 
 
 class NoneType(DataType[SpecialValue, DataTypeConfig]):
-    """Type indicating a 'None' value"""
+
+    """Type indicating a 'None' value."""
 
     _data_type_name = "none"
 
@@ -82,7 +83,9 @@ class NoneType(DataType[SpecialValue, DataTypeConfig]):
 class AnyType(
     DataType[TYPE_PYTHON_CLS, DataTypeConfig], Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]
 ):
-    """'Any' type, the parent type for most other types.
+
+    """
+    'Any' type, the parent type for most other types.
 
     This type acts as the parents for all (or at least most) non-internal value types. There are some generic operations
     (like 'persist_value', or 'pretty_print') which are implemented for this type, so it's descendents have a fallback
@@ -177,6 +180,7 @@ class AnyType(
 
 
 class BytesType(AnyType[bytes, DataTypeConfig]):
+
     """An array of bytes."""
 
     _data_type_name = "bytes"
@@ -222,6 +226,7 @@ class BytesType(AnyType[bytes, DataTypeConfig]):
 
 
 class StringType(AnyType[str, DataTypeConfig]):
+
     """A string."""
 
     _data_type_name = "string"
@@ -274,6 +279,7 @@ class StringType(AnyType[str, DataTypeConfig]):
 
 
 class BooleanType(AnyType[bool, DataTypeConfig]):
+
     "A boolean."
 
     _data_type_name = "boolean"
@@ -315,7 +321,9 @@ class BooleanType(AnyType[bool, DataTypeConfig]):
 
 
 class DictValueType(AnyType[DictModel, DataTypeConfig]):
-    """A dictionary.
+
+    """
+    A dictionary.
 
     In addition to the actual dictionary value, this value type comes also with an optional schema, describing the
     dictionary. In case no schema was attached, a simple generic one is attached. This data type is backed by the
@@ -486,7 +494,9 @@ KIARA_MODEL_CLS = TypeVar("KIARA_MODEL_CLS", bound=KiaraModel)
 class KiaraModelValueType(
     AnyType[KIARA_MODEL_CLS, TYPE_CONFIG_CLS], Generic[KIARA_MODEL_CLS, TYPE_CONFIG_CLS]
 ):
-    """A value type that is used internally.
+
+    """
+    A value type that is used internally.
 
     This type should not be used by user-facing modules and/or operations.
     """

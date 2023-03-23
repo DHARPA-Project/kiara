@@ -106,15 +106,16 @@ def get_pipeline_details_from_path(
     module_type_name: Union[str, None] = None,
     base_module: Union[str, None] = None,
 ) -> Dict[str, Any]:
-    """Load a pipeline description, save it's content, and determine it the pipeline base name.
+    """
+    Load a pipeline description, save it's content, and determine it the pipeline base name.
 
     Arguments:
+    ---------
         path: the path to the pipeline file
         module_type_name: if specifies, overwrites any auto-detected or assigned pipeline name
         base_module: overrides the base module the assembled pipeline module will be located in the python hierarchy
 
     """
-
     if isinstance(path, str):
         path = Path(os.path.expanduser(path))
 
@@ -161,7 +162,8 @@ def check_doc_sidecar(path: Union[Path, str], data: Dict[str, Any]) -> Dict[str,
 def get_pipeline_config(
     pipeline: str, kiara: typing.Union["Kiara", None] = None
 ) -> "PipelineConfig":
-    """Extract a pipeline config from the item specified.
+    """
+    Extract a pipeline config from the item specified.
 
     The lookup of the 'pipeline' reference happens in this order (first match returns the result):
     - check whether there is an operation with that name that is a pipeline
@@ -169,13 +171,14 @@ def get_pipeline_config(
     - check whether the provided string starts with 'workflow:' and matches a workflow alias (or id), in which case it returns the pipeline config for the workflows current state
 
     Arguments:
+    ---------
         pipeline: a reference to the desired pipeline
         kiara: the kiara context
 
     Returns:
+    -------
         a pipeline config object
     """
-
     if kiara is None:
         from kiara.context import Kiara
 
@@ -227,14 +230,15 @@ def get_pipeline_config(
 def find_pipeline_data_in_paths(
     pipeline_paths: Dict[str, Union[Dict[str, Any], None]]
 ) -> Mapping[str, Mapping[str, Any]]:
-    """Find pipeline data in the provided paths.
+    """
+    Find pipeline data in the provided paths.
 
     The 'pipeline_paths' argument has a local path as key, and a mapping as value that contains optional metadata about the context for all the pipelines that are found under the path.
 
     Arguments:
+    ---------
         pipeline_paths: a mapping of pipeline names to paths
     """
-
     all_pipelines = []
 
     for _path in pipeline_paths.keys():

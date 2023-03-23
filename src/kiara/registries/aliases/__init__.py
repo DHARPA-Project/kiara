@@ -36,12 +36,14 @@ class AliasArchive(BaseArchive):
 
     @abc.abstractmethod
     def retrieve_all_aliases(self) -> Union[Mapping[str, uuid.UUID], None]:
-        """Retrieve a list of all aliases registered in this archive.
+        """
+        Retrieve a list of all aliases registered in this archive.
 
         The result of this method can be 'None', for cases where the aliases are determined dynamically.
         In kiara, the result of this method is mostly used to improve performance when looking up an alias.
 
         Returns:
+        -------
             a list of strings (the aliases), or 'None' if this archive does not support alias indexes.
         """
 
@@ -168,7 +170,6 @@ class AliasRegistry(object):
     @property
     def aliases(self) -> Dict[str, AliasItem]:
         """Retrieve a map of all available aliases, context wide, with the registered archive aliases as values."""
-
         if self._cached_aliases is not None:
             return self._cached_aliases
 

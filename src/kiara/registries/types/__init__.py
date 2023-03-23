@@ -168,7 +168,6 @@ class TypeRegistry(object):
 
     def get_type_lineage(self, data_type_name: str) -> List[str]:
         """Returns the shortest path between the specified type and the root, in reverse direction starting from the specified type."""
-
         if data_type_name not in self.data_type_profiles.keys():
             raise DataTypeUnknownException(data_type=data_type_name)
 
@@ -202,11 +201,11 @@ class TypeRegistry(object):
         return True if type_config else False
 
     def get_profile_parent(self, data_type_name: str) -> Union[None, bool]:
-        """Return the parent data type of the specified data type (if that is indeed a profile name).
+        """
+        Return the parent data type of the specified data type (if that is indeed a profile name).
 
         If the specified data type is not a profile name, 'None' will be returned.
         """
-
         return self.data_type_profiles.get(data_type_name, {}).get("type_name", None)
 
     def get_associated_profiles(

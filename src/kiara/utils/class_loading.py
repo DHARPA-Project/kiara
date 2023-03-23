@@ -56,7 +56,6 @@ SUBCLASS_TYPE = TypeVar("SUBCLASS_TYPE")
 
 def _default_id_func(cls: Type) -> str:
     """Utility method to auto-generate a more or less nice looking id_or_alias for a class."""
-
     name = camel_case_to_snake_case(cls.__name__)
     path = cls.__module__
 
@@ -76,7 +75,6 @@ def _default_id_func(cls: Type) -> str:
 
 def _cls_name_id_func(cls: Type) -> str:
     """Utility method to auto-generate a more or less nice looking id_or_alias for a class."""
-
     name = camel_case_to_snake_case(cls.__name__)
     return name
 
@@ -85,16 +83,18 @@ def find_subclasses_under(
     base_class: Type[SUBCLASS_TYPE],
     python_module: Union[str, ModuleType],
 ) -> List[Type[SUBCLASS_TYPE]]:
-    """Find all (non-abstract) subclasses of a base class that live under a module (recursively).
+    """
+    Find all (non-abstract) subclasses of a base class that live under a module (recursively).
 
     Arguments:
+    ---------
         base_class: the parent class
         python_module: the Python module to search
 
     Returns:
+    -------
         a list of all subclasses
     """
-
     # if hasattr(sys, "frozen"):
     #     raise NotImplementedError("Pyinstaller bundling not supported yet.")
 
@@ -131,9 +131,11 @@ def _process_subclass(
     ignore_abstract_classes: bool = True,
     ignore_modules_with_null_module_name: bool = True,
 ) -> Union[str, None]:
-    """Process subclasses of a base class that live under a module (recursively).
+    """
+    Process subclasses of a base class that live under a module (recursively).
 
     Arguments:
+    ---------
         base_class: the parent class
         python_module: the Python module to search
         ignore_abstract_classes: whether to include abstract classes in the result
@@ -144,6 +146,7 @@ def _process_subclass(
         ignore_modules_with_null_module_name: ignore modules that have their '_module_type_name' attribute set to 'None', this is mostly useful to filter out base classes
 
     Returns:
+    -------
         the type id
     """
     is_abstract = inspect.isabstract(sub_class)
@@ -237,9 +240,11 @@ def load_all_subclasses_for_entry_point(
     type_id_no_attach: bool = False,
     attach_python_metadata: Union[bool, str] = False,
 ) -> Dict[str, Type[SUBCLASS_TYPE]]:
-    """Find all subclasses of a base class via package entry points.
+    """
+    Find all subclasses of a base class via package entry points.
 
     Arguments:
+    ---------
         entry_point_name: the entry point name to query entries for
         base_class: the base class to look for
         ignore_abstract_classes: whether to include abstract classes in the result
@@ -248,7 +253,6 @@ def load_all_subclasses_for_entry_point(
         type_id_no_attach: in case you want to use the type_id_key to set the id, but don't want it attached to classes that don't have it, set this to true. In most cases, you won't need this option
         attach_python_metadata: whether to attach a [PythonClass][kiara.models.python_class.PythonClass] metadata model to the class. By default, '_python_class' is used as attribute name if this argument is 'True', If this argument is a string, that will be used as name instead.
     """
-
     log2 = logging.getLogger("stevedore")
     out_hdlr = logging.StreamHandler(sys.stdout)
     out_hdlr.setFormatter(
@@ -363,11 +367,12 @@ def load_all_subclasses_for_entry_point(
 
 
 def find_all_kiara_modules() -> Dict[str, Type["KiaraModule"]]:
-    """Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
-
-    TODO
     """
+    Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
 
+    Todo:
+    ----
+    """
     from kiara.modules import KiaraModule
 
     modules = load_all_subclasses_for_entry_point(
@@ -404,11 +409,12 @@ def find_all_kiara_modules() -> Dict[str, Type["KiaraModule"]]:
 
 
 def find_all_kiara_model_classes() -> Dict[str, Type["KiaraModel"]]:
-    """Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
-
-    TODO
     """
+    Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
 
+    Todo:
+    ----
+    """
     from kiara.models import KiaraModel
 
     return load_all_subclasses_for_entry_point(
@@ -439,7 +445,6 @@ def find_all_kiara_model_classes() -> Dict[str, Type["KiaraModel"]]:
 
 def find_all_archive_types() -> Dict[str, Type["KiaraArchive"]]:
     """Find all [KiaraArchive][kiara.registries.KiaraArchive] subclasses via package entry points."""
-
     from kiara.registries import KiaraArchive
 
     return load_all_subclasses_for_entry_point(
@@ -452,11 +457,12 @@ def find_all_archive_types() -> Dict[str, Type["KiaraArchive"]]:
 
 
 def find_all_data_types() -> Dict[str, Type["DataType"]]:
-    """Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
-
-    TODO
     """
+    Find all [KiaraModule][kiara.module.KiaraModule] subclasses via package entry points.
 
+    Todo:
+    ----
+    """
     from kiara.data_types import DataType
 
     all_data_types = load_all_subclasses_for_entry_point(
@@ -689,11 +695,12 @@ def find_all_cli_subcommands():
 
 
 def find_all_kiara_renderers() -> Dict[str, Type["KiaraRenderer"]]:
-    """Find all [KiaraComponent][kiara_plugin.streamilt.components.KiaraComponent] subclasses via package entry points.
-
-    TODO
     """
+    Find all [KiaraComponent][kiara_plugin.streamilt.components.KiaraComponent] subclasses via package entry points.
 
+    Todo:
+    ----
+    """
     from kiara.renderers import KiaraRenderer
 
     components = load_all_subclasses_for_entry_point(

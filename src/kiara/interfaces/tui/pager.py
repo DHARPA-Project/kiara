@@ -62,7 +62,6 @@ DataViewControl {
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
-
         yield Header()
         yield self._data_preview
         yield self._preview_control

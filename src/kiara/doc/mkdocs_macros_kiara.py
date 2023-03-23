@@ -20,12 +20,11 @@ kiara_obj = Kiara.instance()
 
 def define_env(env):
     """
-    This is the hook for defining variables, macros and filters
+    This is the hook for defining variables, macros and filters.
 
     - variables: the dictionary that contains the environment variables
     - macro: a decorator function, to declare a macro.
     """
-
     # env.variables["baz"] = "John Doe"
 
     @env.macro

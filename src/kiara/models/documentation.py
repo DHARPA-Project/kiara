@@ -24,6 +24,7 @@ from kiara.utils.global_metadata import get_metadata_for_python_module_or_class
 
 
 class AuthorModel(BaseModel):
+
     """Details about an author of a resource."""
 
     class Config:
@@ -36,6 +37,7 @@ class AuthorModel(BaseModel):
 
 
 class LinkModel(BaseModel):
+
     """A description and url for a reference of any kind."""
 
     class Config:
@@ -49,6 +51,7 @@ class LinkModel(BaseModel):
 
 
 class AuthorsMetadataModel(KiaraModel):
+
     """Information about all authors of a resource."""
 
     _kiara_model_id = "metadata.authors"
@@ -87,6 +90,7 @@ class AuthorsMetadataModel(KiaraModel):
 
 
 class ContextMetadataModel(KiaraModel):
+
     """Information about the context of a resource."""
 
     _kiara_model_id = "metadata.context"
@@ -160,6 +164,7 @@ class ContextMetadataModel(KiaraModel):
 
 
 class DocumentationMetadataModel(KiaraModel):
+
     """Documentation about a resource."""
 
     class Config:

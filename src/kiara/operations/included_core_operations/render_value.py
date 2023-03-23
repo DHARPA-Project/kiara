@@ -26,6 +26,7 @@ logger = structlog.getLogger()
 
 
 class RenderValueDetails(BaseOperationDetails):
+
     """A model that contains information needed to describe an 'extract_metadata' operation."""
 
     source_data_type: str = Field(description="The data type that will be rendered.")
@@ -33,7 +34,9 @@ class RenderValueDetails(BaseOperationDetails):
 
 
 class RenderValueOperationType(OperationType[RenderValueDetails]):
-    """An operation that renders a value.
+
+    """
+    An operation that renders a value.
 
     A 'render_value' operation typically is named follwing the pattern:
 
@@ -179,15 +182,17 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
     def get_render_operations_for_source_type(
         self, source_type: str
     ) -> Mapping[str, Operation]:
-        """Return all render operations for the specified data type.
+        """
+        Return all render operations for the specified data type.
 
         Arguments:
+        ---------
             source_type: the data type to render
 
         Returns:
+        -------
             a mapping with the target type as key, and the operation as value
         """
-
         if source_type not in self._kiara.data_type_names:
             source_type = "any"
 
@@ -212,15 +217,17 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
     def get_render_operations_for_target_type(
         self, target_type: str
     ) -> Mapping[str, Operation]:
-        """Return all render operations that renders to the specified data type.
+        """
+        Return all render operations that renders to the specified data type.
 
         Arguments:
+        ---------
             target_type: the result data type
 
         Returns:
+        -------
             a mapping with the source type as key, and the operation as value
         """
-
         # TODO: consider type lineages
 
         if target_type not in self._kiara.data_type_names:

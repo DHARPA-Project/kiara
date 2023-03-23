@@ -46,7 +46,6 @@ def define_env(env):
 
     Read an external file, and return its content as a markdown code block.
     """
-
     # env.variables["baz"] = "John Doe"
 
     @env.macro
@@ -63,7 +62,6 @@ def define_env(env):
         repl_dict: Union[Mapping[str, str], None] = None,
     ):
         """Execute the provided command, save the output and return it to be used in documentation modules."""
-
         hashes = DeepHash(command)
         hash_str = hashes[command]
         hashes_env = DeepHash(extra_env)
@@ -194,6 +192,5 @@ def define_env(env):
     @env.macro
     def inline_file_as_codeblock(path, format: str = ""):
         """Import external file and return its content as a markdown code block."""
-
         f = Path(path)
         return f"```{format}\n{f.read_text()}\n```"

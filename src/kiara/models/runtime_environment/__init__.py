@@ -87,14 +87,14 @@ class RuntimeEnvironment(KiaraModel):
         return self._env_hashes
 
     def _retrieve_sub_profile_env_data(self) -> Mapping[str, Any]:
-        """Return a dictionary with data that identifies one hash profile per key.
+        """
+        Return a dictionary with data that identifies one hash profile per key.
 
         In most cases, this will only return a single-key dictionary containing all the data in that environment. But
         in some cases one might want to have several sub-hash profiles, for example a list of Python packages with and
         without version information, to have more fine-grained control about when to consider two environments functionally
         equal.
         """
-
         return {DEFAULT_ENV_HASH_KEY: self._retrieve_data_to_hash()}
 
     def create_renderable(self, **config: Any) -> RenderableType:

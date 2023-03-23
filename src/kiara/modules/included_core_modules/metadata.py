@@ -25,7 +25,9 @@ class MetadataModuleConfig(KiaraModuleConfig):
 
 
 class ExtractMetadataModule(KiaraModule):
-    """Base class to use when writing a module to extract metadata from a file.
+
+    """
+    Base class to use when writing a module to extract metadata from a file.
 
     It's possible to use any arbitrary *kiara* module for this purpose, but sub-classing this makes it easier.
     """

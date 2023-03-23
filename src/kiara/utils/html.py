@@ -16,7 +16,6 @@ def generate_html(
     add_type_column: bool = False,
 ) -> "Airium":
     """Create html representing this models data."""
-
     from airium import Airium  # type: ignore
 
     doc = Airium()

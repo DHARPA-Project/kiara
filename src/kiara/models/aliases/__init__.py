@@ -27,6 +27,7 @@ VALUE_ALIAS_SEPARATOR = "."
 
 
 class AliasValueMap(ValueMap):
+
     """A model class that holds a tree of values and their schemas."""
 
     _kiara_model_id = "instance.value_map.aliases"
@@ -62,11 +63,11 @@ class AliasValueMap(ValueMap):
     def get_child_map(
         self, field_name: str, version: Union[str, None] = None
     ) -> Union["AliasValueMap", None]:
-        """Get the child map for the specified field / version combination.
+        """
+        Get the child map for the specified field / version combination.
 
         Raises an error if the child field does not exist. Returns 'None' if not value is set yet (but schema is).
         """
-
         if version is not None:
             raise NotImplementedError()
 

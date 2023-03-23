@@ -112,17 +112,21 @@ class DataArchive(BaseArchive):
         pass
 
     def has_value(self, value_id: uuid.UUID) -> bool:
-        """Check whether the specific value_id is persisted in this data store.
+        """
+        Check whether the specific value_id is persisted in this data store.
 
         Implementing classes are encouraged to override this method, and choose a suitable, implementation specific
         way to quickly determine whether a value id is valid for this data store.
 
         Arguments:
+        ---------
             value_id: the id of the value to check.
+
+
         Returns:
+        -------
             whether this data store contains the value with the specified id
         """
-
         all_value_ids = self.value_ids
         if all_value_ids is None:
             return False
@@ -131,12 +135,12 @@ class DataArchive(BaseArchive):
     def retrieve_environment_details(
         self, env_type: str, env_hash: str
     ) -> Mapping[str, Any]:
-        """Retrieve the environment details with the specified type and hash.
+        """
+        Retrieve the environment details with the specified type and hash.
 
         The environment is stored by the data store as a dictionary, including it's schema, not as the actual Python model.
         This is to make sure it can still be loaded later on, in case the Python model has changed in later versions.
         """
-
         cached = self._env_cache.get(env_type, {}).get(env_hash, None)
         if cached is not None:
             return cached
@@ -231,12 +235,15 @@ class DataStore(DataArchive):
 
     @abc.abstractmethod
     def store_value(self, value: Value) -> PersistedData:
-        """ "Store the value, its data and metadata into the store.
+        """
+        "Store the value, its data and metadata into the store.
 
         Arguments:
+        ---------
             value: the value to persist
 
         Returns:
+        -------
             the load config that is needed to retrieve the value data later
         """
 
@@ -260,7 +267,8 @@ class BaseDataStore(DataStore):
 
     @abc.abstractmethod
     def _persist_value_pedigree(self, value: Value):
-        """Create an internal link from a value to its pedigree (and pedigree details).
+        """
+        Create an internal link from a value to its pedigree (and pedigree details).
 
         This is so that the 'retrieve_job_record' can be used to prevent running the same job again, and the link of value
         to the job that produced it is preserved.
@@ -340,12 +348,12 @@ class BaseDataStore(DataStore):
         return persisted_value_info
 
     def persist_environment(self, environment: RuntimeEnvironment):
-        """Persist the specified environment.
+        """
+        Persist the specified environment.
 
         The environment is stored as a dictionary, including it's schema, not as the actual Python model.
         This is to make sure it can still be loaded later on, in case the Python model has changed in later versions.
         """
-
         env_type = environment.get_environment_type_name()
         env_hash = str(environment.instance_cid)
 
@@ -361,7 +369,6 @@ class BaseDataStore(DataStore):
 
     def create_renderable(self, **config: Any) -> RenderableType:
         """Create a renderable for this module configuration."""
-
         from kiara.utils.output import create_renderable_from_values
 
         all_values = {}

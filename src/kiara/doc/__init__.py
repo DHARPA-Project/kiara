@@ -27,7 +27,9 @@ from kiara.doc.generate_api_doc import gen_pages_for_module
 
 
 class FrklDocumentationPlugin(BasePlugin):
-    """[mkdocs](https://www.mkdocs.org/) plugin to render API documentation for a project.
+
+    """
+    [mkdocs](https://www.mkdocs.org/) plugin to render API documentation for a project.
 
     To add to a project, add this to the 'plugins' section of a mkdocs config file:
 

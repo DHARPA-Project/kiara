@@ -53,9 +53,11 @@ class WorkflowArchive(BaseArchive):
 
     @abc.abstractmethod
     def retrieve_workflow_state(self, workflow_state_id: str) -> WorkflowState:
-        """Retrieve workflow state details for the provided state id.
+        """
+        Retrieve workflow state details for the provided state id.
 
         Arguments:
+        ---------
             workflow_id: id of the workflow
             workflow_state_id: the id of the workflow state
         """
@@ -64,9 +66,11 @@ class WorkflowArchive(BaseArchive):
     def retrieve_all_states_for_workflow(
         self, workflow_id: uuid.UUID
     ) -> Mapping[str, WorkflowState]:
-        """Retrieve workflow state details for the provided state id.
+        """
+        Retrieve workflow state details for the provided state id.
 
         Arguments:
+        ---------
             workflow_id: id of the workflow
             workflow_state_id: the id of the workflow state
         """
@@ -94,12 +98,13 @@ class WorkflowStore(WorkflowArchive):
         return workflow_metadata
 
     def unregister_alias(self, alias: str) -> bool:
-        """Unregister a workflow alias.
+        """
+        Unregister a workflow alias.
 
         Returns:
+        -------
             'True' if an alias existed and was unregistered, 'False' otherwise
         """
-
         raise NotImplementedError()
 
     def update_workflow_metadata(self, workflow_metadata: WorkflowMetadata):
@@ -213,7 +218,6 @@ class WorkflowRegistry(object):
 
     def get_aliases(self, workflow_id: uuid.UUID) -> List[str]:
         """Return all aliases for the specified workflow id."""
-
         return [
             alias
             for alias, w_id in self.workflow_aliases.items()
@@ -223,7 +227,6 @@ class WorkflowRegistry(object):
     @property
     def workflow_aliases(self) -> Dict[str, uuid.UUID]:
         """Retrieve all registered workflow aliases."""
-
         if self._all_aliases is not None:
             return self._all_aliases
 
@@ -306,15 +309,17 @@ class WorkflowRegistry(object):
         return workflow_details
 
     def unregister_alias(self, alias: str) -> bool:
-        """Unregister a workflow alias.
+        """
+        Unregister a workflow alias.
 
         Arguments:
+        ---------
             alias: the alias
 
         Returns:
+        -------
             whether an alias existed and was unregistered (True), or not (False)
         """
-
         try:
             self.get_workflow_id(workflow_alias=alias)
         except NoSuchWorkflowException:
@@ -332,16 +337,17 @@ class WorkflowRegistry(object):
         workflow_metadata: Union[None, WorkflowMetadata, str] = None,
         workflow_aliases: Union[Iterable[str], None] = None,
     ) -> WorkflowMetadata:
-        """Register a workflow.
+        """
+        Register a workflow.
 
         If no details are specified, a new WorkflowMetadata object will be created. If a string is provided, a new
         WorkflowMetadata object will be created that uses the string as documentation/description.
 
         Arguments:
+        ---------
             workflow_metadata: the (optional) metadata of the workflow
             workflow_aliases: (optional) aliases to register the workflow under
         """
-
         if workflow_aliases:
             for workflow_alias in workflow_aliases:
                 if workflow_alias in self.workflow_aliases.keys():

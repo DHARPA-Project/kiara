@@ -5,8 +5,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-"""A command-line interface for *Kiara*.
-"""
+"""A command-line interface for *Kiara*."""
 
 import logging
 import sys
@@ -75,13 +74,11 @@ def cli(
     pipelines: Tuple[str],
     plugin: Union[str, None],
 ):
-    """[i b]kiara[/b i] ia a data-orchestration framework; this is the command-line frontend for it.
-
-
+    """
+    [i b]kiara[/b i] ia a data-orchestration framework; this is the command-line frontend for it.
 
     For more information, visit the [i][b]kiara[/b] homepage[/i]: https://dharpa.org/kiara.documentation .
     """
-
     # check if windows symlink work
     from kiara.utils.windows import check_symlink_works
 

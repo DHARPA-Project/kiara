@@ -104,7 +104,6 @@ def render(ctx) -> None:
 @click.pass_context
 def list_renderers(ctx) -> None:
     """List all available renderers."""
-
     kiara_api: KiaraAPI = ctx.obj.kiara_api
 
     infos = kiara_api.retrieve_renderer_infos()
@@ -117,7 +116,6 @@ def list_renderers(ctx) -> None:
 @click.pass_context
 def pipeline(ctx, pipeline: str) -> None:
     """Render a kiara pipeline."""
-
     api: KiaraAPI = ctx.obj.kiara_api
 
     if pipeline.startswith("workflow:"):
@@ -167,7 +165,6 @@ def render_func_pipeline(
 @click.pass_context
 def value(ctx, value: str) -> None:
     """Render a kiara value."""
-
     api: KiaraAPI = ctx.obj.kiara_api
 
     value_obj = api.get_value(value)

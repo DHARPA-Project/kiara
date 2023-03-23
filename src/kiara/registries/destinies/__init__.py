@@ -29,7 +29,8 @@ class DestinyArchive(BaseArchive):
     def get_destiny_aliases_for_value(
         self, value_id: uuid.UUID
     ) -> Union[Set[str], None]:
-        """Retrieve all the destinies for the specified value within this archive.
+        """
+        Retrieve all the destinies for the specified value within this archive.
 
         In case this archive discovers its value destinies dynamically, this can return 'None'.
         """

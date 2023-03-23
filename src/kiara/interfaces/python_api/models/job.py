@@ -9,6 +9,7 @@ from kiara.models.module.manifest import Manifest
 
 
 class JobDesc(BaseModel):
+
     """An object describing a compute job with both raw or referenced inputs."""
 
     module_type: str = Field(description="The module type.")

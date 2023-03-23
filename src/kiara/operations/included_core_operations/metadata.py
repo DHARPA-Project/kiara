@@ -21,6 +21,7 @@ from kiara.registries.models import ModelRegistry
 
 
 class ExtractMetadataDetails(BaseOperationDetails):
+
     """A model that contains information needed to describe an 'extract_metadata' operation."""
 
     data_type: str = Field(
@@ -51,7 +52,9 @@ class ExtractMetadataDetails(BaseOperationDetails):
 
 
 class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
-    """An operation that extracts metadata of a specific type from value data.
+
+    """
+    An operation that extracts metadata of a specific type from value data.
 
     For a module profile to be picked up by this operation type, it needs to have:
     - exactly one input field
@@ -138,15 +141,17 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
         return details
 
     def get_operations_for_data_type(self, data_type: str) -> Mapping[str, Operation]:
-        """Return all available metadata extract operations for the provided type (and it's parent types).
+        """
+        Return all available metadata extract operations for the provided type (and it's parent types).
 
         Arguments:
+        ---------
             data_type: the value type
 
         Returns:
+        -------
             a mapping with the metadata type as key, and the operation as value
         """
-
         lineage = set(
             self._kiara.type_registry.get_type_lineage(data_type_name=data_type)
         )

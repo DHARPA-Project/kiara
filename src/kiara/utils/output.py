@@ -338,8 +338,6 @@ class TabularWrap(ABC):
 
                     yield row
 
-        return
-
 
 class ArrowTabularWrap(TabularWrap):
     def __init__(self, table: "ArrowTable"):
@@ -693,7 +691,6 @@ def extract_renderable(
     item: Any, render_config: Union[Mapping[str, Any], None] = None
 ) -> RenderableType:
     """Try to automatically find and extract or create an object that is renderable by the 'rich' library."""
-
     if render_config is None:
         render_config = {}
     else:
@@ -748,7 +745,6 @@ def create_renderable_from_values(
     values: Mapping[str, "Value"], config: Union[Mapping[str, Any], None] = None
 ) -> RenderableType:
     """Create a renderable for this module configuration."""
-
     if config is None:
         config = {}
 

@@ -81,7 +81,8 @@ class SerializedChunks(BaseModel, abc.ABC):
     def get_chunks(
         self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
     ) -> Iterable[Union[str, BytesLike]]:
-        """Retrieve the chunks belonging to this data instance.
+        """
+        Retrieve the chunks belonging to this data instance.
 
         If 'as_file' is False, return the data as bytes. If set to 'True' store it to an arbitrary location (or use
         an existing one), and return the path to that file. If 'as_file' is a string, write the data (bytes) into
@@ -117,7 +118,6 @@ class SerializedChunks(BaseModel, abc.ABC):
         self, chunks: Iterable[bytes], file: Union[str, None] = None
     ) -> str:
         "Utility method to store bytes to a file."
-
         if file is None:
             file_desc, file = tempfile.mkstemp()
 
@@ -665,6 +665,7 @@ class DataTypeInfo(KiaraModel):
 
 
 class ValueDetails(KiaraModel):
+
     """A wrapper class that manages and retieves value data and its details."""
 
     _kiara_model_id = "instance.value_details"
@@ -716,8 +717,7 @@ class ValueDetails(KiaraModel):
 
     @property
     def is_valid(self) -> bool:
-        """Check whether the current value is valid"""
-
+        """Check whether the current value is valid."""
         if self.is_optional:
             return True
         else:
@@ -730,7 +730,6 @@ class ValueDetails(KiaraModel):
     @property
     def value_status_string(self) -> str:
         """Print a human readable short description of this values status."""
-
         if self.value_status == ValueStatus.DEFAULT:
             return "set (default)"
         elif self.value_status == ValueStatus.SET:
@@ -1284,9 +1283,12 @@ class Value(ValueDetails):
 
 
 class UnloadableData(KiaraModel):
-    """A special 'marker' model, indicating that the data of value can't be loaded.
 
-    In most cases, the reason this happens is because the current kiara context is missing some value types and/or modules."""
+    """
+    A special 'marker' model, indicating that the data of value can't be loaded.
+
+    In most cases, the reason this happens is because the current kiara context is missing some value types and/or modules.
+    """
 
     _kiara_model_id = "instance.unloadable_data"
 
@@ -1328,7 +1330,6 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
 
     def check_invalid(self) -> Dict[str, str]:
         """Check whether the value set is invalid, if it is, return a description of what's wrong."""
-
         invalid: Dict[str, str] = {}
         for field_name in self.values_schema.keys():
 
@@ -1353,12 +1354,12 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
     def get_value_data_for_fields(
         self, *field_names: str, raise_exception_when_unset: bool = False
     ) -> Dict[str, Any]:
-        """Return the data for a one or several fields of this ValueMap.
+        """
+        Return the data for a one or several fields of this ValueMap.
 
         If a value is unset, by default 'None' is returned for it. Unless 'raise_exception_when_unset' is set to 'True',
         in which case an Exception will be raised (obviously).
         """
-
         if raise_exception_when_unset:
             unset: List[str] = []
             for k in field_names:
@@ -1563,12 +1564,12 @@ class ValueMapWritable(ValueMap):  # type: ignore
     _auto_commit: bool = PrivateAttr(default=True)
 
     def get_value_obj(self, field_name: str) -> Value:
-        """Retrieve the value object for the specified field.
+        """
+        Retrieve the value object for the specified field.
 
         This class only creates the actual value object the first time it is requested, because there is a potential
         cost to assembling it, and it might not be needed ever.
         """
-
         if field_name not in self.values_schema.keys():
             raise Exception(
                 f"Can't set data for field '{field_name}': field not valid, valid field names: {', '.join(self.field_names)}."
@@ -1617,7 +1618,6 @@ class ValueMapWritable(ValueMap):  # type: ignore
 
     def set_value(self, field_name: str, data: Any) -> None:
         """Set the value for the specified field."""
-
         if field_name not in self.field_names:
             raise Exception(
                 f"Can't set data for field '{field_name}': field not valid, valid field names: {', '.join(self.field_names)}."

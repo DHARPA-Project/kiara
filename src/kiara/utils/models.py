@@ -54,7 +54,6 @@ def retrieve_data_subcomponent_keys(data: Any) -> Iterable[str]:
 
 def get_subcomponent_from_model(data: "KiaraModel", path: str) -> "KiaraModel":
     """Return subcomponents of a model under a specified path."""
-
     if "." in path:
         first_token, rest = path.split(".", maxsplit=1)
         sc = data.get_subcomponent(first_token)

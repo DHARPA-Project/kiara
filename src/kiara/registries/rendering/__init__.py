@@ -61,6 +61,7 @@ def render_markdown(markdown: mistune.Markdown, markdown_str: str):
 
 
 class RenderRegistry(object):
+
     """A registry collecting all Renderer types/objects that are available to render Value objects or internal kiara models."""
 
     _instance = None
@@ -373,6 +374,5 @@ class RenderRegistry(object):
 
     def get_template_names(self, template_base: Union[str, None] = None) -> List[str]:
         """List all available template names."""
-
         env = self.retrieve_jinja_env(template_base=template_base)
         return env.list_templates()

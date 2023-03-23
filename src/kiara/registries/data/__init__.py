@@ -706,16 +706,18 @@ class DataRegistry(object):
         pedigree_output_name: Union[str, None] = None,
         reuse_existing: bool = True,
     ) -> Tuple[Value, bool]:
-        """Create a new value, or return an existing one that matches the incoming data or reference.
+        """
+        Create a new value, or return an existing one that matches the incoming data or reference.
 
         Arguments:
+        ---------
             data: the (raw) data, or a reference to an existing value
 
 
         Returns:
+        -------
             a tuple containing of the value object, and a boolean indicating whether the value was newly created (True), or already existing (False)
         """
-
         if schema is None:
             raise NotImplementedError()
         elif isinstance(schema, str):
@@ -838,7 +840,6 @@ class DataRegistry(object):
         self, value_id: uuid.UUID
     ) -> Union[SerializedData, None]:
         """Create a LoadConfig object from the details of the persisted version of this value."""
-
         pv = self.retrieve_persisted_value_details(value_id=value_id)
         if pv is None:
             return None
@@ -987,7 +988,6 @@ class DataRegistry(object):
         self, data: Mapping[str, Any], schema: Mapping[str, ValueSchema]
     ) -> ValueMap:
         """Extract a set of [Value][kiara.data.values.Value] from Python data and ValueSchemas."""
-
         input_details = {}
         for input_name, value_schema in schema.items():
             input_details[input_name] = {"schema": value_schema}
@@ -1073,7 +1073,6 @@ class DataRegistry(object):
 
     def create_renderable(self, **config: Any) -> RenderableType:
         """Create a renderable for this module configuration."""
-
         from kiara.utils.output import create_renderable_from_values
 
         all_values = {str(i): v for i, v in self._registered_values.items()}

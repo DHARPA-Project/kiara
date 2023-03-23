@@ -39,7 +39,6 @@ def module(ctx):
 @click.pass_context
 def list_modules(ctx, full_doc: bool, filter: Iterable[str], format: str):
     """List available module data_types."""
-
     kiara_api: KiaraAPI = ctx.obj.kiara_api
     module_types_info = kiara_api.retrieve_module_types_info(filter=filter)
 
@@ -58,13 +57,13 @@ def list_modules(ctx, full_doc: bool, filter: Iterable[str], format: str):
 @output_format_option()
 @click.pass_context
 def explain_module_type(ctx, module_type: str, format: str):
-    """Print details of a module type.
+    """
+    Print details of a module type.
 
     This is different to the 'explain-instance' command, because module data_types need to be
     instantiated with configuration, before we can query all their properties (like
     input/output data_types).
     """
-
     kiara_api: KiaraAPI = ctx.obj.kiara_api
     info = kiara_api.retrieve_module_type_info(module_type=module_type)
 
@@ -82,11 +81,11 @@ def explain_module_type(ctx, module_type: str, format: str):
 @output_format_option()
 @click.pass_context
 def explain_module(ctx, module_type: str, module_config: Iterable[Any], format: str):
-    """Describe a module instance.
+    """
+    Describe a module instance.
 
     This command shows information and metadata about an instantiated *kiara* module.
     """
-
     if module_config:
         module_config = dict_from_cli_args(*module_config)
     else:

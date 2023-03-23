@@ -16,7 +16,9 @@ from kiara.models.documentation import DocumentationMetadataModel
 
 
 class ValueSchema(KiaraModel):
-    """The schema of a value.
+
+    """
+    The schema of a value.
 
     The schema contains the [ValueTypeOrm][kiara.data.values.ValueTypeOrm] of a value, as well as an optional default that
     will be used if no user input was given (yet) for a value.

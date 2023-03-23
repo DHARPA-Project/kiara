@@ -5,7 +5,8 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-"""This is the base module that contains everything data type-related in *kiara*.
+"""
+This is the base module that contains everything data type-related in *kiara*.
 
 I'm still not 100% sure how to best implement the *kiara* type system, there are several ways it could be done, for example
 based on Python type-hints, using JSON-schema, Avro (which is my 2nd favourite option), as well as by implementing a
@@ -71,7 +72,9 @@ logger = structlog.getLogger()
 
 
 class DataTypeConfig(BaseModel):
-    """Base class that describes the configuration a [``DataType``][kiara.data.data_types.DataType] class accepts.
+
+    """
+    Base class that describes the configuration a [``DataType``][kiara.data.data_types.DataType] class accepts.
 
     This is stored in the ``_config_cls`` class attribute in each ``DataType`` class. By default,
     a ``DataType`` is not configurable, unless the ``_config_cls`` class attribute points to a sub-class of this class.
@@ -85,7 +88,6 @@ class DataTypeConfig(BaseModel):
     @classmethod
     def requires_config(cls) -> bool:
         """Return whether this class can be used as-is, or requires configuration before an instance can be created."""
-
         for field_name, field in cls.__fields__.items():
             if field.required and field.default is None:
                 return True
@@ -95,7 +97,6 @@ class DataTypeConfig(BaseModel):
 
     def get(self, key: str) -> Any:
         """Get the value for the specified configuation key."""
-
         if key not in self.__fields__:
             raise Exception(
                 f"No config value '{key}' in module config class '{self.__class__.__name__}'."
@@ -141,7 +142,9 @@ TYPE_CONFIG_CLS = TypeVar("TYPE_CONFIG_CLS", bound=DataTypeConfig)
 
 
 class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
-    """Base class that all *kiara* data_types must inherit from.
+
+    """
+    Base class that all *kiara* data_types must inherit from.
 
     *kiara* data_types have 3 main responsibilities:
 
@@ -248,12 +251,10 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
     def calculate_hash(self, data: "SerializedData") -> str:
         """Calculate the hash of the value."""
-
         return data.instance_id
 
     def calculate_size(self, data: "SerializedData") -> int:
         """Calculate the size of the value."""
-
         return data.data_size
 
     def serialize_as_json(self, data: Any) -> "SerializedData":
@@ -462,24 +463,25 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
         return value, data
 
     def parse_python_obj(self, data: Any) -> TYPE_PYTHON_CLS:
-        """Parse a value into a supported python type.
+        """
+        Parse a value into a supported python type.
 
         This exists to make it easier to do trivial conversions (e.g. from a date string to a datetime object).
         If you choose to overwrite this method, make 100% sure that you don't change the meaning of the value, and try to
         avoid adding or removing information from the data (e.g. by changing the resolution of a date).
 
         Arguments:
+        ---------
             v: the value
 
         Returns:
+        -------
             'None', if no parsing was done and the original value should be used, otherwise return the parsed Python object
         """
-
         return data
 
     def _validate(self, value: TYPE_PYTHON_CLS) -> None:
         """Validate the value. This expects an instance of the defined Python class (from 'backing_python_type)."""
-
         if not isinstance(value, self.__class__.python_class()):
             raise ValueError(
                 f"Invalid python type '{type(value)}', must be: {self.__class__.python_class()}"

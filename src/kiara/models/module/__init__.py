@@ -22,7 +22,9 @@ if TYPE_CHECKING:
 
 
 class KiaraModuleConfig(KiaraModel):
-    """Base class that describes the configuration a [``KiaraModule``][kiara.module.KiaraModule] class accepts.
+
+    """
+    Base class that describes the configuration a [``KiaraModule``][kiara.module.KiaraModule] class accepts.
 
     This is stored in the ``_config_cls`` class attribute in each ``KiaraModule`` class.
 
@@ -41,7 +43,6 @@ class KiaraModuleConfig(KiaraModel):
     @classmethod
     def requires_config(cls, config: Union[Mapping[str, Any], None] = None) -> bool:
         """Return whether this class can be used as-is, or requires configuration before an instance can be created."""
-
         for field_name, field in cls.__fields__.items():
             if field.required and field.default is None:
                 if config:
@@ -65,7 +66,6 @@ class KiaraModuleConfig(KiaraModel):
 
     def get(self, key: str) -> Any:
         """Get the value for the specified configuation key."""
-
         if key not in self.__fields__:
             raise Exception(
                 f"No config value '{key}' in module config class '{self.__class__.__name__}'."

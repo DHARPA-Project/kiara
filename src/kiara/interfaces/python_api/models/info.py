@@ -159,6 +159,7 @@ class ValueTypeAndDescription(BaseModel):
 
 
 class ItemInfo(KiaraModel, Generic[INFO_BASE_INSTANCE_TYPE]):
+
     """Base class that holds/manages information about an item within kiara."""
 
     @classmethod

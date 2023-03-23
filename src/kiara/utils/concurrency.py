@@ -8,6 +8,7 @@ import threading
 
 
 class ThreadSaveCounter(object):
+
     """A thread-safe counter, can be used in kiara modules to update completion percentage."""
 
     def __init__(self):

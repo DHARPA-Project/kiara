@@ -80,7 +80,6 @@ def rich_format_filter_operation_help(
     value: Union[None, str] = None,
 ) -> None:
     """Print nicely formatted help text using rich."""
-
     renderables: List[RenderableType] = []
     # Header text if we have it
     if HEADER_TEXT:
@@ -143,7 +142,8 @@ def rich_format_operation_help(
     op_inputs: ValueMap,
     cmd_help: str,
 ) -> None:
-    """Print nicely formatted help text using rich.
+    """
+    Print nicely formatted help text using rich.
 
     Based on original code from rich-cli, by @willmcgugan.
     https://github.com/Textualize/rich-cli/blob/8a2767c7a340715fc6fbf4930ace717b9b2fc5e5/src/rich_cli/__main__.py#L162-L236
@@ -152,11 +152,11 @@ def rich_format_operation_help(
     Takes a command or group and builds the help text output.
 
     Args:
+    ----
         obj (click.Command or click.Group): Command or group to build help text for
         ctx (click.Context): Click Context object
         table: a rich table, including all the inputs of the current operation
     """
-
     renderables: List[RenderableType] = []
     # Header text if we have it
     if HEADER_TEXT:
@@ -209,7 +209,7 @@ def rich_format_operation_help(
 
         # Already mentioned in a config option group
         for option_group in option_groups:
-            if any([opt in option_group.get("options", []) for opt in param.opts]):
+            if any(opt in option_group.get("options", []) for opt in param.opts):
                 break
 
         # No break, no mention - add to the default group
@@ -332,7 +332,7 @@ def rich_format_operation_help(
                 **t_styles,  # type: ignore
             )
             # Strip the required column if none are required
-            if all([x[0] == "" for x in options_rows]):
+            if all(not x[0] for x in options_rows):
                 options_rows = [x[1:] for x in options_rows]
             for row in options_rows:
                 options_table.add_row(*row)

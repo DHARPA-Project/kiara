@@ -63,7 +63,6 @@ logger = structlog.getLogger()
 
 def explain(item: Any, kiara: Union[None, "Kiara"] = None):
     """Pretty print information about an item on the terminal."""
-
     if isinstance(item, type):
         from kiara.modules import KiaraModule
 
@@ -77,7 +76,9 @@ def explain(item: Any, kiara: Union[None, "Kiara"] = None):
 
 
 class Kiara(object):
-    """The core context of a kiara session.
+
+    """
+    The core context of a kiara session.
 
     The `Kiara` object holds all information related to the current environment the user does works in. This includes:
 
@@ -101,7 +102,6 @@ class Kiara(object):
     @classmethod
     def instance(cls) -> "Kiara":
         """The default *kiara* context. In most cases, it's recommended you create and manage your own, though."""
-
         from kiara.interfaces.python_api import KiaraAPI
 
         return KiaraAPI.instance().context
@@ -189,7 +189,6 @@ class Kiara(object):
 
     def lock_context(self):
         """Lock the context, so that it can't be used by other processes."""
-
         aquired = ID_REGISTRY.lock_context(self.id)
 
         if not aquired:
@@ -355,30 +354,34 @@ class Kiara(object):
     def queue(
         self, manifest: Manifest, inputs: Mapping[str, Any], wait: bool = False
     ) -> uuid.UUID:
-        """Queue a job with the specified manifest and inputs.
+        """
+        Queue a job with the specified manifest and inputs.
 
         Arguments:
+        ---------
            manifest: the job manifest
            inputs: the job inputs
            wait: whether to wait for the job to be finished before returning
 
         Returns:
+        -------
             the job id that can be used to look up job status & results
         """
-
         return self.job_registry.execute(manifest=manifest, inputs=inputs, wait=wait)
 
     def process(self, manifest: Manifest, inputs: Mapping[str, Any]) -> ValueMap:
-        """Queue a job with the specified manifest and inputs.
+        """
+        Queue a job with the specified manifest and inputs.
 
         Arguments:
+        ---------
            manifest: the job manifest
            inputs: the job inputs
            wait: whether to wait for the job to be finished before returning
 
-        Returns
+        Returns:
+        -------
         """
-
         return self.job_registry.execute_and_retrieve(manifest=manifest, inputs=inputs)
 
     def save_values(

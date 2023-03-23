@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-"""HashFS is a content-addressable file management system. What does that mean?
+"""
+HashFS is a content-addressable file management system. What does that mean?
 Simply, that HashFS manages a directory where files are saved based on the
 file's hash.
 
@@ -80,9 +81,12 @@ def shard(digest, depth, width):
 
 
 class HashFS(object):
-    """Content addressable file manager.
+
+    """
+    Content addressable file manager.
 
     Attributes:
+    ----------
         root (str): Directory path used as root of storage space.
         depth (int, optional): Depth of subfolders when saving a
             file.
@@ -116,13 +120,16 @@ class HashFS(object):
         self.dmode = dmode
 
     def put(self, file: BinaryIO) -> "HashAddress":
-        """Store contents of `file` on disk using its content hash for the
+        """
+        Store contents of `file` on disk using its content hash for the
         address.
 
         Args:
+        ----
             file (mixed): Readable object or path to file.
 
         Returns:
+        -------
             HashAddress: File's hash address.
         """
         stream = Stream(file)
@@ -144,11 +151,11 @@ class HashFS(object):
         return HashAddress(hash_id, self.relpath(filepath), filepath, is_duplicate)
 
     def _copy(self, stream: "Stream", id: str):
-        """Copy the contents of `stream` onto disk with an optional file
+        """
+        Copy the contents of `stream` onto disk with an optional file
         extension appended. The copy process uses a temporary file to store the
         initial contents and then moves that file to it's final location.
         """
-
         filepath = self.idpath(id)
 
         if not os.path.isfile(filepath):
@@ -163,7 +170,8 @@ class HashFS(object):
         return (filepath, is_duplicate)
 
     def _mktempfile(self, stream):
-        """Create a named temporary file from a :class:`Stream` object and
+        """
+        Create a named temporary file from a :class:`Stream` object and
         return its filename.
         """
         tmp = NamedTemporaryFile(delete=False)
@@ -184,13 +192,16 @@ class HashFS(object):
         return tmp.name
 
     def get(self, file):
-        """Return :class:`HashAdress` from given id or path. If `file` does not
+        """
+        Return :class:`HashAdress` from given id or path. If `file` does not
         refer to a valid file, then ``None`` is returned.
 
         Args:
+        ----
             file (str): Address ID or path of file.
 
         Returns:
+        -------
             HashAddress: File's hash address.
         """
         realpath = self.realpath(file)
@@ -201,16 +212,20 @@ class HashFS(object):
             return HashAddress(self.unshard(realpath), self.relpath(realpath), realpath)
 
     def open(self, file, mode="rb"):
-        """Return open buffer object from given id or path.
+        """
+        Return open buffer object from given id or path.
 
         Args:
+        ----
             file (str): Address ID or path of file.
             mode (str, optional): Mode to open file in. Defaults to ``'rb'``.
 
         Returns:
+        -------
             Buffer: An ``io`` buffer dependent on the `mode`.
 
         Raises:
+        ------
             IOError: If file doesn't exist.
         """
         realpath = self.realpath(file)
@@ -220,10 +235,12 @@ class HashFS(object):
         return io.open(realpath, mode)
 
     def delete(self, file):
-        """Delete file using id or path. Remove any empty directories after
+        """
+        Delete file using id or path. Remove any empty directories after
         deleting. No exception is raised if file doesn't exist.
 
         Args:
+        ----
             file (str): Address ID or path of file.
         """
         realpath = self.realpath(file)
@@ -238,7 +255,8 @@ class HashFS(object):
             self.remove_empty(os.path.dirname(realpath))
 
     def remove_empty(self, subpath):
-        """Successively remove all empty folders starting with `subpath` and
+        """
+        Successively remove all empty folders starting with `subpath` and
         proceeding "up" through directory tree until reaching the :attr:`root`
         folder.
         """
@@ -254,7 +272,8 @@ class HashFS(object):
             subpath = os.path.dirname(subpath)
 
     def files(self):
-        """Return generator that yields all files in the :attr:`root`
+        """
+        Return generator that yields all files in the :attr:`root`
         directory.
         """
         for folder, subfolders, files in walk(self.root):
@@ -262,7 +281,8 @@ class HashFS(object):
                 yield os.path.abspath(os.path.join(folder, file))
 
     def folders(self):
-        """Return generator that yields all folders in the :attr:`root`
+        """
+        Return generator that yields all folders in the :attr:`root`
         directory that contain files.
         """
         for folder, subfolders, files in walk(self.root):
@@ -277,7 +297,8 @@ class HashFS(object):
         return count
 
     def size(self):
-        """Return the total size in bytes of all files in the :attr:`root`
+        """
+        Return the total size in bytes of all files in the :attr:`root`
         directory.
         """
         total = 0
@@ -292,7 +313,8 @@ class HashFS(object):
         return bool(self.realpath(file))
 
     def haspath(self, path):
-        """Return whether `path` is a subdirectory of the :attr:`root`
+        """
+        Return whether `path` is a subdirectory of the :attr:`root`
         directory.
         """
         return issubdir(path, self.root)
@@ -309,7 +331,8 @@ class HashFS(object):
         return os.path.relpath(path, self.root)
 
     def realpath(self, file):
-        """Attempt to determine the real path of a file id or path through
+        """
+        Attempt to determine the real path of a file id or path through
         successive checking of candidate paths. If the real path is stored with
         an extension, the path is considered a match if the basename matches
         the expected file path of the id.
@@ -337,7 +360,8 @@ class HashFS(object):
         return None
 
     def idpath(self, id):
-        """Build the file path for a given hash id. Optionally, append a
+        """
+        Build the file path for a given hash id. Optionally, append a
         file extension.
         """
         paths = self.shard(id)
@@ -366,7 +390,8 @@ class HashFS(object):
         return os.path.splitext(self.relpath(path))[0].replace(os.sep, "")
 
     def repair(self):
-        """Repair any file locations whose content address doesn't match it's
+        """
+        Repair any file locations whose content address doesn't match it's
         file path.
         """
         repaired = []
@@ -391,7 +416,8 @@ class HashFS(object):
         return repaired
 
     def corrupted(self):
-        """Return generator that yields corrupted files as ``(path, address)``
+        """
+        Return generator that yields corrupted files as ``(path, address)``
         where ``path`` is the path of the corrupted file and ``address`` is
         the :class:`HashAddress` of the expected location.
         """
@@ -410,7 +436,8 @@ class HashFS(object):
                 )
 
     def __contains__(self, file):
-        """Return whether a given file id or path is contained in the
+        """
+        Return whether a given file id or path is contained in the
         :attr:`root` directory.
         """
         return self.exists(file)
@@ -427,9 +454,12 @@ class HashFS(object):
 class HashAddress(
     namedtuple("HashAddress", ["id", "relpath", "abspath", "is_duplicate"])
 ):
-    """File address containing file's path on disk and it's content hash ID.
+
+    """
+    File address containing file's path on disk and it's content hash ID.
 
     Attributes:
+    ----------
         id (str): Hash ID (hexdigest) of file contents.
         relpath (str): Relative path location to :attr:`HashFS.root`.
         abspath (str): Absoluate path location of file on disk.
@@ -443,7 +473,9 @@ class HashAddress(
 
 
 class Stream(object):
-    """Common interface for file-like objects.
+
+    """
+    Common interface for file-like objects.
 
     The input `obj` can be a file-like object or a path to a file. If `obj` is
     a path to a file, then it will be opened until :meth:`close` is called.
@@ -476,7 +508,8 @@ class Stream(object):
         self._buffer_size = buffer_size
 
     def __iter__(self):
-        """Read underlying IO object and yield results. Return object to
+        """
+        Read underlying IO object and yield results. Return object to
         original position if we didn't open it originally.
         """
         self._obj.seek(0)
@@ -493,7 +526,8 @@ class Stream(object):
             self._obj.seek(self._pos)
 
     def close(self):
-        """Close underlying IO object if we opened it, else return it to
+        """
+        Close underlying IO object if we opened it, else return it to
         original position.
         """
         if self._pos is None:

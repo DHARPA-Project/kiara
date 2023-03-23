@@ -33,7 +33,6 @@ def workflow(ctx):
 @click.pass_context
 def list(ctx, all) -> None:
     """List existing workflows."""
-
     kiara_api: KiaraAPI = ctx.obj.kiara_api
 
     if all:
@@ -67,7 +66,6 @@ def create(
     force_alias: bool = False,
 ):
     """Create a new workflow."""
-
     kiara_api: KiaraAPI = ctx.obj.kiara_api
 
     inputs_dict: Union[None, Dict[str, Any]] = None
@@ -98,7 +96,6 @@ def create(
 @click.pass_context
 def explain(ctx, workflow: str):
     """Explain the workflow with the specified id/alias."""
-
     kiara_api: KiaraAPI = ctx.obj.kiara_api
     workflow_info = kiara_api.retrieve_workflow_info(workflow=workflow)
     terminal_print(
@@ -120,7 +117,6 @@ def explain(ctx, workflow: str):
 @click.pass_context
 def set_input(ctx, workflow: str, inputs: Tuple[str], process: bool):
     """Set one or several inputs on the specified workflow."""
-
     from kiara.interfaces.python_api import Workflow
 
     kiara: Kiara = ctx.obj.kiara

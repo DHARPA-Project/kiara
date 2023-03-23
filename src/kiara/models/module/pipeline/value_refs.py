@@ -20,6 +20,7 @@ def generate_step_alias(step_id: str, value_name):
 
 
 class StepValueAddress(BaseModel):
+
     """Small model to describe the address of a value of a step, within a Pipeline/PipelineStructure."""
 
     class Config:
@@ -67,7 +68,9 @@ class StepValueAddress(BaseModel):
 
 
 class ValueRef(BaseModel):
-    """An object that holds information about the location of a value within a pipeline (or other structure).
+
+    """
+    An object that holds information about the location of a value within a pipeline (or other structure).
 
     Basically, a `ValueRef` helps the containing object where in its structure the value belongs (for example so
     it can update dependent other values). A `ValueRef` object (obviously) does not contain the value itself.
@@ -113,7 +116,9 @@ class ValueRef(BaseModel):
 
 
 class StepInputRef(ValueRef):
-    """An input to a step.
+
+    """
+    An input to a step.
 
     This object can either have a 'connected_outputs' set, or a 'connected_pipeline_input', not both.
     """
@@ -154,6 +159,7 @@ class StepInputRef(ValueRef):
 
 
 class StepOutputRef(ValueRef):
+
     """An output to a step."""
 
     class Config:
@@ -182,6 +188,7 @@ class StepOutputRef(ValueRef):
 
 
 class PipelineInputRef(ValueRef):
+
     """An input to a pipeline."""
 
     connected_inputs: List[StepValueAddress] = Field(
@@ -198,6 +205,7 @@ class PipelineInputRef(ValueRef):
 
 
 class PipelineOutputRef(ValueRef):
+
     """An output to a pipeline."""
 
     connected_output: StepValueAddress = Field(description="Connected step outputs.")

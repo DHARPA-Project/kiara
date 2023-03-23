@@ -26,6 +26,7 @@ from kiara.modules.included_core_modules.serialization import DeserializeValueMo
 
 
 class ImportLocalFileModule(KiaraModule):
+
     """Import a file from the local filesystem."""
 
     _module_type_name = "import.local.file"
@@ -54,6 +55,7 @@ class ImportLocalFileModule(KiaraModule):
 
 
 class DeserializeFileModule(DeserializeValueModule):
+
     """Deserialize data to a 'file' value instance."""
 
     _module_type_name = "deserialize.file"
@@ -108,6 +110,7 @@ class ImportFileBundleConfig(KiaraModuleConfig):
 
 
 class ImportLocalFileBundleModule(KiaraModule):
+
     """Import a folder (file_bundle) from the local filesystem."""
 
     _module_type_name = "import.local.file_bundle"
@@ -146,6 +149,7 @@ class ImportLocalFileBundleModule(KiaraModule):
 
 
 class DeserializeFileBundleModule(DeserializeValueModule):
+
     """Deserialize data to a 'file' value instance."""
 
     _module_type_name = "deserialize.file_bundle"
@@ -204,6 +208,7 @@ class DeserializeFileBundleModule(DeserializeValueModule):
 
 
 class ExportFileModule(DataExportModule):
+
     """Export files."""
 
     _module_type_name = "export.file"
@@ -218,6 +223,7 @@ class ExportFileModule(DataExportModule):
 
 
 class PickFileFromFileBundleModule(KiaraModule):
+
     """Pick a single file from a file_bundle value."""
 
     _module_type_name = "file_bundle.pick.file"
@@ -253,6 +259,7 @@ class PickFileFromFileBundleModule(KiaraModule):
 
 
 class PickSubBundle(KiaraModule):
+
     """Pick a sub-folder from a file_bundle, resulting in a new file_bundle."""
 
     _module_type_name = "file_bundle.pick.sub_folder"

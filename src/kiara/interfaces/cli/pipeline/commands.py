@@ -37,7 +37,6 @@ def pipeline(ctx):
 @click.pass_context
 def list_pipelines(ctx, full_doc: bool, filter: typing.Iterable[str], format: str):
     """List available module data_types."""
-
     kiara_obj: Kiara = ctx.obj.kiara
 
     kiara_obj.operation_registry.get_operation_type("pipeline")
@@ -89,7 +88,6 @@ def list_pipelines(ctx, full_doc: bool, filter: typing.Iterable[str], format: st
 @handle_exception()
 def explain(ctx, pipeline_name_or_path: str, format: str, stages_extraction_type: str):
     """Print details about pipeline inputs, outputs, and overall structure."""
-
     kiara_obj: Kiara = ctx.obj.kiara
 
     from kiara.utils.pipelines import get_pipeline_config
@@ -119,7 +117,6 @@ def explain_stages(
     ctx, pipeline_name_or_path: str, format: str, stages_extraction_type: str
 ):
     """Print details about pipeline inputs, outputs, and overall structure."""
-
     from kiara.models.module.pipeline.stages import PipelineStages
     from kiara.utils.pipelines import get_pipeline_config
 
@@ -143,7 +140,6 @@ def explain_stages(
 @click.pass_context
 def execution_graph(ctx, pipeline_name_or_path: str):
     """Print the execution graph for a pipeline structure."""
-
     from kiara.utils.graphs import print_ascii_graph
     from kiara.utils.pipelines import get_pipeline_config
 
@@ -169,7 +165,6 @@ def execution_graph(ctx, pipeline_name_or_path: str):
 @click.pass_context
 def data_flow_graph(ctx, pipeline_name_or_path: str, full: bool):
     """Print the data flow graph for a pipeline structure."""
-
     from kiara.utils.graphs import print_ascii_graph
     from kiara.utils.pipelines import get_pipeline_config
 
@@ -201,7 +196,6 @@ def data_flow_graph(ctx, pipeline_name_or_path: str, full: bool):
 @click.pass_context
 def stages_graph(ctx, pipeline_name_or_path: str, stages_extraction_type: str):
     """Print the data flow graph for a pipeline structure."""
-
     from kiara.utils.graphs import print_ascii_graph
     from kiara.utils.pipelines import get_pipeline_config
 

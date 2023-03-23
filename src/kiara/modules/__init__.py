@@ -65,7 +65,9 @@ log = structlog.getLogger()
 
 
 class InputOutputObject(abc.ABC):
-    """Abstract base class for classes that define inputs and outputs schemas.
+
+    """
+    Abstract base class for classes that define inputs and outputs schemas.
 
     Both the 'create_inputs_schema` and `creawte_outputs_schema` methods implemented by child classes return a description of the input schema of this module.
 
@@ -139,7 +141,6 @@ class InputOutputObject(abc.ABC):
     @property
     def inputs_schema(self) -> Mapping[str, ValueSchema]:
         """The input schema for this module."""
-
         if self._inputs_schema is None:
             self._create_inputs_schema()
 
@@ -163,7 +164,8 @@ class InputOutputObject(abc.ABC):
         return self._constants  # type: ignore
 
     def _create_inputs_schema(self) -> None:
-        """Assemble the inputs schema and assign it to the approriate instance attributes.
+        """
+        Assemble the inputs schema and assign it to the approriate instance attributes.
 
         DEV NOTE: if anything in this method is changed, also change the method of the AutoInputsKiaraModule
         in the kiara_pluginc.core_types package, since it's a carbon copy if this, except for a small change.
@@ -210,7 +212,6 @@ class InputOutputObject(abc.ABC):
     @property
     def outputs_schema(self) -> Mapping[str, ValueSchema]:
         """The output schema for this module."""
-
         if self._outputs_schema is not None:
             return self._outputs_schema
 
@@ -295,7 +296,9 @@ DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS = ModuleCharacteristics(
 
 
 class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
-    """The base class that every custom module in *Kiara* needs to inherit from.
+
+    """
+    The base class that every custom module in *Kiara* needs to inherit from.
 
     The core of every ``KiaraModule`` is a ``process`` method, which should be a 'pure',
      idempotent function that creates one or several output values from the given input(s), and its purpose is to transfor
@@ -311,14 +314,16 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
      ``_module_type_name`` class attribute.
 
     Examples:
-
+    --------
         A simple example would be an 'addition' module, with ``a`` and ``b`` configured as inputs, and ``z`` as the output field name.
 
         An implementing class would look something like this:
 
-        TODO
+    Todo:
+    ----
 
     Arguments:
+    ---------
         module_config: the configuation for this module
     """
 
@@ -417,9 +422,11 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
 
     @property
     def config(self) -> KIARA_CONFIG:
-        """Retrieve the configuration object for this module.
+        """
+        Retrieve the configuration object for this module.
 
         Returns:
+        -------
             the module-class-specific config object
         """
         return self._config
@@ -444,15 +451,17 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         return DEFAULT_IDEMPOTENT_MODULE_CHARACTERISTICS
 
     def get_config_value(self, key: str) -> Any:
-        """Retrieve the value for a specific configuration option.
+        """
+        Retrieve the value for a specific configuration option.
 
         Arguments:
+        ---------
             key: the config key
 
         Returns:
+        -------
             the value for the provided key
         """
-
         try:
             return self.config.get(key)
         except Exception:
@@ -461,18 +470,20 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
             )
 
     def run(self, kiara: "Kiara", **inputs: Any) -> "ValueMap":
-        """Run the module ad-hoc.
+        """
+        Run the module ad-hoc.
 
         This is mostly used in unit tests, you typically want to run a module via the KiaraAPI instance.
 
         Arguments:
+        ---------
             kiara: the kiara context
             inputs: the inputs for this module
 
         Returns:
+        -------
             the outputs of this module run as a ValueMap instance
         """
-
         from kiara.models.values.value import ValueMap, ValueMapWritable, ValuePedigree
 
         _inputs: ValueMap = kiara.data_registry.create_valuemap(
@@ -513,16 +524,17 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
     def process_step(
         self, inputs: "ValueMap", outputs: "ValueMap", job_log: JobLog
     ) -> None:
-        """Kick off processing for a specific set of input/outputs.
+        """
+        Kick off processing for a specific set of input/outputs.
 
         This method calls the implemented [process][kiara.module.KiaraModule.process] method of the inheriting class,
         as well as wrapping input/output-data related functionality.
 
         Arguments:
+        ---------
             inputs: the input value set
             outputs: the output value set
         """
-
         signature = inspect.signature(self.process)  # type: ignore
 
         process_inputs: Dict[str, Any] = {

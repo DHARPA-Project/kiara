@@ -14,7 +14,9 @@ from kiara.models.values.value import SerializedData, Value
 
 
 class PythonObjectType(InternalType[object, DataTypeConfig]):
-    """A 'plain' Python object.
+
+    """
+    A 'plain' Python object.
 
     This data type is mostly used internally, for hading over data in (de-)serialization operations.
     """

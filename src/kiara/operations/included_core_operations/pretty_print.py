@@ -58,7 +58,9 @@ class PrettyPrintDetails(BaseOperationDetails):
 
 
 class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
-    """An operation that takes a value, and renders into a format that can be printed for output..
+
+    """
+    An operation that takes a value, and renders into a format that can be printed for output..
 
     For a module profile to be picked up by this operation type, it needs to have:
     - exactly one output field named "rendered_value"

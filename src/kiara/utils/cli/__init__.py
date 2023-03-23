@@ -89,7 +89,8 @@ class OutputFormat(Enum):
 
 
 def output_format_option(*param_decls: str) -> Callable[[FC], FC]:
-    """Attaches an option to the command.  All positional arguments are
+    """
+    Attaches an option to the command.  All positional arguments are
     passed as parameter declarations to :class:`Option`; all keyword
     arguments are forwarded unchanged (except ``cls``).
     This is equivalent to creating an :class:`Option` instance manually
@@ -98,7 +99,6 @@ def output_format_option(*param_decls: str) -> Callable[[FC], FC]:
     :param cls: the option class to instantiate.  This defaults to
                 :class:`Option`.
     """
-
     if not param_decls:
         param_decls = ("--format", "-f")
 

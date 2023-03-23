@@ -131,7 +131,6 @@ def list_values(
     lineage,
 ) -> None:
     """List all data items that are stored in kiara."""
-
     from kiara.interfaces.python_api import ValuesInfo
     from kiara.interfaces.python_api.models.info import RENDER_FIELDS
 
@@ -245,11 +244,11 @@ def explain_value(
     lineage: bool,
     environment: bool,
 ):
-    """Print the metadata of a stored value.
+    """
+    Print the metadata of a stored value.
 
     All of the 'show-additional-information' flags are only applied when the 'terminal' output format is selected. This might change in the future.
     """
-
     from kiara.interfaces.python_api import ValueInfo
 
     kiara_obj: Kiara = ctx.obj.kiara
@@ -302,7 +301,6 @@ def explain_value(
 @click.pass_context
 def load_value(ctx, value: str, single_page: bool):
     """Load a stored value and print it in a format suitable for the terminal."""
-
     # kiara_obj: Kiara = ctx.obj["kiara"]
     kiara_api: KiaraAPI = ctx.obj.kiara_api
 
@@ -374,11 +372,11 @@ def filter_value(
     save: Iterable[str],
     help: bool,
 ):
-    """Filter a value, then display it like the 'load' subcommand does.
+    """
+    Filter a value, then display it like the 'load' subcommand does.
 
     Filters must be provided as a single string, where filters are seperated using ":".
     """
-
     from kiara.utils.cli.rich_click import rich_format_filter_operation_help
     from kiara.utils.cli.run import (
         _validate_save_option,

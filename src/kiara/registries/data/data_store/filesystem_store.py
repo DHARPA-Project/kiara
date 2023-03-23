@@ -53,6 +53,7 @@ DEFAULT_HASH_FS_ALGORITHM = "sha256"
 
 
 class FileSystemDataArchive(DataArchive, JobArchive):
+
     """Data store that loads data from the local filesystem."""
 
     _archive_type_name = "filesystem_data_archive"
@@ -283,15 +284,19 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         return folders
 
     def has_value(self, value_id: uuid.UUID) -> bool:
-        """Check whether the specific value_id is persisted in this data store.
+        """
+        Check whether the specific value_id is persisted in this data store.
         way to quickly determine whether a value id is valid for this data store.
 
         Arguments:
+        ---------
             value_id: the id of the value to check.
+
+
         Returns:
+        -------
             whether this data store contains the value with the specified id
         """
-
         base_path = (
             self.get_path(entity_type=EntityType.VALUE)
             / str(value_id)
@@ -342,6 +347,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
 
 
 class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
+
     """Data store that stores data as files on the local filesystem."""
 
     _archive_type_name = "filesystem_data_store"

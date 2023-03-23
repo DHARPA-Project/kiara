@@ -261,7 +261,8 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
         extra_input_aliases: Union[None, Mapping[str, str]] = None,
         extra_output_aliases: Union[None, Mapping[str, str]] = None,
     ) -> PipelineConfig:
-        """Assemble a (pipeline) module config to filter values of a specific data type.
+        """
+        Assemble a (pipeline) module config to filter values of a specific data type.
 
         Optionally, a module that uses the filtered dataset as input can be specified.
 
@@ -272,6 +273,7 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
         - a map of string pairs: the keys are step ids, the values operation ids or filter names
 
         Arguments:
+        ---------
             data_type: the type of the data to filter
             filters: a list of operation ids or filter names (and potentiall step_ids if type is a mapping)
             endpoint: optional module to put as last step in the created pipeline
@@ -280,9 +282,9 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
             extra_output_aliases: extra output aliases to add to the pipeline config
 
         Returns:
+        -------
             the (pipeline) module configuration of the filter pipeline
         """
-
         steps: List[Mapping[str, Any]] = []
         last_filter_id: Union[str, None] = None
         last_filter_output_name: Union[str, None] = None

@@ -40,7 +40,6 @@ class PipelineStage(KiaraModel):
         cls, structure: "PipelineStructure"
     ) -> List[List[str]]:
         """Extract a single stage from the pipeline structure.."""
-
         return [[step.step_id for step in structure.steps]]
 
     @classmethod
@@ -48,7 +47,6 @@ class PipelineStage(KiaraModel):
         cls, structure: "PipelineStructure"
     ) -> List[List[str]]:
         """Extract a stage for each step in the pipeline structure."""
-
         flat_list = [
             [item] for sublist in structure.processing_stages for item in sublist
         ]
@@ -57,7 +55,6 @@ class PipelineStage(KiaraModel):
     @classmethod
     def extract_stages__late(cls, structure: "PipelineStructure") -> List[List[str]]:
         """Extract stages in a way so that steps are processed as late as possible."""
-
         execution_graph = structure.execution_graph
         leaf_nodes = [
             node
@@ -93,7 +90,6 @@ class PipelineStage(KiaraModel):
     @classmethod
     def extract_stages__early(cls, structure: "PipelineStructure") -> List[List[str]]:
         """Extract stages in a way so that steps are processed as early as possible."""
-
         execution_graph = structure.execution_graph
         processing_stages = []
         path_lengths: Dict[str, int] = {}

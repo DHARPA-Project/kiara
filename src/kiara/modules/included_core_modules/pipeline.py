@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 
 
 class PipelineModule(KiaraModule):
+
     """A utility module to run multiple connected inner-modules and present it as its own entity."""
 
     _config_cls = PipelineConfig

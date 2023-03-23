@@ -17,8 +17,12 @@ from kiara.doc.mkdocstrings.renderer import KiaraInfoRenderer
 
 
 class KiaraHandler(BaseHandler):
-    """The kiara handler class.
+
+    """
+    The kiara handler class.
+
     Attributes:
+    ----------
         domain: The cross-documentation domain/language for this handler.
         enable_inventory: Whether this handler is interested in enabling the creation
             of the `objects.inv` Sphinx inventory file.
@@ -64,15 +68,20 @@ def get_handler(
     custom_templates: typing.Union[str, None] = None,
     **config: typing.Any,
 ) -> KiaraHandler:
-    """Simply return an instance of `PythonHandler`.
+    """
+    Simply return an instance of `PythonHandler`.
+
     Arguments:
+    ---------
         theme: The theme to use when rendering contents.
         custom_templates: Directory containing custom templates.
         **config: Configuration passed to the handler.
+
+
     Returns:
+    -------
         An instance of `PythonHandler`.
     """
-
     if custom_templates is not None:
         raise Exception("Custom templates are not supported for the kiara renderer.")
 

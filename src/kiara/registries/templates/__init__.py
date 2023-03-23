@@ -53,7 +53,9 @@ def render_markdown(markdown: mistune.Markdown, markdown_str: str):
 
 
 class TemplateRegistry(object):
-    """A registry collecting all the (jinja) templates that are available in the current environment.
+
+    """
+    A registry collecting all the (jinja) templates that are available in the current environment.
 
     Packages can register templates by specifying an entrypoint under 'kiara.templates', pointing to a Python module
     that has template files
@@ -63,11 +65,11 @@ class TemplateRegistry(object):
 
     @classmethod
     def instance(cls) -> "TemplateRegistry":
-        """The default *kiara* TemplateRegistry instance.
+        """
+        The default *kiara* TemplateRegistry instance.
 
         Can be a simgleton because it only contains data that is determined by the current Python environment.
         """
-
         if cls._instance is None:
             cls._instance = TemplateRegistry()
         return cls._instance
@@ -173,7 +175,6 @@ class TemplateRegistry(object):
     @property
     def template_names(self) -> List[str]:
         """List all available template names."""
-
         return self.environment.list_templates()
 
     def get_template_for_model_type(

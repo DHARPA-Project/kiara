@@ -62,7 +62,6 @@ def run(
     help: bool,
 ):
     """Run a kiara operation."""
-
     from kiara.utils.cli.run import (
         _validate_save_option,
         calculate_aliases,

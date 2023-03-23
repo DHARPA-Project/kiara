@@ -47,11 +47,11 @@ class OperationType(abc.ABC, Generic[OPERATION_TYPE_DETAILS]):
     def retrieve_operation_details(
         self, operation: Union[Operation, str]
     ) -> OPERATION_TYPE_DETAILS:
-        """Retrieve operation details for provided operation.
+        """
+        Retrieve operation details for provided operation.
 
         This is really just a utility method, to make the type checker happy.
         """
-
         if isinstance(operation, str):
             operation = self.operations[operation]
 

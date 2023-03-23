@@ -11,6 +11,7 @@ if TYPE_CHECKING:
 
 
 class WorkflowMatcher(KiaraModel):
+
     """An object describing requirements values should satisfy in order to be included in a query result."""
 
     @classmethod

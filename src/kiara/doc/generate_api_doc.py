@@ -16,7 +16,6 @@ def gen_pages_for_module(
     module: typing.Union[str, ModuleType], prefix: str = "api_reference"
 ):
     """Generate modules for a set of modules (using the [mkdocstring](https://github.com/mkdocstrings/mkdocstrings) package."""
-
     result = {}
     modules_info = get_source_tree(module)
     for module_name, path in modules_info.items():
@@ -49,7 +48,6 @@ def gen_pages_for_module(
 
 def get_source_tree(module: typing.Union[str, ModuleType]):
     """Find all python source files for a module."""
-
     if isinstance(module, str):
         module = importlib.import_module(module)
 

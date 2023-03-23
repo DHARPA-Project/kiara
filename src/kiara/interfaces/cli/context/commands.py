@@ -26,7 +26,6 @@ def context(ctx):
 @click.pass_context
 def list_contexts(ctx) -> None:
     """List existing contexts."""
-
     kiara_api: KiaraAPI = ctx.obj.kiara_api
 
     summaries = kiara_api.retrieve_context_infos()
@@ -43,7 +42,6 @@ def explain_context(
     ctx, format: str, value_ids: bool, context_name: Union[Tuple[str], None] = None
 ):
     """Print details for one or several contexts."""
-
     kiara_config: KiaraConfig = ctx.obj.kiara_config
 
     if not context_name:
@@ -94,7 +92,6 @@ def delete_context(
     all_contexts: bool = False,
 ):
     """Delete a context and all its stored values."""
-
     kiara_config: KiaraConfig = ctx.obj.kiara_config
 
     if not context_name:
@@ -185,7 +182,6 @@ def config(ctx):
 @click.pass_context
 def print_config(ctx, format) -> None:
     """Print the (current) kiara context configuration."""
-
     kiara_obj: Kiara = ctx.obj.kiara
 
     terminal_print_model(
@@ -199,7 +195,6 @@ def print_config(ctx, format) -> None:
 @click.pass_context
 def config_help(ctx):
     """Print available configuration options and information about them."""
-
     from kiara.context import KiaraContextConfig
     from kiara.utils.output import create_table_from_base_model_cls
 
@@ -219,7 +214,6 @@ def runtime(ctx):
 @click.pass_context
 def print_context(ctx, format: str):
     """Print all relevant models within the current runtime environment."""
-
     kiara_obj: Kiara = ctx.obj.kiara
 
     terminal_print_model(
@@ -239,7 +233,6 @@ def env_group(ctx):
 @click.pass_context
 def list_envs(ctx):
     """List available runtime environment information."""
-
     from kiara.registries.environment import EnvironmentRegistry
 
     env_reg = EnvironmentRegistry.instance()
@@ -284,7 +277,6 @@ def metadata(ctx):
 @click.pass_context
 def list_metadata(ctx, format) -> None:
     """List available metadata schemas."""
-
     kiara_obj: Kiara = ctx.obj.kiara
     from kiara.models.values.value_metadata import ValueMetadata
 
@@ -307,7 +299,6 @@ def list_metadata(ctx, format) -> None:
 @click.pass_context
 def explain_metadata(ctx, metadata_key, format) -> None:
     """Print details for a specific metadata schema."""
-
     kiara_obj: Kiara = ctx.obj.kiara
     from kiara.models.values.value_metadata import ValueMetadata
 
@@ -344,7 +335,6 @@ def api(ctx):
 @click.pass_context
 def list_endpoints(ctx, filter, full_doc):
     """List all available API endpoints."""
-
     from kiara.interfaces.python_api import KiaraAPI
     from kiara.interfaces.python_api.proxy import ApiEndpoints
 

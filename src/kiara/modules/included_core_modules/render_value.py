@@ -142,6 +142,7 @@ class RenderValueModule(KiaraModule):
 
 
 class ValueTypeRenderModule(KiaraModule):
+
     """A module that uses render methods attached to DataType classes."""
 
     _module_type_name = "render.value"

@@ -49,7 +49,8 @@ class JobArchive(BaseArchive):
         manifest_hash: Union[str, None] = None,
         inputs_hash: Union[str, None] = None,
     ) -> Iterable[str]:
-        """Retrieve a list of all job record hashes (cids) that match the given filter arguments.
+        """
+        Retrieve a list of all job record hashes (cids) that match the given filter arguments.
 
         A job record hash includes information about the module type used in the job, the module configuration, as well as input field names and value ids for the values used in those inputs.
 
@@ -385,15 +386,17 @@ class JobRegistry(object):
     def find_matching_job_record(
         self, inputs_manifest: InputsManifest
     ) -> Union[uuid.UUID, None]:
-        """Check if a job with same inputs manifest already ran some time before.
+        """
+        Check if a job with same inputs manifest already ran some time before.
 
         Arguments:
+        ---------
             inputs_manifest: the manifest incl. inputs
 
         Returns:
+        -------
             'None' if no such job exists, a (uuid) job-id if the job is currently running or has run in the past
         """
-
         log = logger.bind(module_type=inputs_manifest.module_type)
         if inputs_manifest.job_hash in self._active_jobs.keys():
             log.debug("job.use_running")

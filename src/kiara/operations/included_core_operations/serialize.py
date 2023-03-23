@@ -66,7 +66,9 @@ class DeSerializeDetails(BaseOperationDetails):
 
 
 class DeSerializeOperationType(OperationType[DeSerializeDetails]):
-    """An operation that takes a value, and serializes it into the format suitable to the [`serialized_value`][kiara.data_types.included_core_types.SeriailzedValue] value type.
+
+    """
+    An operation that takes a value, and serializes it into the format suitable to the [`serialized_value`][kiara.data_types.included_core_types.SeriailzedValue] value type.
 
     For a module profile to be picked up by this operation type, it needs to have:
     - exactly one output field of type `serialized_value`

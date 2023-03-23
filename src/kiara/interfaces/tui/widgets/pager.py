@@ -13,6 +13,7 @@ from kiara.models.rendering import RenderScene
 
 
 class DataViewPane(Static):
+
     """A widget that displays a data preview."""
 
     value_view = reactive(None)
@@ -24,7 +25,6 @@ class DataViewPane(Static):
 
     def watch_value_view(self, value_view: Union[RenderableType, None]) -> None:
         """Update the data preview."""
-
         if not value_view:
             self.update("-- no value --")
         else:

@@ -84,12 +84,13 @@ class ModuleRegistry(object):
         return ModuleTypesInfo.construct(group_alias=alias, item_infos=result)  # type: ignore
 
     def create_module(self, manifest: Union[Manifest, str]) -> "KiaraModule":
-        """Create a [KiaraModule][kiara.module.KiaraModule] object from a module configuration.
+        """
+        Create a [KiaraModule][kiara.module.KiaraModule] object from a module configuration.
 
         Arguments:
+        ---------
             manifest: the module configuration
         """
-
         if isinstance(manifest, str):
             manifest = Manifest.construct(module_type=manifest, module_config={})
 

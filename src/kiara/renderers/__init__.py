@@ -154,7 +154,6 @@ class KiaraRenderer(
 
     def retrieve_supported_python_classes(self) -> Set[Type]:
         """Retrieve the set of Python classes that this renderer supports as inputs."""
-
         result: Set[Type] = set()
         for x in self.source_transformers:
             result.update(x.retrieve_supported_python_classes())

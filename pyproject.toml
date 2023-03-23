@@ -230,7 +230,7 @@ dev_utils = [
     "pre-commit>=2.9.3",
     "pytest>=6.2.2",
     "setup-cfg-fmt>=1.16.0",
-    "ruff==0.0.238",
+    "ruff==0.0.257",
     "types-Deprecated",
     "types-PyYAML",
     "types-pkg-resources",
@@ -297,6 +297,7 @@ line-length = 88
 src = ["src", "tests"]
 
 select = [
+    "D",
     "E",
     "F",
     "RUF",
@@ -318,10 +319,10 @@ select = [
     "PIE",
 ]
 #select = ["E", "F", "RUF100", "W", "I001"]
-ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110", "PIE810", "PLR0911", "PLR0915", "PLR0912"]
+ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110", "PIE810", "PLR0911", "PLR0915", "PLR0912", "D", "D401", "PLW0603", "PLR5501", "PLW2901"]
 
 fix = true
-fixable = ["E", "F", "RUF100", "I001", "Q"]
+fixable = ["E", "F", "RUF100", "I001", "Q", "D"]
 
 
 #fixable = ["E", "F", "RUF100", "I001"]

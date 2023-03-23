@@ -60,6 +60,7 @@ class PipelineListener(abc.ABC):
 
 
 class Pipeline(object):
+
     """An instance of a [PipelineStructure][kiara.pipeline.structure.PipelineStructure] that holds state for all of the inputs/outputs of the steps within."""
 
     @classmethod
@@ -128,13 +129,13 @@ class Pipeline(object):
         return self._kiara.id
 
     def _init_values(self):
-        """Initialize this object. This should only be called once.
+        """
+        Initialize this object. This should only be called once.
 
         Basically, this goes through all the inputs and outputs of all steps, and 'allocates' a PipelineValueInfo object
         for each of them. In case where output/input or pipeline-input/input points are connected, only one
         value item is allocated, since those refer to the same value.
         """
-
         values = AliasValueMap(
             alias=str(self.id), version=0, assoc_value=None, values_schema={}
         )
@@ -203,7 +204,6 @@ class Pipeline(object):
 
     def get_current_pipeline_inputs(self) -> Dict[str, uuid.UUID]:
         """All (pipeline) input values of this pipeline."""
-
         if not self._structure.steps:
             return {}
 
@@ -212,7 +212,6 @@ class Pipeline(object):
 
     def get_current_pipeline_outputs(self) -> Dict[str, uuid.UUID]:
         """All (pipeline) output values of this pipeline."""
-
         if not self._structure.steps:
             return {}
 
@@ -231,7 +230,6 @@ class Pipeline(object):
 
     def get_inputs_for_steps(self, *step_ids: str) -> Dict[str, Dict[str, uuid.UUID]]:
         """Retrieve value ids for the inputs of the specified steps (or all steps, if no argument provided."""
-
         result = {}
         for step_id in self._structure.step_ids:
             if step_ids and step_id not in step_ids:
@@ -242,7 +240,6 @@ class Pipeline(object):
 
     def get_outputs_for_steps(self, *step_ids: str) -> Dict[str, Dict[str, uuid.UUID]]:
         """Retrieve value ids for the outputs of the specified steps (or all steps, if no argument provided."""
-
         result = {}
         for step_id in self._structure.step_ids:
             if step_ids and step_id not in step_ids:
@@ -518,7 +515,6 @@ class Pipeline(object):
         self, alias: str, **values: Union[uuid.UUID, None]
     ) -> Dict[str, ChangedValue]:
         """Set values (value-ids) for the sub-alias-map with the specified alias path."""
-
         invalid = {}
         for k in values.keys():
             _alias = self._all_values.get_alias(alias)
@@ -582,7 +578,6 @@ class Pipeline(object):
         self,
     ) -> Mapping[int, Mapping[str, PipelineStep]]:
         """Return a all pipeline steps, ordered by stage they belong to."""
-
         if self._steps_by_stage is not None:
             return self._steps_by_stage
 

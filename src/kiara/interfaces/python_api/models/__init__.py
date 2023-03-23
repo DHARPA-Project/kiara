@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 
 
 class OperationsMap(BaseModel, collections.abc.Mapping):
+
     """A list of available context names."""
 
     class Config(object):
@@ -38,6 +39,7 @@ class OperationsMap(BaseModel, collections.abc.Mapping):
 
 
 class WorkflowsMap(BaseModel, collections.abc.Mapping):
+
     """A list of available context names."""
 
     class Config(object):

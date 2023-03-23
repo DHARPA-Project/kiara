@@ -116,18 +116,20 @@ _AUTO_MODULE_ID: Dict[str, int] = {}
 
 
 def get_auto_workflow_alias(module_type: str, use_incremental_ids: bool = False) -> str:
-    """Return an id for a workflow obj of a provided module class.
+    """
+    Return an id for a workflow obj of a provided module class.
 
     If 'use_incremental_ids' is set to True, a unique id is returned.
 
     Args:
+    ----
         module_type (str): the name of the module type
         use_incremental_ids (bool): whether to return a unique (incremental) id
 
     Returns:
+    -------
         str: a module id
     """
-
     if not use_incremental_ids:
         return module_type
 
@@ -165,12 +167,13 @@ def _get_all_subclasses(
 
 
 def check_valid_field_names(*field_names) -> List[str]:
-    """Check whether the provided field names are all valid.
+    """
+    Check whether the provided field names are all valid.
 
     Returns:
+    -------
         an iterable of strings with invalid field names
     """
-
     return [x for x in field_names if x in INVALID_VALUE_NAMES or x.startswith("_")]
 
 
@@ -179,18 +182,20 @@ def find_free_id(
     current_ids: Iterable[str],
     sep="_",
 ) -> str:
-    """Find a free var (or other name) based on a stem string, based on a list of provided existing names.
+    """
+    Find a free var (or other name) based on a stem string, based on a list of provided existing names.
 
     Args:
+    ----
         stem (str): the base string to use
         current_ids (Iterable[str]): currently existing names
         method (str): the method to create new names (allowed: 'count' -- for now)
         method_args (dict): prototing_config for the creation method
 
     Returns:
+    -------
         str: a free name
     """
-
     start_count = 1
     if stem not in current_ids:
         return stem

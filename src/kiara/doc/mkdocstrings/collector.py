@@ -18,7 +18,9 @@ logger = get_logger(__name__)
 
 
 class KiaraCollector(BaseCollector):
-    """The class responsible for loading Jinja templates and rendering them.
+
+    """
+    The class responsible for loading Jinja templates and rendering them.
     It defines some configuration options, implements the `render` method,
     and overrides the `update_env` method of the [`BaseRenderer` class][mkdocstrings.handlers.base.BaseRenderer].
     """
@@ -35,20 +37,27 @@ class KiaraCollector(BaseCollector):
 
     def __init__(self) -> None:
         """Initialize the collector."""
-
         self._kiara: Kiara = Kiara.instance()
 
     def collect(self, identifier: str, config: dict) -> CollectorItem:
-        """Collect the documentation tree given an identifier and selection options.
+        """
+        Collect the documentation tree given an identifier and selection options.
+
         Arguments:
+        ---------
             identifier: The dotted-path of a Python object available in the Python path.
             config: Selection options, used to alter the data collection done by `pytkdocs`.
+
+
         Raises:
+        ------
             CollectionError: When there was a problem collecting the object documentation.
+
+
         Returns:
+        -------
             The collected object-tree.
         """
-
         tokens = identifier.split(".")
 
         if tokens[0] != "kiara_info":

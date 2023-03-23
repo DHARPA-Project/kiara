@@ -37,7 +37,9 @@ logger = structlog.getLogger()
 
 
 class WorkflowPipelineController(SinglePipelineController):
-    """A [PipelineController][kiara.models.modules.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.
+
+    """
+    A [PipelineController][kiara.models.modules.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.
 
     This is the default implementation of a ``PipelineController``, and probably the most simple implementation of one.
     It waits until all inputs are set, after which it executes all pipeline steps in the required order.
@@ -142,7 +144,9 @@ class WorkflowStatus(KiaraModel):
 
 
 class Workflow(object):
-    """A wrapper object to make working with workflows easier for frontend code.
+
+    """
+    A wrapper object to make working with workflows easier for frontend code.
 
     This is the type of class everyone advises you against creating in Object-Oriented code, all it contains is basically
     internal state. In this case, I believe it's warranted because otherwise frontend code would spin out of control,
@@ -157,6 +161,7 @@ class Workflow(object):
      - if you want to create the wrapper object from an existing workflow: provide its id or alias string
 
     Arguments:
+    ---------
         kiara: the kiara context in which this workflow lives
         workflow: the workflow metadata (or reference to it)
         load_existing: if set to 'False', a workflow with the provided id/alias can't already exist, if 'True', it must, if set to 'None', kiara tries to be smart and loads if exists, otherwise creates a new one
@@ -170,7 +175,6 @@ class Workflow(object):
         create: bool = False,
     ):
         """Load an existing workflow using a workflow id or alias."""
-
         try:
             workflow_obj = Workflow(workflow=workflow, kiara=kiara, load_existing=True)
         except NoSuchWorkflowException as nswe:
@@ -207,7 +211,6 @@ class Workflow(object):
         kiara: Union["Kiara", None] = None,
     ):
         """Create a new workflow object."""
-
         if replace_existing_alias and alias is not None:
             if kiara is None:
                 from kiara.context import Kiara
@@ -382,7 +385,6 @@ class Workflow(object):
 
     def _sync_workflow_metadata(self):
         """Store/update the metadata of this workflow."""
-
         self._workflow_metadata = self._kiara.workflow_registry.register_workflow(
             workflow_metadata=self._workflow_metadata,
             workflow_aliases=self._pending_aliases,
@@ -414,7 +416,6 @@ class Workflow(object):
     @property
     def is_persisted(self) -> bool:
         """Check whether this workflow is persisted in it's current state."""
-
         return self.workflow_metadata.is_persisted
 
     @property
@@ -718,30 +719,34 @@ class Workflow(object):
         self._current_pipeline_outputs = None
 
     def set_input(self, field_name: str, value: Any) -> Union[None, uuid.UUID]:
-        """Set a single pipeline input.
+        """
+        Set a single pipeline input.
 
         Arguments:
+        ---------
             field_name: The name of the input field.
             value: The value to set.
 
         Returns:
+        -------
             None if the value for that field in the pipeline didn't change, otherwise the value_id of the new (registered) value.
 
         """
-
         diff = self.set_inputs(**{field_name: value})
         return diff.get(field_name, None)
 
     def set_inputs(self, **inputs: Any) -> Dict[str, Union[uuid.UUID, None]]:
-        """Set multiple pipeline inputs, at once.
+        """
+        Set multiple pipeline inputs, at once.
 
         Arguments:
+        ---------
             inputs: The inputs to set.
 
         Returns:
+        -------
             a dict containing only the newly set or changed values with field name as keys, and value_id (or None) as values.
         """
-
         _inputs = {}
         for k, v in inputs.items():
             # translate aliases
@@ -961,18 +966,19 @@ class Workflow(object):
         doc: Union[str, DocumentationMetadataModel, None] = None,
         replace_existing: bool = False,
     ) -> PipelineStep:
-        """Add a step to the workflows current pipeline structure.
+        """
+        Add a step to the workflows current pipeline structure.
 
         If no 'step_id' is provided, a unque one will automatically be generated based on the 'module_type' argument.
 
         Arguments:
+        ---------
             operation: the module or operation name
             step_id: the id of the new step
             module_config: (optional) configuration for the kiara module this step uses
             input_connections: a map with this steps input field name(s) as keys and output field links (format: <step_id>.<output_field_name>) as value(s).
             replace_existing: if set to 'True', this replaces a step with the same id that already exists, otherwise an exception will be thrown
         """
-
         if step_id is None:
             step_id = find_free_id(
                 slugify(operation, delim="_"), current_ids=self._steps.keys()
@@ -1183,14 +1189,15 @@ class Workflow(object):
     def load_state(
         self, workflow_state_id: Union[str, None] = None
     ) -> Union[None, WorkflowState]:
-        """Load a past state.
+        """
+        Load a past state.
 
         If no state id is specified, the latest one that was saved will be used.
 
         Returns:
+        -------
             'None' if no state was loaded, otherwise the relevant 'WorkflowState' instance
         """
-
         if workflow_state_id is None:
             if not self._workflow_metadata.workflow_history:
                 return None
@@ -1242,7 +1249,6 @@ class Workflow(object):
     @property
     def all_states(self) -> Mapping[str, WorkflowState]:
         """Return a list of all states this workflow had in the past, indexed by the hash of each state."""
-
         missing = []
         for state_id in self.workflow_metadata.workflow_history.values():
             if state_id not in self._state_cache.keys():

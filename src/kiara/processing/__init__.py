@@ -348,7 +348,6 @@ class ModuleProcessor(abc.ABC):
 
     def wait_for(self, *job_ids: uuid.UUID):
         """Wait for the jobs with the specified ids, also optionally sync their outputs with the pipeline value state."""
-
         self._wait_for(*job_ids)
 
         for job_id in job_ids:

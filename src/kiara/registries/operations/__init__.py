@@ -428,12 +428,13 @@ class OperationRegistry(object):
         return self._operations
 
     def register_pipelines(self, *paths: Union[str, Path]) -> Dict[str, Operation]:
-        """Register pipelines from one or more paths.
+        """
+        Register pipelines from one or more paths.
 
         Args:
+        ----
             *paths: one or more paths to load pipelines from.
         """
-
         pipeline_data = find_pipeline_data_in_paths(
             {k if isinstance(k, str) else k.as_posix(): {} for k in paths}
         )

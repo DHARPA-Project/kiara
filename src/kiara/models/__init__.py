@@ -38,7 +38,9 @@ from kiara.utils.models import (
 
 
 class KiaraModel(ABC, BaseModel, JupyterMixin):
-    """Base class that all models in kiara inherit from.
+
+    """
+    Base class that all models in kiara inherit from.
 
     This class provides utility functions for things like rendering the model on terminal or as html, integration into
     a tree hierarchy of the overall kiara context, hashing, etc.
@@ -77,18 +79,17 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     _size_cache: Union[int, None] = PrivateAttr(default=None)
 
     def _retrieve_data_to_hash(self) -> IPLDKind:
-        """Return data important for hashing this model instance. Implemented by sub-classes.
+        """
+        Return data important for hashing this model instance. Implemented by sub-classes.
 
         This returns the relevant data that makes this model unique, excluding any secondary metadata that is not
         necessary for this model to be used functionally. Like for example documentation.
         """
-
         return self.dict()
 
     @property
     def instance_id(self) -> str:
         """The unique id of this model, within its category."""
-
         if self._id_cache is not None:
             return self._id_cache
 
@@ -118,7 +119,6 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     @property
     def model_type_id(self) -> str:
         """The id of the category of this model."""
-
         if hasattr(self.__class__, "_kiara_model_id"):
             return self._kiara_model_id  # type: ignore
         else:
@@ -144,7 +144,6 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     @property
     def subcomponent_keys(self) -> Iterable[str]:
         """The keys of available sub-components of this model."""
-
         if self._subcomponent_names_cache is None:
             self._subcomponent_names_cache = sorted(self._retrieve_subcomponent_keys())
         return self._subcomponent_names_cache
@@ -161,7 +160,6 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
 
     def get_subcomponent(self, path: str) -> "KiaraModel":
         """Retrieve the subcomponent identified by the specified path."""
-
         if path not in self._dynamic_subcomponents.keys():
             self._dynamic_subcomponents[path] = self._retrieve_subcomponent(path=path)
         return self._dynamic_subcomponents[path]
@@ -185,19 +183,19 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         return result
 
     def _retrieve_subcomponent_keys(self) -> Iterable[str]:
-        """Retrieve the keys of all subcomponents of this model.
+        """
+        Retrieve the keys of all subcomponents of this model.
 
         Can be overwritten in sub-classes, by default it tries to automatically determine the subcomponents.
         """
-
         return retrieve_data_subcomponent_keys(self)
 
     def _retrieve_subcomponent(self, path: str) -> "KiaraModel":
-        """Retrieve the subcomponent under the specified path.
+        """
+        Retrieve the subcomponent under the specified path.
 
         Can be overwritten in sub-classes, by default it tries to automatically determine the subcomponents.
         """
-
         m = get_subcomponent_from_model(self, path=path)
         return m
 

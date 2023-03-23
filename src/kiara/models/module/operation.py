@@ -92,13 +92,11 @@ class OperationDetails(KiaraModel):
     @property
     def inputs_schema(self) -> Mapping[str, ValueSchema]:
         """The input schema for this module."""
-
         return self.get_operation_schema().inputs_schema
 
     @property
     def outputs_schema(self) -> Mapping[str, ValueSchema]:
         """The input schema for this module."""
-
         return self.get_operation_schema().outputs_schema
 
     def get_operation_schema(self) -> OperationSchema:
@@ -359,13 +357,13 @@ class Operation(Manifest):
         return self.pipeline_config.structure
 
     def create_renderable(self, **config: Any) -> RenderableType:
-        """Create a printable overview of this operations details.
+        """
+        Create a printable overview of this operations details.
 
         Available render_config options:
           - 'include_full_doc' (default: True): whether to include the full documentation, or just a description
           - 'include_src' (default: False): whether to include the module source code
         """
-
         include_full_doc = config.get("include_full_doc", True)
         include_src = config.get("include_src", False)
         include_inputs = config.get("include_inputs", True)

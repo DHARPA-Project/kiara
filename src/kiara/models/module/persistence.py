@@ -19,7 +19,8 @@ class ByteProvisioningStrategy(Enum):
 
 
 class BytesStructure(BaseModel):
-    """A data structure that"""
+
+    """A data structure that."""
 
     data_type: str = Field(description="The data type.")
     data_type_config: Mapping[str, Any] = Field(description="The data type config.")

@@ -318,8 +318,7 @@ def execute_job(
     save_results: bool,
     aliases: Union[None, Mapping[str, List[str]]],
 ) -> uuid.UUID:
-    """Execute the job"""
-
+    """Execute the job."""
     job_id = api.queue_job(operation=operation, inputs=inputs)
 
     try:

@@ -24,7 +24,6 @@ class EnvironmentRegistry(object):
     @classmethod
     def instance(cls) -> "EnvironmentRegistry":
         """The default *kiara* context. In most cases, it's recommended you create and manage your own, though."""
-
         if cls._instance is None:
             cls._instance = EnvironmentRegistry()
         return cls._instance
@@ -64,7 +63,6 @@ class EnvironmentRegistry(object):
     @property
     def environments(self) -> Mapping[str, RuntimeEnvironment]:
         """Return all environments in this kiara runtime context."""
-
         if self._environments is not None:
             return self._environments
 
@@ -92,7 +90,6 @@ class EnvironmentRegistry(object):
     @property
     def full_model(self) -> BaseModel:
         """A model containing all environment data, incl. schemas and hashes of each sub-environment."""
-
         if self._full_env_model is not None:
             return self._full_env_model
 

@@ -60,6 +60,7 @@ def create_console(
     )
 
     class OptionHighlighter(RegexHighlighter):
+
         """Highlights our special options."""
 
         highlights = [
@@ -113,9 +114,11 @@ def create_console(
 
 
 def get_console() -> "Console":
-    """Get a global Console instance.
+    """
+    Get a global Console instance.
 
     Returns:
+    -------
         Console: A console instance.
     """
     global _console
@@ -133,11 +136,11 @@ def get_proxy_console(
     ] = None,
     restore_default_console: bool = True,
 ) -> Iterator["Console"]:
-    """Get a console that proxies a remote one.
+    """
+    Get a console that proxies a remote one.
 
     This should only be used in a single-threaded way.
     """
-
     global _console
 
     default_console = get_console()
@@ -304,7 +307,6 @@ class KiaraAPIWrap(object):
 
     def lock_file(self, context: str) -> str:
         """The path to the lock file for this context."""
-
         return "asdf"
 
     @property

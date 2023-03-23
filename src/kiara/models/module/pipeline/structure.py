@@ -81,6 +81,7 @@ class StepInfo(KiaraModel):
 
 
 class PipelineStructure(KiaraModel):
+
     """An object that holds one or several steps, and describes the connections between them."""
 
     _kiara_model_id = "instance.pipeline_structure"
@@ -294,14 +295,14 @@ class PipelineStructure(KiaraModel):
     def extract_processing_stages(
         self, stages_extraction_type: str = "late"
     ) -> List[List[str]]:
-        """Extract a list of lists of steps, representing the order of groups in which they will be executed.
+        """
+        Extract a list of lists of steps, representing the order of groups in which they will be executed.
 
         It is possible to extract the stages in different ways, depending on the use-case you have in mind. For most cases,
         'late' will be appropriate. Currently available:
         - 'late': process steps as late in the process as possible
         - 'early': process steps as early in the process as possible
         """
-
         return PipelineStage.extract_stages(
             self, stages_extraction_type=stages_extraction_type
         )
@@ -318,16 +319,18 @@ class PipelineStructure(KiaraModel):
     def get_stages_graph(
         self, stages_extraction_type: str = "late", flatten: bool = True
     ) -> nx.DiGraph:
-        """Creates a networx graph that represents the processing stages of the pipeline and how they are connecte.
+        """
+        Creates a networx graph that represents the processing stages of the pipeline and how they are connecte.
 
         Arguments:
+        ---------
             stages_extraction_type: how to extract the stages
             flatten: if True, the nodes representing connections between stages will be removed, leaving only the edge
 
         Returns:
+        -------
             a networkx graph object
         """
-
         stages = self.extract_processing_stages_info(
             stages_extraction_type=stages_extraction_type
         )
@@ -439,11 +442,11 @@ class PipelineStructure(KiaraModel):
         return result
 
     def get_processing_stage(self, step_id: str) -> int:
-        """Return the processing stage for the specified step_id.
+        """
+        Return the processing stage for the specified step_id.
 
         Returns the stage nr (starting with '1').
         """
-
         for index, stage in enumerate(self.processing_stages, start=1):
             if step_id in stage:
                 return index
@@ -452,12 +455,10 @@ class PipelineStructure(KiaraModel):
 
     def step_is_required(self, step_id: str) -> bool:
         """Check if the specified step is required, or can be omitted."""
-
         return self.get_step_details(step_id=step_id).required
 
     def _process_steps(self) -> None:
         """The core method of this class, it connects all the processing modules, their inputs and outputs."""
-
         steps_details: Dict[str, Any] = {}
         execution_graph = nx.DiGraph()
         execution_graph.add_node("__root__")

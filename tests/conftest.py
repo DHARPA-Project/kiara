@@ -102,7 +102,7 @@ def api() -> KiaraAPI:
     return api
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def presseeded_data_store_minimal() -> Kiara:
 
     instance_path = create_temp_dir()

@@ -27,18 +27,26 @@ if TYPE_CHECKING:
 
 class KiaraException(Exception):
     @classmethod
-    def get_root_details(cls, e: Exception) -> Union[str, None]:
+    def get_root_details(cls, e: Exception, default=None) -> Union[str, None]:
 
         if isinstance(e, KiaraException):
             return e.root_details()
         else:
-            return str(e)
+            if default is None:
+                return str(e)
+            else:
+                return default
 
     def __init__(self, msg: str, parent: Union[Exception, None] = None, **kwargs):
 
+        self._msg = msg
         self._parent: Union[Exception, None] = parent
         self._properties = kwargs
         super().__init__(msg)
+
+    @property
+    def msg(self):
+        return self._msg
 
     @property
     def details(self) -> Union[str, None]:
@@ -86,6 +94,20 @@ class KiaraException(Exception):
             rows.append(Markdown(root_details))
 
         return Group(*rows)
+
+    def __str__(self) -> str:
+        msg = super().__str__()
+        root_details = self.root_details()
+        if root_details:
+            msg += f"\n\n{root_details}"
+        return msg
+
+
+class KiaraContextException(KiaraException):
+    def __init__(self, msg: str, context_id: uuid.UUID):
+
+        self._context_id: uuid.UUID = context_id
+        super().__init__(msg)
 
 
 class KiaraModuleConfigException(KiaraException):
@@ -361,12 +383,11 @@ class FailedJobException(KiaraException):
         self.job: ActiveJob = job
         if msg is None:
             msg = "Job failed."
-        self.msg = msg
-        super().__init__(msg, parent=parent)
+        super().__init__(msg=msg, parent=parent)
 
-    @property
-    def details(self) -> Union[str, None]:
-        return None
+    # @property
+    # def details(self) -> Union[str, None]:
+    #     return None
 
     def create_renderable(self, **config: Any):
 

@@ -5,11 +5,14 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Implementation of interfaces for *Kiara*."""
-
+import contextlib
 import os
 import sys
+import uuid
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterable, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, Literal, Union
+
+import fasteners
 
 from kiara.defaults import KIARA_CONFIG_FILE_NAME, KIARA_MAIN_CONFIG_FILE
 
@@ -27,6 +30,88 @@ if TYPE_CHECKING:
 _console: Union["Console", None] = None
 
 
+def create_console(
+    width: Union[None, int],
+    color_system: Union[
+        None, Literal["auto", "standard", "256", "truecolor", "windows"]
+    ] = None,
+) -> "Console":
+    """Create a console instance."""
+    from rich.console import COLOR_SYSTEMS
+    from rich.highlighter import RegexHighlighter
+    from rich.theme import Theme
+
+    STYLE_OPTION = "bold cyan"
+    STYLE_ARGUMENT = "bold cyan"
+    STYLE_SWITCH = "bold green"
+    STYLE_METAVAR = "bold yellow"
+    STYLE_METAVAR_SEPARATOR = "dim"
+    STYLE_USAGE = "yellow"
+
+    theme = Theme(
+        {
+            "option": STYLE_OPTION,
+            "argument": STYLE_ARGUMENT,
+            "switch": STYLE_SWITCH,
+            "metavar": STYLE_METAVAR,
+            "metavar_sep": STYLE_METAVAR_SEPARATOR,
+            "usage": STYLE_USAGE,
+        }
+    )
+
+    class OptionHighlighter(RegexHighlighter):
+        """Highlights our special options."""
+
+        highlights = [
+            r"(^|\W)(?P<switch>\-\w+)(?![a-zA-Z0-9])",
+            r"(^|\W)(?P<option>\-\-[\w\-]+)(?![a-zA-Z0-9])",
+            r"(^|\W)(?P<argument>[A-Z0-9\_]+)(?![_a-zA-Z0-9])",
+            r"(?P<metavar>\<[^\>]+\>)",
+            r"(?P<usage>Usage: )",
+        ]
+
+    highlighter = OptionHighlighter()
+    FORCE_TERMINAL = (
+        True
+        if os.getenv("GITHUB_ACTIONS")
+        or os.getenv("FORCE_COLOR")
+        or os.getenv("PY_COLORS")
+        else None
+    )
+
+    console_width = None
+    if width is not None:
+        console_width = width
+    else:
+        _console_width = os.environ.get("CONSOLE_WIDTH", None)
+        if _console_width:
+            try:
+                console_width = int(_console_width)
+            except Exception:
+                pass
+
+    from rich.console import Console
+
+    if color_system is not None:
+        _color_system = color_system
+    else:
+        _color_system = "auto"
+
+    if _color_system != "auto" and _color_system not in COLOR_SYSTEMS.keys():
+        raise Exception(
+            f"Invalid color system '{_color_system}': available options: auto, {', '.join(COLOR_SYSTEMS.keys())}."
+        )
+
+    _console = Console(
+        width=console_width,
+        theme=theme,
+        highlighter=highlighter,
+        color_system=_color_system,
+        force_terminal=FORCE_TERMINAL,
+    )
+    return _console
+
+
 def get_console() -> "Console":
     """Get a global Console instance.
 
@@ -35,20 +120,58 @@ def get_console() -> "Console":
     """
     global _console
     if _console is None:
-        console_width = os.environ.get("CONSOLE_WIDTH", None)
-        width = None
-
-        if console_width:
-            try:
-                width = int(console_width)
-            except Exception:
-                pass
-
-        from rich.console import Console
-
-        _console = Console(width=width)
+        _console = create_console(width=None, color_system=None)
 
     return _console
+
+
+@contextlib.contextmanager
+def get_proxy_console(
+    width: Union[None, int] = None,
+    color_system: Union[
+        None, Literal["auto", "standard", "256", "truecolor", "windows"]
+    ] = None,
+    restore_default_console: bool = True,
+) -> Iterator["Console"]:
+    """Get a console that proxies a remote one.
+
+    This should only be used in a single-threaded way.
+    """
+
+    global _console
+
+    default_console = get_console()
+    old_width = default_console.width
+
+    changed = False
+    changed_width = False
+    # TODO: maybe use thread-local?
+    if width is None and color_system is None:
+        result = default_console
+    else:
+        if width is None:
+            width = default_console.width
+
+        if color_system is None:
+            color_system = default_console.color_system  # type: ignore
+
+        if color_system != default_console.color_system:
+            result = create_console(width=width, color_system=color_system)
+            _console = result
+            changed = True
+        elif width != default_console.width:
+            default_console.width = width
+            changed_width = True
+        else:
+            result = default_console
+
+    yield result
+
+    if changed and restore_default_console:
+        _console = default_console
+
+    if changed_width and restore_default_console:
+        default_console.width = old_width
 
 
 def set_console_width(width: Union[int, None] = None, prefer_env: bool = True):
@@ -110,13 +233,20 @@ class KiaraAPIWrap(object):
 
         self._reload_process_if_plugins_installed = True
 
+        self._items: Dict[str, Any] = {}
+
     @property
     def kiara_context_name(self) -> str:
 
-        context = self._context
-        if not context:
-            context = self.kiara_config.default_context
-        return context
+        if not self._context:
+            self._context = self.kiara_config.default_context
+
+        return self._context
+
+    @property
+    def current_kiara_context_id(self) -> uuid.UUID:
+
+        return self.kiara_api.context.id
 
     @property
     def kiara(self) -> "Kiara":
@@ -172,6 +302,11 @@ class KiaraAPIWrap(object):
         self._kiara_config = kiara_config
         return self._kiara_config
 
+    def lock_file(self, context: str) -> str:
+        """The path to the lock file for this context."""
+
+        return "asdf"
+
     @property
     def kiara_api(self) -> "KiaraAPI":
 
@@ -196,6 +331,8 @@ class KiaraAPIWrap(object):
                 )
                 os.execvp(sys.executable, (sys.executable,) + tuple(sys.argv))  # noqa
 
+        fasteners.InterProcessReaderWriterLock(self.lock_file(context))
+
         api.set_active_context(context, create=True)
 
         if self._pipelines:
@@ -206,3 +343,14 @@ class KiaraAPIWrap(object):
 
         self._api = api
         return self._api
+
+    def add_item(self, key: str, item: Any):
+
+        self._items[key] = item
+
+    def get_item(self, key: str) -> Any:
+
+        if key not in self._items.keys():
+            raise ValueError(f"No item with key '{key}'")
+
+        return self._items[key]

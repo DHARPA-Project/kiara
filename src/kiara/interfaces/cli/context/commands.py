@@ -325,3 +325,31 @@ def explain_metadata(ctx, metadata_key, format) -> None:
         format=format,
         in_panel=f"Details for metadata type: [b i]{metadata_key}[/b i]",
     )
+
+
+@context.group()
+@click.pass_context
+def api(ctx):
+    """API-related sub-commands."""
+
+
+@api.command()
+@click.argument("filter", nargs=-1, required=False)
+@click.option(
+    "--full-doc",
+    "-d",
+    is_flag=True,
+    help="Display the full doc for all operations (when using 'terminal' as format).",
+)
+@click.pass_context
+def list_endpoints(ctx, filter, full_doc):
+    """List all available API endpoints."""
+
+    from kiara.interfaces.python_api import KiaraAPI
+    from kiara.interfaces.python_api.proxy import ApiEndpoints
+
+    exclude = ["get_runtime_config", "retrieve_workflow_info"]
+    endpoints = ApiEndpoints(api_cls=KiaraAPI, filters=filter, exclude=exclude)
+
+    terminal_print()
+    terminal_print(endpoints, in_panel="API endpoints", full_doc=full_doc)

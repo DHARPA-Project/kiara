@@ -128,7 +128,7 @@ def pipeline(ctx, pipeline: str) -> None:
 
         pipeline_obj = Pipeline.create_pipeline(kiara=api.context, pipeline=pipeline)
 
-    ctx.obj["item"] = pipeline_obj
+    ctx.obj.add_item("pipeline", pipeline_obj)
 
 
 @pipeline.command("as")
@@ -147,7 +147,7 @@ def render_func_pipeline(
 ) -> None:
 
     kiara_api: KiaraAPI = ctx.obj.kiara_api
-    item = ctx.obj["item"]
+    item = ctx.obj.get_item("pipeline")
 
     render_config_dict = dict_from_cli_args(*render_config)
 
@@ -172,7 +172,7 @@ def value(ctx, value: str) -> None:
 
     value_obj = api.get_value(value)
 
-    ctx.obj["item"] = value_obj
+    ctx.obj.add_item("value", value_obj)
 
 
 @value.command("as")
@@ -201,7 +201,7 @@ def render_func_value(
 ) -> None:
 
     kiara_api: KiaraAPI = ctx.obj.kiara_api
-    item = ctx.obj["item"]
+    item = ctx.obj.get_item("value")
 
     render_config_dict = dict_from_cli_args(*render_config)
 

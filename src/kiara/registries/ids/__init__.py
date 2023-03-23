@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
+import os
 
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
 import uuid
 from typing import Any, Dict, Type, Union
 from weakref import WeakValueDictionary
 
 import structlog
+from fasteners import InterProcessLock
 
+from kiara.defaults import KIARA_MAIN_CONTEXT_LOCKS_PATH
 from kiara.utils import is_debug, is_develop
 
 logger = structlog.getLogger()
@@ -25,12 +27,38 @@ class IdRegistry(object):
         self._ids: Dict[uuid.UUID, Dict[Type, Dict[str, Any]]] = {}
         self._objs: Dict[uuid.UUID, WeakValueDictionary[Type, Any]] = {}
 
+        self._process_context_locks: Dict[uuid.UUID, InterProcessLock] = {}
+
+    def lock_context(self, context_id: uuid.UUID) -> bool:
+
+        if context_id not in self._process_context_locks.keys():
+            lock = InterProcessLock(
+                os.path.join(
+                    KIARA_MAIN_CONTEXT_LOCKS_PATH, f"context_{context_id}.lock"
+                )
+            )
+            self._process_context_locks[context_id] = lock
+        else:
+            lock = self._process_context_locks[context_id]
+
+        aquired = lock.acquire(blocking=False)
+        return aquired
+
+    def unlock_context(self, context_id: uuid.UUID):
+
+        if context_id not in self._process_context_locks.keys():
+            return
+
+        lock = self._process_context_locks[context_id]
+        if lock.acquired:
+            lock.release()
+
     def generate(
         self,
         id: Union[uuid.UUID, None] = None,
         obj_type: Union[Type, None] = None,
         obj: Union[Any, None] = None,
-        **metadata: Any
+        **metadata: Any,
     ):
 
         if id is None:
@@ -55,7 +83,7 @@ class IdRegistry(object):
         id: uuid.UUID,
         obj_type: Union[Type, None] = None,
         obj: Union[Any, None] = None,
-        **metadata
+        **metadata,
     ):
 
         if not is_debug() and not is_develop():

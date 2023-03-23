@@ -1667,13 +1667,21 @@ class RendererInfos(InfoItemGroup[RendererInfo]):
         table.add_column("Target type(s)")
         table.add_column("Description")
 
-        for info in self.item_infos.values():
+        rows: Dict[str, Dict[str, List[RenderableType]]] = {}
+        info: RendererInfo
+        for info in self.item_infos.values():  # type: ignore
             row: List[RenderableType] = []
-
-            row.append("\n".join(info.supported_source_types))  # type: ignore
-            row.append("\n".join(info.supported_target_types))  # type: ignore
+            source_types = "\n".join(info.supported_source_types)
+            target_types = "\n".join(info.supported_target_types)
+            row.append(source_types)  # type: ignore
+            row.append(target_types)  # type: ignore
             row.append(info.documentation.create_renderable(**config))
 
-            table.add_row(*row)
+            rows.setdefault(source_types, {})[target_types] = row
+
+        for source in sorted(rows.keys()):
+            for target in sorted(rows[source].keys()):
+                row = rows[source][target]
+                table.add_row(*row)
 
         return table

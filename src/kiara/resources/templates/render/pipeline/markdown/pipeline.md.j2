@@ -1,6 +1,6 @@
 # pipeline: **{{ pipeline.config.pipeline_name }}**
 {% for stage in pipeline.structure.processing_stages %}
-## *Stag {{ loop.index }}**
+## *Stage {{ loop.index }}*
 {%  for step_id in stage %}
 ### *Step*: {{ step_id }}
 {% if pipeline.get_step(step_id).doc.is_set %}

@@ -36,7 +36,7 @@ from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.jobs import JobLog
 from kiara.models.values.value_schema import ValueSchema
-from kiara.utils import is_debug, log_exception
+from kiara.utils import is_debug, is_develop, log_exception
 from kiara.utils.hashing import compute_cid
 from kiara.utils.values import (
     augment_values,
@@ -539,8 +539,13 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
             log_exception(kpe)
             raise kpe
         except Exception as e:
-            log_exception(e)
-            raise KiaraProcessingException(e, module=self, inputs=inputs)
+            if is_debug() or is_develop():
+                import traceback
+
+                traceback.print_exc()
+            exc = KiaraProcessingException(e, module=self, inputs=inputs)
+            log_exception(exc)
+            raise exc
 
     def __eq__(self, other):
         if self.__class__ != other.__class__:

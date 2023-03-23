@@ -949,7 +949,7 @@ class DataRegistry(object):
         self,
         values: Mapping[str, Union[uuid.UUID, None, str, ValueLink]],
         values_schema: Union[None, Mapping[str, ValueSchema]] = None,
-    ) -> ValueMap:
+    ) -> ValueMapReadOnly:
 
         value_items = {}
         if values_schema:

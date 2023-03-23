@@ -21,6 +21,7 @@ from kiara.exceptions import (
     NoSuchExecutionTargetException,
     NoSuchWorkflowException,
 )
+from kiara.interfaces.python_api.models import OperationsMap, WorkflowsMap
 from kiara.interfaces.python_api.models.info import (
     DataTypeClassesInfo,
     DataTypeClassInfo,
@@ -44,7 +45,12 @@ from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.rendering import RenderValueResult
 from kiara.models.runtime_environment.python import PythonRuntimeEnvironment
 from kiara.models.values.matchers import ValueMatcher
-from kiara.models.values.value import PersistedData, Value, ValueMap, ValueSchema
+from kiara.models.values.value import (
+    PersistedData,
+    Value,
+    ValueMapReadOnly,
+    ValueSchema,
+)
 from kiara.models.workflow import WorkflowGroupInfo, WorkflowInfo, WorkflowMetadata
 from kiara.operations import OperationType
 from kiara.operations.included_core_operations.filter import FilterOperationType
@@ -86,23 +92,26 @@ class KiaraAPI(object):
     so before you use this, make sure that there is not 'get_*' or 'list_*' endpoint that could give you what you need.
     ."""
 
-    _instance: Union["KiaraAPI", None] = None
+    _default_instance: Union["KiaraAPI", None] = None
+    _context_instances: Dict[str, "KiaraAPI"] = {}
 
     @classmethod
-    def instance(
-        cls,
-    ) -> "KiaraAPI":
+    def instance(cls, context_name: Union[str, None] = None) -> "KiaraAPI":
 
-        if cls._instance is not None:
-            return cls._instance
+        if context_name is None:
 
-        from kiara.context import KiaraConfig
+            if cls._default_instance is not None:
+                return cls._default_instance
 
-        config = KiaraConfig()
+            from kiara.context import KiaraConfig
 
-        api = KiaraAPI(kiara_config=config)
-        cls._instance = api
-        return api
+            config = KiaraConfig()
+
+            api = KiaraAPI(kiara_config=config)
+            cls._default_instance = api
+            return api
+        else:
+            raise NotImplementedError()
 
     def __init__(self, kiara_config: "KiaraConfig"):
 
@@ -341,7 +350,7 @@ class KiaraAPI(object):
         return self.context.type_registry.data_type_names
 
     def is_internal_data_type(self, data_type_name: str) -> bool:
-        """Checks if the data type is repdominantly used internally by kiara, or whether it should be exposed to the user."""
+        """Checks if the data type is prepdominantly used internally by kiara, or whether it should be exposed to the user."""
 
         return self.context.type_registry.is_internal_type(
             data_type_name=data_type_name
@@ -634,7 +643,7 @@ class KiaraAPI(object):
         operation_types: Union[str, Iterable[str], None] = None,
         python_packages: Union[str, Iterable[str], None] = None,
         include_internal: bool = False,
-    ) -> Mapping[str, Operation]:
+    ) -> OperationsMap:
         """List all available values, optionally filter.
 
         Arguments:
@@ -735,7 +744,7 @@ class KiaraAPI(object):
                     temp[pkg] = op
             operations = temp
 
-        return operations
+        return OperationsMap.construct(__root__=operations)  # type: ignore
 
     def retrieve_operation_info(
         self, operation: str, allow_external: bool = False
@@ -886,12 +895,12 @@ class KiaraAPI(object):
 
         if matcher_params:
             values = self.list_values(**matcher_params)
-            return sorted(values.keys())
+            return sorted((v.value_id for v in values.values()))
         else:
             _values = self.context.data_registry.retrieve_all_available_value_ids()
             return sorted(_values)
 
-    def list_values(self, **matcher_params: Any) -> Dict[uuid.UUID, Value]:
+    def list_values(self, **matcher_params: Any) -> ValueMapReadOnly:
         """List all available values, optionally filter.
 
         Retrieve information about all values that are available in the current kiara context session (both stored
@@ -915,7 +924,10 @@ class KiaraAPI(object):
                 for k in self.context.data_registry.retrieve_all_available_value_ids()
             }
 
-        return values
+        result = ValueMapReadOnly.create_from_values(
+            **{str(k): v for k, v in values.items()}
+        )
+        return result
 
     def get_value(self, value: Union[str, Value, uuid.UUID]) -> Value:
         """Retrieve a value instance with the specified id or alias.
@@ -998,7 +1010,7 @@ class KiaraAPI(object):
             _values = self.context.alias_registry.all_aliases
             return list(_values)
 
-    def list_aliases(self, **matcher_params) -> Dict[str, Value]:
+    def list_aliases(self, **matcher_params) -> ValueMapReadOnly:
         """List all available values that have an alias assigned, optionally filter.
 
         Arguments:
@@ -1032,7 +1044,7 @@ class KiaraAPI(object):
                 for k in all_aliases
             }
 
-        return result
+        return ValueMapReadOnly.create_from_values(**result)
 
     def retrieve_aliases_info(self, **matcher_params) -> ValuesInfo:
         """Retrieve information about the matching values.
@@ -1065,7 +1077,7 @@ class KiaraAPI(object):
         values_schema: Union[None, Mapping[str, ValueSchema]] = None,
         register_data: bool = False,
         reuse_existing_data: bool = False,
-    ) -> ValueMap:
+    ) -> ValueMapReadOnly:
         """Retrive a [ValueMap][TODO] object from the provided value ids or value links.
 
         By default, this method can only use values/datasets that are already registered in *kiara*. If you want to
@@ -1433,7 +1445,7 @@ class KiaraAPI(object):
 
     def run_manifest(
         self, manifest: Manifest, inputs: Union[None, Mapping[str, Any]] = None
-    ) -> ValueMap:
+    ) -> ValueMapReadOnly:
         """Run a job using the provided manifest to describe the module and config that should be executed.
 
         Arguments:
@@ -1492,7 +1504,7 @@ class KiaraAPI(object):
         operation: Union[str, Path, Manifest, OperationInfo],
         inputs: Union[None, Mapping[str, Any]] = None,
         operation_config: Union[None, Mapping[str, Any]] = None,
-    ) -> ValueMap:
+    ) -> ValueMapReadOnly:
         """Run a job from a operation id, module_name (and config), or pipeline file, wait for the job to finish and retrieve the result.
 
         This is a convenience method that auto-detects what is meant by the 'operation' string input argument.
@@ -1526,7 +1538,7 @@ class KiaraAPI(object):
         job_status = self.context.job_registry.get_job(job_id=job_id)
         return job_status
 
-    def get_job_result(self, job_id: Union[str, uuid.UUID]) -> ValueMap:
+    def get_job_result(self, job_id: Union[str, uuid.UUID]) -> ValueMapReadOnly:
         """Retrieve the result(s) of the specified job."""
 
         if isinstance(job_id, str):
@@ -1713,7 +1725,9 @@ class KiaraAPI(object):
 
         return workflow_obj
 
-    def retrieve_workflow_info(self, workflow: Union[str, uuid.UUID, Workflow]):
+    def retrieve_workflow_info(
+        self, workflow: Union[str, uuid.UUID, Workflow]
+    ) -> WorkflowInfo:
 
         if isinstance(workflow, Workflow):
             _workflow: Workflow = workflow
@@ -1722,7 +1736,7 @@ class KiaraAPI(object):
 
         return WorkflowInfo.create_from_workflow(workflow=_workflow)
 
-    def list_workflows(self, **matcher_params) -> Mapping[uuid.UUID, Workflow]:
+    def list_workflows(self, **matcher_params) -> WorkflowsMap:
         """List all available workflow sessions, indexed by their unique id."""
 
         workflows = {}
@@ -1736,14 +1750,18 @@ class KiaraAPI(object):
 
                 workflow = self.get_workflow(workflow=workflow_id)
                 workflows[workflow.workflow_id] = workflow
-            return workflows
+            return WorkflowsMap.construct(
+                __root__={str(k): v for k, v in workflows.items()}
+            )
         else:
             for workflow_id in self.context.workflow_registry.all_workflow_ids:
                 workflow = self.get_workflow(workflow=workflow_id)
                 workflows[workflow_id] = workflow
-            return workflows
+            return WorkflowsMap.construct(
+                __root__={str(k): v for k, v in workflows.items()}
+            )
 
-    def list_workflow_aliases(self, **matcher_params) -> Dict[str, Workflow]:
+    def list_workflow_aliases(self, **matcher_params) -> WorkflowsMap:
         """List all available workflow sessions that have an alias, indexed by alias."""
 
         if matcher_params:
@@ -1768,7 +1786,7 @@ class KiaraAPI(object):
                 a: self.get_workflow(workflow=all_aliases[a])
                 for a in sorted(all_aliases.keys())
             }
-        return result
+        return WorkflowsMap.construct(__root__=result)
 
     def retrieve_workflows_info(self, **matcher_params: Any) -> WorkflowGroupInfo:
         """Get a map info instances for all available workflows, indexed by (stringified) workflow-id."""

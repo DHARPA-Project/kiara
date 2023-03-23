@@ -18,12 +18,13 @@ import structlog
 from kiara.defaults import (
     SYMLINK_ISSUE_MSG,
 )
-from kiara.interfaces import KiaraAPIWrap
+from kiara.interfaces import KiaraAPIWrap, get_console
 from kiara.utils import is_debug
 from kiara.utils.class_loading import find_all_cli_subcommands
 from kiara.utils.cli import terminal_print
 
 click.rich_click.USE_RICH_MARKUP = True
+click.rich_click._get_rich_console = get_console
 
 
 if is_debug():
@@ -92,13 +93,8 @@ def cli(
         terminal_print(Markdown(SYMLINK_ISSUE_MSG))
         sys.exit(1)
 
-    ctx.obj = {}
-
     lazy_wrapper = KiaraAPIWrap(config, context, pipelines, plugin)
     ctx.obj = lazy_wrapper
-    # ctx.obj["kiara"] = api.context
-    # ctx.obj["kiara_config"] = kiara_config
-    # ctx.obj["kiara_context_name"] = context
 
 
 for plugin in find_all_cli_subcommands():

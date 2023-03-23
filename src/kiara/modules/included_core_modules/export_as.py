@@ -22,6 +22,7 @@ class DataExportResult(BaseModel):
             value = [value]
 
         # TODO: make sure file exists
+        value = [x.as_posix() if isinstance(x, Path) else x for x in value]
 
         return value
 

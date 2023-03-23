@@ -37,6 +37,9 @@ KIARA_DEV_CONFIG_FILE = os.path.join(
     kiara_app_dirs.user_config_dir, KIARA_DEV_CONFIG_FILE_NAME
 )
 KIARA_MAIN_CONTEXTS_PATH = os.path.join(kiara_app_dirs.user_config_dir, "contexts")
+KIARA_MAIN_CONTEXT_LOCKS_PATH = os.path.join(
+    kiara_app_dirs.user_data_dir, "context_locks"
+)
 # USER_PIPELINES_FOLDER = os.path.join(kiara_app_dirs.user_config_dir, "pipelines")
 
 

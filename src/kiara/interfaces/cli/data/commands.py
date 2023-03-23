@@ -46,6 +46,7 @@ def data(ctx):
 
 
 @data.command(name="list")
+@click.argument("filter", nargs=-1, required=False)
 @click.option(
     "--all-values",
     "-a",
@@ -115,6 +116,7 @@ def data(ctx):
 @click.pass_context
 def list_values(
     ctx,
+    filter,
     format,
     all_values,
     hash,
@@ -142,9 +144,10 @@ def list_values(
     if data_type:
         matcher_config["data_types"] = data_type
 
-    values = kiara_api.list_values(
-        allow_internal=include_internal, data_types=data_type, has_alias=not all_values
-    )
+    if filter:
+        matcher_config["alias_matchers"] = filter
+
+    values = kiara_api.list_values(**matcher_config)
 
     list_by_alias = True
 

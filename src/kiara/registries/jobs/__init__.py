@@ -21,7 +21,7 @@ from kiara.models.events.job_registry import (
 )
 from kiara.models.module.jobs import ActiveJob, JobConfig, JobRecord, JobStatus
 from kiara.models.module.manifest import InputsManifest, Manifest
-from kiara.models.values.value import ValueMap
+from kiara.models.values.value import ValueMap, ValueMapReadOnly
 from kiara.processing import ModuleProcessor
 from kiara.processing.synchronous import SynchronousProcessor
 from kiara.registries import BaseArchive
@@ -537,7 +537,7 @@ class JobRegistry(object):
         if not_finished:
             self._processor.wait_for(*not_finished)
 
-    def retrieve_result(self, job_id: uuid.UUID) -> ValueMap:
+    def retrieve_result(self, job_id: uuid.UUID) -> ValueMapReadOnly:
 
         if job_id not in self._archived_records.keys():
             self._processor.wait_for(job_id)

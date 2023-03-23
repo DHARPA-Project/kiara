@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import atexit
 import os
 import uuid
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set, Type, Union
@@ -10,6 +11,7 @@ from pydantic import Field
 
 from kiara.context.config import KiaraConfig, KiaraContextConfig, KiaraRuntimeConfig
 from kiara.data_types import DataType
+from kiara.exceptions import KiaraContextException
 from kiara.interfaces import get_console
 from kiara.interfaces.python_api.models.info import (
     DataTypeClassesInfo,
@@ -183,16 +185,24 @@ class Kiara(object):
                 if supported_type == "workflow":
                     self.workflow_registry.register_archive(archive_obj, alias=archive_alias)  # type: ignore
 
-    # def _run_alembic_migrations(self):
-    #     script_location = os.path.abspath(KIARA_DB_MIGRATIONS_FOLDER)
-    #     dsn = self._config.db_url
-    #     log_message("running migration script", script=script_location, db_url=dsn)
-    #     from alembic.config import Config
-    #
-    #     alembic_cfg = Config(KIARA_DB_MIGRATIONS_CONFIG)
-    #     alembic_cfg.set_main_option("script_location", script_location)
-    #     alembic_cfg.set_main_option("sqlalchemy.url", dsn)
-    #     command.upgrade(alembic_cfg, "head")
+        self.lock_context()
+
+    def lock_context(self):
+        """Lock the context, so that it can't be used by other processes."""
+
+        aquired = ID_REGISTRY.lock_context(self.id)
+
+        if not aquired:
+            raise KiaraContextException(
+                "Can't lock context: already locked by another process.",
+                context_id=self.id,
+            )
+
+        atexit.register(self.unlock_context)
+
+    def unlock_context(self):
+
+        ID_REGISTRY.unlock_context(self.id)
 
     @property
     def id(self) -> uuid.UUID:

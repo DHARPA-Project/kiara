@@ -1167,6 +1167,7 @@ class Value(ValueDetails):
                     "aliases",
                     "kiara_id",
                     "lineage",
+                    "properties",
                     "environments",
                     "environment_hashes",
                 ]
@@ -1497,6 +1498,14 @@ class ValueMapReadOnly(ValueMap):  # type: ignore
     def create_from_ids(cls, data_registry: "DataRegistry", **value_ids: uuid.UUID):
 
         values = {k: data_registry.get_value(v) for k, v in value_ids.items()}
+        values_schema = {k: v.value_schema for k, v in values.items()}
+        return ValueMapReadOnly.construct(
+            value_items=values, values_schema=values_schema
+        )
+
+    @classmethod
+    def create_from_values(cls, **values: Value):
+
         values_schema = {k: v.value_schema for k, v in values.items()}
         return ValueMapReadOnly.construct(
             value_items=values, values_schema=values_schema

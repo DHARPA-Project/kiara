@@ -126,7 +126,7 @@ def presseeded_data_store_minimal() -> Kiara:
     return kiara
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def preseeded_data_store() -> Kiara:
 
     instance_path = create_temp_dir()

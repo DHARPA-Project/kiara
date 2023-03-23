@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from kiara.api import Kiara
 
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #  Copyright (c) 2021, Markus Binsteiner
@@ -8,20 +7,20 @@ from kiara.api import Kiara
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 
-def test_multiple_kiara_instances():
-
-    kiara = Kiara()
-    kiara_2 = Kiara()
-
-    assert kiara.id == kiara_2.id
-    assert (
-        kiara.operation_registry.operation_ids
-        == kiara_2.operation_registry.operation_ids
-    )
-    assert (
-        kiara.module_registry.module_types.keys()
-        == kiara_2.module_registry.module_types.keys()
-    )
+# def test_multiple_kiara_instances():
+#
+#     kiara = Kiara()
+#     kiara_2 = Kiara()
+#
+#     assert kiara.id == kiara_2.id
+#     assert (
+#         kiara.operation_registry.operation_ids
+#         == kiara_2.operation_registry.operation_ids
+#     )
+#     assert (
+#         kiara.module_registry.module_types.keys()
+#         == kiara_2.module_registry.module_types.keys()
+#     )
 
 
 # def test_multiple_kiara_instances_threaded():

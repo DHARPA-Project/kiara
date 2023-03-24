@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pytest
 
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #  Copyright (c) 2021, Markus Binsteiner
@@ -11,7 +10,6 @@ from kiara.context import Kiara
 from kiara.interfaces.cli import cli
 
 
-@pytest.mark.serial
 def test_data_subcommand():
 
     runner = CliRunner()
@@ -32,7 +30,6 @@ def _run_command(kiara_ctx: Kiara, cmd):
     return result
 
 
-@pytest.mark.serial
 def test_data_list_subcommand(presseeded_data_store_minimal: Kiara):
 
     command = "data list --all-values --format json"
@@ -42,7 +39,6 @@ def test_data_list_subcommand(presseeded_data_store_minimal: Kiara):
     assert "preseed_minimal.create_table_from_files__table" in result.stdout
 
 
-@pytest.mark.serial
 def test_data_load_subcommand(presseeded_data_store_minimal: Kiara):
 
     cmd = "data load -s alias:preseed_minimal.import_file__file"
@@ -52,7 +48,6 @@ def test_data_load_subcommand(presseeded_data_store_minimal: Kiara):
     assert "City" in result.stdout
 
 
-@pytest.mark.serial
 def test_data_explain_subcommand(presseeded_data_store_minimal: Kiara):
 
     cmd = "data explain alias:preseed_minimal.create_table_from_files__table -p"
@@ -63,7 +58,6 @@ def test_data_explain_subcommand(presseeded_data_store_minimal: Kiara):
     assert "type_name" in result.stdout
 
 
-@pytest.mark.serial
 def test_data_explain_subcommand_2(preseeded_data_store: Kiara):
 
     cmd = "data explain alias:preseed.journal_nodes_table"
@@ -75,7 +69,6 @@ def test_data_explain_subcommand_2(preseeded_data_store: Kiara):
     assert "table" in result.stdout
 
 
-@pytest.mark.serial
 def test_data_load_subcommand_3(preseeded_data_store: Kiara):
 
     cmd = "data load -s alias:preseed.journal_nodes_table"

@@ -138,6 +138,9 @@ class KiaraRuntimeConfig(BaseSettings):
     allow_external: bool = Field(
         description="Whether to allow external external pipelines.", default=True
     )
+    lock_context: bool = Field(
+        description="Whether to lock context(s) on creation.", default=False
+    )
     # ignore_errors: bool = Field(
     #     description="If set, kiara will try to ignore most errors (that can be ignored).",
     #     default=False,

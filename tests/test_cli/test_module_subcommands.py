@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pytest
 
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #  Copyright (c) 2021, Markus Binsteiner
@@ -10,7 +9,6 @@ from click.testing import CliRunner
 from kiara.interfaces.cli import cli
 
 
-@pytest.mark.serial
 def test_module_subcommand():
 
     runner = CliRunner()
@@ -19,7 +17,6 @@ def test_module_subcommand():
     assert "Module-related sub-commands" in result.stdout
 
 
-@pytest.mark.serial
 def test_logic_list_subcommand():
 
     runner = CliRunner()
@@ -30,7 +27,6 @@ def test_logic_list_subcommand():
     assert "logic.xor" not in result.stdout
 
 
-@pytest.mark.serial
 def test_logic_list_filter_subcommand():
 
     runner = CliRunner()
@@ -41,7 +37,6 @@ def test_logic_list_filter_subcommand():
     assert "logic.xor" not in result.stdout
 
 
-@pytest.mark.serial
 def test_module_explain_subcommand():
 
     runner = CliRunner()
@@ -51,7 +46,6 @@ def test_module_explain_subcommand():
     assert "Processing source code" in result.stdout
 
 
-@pytest.mark.serial
 def test_module_explain_instance_subcommand():
 
     runner = CliRunner()

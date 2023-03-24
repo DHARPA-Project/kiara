@@ -57,6 +57,7 @@ dependencies = [
     "pp-ez>=0.2.0",
     "pydantic[email]>=1.10.0",
     "pytz>=2022.6",
+    "pyzmq>=25.0.0",
     "regex>=2022.4.0",
     "rich>=12.4.0",
     "rich-click>=1.0.0",
@@ -291,9 +292,6 @@ write_to = "src/kiara/version.txt"
 [tool.pytest.ini_options]
 pythonpath = [
     "src"
-]
-markers = [
-    "serial"
 ]
 
 [tool.ruff]

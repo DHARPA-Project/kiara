@@ -185,7 +185,8 @@ class Kiara(object):
                 if supported_type == "workflow":
                     self.workflow_registry.register_archive(archive_obj, alias=archive_alias)  # type: ignore
 
-        self.lock_context()
+        if self._runtime_config.lock_context:
+            self.lock_context()
 
     def lock_context(self):
         """Lock the context, so that it can't be used by other processes."""

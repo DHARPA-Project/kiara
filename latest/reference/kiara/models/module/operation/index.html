@@ -6439,7 +6439,15 @@
 <span class="normal">429</span>
 <span class="normal">430</span>
 <span class="normal">431</span>
-<span class="normal">432</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Operation</span><span class="p">(</span><span class="n">Manifest</span><span class="p">):</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Operation</span><span class="p">(</span><span class="n">Manifest</span><span class="p">):</span>
 
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.operation&quot;</span>
 
@@ -6631,6 +6639,10 @@
             <span class="p">)</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Outputs&quot;</span><span class="p">,</span> <span class="n">outputs_table</span><span class="p">)</span>
 
+        <span class="kn">from</span> <span class="nn">kiara.interfaces.python_api</span> <span class="kn">import</span> <span class="n">ModuleTypeInfo</span>
+
+        <span class="n">module_type_md</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ModuleTypeInfo</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="k">if</span> <span class="n">include_module_details</span><span class="p">:</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module type&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_type</span><span class="p">)</span>
 
@@ -6641,8 +6653,6 @@
                 <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module config&quot;</span><span class="p">,</span> <span class="n">conf</span><span class="p">)</span>
-
-            <span class="kn">from</span> <span class="nn">kiara.interfaces.python_api</span> <span class="kn">import</span> <span class="n">ModuleTypeInfo</span>
 
             <span class="n">module_type_md</span> <span class="o">=</span> <span class="n">ModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
                 <span class="n">type_cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_details</span><span class="o">.</span><span class="n">get_class</span><span class="p">(),</span>  <span class="c1"># type: ignore</span>
@@ -6657,6 +6667,12 @@
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module metadata&quot;</span><span class="p">,</span> <span class="n">m_md</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">include_src</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">module_type_md</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">module_type_md</span> <span class="o">=</span> <span class="n">ModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
+                    <span class="n">type_cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_details</span><span class="o">.</span><span class="n">get_class</span><span class="p">(),</span>  <span class="c1"># type: ignore</span>
+                    <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                <span class="p">)</span>
+
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Source code&quot;</span><span class="p">,</span> <span class="n">module_type_md</span><span class="o">.</span><span class="n">module_src</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">table</span>
@@ -7189,7 +7205,15 @@
 <span class="normal">429</span>
 <span class="normal">430</span>
 <span class="normal">431</span>
-<span class="normal">432</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a printable overview of this operations details.</span>
 
@@ -7234,6 +7258,10 @@
         <span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Outputs&quot;</span><span class="p">,</span> <span class="n">outputs_table</span><span class="p">)</span>
 
+    <span class="kn">from</span> <span class="nn">kiara.interfaces.python_api</span> <span class="kn">import</span> <span class="n">ModuleTypeInfo</span>
+
+    <span class="n">module_type_md</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ModuleTypeInfo</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
     <span class="k">if</span> <span class="n">include_module_details</span><span class="p">:</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module type&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_type</span><span class="p">)</span>
 
@@ -7244,8 +7272,6 @@
             <span class="n">background_color</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module config&quot;</span><span class="p">,</span> <span class="n">conf</span><span class="p">)</span>
-
-        <span class="kn">from</span> <span class="nn">kiara.interfaces.python_api</span> <span class="kn">import</span> <span class="n">ModuleTypeInfo</span>
 
         <span class="n">module_type_md</span> <span class="o">=</span> <span class="n">ModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
             <span class="n">type_cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_details</span><span class="o">.</span><span class="n">get_class</span><span class="p">(),</span>  <span class="c1"># type: ignore</span>
@@ -7260,6 +7286,12 @@
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Module metadata&quot;</span><span class="p">,</span> <span class="n">m_md</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">include_src</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">module_type_md</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">module_type_md</span> <span class="o">=</span> <span class="n">ModuleTypeInfo</span><span class="o">.</span><span class="n">create_from_type_class</span><span class="p">(</span>
+                <span class="n">type_cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">module_details</span><span class="o">.</span><span class="n">get_class</span><span class="p">(),</span>  <span class="c1"># type: ignore</span>
+                <span class="n">kiara</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="p">)</span>
+
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Source code&quot;</span><span class="p">,</span> <span class="n">module_type_md</span><span class="o">.</span><span class="n">module_src</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">table</span>
@@ -7296,18 +7328,18 @@
 
         <details class="quote">
           <summary>Source code in <code>kiara/models/module/operation.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">695</span>
-<span class="normal">696</span>
-<span class="normal">697</span>
-<span class="normal">698</span>
-<span class="normal">699</span>
-<span class="normal">700</span>
-<span class="normal">701</span>
-<span class="normal">702</span>
-<span class="normal">703</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">703</span>
 <span class="normal">704</span>
 <span class="normal">705</span>
-<span class="normal">706</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Filter</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+<span class="normal">706</span>
+<span class="normal">707</span>
+<span class="normal">708</span>
+<span class="normal">709</span>
+<span class="normal">710</span>
+<span class="normal">711</span>
+<span class="normal">712</span>
+<span class="normal">713</span>
+<span class="normal">714</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Filter</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
 
     <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The underlying operation providing which does the filtering.&quot;</span>

@@ -1,0 +1,8018 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Documentation for the Kiara project">
+      
+      
+        <meta name="author" content="Markus Binsteiner">
+      
+      
+        <link rel="canonical" href="https://dharpa.org/kiara/0.4.34/included_components/module_types/">
+      
+      
+        <link rel="prev" href="../data_types/">
+      
+      
+        <link rel="next" href="../kiara_model_types/">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.4">
+    
+    
+      
+        <title>module_types - Kiara</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.240905d7.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.a0c5b2b5.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#kiara_info.module_types.deserialize.file" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Kiara" class="md-header__button md-logo" aria-label="Kiara" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Kiara
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              module_types
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/DHARPA-Project/kiara" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Kiara" class="md-nav__button md-logo" aria-label="Kiara" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Kiara
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/DHARPA-Project/kiara" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../development/">Development</a>
+          
+            <label for="__nav_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Development
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/install/" class="md-nav__link">
+        Install development environment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../development/modules/render_value/" class="md-nav__link">
+        Modules
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Included components
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Included components
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        Summary
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data_types/" class="md-nav__link">
+        data_types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          module_types
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        module_types
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.deserialize.file" class="md-nav__link">
+    deserialize.file
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.deserialize.file_bundle" class="md-nav__link">
+    deserialize.file_bundle
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.deserialize.from_json" class="md-nav__link">
+    deserialize.from_json
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.export.file" class="md-nav__link">
+    export.file
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.file_bundle.pick.file" class="md-nav__link">
+    file_bundle.pick.file
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.file_bundle.pick.sub_folder" class="md-nav__link">
+    file_bundle.pick.sub_folder
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.import.local.file" class="md-nav__link">
+    import.local.file
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.import.local.file_bundle" class="md-nav__link">
+    import.local.file_bundle
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.load.bytes" class="md-nav__link">
+    load.bytes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.load.internal_model" class="md-nav__link">
+    load.internal_model
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.load.string" class="md-nav__link">
+    load.string
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.pipeline" class="md-nav__link">
+    pipeline
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.pretty_print.any.value" class="md-nav__link">
+    pretty_print.any.value
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.pretty_print.value" class="md-nav__link">
+    pretty_print.value
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.render.value" class="md-nav__link">
+    render.value
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.unpickle.value" class="md-nav__link">
+    unpickle.value
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.value.extract_metadata" class="md-nav__link">
+    value.extract_metadata
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kiara_model_types/" class="md-nav__link">
+        kiara_model_types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operation_types/" class="md-nav__link">
+        operation_types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operations/" class="md-nav__link">
+        operations
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          API reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          API reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/__init__/">kiara</a>
+          
+            <label for="__nav_4_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          kiara
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/api/" class="md-nav__link">
+        api
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_2" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/context/__init__/">context</a>
+          
+            <label for="__nav_4_1_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          context
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/context/config/" class="md-nav__link">
+        config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/context/orm/" class="md-nav__link">
+        orm
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/context/runtime_config/" class="md-nav__link">
+        runtime_config
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_3" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/data_types/__init__/">data_types</a>
+          
+            <label for="__nav_4_1_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_3">
+          <span class="md-nav__icon md-icon"></span>
+          data_types
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_3_1" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/data_types/included_core_types/__init__/">included_core_types</a>
+          
+            <label for="__nav_4_1_3_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_3_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          included_core_types
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/data_types/included_core_types/filesystem/" class="md-nav__link">
+        filesystem
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_3_1_2" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/data_types/included_core_types/internal/__init__/">internal</a>
+          
+            <label for="__nav_4_1_3_1_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_3_1_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_3_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          internal
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/data_types/included_core_types/internal/render_value/" class="md-nav__link">
+        render_value
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/data_types/included_core_types/metadata/" class="md-nav__link">
+        metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/data_types/included_core_types/serialization/" class="md-nav__link">
+        serialization
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/defaults/" class="md-nav__link">
+        defaults
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_5" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/doc/__init__/">doc</a>
+          
+            <label for="__nav_4_1_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_5">
+          <span class="md-nav__icon md-icon"></span>
+          doc
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/doc/gen_info_pages/" class="md-nav__link">
+        gen_info_pages
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/doc/generate_api_doc/" class="md-nav__link">
+        generate_api_doc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/doc/mkdocs_macros_cli/" class="md-nav__link">
+        mkdocs_macros_cli
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/doc/mkdocs_macros_kiara/" class="md-nav__link">
+        mkdocs_macros_kiara
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_5_5" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/doc/mkdocstrings/__init__/">mkdocstrings</a>
+          
+            <label for="__nav_4_1_5_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_5_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_5_5">
+          <span class="md-nav__icon md-icon"></span>
+          mkdocstrings
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/doc/mkdocstrings/collector/" class="md-nav__link">
+        collector
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/doc/mkdocstrings/handler/" class="md-nav__link">
+        handler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/doc/mkdocstrings/renderer/" class="md-nav__link">
+        renderer
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/exceptions/" class="md-nav__link">
+        exceptions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/__init__/">interfaces</a>
+          
+            <label for="__nav_4_1_7">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7">
+          <span class="md-nav__icon md-icon"></span>
+          interfaces
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7_1" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/cli/__init__/">cli</a>
+          
+            <label for="__nav_4_1_7_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_7_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7_1">
+          <span class="md-nav__icon md-icon"></span>
+          cli
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7_1_1" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/cli/config/__init__/">config</a>
+          
+            <label for="__nav_4_1_7_1_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_7_1_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7_1_1">
+          <span class="md-nav__icon md-icon"></span>
+          config
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/cli/config/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7_1_2" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/cli/context/__init__/">context</a>
+          
+            <label for="__nav_4_1_7_1_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_7_1_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          context
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/cli/context/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7_1_3" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/cli/data/__init__/">data</a>
+          
+            <label for="__nav_4_1_7_1_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_7_1_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7_1_3">
+          <span class="md-nav__icon md-icon"></span>
+          data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/cli/data/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7_1_4" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/cli/module/__init__/">module</a>
+          
+            <label for="__nav_4_1_7_1_4">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_7_1_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7_1_4">
+          <span class="md-nav__icon md-icon"></span>
+          module
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/cli/module/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7_1_5" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/cli/operation/__init__/">operation</a>
+          
+            <label for="__nav_4_1_7_1_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_7_1_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7_1_5">
+          <span class="md-nav__icon md-icon"></span>
+          operation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/cli/operation/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7_1_6" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/cli/pipeline/__init__/">pipeline</a>
+          
+            <label for="__nav_4_1_7_1_6">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_7_1_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7_1_6">
+          <span class="md-nav__icon md-icon"></span>
+          pipeline
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/cli/pipeline/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/cli/proxy_cli/" class="md-nav__link">
+        proxy_cli
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7_1_8" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/cli/render/__init__/">render</a>
+          
+            <label for="__nav_4_1_7_1_8">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_7_1_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7_1_8">
+          <span class="md-nav__icon md-icon"></span>
+          render
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/cli/render/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/cli/run/" class="md-nav__link">
+        run
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7_1_10" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/cli/type/__init__/">type</a>
+          
+            <label for="__nav_4_1_7_1_10">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_7_1_10_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7_1_10">
+          <span class="md-nav__icon md-icon"></span>
+          type
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/cli/type/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7_1_11" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/cli/workflow/__init__/">workflow</a>
+          
+            <label for="__nav_4_1_7_1_11">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_7_1_11_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7_1_11">
+          <span class="md-nav__icon md-icon"></span>
+          workflow
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/cli/workflow/commands/" class="md-nav__link">
+        commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7_2" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/python_api/__init__/">python_api</a>
+          
+            <label for="__nav_4_1_7_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_7_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7_2">
+          <span class="md-nav__icon md-icon"></span>
+          python_api
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/python_api/batch/" class="md-nav__link">
+        batch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7_2_2" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/python_api/models/__init__/">models</a>
+          
+            <label for="__nav_4_1_7_2_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_7_2_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7_2_2">
+          <span class="md-nav__icon md-icon"></span>
+          models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/python_api/models/info/" class="md-nav__link">
+        info
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/python_api/models/job/" class="md-nav__link">
+        job
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/python_api/models/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/python_api/operation/" class="md-nav__link">
+        operation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/python_api/proxy/" class="md-nav__link">
+        proxy
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/python_api/utils/" class="md-nav__link">
+        utils
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/python_api/value/" class="md-nav__link">
+        value
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/python_api/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7_3" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/tui/__init__/">tui</a>
+          
+            <label for="__nav_4_1_7_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_7_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7_3">
+          <span class="md-nav__icon md-icon"></span>
+          tui
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/tui/pager/" class="md-nav__link">
+        pager
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7_3_2" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/interfaces/tui/widgets/__init__/">widgets</a>
+          
+            <label for="__nav_4_1_7_3_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_7_3_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          widgets
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/interfaces/tui/widgets/pager/" class="md-nav__link">
+        pager
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_8" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/models/__init__/">models</a>
+          
+            <label for="__nav_4_1_8">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_8">
+          <span class="md-nav__icon md-icon"></span>
+          models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/aliases/__init__/" class="md-nav__link">
+        aliases
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/archives/" class="md-nav__link">
+        archives
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/context/" class="md-nav__link">
+        context
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/data_types/" class="md-nav__link">
+        data_types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/documentation/" class="md-nav__link">
+        documentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_8_6" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/models/events/__init__/">events</a>
+          
+            <label for="__nav_4_1_8_6">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_8_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_8_6">
+          <span class="md-nav__icon md-icon"></span>
+          events
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/events/alias_registry/" class="md-nav__link">
+        alias_registry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/events/data_registry/" class="md-nav__link">
+        data_registry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/events/destiny_registry/" class="md-nav__link">
+        destiny_registry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/events/job_registry/" class="md-nav__link">
+        job_registry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/events/pipeline/" class="md-nav__link">
+        pipeline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/events/workflow_registry/" class="md-nav__link">
+        workflow_registry
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/filesystem/" class="md-nav__link">
+        filesystem
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_8_8" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/models/module/__init__/">module</a>
+          
+            <label for="__nav_4_1_8_8">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_8_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_8_8">
+          <span class="md-nav__icon md-icon"></span>
+          module
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/module/destiny/" class="md-nav__link">
+        destiny
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/module/jobs/" class="md-nav__link">
+        jobs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/module/manifest/" class="md-nav__link">
+        manifest
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/module/operation/" class="md-nav__link">
+        operation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/module/persistence/" class="md-nav__link">
+        persistence
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_8_8_6" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/models/module/pipeline/__init__/">pipeline</a>
+          
+            <label for="__nav_4_1_8_8_6">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_8_8_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_8_8_6">
+          <span class="md-nav__icon md-icon"></span>
+          pipeline
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/module/pipeline/controller/" class="md-nav__link">
+        controller
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/module/pipeline/pipeline/" class="md-nav__link">
+        pipeline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/module/pipeline/stages/" class="md-nav__link">
+        stages
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/module/pipeline/structure/" class="md-nav__link">
+        structure
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/module/pipeline/value_refs/" class="md-nav__link">
+        value_refs
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/python_class/" class="md-nav__link">
+        python_class
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_8_10" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/models/rendering/__init__/">rendering</a>
+          
+            <label for="__nav_4_1_8_10">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_8_10_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_8_10">
+          <span class="md-nav__icon md-icon"></span>
+          rendering
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/rendering/values/" class="md-nav__link">
+        values
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_8_11" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/models/runtime_environment/__init__/">runtime_environment</a>
+          
+            <label for="__nav_4_1_8_11">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_8_11_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_8_11">
+          <span class="md-nav__icon md-icon"></span>
+          runtime_environment
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/runtime_environment/kiara/" class="md-nav__link">
+        kiara
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/runtime_environment/operating_system/" class="md-nav__link">
+        operating_system
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/runtime_environment/python/" class="md-nav__link">
+        python
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_8_12" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/models/values/__init__/">values</a>
+          
+            <label for="__nav_4_1_8_12">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_8_12_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_8_12">
+          <span class="md-nav__icon md-icon"></span>
+          values
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/values/data_type/" class="md-nav__link">
+        data_type
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/values/lineage/" class="md-nav__link">
+        lineage
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/values/matchers/" class="md-nav__link">
+        matchers
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/values/value/" class="md-nav__link">
+        value
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_8_12_5" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/models/values/value_metadata/__init__/">value_metadata</a>
+          
+            <label for="__nav_4_1_8_12_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_8_12_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_8_12_5">
+          <span class="md-nav__icon md-icon"></span>
+          value_metadata
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/values/value_metadata/included_metadata_types/__init__/" class="md-nav__link">
+        included_metadata_types
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/values/value_schema/" class="md-nav__link">
+        value_schema
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/models/workflow/" class="md-nav__link">
+        workflow
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_9" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/modules/__init__/">modules</a>
+          
+            <label for="__nav_4_1_9">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_9_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_9">
+          <span class="md-nav__icon md-icon"></span>
+          modules
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_9_1" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/modules/included_core_modules/__init__/">included_core_modules</a>
+          
+            <label for="__nav_4_1_9_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_9_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_9_1">
+          <span class="md-nav__icon md-icon"></span>
+          included_core_modules
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/modules/included_core_modules/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/modules/included_core_modules/export_as/" class="md-nav__link">
+        export_as
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/modules/included_core_modules/filesystem/" class="md-nav__link">
+        filesystem
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/modules/included_core_modules/filter/" class="md-nav__link">
+        filter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/modules/included_core_modules/metadata/" class="md-nav__link">
+        metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/modules/included_core_modules/pipeline/" class="md-nav__link">
+        pipeline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/modules/included_core_modules/pretty_print/" class="md-nav__link">
+        pretty_print
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/modules/included_core_modules/render_value/" class="md-nav__link">
+        render_value
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/modules/included_core_modules/serialization/" class="md-nav__link">
+        serialization
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_10" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/operations/__init__/">operations</a>
+          
+            <label for="__nav_4_1_10">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_10_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_10">
+          <span class="md-nav__icon md-icon"></span>
+          operations
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_10_1" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/operations/included_core_operations/__init__/">included_core_operations</a>
+          
+            <label for="__nav_4_1_10_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_10_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_10_1">
+          <span class="md-nav__icon md-icon"></span>
+          included_core_operations
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/operations/included_core_operations/create_from/" class="md-nav__link">
+        create_from
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/operations/included_core_operations/export_as/" class="md-nav__link">
+        export_as
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/operations/included_core_operations/filter/" class="md-nav__link">
+        filter
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/operations/included_core_operations/import_data/" class="md-nav__link">
+        import_data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/operations/included_core_operations/metadata/" class="md-nav__link">
+        metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/operations/included_core_operations/pipeline/" class="md-nav__link">
+        pipeline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/operations/included_core_operations/pretty_print/" class="md-nav__link">
+        pretty_print
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/operations/included_core_operations/render_data/" class="md-nav__link">
+        render_data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/operations/included_core_operations/render_value/" class="md-nav__link">
+        render_value
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/operations/included_core_operations/serialize/" class="md-nav__link">
+        serialize
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_11" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/processing/__init__/">processing</a>
+          
+            <label for="__nav_4_1_11">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_11_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_11">
+          <span class="md-nav__icon md-icon"></span>
+          processing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/processing/synchronous/" class="md-nav__link">
+        synchronous
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_12" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/registries/__init__/">registries</a>
+          
+            <label for="__nav_4_1_12">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_12_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_12">
+          <span class="md-nav__icon md-icon"></span>
+          registries
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_12_1" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/registries/aliases/__init__/">aliases</a>
+          
+            <label for="__nav_4_1_12_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_12_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_12_1">
+          <span class="md-nav__icon md-icon"></span>
+          aliases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/aliases/archives/" class="md-nav__link">
+        archives
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_12_2" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/registries/data/__init__/">data</a>
+          
+            <label for="__nav_4_1_12_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_12_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_12_2">
+          <span class="md-nav__icon md-icon"></span>
+          data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_12_2_1" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/registries/data/data_store/__init__/">data_store</a>
+          
+            <label for="__nav_4_1_12_2_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_12_2_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_12_2_1">
+          <span class="md-nav__icon md-icon"></span>
+          data_store
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/data/data_store/filesystem_store/" class="md-nav__link">
+        filesystem_store
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_12_3" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/registries/destinies/__init__/">destinies</a>
+          
+            <label for="__nav_4_1_12_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_12_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_12_3">
+          <span class="md-nav__icon md-icon"></span>
+          destinies
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/destinies/filesystem_store/" class="md-nav__link">
+        filesystem_store
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/destinies/registry/" class="md-nav__link">
+        registry
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/environment/__init__/" class="md-nav__link">
+        environment
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_12_5" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/registries/events/__init__/">events</a>
+          
+            <label for="__nav_4_1_12_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_12_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_12_5">
+          <span class="md-nav__icon md-icon"></span>
+          events
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/events/metadata/" class="md-nav__link">
+        metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/events/registry/" class="md-nav__link">
+        registry
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/ids/__init__/" class="md-nav__link">
+        ids
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_12_7" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/registries/jobs/__init__/">jobs</a>
+          
+            <label for="__nav_4_1_12_7">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_12_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_12_7">
+          <span class="md-nav__icon md-icon"></span>
+          jobs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_12_7_1" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/registries/jobs/job_store/__init__/">job_store</a>
+          
+            <label for="__nav_4_1_12_7_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="5" aria-labelledby="__nav_4_1_12_7_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_12_7_1">
+          <span class="md-nav__icon md-icon"></span>
+          job_store
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/jobs/job_store/filesystem_store/" class="md-nav__link">
+        filesystem_store
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/models/__init__/" class="md-nav__link">
+        models
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/modules/__init__/" class="md-nav__link">
+        modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/operations/__init__/" class="md-nav__link">
+        operations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/rendering/__init__/" class="md-nav__link">
+        rendering
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/templates/__init__/" class="md-nav__link">
+        templates
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/types/__init__/" class="md-nav__link">
+        types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_12_14" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/registries/workflows/__init__/">workflows</a>
+          
+            <label for="__nav_4_1_12_14">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_12_14_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_12_14">
+          <span class="md-nav__icon md-icon"></span>
+          workflows
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/registries/workflows/archives/" class="md-nav__link">
+        archives
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_13" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/renderers/__init__/">renderers</a>
+          
+            <label for="__nav_4_1_13">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_13_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_13">
+          <span class="md-nav__icon md-icon"></span>
+          renderers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_13_1" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/renderers/included_renderers/__init__/">included_renderers</a>
+          
+            <label for="__nav_4_1_13_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_13_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_13_1">
+          <span class="md-nav__icon md-icon"></span>
+          included_renderers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/renderers/included_renderers/api/" class="md-nav__link">
+        api
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/renderers/included_renderers/pipeline/" class="md-nav__link">
+        pipeline
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/renderers/included_renderers/value/" class="md-nav__link">
+        value
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/renderers/jinja/" class="md-nav__link">
+        jinja
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_14" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/utils/__init__/">utils</a>
+          
+            <label for="__nav_4_1_14">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_14_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_14">
+          <span class="md-nav__icon md-icon"></span>
+          utils
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/class_loading/" class="md-nav__link">
+        class_loading
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_14_2" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/utils/cli/__init__/">cli</a>
+          
+            <label for="__nav_4_1_14_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="4" aria-labelledby="__nav_4_1_14_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_14_2">
+          <span class="md-nav__icon md-icon"></span>
+          cli
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/cli/exceptions/" class="md-nav__link">
+        exceptions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/cli/rich_click/" class="md-nav__link">
+        rich_click
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/cli/run/" class="md-nav__link">
+        run
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/concurrency/" class="md-nav__link">
+        concurrency
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/data/" class="md-nav__link">
+        data
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/db/" class="md-nav__link">
+        db
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/debug/" class="md-nav__link">
+        debug
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/develop/__init__/" class="md-nav__link">
+        develop
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/dicts/" class="md-nav__link">
+        dicts
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/doc/" class="md-nav__link">
+        doc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/downloads/" class="md-nav__link">
+        downloads
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/files/" class="md-nav__link">
+        files
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/global_metadata/" class="md-nav__link">
+        global_metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/graphs/" class="md-nav__link">
+        graphs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/hashfs/__init__/" class="md-nav__link">
+        hashfs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/hashing/" class="md-nav__link">
+        hashing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/html/" class="md-nav__link">
+        html
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/json/" class="md-nav__link">
+        json
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/metadata/" class="md-nav__link">
+        metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/models/" class="md-nav__link">
+        models
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/modules/" class="md-nav__link">
+        modules
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/operations/" class="md-nav__link">
+        operations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/output/" class="md-nav__link">
+        output
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/pipelines/" class="md-nav__link">
+        pipelines
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/reflection/" class="md-nav__link">
+        reflection
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/string_vars/" class="md-nav__link">
+        string_vars
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/values/" class="md-nav__link">
+        values
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/windows/" class="md-nav__link">
+        windows
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/yaml/" class="md-nav__link">
+        yaml
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_15" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../reference/kiara/zmq/__init__/">zmq</a>
+          
+            <label for="__nav_4_1_15">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_15_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_15">
+          <span class="md-nav__icon md-icon"></span>
+          zmq
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/zmq/client/" class="md-nav__link">
+        client
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/zmq/messages/__init__/" class="md-nav__link">
+        messages
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/kiara/zmq/service/__init__/" class="md-nav__link">
+        service
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../design_docs/">Design docs</a>
+          
+            <label for="__nav_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Design docs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../design_docs/architecture/">Architecture</a>
+          
+            <label for="__nav_5_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5_1">
+          <span class="md-nav__icon md-icon"></span>
+          Architecture
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../design_docs/architecture/assumptions/" class="md-nav__link">
+        Assumptions & considerations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../design_docs/architecture/decisions/" class="md-nav__link">
+        Decisions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../design_docs/architecture/metadata/" class="md-nav__link">
+        Metadata
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_4" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../design_docs/architecture/data/">Data</a>
+          
+            <label for="__nav_5_1_4">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_5_1_4">
+          <span class="md-nav__icon md-icon"></span>
+          Data
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../design_docs/architecture/data/persistence/" class="md-nav__link">
+        Data persistence
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../design_docs/architecture/workflows/" class="md-nav__link">
+        Workflows
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.deserialize.file" class="md-nav__link">
+    deserialize.file
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.deserialize.file_bundle" class="md-nav__link">
+    deserialize.file_bundle
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.deserialize.from_json" class="md-nav__link">
+    deserialize.from_json
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.export.file" class="md-nav__link">
+    export.file
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.file_bundle.pick.file" class="md-nav__link">
+    file_bundle.pick.file
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.file_bundle.pick.sub_folder" class="md-nav__link">
+    file_bundle.pick.sub_folder
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.import.local.file" class="md-nav__link">
+    import.local.file
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.import.local.file_bundle" class="md-nav__link">
+    import.local.file_bundle
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.load.bytes" class="md-nav__link">
+    load.bytes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.load.internal_model" class="md-nav__link">
+    load.internal_model
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.load.string" class="md-nav__link">
+    load.string
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.pipeline" class="md-nav__link">
+    pipeline
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.pretty_print.any.value" class="md-nav__link">
+    pretty_print.any.value
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.pretty_print.value" class="md-nav__link">
+    pretty_print.value
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.render.value" class="md-nav__link">
+    render.value
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.unpickle.value" class="md-nav__link">
+    unpickle.value
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.module_types.value.extract_metadata" class="md-nav__link">
+    value.extract_metadata
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  <h1>module_types</h1>
+
+<h3 id="kiara_info.module_types.deserialize.file"><code>deserialize.file</code><a class="headerlink" href="#kiara_info.module_types.deserialize.file" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>deserialize.file</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>Deserialize data to a 'file' value instance.</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>DeserializeFileModule</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.filesystem</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.filesystem.DeserializeFileModule</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class DeserializeFileModule(DeserializeValueModule):
+
+    """Deserialize data to a 'file' value instance."""
+
+    _module_type_name = "deserialize.file"
+
+    @classmethod
+    def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
+        return {"python_object": FileModel}
+
+    @classmethod
+    def retrieve_serialized_value_type(cls) -> str:
+        return "file"
+
+    @classmethod
+    def retrieve_supported_serialization_profile(cls) -> str:
+        return "copy"
+
+    def to__python_object(self, data: SerializedData, **config: Any):
+
+        keys = list(data.get_keys())
+        keys.remove("__file_metadata__")
+        assert len(keys) == 1
+
+        file_metadata_chunks = data.get_serialized_data("__file_metadata__")
+        assert file_metadata_chunks.get_number_of_chunks() == 1
+        file_metadata_json = list(file_metadata_chunks.get_chunks(as_files=False))
+        assert len(file_metadata_json) == 1
+        file_metadata = orjson.loads(file_metadata_json[0])
+
+        chunks = data.get_serialized_data(keys[0])
+        assert chunks.get_number_of_chunks() == 1
+
+        files = list(chunks.get_chunks(as_files=True, symlink_ok=True))
+        assert len(files) == 1
+
+        file: str = files[0]  # type: ignore
+
+        fm = FileModel.load_file(
+            source=file,
+            file_name=file_metadata["file_name"],
+        )
+        return fm
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.deserialize.file_bundle"><code>deserialize.file_bundle</code><a class="headerlink" href="#kiara_info.module_types.deserialize.file_bundle" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>deserialize.file_bundle</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>Deserialize data to a 'file' value instance.</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>DeserializeFileBundleModule</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.filesystem</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.filesystem.DeserializeFileBundleModule</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class DeserializeFileBundleModule(DeserializeValueModule):
+
+    """Deserialize data to a 'file' value instance."""
+
+    _module_type_name = "deserialize.file_bundle"
+
+    @classmethod
+    def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
+        return {"python_object": FileBundle}
+
+    @classmethod
+    def retrieve_serialized_value_type(cls) -> str:
+        return "file_bundle"
+
+    @classmethod
+    def retrieve_supported_serialization_profile(cls) -> str:
+        return "copy"
+
+    def to__python_object(self, data: SerializedData, **config: Any):
+
+        keys = list(data.get_keys())
+        keys.remove("__file_metadata__")
+
+        file_metadata_chunks = data.get_serialized_data("__file_metadata__")
+        assert file_metadata_chunks.get_number_of_chunks() == 1
+        file_metadata_json = list(file_metadata_chunks.get_chunks(as_files=False))
+        assert len(file_metadata_json) == 1
+        metadata = orjson.loads(file_metadata_json[0])
+        file_metadata = metadata["included_files"]
+        bundle_name = metadata["bundle_name"]
+        # bundle_import_time = metadata["import_time"]
+        sum_size = metadata["size"]
+        number_of_files = metadata["number_of_files"]
+
+        included_files = {}
+        for rel_path in keys:
+
+            chunks = data.get_serialized_data(rel_path)
+            assert chunks.get_number_of_chunks() == 1
+
+            files = list(chunks.get_chunks(as_files=True, symlink_ok=True))
+            assert len(files) == 1
+
+            file: str = files[0]  # type: ignore
+            file_name = file_metadata[rel_path]["file_name"]
+            # import_time = file_metadata[rel_path]["import_time"]
+            fm = FileModel.load_file(source=file, file_name=file_name)
+            included_files[rel_path] = fm
+
+        fb = FileBundle(
+            included_files=included_files,
+            bundle_name=bundle_name,
+            # import_time=bundle_import_time,
+            number_of_files=number_of_files,
+            size=sum_size,
+        )
+        return fb
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.deserialize.from_json"><code>deserialize.from_json</code><a class="headerlink" href="#kiara_info.module_types.deserialize.from_json" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>deserialize.from_json</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>-- n/a --</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>DeserializeFromJsonModule</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.serialization</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.serialization.DeserializeFromJsonModule</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class DeserializeFromJsonModule(KiaraModule):
+
+    _module_type_name: str = "deserialize.from_json"
+    _config_cls = DeserializeJsonConfig
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+        return DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS
+
+    def create_inputs_schema(
+        self,
+    ) -> ValueMapSchema:
+
+        return {
+            "value": {
+                "type": "any",
+                "doc": "The value object to deserialize the data for.",
+            }
+        }
+
+    def create_outputs_schema(
+        self,
+    ) -> ValueMapSchema:
+
+        return {
+            "python_object": {
+                "type": "python_object",
+                "doc": "The deserialized python object.",
+            }
+        }
+
+    def process(self, inputs: ValueMap, outputs: ValueMap):
+
+        value: Value = inputs.get_value_obj("value")
+        serialized: SerializedData = value.serialized_data
+
+        chunks = serialized.get_serialized_data(self.get_config_value("result_path"))
+        assert chunks.get_number_of_chunks() == 1
+        _data = list(chunks.get_chunks(as_files=False))
+        assert len(_data) == 1
+        _chunk: bytes = _data[0]  # type: ignore
+
+        deserialized = orjson.loads(_chunk)
+
+        outputs.set_value("python_object", deserialized)
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.export.file"><code>export.file</code><a class="headerlink" href="#kiara_info.module_types.export.file" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>export.file</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>Export files.</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>ExportFileModule</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.filesystem</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.filesystem.ExportFileModule</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class ExportFileModule(DataExportModule):
+
+    """Export files."""
+
+    _module_type_name = "export.file"
+
+    def export__file__as__file(self, value: FileModel, base_path: str, name: str):
+
+        target_path = os.path.join(base_path, value.file_name)
+
+        shutil.copy2(value.path, target_path)
+
+        return {"files": target_path}
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.file_bundle.pick.file"><code>file_bundle.pick.file</code><a class="headerlink" href="#kiara_info.module_types.file_bundle.pick.file" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>file_bundle.pick.file</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>Pick a single file from a file_bundle value.</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>PickFileFromFileBundleModule</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.filesystem</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.filesystem.PickFileFromFileBundleModule</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class PickFileFromFileBundleModule(KiaraModule):
+
+    """Pick a single file from a file_bundle value."""
+
+    _module_type_name = "file_bundle.pick.file"
+
+    def create_inputs_schema(
+        self,
+    ) -> ValueMapSchema:
+
+        return {
+            "file_bundle": {"type": "file_bundle", "doc": "The file bundle."},
+            "path": {"type": "string", "doc": "The relative path of the file to pick."},
+        }
+
+    def create_outputs_schema(
+        self,
+    ) -> ValueMapSchema:
+
+        return {"file": {"type": "file", "doc": "The file."}}
+
+    def process(self, inputs: ValueMap, outputs: ValueMap):
+
+        file_bundle: FileBundle = inputs.get_value_data("file_bundle")
+        path: str = inputs.get_value_data("path")
+
+        if path not in file_bundle.included_files.keys():
+            raise KiaraProcessingException(
+                f"Can't pick file '{path}' from file bundle: file not available."
+            )
+
+        file: FileModel = file_bundle.included_files[path]
+
+        outputs.set_value("file", file)
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.file_bundle.pick.sub_folder"><code>file_bundle.pick.sub_folder</code><a class="headerlink" href="#kiara_info.module_types.file_bundle.pick.sub_folder" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>file_bundle.pick.sub_folder</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>Pick a sub-folder from a file_bundle, resulting in a new file_bundle.</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>PickSubBundle</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.filesystem</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.filesystem.PickSubBundle</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class PickSubBundle(KiaraModule):
+
+    """Pick a sub-folder from a file_bundle, resulting in a new file_bundle."""
+
+    _module_type_name = "file_bundle.pick.sub_folder"
+
+    def create_inputs_schema(
+        self,
+    ) -> ValueMapSchema:
+
+        return {
+            "file_bundle": {"type": "file_bundle", "doc": "The file bundle."},
+            "sub_path": {
+                "type": "string",
+                "doc": "The relative path of the sub-folder to pick.",
+            },
+        }
+
+    def create_outputs_schema(self) -> ValueMapSchema:
+        return {
+            "file_bundle": {
+                "type": "file_bundle",
+                "doc": "The picked (sub-)file_bundle.",
+            }
+        }
+
+    def process(self, inputs: ValueMap, outputs: ValueMap):
+
+        file_bundle: FileBundle = inputs.get_value_data("file_bundle")
+        sub_path: str = inputs.get_value_data("sub_path")
+
+        result = {}
+        for path, file in file_bundle.included_files.items():
+            if path.startswith(sub_path):
+                result[path] = file
+
+        if not result:
+            raise KiaraProcessingException(
+                f"Can't pick sub-folder '{sub_path}' from file bundle: no matches."
+            )
+
+        new_file_bundle: FileBundle = FileBundle.create_from_file_models(
+            result, bundle_name=f"{file_bundle.bundle_name}_{sub_path}"
+        )
+
+        outputs.set_value("file_bundle", new_file_bundle)
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.import.local.file"><code>import.local.file</code><a class="headerlink" href="#kiara_info.module_types.import.local.file" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>import.local.file</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>Import a file from the local filesystem.</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>ImportLocalFileModule</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.filesystem</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.filesystem.ImportLocalFileModule</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class ImportLocalFileModule(KiaraModule):
+
+    """Import a file from the local filesystem."""
+
+    _module_type_name = "import.local.file"
+
+    def create_inputs_schema(
+        self,
+    ) -> ValueMapSchema:
+
+        return {"path": {"type": "string", "doc": "The local path to the file."}}
+
+    def create_outputs_schema(
+        self,
+    ) -> ValueMapSchema:
+
+        return {"file": {"type": "file", "doc": "The loaded files."}}
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+        return ModuleCharacteristics(is_idempotent=False)
+
+    def process(self, inputs: ValueMap, outputs: ValueMap):
+
+        path = inputs.get_value_data("path")
+
+        file = FileModel.load_file(source=path)
+        outputs.set_value("file", file)
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.import.local.file_bundle"><code>import.local.file_bundle</code><a class="headerlink" href="#kiara_info.module_types.import.local.file_bundle" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>import.local.file_bundle</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>Import a folder (file_bundle) from the local filesystem.</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>ImportLocalFileBundleModule</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.filesystem</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.filesystem.ImportLocalFileBundleModule</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class ImportLocalFileBundleModule(KiaraModule):
+
+    """Import a folder (file_bundle) from the local filesystem."""
+
+    _module_type_name = "import.local.file_bundle"
+    _config_cls = ImportFileBundleConfig
+
+    def create_inputs_schema(
+        self,
+    ) -> ValueMapSchema:
+
+        return {
+            "path": {"type": "string", "doc": "The local path of the folder to import."}
+        }
+
+    def create_outputs_schema(
+        self,
+    ) -> ValueMapSchema:
+
+        return {
+            "file_bundle": {"type": "file_bundle", "doc": "The imported file bundle."}
+        }
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+        return DEFAULT_NO_IDEMPOTENT_MODULE_CHARACTERISTICS
+
+    def process(self, inputs: ValueMap, outputs: ValueMap):
+
+        path = inputs.get_value_data("path")
+
+        include = self.get_config_value("include_file_types")
+        exclude = self.get_config_value("exclude_file_types")
+
+        config = FolderImportConfig(include_files=include, exclude_files=exclude)
+
+        file_bundle = FileBundle.import_folder(source=path, import_config=config)
+        outputs.set_value("file_bundle", file_bundle)
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.load.bytes"><code>load.bytes</code><a class="headerlink" href="#kiara_info.module_types.load.bytes" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>load.bytes</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>-- n/a --</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>LoadBytesModule</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.serialization</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.serialization.LoadBytesModule</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class LoadBytesModule(DeserializeValueModule):
+
+    _module_type_name = "load.bytes"
+
+    @classmethod
+    def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
+        return {"python_object": bytes}
+
+    @classmethod
+    def retrieve_supported_serialization_profile(cls) -> str:
+        return "raw"
+
+    @classmethod
+    def retrieve_serialized_value_type(cls) -> str:
+        return "bytes"
+
+    def to__python_object(self, data: SerializedData, **config: Any) -> bytes:
+
+        chunks = data.get_serialized_data("bytes")
+        assert chunks.get_number_of_chunks() == 1
+        _chunks = list(chunks.get_chunks(as_files=False))
+        assert len(_chunks) == 1
+        _chunk: bytes = _chunks[0]  # type: ignore
+        return _chunk
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.load.internal_model"><code>load.internal_model</code><a class="headerlink" href="#kiara_info.module_types.load.internal_model" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>load.internal_model</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>-- n/a --</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>LoadInternalModel</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.serialization</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.serialization.LoadInternalModel</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class LoadInternalModel(DeserializeValueModule):
+
+    _module_type_name = "load.internal_model"
+
+    @classmethod
+    def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
+        return {"python_object": KiaraModel}
+
+    @classmethod
+    def retrieve_supported_serialization_profile(cls) -> str:
+        return "json"
+
+    @classmethod
+    def retrieve_serialized_value_type(cls) -> str:
+        return "internal_model"
+
+    def to__python_object(self, data: SerializedData, **config: Any) -> KiaraModel:
+
+        chunks = data.get_serialized_data("data")
+        assert chunks.get_number_of_chunks() == 1
+        _chunks = list(chunks.get_chunks(as_files=False))
+        assert len(_chunks) == 1
+
+        bytes_string: bytes = _chunks[0]  # type: ignore
+        model_data = orjson.loads(bytes_string)
+
+        model_id: str = data.data_type_config["kiara_model_id"]
+        model_registry = ModelRegistry.instance()
+        m_cls = model_registry.get_model_cls(kiara_model_id=model_id)
+        obj = m_cls(**model_data)
+        return obj
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.load.string"><code>load.string</code><a class="headerlink" href="#kiara_info.module_types.load.string" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>load.string</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>-- n/a --</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>LoadStringModule</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.serialization</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.serialization.LoadStringModule</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class LoadStringModule(DeserializeValueModule):
+
+    _module_type_name = "load.string"
+
+    @classmethod
+    def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
+        return {"python_object": str}
+
+    @classmethod
+    def retrieve_supported_serialization_profile(cls) -> str:
+        return "raw"
+
+    @classmethod
+    def retrieve_serialized_value_type(cls) -> str:
+        return "string"
+
+    def to__python_object(self, data: SerializedData, **config: Any) -> str:
+
+        chunks = data.get_serialized_data("string")
+        assert chunks.get_number_of_chunks() == 1
+        _chunks = list(chunks.get_chunks(as_files=False))
+        assert len(_chunks) == 1
+
+        bytes_string: bytes = _chunks[0]  # type: ignore
+        return bytes_string.decode("utf-8")
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.pipeline"><code>pipeline</code><a class="headerlink" href="#kiara_info.module_types.pipeline" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>pipeline</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>A utility module to run multiple connected inner-modules and present it as its own entity.</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>PipelineModule</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.pipeline</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.pipeline.PipelineModule</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class PipelineModule(KiaraModule):
+
+    """A utility module to run multiple connected inner-modules and present it as its own entity."""
+
+    _config_cls = PipelineConfig
+    _module_type_name = "pipeline"
+
+    def __init__(
+        self,
+        module_config: Union[None, KIARA_CONFIG, Mapping[str, Any]] = None,
+    ):
+        self._job_registry: Union[JobRegistry, None] = None
+        super().__init__(module_config=module_config)
+
+    @classmethod
+    def is_pipeline(cls) -> bool:
+        return True
+
+    def _set_job_registry(self, job_registry: "JobRegistry"):
+        self._job_registry = job_registry
+
+    @property
+    def operation(self) -> "Operation":
+
+        if self._operation is not None:
+            return self._operation
+
+        from kiara.models.module.operation import Operation
+
+        self._operation = Operation.create_from_module(self, doc=self.config.doc)
+        return self._operation
+
+    def create_inputs_schema(
+        self,
+    ) -> ValueMapSchema:
+
+        pipeline_structure: PipelineStructure = self.config.structure
+        inputs_schema = pipeline_structure.pipeline_inputs_schema
+        return inputs_schema
+
+    def create_outputs_schema(
+        self,
+    ) -> ValueMapSchema:
+        pipeline_structure: PipelineStructure = self.config.structure
+        return pipeline_structure.pipeline_outputs_schema
+
+    def process(self, inputs: ValueMap, outputs: ValueMapWritable, job_log: JobLog):
+
+        pipeline_structure: PipelineStructure = self.config.structure
+
+        pipeline = Pipeline(structure=pipeline_structure, kiara=outputs._kiara)
+
+        assert self._job_registry is not None
+        controller = SinglePipelineBatchController(
+            pipeline=pipeline, job_registry=self._job_registry
+        )
+
+        pipeline.set_pipeline_inputs(inputs=inputs)
+        step_details = controller.process_pipeline()
+
+        errors: Dict[str, Union[Exception, uuid.UUID]] = {}
+        for step_id, details in step_details.items():
+            if isinstance(details, Exception):
+                errors[step_id] = details
+            else:
+                job = self._job_registry.get_job(details)
+                if job.error:
+                    if job._exception:
+                        errors[step_id] = job._exception
+                    else:
+                        errors[step_id] = Exception(job.error)
+
+        if errors:
+            msg = "Error processing pipeline:"
+            for f, e in errors.items():
+                msg = f"{msg}\n  - {f}: {e}"
+
+            raise KiaraProcessingException(f"Errors while processing pipeline: {msg}")
+
+        # TODO: resolve values first?
+        outputs.set_values(**pipeline.get_current_pipeline_outputs())
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.pretty_print.any.value"><code>pretty_print.any.value</code><a class="headerlink" href="#kiara_info.module_types.pretty_print.any.value" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>pretty_print.any.value</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>-- n/a --</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>PrettyPrintAnyValueModule</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.pretty_print</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.pretty_print.PrettyPrintAnyValueModule</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class PrettyPrintAnyValueModule(PrettyPrintModule):
+
+    _module_type_name = "pretty_print.any.value"
+
+    # def pretty_print__any__as__string(self, value: Value, render_config: Dict[str, Any]):
+    #
+    #     data = value.data
+    #     if isinstance(data, KiaraModel):
+    #         return data.json(option=orjson.OPT_INDENT_2)
+    #     else:
+    #         return str(data)
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.pretty_print.value"><code>pretty_print.value</code><a class="headerlink" href="#kiara_info.module_types.pretty_print.value" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>pretty_print.value</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>-- n/a --</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>ValueTypePrettyPrintModule</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.pretty_print</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.pretty_print.ValueTypePrettyPrintModule</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class ValueTypePrettyPrintModule(KiaraModule):
+
+    _module_type_name = "pretty_print.value"
+    _config_cls = PrettyPrintConfig
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+        return DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS
+
+    def create_inputs_schema(
+        self,
+    ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
+
+        source_type = self.get_config_value("source_type")
+        assert source_type not in ["target", "base_name"]
+
+        schema = {
+            "value": {
+                "type": source_type,
+                "doc": "The value to render.",
+                "optional": True,
+            },
+            "render_config": {
+                "type": "any",
+                "doc": "Value type dependent render configuration.",
+                "optional": True,
+            },
+        }
+
+        return schema
+
+    def create_outputs_schema(
+        self,
+    ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
+
+        return {
+            "rendered_value": {
+                "type": self.get_config_value("target_type"),
+                "doc": "The rendered value.",
+            }
+        }
+
+    def process(self, inputs: ValueMap, outputs: ValueMap):
+
+        # source_type = self.get_config_value("source_type")
+        target_type = self.get_config_value("target_type")
+
+        source_value = inputs.get_value_obj("value")
+        render_config = inputs.get_value_obj("render_config")
+
+        if not source_value.is_set:
+            outputs.set_value("rendered_value", "-- none/not set --")
+            return
+
+        try:
+            data_type_cls = source_value.data_type_info.data_type_class.get_class()
+            data_type = data_type_cls(**source_value.value_schema.type_config)
+        except Exception as e:
+            source_data_type = source_value.data_type_name
+            log_message("data_type.unknown", data_type=source_data_type, error=e)
+
+            from kiara.data_types.included_core_types import AnyType
+
+            data_type = AnyType()
+
+        func_name = f"pretty_print_as__{target_type}"
+        func = getattr(data_type, func_name)
+
+        render_config_dict = render_config.data
+        if render_config_dict is None:
+            render_config_dict = {}
+
+        result = func(value=source_value, render_config=render_config_dict)
+        # TODO: check we have the correct type?
+        outputs.set_value("rendered_value", result)
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.render.value"><code>render.value</code><a class="headerlink" href="#kiara_info.module_types.render.value" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>render.value</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>A module that uses render methods attached to DataType classes.</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>ValueTypeRenderModule</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.render_value</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.render_value.ValueTypeRenderModule</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class ValueTypeRenderModule(KiaraModule):
+
+    """A module that uses render methods attached to DataType classes."""
+
+    _module_type_name = "render.value"
+    _config_cls = RenderValueModuleConfig
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+        return DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS
+
+    def create_inputs_schema(
+        self,
+    ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
+
+        source_type = self.get_config_value("source_type")
+        assert source_type not in ["target", "base_name"]
+
+        schema = {
+            "value": {
+                "type": source_type,
+                "doc": "The value to render.",
+                "optional": False,
+            },
+            "render_config": {
+                "type": "dict",
+                "doc": "Instructions/config on how (or what) to render the provided value.",
+                "default": {},
+            },
+        }
+
+        return schema
+
+    def create_outputs_schema(
+        self,
+    ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
+
+        outputs = {
+            "render_value_result": {
+                "type": "render_value_result",
+                "doc": "The rendered value, incl. some metadata.",
+            },
+        }
+
+        return outputs
+
+    def process(self, inputs: ValueMap, outputs: ValueMap):
+
+        source_value = inputs.get_value_obj("value")
+        if not source_value.is_set:
+            raise KiaraProcessingException(
+                f"Can't render value '{source_value.value_id}': value not set."
+            )
+
+        # source_type = self.get_config_value("source_type")
+        target_type = self.get_config_value("target_type")
+
+        render_scene: DictModel = inputs.get_value_data("render_config")
+
+        try:
+            data_type_cls = source_value.data_type_info.data_type_class.get_class()
+            data_type = data_type_cls(**source_value.value_schema.type_config)
+
+        except Exception as e:
+            source_data_type = source_value.data_type_name
+            log_message("data_type.unknown", data_type=source_data_type, error=e)
+
+            from kiara.data_types.included_core_types import AnyType
+
+            data_type = AnyType()
+
+        func_name = f"render_as__{target_type}"
+        func = getattr(data_type, func_name)
+
+        if render_scene:
+            rc = render_scene.dict_data
+        else:
+            rc = {}
+
+        result = func(
+            value=source_value,
+            render_config=rc,
+            manifest=self.manifest,
+        )
+
+        if isinstance(result, RenderValueResult):
+            render_scene_result = result
+        else:
+            render_scene_result = RenderValueResult(
+                value_id=source_value.value_id,
+                render_config=rc,
+                render_manifest=self.manifest.manifest_hash,
+                rendered=result,
+                related_scenes={},
+                manifest_lookup={self.manifest.manifest_hash: self.manifest},
+            )
+
+        outputs.set_value("render_value_result", render_scene_result)
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.unpickle.value"><code>unpickle.value</code><a class="headerlink" href="#kiara_info.module_types.unpickle.value" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>unpickle.value</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>-- n/a --</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>UnpickleModule</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.serialization</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.serialization.UnpickleModule</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class UnpickleModule(DeserializeValueModule):
+
+    _module_type_name = "unpickle.value"
+
+    @classmethod
+    def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
+
+        return {"python_object": object}
+
+    @classmethod
+    def retrieve_supported_serialization_profile(cls) -> str:
+        return "pickle"
+
+    @classmethod
+    def retrieve_serialized_value_type(cls) -> str:
+
+        return "any"
+
+    def to__python_object(self, data: SerializedData, **config: Any):
+
+        try:
+            import pickle5 as pickle
+        except Exception:
+            import pickle  # type: ignore
+
+        assert "python_object" in data.get_keys()
+        python_object_data = data.get_serialized_data("python_object")
+        assert python_object_data.get_number_of_chunks() == 1
+
+        _bytes = list(python_object_data.get_chunks(as_files=False))[0]
+        data = pickle.loads(_bytes)
+
+        return data
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table><h3 id="kiara_info.module_types.value.extract_metadata"><code>value.extract_metadata</code><a class="headerlink" href="#kiara_info.module_types.value.extract_metadata" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>value.extract_metadata</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>Base class to use when writing a module to extract metadata from a file.</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>It's possible to use any arbitrary *kiara* module for this purpose, but sub-classing this makes it easier.</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>ExtractMetadataModule</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.modules.included_core_modules.metadata</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.modules.included_core_modules.metadata.ExtractMetadataModule</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>module_src</td>
+    <td>class ExtractMetadataModule(KiaraModule):
+
+    """
+    Base class to use when writing a module to extract metadata from a file.
+
+    It's possible to use any arbitrary *kiara* module for this purpose, but sub-classing this makes it easier.
+    """
+
+    _config_cls = MetadataModuleConfig
+    _module_type_name: str = "value.extract_metadata"
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+
+        return ModuleCharacteristics(
+            is_idempotent=True, is_internal=True, unique_result_values=True
+        )
+
+    def create_inputs_schema(
+        self,
+    ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
+
+        data_type_name = self.get_config_value("data_type")
+        inputs = {
+            "value": {
+                "type": data_type_name,
+                "doc": f"A value of type '{data_type_name}'",
+                "optional": False,
+            }
+        }
+        return inputs
+
+    def create_outputs_schema(
+        self,
+    ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
+
+        kiara_model_id: str = self.get_config_value("kiara_model_id")
+
+        # TODO: check it's subclassing the right class
+
+        outputs = {
+            "value_metadata": {
+                "type": "internal_model",
+                "type_config": {"kiara_model_id": kiara_model_id},
+                "doc": "The metadata for the provided value.",
+            }
+        }
+
+        return outputs
+
+    def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
+
+        value = inputs.get_value_obj("value")
+
+        kiara_model_id: str = self.get_config_value("kiara_model_id")
+
+        model_registry = ModelRegistry.instance()
+        metadata_model_cls: Type[ValueMetadata] = model_registry.get_model_cls(kiara_model_id=kiara_model_id, required_subclass=ValueMetadata)  # type: ignore
+
+        metadata = metadata_model_cls.create_value_metadata(value=value)
+
+        if not isinstance(metadata, metadata_model_cls):
+            raise KiaraProcessingException(
+                f"Invalid metadata model result, should be class '{metadata_model_cls.__name__}', but is: {metadata.__class__.__name__}. This is most likely a bug."
+            )
+
+        outputs.set_value("value_metadata", metadata)
+</td>
+    <td>The source code of the process method of the module.</td>
+  </tr>
+</table>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      DHARPA project
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.19047be9.min.js"></script>
+      
+    
+  </body>
+</html>

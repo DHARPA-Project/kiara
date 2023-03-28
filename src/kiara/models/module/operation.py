@@ -401,6 +401,10 @@ class Operation(Manifest):
             )
             table.add_row("Outputs", outputs_table)
 
+        from kiara.interfaces.python_api import ModuleTypeInfo
+
+        module_type_md: Union[ModuleTypeInfo, None] = None
+
         if include_module_details:
             table.add_row("Module type", self.module_type)
 
@@ -411,8 +415,6 @@ class Operation(Manifest):
                 background_color="default",
             )
             table.add_row("Module config", conf)
-
-            from kiara.interfaces.python_api import ModuleTypeInfo
 
             module_type_md = ModuleTypeInfo.create_from_type_class(
                 type_cls=self.module_details.get_class(),  # type: ignore
@@ -427,6 +429,12 @@ class Operation(Manifest):
             table.add_row("Module metadata", m_md)
 
         if include_src:
+            if module_type_md is None:
+                module_type_md = ModuleTypeInfo.create_from_type_class(
+                    type_cls=self.module_details.get_class(),  # type: ignore
+                    kiara=None,  # type: ignore
+                )
+
             table.add_row("Source code", module_type_md.module_src)
 
         return table

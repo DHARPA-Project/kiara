@@ -21,7 +21,7 @@
         <link rel="next" href="../../concurrency/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.3">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.4">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.c4a75a56.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.240905d7.min.css">
       
         
         <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.a0c5b2b5.min.css">
@@ -556,6 +556,20 @@
     <li class="md-nav__item">
       <a href="../../../context/orm/" class="md-nav__link">
         orm
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../context/runtime_config/" class="md-nav__link">
+        runtime_config
       </a>
     </li>
   
@@ -4444,6 +4458,88 @@
 
             
           
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_15" >
+      
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../zmq/__init__/">zmq</a>
+          
+            <label for="__nav_4_1_15">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_15_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_15">
+          <span class="md-nav__icon md-icon"></span>
+          zmq
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../zmq/client/" class="md-nav__link">
+        client
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../zmq/messages/__init__/" class="md-nav__link">
+        messages
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../zmq/service/__init__/" class="md-nav__link">
+        service
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -4779,8 +4875,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/cli/run.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 47</span>
-<span class="normal"> 48</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 48</span>
 <span class="normal"> 49</span>
 <span class="normal"> 50</span>
 <span class="normal"> 51</span>
@@ -4840,7 +4935,14 @@
 <span class="normal">105</span>
 <span class="normal">106</span>
 <span class="normal">107</span>
-<span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">validate_operation_in_terminal</span><span class="p">(</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">validate_operation_in_terminal</span><span class="p">(</span>
     <span class="n">api</span><span class="p">:</span> <span class="n">KiaraAPI</span><span class="p">,</span>
     <span class="n">module_or_operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
     <span class="n">allow_external</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -4856,6 +4958,7 @@
         <span class="c1"># validate that operation config is valid, ignoring inputs for now</span>
         <span class="c1"># kiara_op.operation</span>
     <span class="k">except</span> <span class="n">NoSuchExecutionTargetException</span> <span class="k">as</span> <span class="n">nset</span><span class="p">:</span>
+
         <span class="n">terminal_print</span><span class="p">()</span>
         <span class="n">terminal_print</span><span class="p">(</span><span class="n">nset</span><span class="p">)</span>
         <span class="n">terminal_print</span><span class="p">()</span>
@@ -4863,7 +4966,7 @@
         <span class="n">terminal_print</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nset</span><span class="o">.</span><span class="n">avaliable_targets</span><span class="p">:</span>
             <span class="n">terminal_print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - [i]</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2">[/i]&quot;</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">InvalidCommandLineInvocation</span><span class="p">(</span><span class="s2">&quot;No such target.&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">nset</span><span class="p">,</span> <span class="n">error_code</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">ValidationError</span> <span class="k">as</span> <span class="n">ve</span><span class="p">:</span>
 
         <span class="n">renderables</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">RenderableType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
@@ -4887,7 +4990,10 @@
         <span class="n">msg</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="o">*</span><span class="n">renderables</span><span class="p">)</span>
         <span class="n">terminal_print</span><span class="p">()</span>
         <span class="n">terminal_print</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">in_panel</span><span class="o">=</span><span class="s2">&quot;[b red]Module configuration error[/b red]&quot;</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">InvalidCommandLineInvocation</span><span class="p">(</span>
+            <span class="s2">&quot;Invalid module config.&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">ve</span><span class="p">,</span> <span class="n">error_code</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="n">terminal_print</span><span class="p">()</span>
@@ -4899,7 +5005,9 @@
         <span class="k">if</span> <span class="n">root_cause</span><span class="p">:</span>
             <span class="n">terminal_print</span><span class="p">()</span>
             <span class="n">terminal_print</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="n">root_cause</span><span class="p">))</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">InvalidCommandLineInvocation</span><span class="p">(</span>
+            <span class="s2">&quot;Can&#39;t validate operation.&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">e</span><span class="p">,</span> <span class="n">error_code</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">operation</span>
 </code></pre></div></td></tr></table></div>
@@ -4922,14 +5030,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/cli/run.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">118</span>
 <span class="normal">119</span>
 <span class="normal">120</span>
 <span class="normal">121</span>
@@ -4971,7 +5072,14 @@
 <span class="normal">157</span>
 <span class="normal">158</span>
 <span class="normal">159</span>
-<span class="normal">160</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_aliases</span><span class="p">(</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_aliases</span><span class="p">(</span>
     <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span> <span class="n">alias_tokens</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 
@@ -5032,7 +5140,7 @@
 
 
 <h3 id="kiara.utils.cli.run.set_and_validate_inputs" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">set_and_validate_inputs</span><span class="p">(</span><span class="n">api</span><span class="p">:</span> <span class="n">KiaraAPI</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">explain</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">print_help</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">click_context</span><span class="p">:</span> <span class="n">ClickContext</span><span class="p">,</span> <span class="n">cmd_help</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span></code>
+<code class="highlight language-python"><span class="n">set_and_validate_inputs</span><span class="p">(</span><span class="n">api</span><span class="p">:</span> <span class="n">KiaraAPI</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">explain</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">print_help</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">click_context</span><span class="p">:</span> <span class="n">ClickContext</span><span class="p">,</span> <span class="n">cmd_help</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueMap</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span></code>
 
 <a href="#kiara.utils.cli.run.set_and_validate_inputs" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -5041,14 +5149,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/cli/run.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">163</span>
-<span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">170</span>
 <span class="normal">171</span>
 <span class="normal">172</span>
 <span class="normal">173</span>
@@ -5188,7 +5289,16 @@
 <span class="normal">307</span>
 <span class="normal">308</span>
 <span class="normal">309</span>
-<span class="normal">310</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_and_validate_inputs</span><span class="p">(</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_and_validate_inputs</span><span class="p">(</span>
     <span class="n">api</span><span class="p">:</span> <span class="n">KiaraAPI</span><span class="p">,</span>
     <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
@@ -5196,7 +5306,7 @@
     <span class="n">print_help</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
     <span class="n">click_context</span><span class="p">:</span> <span class="n">ClickContext</span><span class="p">,</span>
     <span class="n">cmd_help</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span><span class="p">:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ValueMap</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="c1"># =========================================================================</span>
     <span class="c1"># prepare inputs</span>
@@ -5257,7 +5367,9 @@
             <span class="p">),</span>
         <span class="p">)</span>
         <span class="n">terminal_print</span><span class="p">(</span><span class="n">rg</span><span class="p">,</span> <span class="n">in_panel</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Run info: [b]</span><span class="si">{</span><span class="n">operation</span><span class="o">.</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">[/b]&quot;</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">InvalidCommandLineInvocation</span><span class="p">(</span>
+            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Invalid or insufficient input(s)&quot;</span><span class="p">,</span> <span class="n">error_code</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">print_help</span><span class="p">:</span>
         <span class="n">rich_format_operation_help</span><span class="p">(</span>
@@ -5267,7 +5379,7 @@
             <span class="n">op_inputs</span><span class="o">=</span><span class="n">value_map</span><span class="p">,</span>
             <span class="n">cmd_help</span><span class="o">=</span><span class="n">cmd_help</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">explain</span><span class="p">:</span>
         <span class="n">terminal_print</span><span class="p">()</span>
@@ -5358,16 +5470,7 @@
 
       <details class="quote">
         <summary>Source code in <code>kiara/utils/cli/run.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">313</span>
-<span class="normal">314</span>
-<span class="normal">315</span>
-<span class="normal">316</span>
-<span class="normal">317</span>
-<span class="normal">318</span>
-<span class="normal">319</span>
-<span class="normal">320</span>
-<span class="normal">321</span>
-<span class="normal">322</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">322</span>
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
@@ -5425,7 +5528,16 @@
 <span class="normal">377</span>
 <span class="normal">378</span>
 <span class="normal">379</span>
-<span class="normal">380</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">execute_job</span><span class="p">(</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">execute_job</span><span class="p">(</span>
     <span class="n">api</span><span class="p">:</span> <span class="n">KiaraAPI</span><span class="p">,</span>
     <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span>
@@ -5550,7 +5662,7 @@
     <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.efa0ade1.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.19047be9.min.js"></script>
       
     
   </body>

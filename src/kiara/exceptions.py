@@ -103,6 +103,20 @@ class KiaraException(Exception):
         return msg
 
 
+class InvalidCommandLineInvocation(KiaraException):
+    def __init__(
+        self,
+        msg: str,
+        parent: Union[Exception, None] = None,
+        error_code: int = 0,
+        **kwargs,
+    ):
+
+        self.error_code: int = error_code
+
+        super().__init__(msg, parent=parent, **kwargs)
+
+
 class KiaraContextException(KiaraException):
     def __init__(self, msg: str, context_id: uuid.UUID):
 

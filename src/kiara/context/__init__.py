@@ -9,7 +9,8 @@ import structlog
 # from alembic import command  # type: ignore
 from pydantic import Field
 
-from kiara.context.config import KiaraConfig, KiaraContextConfig, KiaraRuntimeConfig
+from kiara.context.config import KiaraConfig, KiaraContextConfig
+from kiara.context.runtime_config import KiaraRuntimeConfig
 from kiara.data_types import DataType
 from kiara.exceptions import KiaraContextException
 from kiara.interfaces import get_console

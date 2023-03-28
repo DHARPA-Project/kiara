@@ -29,7 +29,7 @@ from kiara.utils import get_dev_config, is_develop
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
-    from kiara.context.config import JobCacheStrategy
+    from kiara.context.runtime_config import JobCacheStrategy
 
 logger = structlog.getLogger()
 
@@ -204,7 +204,7 @@ class JobRegistry(object):
     @property
     def job_matcher(self) -> JobMatcher:
 
-        from kiara.context.config import JobCacheStrategy
+        from kiara.context.runtime_config import JobCacheStrategy
 
         strategy = self._kiara.runtime_config.job_cache
         if is_develop():

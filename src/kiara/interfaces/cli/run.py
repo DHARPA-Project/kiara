@@ -15,6 +15,7 @@ from typing import Any, Iterable, Mapping, Union
 
 import rich_click as click
 
+from kiara.exceptions import InvalidCommandLineInvocation
 from kiara.utils.cli import dict_from_cli_args, terminal_print
 from kiara.utils.cli.exceptions import handle_exception
 
@@ -102,6 +103,7 @@ def run(
             terminal_print(
                 f"Can't run workflow, the target files already exist, and '--output force=true' not specified: {target_file}"
             )
+
             sys.exit(1)
 
     api: KiaraAPI = ctx.obj.kiara_api  # type: ignore
@@ -117,18 +119,31 @@ def run(
     else:
         op = module_or_operation
 
-    kiara_op = validate_operation_in_terminal(api=api, module_or_operation=op)
+    try:
+        kiara_op = validate_operation_in_terminal(api=api, module_or_operation=op)
+    except InvalidCommandLineInvocation as e:
+        ctx.obj.exit(msg=None, exit_code=e.error_code)
+        return
+
     final_aliases = calculate_aliases(operation=kiara_op, alias_tokens=save)
 
-    inputs_value_map = set_and_validate_inputs(
-        api=api,
-        operation=kiara_op,
-        inputs=inputs,
-        explain=explain,
-        print_help=help,
-        click_context=ctx,
-        cmd_help=cmd_help,
-    )
+    try:
+        inputs_value_map = set_and_validate_inputs(
+            api=api,
+            operation=kiara_op,
+            inputs=inputs,
+            explain=explain,
+            print_help=help,
+            click_context=ctx,
+            cmd_help=cmd_help,
+        )
+        if inputs_value_map is None:
+            ctx.obj.exit(msg=None, error_code=0)
+            return
+    except InvalidCommandLineInvocation as e:
+        ctx.obj.exit(msg=None, exit_code=e.error_code)
+        return
+
     execute_job(
         api=api,
         operation=kiara_op,

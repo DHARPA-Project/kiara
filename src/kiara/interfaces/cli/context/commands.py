@@ -9,8 +9,14 @@ from typing import TYPE_CHECKING, Tuple, Union
 import rich_click as click
 from rich.panel import Panel
 
-from kiara.interfaces import get_console
-from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
+from kiara.interfaces import KiaraAPIWrap, get_console
+from kiara.utils import log_exception
+from kiara.utils.cli import (
+    dict_from_cli_args,
+    output_format_option,
+    terminal_print,
+    terminal_print_model,
+)
 
 if TYPE_CHECKING:
     from kiara.api import Kiara, KiaraAPI, KiaraConfig
@@ -171,10 +177,16 @@ def delete_context(
         terminal_print("Done.")
 
 
-@context.group("config")
+@context.group("info")
+@click.pass_context
+def info(ctx):
+    """Information about several aspects of the current/specified kiara context."""
+
+
+@info.group("config")
 @click.pass_context
 def config(ctx):
-    """Config-related sub-commands."""
+    """Information about the current context configuration."""
 
 
 @config.command("print")
@@ -203,10 +215,10 @@ def config_help(ctx):
     terminal_print(Panel(table))
 
 
-@context.group(name="runtime-info")
+@info.group(name="runtime")
 @click.pass_context
 def runtime(ctx):
-    """Information about runtime models, etc."""
+    """Information about the current runtime (Python environment, available metadata models, etc)."""
 
 
 @runtime.command("print")
@@ -223,7 +235,7 @@ def print_context(ctx, format: str):
     )
 
 
-@context.group(name="environment")
+@runtime.group(name="environment")
 @click.pass_context
 def env_group(ctx):
     """Environment-related sub-commands."""
@@ -266,7 +278,7 @@ def explain_env(ctx, env_type: str, format: str) -> None:
     )
 
 
-@context.group()
+@runtime.group()
 @click.pass_context
 def metadata(ctx):
     """Metadata-related sub-commands."""
@@ -318,7 +330,7 @@ def explain_metadata(ctx, metadata_key, format) -> None:
     )
 
 
-@context.group()
+@runtime.group()
 @click.pass_context
 def api(ctx):
     """API-related sub-commands."""
@@ -343,3 +355,222 @@ def list_endpoints(ctx, filter, full_doc):
 
     terminal_print()
     terminal_print(endpoints, in_panel="API endpoints", full_doc=full_doc)
+
+
+@context.group("service")
+@click.pass_context
+def service(ctx):
+    """Service-related sub-commands."""
+
+
+@service.command("start")
+@click.option("--host", help="The host to bind to.", default="localhost")
+@click.option("--port", help="The port to bind to.", required=False, default=0)
+@click.option(
+    "--monitor",
+    help="Monitor the service.",
+    required=False,
+    default=False,
+    is_flag=True,
+)
+@click.option(
+    "--stdout",
+    "-o",
+    help="Write output logs to this file.",
+    required=False,
+    default=None,
+)
+@click.option(
+    "--stderr",
+    "-e",
+    help="Write error logs to this file.",
+    required=False,
+    default=None,
+)
+@click.option(
+    "--timeout",
+    "-t",
+    help="If set, the service shuts down if not request happens within the specified timeout (in milliseconds).",
+    required=False,
+    default=0,
+)
+@click.pass_context
+def start_service(
+    ctx,
+    host: str,
+    port: int,
+    monitor: bool = False,
+    stdout: Union[str, None] = None,
+    stderr: Union[str, None] = None,
+    timeout: int = 0,
+):
+    """Start a kiara zmq service for this context."""
+
+    from kiara.utils.output import create_table_from_model_object
+    from kiara.zmq import start_zmq_service
+
+    api_wrap: KiaraAPIWrap = ctx.obj
+
+    try:
+        details = start_zmq_service(
+            api_wrap=api_wrap,
+            host=host,
+            port=port,
+            monitor=monitor,
+            stdout=stdout,
+            stderr=stderr,
+            timeout=timeout,
+        )
+
+        if not monitor:
+            assert details is not None
+            if not details.newly_started:
+                terminal_print()
+                terminal_print(
+                    f"Service for context '{api_wrap.kiara_context_name}' already running, doing nothing..."
+                )
+            else:
+                terminal_print()
+                terminal_print("Started service in background process:")
+                terminal_print()
+                table = create_table_from_model_object(
+                    details,
+                    render_config={"show_header": False, "show_type_column": False},
+                )
+                terminal_print(table, in_panel="Service details")
+
+    except Exception as e:
+        import traceback
+
+        traceback.print_exc()
+        log_exception(e)
+        terminal_print()
+        terminal_print(f"Error starting service: {e}")
+        sys.exit(1)
+
+
+@service.command("stop")
+@click.argument("context_name", nargs=1, required=False)
+@click.pass_context
+def stop_service(ctx, context_name: Union[None, str]):
+    """Stop a running zmq service for this context."""
+
+    from kiara.zmq import get_context_details
+    from kiara.zmq.client import KiaraZmqClient
+
+    if not context_name:
+        context_name = ctx.obj.kiara_context_name
+
+    context_details = get_context_details(context_name=context_name)  # type: ignore
+    if not context_details:
+        terminal_print()
+        terminal_print(
+            f"No service running for context '{context_name}'. Doing nothing..."
+        )
+        sys.exit(0)
+
+    host = context_details["host"]
+    port = context_details["port"]
+    zmq_client = KiaraZmqClient(host=host, port=port)
+    zmq_client.request(endpoint_name="stop", args={})
+
+    terminal_print()
+    terminal_print(f"Stopped context: {context_name}")
+
+    sys.exit(0)
+
+
+@service.command("list")
+@click.pass_context
+def list_services(ctx):
+    """List all contexts that have a currently running service."""
+
+    from kiara.zmq import list_registered_contexts
+
+    contexts = list_registered_contexts()
+    if not contexts:
+        terminal_print()
+        terminal_print("No services running.")
+        sys.exit(0)
+
+    terminal_print()
+    terminal_print("Running services:")
+    for c in contexts:
+        terminal_print(f" - {c}")
+
+
+@service.command("request")
+@click.option(
+    "--context", "-c", help="The context to use.", required=False, default=None
+)
+@click.argument("endpoint", required=True, nargs=1)
+@click.argument("arguments", required=False, nargs=-1)
+@click.pass_context
+def request(
+    ctx, endpoint: str, arguments: Tuple[str], context: Union[None, str] = None
+):
+    """Send a request to a kiara zmq service."""
+
+    from kiara.zmq import get_context_details
+    from kiara.zmq.client import KiaraZmqClient
+
+    if not context:
+        context = ctx.obj.kiara_context_name
+
+    context_details = get_context_details(context_name=context)  # type: ignore
+    if not context_details:
+        terminal_print()
+        terminal_print(f"No service running for context '{context}'. Doing nothing...")
+        sys.exit(1)
+
+    zmq_client = KiaraZmqClient(
+        host=context_details["host"], port=context_details["port"]
+    )
+
+    args = dict_from_cli_args(*arguments)
+
+    try:
+        result = zmq_client.request(endpoint_name=endpoint, args=args)
+        print(result)  # noqa
+    except KeyboardInterrupt:
+        terminal_print("\nInterrupted by user, closing connection to service...")
+    finally:
+        zmq_client.close()
+
+
+CLI_CLIENT_CLICK_CONTEXT_SETTINGS = {
+    "help_option_names": [],
+    "ignore_unknown_options": True,
+}
+
+
+@service.command("request-cli", context_settings=CLI_CLIENT_CLICK_CONTEXT_SETTINGS)
+@click.option(
+    "--context", "-c", help="The context to use.", required=False, default=None
+)
+@click.argument("arguments", required=False, nargs=-1)
+@click.pass_context
+def request_cli(ctx, arguments: Tuple[str], context: Union[None, str] = None):
+    """Send a request to a kiara zmq service."""
+    from kiara.zmq import get_context_details
+    from kiara.zmq.client import KiaraZmqClient
+
+    if not context:
+        context = ctx.obj.kiara_context_name
+
+    context_details = get_context_details(context_name=context)  # type: ignore
+    if not context_details:
+        terminal_print()
+        terminal_print(f"No service running for context '{context}'. Doing nothing...")
+        sys.exit(1)
+
+    zmq_client = KiaraZmqClient(
+        host=context_details["host"], port=context_details["port"]
+    )
+
+    try:
+        zmq_client.request_cli(args=arguments)
+    except KeyboardInterrupt:
+        terminal_print("\nInterrupted by user, closing connection to service...")
+    finally:
+        zmq_client.close()

@@ -11,8 +11,6 @@ from rich.panel import Panel
 from rich.rule import Rule
 from rich.syntax import Syntax
 
-from kiara.interfaces import get_console
-
 # ======================================================================================================================
 # click helper methods
 from kiara.utils import logger
@@ -43,6 +41,7 @@ def terminal_print(
     **config: Any,
 ) -> None:
 
+    from kiara.interfaces import get_console
     from kiara.utils.output import extract_renderable
 
     if msg is None:

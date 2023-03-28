@@ -653,11 +653,25 @@ def create_table_from_model_object(
 
     model_cls = model.__class__
 
-    table = RichTable(box=box.SIMPLE, show_lines=True)
+    show_header: bool = True
+    show_type_column: bool = True
+    show_value_column: bool = True
+    show_desc: bool = True
+
+    if render_config:
+        show_header = render_config.get("show_header", True)
+        show_type_column = render_config.get("show_type_column", True)
+        show_value_column = render_config.get("show_value_column", True)
+        show_desc = render_config.get("show_description", True)
+
+    table = RichTable(box=box.SIMPLE, show_lines=True, show_header=show_header)
     table.add_column("Field")
-    table.add_column("Type")
-    table.add_column("Value")
-    table.add_column("Description")
+    if show_type_column:
+        table.add_column("Type")
+    if show_value_column:
+        table.add_column("Value")
+    if show_desc:
+        table.add_column("Description")
 
     props = model_cls.schema().get("properties", {})
 
@@ -674,14 +688,16 @@ def create_table_from_model_object(
             # TODO: check 'anyOf' keys
             desc = p.get("description", "")
 
-        if p_type is None:
-            p_type = "-- check source --"
-        row.append(p_type)
+        if show_type_column:
+            if p_type is None:
+                p_type = "-- check source --"
+            row.append(p_type)
 
         data = getattr(model, field_name)
-        row.append(extract_renderable(data, render_config=render_config))
-
-        row.append(desc)
+        if show_value_column:
+            row.append(extract_renderable(data, render_config=render_config))
+        if show_desc:
+            row.append(desc)
         table.add_row(*row)
 
     return table

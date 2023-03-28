@@ -13,6 +13,7 @@ from rich.rule import Rule
 from kiara.api import KiaraAPI, ValueMap
 from kiara.exceptions import (
     FailedJobException,
+    InvalidCommandLineInvocation,
     KiaraException,
     NoSuchExecutionTargetException,
 )
@@ -34,11 +35,11 @@ def _validate_save_option(save: Iterable[str]) -> bool:
             if "=" in a:
                 tokens = a.split("=")
                 if len(tokens) != 2:
-                    terminal_print()
-                    terminal_print(
-                        f"Invalid alias format, can only contain a single '=': {a}"
+                    raise InvalidCommandLineInvocation(
+                        msg=f"Invalid alias format, can only contain a single '=': {a}",
+                        error_code=1,
                     )
-                    sys.exit(1)
+
         return True
     else:
         return False
@@ -60,6 +61,7 @@ def validate_operation_in_terminal(
         # validate that operation config is valid, ignoring inputs for now
         # kiara_op.operation
     except NoSuchExecutionTargetException as nset:
+
         terminal_print()
         terminal_print(nset)
         terminal_print()
@@ -67,7 +69,7 @@ def validate_operation_in_terminal(
         terminal_print()
         for n in nset.avaliable_targets:
             terminal_print(f"  - [i]{n}[/i]")
-        sys.exit(1)
+        raise InvalidCommandLineInvocation("No such target.", parent=nset, error_code=1)
     except ValidationError as ve:
 
         renderables: List[RenderableType] = [""]
@@ -91,7 +93,10 @@ def validate_operation_in_terminal(
         msg = Group(*renderables)
         terminal_print()
         terminal_print(msg, in_panel="[b red]Module configuration error[/b red]")
-        sys.exit(1)
+        raise InvalidCommandLineInvocation(
+            "Invalid module config.", parent=ve, error_code=1
+        )
+
     except Exception as e:
         log_exception(e)
         terminal_print()
@@ -103,7 +108,9 @@ def validate_operation_in_terminal(
         if root_cause:
             terminal_print()
             terminal_print(Markdown(root_cause))
-        sys.exit(1)
+        raise InvalidCommandLineInvocation(
+            "Can't validate operation.", parent=e, error_code=1
+        )
 
     return operation
 
@@ -168,7 +175,7 @@ def set_and_validate_inputs(
     print_help: bool,
     click_context: ClickContext,
     cmd_help: str,
-) -> ValueMap:
+) -> Union[ValueMap, None]:
 
     # =========================================================================
     # prepare inputs
@@ -229,7 +236,9 @@ def set_and_validate_inputs(
             ),
         )
         terminal_print(rg, in_panel=f"Run info: [b]{operation.operation_id}[/b]")
-        sys.exit(1)
+        raise InvalidCommandLineInvocation(
+            msg="Invalid or insufficient input(s)", error_code=1
+        )
 
     if print_help:
         rich_format_operation_help(
@@ -239,7 +248,7 @@ def set_and_validate_inputs(
             op_inputs=value_map,
             cmd_help=cmd_help,
         )
-        sys.exit(0)
+        return None
 
     if explain:
         terminal_print()

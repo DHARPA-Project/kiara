@@ -632,6 +632,13 @@ class KiaraAPI(object):
                         raise Exception(
                             f"Can't parse configuration string: {operation}."
                         )
+            if not isinstance(_module_config, Mapping):
+                raise NoSuchExecutionTargetException(
+                    selected_target=operation,
+                    available_targets=self.context.operation_registry.operation_ids,
+                    msg=f"Can't find operation or execution target for string '{operation}'.",
+                )
+
         else:
             _module_config = dict(operation)
 

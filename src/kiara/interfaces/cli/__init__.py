@@ -18,7 +18,7 @@ from kiara.defaults import (
     SYMLINK_ISSUE_MSG,
 )
 from kiara.interfaces import KiaraAPIWrap, get_console
-from kiara.utils import is_debug
+from kiara.utils import is_debug, log_message
 from kiara.utils.class_loading import find_all_cli_subcommands
 from kiara.utils.cli import terminal_print
 
@@ -66,6 +66,13 @@ CLICK_CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
     "-P",
     help="Ensure the provided plugin package(s) are installed in the virtual environment.",
 )
+@click.option(
+    "--use-background-service",
+    "-b",
+    is_flag=True,
+    help="Always use the background service (start if not already running).",
+    default=False,
+)
 @click.pass_context
 def cli(
     ctx,
@@ -73,6 +80,7 @@ def cli(
     context: Union[str, None],
     pipelines: Tuple[str],
     plugin: Union[str, None],
+    use_background_service: Union[bool, None] = None,
 ):
     """
     [i b]kiara[/b i] ia a data-orchestration framework; this is the command-line frontend for it.
@@ -90,8 +98,89 @@ def cli(
         terminal_print(Markdown(SYMLINK_ISSUE_MSG))
         sys.exit(1)
 
-    lazy_wrapper = KiaraAPIWrap(config, context, pipelines, plugin)
-    ctx.obj = lazy_wrapper
+    context_subcommand = ctx.invoked_subcommand == "context"
+    if context_subcommand and use_background_service:
+        log_message(
+            "ignore.background_service_request",
+            reason="Not using background service for 'context' subcommand.",
+        )
+
+    if use_background_service and not context_subcommand:
+
+        from kiara.zmq import (
+            KiaraZmqServiceDetails,
+            get_context_details,
+            start_zmq_service,
+        )
+        from kiara.zmq.client import KiaraZmqClient
+
+        if context is None:
+            context = "default"
+
+        context_details_data = get_context_details(context_name=context)
+        if context_details_data is None:
+
+            timeout = 120 * 1000  # 2 minutes default timeout
+            api_wrap = KiaraAPIWrap(config, context, pipelines, plugin)
+            context_details = start_zmq_service(
+                api_wrap=api_wrap,
+                host=None,
+                port=None,
+                monitor=False,
+                stdout=None,
+                stderr=None,
+                timeout=timeout,
+            )
+        else:
+            context_details = KiaraZmqServiceDetails(**context_details_data)
+
+        CONTEXT_ARG_NAMES = [
+            "--config",
+            "--context",
+            "--pipelines",
+            "--plugin",
+            "-cnf",
+            "-ctx",
+            "-c",
+            "-p",
+            "-P",
+        ]
+        CONTEXT_FLAG_NAMES = ["--use-background-service", "-b"]
+
+        arguments = []
+        still_prefix = True
+        for arg in sys.argv[1:]:
+            if still_prefix and arg in CONTEXT_ARG_NAMES:
+                # TODO: check arg with running service
+                raise NotImplementedError(
+                    "Custom context args for background service client not supported yet."
+                )
+
+            if still_prefix and arg in CONTEXT_FLAG_NAMES:
+                continue
+            else:
+                still_prefix = False
+
+            arguments.append(arg)
+
+        assert context_details is not None
+
+        zmq_client = KiaraZmqClient(
+            host=context_details.host, port=context_details.port
+        )
+
+        try:
+            zmq_client.request_cli(args=arguments)
+            sys.exit(0)
+        except KeyboardInterrupt:
+            terminal_print("\nInterrupted by user, closing connection to service...")
+            sys.exit(1)
+        finally:
+            zmq_client.close()
+
+    else:
+        lazy_wrapper = KiaraAPIWrap(config, context, pipelines, plugin)
+        ctx.obj = lazy_wrapper
 
 
 for plugin in find_all_cli_subcommands():

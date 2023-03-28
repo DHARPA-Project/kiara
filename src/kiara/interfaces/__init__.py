@@ -12,9 +12,9 @@ import uuid
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, Literal, Union
 
-import fasteners
-
 from kiara.defaults import KIARA_CONFIG_FILE_NAME, KIARA_MAIN_CONFIG_FILE
+from kiara.exceptions import KiaraException
+from kiara.utils.cli import terminal_print
 
 if TYPE_CHECKING:
     from rich.console import Console
@@ -220,8 +220,8 @@ class KiaraAPIWrap(object):
         context: Union[str, None],
         pipelines: Union[None, Iterable[str]] = None,
         ensure_plugins: Union[str, Iterable[str], None] = None,
+        exit_process: bool = True,
     ):
-
         if not context:
             context = os.environ.get("KIARA_CONTEXT", None)
 
@@ -237,6 +237,7 @@ class KiaraAPIWrap(object):
         self._reload_process_if_plugins_installed = True
 
         self._items: Dict[str, Any] = {}
+        self._exit_process: bool = exit_process
 
     @property
     def kiara_context_name(self) -> str:
@@ -245,6 +246,25 @@ class KiaraAPIWrap(object):
             self._context = self.kiara_config.default_context
 
         return self._context
+
+    @property
+    def exit_process(self) -> bool:
+        return self._exit_process
+
+    @exit_process.setter
+    def exit_process(self, exit_process: bool):
+        self._exit_process = exit_process
+
+    def exit(self, msg: Union[None, Any] = None, exit_code: int = 1):
+
+        if self._exit_process:
+            if msg:
+                terminal_print(msg)
+            sys.exit(exit_code)
+        else:
+            if not msg:
+                msg = "An error occured."
+            raise KiaraException(str(msg))
 
     @property
     def current_kiara_context_id(self) -> uuid.UUID:
@@ -332,6 +352,8 @@ class KiaraAPIWrap(object):
                     reason="reloading this process, in order to pick up new plugin packages",
                 )
                 os.execvp(sys.executable, (sys.executable,) + tuple(sys.argv))  # noqa
+
+        import fasteners
 
         fasteners.InterProcessReaderWriterLock(self.lock_file(context))
 

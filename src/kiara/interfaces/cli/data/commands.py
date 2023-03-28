@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING, Iterable, Tuple
 import rich_click as click
 import structlog
 
+from kiara.exceptions import InvalidCommandLineInvocation
 from kiara.utils import log_exception, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
 
@@ -439,19 +440,30 @@ def filter_value(
     all_inputs = [f"value={value}"]
     all_inputs.extend(inputs)
 
-    kiara_op = validate_operation_in_terminal(
-        api=api, module_or_operation=op.module_config
-    )
+    try:
+        kiara_op = validate_operation_in_terminal(
+            api=api, module_or_operation=op.module_config
+        )
+    except InvalidCommandLineInvocation as e:
+        ctx.obj.exit(msg=None, exit_code=e.error_code)
+
     final_aliases = calculate_aliases(operation=kiara_op, alias_tokens=save)
-    inputs_value_map = set_and_validate_inputs(
-        api=api,
-        operation=kiara_op,
-        inputs=all_inputs,
-        explain=explain,
-        print_help=help,
-        click_context=ctx,
-        cmd_help=cmd_help,
-    )
+    try:
+        inputs_value_map = set_and_validate_inputs(
+            api=api,
+            operation=kiara_op,
+            inputs=all_inputs,
+            explain=explain,
+            print_help=help,
+            click_context=ctx,
+            cmd_help=cmd_help,
+        )
+        if inputs_value_map is None:
+            ctx.obj.exit(msg=None, exit_code=0)
+            return
+    except InvalidCommandLineInvocation as e:
+        ctx.obj.exit(msg=None, exit_code=e.error_code)
+        return
 
     job_id = execute_job(
         api=api,

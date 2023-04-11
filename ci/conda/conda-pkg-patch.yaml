@@ -7,6 +7,9 @@ channels:
   - conda-forge
   - dharpa
 
+entry_points:
+  kiara: kiara.interfaces.cli:cli
+
 host_requirements:
   - pip
   - python

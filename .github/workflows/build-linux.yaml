@@ -213,7 +213,7 @@ jobs:
       - name: install kiara
         run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .
       - name: install required plugin packages
-        run: pip install -U --pre --extra-index-url https://pypi.fury.io/dharpa/ kiara_plugin.develop
+        run: pip install git+https://github.com/DHARPA-Project/kiara_plugin.develop.git@develop
       - name: build conda package
         if: ${{ ( github.ref == 'refs/heads/develop') }}
         run: kiara conda build-package --patch-data ci/conda/conda-pkg-patch.yaml .

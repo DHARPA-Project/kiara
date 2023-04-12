@@ -18,6 +18,7 @@ from ruamel.yaml import YAML
 from kiara.defaults import OFFICIAL_KIARA_PLUGINS
 from kiara.exceptions import (
     DataTypeUnknownException,
+    KiaraException,
     NoSuchExecutionTargetException,
     NoSuchWorkflowException,
 )
@@ -1159,13 +1160,15 @@ class KiaraAPI(object):
                             continue
 
                 if not values_schema:
-                    raise Exception(
-                        f"Can't assemble value map field without schema: '{k}' -- {str(v)}"
+                    details = "No schema provided."
+                    raise KiaraException(
+                        f"Invalid field name: '{k}' (value: {str(v)}).", details=details
                     )
 
                 if k not in values_schema.keys():
-                    raise Exception(
-                        f"Can't assemble value map field without schema key: '{k}' -- {str(v)}"
+                    details = "Valid field names: " + ", ".join(values_schema.keys())
+                    raise KiaraException(
+                        f"Invalid field name: '{k}' (value: {str(v)}).", details=details
                     )
 
                 if v is None:

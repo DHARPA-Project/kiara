@@ -48,6 +48,11 @@ class CreateValueFromDetails(BaseOperationDetails):
 
 
 class CreateFromOperationType(OperationType[CreateValueFromDetails]):
+    """Create a dataset from a dataset of another value.
+
+    This operation always has at least one input named after the source type, and one output named after the target type. It can,
+    in addition, also have other, optional inputs, to control how exactly the target value is created.
+    """
 
     _operation_type_name = "create_from"
 

@@ -21,7 +21,7 @@
         <link rel="next" href="../../module/__init__/">
       
       <link rel="icon" href="../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.6">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.7">
     
     
       
@@ -30,9 +30,6 @@
     
     
       <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.ded33207.min.css">
-      
-        
-        <link rel="stylesheet" href="../../../../../../assets/stylesheets/palette.a0c5b2b5.min.css">
       
       
 
@@ -62,14 +59,11 @@
   </head>
   
   
-    
-    
-    
-    
-    
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+    <body dir="ltr">
   
     
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -122,6 +116,10 @@
         </div>
       </div>
     </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+      </form>
     
     
     
@@ -4953,7 +4951,7 @@
       <p>Data-related sub-commands.</p>
 
       <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.10/x64/lib/python3.10/site-packages/kiara/interfaces/cli/data/commands.py</code></summary>
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/data/commands.py</code></summary>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span>
@@ -4982,7 +4980,7 @@
       <p>List all data items that are stored in kiara.</p>
 
       <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.10/x64/lib/python3.10/site-packages/kiara/interfaces/cli/data/commands.py</code></summary>
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/data/commands.py</code></summary>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 49</span>
 <span class="normal"> 50</span>
 <span class="normal"> 51</span>
@@ -5296,7 +5294,7 @@
 <p>All of the 'show-additional-information' flags are only applied when the 'terminal' output format is selected. This might change in the future.</p>
 
       <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.10/x64/lib/python3.10/site-packages/kiara/interfaces/cli/data/commands.py</code></summary>
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/data/commands.py</code></summary>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">197</span>
 <span class="normal">198</span>
 <span class="normal">199</span>
@@ -5497,7 +5495,7 @@
 
 
 <h3 id="kiara.interfaces.cli.data.commands.load_value" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">load_value</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">single_page</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">load_value</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span></code>
 
 <a href="#kiara.interfaces.cli.data.commands.load_value" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -5507,7 +5505,7 @@
       <p>Load a stored value and print it in a format suitable for the terminal.</p>
 
       <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.10/x64/lib/python3.10/site-packages/kiara/interfaces/cli/data/commands.py</code></summary>
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/data/commands.py</code></summary>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">294</span>
 <span class="normal">295</span>
 <span class="normal">296</span>
@@ -5549,22 +5547,16 @@
 <span class="normal">332</span>
 <span class="normal">333</span>
 <span class="normal">334</span>
-<span class="normal">335</span>
-<span class="normal">336</span>
-<span class="normal">337</span>
-<span class="normal">338</span>
-<span class="normal">339</span>
-<span class="normal">340</span>
-<span class="normal">341</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@data</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;load&quot;</span><span class="p">)</span>
+<span class="normal">335</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@data</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;load&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
-    <span class="s2">&quot;--single-page&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
-    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Only pretty print a single (preview) page, instead of using a pager when available.&quot;</span><span class="p">,</span>
-    <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="c1"># @click.option(</span>
+<span class="c1">#     &quot;--single-page&quot;,</span>
+<span class="c1">#     &quot;-s&quot;,</span>
+<span class="c1">#     help=&quot;Only pretty print a single (preview) page, instead of using a pager when available.&quot;,</span>
+<span class="c1">#     is_flag=True,</span>
+<span class="c1"># )</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
-<span class="k">def</span> <span class="nf">load_value</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">single_page</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">load_value</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load a stored value and print it in a format suitable for the terminal.&quot;&quot;&quot;</span>
     <span class="c1"># kiara_obj: Kiara = ctx.obj[&quot;kiara&quot;]</span>
     <span class="n">kiara_api</span><span class="p">:</span> <span class="n">KiaraAPI</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">kiara_api</span>
@@ -5579,30 +5571,24 @@
         <span class="n">terminal_print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[red]Error[/red]: No value found for: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">single_page</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;fallback.render_value&quot;</span><span class="p">,</span>
-            <span class="n">solution</span><span class="o">=</span><span class="s2">&quot;use pretty print&quot;</span><span class="p">,</span>
-            <span class="n">source_type</span><span class="o">=</span><span class="n">_value</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">,</span>
-            <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;terminal_renderable&quot;</span><span class="p">,</span>
-            <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;no &#39;render_value&#39; operation for source/target operation&quot;</span><span class="p">,</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="s2">&quot;fallback.render_value&quot;</span><span class="p">,</span>
+        <span class="n">solution</span><span class="o">=</span><span class="s2">&quot;use pretty print&quot;</span><span class="p">,</span>
+        <span class="n">source_type</span><span class="o">=</span><span class="n">_value</span><span class="o">.</span><span class="n">data_type_name</span><span class="p">,</span>
+        <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;terminal_renderable&quot;</span><span class="p">,</span>
+        <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;no &#39;render_value&#39; operation for source/target operation&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">renderable</span> <span class="o">=</span> <span class="n">kiara_api</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">pretty_print_data</span><span class="p">(</span>
+            <span class="n">_value</span><span class="o">.</span><span class="n">value_id</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;terminal_renderable&quot;</span>
         <span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">renderable</span> <span class="o">=</span> <span class="n">kiara_api</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">data_registry</span><span class="o">.</span><span class="n">pretty_print_data</span><span class="p">(</span>
-                <span class="n">_value</span><span class="o">.</span><span class="n">value_id</span><span class="p">,</span> <span class="n">target_type</span><span class="o">=</span><span class="s2">&quot;terminal_renderable&quot;</span>
-            <span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-            <span class="n">log_message</span><span class="p">(</span><span class="s2">&quot;error.pretty_print&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">_value</span><span class="o">.</span><span class="n">value_id</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
-            <span class="n">renderable</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">_value</span><span class="o">.</span><span class="n">data</span><span class="p">)]</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">log_message</span><span class="p">(</span><span class="s2">&quot;error.pretty_print&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">_value</span><span class="o">.</span><span class="n">value_id</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="p">)</span>
+        <span class="n">renderable</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">_value</span><span class="o">.</span><span class="n">data</span><span class="p">)]</span>
 
-        <span class="n">terminal_print</span><span class="p">(</span><span class="n">renderable</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">kiara.interfaces.tui.pager</span> <span class="kn">import</span> <span class="n">PagerApp</span>
-
-        <span class="n">app</span> <span class="o">=</span> <span class="n">PagerApp</span><span class="p">(</span><span class="n">api</span><span class="o">=</span><span class="n">kiara_api</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">_value</span><span class="o">.</span><span class="n">value_id</span><span class="p">))</span>
-        <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">terminal_print</span><span class="p">(</span><span class="n">renderable</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -5625,8 +5611,10 @@
 <p>Filters must be provided as a single string, where filters are seperated using ":".</p>
 
       <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.10/x64/lib/python3.10/site-packages/kiara/interfaces/cli/data/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">344</span>
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/data/commands.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
 <span class="normal">345</span>
 <span class="normal">346</span>
 <span class="normal">347</span>
@@ -5790,9 +5778,7 @@
 <span class="normal">505</span>
 <span class="normal">506</span>
 <span class="normal">507</span>
-<span class="normal">508</span>
-<span class="normal">509</span>
-<span class="normal">510</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@data</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;filter&quot;</span><span class="p">)</span>
+<span class="normal">508</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@data</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s2">&quot;filter&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;__no_value__&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;filters&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;__no_filters__&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>

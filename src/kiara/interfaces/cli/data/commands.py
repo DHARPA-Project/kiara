@@ -293,14 +293,14 @@ def explain_value(
 
 @data.command(name="load")
 @click.argument("value", nargs=1, required=True)
-@click.option(
-    "--single-page",
-    "-s",
-    help="Only pretty print a single (preview) page, instead of using a pager when available.",
-    is_flag=True,
-)
+# @click.option(
+#     "--single-page",
+#     "-s",
+#     help="Only pretty print a single (preview) page, instead of using a pager when available.",
+#     is_flag=True,
+# )
 @click.pass_context
-def load_value(ctx, value: str, single_page: bool):
+def load_value(ctx, value: str):
     """Load a stored value and print it in a format suitable for the terminal."""
     # kiara_obj: Kiara = ctx.obj["kiara"]
     kiara_api: KiaraAPI = ctx.obj.kiara_api
@@ -315,30 +315,28 @@ def load_value(ctx, value: str, single_page: bool):
         terminal_print(f"[red]Error[/red]: No value found for: {value}")
         sys.exit(1)
 
-    if single_page:
-        logger.debug(
-            "fallback.render_value",
-            solution="use pretty print",
-            source_type=_value.data_type_name,
-            target_type="terminal_renderable",
-            reason="no 'render_value' operation for source/target operation",
+    logger.debug(
+        "fallback.render_value",
+        solution="use pretty print",
+        source_type=_value.data_type_name,
+        target_type="terminal_renderable",
+        reason="no 'render_value' operation for source/target operation",
+    )
+    try:
+        renderable = kiara_api.context.data_registry.pretty_print_data(
+            _value.value_id, target_type="terminal_renderable"
         )
-        try:
-            renderable = kiara_api.context.data_registry.pretty_print_data(
-                _value.value_id, target_type="terminal_renderable"
-            )
-        except Exception as e:
-            log_exception(e)
-            log_message("error.pretty_print", value=_value.value_id, error=e)
-            renderable = [str(_value.data)]
+    except Exception as e:
+        log_exception(e)
+        log_message("error.pretty_print", value=_value.value_id, error=e)
+        renderable = [str(_value.data)]
 
-        terminal_print(renderable)
-        sys.exit(0)
-    else:
-        from kiara.interfaces.tui.pager import PagerApp
-
-        app = PagerApp(api=kiara_api, value=str(_value.value_id))
-        app.run()
+    terminal_print(renderable)
+    sys.exit(0)
+    # from kiara.interfaces.tui.pager import PagerApp
+    #
+    # app = PagerApp(api=kiara_api, value=str(_value.value_id))
+    # app.run()
 
 
 @data.command("filter")

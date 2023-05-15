@@ -21,7 +21,7 @@
         <link rel="next" href="../job/">
       
       <link rel="icon" href="../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.7">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.12">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.ded33207.min.css">
+      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.85bb2934.min.css">
       
       
 
@@ -116,10 +116,6 @@
         </div>
       </div>
     </div>
-    
-      <form class="md-header__option" data-md-component="palette">
-        
-      </form>
     
     
     
@@ -5348,6 +5344,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueTypeAndDescription.description" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5367,6 +5364,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueTypeAndDescription.type" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5386,6 +5384,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueTypeAndDescription.value_default" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5405,6 +5404,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueTypeAndDescription.required" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5585,6 +5585,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ItemInfo.type_name" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5604,6 +5605,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ItemInfo.documentation" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5623,6 +5625,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ItemInfo.authors" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5642,6 +5645,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ItemInfo.context" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5662,8 +5666,8 @@
 <code class="highlight language-python"><span class="n">base_instance_class</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">INFO_BASE_INSTANCE_TYPE</span><span class="p">]</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
       <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ItemInfo.base_instance_class" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5691,11 +5695,11 @@
 
 
 <h5 id="kiara.interfaces.python_api.models.info.ItemInfo.create_from_instance" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_from_instance</span><span class="p">(</span><span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">INFO_BASE_INSTANCE_TYPE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_from_instance</span><span class="p">(</span><span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">INFO_BASE_INSTANCE_TYPE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">INFO_BASE_INSTANCE_TYPE</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
       <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ItemInfo.create_from_instance" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5898,6 +5902,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.TypeInfo.python_class" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5915,7 +5920,7 @@
 
 
 <h5 id="kiara.interfaces.python_api.models.info.TypeInfo.create_from_instance" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_from_instance</span><span class="p">(</span><span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">INFO_BASE_CLASS</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_from_instance</span><span class="p">(</span><span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">INFO_BASE_CLASS</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">INFO_BASE_CLASS</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -5949,8 +5954,8 @@
 <code class="highlight language-python"><span class="n">create_from_type_class</span><span class="p">(</span><span class="n">type_cls</span><span class="p">:</span> <span class="n">INFO_BASE_CLASS</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ItemInfo</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
       <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.TypeInfo.create_from_type_class" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6178,6 +6183,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.InfoItemGroup.group_title" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6197,6 +6203,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.InfoItemGroup.item_infos" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6217,8 +6224,8 @@
 <code class="highlight language-python"><span class="n">base_info_class</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">INFO_ITEM_TYPE</span><span class="p">]</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
       <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.InfoItemGroup.base_info_class" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6436,8 +6443,8 @@
 <code class="highlight language-python"><span class="n">base_info_class</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">TypeInfo</span><span class="p">]</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
       <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.TypeInfoItemGroup.base_info_class" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6669,6 +6676,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.KiaraModelTypeInfo.metadata_schema" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6939,6 +6947,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.KiaraModelClassesInfo.type_name" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6958,6 +6967,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.KiaraModelClassesInfo.item_infos" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7502,6 +7512,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.value_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7521,6 +7532,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.kiara_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7540,6 +7552,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.value_schema" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7559,6 +7572,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.value_status" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7578,6 +7592,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.value_size" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7597,6 +7612,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.value_hash" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7616,6 +7632,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.pedigree" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7635,6 +7652,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.pedigree_output_name" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7654,6 +7672,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.data_type_info" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7673,6 +7692,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.aliases" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7692,6 +7712,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.serialized" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7711,6 +7732,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.properties" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7730,6 +7752,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.destiny_links" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7749,6 +7772,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.environment_hashes" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7768,6 +7792,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.enviroments" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7787,6 +7812,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.property_links" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7806,6 +7832,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.destiny_backlinks" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7825,6 +7852,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.is_internal" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7844,6 +7872,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ValueInfo.is_persisted" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -8511,7 +8540,7 @@
 
 
 <h5 id="kiara.interfaces.python_api.models.info.ValuesInfo.create_render_map" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_render_map</span><span class="p">(</span><span class="n">render_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default_render_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_render_map</span><span class="p">(</span><span class="n">render_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default_render_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span></code>
 
 <a href="#kiara.interfaces.python_api.models.info.ValuesInfo.create_render_map" class="headerlink" title="Permanent link">&para;</a></h5>
 
@@ -8876,6 +8905,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.KiaraModuleConfigMetadata.python_class" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -8895,6 +8925,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.KiaraModuleConfigMetadata.config_values" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -9270,6 +9301,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.DataTypeClassInfo.value_cls" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -9289,6 +9321,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.DataTypeClassInfo.data_type_config_cls" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -9308,6 +9341,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.DataTypeClassInfo.lineage" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -9327,6 +9361,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.DataTypeClassInfo.qualifier_profiles" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -9855,6 +9890,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.DataTypeClassesInfo.type_name" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -9874,6 +9910,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.DataTypeClassesInfo.item_infos" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -10280,6 +10317,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ModuleTypeInfo.module_src" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -10631,6 +10669,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ModuleTypesInfo.type_name" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -10650,6 +10689,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.ModuleTypesInfo.item_infos" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -10997,6 +11037,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.OperationTypeClassesInfo.type_name" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11016,6 +11057,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.OperationTypeClassesInfo.item_infos" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11125,6 +11167,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.FieldInfo.field_name" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11144,6 +11187,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.FieldInfo.field_schema" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11163,6 +11207,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.FieldInfo.data_type_info" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11182,6 +11227,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.FieldInfo.value_required" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11534,6 +11580,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.pipeline_config" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11553,6 +11600,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.steps" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11572,6 +11620,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.step_details" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11591,6 +11640,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.input_aliases" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11610,6 +11660,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.output_aliases" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11629,6 +11680,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.constants" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11648,6 +11700,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.defaults" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11667,6 +11720,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.pipeline_input_fields" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11686,6 +11740,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.pipeline_output_fields" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11705,6 +11760,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.pipeline_input_refs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11724,6 +11780,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.pipeline_output_refs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11743,6 +11800,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.execution_graph" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11762,6 +11820,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.data_flow_graph" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11781,6 +11840,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.data_flow_graph_simple" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11800,6 +11860,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.PipelineStructureInfo.processing_stages" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -11846,7 +11907,7 @@
 
 
 <h5 id="kiara.interfaces.python_api.models.info.PipelineStructureInfo.create_from_instance" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_from_instance</span><span class="p">(</span><span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">PipelineStructure</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_from_instance</span><span class="p">(</span><span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">PipelineStructure</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">PipelineStructure</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -12345,6 +12406,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.OperationInfo.operation" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -12364,6 +12426,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.OperationInfo.operation_types" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -12383,6 +12446,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.OperationInfo.input_fields" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -12402,6 +12466,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.OperationInfo.output_fields" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -12448,7 +12513,7 @@
 
 
 <h5 id="kiara.interfaces.python_api.models.info.OperationInfo.create_from_instance" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_from_instance</span><span class="p">(</span><span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_from_instance</span><span class="p">(</span><span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Operation</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Operation</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -13033,6 +13098,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.OperationGroupInfo.item_infos" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -13390,6 +13456,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.RendererInfo.renderer_config" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -13409,6 +13476,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.RendererInfo.renderer_cls" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -13428,6 +13496,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.RendererInfo.supported_inputs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -13447,6 +13516,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.RendererInfo.supported_source_types" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -13466,6 +13536,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.RendererInfo.supported_target_types" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -13485,6 +13556,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.info.RendererInfo.supported_python_classes" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -13531,7 +13603,7 @@
 
 
 <h5 id="kiara.interfaces.python_api.models.info.RendererInfo.create_from_instance" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_from_instance</span><span class="p">(</span><span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">KiaraRenderer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">create_from_instance</span><span class="p">(</span><span class="n">kiara</span><span class="p">:</span> <span class="n">Kiara</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">KiaraRenderer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">KiaraRenderer</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -14008,7 +14080,7 @@
     <script id="__config" type="application/json">{"base": "../../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../../assets/javascripts/bundle.51198bba.min.js"></script>
+      <script src="../../../../../../assets/javascripts/bundle.c2be25ad.min.js"></script>
       
     
   </body>

@@ -21,7 +21,7 @@
         <link rel="next" href="../controller/">
       
       <link rel="icon" href="../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.1.7">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.12">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.ded33207.min.css">
+      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.85bb2934.min.css">
       
       
 
@@ -116,10 +116,6 @@
         </div>
       </div>
     </div>
-    
-      <form class="md-header__option" data-md-component="palette">
-        
-      </form>
     
     
     
@@ -4851,6 +4847,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.StepStatus.INPUTS_INVALID" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -4870,6 +4867,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.StepStatus.INPUTS_READY" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -4889,6 +4887,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.StepStatus.RESULTS_READY" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5593,6 +5592,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineStep.step_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5612,6 +5612,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineStep.module_type" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5631,6 +5632,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineStep.module_config" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5650,6 +5652,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineStep.manifest_src" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5669,6 +5672,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineStep.input_links" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5688,6 +5692,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineStep.module_details" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5707,6 +5712,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineStep.doc" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5781,6 +5787,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineStep.Config.validate_assignment" class="headerlink" title="Permanent link">&para;</a></h7>
@@ -5800,6 +5807,7 @@
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineStep.Config.extra" class="headerlink" title="Permanent link">&para;</a></h7>
@@ -6531,11 +6539,11 @@ not_step = PipelineStepConfig(module_type=&quot;not&quot;, step_id=&quot;not&quo
 nand_p_conf = PipelineConfig(doc=&quot;Returns &#39;False&#39; if both inputs are &#39;True&#39;.&quot;,
                     steps=[and_step, not_step],
                     input_aliases={
-                        &quot;and__a&quot;: &quot;a&quot;,
-                        &quot;and__b&quot;: &quot;b&quot;
+                        &quot;and.a&quot;: &quot;a&quot;,
+                        &quot;and.b&quot;: &quot;b&quot;
                     },
                     output_aliases={
-                        &quot;not__y&quot;: &quot;y&quot;
+                        &quot;not.y&quot;: &quot;y&quot;
                     }}
 ```
 
@@ -6559,11 +6567,11 @@ Or, the same thing in json:
     }
   ],
   &quot;input_aliases&quot;: {
-    &quot;and__a&quot;: &quot;a&quot;,
-    &quot;and__b&quot;: &quot;b&quot;
+    &quot;and.a&quot;: &quot;a&quot;,
+    &quot;and.b&quot;: &quot;b&quot;
   },
   &quot;output_aliases&quot;: {
-    &quot;not__y&quot;: &quot;y&quot;
+    &quot;not.y&quot;: &quot;y&quot;
   }
 }
 ```
@@ -6894,11 +6902,11 @@ Or, the same thing in json:
 <span class="sd">        nand_p_conf = PipelineConfig(doc=&quot;Returns &#39;False&#39; if both inputs are &#39;True&#39;.&quot;,</span>
 <span class="sd">                            steps=[and_step, not_step],</span>
 <span class="sd">                            input_aliases={</span>
-<span class="sd">                                &quot;and__a&quot;: &quot;a&quot;,</span>
-<span class="sd">                                &quot;and__b&quot;: &quot;b&quot;</span>
+<span class="sd">                                &quot;and.a&quot;: &quot;a&quot;,</span>
+<span class="sd">                                &quot;and.b&quot;: &quot;b&quot;</span>
 <span class="sd">                            },</span>
 <span class="sd">                            output_aliases={</span>
-<span class="sd">                                &quot;not__y&quot;: &quot;y&quot;</span>
+<span class="sd">                                &quot;not.y&quot;: &quot;y&quot;</span>
 <span class="sd">                            }}</span>
 <span class="sd">        ```</span>
 
@@ -6922,11 +6930,11 @@ Or, the same thing in json:
 <span class="sd">            }</span>
 <span class="sd">          ],</span>
 <span class="sd">          &quot;input_aliases&quot;: {</span>
-<span class="sd">            &quot;and__a&quot;: &quot;a&quot;,</span>
-<span class="sd">            &quot;and__b&quot;: &quot;b&quot;</span>
+<span class="sd">            &quot;and.a&quot;: &quot;a&quot;,</span>
+<span class="sd">            &quot;and.b&quot;: &quot;b&quot;</span>
 <span class="sd">          },</span>
 <span class="sd">          &quot;output_aliases&quot;: {</span>
-<span class="sd">            &quot;not__y&quot;: &quot;y&quot;</span>
+<span class="sd">            &quot;not.y&quot;: &quot;y&quot;</span>
 <span class="sd">          }</span>
 <span class="sd">        }</span>
 <span class="sd">        ```</span>
@@ -7179,6 +7187,7 @@ Or, the same thing in json:
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineConfig.pipeline_name" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7198,6 +7207,7 @@ Or, the same thing in json:
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineConfig.steps" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7217,6 +7227,7 @@ Or, the same thing in json:
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineConfig.input_aliases" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7236,6 +7247,7 @@ Or, the same thing in json:
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineConfig.output_aliases" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7255,6 +7267,7 @@ Or, the same thing in json:
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineConfig.doc" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7274,6 +7287,7 @@ Or, the same thing in json:
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineConfig.context" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7348,6 +7362,7 @@ Or, the same thing in json:
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineConfig.Config.extra" class="headerlink" title="Permanent link">&para;</a></h7>
@@ -7367,6 +7382,7 @@ Or, the same thing in json:
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.PipelineConfig.Config.validate_assignment" class="headerlink" title="Permanent link">&para;</a></h7>
@@ -7917,7 +7933,7 @@ Or, the same thing in json:
     <script id="__config" type="application/json">{"base": "../../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../../assets/javascripts/bundle.51198bba.min.js"></script>
+      <script src="../../../../../../assets/javascripts/bundle.c2be25ad.min.js"></script>
       
     
   </body>

@@ -433,11 +433,11 @@ class PipelineConfig(KiaraModuleConfig):
         nand_p_conf = PipelineConfig(doc="Returns 'False' if both inputs are 'True'.",
                             steps=[and_step, not_step],
                             input_aliases={
-                                "and__a": "a",
-                                "and__b": "b"
+                                "and.a": "a",
+                                "and.b": "b"
                             },
                             output_aliases={
-                                "not__y": "y"
+                                "not.y": "y"
                             }}
         ```
 
@@ -461,11 +461,11 @@ class PipelineConfig(KiaraModuleConfig):
             }
           ],
           "input_aliases": {
-            "and__a": "a",
-            "and__b": "b"
+            "and.a": "a",
+            "and.b": "b"
           },
           "output_aliases": {
-            "not__y": "y"
+            "not.y": "y"
           }
         }
         ```

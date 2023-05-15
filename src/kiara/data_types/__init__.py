@@ -168,10 +168,11 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
     @classmethod
     @abc.abstractmethod
     def python_class(cls) -> Type[TYPE_PYTHON_CLS]:
-        pass
+        """The Python class that the internal 'data' attribute of a value has."""
 
     @classmethod
     def data_type_config_class(cls) -> Type[TYPE_CONFIG_CLS]:
+        """The Python class that holds the (optional) configuration for a data type instance."""
         return DataTypeConfig  # type: ignore
 
     @classmethod

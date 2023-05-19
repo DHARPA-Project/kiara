@@ -736,8 +736,10 @@ class DataRegistry(object):
                 data = copy.deepcopy(schema.default)
             reuse_existing = False
 
-        if data is None:
+        if data in [None, NONE_VALUE_ID]:
             data = SpecialValue.NO_VALUE
+        elif data == NOT_SET_VALUE_ID:
+            data = SpecialValue.NOT_SET
 
         if reuse_existing and data not in [SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
             (

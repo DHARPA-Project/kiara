@@ -118,7 +118,8 @@ def presseeded_data_store_minimal() -> Kiara:
     inputs = {
         "import_file__path": os.path.join(
             ROOT_DIR, "examples", "data", "journals", "JournalNodes1902.csv"
-        )
+        ),
+        "create_table_from_files__first_row_is_header": True,
     }
 
     batch_op.run(inputs=inputs, save="preseed_minimal")

@@ -25,7 +25,6 @@ def test_extract_metadata_all_available_data(presseeded_data_store_minimal: Kiar
     ) in presseeded_data_store_minimal.data_registry.retrieve_all_available_value_ids():
 
         value = presseeded_data_store_minimal.data_registry.get_value(value_id)
-
         ops = op_type.get_operations_for_data_type(value.value_schema.type)
 
         for op in ops.values():

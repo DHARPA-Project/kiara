@@ -734,25 +734,12 @@ class DataRegistry(object):
                 data = schema.default()
             else:
                 data = copy.deepcopy(schema.default)
+            reuse_existing = False
 
         if data is None:
             data = SpecialValue.NO_VALUE
 
-        _reuse_existing = reuse_existing and data not in [
-            SpecialValue.NO_VALUE,
-            SpecialValue.NOT_SET,
-        ]
-
-        data_type = None
-        if _reuse_existing:
-            # check if the data type is a scalar
-            data_type = self._kiara.type_registry.retrieve_data_type(
-                data_type_name=schema.type, data_type_config=schema.type_config
-            )
-            if data_type.characteristics.is_scalar:
-                _reuse_existing = False
-
-        if _reuse_existing:
+        if reuse_existing and data not in [SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
             (
                 _existing,
                 data_type,
@@ -767,10 +754,9 @@ class DataRegistry(object):
                 # TODO: check pedigree
                 return (_existing, False)
         else:
-            if data_type is None:
-                data_type = self._kiara.type_registry.retrieve_data_type(
-                    data_type_name=schema.type, data_type_config=schema.type_config
-                )
+            data_type = self._kiara.type_registry.retrieve_data_type(
+                data_type_name=schema.type, data_type_config=schema.type_config
+            )
 
             (
                 data,

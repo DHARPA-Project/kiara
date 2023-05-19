@@ -734,12 +734,24 @@ class DataRegistry(object):
                 data = schema.default()
             else:
                 data = copy.deepcopy(schema.default)
+
             reuse_existing = False
 
-        if data in [None, NONE_VALUE_ID]:
+        data_type: Union[None, DataType] = None
+        if reuse_existing:
+            data_type = self._kiara.type_registry.retrieve_data_type(
+                data_type_name=schema.type, data_type_config=schema.type_config
+            )
+            if data_type.characteristics.is_scalar:
+                reuse_existing = False
+
+        if data is None:
             data = SpecialValue.NO_VALUE
-        elif data == NOT_SET_VALUE_ID:
-            data = SpecialValue.NOT_SET
+        elif isinstance(data, uuid.UUID):
+            if data == NONE_VALUE_ID:
+                data = SpecialValue.NO_VALUE
+            elif data == NOT_SET_VALUE_ID:
+                data = SpecialValue.NOT_SET
 
         if reuse_existing and data not in [SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
             (
@@ -756,9 +768,10 @@ class DataRegistry(object):
                 # TODO: check pedigree
                 return (_existing, False)
         else:
-            data_type = self._kiara.type_registry.retrieve_data_type(
-                data_type_name=schema.type, data_type_config=schema.type_config
-            )
+            if data_type is None:
+                data_type = self._kiara.type_registry.retrieve_data_type(
+                    data_type_name=schema.type, data_type_config=schema.type_config
+                )
 
             (
                 data,

@@ -18,13 +18,13 @@ from kiara.defaults import (
     VALID_PIPELINE_FILE_EXTENSIONS,
 )
 from kiara.exceptions import InvalidOperationException, NoSuchOperationException
-from kiara.models.module.pipeline.value_refs import StepValueAddress
 from kiara.utils import log_exception
 from kiara.utils.files import get_data_from_file
 
 if typing.TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.models.module.pipeline import PipelineConfig
+    from kiara.models.module.pipeline.value_refs import StepValueAddress
     from kiara.modules.included_core_modules.pipeline import PipelineModule
 
 logger = structlog.get_logger()
@@ -34,6 +34,8 @@ def create_step_value_address(
     value_address_config: Union[str, Mapping[str, Any]],
     default_field_name: str,
 ) -> "StepValueAddress":
+
+    from kiara.models.module.pipeline.value_refs import StepValueAddress
 
     if isinstance(value_address_config, StepValueAddress):
         return value_address_config

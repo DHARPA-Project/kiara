@@ -1137,6 +1137,7 @@ class KiaraAPI(object):
         -------
             a value map instance
         """
+
         if register_data:
             temp: Dict[str, Union[str, Value, uuid.UUID, None]] = {}
             for k, v in values.items():
@@ -1144,20 +1145,6 @@ class KiaraAPI(object):
                 if isinstance(v, (Value, uuid.UUID)):
                     temp[k] = v
                     continue
-
-                if isinstance(v, str):
-                    try:
-                        v = uuid.UUID(v)
-                        temp[k] = v
-                        continue
-                    except Exception:
-                        if v.startswith("alias:"):  # type: ignore
-                            _v = v.replace("alias:", "")  # type: ignore
-                        else:
-                            _v = v
-                        if _v in self.list_aliases():
-                            temp[k] = f"alias:{_v}"
-                            continue
 
                 if not values_schema:
                     details = "No schema provided."
@@ -1171,6 +1158,22 @@ class KiaraAPI(object):
                         f"Invalid field name: '{k}' (value: {str(v)}).", details=details
                     )
 
+                if isinstance(v, str):
+                    try:
+                        v = uuid.UUID(v)
+                        temp[k] = v
+                        continue
+                    except Exception:
+                        if v.startswith("alias:"):  # type: ignore
+                            _v = v.replace("alias:", "")  # type: ignore
+                        else:
+                            _v = v
+
+                        data_type = values_schema[k].type
+                        if data_type != "string" and _v in self.list_aliases():
+                            temp[k] = f"alias:{_v}"
+                            continue
+
                 if v is None:
                     temp[k] = None
                 else:
@@ -1181,7 +1184,6 @@ class KiaraAPI(object):
                     )
                     temp[k] = _v
             values = temp
-
         return self.context.data_registry.load_values(
             values=values, values_schema=values_schema
         )

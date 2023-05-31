@@ -7,7 +7,11 @@ import pytz
 import structlog
 from boltons.strutils import slugify
 
-from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
+from kiara.defaults import (
+    KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
+    NONE_VALUE_ID,
+    NOT_SET_VALUE_ID,
+)
 from kiara.exceptions import NoSuchWorkflowException
 from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
@@ -81,7 +85,7 @@ class WorkflowPipelineController(SinglePipelineController):
 
         try:
             stages = self.pipeline.structure.extract_processing_stages(
-                stages_extraction_type="late"
+                stages_extraction_type=KIARA_DEFAULT_STAGES_EXTRACTION_TYPE
             )
             for idx, stage in enumerate(stages, start=1):
 

@@ -12,6 +12,7 @@ import structlog
 
 from kiara.models.events.pipeline import PipelineEvent, PipelineState
 from kiara.models.module.pipeline.pipeline import Pipeline, PipelineListener
+from kiara.models.module.pipeline.stages import PipelineStage
 from kiara.registries.jobs import JobRegistry
 from kiara.utils import log_exception
 
@@ -193,9 +194,10 @@ class SinglePipelineBatchController(SinglePipelineController):
         self._is_running = True
         all_job_ids: Dict[str, Union[Exception, uuid.UUID]] = {}
         try:
-            for idx, stage in enumerate(
-                self.pipeline.structure.processing_stages, start=1
-            ):
+            stages = PipelineStage.extract_stages(
+                self.pipeline.structure, stages_extraction_type="early"
+            )
+            for idx, stage in enumerate(stages, start=1):
 
                 log.debug(
                     "execute.pipeline.stage",

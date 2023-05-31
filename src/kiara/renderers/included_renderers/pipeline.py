@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any, Iterable, Literal, Mapping, Set, Type, Un
 from jinja2 import Template
 from pydantic import Field
 
+from kiara.defaults import KIARA_DEFAULT_STAGES_EXTRACTION_TYPE
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.models.module.pipeline.structure import PipelineStructure
@@ -126,7 +127,8 @@ class PipelineRendererPngConfig(KiaraRendererConfig):
 class PipelineInputsSchema(RenderInputsSchema):
 
     stages_extraction_type: str = Field(
-        description="The type of stages extraction to use.", default="late"
+        description="The type of stages extraction to use.",
+        default=KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
     )
 
 

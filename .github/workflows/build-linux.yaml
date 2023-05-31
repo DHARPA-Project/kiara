@@ -67,10 +67,12 @@ jobs:
         run: pip list | grep kiara
       - name: Run coverage
         run: coverage run -m pytest tests
-      - name: Upload coverage data to coveralls.io
-        run: coveralls --service=github
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: coveralls
+        uses: coverallsapp/github-action@v2
+#      - name: Upload coverage data to coveralls.io
+#        run: coveralls --service=github
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   mypy-linux:
     name: mypy check on linux

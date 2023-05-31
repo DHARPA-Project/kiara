@@ -189,7 +189,6 @@ def set_and_validate_inputs(
 
     try:
         inputs_dict = dict_from_cli_args(*inputs, list_keys=list_keys)
-
         value_map = api.assemble_value_map(
             values=inputs_dict,
             values_schema=operation.inputs_schema,
@@ -266,24 +265,6 @@ def set_and_validate_inputs(
         )
         terminal_print(rg, in_panel=f"Operation info: [b]{operation.operation_id}[/b]")
         sys.exit(0)
-
-    # try:
-    #     operation_inputs = kiara_op.operation_inputs
-    # except InvalidValuesException as ive:
-    #
-    #     terminal_print()
-    #     rg = Group(
-    #         "",
-    #         f"Can't run operation: {ive}",
-    #         "",
-    #         Rule(),
-    #         "",
-    #         kiara_op.create_renderable(
-    #             show_operation_name=True, show_inputs=True, show_outputs_schema=True
-    #         ),
-    #     )
-    #     terminal_print(rg, in_panel=f"Run info: [b]{kiara_op.operation_name}[/b]")
-    #     sys.exit(1)
 
     if value_map.check_invalid():
         terminal_print()

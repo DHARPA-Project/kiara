@@ -12,6 +12,7 @@ from pydantic import Field, PrivateAttr, root_validator
 from rich.console import RenderableType
 from rich.tree import Tree
 
+from kiara.defaults import KIARA_DEFAULT_STAGES_EXTRACTION_TYPE
 from kiara.exceptions import InvalidPipelineConfig
 from kiara.models import KiaraModel
 from kiara.models.module.pipeline import PipelineConfig, PipelineStep
@@ -288,12 +289,15 @@ class PipelineStructure(KiaraModel):
         # process_late = self.pipeline_config.pipeline_name == "topic_modeling"
         processing_stages = []
 
-        processing_stages = PipelineStage.extract_stages(self)
+        processing_stages = PipelineStage.extract_stages(
+            self, stages_extraction_type=KIARA_DEFAULT_STAGES_EXTRACTION_TYPE
+        )
+
         self._processing_stages = processing_stages
         return self._processing_stages
 
     def extract_processing_stages(
-        self, stages_extraction_type: str = "late"
+        self, stages_extraction_type: str = KIARA_DEFAULT_STAGES_EXTRACTION_TYPE
     ) -> List[List[str]]:
         """
         Extract a list of lists of steps, representing the order of groups in which they will be executed.
@@ -308,7 +312,7 @@ class PipelineStructure(KiaraModel):
         )
 
     def extract_processing_stages_info(
-        self, stages_extraction_type: str = "late"
+        self, stages_extraction_type: str = KIARA_DEFAULT_STAGES_EXTRACTION_TYPE
     ) -> List[PipelineStage]:
 
         stages = self.extract_processing_stages(
@@ -317,7 +321,9 @@ class PipelineStructure(KiaraModel):
         return PipelineStage.stages_info_from_pipeline_structure(self, stages)
 
     def get_stages_graph(
-        self, stages_extraction_type: str = "late", flatten: bool = True
+        self,
+        stages_extraction_type: str = KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
+        flatten: bool = True,
     ) -> nx.DiGraph:
         """
         Creates a networx graph that represents the processing stages of the pipeline and how they are connecte.
@@ -726,7 +732,9 @@ class PipelineStructure(KiaraModel):
         show_pipeline_inputs_for_steps = config.get(
             "show_pipeline_inputs_for_steps", False
         )
-        stages_extraction_type = config.get("stages_extraction_type", "late")
+        stages_extraction_type = config.get(
+            "stages_extraction_type", KIARA_DEFAULT_STAGES_EXTRACTION_TYPE
+        )
 
         tree = Tree("pipeline")
         inputs = tree.add("inputs")

@@ -12,6 +12,7 @@ from typing import Literal, Union
 
 import networkx as nx
 
+from kiara.defaults import KIARA_DEFAULT_STAGES_EXTRACTION_TYPE
 from kiara.utils import log_message
 from kiara.utils.cli import terminal_print
 
@@ -118,7 +119,7 @@ def pipeline_graph_to_image(
     graph_type: Literal[
         "data-flow", "data-flow-simple", "execution", "stages"
     ] = "execution",
-    stages_extraction_type: str = "late",
+    stages_extraction_type: str = KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
     return_bytes: bool = False,
 ):
 

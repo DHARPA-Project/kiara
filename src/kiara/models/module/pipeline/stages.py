@@ -7,6 +7,7 @@ from rich import box
 from rich.console import RenderableType
 from rich.table import Table
 
+from kiara.defaults import KIARA_DEFAULT_STAGES_EXTRACTION_TYPE
 from kiara.exceptions import KiaraException
 from kiara.models import KiaraModel
 
@@ -20,7 +21,9 @@ class PipelineStage(KiaraModel):
 
     @classmethod
     def extract_stages(
-        cls, structure: "PipelineStructure", stages_extraction_type: str = "late"
+        cls,
+        structure: "PipelineStructure",
+        stages_extraction_type: str = KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
     ) -> List[List[str]]:
 
         func_name = f"extract_stages__{stages_extraction_type}"
@@ -55,6 +58,7 @@ class PipelineStage(KiaraModel):
     @classmethod
     def extract_stages__late(cls, structure: "PipelineStructure") -> List[List[str]]:
         """Extract stages in a way so that steps are processed as late as possible."""
+
         execution_graph = structure.execution_graph
         leaf_nodes = [
             node
@@ -118,7 +122,7 @@ class PipelineStage(KiaraModel):
     def stages_info_from_pipeline_structure(
         cls,
         structure: "PipelineStructure",
-        stages: Union[List[List[str]], str] = "late",
+        stages: Union[List[List[str]], str] = KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
     ) -> List["PipelineStage"]:
 
         if isinstance(stages, str):
@@ -242,7 +246,9 @@ class PipelineStage(KiaraModel):
 class PipelineStages(KiaraModel):
     @classmethod
     def create(
-        cls, structure: "PipelineStructure", stages_extraction_type: str = "late"
+        cls,
+        structure: "PipelineStructure",
+        stages_extraction_type: str = KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
     ) -> "PipelineStages":
 
         stages_info = structure.extract_processing_stages_info(

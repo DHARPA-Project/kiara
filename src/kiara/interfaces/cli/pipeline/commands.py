@@ -12,6 +12,7 @@ import rich_click as click
 from rich import box
 from rich.table import Table
 
+from kiara.defaults import KIARA_DEFAULT_STAGES_EXTRACTION_TYPE
 from kiara.utils.cli import output_format_option, terminal_print_model
 from kiara.utils.cli.exceptions import handle_exception
 
@@ -80,7 +81,7 @@ def list_pipelines(ctx, full_doc: bool, filter: typing.Iterable[str], format: st
 @click.option(
     "--stages-extraction-type",
     "-s",
-    default="late",
+    default=KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
     help="How to extract the stages from the pipeline structure. Available: 'late', 'early', as well as pipeline specific profiles (if in pipeline metadata).",
 )
 @output_format_option()
@@ -107,7 +108,7 @@ def explain(ctx, pipeline_name_or_path: str, format: str, stages_extraction_type
 @click.option(
     "--stages-extraction-type",
     "-s",
-    default="late",
+    default=KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
     help="How to extract the stages from the pipeline structure. Available: 'late', 'early', as well as pipeline specific profiles (if in pipeline metadata).",
 )
 @output_format_option()
@@ -165,6 +166,7 @@ def execution_graph(ctx, pipeline_name_or_path: str):
 @click.pass_context
 def data_flow_graph(ctx, pipeline_name_or_path: str, full: bool):
     """Print the data flow graph for a pipeline structure."""
+
     from kiara.utils.graphs import print_ascii_graph
     from kiara.utils.pipelines import get_pipeline_config
 
@@ -190,7 +192,7 @@ def data_flow_graph(ctx, pipeline_name_or_path: str, full: bool):
 @click.option(
     "--stages-extraction-type",
     "-s",
-    default="late",
+    default=KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
     help="How to extract the stages from the pipeline structure. Available: 'late', 'early', as well as pipeline specific profiles (if in pipeline metadata).",
 )
 @click.pass_context

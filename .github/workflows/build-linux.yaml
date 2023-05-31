@@ -69,6 +69,9 @@ jobs:
         run: coverage run -m pytest tests
       - name: coveralls
         uses: coverallsapp/github-action@v2
+        with:
+          format: python
+          allow-empty: true
 #      - name: Upload coverage data to coveralls.io
 #        run: coveralls --service=github
 #        env:

@@ -24,7 +24,7 @@ def test_internal_data_types(api: KiaraAPI):
 def test_data_type_info(api: KiaraAPI):
 
     infos = api.retrieve_data_types_info(filter="table")
-    assert len(infos.item_infos) == 1
+    assert len(infos.item_infos) == 2
 
     info = api.retrieve_data_type_info("table")
     assert info == next(iter(infos.item_infos.values()))

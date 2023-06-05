@@ -21,7 +21,7 @@
         <link rel="next" href="../workflow_registry/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.13">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.26e3688c.min.css">
       
       
 
@@ -4887,10 +4887,10 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/events/pipeline.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ChangedValue</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ChangedValue</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 
     <span class="n">old</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
     <span class="n">new</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
@@ -4974,7 +4974,13 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/events/pipeline.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">37</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
 <span class="normal">38</span>
 <span class="normal">39</span>
 <span class="normal">40</span>
@@ -5011,13 +5017,7 @@
 <span class="normal">71</span>
 <span class="normal">72</span>
 <span class="normal">73</span>
-<span class="normal">74</span>
-<span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StepDetails</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">StepDetails</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 
     <span class="n">kiara_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the kiara context.&quot;</span><span class="p">)</span>
     <span class="n">pipeline_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The id of the pipeline.&quot;</span><span class="p">)</span>
@@ -5082,8 +5082,8 @@
 <code class="highlight language-python"><span class="n">kiara_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The id of the kiara context.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.StepDetails.kiara_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5102,8 +5102,8 @@
 <code class="highlight language-python"><span class="n">pipeline_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The id of the pipeline.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.StepDetails.pipeline_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5122,8 +5122,8 @@
 <code class="highlight language-python"><span class="n">step</span><span class="p">:</span> <span class="n">PipelineStep</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The pipeline step details.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.StepDetails.step" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5142,8 +5142,8 @@
 <code class="highlight language-python"><span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The id of the step.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.StepDetails.step_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5162,8 +5162,8 @@
 <code class="highlight language-python"><span class="n">processing_stage</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The execution stage where this step is executed.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.StepDetails.processing_stage" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5182,8 +5182,8 @@
 <code class="highlight language-python"><span class="n">status</span><span class="p">:</span> <span class="n">StepStatus</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The current status of this step.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.StepDetails.status" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5202,8 +5202,8 @@
 <code class="highlight language-python"><span class="n">invalid_details</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Details about fields that are invalid (if status &lt; &#39;INPUTS_READY&#39;.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.StepDetails.invalid_details" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5222,8 +5222,8 @@
 <code class="highlight language-python"><span class="n">inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The current inputs of this step.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.StepDetails.inputs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5242,8 +5242,8 @@
 <code class="highlight language-python"><span class="n">outputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The current outputs of this step.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.StepDetails.outputs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5270,15 +5270,15 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/events/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">56</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
 <span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">)</span>
+<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">replace_none_values_inputs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
@@ -5307,15 +5307,15 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/events/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">66</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
 <span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span>
-<span class="normal">70</span>
-<span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span>
-<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">)</span>
+<span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;outputs&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">replace_none_values_outputs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
@@ -5357,7 +5357,13 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/events/pipeline.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 83</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
 <span class="normal"> 84</span>
 <span class="normal"> 85</span>
 <span class="normal"> 86</span>
@@ -5386,13 +5392,7 @@
 <span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineState</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineState</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
 
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;instance.pipeline_state&quot;</span>
 
@@ -5449,8 +5449,8 @@
 <code class="highlight language-python"><span class="n">kiara_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The id of the kiara context.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineState.kiara_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5469,8 +5469,8 @@
 <code class="highlight language-python"><span class="n">pipeline_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The id of the pipeline.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineState.pipeline_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5489,8 +5489,8 @@
 <code class="highlight language-python"><span class="n">pipeline_status</span><span class="p">:</span> <span class="n">StepStatus</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The current status of this pipeline.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineState.pipeline_status" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5509,8 +5509,8 @@
 <code class="highlight language-python"><span class="n">invalid_details</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Details about fields that are invalid (if status &lt; &#39;INPUTS_READY&#39;.&quot;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineState.invalid_details" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5529,8 +5529,8 @@
 <code class="highlight language-python"><span class="n">pipeline_inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The current pipeline inputs.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineState.pipeline_inputs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5549,8 +5549,8 @@
 <code class="highlight language-python"><span class="n">pipeline_outputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The current pipeline outputs.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineState.pipeline_outputs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5569,8 +5569,8 @@
 <code class="highlight language-python"><span class="n">step_states</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StepDetails</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The state of each step within this pipeline.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineState.step_states" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5599,9 +5599,9 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/events/pipeline.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">json_loads</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span>
     <span class="n">json_dumps</span> <span class="o">=</span> <span class="n">orjson_dumps</span>
 </code></pre></div></td></tr></table></div>
@@ -5625,8 +5625,8 @@
 <code class="highlight language-python"><span class="n">json_loads</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineState.Config.json_loads" class="headerlink" title="Permanent link">&para;</a></h7>
@@ -5645,8 +5645,8 @@
 <code class="highlight language-python"><span class="n">json_dumps</span> <span class="o">=</span> <span class="n">orjson_dumps</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineState.Config.json_dumps" class="headerlink" title="Permanent link">&para;</a></h7>
@@ -5682,12 +5682,12 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/events/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_steps_by_processing_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StepDetails</span><span class="p">]]:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_steps_by_processing_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StepDetails</span><span class="p">]]:</span>
 
     <span class="n">result</span><span class="p">:</span> <span class="n">MutableMapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StepDetails</span><span class="p">]]</span> <span class="o">=</span> <span class="n">SortedDict</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">step_details</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_states</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
@@ -5726,7 +5726,13 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/events/pipeline.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">121</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
 <span class="normal">122</span>
 <span class="normal">123</span>
 <span class="normal">124</span>
@@ -5799,13 +5805,7 @@
 <span class="normal">191</span>
 <span class="normal">192</span>
 <span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span>
-<span class="normal">199</span>
-<span class="normal">200</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineEvent</span><span class="p">(</span><span class="n">KiaraEvent</span><span class="p">):</span>
+<span class="normal">194</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineEvent</span><span class="p">(</span><span class="n">KiaraEvent</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_event</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -5906,8 +5906,8 @@
 <code class="highlight language-python"><span class="n">kiara_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The id of the kiara context that created the pipeline.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineEvent.kiara_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5926,8 +5926,8 @@
 <code class="highlight language-python"><span class="n">pipeline_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The pipeline id.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineEvent.pipeline_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5946,8 +5946,8 @@
 <code class="highlight language-python"><span class="n">pipeline_inputs_changed</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ChangedValue</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Details about changed pipeline input values.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineEvent.pipeline_inputs_changed" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5966,8 +5966,8 @@
 <code class="highlight language-python"><span class="n">pipeline_outputs_changed</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ChangedValue</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Details about changed pipeline output values.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineEvent.pipeline_outputs_changed" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5986,8 +5986,8 @@
 <code class="highlight language-python"><span class="n">step_inputs_changed</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ChangedValue</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Details about changed step input values.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineEvent.step_inputs_changed" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6006,8 +6006,8 @@
 <code class="highlight language-python"><span class="n">step_outputs_changed</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ChangedValue</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Details about changed step output values.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineEvent.step_outputs_changed" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6026,8 +6026,8 @@
 <code class="highlight language-python"><span class="n">changed_steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;A list of all step ids that have newly invalidated outputs.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineEvent.changed_steps" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6056,8 +6056,8 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/events/pipeline.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">169</span>
-<span class="normal">170</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">163</span>
+<span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">allow_mutation</span> <span class="o">=</span> <span class="kc">False</span>
 </code></pre></div></td></tr></table></div>
         </details>
@@ -6080,8 +6080,8 @@
 <code class="highlight language-python"><span class="n">allow_mutation</span> <span class="o">=</span> <span class="kc">False</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.events.pipeline.PipelineEvent.Config.allow_mutation" class="headerlink" title="Permanent link">&para;</a></h7>
@@ -6121,7 +6121,13 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/events/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">122</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
 <span class="normal">123</span>
 <span class="normal">124</span>
 <span class="normal">125</span>
@@ -6160,13 +6166,7 @@
 <span class="normal">158</span>
 <span class="normal">159</span>
 <span class="normal">160</span>
-<span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">161</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_event</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">pipeline</span><span class="p">:</span> <span class="s2">&quot;Pipeline&quot;</span><span class="p">,</span>

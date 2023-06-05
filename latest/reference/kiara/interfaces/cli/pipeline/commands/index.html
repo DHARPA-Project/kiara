@@ -21,7 +21,7 @@
         <link rel="next" href="../../proxy_cli/">
       
       <link rel="icon" href="../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.13">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.26e3688c.min.css">
       
       
 
@@ -1372,6 +1372,13 @@
         <li class="md-nav__item">
   <a href="#kiara.interfaces.cli.pipeline.commands" class="md-nav__link">
     kiara.interfaces.cli.pipeline.commands
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.interfaces.cli.pipeline.commands-attributes" class="md-nav__link">
+    Attributes
   </a>
   
 </li>
@@ -4793,6 +4800,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara.interfaces.cli.pipeline.commands-attributes" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara.interfaces.cli.pipeline.commands-classes" class="md-nav__link">
     Classes
   </a>
@@ -4897,7 +4911,7 @@
 
 
 
-
+<h2 id="kiara.interfaces.cli.pipeline.commands-attributes">Attributes<a href="#kiara.interfaces.cli.pipeline.commands-attributes" class="headerlink" title="Permanent link">&para;</a></h2>
 <h2 id="kiara.interfaces.cli.pipeline.commands-classes">Classes<a href="#kiara.interfaces.cli.pipeline.commands-classes" class="headerlink" title="Permanent link">&para;</a></h2>
 <h2 id="kiara.interfaces.cli.pipeline.commands-functions">Functions<a href="#kiara.interfaces.cli.pipeline.commands-functions" class="headerlink" title="Permanent link">&para;</a></h2>
 
@@ -4917,10 +4931,10 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/pipeline/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
-<span class="normal">23</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
 <span class="normal">24</span>
-<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+<span class="normal">25</span>
+<span class="normal">26</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">pipeline</span><span class="p">(</span><span class="n">ctx</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Pipeline-related sub-commands.&quot;&quot;&quot;</span>
@@ -4946,8 +4960,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/pipeline/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
-<span class="normal">29</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span>
 <span class="normal">32</span>
@@ -4993,7 +5006,8 @@
 <span class="normal">72</span>
 <span class="normal">73</span>
 <span class="normal">74</span>
-<span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">)</span>
+<span class="normal">75</span>
+<span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
     <span class="s2">&quot;--full-doc&quot;</span><span class="p">,</span>
     <span class="s2">&quot;-d&quot;</span><span class="p">,</span>
@@ -5063,8 +5077,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/pipeline/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 78</span>
-<span class="normal"> 79</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 79</span>
 <span class="normal"> 80</span>
 <span class="normal"> 81</span>
 <span class="normal"> 82</span>
@@ -5087,12 +5100,13 @@
 <span class="normal"> 99</span>
 <span class="normal">100</span>
 <span class="normal">101</span>
-<span class="normal">102</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="normal">102</span>
+<span class="normal">103</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;pipeline-name-or-path&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
     <span class="s2">&quot;--stages-extraction-type&quot;</span><span class="p">,</span>
     <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
-    <span class="n">default</span><span class="o">=</span><span class="s2">&quot;late&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="n">KIARA_DEFAULT_STAGES_EXTRACTION_TYPE</span><span class="p">,</span>
     <span class="n">help</span><span class="o">=</span><span class="s2">&quot;How to extract the stages from the pipeline structure. Available: &#39;late&#39;, &#39;early&#39;, as well as pipeline specific profiles (if in pipeline metadata).&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="nd">@output_format_option</span><span class="p">()</span>
@@ -5134,8 +5148,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/pipeline/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">105</span>
-<span class="normal">106</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">106</span>
 <span class="normal">107</span>
 <span class="normal">108</span>
 <span class="normal">109</span>
@@ -5164,12 +5177,13 @@
 <span class="normal">132</span>
 <span class="normal">133</span>
 <span class="normal">134</span>
-<span class="normal">135</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="normal">135</span>
+<span class="normal">136</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;pipeline-name-or-path&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
     <span class="s2">&quot;--stages-extraction-type&quot;</span><span class="p">,</span>
     <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
-    <span class="n">default</span><span class="o">=</span><span class="s2">&quot;late&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="n">KIARA_DEFAULT_STAGES_EXTRACTION_TYPE</span><span class="p">,</span>
     <span class="n">help</span><span class="o">=</span><span class="s2">&quot;How to extract the stages from the pipeline structure. Available: &#39;late&#39;, &#39;early&#39;, as well as pipeline specific profiles (if in pipeline metadata).&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="nd">@output_format_option</span><span class="p">()</span>
@@ -5217,8 +5231,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/pipeline/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">138</span>
-<span class="normal">139</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">139</span>
 <span class="normal">140</span>
 <span class="normal">141</span>
 <span class="normal">142</span>
@@ -5233,7 +5246,8 @@
 <span class="normal">151</span>
 <span class="normal">152</span>
 <span class="normal">153</span>
-<span class="normal">154</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="normal">154</span>
+<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;pipeline-name-or-path&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">execution_graph</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">pipeline_name_or_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -5272,8 +5286,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/pipeline/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">157</span>
-<span class="normal">158</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">158</span>
 <span class="normal">159</span>
 <span class="normal">160</span>
 <span class="normal">161</span>
@@ -5300,7 +5313,9 @@
 <span class="normal">182</span>
 <span class="normal">183</span>
 <span class="normal">184</span>
-<span class="normal">185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;pipeline-name-or-path&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
     <span class="s2">&quot;--full&quot;</span><span class="p">,</span>
@@ -5311,6 +5326,7 @@
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">data_flow_graph</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">pipeline_name_or_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">full</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Print the data flow graph for a pipeline structure.&quot;&quot;&quot;</span>
+
     <span class="kn">from</span> <span class="nn">kiara.utils.graphs</span> <span class="kn">import</span> <span class="n">print_ascii_graph</span>
     <span class="kn">from</span> <span class="nn">kiara.utils.pipelines</span> <span class="kn">import</span> <span class="n">get_pipeline_config</span>
 
@@ -5351,9 +5367,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/pipeline/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">188</span>
-<span class="normal">189</span>
-<span class="normal">190</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">190</span>
 <span class="normal">191</span>
 <span class="normal">192</span>
 <span class="normal">193</span>
@@ -5377,12 +5391,14 @@
 <span class="normal">211</span>
 <span class="normal">212</span>
 <span class="normal">213</span>
-<span class="normal">214</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@pipeline</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;pipeline-name-or-path&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
     <span class="s2">&quot;--stages-extraction-type&quot;</span><span class="p">,</span>
     <span class="s2">&quot;-s&quot;</span><span class="p">,</span>
-    <span class="n">default</span><span class="o">=</span><span class="s2">&quot;late&quot;</span><span class="p">,</span>
+    <span class="n">default</span><span class="o">=</span><span class="n">KIARA_DEFAULT_STAGES_EXTRACTION_TYPE</span><span class="p">,</span>
     <span class="n">help</span><span class="o">=</span><span class="s2">&quot;How to extract the stages from the pipeline structure. Available: &#39;late&#39;, &#39;early&#39;, as well as pipeline specific profiles (if in pipeline metadata).&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>

@@ -21,7 +21,7 @@
         <link rel="next" href="../pipeline/">
       
       <link rel="icon" href="../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.13">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.26e3688c.min.css">
       
       
 
@@ -4920,9 +4920,9 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/controller.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineController</span><span class="p">(</span><span class="n">PipelineListener</span><span class="p">):</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineController</span><span class="p">(</span><span class="n">PipelineListener</span><span class="p">):</span>
 
     <span class="k">pass</span>
 </code></pre></div></td></tr></table></div>
@@ -4951,8 +4951,7 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/controller.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 26</span>
-<span class="normal"> 27</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 27</span>
 <span class="normal"> 28</span>
 <span class="normal"> 29</span>
 <span class="normal"> 30</span>
@@ -5071,7 +5070,8 @@
 <span class="normal">143</span>
 <span class="normal">144</span>
 <span class="normal">145</span>
-<span class="normal">146</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">SinglePipelineController</span><span class="p">(</span><span class="n">PipelineController</span><span class="p">):</span>
+<span class="normal">146</span>
+<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">SinglePipelineController</span><span class="p">(</span><span class="n">PipelineController</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">job_registry</span><span class="p">:</span> <span class="n">JobRegistry</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
@@ -5213,8 +5213,8 @@
 <code class="highlight language-python"><span class="n">pipeline</span><span class="p">:</span> <span class="n">Pipeline</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.controller.SinglePipelineController.pipeline" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5241,11 +5241,11 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/controller.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">56</span>
-<span class="normal">57</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">57</span>
 <span class="normal">58</span>
 <span class="normal">59</span>
-<span class="normal">60</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">current_pipeline_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineState</span><span class="p">:</span>
+<span class="normal">60</span>
+<span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">current_pipeline_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineState</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_details</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pipeline_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">get_pipeline_details</span><span class="p">()</span>
@@ -5272,12 +5272,12 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/controller.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">62</span>
-<span class="normal">63</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span>
 <span class="normal">66</span>
-<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">can_be_processed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">67</span>
+<span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">can_be_processed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether the step with the provided id is ready to be processed.&quot;&quot;&quot;</span>
     <span class="n">pipeline_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_pipeline_state</span><span class="p">()</span>
     <span class="n">step_state</span> <span class="o">=</span> <span class="n">pipeline_state</span><span class="o">.</span><span class="n">step_states</span><span class="p">[</span><span class="n">step_id</span><span class="p">]</span>
@@ -5305,12 +5305,12 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/controller.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">69</span>
-<span class="normal">70</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">70</span>
 <span class="normal">71</span>
 <span class="normal">72</span>
 <span class="normal">73</span>
-<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">can_be_skipped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">74</span>
+<span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">can_be_skipped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether the processing of a step can be skipped.&quot;&quot;&quot;</span>
     <span class="n">required</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">step_is_required</span><span class="p">(</span><span class="n">step_id</span><span class="o">=</span><span class="n">step_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">required</span><span class="p">:</span>
@@ -5341,8 +5341,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/controller.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 83</span>
-<span class="normal"> 84</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 84</span>
 <span class="normal"> 85</span>
 <span class="normal"> 86</span>
 <span class="normal"> 87</span>
@@ -5367,7 +5366,8 @@
 <span class="normal">106</span>
 <span class="normal">107</span>
 <span class="normal">108</span>
-<span class="normal">109</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_processing_results</span><span class="p">(</span>
+<span class="normal">109</span>
+<span class="normal">110</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">set_processing_results</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">job_ids</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -5421,8 +5421,7 @@ pipeline can be processed.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/controller.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">111</span>
-<span class="normal">112</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">112</span>
 <span class="normal">113</span>
 <span class="normal">114</span>
 <span class="normal">115</span>
@@ -5434,7 +5433,8 @@ pipeline can be processed.</p>
 <span class="normal">121</span>
 <span class="normal">122</span>
 <span class="normal">123</span>
-<span class="normal">124</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pipeline_is_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">124</span>
+<span class="normal">125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pipeline_is_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return whether the pipeline is ready to be processed.</span>
 
@@ -5473,8 +5473,7 @@ pipeline can be processed.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/controller.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">126</span>
-<span class="normal">127</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">127</span>
 <span class="normal">128</span>
 <span class="normal">129</span>
 <span class="normal">130</span>
@@ -5493,7 +5492,8 @@ pipeline can be processed.</p>
 <span class="normal">143</span>
 <span class="normal">144</span>
 <span class="normal">145</span>
-<span class="normal">146</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
+<span class="normal">146</span>
+<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">wait</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Kick off processing for the step with the provided id.</span>
 
@@ -5555,8 +5555,7 @@ auto_process: whether to automatically start processing the pipeline as soon as 
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/controller.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">149</span>
-<span class="normal">150</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">150</span>
 <span class="normal">151</span>
 <span class="normal">152</span>
 <span class="normal">153</span>
@@ -5643,7 +5642,9 @@ auto_process: whether to automatically start processing the pipeline as soon as 
 <span class="normal">234</span>
 <span class="normal">235</span>
 <span class="normal">236</span>
-<span class="normal">237</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">SinglePipelineBatchController</span><span class="p">(</span><span class="n">SinglePipelineController</span><span class="p">):</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">SinglePipelineBatchController</span><span class="p">(</span><span class="n">SinglePipelineController</span><span class="p">):</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A [PipelineController][kiara.models.modules.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.</span>
@@ -5690,9 +5691,10 @@ auto_process: whether to automatically start processing the pipeline as soon as 
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">all_job_ids</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span>
-            <span class="p">):</span>
+            <span class="n">stages</span> <span class="o">=</span> <span class="n">PipelineStage</span><span class="o">.</span><span class="n">extract_stages</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">stages_extraction_type</span><span class="o">=</span><span class="s2">&quot;early&quot;</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stages</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                     <span class="s2">&quot;execute.pipeline.stage&quot;</span><span class="p">,</span>
@@ -5753,8 +5755,8 @@ auto_process: whether to automatically start processing the pipeline as soon as 
 <code class="highlight language-python"><span class="n">auto_process</span><span class="p">:</span> <span class="nb">bool</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.controller.SinglePipelineBatchController.auto_process" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5781,8 +5783,7 @@ auto_process: whether to automatically start processing the pipeline as soon as 
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/controller.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">182</span>
-<span class="normal">183</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">183</span>
 <span class="normal">184</span>
 <span class="normal">185</span>
 <span class="normal">186</span>
@@ -5836,7 +5837,9 @@ auto_process: whether to automatically start processing the pipeline as soon as 
 <span class="normal">234</span>
 <span class="normal">235</span>
 <span class="normal">236</span>
-<span class="normal">237</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">]]:</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">]]:</span>
 
     <span class="n">log</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">pipeline_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">pipeline_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span><span class="p">:</span>
@@ -5850,9 +5853,10 @@ auto_process: whether to automatically start processing the pipeline as soon as 
     <span class="bp">self</span><span class="o">.</span><span class="n">_is_running</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">all_job_ids</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">processing_stages</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span>
-        <span class="p">):</span>
+        <span class="n">stages</span> <span class="o">=</span> <span class="n">PipelineStage</span><span class="o">.</span><span class="n">extract_stages</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">structure</span><span class="p">,</span> <span class="n">stages_extraction_type</span><span class="o">=</span><span class="s2">&quot;early&quot;</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">stage</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stages</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="s2">&quot;execute.pipeline.stage&quot;</span><span class="p">,</span>

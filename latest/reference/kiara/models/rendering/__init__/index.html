@@ -21,7 +21,7 @@
         <link rel="next" href="../values/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.13">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.26e3688c.min.css">
       
       
 
@@ -4895,8 +4895,8 @@
 <code class="highlight language-python"><span class="n">title</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The title of this scene.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.rendering.RenderScene.title" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -4915,8 +4915,8 @@
 <code class="highlight language-python"><span class="n">disabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether this scene should be displayed as &#39;disabled&#39; in a UI.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.rendering.RenderScene.disabled" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -4935,8 +4935,8 @@
 <code class="highlight language-python"><span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Description of what this scene renders.&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_NO_DESC_VALUE</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.rendering.RenderScene.description" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -4955,8 +4955,8 @@
 <code class="highlight language-python"><span class="n">manifest_hash</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The hash of the manifest of the referenced render scene.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.rendering.RenderScene.manifest_hash" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -4975,8 +4975,8 @@
 <code class="highlight language-python"><span class="n">render_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The inputs used with the referenced manifest.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.rendering.RenderScene.render_config" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -4995,8 +4995,8 @@
 <code class="highlight language-python"><span class="n">related_scenes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Other render scenes, related to this one.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.rendering.RenderScene.related_scenes" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5225,8 +5225,8 @@
 <code class="highlight language-python"><span class="n">value_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The value that was rendered.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.rendering.RenderValueResult.value_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5245,8 +5245,8 @@
 <code class="highlight language-python"><span class="n">render_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The config that was used to render this.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.rendering.RenderValueResult.render_config" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5265,8 +5265,8 @@
 <code class="highlight language-python"><span class="n">render_manifest</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The id of the manifest that was used to render this.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.rendering.RenderValueResult.render_manifest" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5285,8 +5285,8 @@
 <code class="highlight language-python"><span class="n">related_scenes</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">RenderScene</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Other render scenes, related to this one.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.rendering.RenderValueResult.related_scenes" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5305,8 +5305,8 @@
 <code class="highlight language-python"><span class="n">manifest_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The manifests referenced in this model, indexed by the hashes.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.rendering.RenderValueResult.manifest_lookup" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5325,8 +5325,8 @@
 <code class="highlight language-python"><span class="n">rendered</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The rendered object.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.rendering.RenderValueResult.rendered" class="headerlink" title="Permanent link">&para;</a></h5>

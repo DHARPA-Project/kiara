@@ -21,7 +21,7 @@
         <link rel="next" href="../structure/">
       
       <link rel="icon" href="../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.13">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.26e3688c.min.css">
       
       
 
@@ -2316,6 +2316,13 @@
         <li class="md-nav__item">
   <a href="#kiara.models.module.pipeline.stages" class="md-nav__link">
     kiara.models.module.pipeline.stages
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.models.module.pipeline.stages-attributes" class="md-nav__link">
+    Attributes
   </a>
   
 </li>
@@ -4751,6 +4758,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara.models.module.pipeline.stages-attributes" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara.models.module.pipeline.stages-classes" class="md-nav__link">
     Classes
   </a>
@@ -4811,7 +4825,7 @@
 
 
 
-
+<h2 id="kiara.models.module.pipeline.stages-attributes">Attributes<a href="#kiara.models.module.pipeline.stages-attributes" class="headerlink" title="Permanent link">&para;</a></h2>
 <h2 id="kiara.models.module.pipeline.stages-classes">Classes<a href="#kiara.models.module.pipeline.stages-classes" class="headerlink" title="Permanent link">&para;</a></h2>
 
 <div class="doc doc-object doc-class">
@@ -4833,8 +4847,7 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/stages.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 17</span>
-<span class="normal"> 18</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 18</span>
 <span class="normal"> 19</span>
 <span class="normal"> 20</span>
 <span class="normal"> 21</span>
@@ -5055,13 +5068,19 @@
 <span class="normal">236</span>
 <span class="normal">237</span>
 <span class="normal">238</span>
-<span class="normal">239</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineStage</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineStage</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
 
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;info.pipeline_stage&quot;</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">extract_stages</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span><span class="p">,</span> <span class="n">stages_extraction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;late&quot;</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span><span class="p">,</span>
+        <span class="n">stages_extraction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">KIARA_DEFAULT_STAGES_EXTRACTION_TYPE</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 
         <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;extract_stages__</span><span class="si">{</span><span class="n">stages_extraction_type</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -5096,6 +5115,7 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">extract_stages__late</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract stages in a way so that steps are processed as late as possible.&quot;&quot;&quot;</span>
+
         <span class="n">execution_graph</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">execution_graph</span>
         <span class="n">leaf_nodes</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">node</span>
@@ -5159,7 +5179,7 @@
     <span class="k">def</span> <span class="nf">stages_info_from_pipeline_structure</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span><span class="p">,</span>
-        <span class="n">stages</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;late&quot;</span><span class="p">,</span>
+        <span class="n">stages</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KIARA_DEFAULT_STAGES_EXTRACTION_TYPE</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;PipelineStage&quot;</span><span class="p">]:</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stages</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -5299,8 +5319,8 @@
 <code class="highlight language-python"><span class="n">stage_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The index of this stage.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.stages.PipelineStage.stage_index" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5319,8 +5339,8 @@
 <code class="highlight language-python"><span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The pipeline steps that are executed in this stage.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.stages.PipelineStage.steps" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5339,8 +5359,8 @@
 <code class="highlight language-python"><span class="n">connected_outputs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Previous step outputs that are connected to this stage.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.stages.PipelineStage.connected_outputs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5359,8 +5379,8 @@
 <code class="highlight language-python"><span class="n">stage_outputs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The outputs of this stage.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.stages.PipelineStage.stage_outputs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5379,8 +5399,8 @@
 <code class="highlight language-python"><span class="n">pipeline_inputs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The pipeline inputs required for this stage.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.stages.PipelineStage.pipeline_inputs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5399,8 +5419,8 @@
 <code class="highlight language-python"><span class="n">pipeline_outputs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The pipeline outputs that are ready once this stage is processed.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.stages.PipelineStage.pipeline_outputs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5419,8 +5439,8 @@
 <code class="highlight language-python"><span class="n">previous_pipeline_inputs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Pipeline inputs that are already set by this stage.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.stages.PipelineStage.previous_pipeline_inputs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5439,8 +5459,8 @@
 <code class="highlight language-python"><span class="n">previous_pipeline_outputs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Pipeline outputs that are already computed by this stage.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.stages.PipelineStage.previous_pipeline_outputs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5458,7 +5478,7 @@
 
 
 <h5 id="kiara.models.module.pipeline.stages.PipelineStage.extract_stages" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">extract_stages</span><span class="p">(</span><span class="n">structure</span><span class="p">:</span> <span class="n">PipelineStructure</span><span class="p">,</span> <span class="n">stages_extraction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;late&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span></code>
+<code class="highlight language-python"><span class="n">extract_stages</span><span class="p">(</span><span class="n">structure</span><span class="p">:</span> <span class="n">PipelineStructure</span><span class="p">,</span> <span class="n">stages_extraction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">KIARA_DEFAULT_STAGES_EXTRACTION_TYPE</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -5471,8 +5491,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/stages.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
-<span class="normal">22</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
 <span class="normal">23</span>
 <span class="normal">24</span>
 <span class="normal">25</span>
@@ -5486,9 +5505,14 @@
 <span class="normal">33</span>
 <span class="normal">34</span>
 <span class="normal">35</span>
-<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">extract_stages</span><span class="p">(</span>
-    <span class="bp">cls</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span><span class="p">,</span> <span class="n">stages_extraction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;late&quot;</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span><span class="p">,</span>
+    <span class="n">stages_extraction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">KIARA_DEFAULT_STAGES_EXTRACTION_TYPE</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 
     <span class="n">func_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;extract_stages__</span><span class="si">{</span><span class="n">stages_extraction_type</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -5528,12 +5552,12 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/stages.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">38</span>
-<span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">41</span>
 <span class="normal">42</span>
-<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">extract_stages__single_stage</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
@@ -5565,15 +5589,15 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/stages.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span>
-<span class="normal">48</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
 <span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
 <span class="normal">52</span>
-<span class="normal">53</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">extract_stages__stage_per_step</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
@@ -5608,10 +5632,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/stages.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">58</span>
 <span class="normal">59</span>
 <span class="normal">60</span>
 <span class="normal">61</span>
@@ -5641,9 +5662,14 @@
 <span class="normal">85</span>
 <span class="normal">86</span>
 <span class="normal">87</span>
-<span class="normal">88</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">extract_stages__late</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract stages in a way so that steps are processed as late as possible.&quot;&quot;&quot;</span>
+
     <span class="n">execution_graph</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">execution_graph</span>
     <span class="n">leaf_nodes</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">node</span>
@@ -5701,11 +5727,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/stages.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 90</span>
-<span class="normal"> 91</span>
-<span class="normal"> 92</span>
-<span class="normal"> 93</span>
-<span class="normal"> 94</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 94</span>
 <span class="normal"> 95</span>
 <span class="normal"> 96</span>
 <span class="normal"> 97</span>
@@ -5726,7 +5748,11 @@
 <span class="normal">112</span>
 <span class="normal">113</span>
 <span class="normal">114</span>
-<span class="normal">115</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">extract_stages__early</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract stages in a way so that steps are processed as early as possible.&quot;&quot;&quot;</span>
     <span class="n">execution_graph</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">execution_graph</span>
@@ -5763,7 +5789,7 @@
 
 
 <h5 id="kiara.models.module.pipeline.stages.PipelineStage.stages_info_from_pipeline_structure" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">stages_info_from_pipeline_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">:</span> <span class="n">PipelineStructure</span><span class="p">,</span> <span class="n">stages</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;late&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">PipelineStage</span><span class="p">]</span></code>
+<code class="highlight language-python"><span class="n">stages_info_from_pipeline_structure</span><span class="p">(</span><span class="n">structure</span><span class="p">:</span> <span class="n">PipelineStructure</span><span class="p">,</span> <span class="n">stages</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KIARA_DEFAULT_STAGES_EXTRACTION_TYPE</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">PipelineStage</span><span class="p">]</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -5776,11 +5802,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/stages.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">121</span>
 <span class="normal">122</span>
 <span class="normal">123</span>
 <span class="normal">124</span>
@@ -5849,11 +5871,15 @@
 <span class="normal">187</span>
 <span class="normal">188</span>
 <span class="normal">189</span>
-<span class="normal">190</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">stages_info_from_pipeline_structure</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span><span class="p">,</span>
-    <span class="n">stages</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;late&quot;</span><span class="p">,</span>
+    <span class="n">stages</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">KIARA_DEFAULT_STAGES_EXTRACTION_TYPE</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s2">&quot;PipelineStage&quot;</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stages</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -5943,11 +5969,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/stages.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">219</span>
 <span class="normal">220</span>
 <span class="normal">221</span>
 <span class="normal">222</span>
@@ -5967,7 +5989,11 @@
 <span class="normal">236</span>
 <span class="normal">237</span>
 <span class="normal">238</span>
-<span class="normal">239</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_graph_fragment</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_graph_fragment</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph</span>
 
@@ -6025,11 +6051,7 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/stages.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">242</span>
-<span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span>
-<span class="normal">246</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">246</span>
 <span class="normal">247</span>
 <span class="normal">248</span>
 <span class="normal">249</span>
@@ -6052,10 +6074,18 @@
 <span class="normal">266</span>
 <span class="normal">267</span>
 <span class="normal">268</span>
-<span class="normal">269</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineStages</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineStages</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span><span class="p">,</span> <span class="n">stages_extraction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;late&quot;</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span><span class="p">,</span>
+        <span class="n">stages_extraction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">KIARA_DEFAULT_STAGES_EXTRACTION_TYPE</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PipelineStages&quot;</span><span class="p">:</span>
 
         <span class="n">stages_info</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">extract_processing_stages_info</span><span class="p">(</span>
@@ -6101,8 +6131,8 @@
 <code class="highlight language-python"><span class="n">stages</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PipelineStage</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The pipeline stages.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.pipeline.stages.PipelineStages.stages" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6120,7 +6150,7 @@
 
 
 <h5 id="kiara.models.module.pipeline.stages.PipelineStages.create" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create</span><span class="p">(</span><span class="n">structure</span><span class="p">:</span> <span class="n">PipelineStructure</span><span class="p">,</span> <span class="n">stages_extraction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;late&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineStages</span></code>
+<code class="highlight language-python"><span class="n">create</span><span class="p">(</span><span class="n">structure</span><span class="p">:</span> <span class="n">PipelineStructure</span><span class="p">,</span> <span class="n">stages_extraction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">KIARA_DEFAULT_STAGES_EXTRACTION_TYPE</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PipelineStages</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
@@ -6133,20 +6163,24 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/stages.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span>
-<span class="normal">246</span>
-<span class="normal">247</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">247</span>
 <span class="normal">248</span>
 <span class="normal">249</span>
 <span class="normal">250</span>
 <span class="normal">251</span>
 <span class="normal">252</span>
 <span class="normal">253</span>
-<span class="normal">254</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create</span><span class="p">(</span>
-    <span class="bp">cls</span><span class="p">,</span> <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span><span class="p">,</span> <span class="n">stages_extraction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;late&quot;</span>
+    <span class="bp">cls</span><span class="p">,</span>
+    <span class="n">structure</span><span class="p">:</span> <span class="s2">&quot;PipelineStructure&quot;</span><span class="p">,</span>
+    <span class="n">stages_extraction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">KIARA_DEFAULT_STAGES_EXTRACTION_TYPE</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PipelineStages&quot;</span><span class="p">:</span>
 
     <span class="n">stages_info</span> <span class="o">=</span> <span class="n">structure</span><span class="o">.</span><span class="n">extract_processing_stages_info</span><span class="p">(</span>
@@ -6176,17 +6210,17 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/stages.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">259</span>
-<span class="normal">260</span>
-<span class="normal">261</span>
-<span class="normal">262</span>
-<span class="normal">263</span>
-<span class="normal">264</span>
-<span class="normal">265</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">265</span>
 <span class="normal">266</span>
 <span class="normal">267</span>
 <span class="normal">268</span>
-<span class="normal">269</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
     <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;Stage&quot;</span><span class="p">)</span>

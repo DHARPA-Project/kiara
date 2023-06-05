@@ -21,7 +21,7 @@
         <link rel="next" href="../data_types/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.13">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.26e3688c.min.css">
       
       
 
@@ -4829,7 +4829,8 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/context.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 21</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 20</span>
+<span class="normal"> 21</span>
 <span class="normal"> 22</span>
 <span class="normal"> 23</span>
 <span class="normal"> 24</span>
@@ -5038,14 +5039,13 @@
 <span class="normal">227</span>
 <span class="normal">228</span>
 <span class="normal">229</span>
-<span class="normal">230</span>
-<span class="normal">231</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ContextInfo</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
+<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ContextInfo</span><span class="p">(</span><span class="n">KiaraModel</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">create_from_context_config</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
-        <span class="n">config</span><span class="p">:</span> <span class="n">KiaraContextConfig</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="s2">&quot;KiaraContextConfig&quot;</span><span class="p">,</span>
         <span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">runtime_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">KiaraRuntimeConfig</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">runtime_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;KiaraRuntimeConfig&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 
         <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
@@ -5271,8 +5271,8 @@
 <code class="highlight language-python"><span class="n">kiara_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The (globally unique) id of the kiara context.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.context.ContextInfo.kiara_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5291,8 +5291,8 @@
 <code class="highlight language-python"><span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The local alias for this context.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.context.ContextInfo.context_name" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5311,8 +5311,8 @@
 <code class="highlight language-python"><span class="n">value_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The ids of all stored values in this context.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.context.ContextInfo.value_ids" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5331,8 +5331,8 @@
 <code class="highlight language-python"><span class="n">aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;All available aliases within this context (and the value ids they refer to).&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.context.ContextInfo.aliases" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5351,8 +5351,8 @@
 <code class="highlight language-python"><span class="n">archives</span><span class="p">:</span> <span class="n">ArchiveGroupInfo</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The archives registered in this context.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.context.ContextInfo.archives" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5371,8 +5371,8 @@
 <code class="highlight language-python"><span class="n">invalid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Whether this context has errors.&#39;</span><span class="p">,</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.context.ContextInfo.invalid" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5391,8 +5391,8 @@
 <code class="highlight language-python"><span class="n">comment</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;(Optional) comment about this context.&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.context.ContextInfo.comment" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5442,7 +5442,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/context.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
+<span class="normal">22</span>
 <span class="normal">23</span>
 <span class="normal">24</span>
 <span class="normal">25</span>
@@ -5452,13 +5453,12 @@
 <span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span>
-<span class="normal">32</span>
-<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">32</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_from_context_config</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
-    <span class="n">config</span><span class="p">:</span> <span class="n">KiaraContextConfig</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="s2">&quot;KiaraContextConfig&quot;</span><span class="p">,</span>
     <span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">runtime_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">KiaraRuntimeConfig</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">runtime_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;KiaraRuntimeConfig&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="kn">from</span> <span class="nn">kiara.context</span> <span class="kn">import</span> <span class="n">Kiara</span>
@@ -5489,7 +5489,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/context.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">35</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
+<span class="normal">35</span>
 <span class="normal">36</span>
 <span class="normal">37</span>
 <span class="normal">38</span>
@@ -5530,8 +5531,7 @@
 <span class="normal">73</span>
 <span class="normal">74</span>
 <span class="normal">75</span>
-<span class="normal">76</span>
-<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">76</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_from_context</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 
     <span class="n">errors</span> <span class="o">=</span> <span class="p">{}</span>
@@ -5594,7 +5594,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/context.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">107</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">106</span>
+<span class="normal">107</span>
 <span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
@@ -5621,8 +5622,7 @@
 <span class="normal">131</span>
 <span class="normal">132</span>
 <span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">value_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="normal">134</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">value_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
     <span class="n">sum_size</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -5671,7 +5671,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/context.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">137</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">136</span>
+<span class="normal">137</span>
 <span class="normal">138</span>
 <span class="normal">139</span>
 <span class="normal">140</span>
@@ -5698,8 +5699,7 @@
 <span class="normal">161</span>
 <span class="normal">162</span>
 <span class="normal">163</span>
-<span class="normal">164</span>
-<span class="normal">165</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">alias_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">alias_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
     <span class="n">sum_size</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">types</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -5748,7 +5748,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/context.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">167</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">166</span>
+<span class="normal">167</span>
 <span class="normal">168</span>
 <span class="normal">169</span>
 <span class="normal">170</span>
@@ -5811,8 +5812,7 @@
 <span class="normal">227</span>
 <span class="normal">228</span>
 <span class="normal">229</span>
-<span class="normal">230</span>
-<span class="normal">231</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="n">full_details</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;full_details&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">show_value_ids</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_value_ids&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
@@ -5910,7 +5910,8 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/context.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">234</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">233</span>
+<span class="normal">234</span>
 <span class="normal">235</span>
 <span class="normal">236</span>
 <span class="normal">237</span>
@@ -5964,8 +5965,7 @@
 <span class="normal">285</span>
 <span class="normal">286</span>
 <span class="normal">287</span>
-<span class="normal">288</span>
-<span class="normal">289</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ContextInfos</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">288</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ContextInfos</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="n">__root__</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ContextInfo</span><span class="p">]</span>
 
     <span class="nd">@classmethod</span>
@@ -6054,7 +6054,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/context.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">237</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">236</span>
+<span class="normal">237</span>
 <span class="normal">238</span>
 <span class="normal">239</span>
 <span class="normal">240</span>
@@ -6067,8 +6068,7 @@
 <span class="normal">247</span>
 <span class="normal">248</span>
 <span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">250</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_context_infos</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span> <span class="n">contexts</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;KiaraContextConfig&quot;</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">):</span>
@@ -6103,7 +6103,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/models/context.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">253</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">252</span>
+<span class="normal">253</span>
 <span class="normal">254</span>
 <span class="normal">255</span>
 <span class="normal">256</span>
@@ -6138,8 +6139,7 @@
 <span class="normal">285</span>
 <span class="normal">286</span>
 <span class="normal">287</span>
-<span class="normal">288</span>
-<span class="normal">289</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+<span class="normal">288</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="n">full_details</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;full_details&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 

@@ -21,7 +21,7 @@
         <link rel="next" href="../value/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.13">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.26e3688c.min.css">
       
       
 
@@ -3854,6 +3854,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara.renderers.included_renderers.pipeline-attributes" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara.renderers.included_renderers.pipeline-classes" class="md-nav__link">
     Classes
   </a>
@@ -4784,6 +4791,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kiara.renderers.included_renderers.pipeline-attributes" class="md-nav__link">
+    Attributes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kiara.renderers.included_renderers.pipeline-classes" class="md-nav__link">
     Classes
   </a>
@@ -4879,7 +4893,7 @@
 
 
 
-
+<h2 id="kiara.renderers.included_renderers.pipeline-attributes">Attributes<a href="#kiara.renderers.included_renderers.pipeline-attributes" class="headerlink" title="Permanent link">&para;</a></h2>
 <h2 id="kiara.renderers.included_renderers.pipeline-classes">Classes<a href="#kiara.renderers.included_renderers.pipeline-classes" class="headerlink" title="Permanent link">&para;</a></h2>
 
 <div class="doc doc-object doc-class">
@@ -4901,8 +4915,7 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
-<span class="normal">24</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">24</span>
 <span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
@@ -4924,7 +4937,8 @@
 <span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span>
-<span class="normal">46</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineTransformer</span><span class="p">(</span><span class="n">SourceTransformer</span><span class="p">):</span>
+<span class="normal">46</span>
+<span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineTransformer</span><span class="p">(</span><span class="n">SourceTransformer</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span> <span class="o">=</span> <span class="n">kiara</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -4977,8 +4991,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
-<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_python_classes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Type</span><span class="p">]:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">29</span>
+<span class="normal">30</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_python_classes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Type</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">PipelineConfig</span><span class="p">,</span> <span class="n">Pipeline</span><span class="p">,</span> <span class="n">PipelineStructure</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -5000,12 +5014,12 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">31</span>
-<span class="normal">32</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">32</span>
 <span class="normal">33</span>
 <span class="normal">34</span>
 <span class="normal">35</span>
-<span class="normal">36</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_inputs_descs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="normal">36</span>
+<span class="normal">37</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_inputs_descs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
     <span class="k">return</span> <span class="p">[</span>
         <span class="s2">&quot;a registered pipeline operation&quot;</span><span class="p">,</span>
         <span class="s2">&quot;a path to a pipeline file&quot;</span><span class="p">,</span>
@@ -5031,15 +5045,15 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">38</span>
-<span class="normal">39</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
 <span class="normal">40</span>
 <span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span>
-<span class="normal">46</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">validate_and_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="normal">46</span>
+<span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">validate_and_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">Pipeline</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">source</span>
@@ -5083,8 +5097,7 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">49</span>
-<span class="normal">50</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">50</span>
 <span class="normal">51</span>
 <span class="normal">52</span>
 <span class="normal">53</span>
@@ -5115,7 +5128,8 @@
 <span class="normal">78</span>
 <span class="normal">79</span>
 <span class="normal">80</span>
-<span class="normal">81</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineRendererHtml</span><span class="p">(</span><span class="n">BaseJinjaRenderer</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">],</span> <span class="n">RenderInputsSchema</span><span class="p">]):</span>
+<span class="normal">81</span>
+<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineRendererHtml</span><span class="p">(</span><span class="n">BaseJinjaRenderer</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">],</span> <span class="n">RenderInputsSchema</span><span class="p">]):</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Renders a pipeline structure as static html page.&quot;&quot;&quot;</span>
 
@@ -5177,8 +5191,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">57</span>
-<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">58</span>
+<span class="normal">59</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="s2">&quot;pipeline&quot;</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -5200,8 +5214,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">60</span>
-<span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">61</span>
+<span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
     <span class="k">return</span> <span class="s2">&quot;html&quot;</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -5223,8 +5237,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">63</span>
-<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_source_transformers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">SourceTransformer</span><span class="p">]:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">64</span>
+<span class="normal">65</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_source_transformers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">SourceTransformer</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">PipelineTransformer</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)]</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -5246,10 +5260,10 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">66</span>
-<span class="normal">67</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
 <span class="normal">68</span>
-<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_jinja_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JinjaEnv</span><span class="p">:</span>
+<span class="normal">69</span>
+<span class="normal">70</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_jinja_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JinjaEnv</span><span class="p">:</span>
 
     <span class="n">jinja_env</span> <span class="o">=</span> <span class="n">JinjaEnv</span><span class="p">(</span><span class="n">template_base</span><span class="o">=</span><span class="s2">&quot;kiara&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">jinja_env</span>
@@ -5273,9 +5287,9 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">71</span>
-<span class="normal">72</span>
-<span class="normal">73</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">RenderInputsSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">RenderInputsSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_jinja_env</span><span class="p">()</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="s2">&quot;pipeline/static_page/page.html.j2&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -5298,13 +5312,13 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">75</span>
-<span class="normal">76</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">76</span>
 <span class="normal">77</span>
 <span class="normal">78</span>
 <span class="normal">79</span>
 <span class="normal">80</span>
-<span class="normal">81</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assemble_render_inputs</span><span class="p">(</span>
+<span class="normal">81</span>
+<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assemble_render_inputs</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">RenderInputsSchema</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
@@ -5346,8 +5360,7 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 84</span>
-<span class="normal"> 85</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 85</span>
 <span class="normal"> 86</span>
 <span class="normal"> 87</span>
 <span class="normal"> 88</span>
@@ -5378,7 +5391,8 @@
 <span class="normal">113</span>
 <span class="normal">114</span>
 <span class="normal">115</span>
-<span class="normal">116</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineRendererMarkdown</span><span class="p">(</span><span class="n">BaseJinjaRenderer</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">],</span> <span class="n">RenderInputsSchema</span><span class="p">]):</span>
+<span class="normal">116</span>
+<span class="normal">117</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineRendererMarkdown</span><span class="p">(</span><span class="n">BaseJinjaRenderer</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">],</span> <span class="n">RenderInputsSchema</span><span class="p">]):</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Renders a pipeline structure as static html page.&quot;&quot;&quot;</span>
 
@@ -5440,8 +5454,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">92</span>
-<span class="normal">93</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">93</span>
+<span class="normal">94</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="s2">&quot;pipeline&quot;</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -5463,8 +5477,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">95</span>
-<span class="normal">96</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">96</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
     <span class="k">return</span> <span class="s2">&quot;markdown&quot;</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -5486,8 +5500,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">98</span>
-<span class="normal">99</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_source_transformers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">SourceTransformer</span><span class="p">]:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 99</span>
+<span class="normal">100</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_source_transformers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">SourceTransformer</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">PipelineTransformer</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)]</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -5509,10 +5523,10 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">101</span>
-<span class="normal">102</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">102</span>
 <span class="normal">103</span>
-<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_jinja_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JinjaEnv</span><span class="p">:</span>
+<span class="normal">104</span>
+<span class="normal">105</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_jinja_env</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JinjaEnv</span><span class="p">:</span>
 
     <span class="n">jinja_env</span> <span class="o">=</span> <span class="n">JinjaEnv</span><span class="p">(</span><span class="n">template_base</span><span class="o">=</span><span class="s2">&quot;kiara&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">jinja_env</span>
@@ -5536,9 +5550,9 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">RenderInputsSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_template</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">RenderInputsSchema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Template</span><span class="p">:</span>
 
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_jinja_env</span><span class="p">()</span><span class="o">.</span><span class="n">get_template</span><span class="p">(</span><span class="s2">&quot;pipeline/markdown/pipeline.md.j2&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -5561,13 +5575,13 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">110</span>
-<span class="normal">111</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">111</span>
 <span class="normal">112</span>
 <span class="normal">113</span>
 <span class="normal">114</span>
 <span class="normal">115</span>
-<span class="normal">116</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assemble_render_inputs</span><span class="p">(</span>
+<span class="normal">116</span>
+<span class="normal">117</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">assemble_render_inputs</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">RenderInputsSchema</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 
@@ -5607,11 +5621,11 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">119</span>
-<span class="normal">120</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">120</span>
 <span class="normal">121</span>
 <span class="normal">122</span>
-<span class="normal">123</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineRendererPngConfig</span><span class="p">(</span><span class="n">KiaraRendererConfig</span><span class="p">):</span>
+<span class="normal">123</span>
+<span class="normal">124</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineRendererPngConfig</span><span class="p">(</span><span class="n">KiaraRendererConfig</span><span class="p">):</span>
 
     <span class="n">graph_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;execution&quot;</span><span class="p">,</span> <span class="s2">&quot;data-flow&quot;</span><span class="p">,</span> <span class="s2">&quot;data-flow-simple&quot;</span><span class="p">,</span> <span class="s2">&quot;stages&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The type of graph to render.&quot;</span>
@@ -5637,8 +5651,8 @@
 <code class="highlight language-python"><span class="n">graph_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;execution&#39;</span><span class="p">,</span> <span class="s1">&#39;data-flow&#39;</span><span class="p">,</span> <span class="s1">&#39;data-flow-simple&#39;</span><span class="p">,</span> <span class="s1">&#39;stages&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The type of graph to render.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.renderers.included_renderers.pipeline.PipelineRendererPngConfig.graph_type" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5678,14 +5692,16 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">126</span>
-<span class="normal">127</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">127</span>
 <span class="normal">128</span>
 <span class="normal">129</span>
-<span class="normal">130</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineInputsSchema</span><span class="p">(</span><span class="n">RenderInputsSchema</span><span class="p">):</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineInputsSchema</span><span class="p">(</span><span class="n">RenderInputsSchema</span><span class="p">):</span>
 
     <span class="n">stages_extraction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The type of stages extraction to use.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;late&quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The type of stages extraction to use.&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="n">KIARA_DEFAULT_STAGES_EXTRACTION_TYPE</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
         </details>
@@ -5705,11 +5721,11 @@
 
 
 <h5 id="kiara.renderers.included_renderers.pipeline.PipelineInputsSchema.stages_extraction_type" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">stages_extraction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The type of stages extraction to use.&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;late&#39;</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">stages_extraction_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The type of stages extraction to use.&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">KIARA_DEFAULT_STAGES_EXTRACTION_TYPE</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.renderers.included_renderers.pipeline.PipelineInputsSchema.stages_extraction_type" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5749,9 +5765,7 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">135</span>
 <span class="normal">136</span>
 <span class="normal">137</span>
 <span class="normal">138</span>
@@ -5811,7 +5825,9 @@
 <span class="normal">192</span>
 <span class="normal">193</span>
 <span class="normal">194</span>
-<span class="normal">195</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineRendererPng</span><span class="p">(</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineRendererPng</span><span class="p">(</span>
     <span class="n">KiaraRenderer</span><span class="p">[</span><span class="n">Pipeline</span><span class="p">,</span> <span class="n">PipelineInputsSchema</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">PipelineRendererPngConfig</span><span class="p">]</span>
 <span class="p">):</span>
 
@@ -5903,9 +5919,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">150</span>
 <span class="normal">151</span>
 <span class="normal">152</span>
 <span class="normal">153</span>
@@ -5918,7 +5932,9 @@
 <span class="normal">160</span>
 <span class="normal">161</span>
 <span class="normal">162</span>
-<span class="normal">163</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_doc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_doc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 
     <span class="n">graph_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">renderer_config</span><span class="o">.</span><span class="n">graph_type</span>
 
@@ -5954,8 +5970,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">165</span>
-<span class="normal">166</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_source_transformers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">SourceTransformer</span><span class="p">]:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">167</span>
+<span class="normal">168</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_source_transformers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">SourceTransformer</span><span class="p">]:</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">PipelineTransformer</span><span class="p">(</span><span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)]</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -5977,8 +5993,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">168</span>
-<span class="normal">169</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_renderer_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">170</span>
+<span class="normal">171</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_renderer_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">renderer_config</span><span class="o">.</span><span class="n">graph_type</span><span class="si">}</span><span class="s2">_png&quot;</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -6000,8 +6016,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">171</span>
-<span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">173</span>
+<span class="normal">174</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="s2">&quot;pipeline&quot;</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -6023,8 +6039,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/renderers/included_renderers/pipeline.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">174</span>
-<span class="normal">175</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">176</span>
+<span class="normal">177</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_supported_render_targets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">renderer_config</span><span class="o">.</span><span class="n">graph_type</span><span class="si">}</span><span class="s2">_png&quot;</span>
 </code></pre></div></td></tr></table></div>
       </details>

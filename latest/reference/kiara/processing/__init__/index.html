@@ -21,7 +21,7 @@
         <link rel="next" href="../synchronous/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.13">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.85bb2934.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.26e3688c.min.css">
       
       
 
@@ -4818,14 +4818,14 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/processing/__init__.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobStatusListener</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobStatusListener</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">job_status_changed</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
@@ -4862,13 +4862,13 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/processing/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span>
-<span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span>
-<span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">job_status_changed</span><span class="p">(</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">job_status_changed</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span>
     <span class="n">old_status</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobStatus</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
@@ -4908,9 +4908,9 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/processing/__init__.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ProcessorConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ProcessorConfig</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 
     <span class="n">module_processor_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;synchronous&quot;</span><span class="p">,</span> <span class="s2">&quot;multi-threaded&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;synchronous&quot;</span>
 </code></pre></div></td></tr></table></div>
@@ -4934,8 +4934,8 @@
 <code class="highlight language-python"><span class="n">module_processor_type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;synchronous&#39;</span><span class="p">,</span> <span class="s1">&#39;multi-threaded&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;synchronous&#39;</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.processing.ProcessorConfig.module_processor_type" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -4975,7 +4975,13 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/processing/__init__.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 55</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
 <span class="normal"> 56</span>
 <span class="normal"> 57</span>
 <span class="normal"> 58</span>
@@ -5287,13 +5293,7 @@
 <span class="normal">364</span>
 <span class="normal">365</span>
 <span class="normal">366</span>
-<span class="normal">367</span>
-<span class="normal">368</span>
-<span class="normal">369</span>
-<span class="normal">370</span>
-<span class="normal">371</span>
-<span class="normal">372</span>
-<span class="normal">373</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ModuleProcessor</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+<span class="normal">367</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ModuleProcessor</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">kiara</span>
@@ -5641,9 +5641,9 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/processing/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">register_job_status_listener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listener</span><span class="p">:</span> <span class="n">JobStatusListener</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">register_job_status_listener</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">listener</span><span class="p">:</span> <span class="n">JobStatusListener</span><span class="p">):</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_listeners</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">listener</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -5666,16 +5666,16 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/processing/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">85</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
 <span class="normal">86</span>
 <span class="normal">87</span>
-<span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span>
-<span class="normal">92</span>
-<span class="normal">93</span>
-<span class="normal">94</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActiveJob</span><span class="p">:</span>
+<span class="normal">88</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActiveJob</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_jobs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_jobs</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span>
@@ -5705,10 +5705,10 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/processing/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">96</span>
-<span class="normal">97</span>
-<span class="normal">98</span>
-<span class="normal">99</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_job_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JobStatus</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_job_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JobStatus</span><span class="p">:</span>
 
     <span class="n">job</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_job</span><span class="p">(</span><span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">job</span><span class="o">.</span><span class="n">status</span>
@@ -5732,12 +5732,12 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/processing/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_job_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JobRecord</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_job_record</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JobRecord</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job_records</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job_records</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span>
@@ -5763,7 +5763,13 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/processing/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span>
@@ -5842,13 +5848,7 @@
 <span class="normal">184</span>
 <span class="normal">185</span>
 <span class="normal">186</span>
-<span class="normal">187</span>
-<span class="normal">188</span>
-<span class="normal">189</span>
-<span class="normal">190</span>
-<span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_job</span><span class="p">(</span>
+<span class="normal">187</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_job</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">job_config</span><span class="p">:</span> <span class="n">JobConfig</span><span class="p">,</span> <span class="n">job_metadata</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">:</span>
 
@@ -5954,7 +5954,13 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/processing/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">195</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
 <span class="normal">196</span>
 <span class="normal">197</span>
 <span class="normal">198</span>
@@ -6000,13 +6006,7 @@
 <span class="normal">238</span>
 <span class="normal">239</span>
 <span class="normal">240</span>
-<span class="normal">241</span>
-<span class="normal">242</span>
-<span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span>
-<span class="normal">246</span>
-<span class="normal">247</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">queue_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActiveJob</span><span class="p">:</span>
+<span class="normal">241</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">queue_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActiveJob</span><span class="p">:</span>
 
     <span class="n">job_details</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_created_jobs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_running_job_details</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_details</span>
@@ -6079,7 +6079,13 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/processing/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">249</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
 <span class="normal">250</span>
 <span class="normal">251</span>
 <span class="normal">252</span>
@@ -6171,13 +6177,7 @@
 <span class="normal">338</span>
 <span class="normal">339</span>
 <span class="normal">340</span>
-<span class="normal">341</span>
-<span class="normal">342</span>
-<span class="normal">343</span>
-<span class="normal">344</span>
-<span class="normal">345</span>
-<span class="normal">346</span>
-<span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">job_status_updated</span><span class="p">(</span>
+<span class="normal">341</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">job_status_updated</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobStatus</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">]</span>
 <span class="p">):</span>
 
@@ -6298,16 +6298,16 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/processing/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">349</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
 <span class="normal">350</span>
 <span class="normal">351</span>
-<span class="normal">352</span>
-<span class="normal">353</span>
-<span class="normal">354</span>
-<span class="normal">355</span>
-<span class="normal">356</span>
-<span class="normal">357</span>
-<span class="normal">358</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">wait_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">job_ids</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
+<span class="normal">352</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">wait_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">job_ids</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wait for the jobs with the specified ids, also optionally sync their outputs with the pipeline value state.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for</span><span class="p">(</span><span class="o">*</span><span class="n">job_ids</span><span class="p">)</span>
 

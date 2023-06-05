@@ -9,6 +9,7 @@ import uuid
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, MutableMapping, Set, Union
 
 import orjson
+from pydantic import BaseModel, Field, validator
 from sortedcontainers import SortedDict
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
@@ -16,13 +17,6 @@ from kiara.models import KiaraModel
 from kiara.models.events import KiaraEvent
 from kiara.models.module.pipeline import PipelineStep, StepStatus
 from kiara.utils.json import orjson_dumps
-
-try:
-    from typing import Literal
-except Exception:
-    from typing_extensions import Literal  # type: ignore  # noqa
-
-from pydantic import BaseModel, Field, validator
 
 if TYPE_CHECKING:
     from kiara.models.module.pipeline.pipeline import Pipeline

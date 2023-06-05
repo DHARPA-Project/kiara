@@ -979,9 +979,19 @@ class Value(ValueDetails):
             log_exception(e)
             return None
 
-    def get_all_property_data(self) -> Mapping[str, Any]:
+    def get_all_property_data(self, flatten_models: bool = False) -> Mapping[str, Any]:
 
-        return {k: self.get_property_data(k) for k in self.property_names}
+        result = {k: self.get_property_data(k) for k in self.property_names}
+        if not flatten_models:
+            return result
+
+        flat = {}
+        for k, v in result.items():
+            if hasattr(v, "dict"):
+                flat[k] = v.dict()
+            else:
+                flat[k] = v
+        return flat
 
     def lookup_self_aliases(self) -> Set[str]:
 

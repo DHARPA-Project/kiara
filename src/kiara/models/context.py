@@ -10,21 +10,20 @@ from rich.console import Group, RenderableType
 from rich.markdown import Markdown
 from rich.table import Table
 
-from kiara.context import KiaraConfig, KiaraContextConfig, KiaraRuntimeConfig
 from kiara.models import KiaraModel
 from kiara.models.archives import ArchiveGroupInfo
 
 if TYPE_CHECKING:
-    from kiara.context import Kiara
+    from kiara.context import Kiara, KiaraConfig, KiaraContextConfig, KiaraRuntimeConfig
 
 
 class ContextInfo(KiaraModel):
     @classmethod
     def create_from_context_config(
         cls,
-        config: KiaraContextConfig,
+        config: "KiaraContextConfig",
         context_name: Union[str, None] = None,
-        runtime_config: Union[KiaraRuntimeConfig, None] = None,
+        runtime_config: Union["KiaraRuntimeConfig", None] = None,
     ):
 
         from kiara.context import Kiara

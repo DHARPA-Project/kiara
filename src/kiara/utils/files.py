@@ -6,6 +6,8 @@ from typing import Any, Union
 
 from ruamel.yaml import YAML
 
+from kiara.exceptions import KiaraException
+
 yaml = YAML(typ="safe")
 
 
@@ -18,21 +20,30 @@ def get_data_from_file(
 
     content = path.read_text()
 
-    if content_type:
-        assert content_type in ["json", "yaml"]
-    else:
+    if not content_type:
         if path.name.endswith(".json"):
             content_type = "json"
         elif path.name.endswith(".yaml") or path.name.endswith(".yml"):
             content_type = "yaml"
-        else:
-            raise ValueError(
-                "Invalid data format, only 'json' or 'yaml' are supported currently."
+
+    if content_type:
+
+        if content_type not in ["json", "yaml"]:
+            raise KiaraException(
+                "Invalid content type, only 'json' or 'yaml' are supported currently."
             )
 
-    if content_type == "json":
-        data = json.loads(content)
+        if content_type == "json":
+            data = json.loads(content)
+        else:
+            data = yaml.load(content)
     else:
-        data = yaml.load(content)
+        try:
+            data = json.loads(content)
+        except Exception:
+            try:
+                data = yaml.load(content)
+            except Exception:
+                raise ValueError("Could not determine data format from file extension.")
 
     return data

@@ -175,6 +175,7 @@ def set_and_validate_inputs(
     print_help: bool,
     click_context: ClickContext,
     cmd_help: str,
+    base_inputs: Union[None, Mapping[str, Any]] = None,
 ) -> Union[ValueMap, None]:
 
     # =========================================================================
@@ -188,7 +189,12 @@ def set_and_validate_inputs(
             list_keys.append(name)
 
     try:
-        inputs_dict = dict_from_cli_args(*inputs, list_keys=list_keys)
+        inputs_dict: Dict[str, Any] = dict_from_cli_args(*inputs, list_keys=list_keys)
+        if base_inputs:
+            for k, v in base_inputs.items():
+                if k not in inputs_dict.keys():
+                    inputs_dict[k] = v
+
         value_map = api.assemble_value_map(
             values=inputs_dict,
             values_schema=operation.inputs_schema,

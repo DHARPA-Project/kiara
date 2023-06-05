@@ -16,11 +16,14 @@ from typing import Any, Iterable, Mapping, Union
 import rich_click as click
 
 from kiara.exceptions import InvalidCommandLineInvocation
+from kiara.interfaces.python_api import JobDesc
+from kiara.utils import log_message
 from kiara.utils.cli import dict_from_cli_args, terminal_print
 from kiara.utils.cli.exceptions import handle_exception
 
 if typing.TYPE_CHECKING:
     from kiara.api import KiaraAPI
+    from kiara.models.module.operation import Operation
 
 
 @click.command()
@@ -119,11 +122,23 @@ def run(
     else:
         op = module_or_operation
 
-    try:
-        kiara_op = validate_operation_in_terminal(api=api, module_or_operation=op)
-    except InvalidCommandLineInvocation as e:
-        ctx.obj.exit(msg=None, exit_code=e.error_code)
-        return
+    kiara_op: Union[None, Operation] = None
+    base_inputs: Union[Mapping[str, Any], None] = None
+
+    if not module_config and os.path.isfile(module_or_operation):
+        try:
+            job_desc = JobDesc.create_from_file(module_or_operation)
+            kiara_op = job_desc.get_operation(kiara_api=api)
+            base_inputs = job_desc.inputs
+        except Exception as e:
+            log_message("run_arg.no.job_desc", path=module_or_operation, error=e)
+
+    if kiara_op is None:
+        try:
+            kiara_op = validate_operation_in_terminal(api=api, module_or_operation=op)
+        except InvalidCommandLineInvocation as e:
+            ctx.obj.exit(msg=None, exit_code=e.error_code)
+            return
 
     final_aliases = calculate_aliases(operation=kiara_op, alias_tokens=save)
 
@@ -136,9 +151,10 @@ def run(
             print_help=help,
             click_context=ctx,
             cmd_help=cmd_help,
+            base_inputs=base_inputs,
         )
         if inputs_value_map is None:
-            ctx.obj.exit(msg=None, error_code=0)
+            ctx.obj.exit(msg=None, exit_code=0)
             return
     except InvalidCommandLineInvocation as e:
         ctx.obj.exit(msg=None, exit_code=e.error_code)

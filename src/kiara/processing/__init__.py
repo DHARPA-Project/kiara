@@ -8,7 +8,7 @@
 import abc
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List, Mapping, Protocol, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Mapping, Protocol, Union
 
 import structlog
 from pydantic import BaseModel
@@ -21,18 +21,12 @@ from kiara.models.values.value import (
     ValueMapWritable,
     ValuePedigree,
 )
+from kiara.modules import KiaraModule
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import get_dev_config, is_develop, log_exception
 
-try:
-    from typing import Literal
-
+if TYPE_CHECKING:
     from kiara.context import Kiara
-    from kiara.modules import KiaraModule
-
-except Exception:
-    from typing_extensions import Literal  # type: ignore
-
 
 log = structlog.getLogger()
 

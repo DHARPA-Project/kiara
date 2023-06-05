@@ -9,13 +9,19 @@ from functools import cached_property
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
+import dpath
+
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import structlog
 from ruamel.yaml import YAML
 
-from kiara.defaults import OFFICIAL_KIARA_PLUGINS
+from kiara.defaults import (
+    OFFICIAL_KIARA_PLUGINS,
+    VALID_VALUE_QUERY_CATEGORIES,
+    VALUE_ATTR_DELIMITER,
+)
 from kiara.exceptions import (
     DataTypeUnknownException,
     KiaraException,
@@ -35,6 +41,7 @@ from kiara.interfaces.python_api.models.info import (
     ValueInfo,
     ValuesInfo,
 )
+from kiara.interfaces.python_api.models.job import JobDesc
 from kiara.interfaces.python_api.models.workflow import WorkflowMatcher
 from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
 from kiara.interfaces.python_api.workflow import Workflow
@@ -70,6 +77,7 @@ from kiara.utils import log_exception, log_message
 from kiara.utils.downloads import get_data_from_url
 from kiara.utils.files import get_data_from_file
 from kiara.utils.operations import create_operation
+from kiara.utils.string_vars import replace_var_names_in_obj
 
 if TYPE_CHECKING:
     from kiara.context import Kiara, KiaraConfig, KiaraRuntimeConfig
@@ -975,6 +983,83 @@ class KiaraAPI(object):
         """
         return self.context.data_registry.get_value(value=value)
 
+    def query_value(
+        self,
+        value_or_path: Union[str, Value, uuid.UUID],
+        query_path: Union[str, None] = None,
+    ) -> Any:
+        """
+        Retrieve a value attribute with the specified id or alias.
+
+        A query path is delimited by "::", and has the following format:
+
+        ```
+        <value_id_or_alias>::[<category_name>]::[<attribute_name>]::[...]
+        ```
+
+        Currently supported categories:
+        - "data": the data of the value
+        - "properties: the properties of the value
+
+        If no category is specified, the value instance itself is returned.
+
+        Raises an exception if no value could be found.
+
+        Arguments:
+        ---------
+            value_or_path: a value or value reference, or a query path containing the value id or alias as first token
+            query_path: a query path which will be appended a potential query path computed from the first argument
+
+        Returns:
+        -------
+            the attribute value
+        """
+
+        if isinstance(value_or_path, str):
+            tokens = value_or_path.split(VALUE_ATTR_DELIMITER)
+            value_id = tokens.pop(0)
+            _value = self.get_value(value=value_id)
+        else:
+            tokens = []
+            _value = self.get_value(value=value_or_path)
+
+        if query_path:
+            tokens.extend(query_path.split(VALUE_ATTR_DELIMITER))
+
+        if not tokens:
+            return _value
+
+        current_result: Any = _value
+        category = tokens.pop(0)
+        if category == "properties":
+            current_result = current_result.get_all_property_data(flatten_models=True)
+        elif category == "data":
+            current_result = current_result.data
+        else:
+            raise KiaraException(
+                f"Invalid query path category: {category}. Valid categories are: {', '.join(VALID_VALUE_QUERY_CATEGORIES)}"
+            )
+
+        if tokens:
+            try:
+                path = VALUE_ATTR_DELIMITER.join(tokens)
+                current_result = dpath.get(
+                    current_result, path, separator=VALUE_ATTR_DELIMITER
+                )
+
+            except Exception as e:
+                valid_base_keys = list(current_result.keys())
+                details = "Valid (base) keys are:\n"
+                for k in valid_base_keys:
+                    details += f"- {k}\n"
+                raise KiaraException(
+                    msg=f"Failed to retrieve value attribute using query sub-path: {path}",
+                    parent=e,
+                    details=details,
+                )
+
+        return current_result
+
     def retrieve_value_info(self, value: Union[str, uuid.UUID, Value]) -> ValueInfo:
         """
         Retrieve an info object for a value.
@@ -1115,7 +1200,7 @@ class KiaraAPI(object):
 
     def assemble_value_map(
         self,
-        values: Mapping[str, Union[uuid.UUID, None, str, Value]],
+        values: Mapping[str, Union[uuid.UUID, None, str, Value, Any]],
         values_schema: Union[None, Mapping[str, ValueSchema]] = None,
         register_data: bool = False,
         reuse_existing_data: bool = False,
@@ -1520,8 +1605,8 @@ class KiaraAPI(object):
 
     def queue_job(
         self,
-        operation: Union[str, Path, Manifest, OperationInfo],
-        inputs: Mapping[str, Any],
+        operation: Union[str, Path, Manifest, OperationInfo, JobDesc],
+        inputs: Union[Mapping[str, Any], None],
         operation_config: Union[None, Mapping[str, Any]] = None,
     ) -> uuid.UUID:
         """
@@ -1539,30 +1624,81 @@ class KiaraAPI(object):
         -------
             the queued job id
         """
-        if isinstance(operation, Path):
+
+        if inputs is None:
+            inputs = {}
+
+        if isinstance(operation, str):
+            if os.path.isfile(operation):
+                job_path = Path(operation)
+                if not job_path.is_file():
+                    raise Exception(
+                        f"Can't queue job from file '{job_path.as_posix()}': file does not exist/not a file."
+                    )
+
+                op_data = get_data_from_file(job_path)
+                if isinstance(op_data, Mapping) and "operation" in op_data.keys():
+                    try:
+                        repl_dict: Dict[str, Any] = {
+                            "this_dir": job_path.parent.as_posix()
+                        }
+                        job_data = replace_var_names_in_obj(
+                            op_data, repl_dict=repl_dict
+                        )
+                        job_data["job_alias"] = job_path.stem
+                        job_desc = JobDesc(**job_data)
+                        _operation: Union[Manifest, str] = job_desc.get_operation(
+                            kiara_api=self
+                        )
+                        if job_desc.inputs:
+                            _inputs = dict(job_desc.inputs)
+                            _inputs.update(inputs)
+                            inputs = _inputs
+                    except Exception as e:
+                        raise KiaraException(
+                            f"Failed to parse job description file: {operation}",
+                            parent=e,
+                        )
+                else:
+                    _operation = job_path.as_posix()
+            else:
+                _operation = operation
+        elif isinstance(operation, Path):
             if not operation.is_file():
                 raise Exception(
-                    f"Can't queue job from file '{operation.as_posix()}': file does not exist."
+                    f"Can't queue job from file '{operation.as_posix()}': file does not exist/not a file."
                 )
-            operation = operation.as_posix()
+            _operation = operation.as_posix()
         elif isinstance(operation, OperationInfo):
-            operation = operation.operation
+            _operation = operation.operation
+        elif isinstance(operation, JobDesc):
+            if operation_config:
+                raise KiaraException(
+                    "Specifying 'operation_config' when operation is a job_desc is invalid."
+                )
+            _operation = operation.get_operation(kiara_api=self)
+            if operation.inputs:
+                _inputs = dict(operation.inputs)
+                _inputs.update(inputs)
+                inputs = _inputs
+        else:
+            _operation = operation
 
-        if not isinstance(operation, Manifest):
+        if not isinstance(_operation, Manifest):
             manifest: Manifest = create_operation(
-                module_or_operation=operation,
+                module_or_operation=_operation,
                 operation_config=operation_config,
                 kiara=self.context,
             )
         else:
-            manifest = operation
+            manifest = _operation
 
         job_id = self.queue_manifest(manifest=manifest, inputs=inputs)
         return job_id
 
     def run_job(
         self,
-        operation: Union[str, Path, Manifest, OperationInfo],
+        operation: Union[str, Path, Manifest, OperationInfo, JobDesc],
         inputs: Union[None, Mapping[str, Any]] = None,
         operation_config: Union[None, Mapping[str, Any]] = None,
     ) -> ValueMapReadOnly:

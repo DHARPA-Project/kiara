@@ -119,7 +119,9 @@ class JobTest(object):
                 arg_values: List[Any] = []
 
                 for arg_name in args.parameters.keys():
-                    if arg_name == "outputs":
+                    if arg_name == "kiara_api":
+                        arg_values.append(self._kiara_api)
+                    elif arg_name == "outputs":
                         arg_values.append(result)
                     elif arg_name in result.field_names:
                         arg_values.append(result.get_value_obj(arg_name))

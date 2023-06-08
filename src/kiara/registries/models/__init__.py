@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, Dict, Type, Union
 
+from orjson import orjson
+
+from kiara.defaults import KIARA_MODEL_DATA_KEY, KIARA_MODEL_ID_KEY
+from kiara.exceptions import KiaraException
 from kiara.interfaces.python_api.models.info import KiaraModelClassesInfo
 from kiara.models import KiaraModel
 
@@ -93,3 +97,23 @@ class ModelRegistry(object):
         )
         self._sub_models[model_type] = classes
         return classes
+
+    def create_instance_from_json(self, json_data: str) -> KiaraModel:
+
+        data = orjson.loads(json_data)
+
+        model_id = data.get(KIARA_MODEL_ID_KEY, None)
+        if model_id is None:
+            raise KiaraException(
+                "Can't create model instance from JSON: no kiara model id."
+            )
+
+        cls = self.get_model_cls(model_id)
+
+        model_data = data.get(KIARA_MODEL_DATA_KEY, None)
+        if model_data is None:
+            raise KiaraException(
+                "Can't create model instance from JSON: no model data."
+            )
+
+        return cls(**model_data)

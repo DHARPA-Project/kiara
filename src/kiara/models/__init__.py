@@ -23,7 +23,12 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.tree import Tree
 
-from kiara.defaults import KIARA_HASH_FUNCTION
+from kiara.defaults import (
+    KIARA_HASH_FUNCTION,
+    KIARA_MODEL_DATA_KEY,
+    KIARA_MODEL_ID_KEY,
+    KIARA_MODEL_SCHEMA_KEY,
+)
 from kiara.registries.templates import TemplateRegistry
 from kiara.utils.class_loading import _default_id_func
 from kiara.utils.develop import log_dev_message
@@ -277,11 +282,38 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     def as_dict_with_schema(self) -> Dict[str, Dict[str, Any]]:
         return {"data": self.dict(), "schema": self.schema()}
 
-    def as_json_with_schema(self) -> str:
+    def as_json_with_schema(self, incl_model_id: bool = False) -> str:
 
         data_json = self.json()
         schema_json = self.schema_json()
-        return '{"data": ' + data_json + ', "schema": ' + schema_json + "}"
+        if not incl_model_id:
+            return (
+                '{"'
+                + KIARA_MODEL_DATA_KEY
+                + '": '
+                + data_json
+                + ', "'
+                + KIARA_MODEL_SCHEMA_KEY
+                + '": '
+                + schema_json
+                + "}"
+            )
+        else:
+            return (
+                '{"'
+                + KIARA_MODEL_DATA_KEY
+                + '": '
+                + data_json
+                + ', "'
+                + KIARA_MODEL_SCHEMA_KEY
+                + '": '
+                + schema_json
+                + ', "'
+                + KIARA_MODEL_ID_KEY
+                + '": "'
+                + self.model_type_id
+                + '"}'
+            )
 
     def __hash__(self):
         return int.from_bytes(self.instance_cid.digest, "big")

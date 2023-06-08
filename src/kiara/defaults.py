@@ -248,6 +248,9 @@ ARRAY_MODEL_CATEOGORY_ID = "instance.model.array"
 TABLE_MODEL_CATEOGORY_ID = "instance.model.table"
 DEFAULT_CONTEXT_NAME = "default"
 
+KIARA_MODEL_ID_KEY = "kiara_model_id"
+KIARA_MODEL_DATA_KEY = "data"
+KIARA_MODEL_SCHEMA_KEY = "schema"
 
 SYMLINK_ISSUE_MSG = """Your operating system does not support symlinks, which is a requirement for kiara to work.
 

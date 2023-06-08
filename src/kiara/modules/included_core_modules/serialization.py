@@ -229,6 +229,7 @@ class LoadInternalModel(DeserializeValueModule):
         model_id: str = data.data_type_config["kiara_model_id"]
         model_registry = ModelRegistry.instance()
         m_cls = model_registry.get_model_cls(kiara_model_id=model_id)
+
         obj = m_cls(**model_data)
         return obj
 

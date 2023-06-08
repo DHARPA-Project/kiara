@@ -36,7 +36,7 @@ jobs:
       - name: install tabular types plugin
         run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.tabular@develop
       - name: install kiara
-        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[dev_testing]
+        run: pip install -U  .[dev_testing]
       - name: display installed kiara and module package versions
         run: pip list | grep kiara
       - name: test with pytest
@@ -62,7 +62,7 @@ jobs:
       - name: install tabular types plugin
         run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.tabular@develop
       - name: install kiara
-        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[dev_testing]
+        run: pip install -U  .[dev_testing]
       - name: display installed kiara and module package versions
         run: pip list | grep kiara
       - name: Run coverage
@@ -96,7 +96,7 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}
       - uses: actions/checkout@v2
       - name: install kiara
-        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[dev_testing]
+        run: pip install -U  .[dev_testing]
       - name: Test with mypy
         run: make mypy
 
@@ -144,7 +144,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: install kiara
-        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[dev_documentation,doc]
+        run: pip install -U .[dev_documentation,doc]
       - run: git config --global user.email "markus@frkl.io"
       - run: git config --global user.name "Markus Binsteiner"
       - name: create latest documentation
@@ -176,7 +176,7 @@ jobs:
       - name: install pip
         run: pip install pip==21.2.4 setuptools==57.4.0
       - name: install kiara
-        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ -e .
+        run: pip install -U -e .
       - name: install 'build' package
         run: pip install -U build
       - name: create packages
@@ -216,7 +216,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: install kiara
-        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .
+        run: pip install -U .
       - name: install required plugin packages
         run: pip install git+https://github.com/DHARPA-Project/kiara_plugin.develop.git@develop
       - name: build conda package

@@ -30,7 +30,7 @@ jobs:
       - name: install tabular types plugin
         run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.tabular@develop
       - name: install kiara
-        run: pip install -U --extra-index-url https://pypi.fury.io/dharpa/ .[dev_testing]
+        run: pip install -U .[dev_testing]
       - name: display installed kiara and module package versions
         run: pip list | grep kiara
       - name: test with pytest

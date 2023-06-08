@@ -4467,6 +4467,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../reference/kiara/utils/testing/__init__/" class="md-nav__link">
+        testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/kiara/utils/values/" class="md-nav__link">
         values
       </a>
@@ -6637,6 +6651,7 @@
         model_id: str = data.data_type_config["kiara_model_id"]
         model_registry = ModelRegistry.instance()
         m_cls = model_registry.get_model_cls(kiara_model_id=model_id)
+
         obj = m_cls(**model_data)
         return obj
 </td>

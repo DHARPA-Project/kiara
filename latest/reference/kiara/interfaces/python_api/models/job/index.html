@@ -4397,6 +4397,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../../utils/testing/__init__/" class="md-nav__link">
+        testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../../utils/values/" class="md-nav__link">
         values
       </a>
@@ -4969,8 +4983,8 @@
 <code class="highlight language-python"><span class="n">job_alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The alias for the job.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.job.JobDesc.job_alias" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -4989,8 +5003,8 @@
 <code class="highlight language-python"><span class="n">operation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The operation id or module type.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.job.JobDesc.operation" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5009,8 +5023,8 @@
 <code class="highlight language-python"><span class="n">module_config</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The configuration for the module.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.job.JobDesc.module_config" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5029,8 +5043,8 @@
 <code class="highlight language-python"><span class="n">inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The inputs for the job.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.models.job.JobDesc.inputs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5248,7 +5262,9 @@
 <span class="normal">128</span>
 <span class="normal">129</span>
 <span class="normal">130</span>
-<span class="normal">131</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobTest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobTest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">kiara_api</span><span class="p">:</span> <span class="s2">&quot;KiaraAPI&quot;</span><span class="p">,</span>
@@ -5301,7 +5317,9 @@
                 <span class="n">arg_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
                 <span class="k">for</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="n">arg_name</span> <span class="o">==</span> <span class="s2">&quot;outputs&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">arg_name</span> <span class="o">==</span> <span class="s2">&quot;kiara_api&quot;</span><span class="p">:</span>
+                        <span class="n">arg_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara_api</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">arg_name</span> <span class="o">==</span> <span class="s2">&quot;outputs&quot;</span><span class="p">:</span>
                         <span class="n">arg_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
                     <span class="k">elif</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="p">:</span>
                         <span class="n">arg_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">arg_name</span><span class="p">))</span>
@@ -5432,7 +5450,9 @@
 <span class="normal">128</span>
 <span class="normal">129</span>
 <span class="normal">130</span>
-<span class="normal">131</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">check_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="s2">&quot;ValueMap&quot;</span><span class="p">):</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">check_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="s2">&quot;ValueMap&quot;</span><span class="p">):</span>
 
     <span class="kn">import</span> <span class="nn">inspect</span>
 
@@ -5461,7 +5481,9 @@
             <span class="n">arg_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
             <span class="k">for</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">arg_name</span> <span class="o">==</span> <span class="s2">&quot;outputs&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">arg_name</span> <span class="o">==</span> <span class="s2">&quot;kiara_api&quot;</span><span class="p">:</span>
+                    <span class="n">arg_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara_api</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">arg_name</span> <span class="o">==</span> <span class="s2">&quot;outputs&quot;</span><span class="p">:</span>
                     <span class="n">arg_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="p">:</span>
                     <span class="n">arg_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">arg_name</span><span class="p">))</span>

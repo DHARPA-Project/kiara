@@ -12,24 +12,24 @@
         <meta name="author" content="Markus Binsteiner">
       
       
-        <link rel="canonical" href="https://dharpa.org/kiara/latest/design_docs/architecture/data/">
+        <link rel="canonical" href="https://dharpa.org/kiara/latest/reference/kiara/utils/testing/__init__/">
       
       
-        <link rel="prev" href="../metadata/">
+        <link rel="prev" href="../../string_vars/">
       
       
-        <link rel="next" href="persistence/">
+        <link rel="next" href="../../values/">
       
-      <link rel="icon" href="../../../assets/images/favicon.png">
+      <link rel="icon" href="../../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
     
     
       
-        <title>Data - Kiara</title>
+        <title>testing - Kiara</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.26e3688c.min.css">
       
       
 
@@ -45,11 +45,11 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -71,7 +71,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#whats-data" class="md-skip">
+        <a href="#kiara.utils.testing" class="md-skip">
           Skip to content
         </a>
       
@@ -91,7 +91,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../.." title="Kiara" class="md-header__button md-logo" aria-label="Kiara" data-md-component="logo">
+    <a href="../../../../.." title="Kiara" class="md-header__button md-logo" aria-label="Kiara" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -110,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Data
+              testing
             
           </span>
         </div>
@@ -189,7 +189,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../.." title="Kiara" class="md-nav__button md-logo" aria-label="Kiara" data-md-component="logo">
+    <a href="../../../../.." title="Kiara" class="md-nav__button md-logo" aria-label="Kiara" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -220,7 +220,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../.." class="md-nav__link">
+      <a href="../../../../.." class="md-nav__link">
         Home
       </a>
     </li>
@@ -247,7 +247,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../development/">Development</a>
+          <a href="../../../../../development/">Development</a>
           
             <label for="__nav_2">
               <span class="md-nav__icon md-icon"></span>
@@ -268,7 +268,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../development/install/" class="md-nav__link">
+      <a href="../../../../../development/install/" class="md-nav__link">
         Install development environment
       </a>
     </li>
@@ -282,7 +282,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../development/modules/render_value/" class="md-nav__link">
+      <a href="../../../../../development/modules/render_value/" class="md-nav__link">
         Modules
       </a>
     </li>
@@ -331,7 +331,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../included_components/" class="md-nav__link">
+      <a href="../../../../../included_components/" class="md-nav__link">
         Summary
       </a>
     </li>
@@ -345,7 +345,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../included_components/data_types/" class="md-nav__link">
+      <a href="../../../../../included_components/data_types/" class="md-nav__link">
         data_types
       </a>
     </li>
@@ -359,7 +359,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../included_components/module_types/" class="md-nav__link">
+      <a href="../../../../../included_components/module_types/" class="md-nav__link">
         module_types
       </a>
     </li>
@@ -373,7 +373,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../included_components/kiara_model_types/" class="md-nav__link">
+      <a href="../../../../../included_components/kiara_model_types/" class="md-nav__link">
         kiara_model_types
       </a>
     </li>
@@ -387,7 +387,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../included_components/operation_types/" class="md-nav__link">
+      <a href="../../../../../included_components/operation_types/" class="md-nav__link">
         operation_types
       </a>
     </li>
@@ -401,7 +401,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../included_components/operations/" class="md-nav__link">
+      <a href="../../../../../included_components/operations/" class="md-nav__link">
         operations
       </a>
     </li>
@@ -421,14 +421,16 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
       
       
       
@@ -437,7 +439,7 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
           API reference
@@ -448,21 +450,23 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" checked>
       
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/__init__/">kiara</a>
+          <a href="../../../__init__/">kiara</a>
           
             <label for="__nav_4_1">
               <span class="md-nav__icon md-icon"></span>
@@ -470,7 +474,7 @@
           
         </div>
       
-      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_4_1">
           <span class="md-nav__icon md-icon"></span>
           kiara
@@ -483,7 +487,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/api/" class="md-nav__link">
+      <a href="../../../api/" class="md-nav__link">
         api
       </a>
     </li>
@@ -509,7 +513,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/context/__init__/">context</a>
+          <a href="../../../context/__init__/">context</a>
           
             <label for="__nav_4_1_2">
               <span class="md-nav__icon md-icon"></span>
@@ -530,7 +534,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/context/config/" class="md-nav__link">
+      <a href="../../../context/config/" class="md-nav__link">
         config
       </a>
     </li>
@@ -544,7 +548,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/context/orm/" class="md-nav__link">
+      <a href="../../../context/orm/" class="md-nav__link">
         orm
       </a>
     </li>
@@ -558,7 +562,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/context/runtime_config/" class="md-nav__link">
+      <a href="../../../context/runtime_config/" class="md-nav__link">
         runtime_config
       </a>
     </li>
@@ -591,7 +595,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/data_types/__init__/">data_types</a>
+          <a href="../../../data_types/__init__/">data_types</a>
           
             <label for="__nav_4_1_3">
               <span class="md-nav__icon md-icon"></span>
@@ -624,7 +628,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/data_types/included_core_types/__init__/">included_core_types</a>
+          <a href="../../../data_types/included_core_types/__init__/">included_core_types</a>
           
             <label for="__nav_4_1_3_1">
               <span class="md-nav__icon md-icon"></span>
@@ -645,7 +649,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/data_types/included_core_types/filesystem/" class="md-nav__link">
+      <a href="../../../data_types/included_core_types/filesystem/" class="md-nav__link">
         filesystem
       </a>
     </li>
@@ -671,7 +675,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/data_types/included_core_types/internal/__init__/">internal</a>
+          <a href="../../../data_types/included_core_types/internal/__init__/">internal</a>
           
             <label for="__nav_4_1_3_1_2">
               <span class="md-nav__icon md-icon"></span>
@@ -692,7 +696,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/data_types/included_core_types/internal/render_value/" class="md-nav__link">
+      <a href="../../../data_types/included_core_types/internal/render_value/" class="md-nav__link">
         render_value
       </a>
     </li>
@@ -713,7 +717,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/data_types/included_core_types/metadata/" class="md-nav__link">
+      <a href="../../../data_types/included_core_types/metadata/" class="md-nav__link">
         metadata
       </a>
     </li>
@@ -727,7 +731,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/data_types/included_core_types/serialization/" class="md-nav__link">
+      <a href="../../../data_types/included_core_types/serialization/" class="md-nav__link">
         serialization
       </a>
     </li>
@@ -755,7 +759,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/defaults/" class="md-nav__link">
+      <a href="../../../defaults/" class="md-nav__link">
         defaults
       </a>
     </li>
@@ -781,7 +785,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/doc/__init__/">doc</a>
+          <a href="../../../doc/__init__/">doc</a>
           
             <label for="__nav_4_1_5">
               <span class="md-nav__icon md-icon"></span>
@@ -802,7 +806,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/doc/gen_info_pages/" class="md-nav__link">
+      <a href="../../../doc/gen_info_pages/" class="md-nav__link">
         gen_info_pages
       </a>
     </li>
@@ -816,7 +820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/doc/generate_api_doc/" class="md-nav__link">
+      <a href="../../../doc/generate_api_doc/" class="md-nav__link">
         generate_api_doc
       </a>
     </li>
@@ -830,7 +834,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/doc/mkdocs_macros_cli/" class="md-nav__link">
+      <a href="../../../doc/mkdocs_macros_cli/" class="md-nav__link">
         mkdocs_macros_cli
       </a>
     </li>
@@ -844,7 +848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/doc/mkdocs_macros_kiara/" class="md-nav__link">
+      <a href="../../../doc/mkdocs_macros_kiara/" class="md-nav__link">
         mkdocs_macros_kiara
       </a>
     </li>
@@ -870,7 +874,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/doc/mkdocstrings/__init__/">mkdocstrings</a>
+          <a href="../../../doc/mkdocstrings/__init__/">mkdocstrings</a>
           
             <label for="__nav_4_1_5_5">
               <span class="md-nav__icon md-icon"></span>
@@ -891,7 +895,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/doc/mkdocstrings/collector/" class="md-nav__link">
+      <a href="../../../doc/mkdocstrings/collector/" class="md-nav__link">
         collector
       </a>
     </li>
@@ -905,7 +909,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/doc/mkdocstrings/handler/" class="md-nav__link">
+      <a href="../../../doc/mkdocstrings/handler/" class="md-nav__link">
         handler
       </a>
     </li>
@@ -919,7 +923,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/doc/mkdocstrings/renderer/" class="md-nav__link">
+      <a href="../../../doc/mkdocstrings/renderer/" class="md-nav__link">
         renderer
       </a>
     </li>
@@ -947,7 +951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/exceptions/" class="md-nav__link">
+      <a href="../../../exceptions/" class="md-nav__link">
         exceptions
       </a>
     </li>
@@ -973,7 +977,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/interfaces/__init__/">interfaces</a>
+          <a href="../../../interfaces/__init__/">interfaces</a>
           
             <label for="__nav_4_1_7">
               <span class="md-nav__icon md-icon"></span>
@@ -1006,7 +1010,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/interfaces/cli/__init__/">cli</a>
+          <a href="../../../interfaces/cli/__init__/">cli</a>
           
             <label for="__nav_4_1_7_1">
               <span class="md-nav__icon md-icon"></span>
@@ -1039,7 +1043,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/interfaces/cli/config/__init__/">config</a>
+          <a href="../../../interfaces/cli/config/__init__/">config</a>
           
             <label for="__nav_4_1_7_1_1">
               <span class="md-nav__icon md-icon"></span>
@@ -1060,7 +1064,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/cli/config/commands/" class="md-nav__link">
+      <a href="../../../interfaces/cli/config/commands/" class="md-nav__link">
         commands
       </a>
     </li>
@@ -1093,7 +1097,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/interfaces/cli/context/__init__/">context</a>
+          <a href="../../../interfaces/cli/context/__init__/">context</a>
           
             <label for="__nav_4_1_7_1_2">
               <span class="md-nav__icon md-icon"></span>
@@ -1114,7 +1118,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/cli/context/commands/" class="md-nav__link">
+      <a href="../../../interfaces/cli/context/commands/" class="md-nav__link">
         commands
       </a>
     </li>
@@ -1147,7 +1151,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/interfaces/cli/data/__init__/">data</a>
+          <a href="../../../interfaces/cli/data/__init__/">data</a>
           
             <label for="__nav_4_1_7_1_3">
               <span class="md-nav__icon md-icon"></span>
@@ -1168,7 +1172,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/cli/data/commands/" class="md-nav__link">
+      <a href="../../../interfaces/cli/data/commands/" class="md-nav__link">
         commands
       </a>
     </li>
@@ -1201,7 +1205,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/interfaces/cli/module/__init__/">module</a>
+          <a href="../../../interfaces/cli/module/__init__/">module</a>
           
             <label for="__nav_4_1_7_1_4">
               <span class="md-nav__icon md-icon"></span>
@@ -1222,7 +1226,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/cli/module/commands/" class="md-nav__link">
+      <a href="../../../interfaces/cli/module/commands/" class="md-nav__link">
         commands
       </a>
     </li>
@@ -1255,7 +1259,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/interfaces/cli/operation/__init__/">operation</a>
+          <a href="../../../interfaces/cli/operation/__init__/">operation</a>
           
             <label for="__nav_4_1_7_1_5">
               <span class="md-nav__icon md-icon"></span>
@@ -1276,7 +1280,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/cli/operation/commands/" class="md-nav__link">
+      <a href="../../../interfaces/cli/operation/commands/" class="md-nav__link">
         commands
       </a>
     </li>
@@ -1309,7 +1313,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/interfaces/cli/pipeline/__init__/">pipeline</a>
+          <a href="../../../interfaces/cli/pipeline/__init__/">pipeline</a>
           
             <label for="__nav_4_1_7_1_6">
               <span class="md-nav__icon md-icon"></span>
@@ -1330,7 +1334,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/cli/pipeline/commands/" class="md-nav__link">
+      <a href="../../../interfaces/cli/pipeline/commands/" class="md-nav__link">
         commands
       </a>
     </li>
@@ -1351,7 +1355,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/cli/proxy_cli/" class="md-nav__link">
+      <a href="../../../interfaces/cli/proxy_cli/" class="md-nav__link">
         proxy_cli
       </a>
     </li>
@@ -1377,7 +1381,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/interfaces/cli/render/__init__/">render</a>
+          <a href="../../../interfaces/cli/render/__init__/">render</a>
           
             <label for="__nav_4_1_7_1_8">
               <span class="md-nav__icon md-icon"></span>
@@ -1398,7 +1402,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/cli/render/commands/" class="md-nav__link">
+      <a href="../../../interfaces/cli/render/commands/" class="md-nav__link">
         commands
       </a>
     </li>
@@ -1419,7 +1423,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/cli/run/" class="md-nav__link">
+      <a href="../../../interfaces/cli/run/" class="md-nav__link">
         run
       </a>
     </li>
@@ -1445,7 +1449,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/interfaces/cli/type/__init__/">type</a>
+          <a href="../../../interfaces/cli/type/__init__/">type</a>
           
             <label for="__nav_4_1_7_1_10">
               <span class="md-nav__icon md-icon"></span>
@@ -1466,7 +1470,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/cli/type/commands/" class="md-nav__link">
+      <a href="../../../interfaces/cli/type/commands/" class="md-nav__link">
         commands
       </a>
     </li>
@@ -1499,7 +1503,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/interfaces/cli/workflow/__init__/">workflow</a>
+          <a href="../../../interfaces/cli/workflow/__init__/">workflow</a>
           
             <label for="__nav_4_1_7_1_11">
               <span class="md-nav__icon md-icon"></span>
@@ -1520,7 +1524,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/cli/workflow/commands/" class="md-nav__link">
+      <a href="../../../interfaces/cli/workflow/commands/" class="md-nav__link">
         commands
       </a>
     </li>
@@ -1560,7 +1564,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/interfaces/python_api/__init__/">python_api</a>
+          <a href="../../../interfaces/python_api/__init__/">python_api</a>
           
             <label for="__nav_4_1_7_2">
               <span class="md-nav__icon md-icon"></span>
@@ -1581,7 +1585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/python_api/batch/" class="md-nav__link">
+      <a href="../../../interfaces/python_api/batch/" class="md-nav__link">
         batch
       </a>
     </li>
@@ -1607,7 +1611,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/interfaces/python_api/models/__init__/">models</a>
+          <a href="../../../interfaces/python_api/models/__init__/">models</a>
           
             <label for="__nav_4_1_7_2_2">
               <span class="md-nav__icon md-icon"></span>
@@ -1628,7 +1632,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/python_api/models/info/" class="md-nav__link">
+      <a href="../../../interfaces/python_api/models/info/" class="md-nav__link">
         info
       </a>
     </li>
@@ -1642,7 +1646,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/python_api/models/job/" class="md-nav__link">
+      <a href="../../../interfaces/python_api/models/job/" class="md-nav__link">
         job
       </a>
     </li>
@@ -1656,7 +1660,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/python_api/models/workflow/" class="md-nav__link">
+      <a href="../../../interfaces/python_api/models/workflow/" class="md-nav__link">
         workflow
       </a>
     </li>
@@ -1677,7 +1681,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/python_api/operation/" class="md-nav__link">
+      <a href="../../../interfaces/python_api/operation/" class="md-nav__link">
         operation
       </a>
     </li>
@@ -1691,7 +1695,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/python_api/proxy/" class="md-nav__link">
+      <a href="../../../interfaces/python_api/proxy/" class="md-nav__link">
         proxy
       </a>
     </li>
@@ -1705,7 +1709,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/python_api/utils/" class="md-nav__link">
+      <a href="../../../interfaces/python_api/utils/" class="md-nav__link">
         utils
       </a>
     </li>
@@ -1719,7 +1723,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/python_api/value/" class="md-nav__link">
+      <a href="../../../interfaces/python_api/value/" class="md-nav__link">
         value
       </a>
     </li>
@@ -1733,7 +1737,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/python_api/workflow/" class="md-nav__link">
+      <a href="../../../interfaces/python_api/workflow/" class="md-nav__link">
         workflow
       </a>
     </li>
@@ -1766,7 +1770,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/interfaces/tui/__init__/">tui</a>
+          <a href="../../../interfaces/tui/__init__/">tui</a>
           
             <label for="__nav_4_1_7_3">
               <span class="md-nav__icon md-icon"></span>
@@ -1787,7 +1791,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/tui/pager/" class="md-nav__link">
+      <a href="../../../interfaces/tui/pager/" class="md-nav__link">
         pager
       </a>
     </li>
@@ -1813,7 +1817,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/interfaces/tui/widgets/__init__/">widgets</a>
+          <a href="../../../interfaces/tui/widgets/__init__/">widgets</a>
           
             <label for="__nav_4_1_7_3_2">
               <span class="md-nav__icon md-icon"></span>
@@ -1834,7 +1838,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/interfaces/tui/widgets/pager/" class="md-nav__link">
+      <a href="../../../interfaces/tui/widgets/pager/" class="md-nav__link">
         pager
       </a>
     </li>
@@ -1881,7 +1885,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/models/__init__/">models</a>
+          <a href="../../../models/__init__/">models</a>
           
             <label for="__nav_4_1_8">
               <span class="md-nav__icon md-icon"></span>
@@ -1902,7 +1906,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/aliases/__init__/" class="md-nav__link">
+      <a href="../../../models/aliases/__init__/" class="md-nav__link">
         aliases
       </a>
     </li>
@@ -1916,7 +1920,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/archives/" class="md-nav__link">
+      <a href="../../../models/archives/" class="md-nav__link">
         archives
       </a>
     </li>
@@ -1930,7 +1934,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/context/" class="md-nav__link">
+      <a href="../../../models/context/" class="md-nav__link">
         context
       </a>
     </li>
@@ -1944,7 +1948,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/data_types/" class="md-nav__link">
+      <a href="../../../models/data_types/" class="md-nav__link">
         data_types
       </a>
     </li>
@@ -1958,7 +1962,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/documentation/" class="md-nav__link">
+      <a href="../../../models/documentation/" class="md-nav__link">
         documentation
       </a>
     </li>
@@ -1984,7 +1988,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/models/events/__init__/">events</a>
+          <a href="../../../models/events/__init__/">events</a>
           
             <label for="__nav_4_1_8_6">
               <span class="md-nav__icon md-icon"></span>
@@ -2005,7 +2009,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/events/alias_registry/" class="md-nav__link">
+      <a href="../../../models/events/alias_registry/" class="md-nav__link">
         alias_registry
       </a>
     </li>
@@ -2019,7 +2023,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/events/data_registry/" class="md-nav__link">
+      <a href="../../../models/events/data_registry/" class="md-nav__link">
         data_registry
       </a>
     </li>
@@ -2033,7 +2037,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/events/destiny_registry/" class="md-nav__link">
+      <a href="../../../models/events/destiny_registry/" class="md-nav__link">
         destiny_registry
       </a>
     </li>
@@ -2047,7 +2051,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/events/job_registry/" class="md-nav__link">
+      <a href="../../../models/events/job_registry/" class="md-nav__link">
         job_registry
       </a>
     </li>
@@ -2061,7 +2065,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/events/pipeline/" class="md-nav__link">
+      <a href="../../../models/events/pipeline/" class="md-nav__link">
         pipeline
       </a>
     </li>
@@ -2075,7 +2079,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/events/workflow_registry/" class="md-nav__link">
+      <a href="../../../models/events/workflow_registry/" class="md-nav__link">
         workflow_registry
       </a>
     </li>
@@ -2096,7 +2100,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/filesystem/" class="md-nav__link">
+      <a href="../../../models/filesystem/" class="md-nav__link">
         filesystem
       </a>
     </li>
@@ -2122,7 +2126,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/models/module/__init__/">module</a>
+          <a href="../../../models/module/__init__/">module</a>
           
             <label for="__nav_4_1_8_8">
               <span class="md-nav__icon md-icon"></span>
@@ -2143,7 +2147,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/module/destiny/" class="md-nav__link">
+      <a href="../../../models/module/destiny/" class="md-nav__link">
         destiny
       </a>
     </li>
@@ -2157,7 +2161,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/module/jobs/" class="md-nav__link">
+      <a href="../../../models/module/jobs/" class="md-nav__link">
         jobs
       </a>
     </li>
@@ -2171,7 +2175,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/module/manifest/" class="md-nav__link">
+      <a href="../../../models/module/manifest/" class="md-nav__link">
         manifest
       </a>
     </li>
@@ -2185,7 +2189,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/module/operation/" class="md-nav__link">
+      <a href="../../../models/module/operation/" class="md-nav__link">
         operation
       </a>
     </li>
@@ -2199,7 +2203,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/module/persistence/" class="md-nav__link">
+      <a href="../../../models/module/persistence/" class="md-nav__link">
         persistence
       </a>
     </li>
@@ -2225,7 +2229,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/models/module/pipeline/__init__/">pipeline</a>
+          <a href="../../../models/module/pipeline/__init__/">pipeline</a>
           
             <label for="__nav_4_1_8_8_6">
               <span class="md-nav__icon md-icon"></span>
@@ -2246,7 +2250,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/module/pipeline/controller/" class="md-nav__link">
+      <a href="../../../models/module/pipeline/controller/" class="md-nav__link">
         controller
       </a>
     </li>
@@ -2260,7 +2264,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/module/pipeline/pipeline/" class="md-nav__link">
+      <a href="../../../models/module/pipeline/pipeline/" class="md-nav__link">
         pipeline
       </a>
     </li>
@@ -2274,7 +2278,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/module/pipeline/stages/" class="md-nav__link">
+      <a href="../../../models/module/pipeline/stages/" class="md-nav__link">
         stages
       </a>
     </li>
@@ -2288,7 +2292,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/module/pipeline/structure/" class="md-nav__link">
+      <a href="../../../models/module/pipeline/structure/" class="md-nav__link">
         structure
       </a>
     </li>
@@ -2302,7 +2306,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/module/pipeline/value_refs/" class="md-nav__link">
+      <a href="../../../models/module/pipeline/value_refs/" class="md-nav__link">
         value_refs
       </a>
     </li>
@@ -2330,7 +2334,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/python_class/" class="md-nav__link">
+      <a href="../../../models/python_class/" class="md-nav__link">
         python_class
       </a>
     </li>
@@ -2356,7 +2360,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/models/rendering/__init__/">rendering</a>
+          <a href="../../../models/rendering/__init__/">rendering</a>
           
             <label for="__nav_4_1_8_10">
               <span class="md-nav__icon md-icon"></span>
@@ -2377,7 +2381,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/rendering/values/" class="md-nav__link">
+      <a href="../../../models/rendering/values/" class="md-nav__link">
         values
       </a>
     </li>
@@ -2410,7 +2414,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/models/runtime_environment/__init__/">runtime_environment</a>
+          <a href="../../../models/runtime_environment/__init__/">runtime_environment</a>
           
             <label for="__nav_4_1_8_11">
               <span class="md-nav__icon md-icon"></span>
@@ -2431,7 +2435,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/runtime_environment/kiara/" class="md-nav__link">
+      <a href="../../../models/runtime_environment/kiara/" class="md-nav__link">
         kiara
       </a>
     </li>
@@ -2445,7 +2449,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/runtime_environment/operating_system/" class="md-nav__link">
+      <a href="../../../models/runtime_environment/operating_system/" class="md-nav__link">
         operating_system
       </a>
     </li>
@@ -2459,7 +2463,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/runtime_environment/python/" class="md-nav__link">
+      <a href="../../../models/runtime_environment/python/" class="md-nav__link">
         python
       </a>
     </li>
@@ -2492,7 +2496,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/models/values/__init__/">values</a>
+          <a href="../../../models/values/__init__/">values</a>
           
             <label for="__nav_4_1_8_12">
               <span class="md-nav__icon md-icon"></span>
@@ -2513,7 +2517,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/values/data_type/" class="md-nav__link">
+      <a href="../../../models/values/data_type/" class="md-nav__link">
         data_type
       </a>
     </li>
@@ -2527,7 +2531,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/values/lineage/" class="md-nav__link">
+      <a href="../../../models/values/lineage/" class="md-nav__link">
         lineage
       </a>
     </li>
@@ -2541,7 +2545,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/values/matchers/" class="md-nav__link">
+      <a href="../../../models/values/matchers/" class="md-nav__link">
         matchers
       </a>
     </li>
@@ -2555,7 +2559,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/values/value/" class="md-nav__link">
+      <a href="../../../models/values/value/" class="md-nav__link">
         value
       </a>
     </li>
@@ -2581,7 +2585,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/models/values/value_metadata/__init__/">value_metadata</a>
+          <a href="../../../models/values/value_metadata/__init__/">value_metadata</a>
           
             <label for="__nav_4_1_8_12_5">
               <span class="md-nav__icon md-icon"></span>
@@ -2602,7 +2606,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/values/value_metadata/included_metadata_types/__init__/" class="md-nav__link">
+      <a href="../../../models/values/value_metadata/included_metadata_types/__init__/" class="md-nav__link">
         included_metadata_types
       </a>
     </li>
@@ -2623,7 +2627,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/values/value_schema/" class="md-nav__link">
+      <a href="../../../models/values/value_schema/" class="md-nav__link">
         value_schema
       </a>
     </li>
@@ -2644,7 +2648,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/models/workflow/" class="md-nav__link">
+      <a href="../../../models/workflow/" class="md-nav__link">
         workflow
       </a>
     </li>
@@ -2677,7 +2681,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/modules/__init__/">modules</a>
+          <a href="../../../modules/__init__/">modules</a>
           
             <label for="__nav_4_1_9">
               <span class="md-nav__icon md-icon"></span>
@@ -2710,7 +2714,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/modules/included_core_modules/__init__/">included_core_modules</a>
+          <a href="../../../modules/included_core_modules/__init__/">included_core_modules</a>
           
             <label for="__nav_4_1_9_1">
               <span class="md-nav__icon md-icon"></span>
@@ -2731,7 +2735,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/modules/included_core_modules/create_from/" class="md-nav__link">
+      <a href="../../../modules/included_core_modules/create_from/" class="md-nav__link">
         create_from
       </a>
     </li>
@@ -2745,7 +2749,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/modules/included_core_modules/export_as/" class="md-nav__link">
+      <a href="../../../modules/included_core_modules/export_as/" class="md-nav__link">
         export_as
       </a>
     </li>
@@ -2759,7 +2763,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/modules/included_core_modules/filesystem/" class="md-nav__link">
+      <a href="../../../modules/included_core_modules/filesystem/" class="md-nav__link">
         filesystem
       </a>
     </li>
@@ -2773,7 +2777,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/modules/included_core_modules/filter/" class="md-nav__link">
+      <a href="../../../modules/included_core_modules/filter/" class="md-nav__link">
         filter
       </a>
     </li>
@@ -2787,7 +2791,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/modules/included_core_modules/metadata/" class="md-nav__link">
+      <a href="../../../modules/included_core_modules/metadata/" class="md-nav__link">
         metadata
       </a>
     </li>
@@ -2801,7 +2805,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/modules/included_core_modules/pipeline/" class="md-nav__link">
+      <a href="../../../modules/included_core_modules/pipeline/" class="md-nav__link">
         pipeline
       </a>
     </li>
@@ -2815,7 +2819,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/modules/included_core_modules/pretty_print/" class="md-nav__link">
+      <a href="../../../modules/included_core_modules/pretty_print/" class="md-nav__link">
         pretty_print
       </a>
     </li>
@@ -2829,7 +2833,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/modules/included_core_modules/render_value/" class="md-nav__link">
+      <a href="../../../modules/included_core_modules/render_value/" class="md-nav__link">
         render_value
       </a>
     </li>
@@ -2843,7 +2847,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/modules/included_core_modules/serialization/" class="md-nav__link">
+      <a href="../../../modules/included_core_modules/serialization/" class="md-nav__link">
         serialization
       </a>
     </li>
@@ -2883,7 +2887,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/operations/__init__/">operations</a>
+          <a href="../../../operations/__init__/">operations</a>
           
             <label for="__nav_4_1_10">
               <span class="md-nav__icon md-icon"></span>
@@ -2916,7 +2920,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/operations/included_core_operations/__init__/">included_core_operations</a>
+          <a href="../../../operations/included_core_operations/__init__/">included_core_operations</a>
           
             <label for="__nav_4_1_10_1">
               <span class="md-nav__icon md-icon"></span>
@@ -2937,7 +2941,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/operations/included_core_operations/create_from/" class="md-nav__link">
+      <a href="../../../operations/included_core_operations/create_from/" class="md-nav__link">
         create_from
       </a>
     </li>
@@ -2951,7 +2955,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/operations/included_core_operations/export_as/" class="md-nav__link">
+      <a href="../../../operations/included_core_operations/export_as/" class="md-nav__link">
         export_as
       </a>
     </li>
@@ -2965,7 +2969,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/operations/included_core_operations/filter/" class="md-nav__link">
+      <a href="../../../operations/included_core_operations/filter/" class="md-nav__link">
         filter
       </a>
     </li>
@@ -2979,7 +2983,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/operations/included_core_operations/import_data/" class="md-nav__link">
+      <a href="../../../operations/included_core_operations/import_data/" class="md-nav__link">
         import_data
       </a>
     </li>
@@ -2993,7 +2997,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/operations/included_core_operations/metadata/" class="md-nav__link">
+      <a href="../../../operations/included_core_operations/metadata/" class="md-nav__link">
         metadata
       </a>
     </li>
@@ -3007,7 +3011,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/operations/included_core_operations/pipeline/" class="md-nav__link">
+      <a href="../../../operations/included_core_operations/pipeline/" class="md-nav__link">
         pipeline
       </a>
     </li>
@@ -3021,7 +3025,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/operations/included_core_operations/pretty_print/" class="md-nav__link">
+      <a href="../../../operations/included_core_operations/pretty_print/" class="md-nav__link">
         pretty_print
       </a>
     </li>
@@ -3035,7 +3039,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/operations/included_core_operations/render_data/" class="md-nav__link">
+      <a href="../../../operations/included_core_operations/render_data/" class="md-nav__link">
         render_data
       </a>
     </li>
@@ -3049,7 +3053,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/operations/included_core_operations/render_value/" class="md-nav__link">
+      <a href="../../../operations/included_core_operations/render_value/" class="md-nav__link">
         render_value
       </a>
     </li>
@@ -3063,7 +3067,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/operations/included_core_operations/serialize/" class="md-nav__link">
+      <a href="../../../operations/included_core_operations/serialize/" class="md-nav__link">
         serialize
       </a>
     </li>
@@ -3103,7 +3107,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/processing/__init__/">processing</a>
+          <a href="../../../processing/__init__/">processing</a>
           
             <label for="__nav_4_1_11">
               <span class="md-nav__icon md-icon"></span>
@@ -3124,7 +3128,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/processing/synchronous/" class="md-nav__link">
+      <a href="../../../processing/synchronous/" class="md-nav__link">
         synchronous
       </a>
     </li>
@@ -3157,7 +3161,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/registries/__init__/">registries</a>
+          <a href="../../../registries/__init__/">registries</a>
           
             <label for="__nav_4_1_12">
               <span class="md-nav__icon md-icon"></span>
@@ -3190,7 +3194,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/registries/aliases/__init__/">aliases</a>
+          <a href="../../../registries/aliases/__init__/">aliases</a>
           
             <label for="__nav_4_1_12_1">
               <span class="md-nav__icon md-icon"></span>
@@ -3211,7 +3215,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/aliases/archives/" class="md-nav__link">
+      <a href="../../../registries/aliases/archives/" class="md-nav__link">
         archives
       </a>
     </li>
@@ -3244,7 +3248,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/registries/data/__init__/">data</a>
+          <a href="../../../registries/data/__init__/">data</a>
           
             <label for="__nav_4_1_12_2">
               <span class="md-nav__icon md-icon"></span>
@@ -3277,7 +3281,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/registries/data/data_store/__init__/">data_store</a>
+          <a href="../../../registries/data/data_store/__init__/">data_store</a>
           
             <label for="__nav_4_1_12_2_1">
               <span class="md-nav__icon md-icon"></span>
@@ -3298,7 +3302,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/data/data_store/filesystem_store/" class="md-nav__link">
+      <a href="../../../registries/data/data_store/filesystem_store/" class="md-nav__link">
         filesystem_store
       </a>
     </li>
@@ -3338,7 +3342,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/registries/destinies/__init__/">destinies</a>
+          <a href="../../../registries/destinies/__init__/">destinies</a>
           
             <label for="__nav_4_1_12_3">
               <span class="md-nav__icon md-icon"></span>
@@ -3359,7 +3363,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/destinies/filesystem_store/" class="md-nav__link">
+      <a href="../../../registries/destinies/filesystem_store/" class="md-nav__link">
         filesystem_store
       </a>
     </li>
@@ -3373,7 +3377,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/destinies/registry/" class="md-nav__link">
+      <a href="../../../registries/destinies/registry/" class="md-nav__link">
         registry
       </a>
     </li>
@@ -3394,7 +3398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/environment/__init__/" class="md-nav__link">
+      <a href="../../../registries/environment/__init__/" class="md-nav__link">
         environment
       </a>
     </li>
@@ -3420,7 +3424,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/registries/events/__init__/">events</a>
+          <a href="../../../registries/events/__init__/">events</a>
           
             <label for="__nav_4_1_12_5">
               <span class="md-nav__icon md-icon"></span>
@@ -3441,7 +3445,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/events/metadata/" class="md-nav__link">
+      <a href="../../../registries/events/metadata/" class="md-nav__link">
         metadata
       </a>
     </li>
@@ -3455,7 +3459,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/events/registry/" class="md-nav__link">
+      <a href="../../../registries/events/registry/" class="md-nav__link">
         registry
       </a>
     </li>
@@ -3476,7 +3480,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/ids/__init__/" class="md-nav__link">
+      <a href="../../../registries/ids/__init__/" class="md-nav__link">
         ids
       </a>
     </li>
@@ -3502,7 +3506,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/registries/jobs/__init__/">jobs</a>
+          <a href="../../../registries/jobs/__init__/">jobs</a>
           
             <label for="__nav_4_1_12_7">
               <span class="md-nav__icon md-icon"></span>
@@ -3535,7 +3539,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/registries/jobs/job_store/__init__/">job_store</a>
+          <a href="../../../registries/jobs/job_store/__init__/">job_store</a>
           
             <label for="__nav_4_1_12_7_1">
               <span class="md-nav__icon md-icon"></span>
@@ -3556,7 +3560,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/jobs/job_store/filesystem_store/" class="md-nav__link">
+      <a href="../../../registries/jobs/job_store/filesystem_store/" class="md-nav__link">
         filesystem_store
       </a>
     </li>
@@ -3584,7 +3588,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/models/__init__/" class="md-nav__link">
+      <a href="../../../registries/models/__init__/" class="md-nav__link">
         models
       </a>
     </li>
@@ -3598,7 +3602,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/modules/__init__/" class="md-nav__link">
+      <a href="../../../registries/modules/__init__/" class="md-nav__link">
         modules
       </a>
     </li>
@@ -3612,7 +3616,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/operations/__init__/" class="md-nav__link">
+      <a href="../../../registries/operations/__init__/" class="md-nav__link">
         operations
       </a>
     </li>
@@ -3626,7 +3630,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/rendering/__init__/" class="md-nav__link">
+      <a href="../../../registries/rendering/__init__/" class="md-nav__link">
         rendering
       </a>
     </li>
@@ -3640,7 +3644,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/templates/__init__/" class="md-nav__link">
+      <a href="../../../registries/templates/__init__/" class="md-nav__link">
         templates
       </a>
     </li>
@@ -3654,7 +3658,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/types/__init__/" class="md-nav__link">
+      <a href="../../../registries/types/__init__/" class="md-nav__link">
         types
       </a>
     </li>
@@ -3680,7 +3684,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/registries/workflows/__init__/">workflows</a>
+          <a href="../../../registries/workflows/__init__/">workflows</a>
           
             <label for="__nav_4_1_12_14">
               <span class="md-nav__icon md-icon"></span>
@@ -3701,7 +3705,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/registries/workflows/archives/" class="md-nav__link">
+      <a href="../../../registries/workflows/archives/" class="md-nav__link">
         archives
       </a>
     </li>
@@ -3741,7 +3745,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/renderers/__init__/">renderers</a>
+          <a href="../../../renderers/__init__/">renderers</a>
           
             <label for="__nav_4_1_13">
               <span class="md-nav__icon md-icon"></span>
@@ -3774,7 +3778,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/renderers/included_renderers/__init__/">included_renderers</a>
+          <a href="../../../renderers/included_renderers/__init__/">included_renderers</a>
           
             <label for="__nav_4_1_13_1">
               <span class="md-nav__icon md-icon"></span>
@@ -3795,7 +3799,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/renderers/included_renderers/api/" class="md-nav__link">
+      <a href="../../../renderers/included_renderers/api/" class="md-nav__link">
         api
       </a>
     </li>
@@ -3809,7 +3813,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/renderers/included_renderers/pipeline/" class="md-nav__link">
+      <a href="../../../renderers/included_renderers/pipeline/" class="md-nav__link">
         pipeline
       </a>
     </li>
@@ -3823,7 +3827,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/renderers/included_renderers/value/" class="md-nav__link">
+      <a href="../../../renderers/included_renderers/value/" class="md-nav__link">
         value
       </a>
     </li>
@@ -3844,7 +3848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/renderers/jinja/" class="md-nav__link">
+      <a href="../../../renderers/jinja/" class="md-nav__link">
         jinja
       </a>
     </li>
@@ -3863,21 +3867,23 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_14" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_14" checked>
       
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/utils/__init__/">utils</a>
+          <a href="../../__init__/">utils</a>
           
             <label for="__nav_4_1_14">
               <span class="md-nav__icon md-icon"></span>
@@ -3885,7 +3891,7 @@
           
         </div>
       
-      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_14_label" aria-expanded="false">
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_14_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_4_1_14">
           <span class="md-nav__icon md-icon"></span>
           utils
@@ -3898,7 +3904,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/class_loading/" class="md-nav__link">
+      <a href="../../class_loading/" class="md-nav__link">
         class_loading
       </a>
     </li>
@@ -3924,7 +3930,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/utils/cli/__init__/">cli</a>
+          <a href="../../cli/__init__/">cli</a>
           
             <label for="__nav_4_1_14_2">
               <span class="md-nav__icon md-icon"></span>
@@ -3945,7 +3951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/cli/exceptions/" class="md-nav__link">
+      <a href="../../cli/exceptions/" class="md-nav__link">
         exceptions
       </a>
     </li>
@@ -3959,7 +3965,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/cli/rich_click/" class="md-nav__link">
+      <a href="../../cli/rich_click/" class="md-nav__link">
         rich_click
       </a>
     </li>
@@ -3973,7 +3979,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/cli/run/" class="md-nav__link">
+      <a href="../../cli/run/" class="md-nav__link">
         run
       </a>
     </li>
@@ -3994,7 +4000,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/concurrency/" class="md-nav__link">
+      <a href="../../concurrency/" class="md-nav__link">
         concurrency
       </a>
     </li>
@@ -4008,7 +4014,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/data/" class="md-nav__link">
+      <a href="../../data/" class="md-nav__link">
         data
       </a>
     </li>
@@ -4022,7 +4028,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/db/" class="md-nav__link">
+      <a href="../../db/" class="md-nav__link">
         db
       </a>
     </li>
@@ -4036,7 +4042,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/debug/" class="md-nav__link">
+      <a href="../../debug/" class="md-nav__link">
         debug
       </a>
     </li>
@@ -4050,7 +4056,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/develop/__init__/" class="md-nav__link">
+      <a href="../../develop/__init__/" class="md-nav__link">
         develop
       </a>
     </li>
@@ -4064,7 +4070,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/dicts/" class="md-nav__link">
+      <a href="../../dicts/" class="md-nav__link">
         dicts
       </a>
     </li>
@@ -4078,7 +4084,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/doc/" class="md-nav__link">
+      <a href="../../doc/" class="md-nav__link">
         doc
       </a>
     </li>
@@ -4092,7 +4098,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/downloads/" class="md-nav__link">
+      <a href="../../downloads/" class="md-nav__link">
         downloads
       </a>
     </li>
@@ -4106,7 +4112,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/files/" class="md-nav__link">
+      <a href="../../files/" class="md-nav__link">
         files
       </a>
     </li>
@@ -4120,7 +4126,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/global_metadata/" class="md-nav__link">
+      <a href="../../global_metadata/" class="md-nav__link">
         global_metadata
       </a>
     </li>
@@ -4134,7 +4140,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/graphs/" class="md-nav__link">
+      <a href="../../graphs/" class="md-nav__link">
         graphs
       </a>
     </li>
@@ -4148,7 +4154,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/hashfs/__init__/" class="md-nav__link">
+      <a href="../../hashfs/__init__/" class="md-nav__link">
         hashfs
       </a>
     </li>
@@ -4162,7 +4168,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/hashing/" class="md-nav__link">
+      <a href="../../hashing/" class="md-nav__link">
         hashing
       </a>
     </li>
@@ -4176,7 +4182,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/html/" class="md-nav__link">
+      <a href="../../html/" class="md-nav__link">
         html
       </a>
     </li>
@@ -4190,7 +4196,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/json/" class="md-nav__link">
+      <a href="../../json/" class="md-nav__link">
         json
       </a>
     </li>
@@ -4204,7 +4210,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/metadata/" class="md-nav__link">
+      <a href="../../metadata/" class="md-nav__link">
         metadata
       </a>
     </li>
@@ -4218,7 +4224,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/models/" class="md-nav__link">
+      <a href="../../models/" class="md-nav__link">
         models
       </a>
     </li>
@@ -4232,7 +4238,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/modules/" class="md-nav__link">
+      <a href="../../modules/" class="md-nav__link">
         modules
       </a>
     </li>
@@ -4246,7 +4252,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/operations/" class="md-nav__link">
+      <a href="../../operations/" class="md-nav__link">
         operations
       </a>
     </li>
@@ -4260,7 +4266,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/output/" class="md-nav__link">
+      <a href="../../output/" class="md-nav__link">
         output
       </a>
     </li>
@@ -4274,7 +4280,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/pipelines/" class="md-nav__link">
+      <a href="../../pipelines/" class="md-nav__link">
         pipelines
       </a>
     </li>
@@ -4288,7 +4294,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/reflection/" class="md-nav__link">
+      <a href="../../reflection/" class="md-nav__link">
         reflection
       </a>
     </li>
@@ -4302,7 +4308,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/string_vars/" class="md-nav__link">
+      <a href="../../string_vars/" class="md-nav__link">
         string_vars
       </a>
     </li>
@@ -4314,11 +4320,82 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/testing/__init__/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          testing
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         testing
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.utils.testing" class="md-nav__link">
+    kiara.utils.testing
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.utils.testing-classes" class="md-nav__link">
+    Classes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.utils.testing-functions" class="md-nav__link">
+    Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.testing.list_job_descs" class="md-nav__link">
+    list_job_descs()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.testing.get_tests_for_job" class="md-nav__link">
+    get_tests_for_job()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -4330,7 +4407,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/values/" class="md-nav__link">
+      <a href="../../values/" class="md-nav__link">
         values
       </a>
     </li>
@@ -4344,7 +4421,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/windows/" class="md-nav__link">
+      <a href="../../windows/" class="md-nav__link">
         windows
       </a>
     </li>
@@ -4358,7 +4435,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/utils/yaml/" class="md-nav__link">
+      <a href="../../yaml/" class="md-nav__link">
         yaml
       </a>
     </li>
@@ -4391,7 +4468,7 @@
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../../reference/kiara/zmq/__init__/">zmq</a>
+          <a href="../../../zmq/__init__/">zmq</a>
           
             <label for="__nav_4_1_15">
               <span class="md-nav__icon md-icon"></span>
@@ -4412,7 +4489,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/zmq/client/" class="md-nav__link">
+      <a href="../../../zmq/client/" class="md-nav__link">
         client
       </a>
     </li>
@@ -4426,7 +4503,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/zmq/messages/__init__/" class="md-nav__link">
+      <a href="../../../zmq/messages/__init__/" class="md-nav__link">
         messages
       </a>
     </li>
@@ -4440,7 +4517,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../reference/kiara/zmq/service/__init__/" class="md-nav__link">
+      <a href="../../../zmq/service/__init__/" class="md-nav__link">
         service
       </a>
     </li>
@@ -4474,23 +4551,21 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
       
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../../">Design docs</a>
+          <a href="../../../../../design_docs/">Design docs</a>
           
             <label for="__nav_5">
               <span class="md-nav__icon md-icon"></span>
@@ -4498,7 +4573,7 @@
           
         </div>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5">
           <span class="md-nav__icon md-icon"></span>
           Design docs
@@ -4509,23 +4584,21 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1" >
       
       
       
         
         
         <div class="md-nav__link md-nav__link--index ">
-          <a href="../">Architecture</a>
+          <a href="../../../../../design_docs/architecture/">Architecture</a>
           
             <label for="__nav_5_1">
               <span class="md-nav__icon md-icon"></span>
@@ -4533,7 +4606,7 @@
           
         </div>
       
-      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_1_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5_1">
           <span class="md-nav__icon md-icon"></span>
           Architecture
@@ -4546,7 +4619,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../assumptions/" class="md-nav__link">
+      <a href="../../../../../design_docs/architecture/assumptions/" class="md-nav__link">
         Assumptions & considerations
       </a>
     </li>
@@ -4560,7 +4633,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../decisions/" class="md-nav__link">
+      <a href="../../../../../design_docs/architecture/decisions/" class="md-nav__link">
         Decisions
       </a>
     </li>
@@ -4574,7 +4647,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../metadata/" class="md-nav__link">
+      <a href="../../../../../design_docs/architecture/metadata/" class="md-nav__link">
         Metadata
       </a>
     </li>
@@ -4586,23 +4659,21 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_4" checked>
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_1_4" >
       
       
       
         
         
-        <div class="md-nav__link md-nav__link--index md-nav__link--active">
-          <a href="./">Data</a>
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../../../../../design_docs/architecture/data/">Data</a>
           
             <label for="__nav_5_1_4">
               <span class="md-nav__icon md-icon"></span>
@@ -4610,7 +4681,7 @@
           
         </div>
       
-      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_4_label" aria-expanded="true">
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_1_4_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5_1_4">
           <span class="md-nav__icon md-icon"></span>
           Data
@@ -4623,7 +4694,7 @@
   
   
     <li class="md-nav__item">
-      <a href="persistence/" class="md-nav__link">
+      <a href="../../../../../design_docs/architecture/data/persistence/" class="md-nav__link">
         Data persistence
       </a>
     </li>
@@ -4644,7 +4715,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../workflows/" class="md-nav__link">
+      <a href="../../../../../design_docs/architecture/workflows/" class="md-nav__link">
         Workflows
       </a>
     </li>
@@ -4690,36 +4761,43 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#whats-data" class="md-nav__link">
-    What's data?
+  <a href="#kiara.utils.testing" class="md-nav__link">
+    kiara.utils.testing
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#structured-data-data-transformations" class="md-nav__link">
-    Structured data / Data transformations
+  <a href="#kiara.utils.testing-classes" class="md-nav__link">
+    Classes
   </a>
   
-    <nav class="md-nav" aria-label="Structured data / Data transformations">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara.utils.testing-functions" class="md-nav__link">
+    Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#example" class="md-nav__link">
-    Example
+  <a href="#kiara.utils.testing.list_job_descs" class="md-nav__link">
+    list_job_descs()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.testing.get_tests_for_job" class="md-nav__link">
+    get_tests_for_job()
   </a>
   
 </li>
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#big-ish-data" class="md-nav__link">
-    'Big-ish' data
-  </a>
   
 </li>
       
@@ -4741,63 +4819,170 @@
   
 
 
-  <h1>Data</h1>
+  <h1>testing</h1>
 
-<p>From looking at the user stories, and after listening to the interviews Lorella conducted and also considering my own
-personal experience in eResearch, I think its save to say that the central topic we are dealing with is data. Without data,
-none of the other topics (workflows, visualisation, metadata...) would even exist. Because of its central nature I want to lay out the different forms it comes in, and which characteristics of it are
-important in our context.</p>
-<h2 id="whats-data">What's data?<a class="headerlink" href="#whats-data" title="Permanent link">&para;</a></h2>
-<p>Data is created from sources. Sources come in different forms (analog, digital) and can be anything from handwritten
-documents in an archive to a twitter feed. Photos, cave-paintings, what have you. I'm not websters dictionary, but I think
-one usable working definition of data could be a 'materialized source', in our context 'materialized source in digital form'.
-From here on out I'll assume we are talking about 'digital' data when I mention data.</p>
-<p>One thing I'll leave out in this discussion is what is usually called 'dirty data' in data engineering, although it is
-an important topic. Most of the issues there map fairly well to the structured/unstructured thing below. There are a few
-differences, but in the interest of clarity let's ignore those for now...</p>
-<h2 id="structured-data-data-transformations">Structured data / Data transformations<a class="headerlink" href="#structured-data-data-transformations" title="Permanent link">&para;</a></h2>
-<p>Important for us is that data can come in two different formats: unstructured, and, who'd have guessed... structured. The same
-piece of data can be theoretically expressed in structured as well as unstructured form: the meaning to a researcher would
-be 100% the same, but the ways to handle, digest and operate with the data can differ, and in most scenarios adding structure
-opens up possibilities to work with the data that weren't there before. In my head I call those two forms 'useless', and
-'useful' data, but researcher usually get a bit agitated when I do, so I have learned to not do that in public anymore.</p>
-<p>For researchers, the most (and arguably only) important feature of 'structure' is that it enables them to
-do <em>more</em> with the data they already possess. By means of computation. I think it's fair to say that only structured data
-can be used in a meaningful way in a computational context. With the exception that unstructured data is useful input to
-create structured data.</p>
-<p>One more thing to mention is that the line between structured and un-structured is sometimes hard to draw,
-and can depend entirely on context. "One persons structured data is another persons unstructured data.", something like that.
-In addition, in some instances unstructured data can be converted to structured data trivially, meaning without much effort
-or any user-interaction. I'd argue we can consider those sorts of datasets basically 'structured'.</p>
-<h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
-<p>Lets use a simple example to illustrate all that: <em>a digital image of a document</em>.</p>
-<p>Depending on what you are interested in, such an image might already be structured data. For example it could contain geo-tags, and a
-timestamp, which are both digitally readable. If you want to visualize on a map where a document is from, you can do that instantly.
-Structured data, yay!</p>
-<p>Similarly, if you are interested in the color of the paper of the document (ok, I'm stretching my argument here as this seems fairly
-unlikely, but this is really just to illustrate...), you might get the color histogram of the image (which is trivial to extract,
-but needs some batch-computation), and for your purposes you would also consider the image file structured data.</p>
-<p>Now, if you are interested in the text content of the document, things get more interesting. You will have to jump
-through some hoops, and feed the image file to an OCR pipeline that will spit out a text file for example. The data
-itself would still be the same, but now computers can access not only some probably irrelevant metadata, but also the text content,
-which, in almost all cases, is where the 'soul' of the data is.</p>
-<p>It could be argued that 'just' a text file is not actually structured. I'd say that groups of ascii-characters that
-can be found in english-language dictionaries, separated by whitespaces and new-lines can be considered a structure,
-even if only barely. The new format certainly allows the researcher to interact with the data in other ways (e.g. full-text search).</p>
-<p>We can go further, and might be interested in characteristics of the text content (language, topics, etc.). This is where
-the actual magic happens, everything before that is just rote data preparation: turning unstructured (or 'other-ly' structured)
-data into (meaningful) structured data... On a technical level, those two parts (preparation/computation) of a research workflow might look (or be)
-the same, but I think there is a difference worth keeping in mind. If I don't forget I'll elaborate on that later.</p>
-<h2 id="big-ish-data">'Big-ish' data<a class="headerlink" href="#big-ish-data" title="Permanent link">&para;</a></h2>
-<p>I'm not talking about real 'Big data'-big data here, just largish files, or lots of them, or both. I don't think we'll encounter many use-cases where we have to move
-or analyze terabytes of data, but I wouldn't be surprised if we come across a few gigabytes worth of it every now and then.</p>
-<p>There are a few things we have to be prepared for, in those cases:</p>
-<ul>
-<li>transferring that sort of data is not trivial (esp. from home internet connections with limited upload bandwidth) -- and we will most likely have to be able to offer some sort of resumable-upload (and download) option (in case of a hosted solution)</li>
-<li>if we offer a hosted service, we will have to take into account and plan for this, so we don't run out of storage space (we might have to impose quotas, for example)</li>
-<li>computation-wise, we need to make sure we are prepared for large datasets and handle that in a smart way (if we load a huge dataset into memory, it can crash the machine where that is done)</li>
-<li>similarly, when we feed large datasets into a pipeline, we might not be able to just duplicate and edit the dataset like we could do for small amounts of data (too expensive, storage-wise) -- so we might need to have different strategies in place on how to execute a workflow, depending on file sizes (for example some sort of copy-on-write)</li>
-</ul>
+<div class="doc doc-object doc-module">
+
+
+<a id="kiara.utils.testing"></a>
+  <div class="doc doc-contents first">
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+<h2 id="kiara.utils.testing-classes">Classes<a href="#kiara.utils.testing-classes" class="headerlink" title="Permanent link">&para;</a></h2>
+<h2 id="kiara.utils.testing-functions">Functions<a href="#kiara.utils.testing-functions" class="headerlink" title="Permanent link">&para;</a></h2>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="kiara.utils.testing.list_job_descs" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">list_job_descs</span><span class="p">(</span><span class="n">jobs_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span></code>
+
+<a href="#kiara.utils.testing.list_job_descs" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/utils/testing/__init__.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_job_descs</span><span class="p">(</span><span class="n">jobs_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">jobs_folder</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">job_desc</span> <span class="o">=</span> <span class="n">JobDesc</span><span class="o">.</span><span class="n">create_from_file</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">job_desc</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log_exception</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="kiara.utils.testing.get_tests_for_job" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">get_tests_for_job</span><span class="p">(</span><span class="n">job_alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">job_tests_folder</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]]</span></code>
+
+<a href="#kiara.utils.testing.get_tests_for_job" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Get tests for a job.</p>
+<p>In case the tests are Python code, this will use 'exec' to execute it, which is
+usually discouraged. However, this is only used for testing, and it makes it easier
+to create those tests, which is why it is used here.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/utils/testing/__init__.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_tests_for_job</span><span class="p">(</span>
+    <span class="n">job_alias</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">job_tests_folder</span><span class="p">:</span> <span class="n">Path</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get tests for a job.</span>
+
+<span class="sd">    In case the tests are Python code, this will use &#39;exec&#39; to execute it, which is</span>
+<span class="sd">    usually discouraged. However, this is only used for testing, and it makes it easier</span>
+<span class="sd">    to create those tests, which is why it is used here.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">module_base_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;kiara_tests.job_tests.</span><span class="si">{</span><span class="n">job_alias</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">test_folder</span> <span class="o">=</span> <span class="n">job_tests_folder</span> <span class="o">/</span> <span class="n">job_alias</span>
+    <span class="n">tests</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">test_folder</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">test_folder</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.py&quot;</span><span class="p">):</span>
+            <span class="n">test_name</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">stem</span>
+            <span class="n">code</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+            <span class="n">module_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module_base_name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">test_name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+            <span class="n">exec</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>  <span class="c1"># noqa</span>
+
+            <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">getmembers</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">isfunction</span><span class="p">):</span>
+                <span class="n">tests</span><span class="p">[</span><span class="n">func</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">func</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">test_checks</span> <span class="o">=</span> <span class="n">test_folder</span> <span class="o">/</span> <span class="s2">&quot;outputs.json&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">test_checks</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+        <span class="n">test_checks</span> <span class="o">=</span> <span class="n">test_folder</span> <span class="o">/</span> <span class="s2">&quot;outputs.yaml&quot;</span>
+
+    <span class="k">if</span> <span class="n">test_checks</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+        <span class="n">test_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">test_checks</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">test_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">test_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">tests</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Duplicate test name: </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">tests</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+    <span class="k">return</span> <span class="n">tests</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
 
 
 
@@ -4839,10 +5024,10 @@ or analyze terabytes of data, but I wouldn't be surprised if we come across a fe
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.b4d07000.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.b4d07000.min.js"></script>
       
     
   </body>

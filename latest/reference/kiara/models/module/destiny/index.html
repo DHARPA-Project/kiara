@@ -4388,6 +4388,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../utils/testing/__init__/" class="md-nav__link">
+        testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../utils/values/" class="md-nav__link">
         values
       </a>
@@ -5139,8 +5153,8 @@ This is similar to what is usually called a 'future' in programming languages, b
 <code class="highlight language-python"><span class="n">destiny_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The id of this destiny.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.destiny.Destiny.destiny_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5159,8 +5173,8 @@ This is similar to what is usually called a 'future' in programming languages, b
 <code class="highlight language-python"><span class="n">destiny_alias</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The path to (the) destiny.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.destiny.Destiny.destiny_alias" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5179,8 +5193,8 @@ This is similar to what is usually called a 'future' in programming languages, b
 <code class="highlight language-python"><span class="n">module_details</span><span class="p">:</span> <span class="n">KiaraModuleInstance</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The class of the underlying module.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.destiny.Destiny.module_details" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5199,8 +5213,8 @@ This is similar to what is usually called a 'future' in programming languages, b
 <code class="highlight language-python"><span class="n">fixed_inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Inputs that are known in advance.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.destiny.Destiny.fixed_inputs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5219,8 +5233,8 @@ This is similar to what is usually called a 'future' in programming languages, b
 <code class="highlight language-python"><span class="n">inputs_schema</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The schemas of all deferred input fields.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.destiny.Destiny.inputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5239,8 +5253,8 @@ This is similar to what is usually called a 'future' in programming languages, b
 <code class="highlight language-python"><span class="n">deferred_inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Potentially required external inputs that are needed for this destiny to materialize.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.destiny.Destiny.deferred_inputs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5259,8 +5273,8 @@ This is similar to what is usually called a 'future' in programming languages, b
 <code class="highlight language-python"><span class="n">result_field_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The name of the result field.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.destiny.Destiny.result_field_name" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5279,8 +5293,8 @@ This is similar to what is usually called a 'future' in programming languages, b
 <code class="highlight language-python"><span class="n">result_schema</span><span class="p">:</span> <span class="n">ValueSchema</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The value schema of the result.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.destiny.Destiny.result_schema" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5299,8 +5313,8 @@ This is similar to what is usually called a 'future' in programming languages, b
 <code class="highlight language-python"><span class="n">result_value_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The value id of the result.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.destiny.Destiny.result_value_id" class="headerlink" title="Permanent link">&para;</a></h5>

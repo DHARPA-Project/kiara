@@ -57,7 +57,7 @@ site
 .env
 docs/api-documentation.md
 .frkl
-.envrc
+.envrc*
 build.sh
 onefile.spec
 .kiara_complete.zsh.zwc

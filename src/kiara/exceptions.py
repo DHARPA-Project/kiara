@@ -8,7 +8,6 @@ import uuid
 from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Type, Union
 
 from orjson import orjson
-from rich.markdown import Markdown
 
 from kiara.defaults import NOT_AVAILBLE_MARKER
 from kiara.utils.json import orjson_dumps
@@ -90,6 +89,8 @@ class KiaraException(Exception):
         rows: List[RenderableType] = [f"[red]Error[/red]: {str(self)}"]
         root_details = self.root_details()
         if root_details:
+            from rich.markdown import Markdown
+
             rows.append("")
             rows.append(Markdown(root_details))
 

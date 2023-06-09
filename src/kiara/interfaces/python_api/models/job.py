@@ -111,7 +111,11 @@ class JobTest(object):
 
                 if isinstance(data_to_test, Value):
                     data_to_test = data_to_test.data
-                assert test == data_to_test, f"Test '{test_name}' failed"
+
+                if test != data_to_test:
+                    raise AssertionError(
+                        f"Test pattern '{test_name}' for job '{self._job_desc.job_alias}' failed: {data_to_test} (result) != {test} (expected)"
+                    )
 
             else:
 

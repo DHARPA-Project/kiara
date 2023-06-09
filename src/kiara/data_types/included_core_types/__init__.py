@@ -268,6 +268,11 @@ class StringType(AnyType[str, DataTypeConfig]):
     def _retrieve_characteristics(self) -> DataTypeCharacteristics:
         return SCALAR_CHARACTERISTICS
 
+    def parse_python_obj(self, data: Any) -> str:
+
+        # TODO: check if this is actually ok to do always
+        return str(data)
+
     def _validate(cls, value: Any) -> None:
 
         if not isinstance(value, str):

@@ -16,7 +16,6 @@ from typing import Any, Iterable, Mapping, Union
 import rich_click as click
 
 from kiara.exceptions import InvalidCommandLineInvocation
-from kiara.interfaces.python_api import JobDesc
 from kiara.utils import log_message
 from kiara.utils.cli import dict_from_cli_args, terminal_print
 from kiara.utils.cli.exceptions import handle_exception
@@ -127,6 +126,8 @@ def run(
 
     if not module_config and os.path.isfile(module_or_operation):
         try:
+            from kiara.interfaces.python_api import JobDesc
+
             job_desc = JobDesc.create_from_file(module_or_operation)
             kiara_op = job_desc.get_operation(kiara_api=api)
             base_inputs = job_desc.inputs

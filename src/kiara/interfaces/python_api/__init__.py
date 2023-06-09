@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import inspect
 import json
 import os.path
@@ -28,7 +29,6 @@ from kiara.exceptions import (
     NoSuchExecutionTargetException,
     NoSuchWorkflowException,
 )
-from kiara.interfaces.python_api.models import OperationsMap, WorkflowsMap
 from kiara.interfaces.python_api.models.info import (
     DataTypeClassesInfo,
     DataTypeClassInfo,
@@ -81,6 +81,7 @@ from kiara.utils.string_vars import replace_var_names_in_obj
 
 if TYPE_CHECKING:
     from kiara.context import Kiara, KiaraConfig, KiaraRuntimeConfig
+    from kiara.interfaces.python_api.models.doc import OperationsMap, WorkflowsMap
 
 logger = structlog.getLogger()
 yaml = YAML(typ="safe")
@@ -670,7 +671,7 @@ class KiaraAPI(object):
         operation_types: Union[str, Iterable[str], None] = None,
         python_packages: Union[str, Iterable[str], None] = None,
         include_internal: bool = False,
-    ) -> OperationsMap:
+    ) -> "OperationsMap":
         """
         List all available values, optionally filter.
 
@@ -1047,14 +1048,29 @@ class KiaraAPI(object):
                     current_result, path, separator=VALUE_ATTR_DELIMITER
                 )
 
-            except Exception as e:
+            except Exception:
+
+                def dict_path(path, my_dict, all_paths):
+                    for k, v in my_dict.items():
+                        if isinstance(v, dict):
+                            dict_path(path + "::" + k, v, all_paths)
+                        else:
+                            all_paths.append(path[2:] + "::" + k)
+
                 valid_base_keys = list(current_result.keys())
-                details = "Valid (base) keys are:\n"
+                details = "Valid (base) sub-keys are:\n\n"
                 for k in valid_base_keys:
-                    details += f"- {k}\n"
+                    details += f"  - {k}\n"
+
+                all_paths: List[str] = []
+                dict_path("", current_result, all_paths)
+
+                details += "\nValid (full) sub-paths are:\n\n"
+                for k in all_paths:
+                    details += f"  - {k}\n"
+
                 raise KiaraException(
                     msg=f"Failed to retrieve value attribute using query sub-path: {path}",
-                    parent=e,
                     details=details,
                 )
 
@@ -1932,8 +1948,11 @@ class KiaraAPI(object):
 
         return WorkflowInfo.create_from_workflow(workflow=_workflow)
 
-    def list_workflows(self, **matcher_params) -> WorkflowsMap:
+    def list_workflows(self, **matcher_params) -> "WorkflowsMap":
         """List all available workflow sessions, indexed by their unique id."""
+
+        from kiara.interfaces.python_api.models.doc import WorkflowsMap
+
         workflows = {}
 
         matcher = WorkflowMatcher(**matcher_params)
@@ -1956,8 +1975,11 @@ class KiaraAPI(object):
                 __root__={str(k): v for k, v in workflows.items()}
             )
 
-    def list_workflow_aliases(self, **matcher_params) -> WorkflowsMap:
+    def list_workflow_aliases(self, **matcher_params) -> "WorkflowsMap":
         """List all available workflow sessions that have an alias, indexed by alias."""
+
+        from kiara.interfaces.python_api.models.doc import WorkflowsMap
+
         if matcher_params:
             matcher_params["has_alias"] = True
             workflows = self.list_workflows(**matcher_params)
@@ -1980,6 +2002,7 @@ class KiaraAPI(object):
                 a: self.get_workflow(workflow=all_aliases[a])
                 for a in sorted(all_aliases.keys())
             }
+
         return WorkflowsMap.construct(__root__=result)
 
     def retrieve_workflows_info(self, **matcher_params: Any) -> WorkflowGroupInfo:

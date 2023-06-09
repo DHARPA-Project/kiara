@@ -1638,6 +1638,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../doc/" class="md-nav__link">
+        doc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../info/" class="md-nav__link">
         info
       </a>
@@ -5264,7 +5278,11 @@
 <span class="normal">130</span>
 <span class="normal">131</span>
 <span class="normal">132</span>
-<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobTest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobTest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">kiara_api</span><span class="p">:</span> <span class="s2">&quot;KiaraAPI&quot;</span><span class="p">,</span>
@@ -5309,7 +5327,11 @@
 
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_to_test</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
                     <span class="n">data_to_test</span> <span class="o">=</span> <span class="n">data_to_test</span><span class="o">.</span><span class="n">data</span>
-                <span class="k">assert</span> <span class="n">test</span> <span class="o">==</span> <span class="n">data_to_test</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Test &#39;</span><span class="si">{</span><span class="n">test_name</span><span class="si">}</span><span class="s2">&#39; failed&quot;</span>
+
+                <span class="k">if</span> <span class="n">test</span> <span class="o">!=</span> <span class="n">data_to_test</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Test pattern &#39;</span><span class="si">{</span><span class="n">test_name</span><span class="si">}</span><span class="s2">&#39; for job &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="o">.</span><span class="n">job_alias</span><span class="si">}</span><span class="s2">&#39; failed: </span><span class="si">{</span><span class="n">data_to_test</span><span class="si">}</span><span class="s2"> (result) != </span><span class="si">{</span><span class="n">test</span><span class="si">}</span><span class="s2"> (expected)&quot;</span>
+                    <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
 
@@ -5452,7 +5474,11 @@
 <span class="normal">130</span>
 <span class="normal">131</span>
 <span class="normal">132</span>
-<span class="normal">133</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">check_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="s2">&quot;ValueMap&quot;</span><span class="p">):</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">check_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="s2">&quot;ValueMap&quot;</span><span class="p">):</span>
 
     <span class="kn">import</span> <span class="nn">inspect</span>
 
@@ -5473,7 +5499,11 @@
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_to_test</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
                 <span class="n">data_to_test</span> <span class="o">=</span> <span class="n">data_to_test</span><span class="o">.</span><span class="n">data</span>
-            <span class="k">assert</span> <span class="n">test</span> <span class="o">==</span> <span class="n">data_to_test</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Test &#39;</span><span class="si">{</span><span class="n">test_name</span><span class="si">}</span><span class="s2">&#39; failed&quot;</span>
+
+            <span class="k">if</span> <span class="n">test</span> <span class="o">!=</span> <span class="n">data_to_test</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Test pattern &#39;</span><span class="si">{</span><span class="n">test_name</span><span class="si">}</span><span class="s2">&#39; for job &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="o">.</span><span class="n">job_alias</span><span class="si">}</span><span class="s2">&#39; failed: </span><span class="si">{</span><span class="n">data_to_test</span><span class="si">}</span><span class="s2"> (result) != </span><span class="si">{</span><span class="n">test</span><span class="si">}</span><span class="s2"> (expected)&quot;</span>
+                <span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
 

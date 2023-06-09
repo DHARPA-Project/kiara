@@ -1700,6 +1700,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../python_api/models/doc/" class="md-nav__link">
+        doc
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../python_api/models/info/" class="md-nav__link">
         info
       </a>
@@ -4845,7 +4859,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/run.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 29</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 28</span>
+<span class="normal"> 29</span>
 <span class="normal"> 30</span>
 <span class="normal"> 31</span>
 <span class="normal"> 32</span>
@@ -4986,7 +5001,8 @@
 <span class="normal">167</span>
 <span class="normal">168</span>
 <span class="normal">169</span>
-<span class="normal">170</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="normal">170</span>
+<span class="normal">171</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;module_or_operation&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;MODULE_OR_OPERATION&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
@@ -5087,6 +5103,8 @@
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">module_config</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">module_or_operation</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">kiara.interfaces.python_api</span> <span class="kn">import</span> <span class="n">JobDesc</span>
+
             <span class="n">job_desc</span> <span class="o">=</span> <span class="n">JobDesc</span><span class="o">.</span><span class="n">create_from_file</span><span class="p">(</span><span class="n">module_or_operation</span><span class="p">)</span>
             <span class="n">kiara_op</span> <span class="o">=</span> <span class="n">job_desc</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">kiara_api</span><span class="o">=</span><span class="n">api</span><span class="p">)</span>
             <span class="n">base_inputs</span> <span class="o">=</span> <span class="n">job_desc</span><span class="o">.</span><span class="n">inputs</span>

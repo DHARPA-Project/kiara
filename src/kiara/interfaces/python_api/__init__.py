@@ -773,6 +773,8 @@ class KiaraAPI(object):
                     temp[pkg] = op
             operations = temp
 
+        from kiara.interfaces.python_api.models.doc import OperationsMap
+
         return OperationsMap.construct(__root__=operations)  # type: ignore
 
     def retrieve_operation_info(

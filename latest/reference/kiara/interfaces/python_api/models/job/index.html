@@ -4877,8 +4877,7 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/job.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">17</span>
-<span class="normal">18</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
 <span class="normal">19</span>
 <span class="normal">20</span>
 <span class="normal">21</span>
@@ -4926,7 +4925,8 @@
 <span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span>
-<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobDesc</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="normal">66</span>
+<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobDesc</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An object describing a compute job with both raw or referenced inputs.&quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
@@ -5089,8 +5089,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/job.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">20</span>
-<span class="normal">21</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
 <span class="normal">22</span>
 <span class="normal">23</span>
 <span class="normal">24</span>
@@ -5113,7 +5112,8 @@
 <span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span>
-<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">44</span>
+<span class="normal">45</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]):</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -5158,8 +5158,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/job.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">55</span>
-<span class="normal">56</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">56</span>
 <span class="normal">57</span>
 <span class="normal">58</span>
 <span class="normal">59</span>
@@ -5169,7 +5168,8 @@
 <span class="normal">63</span>
 <span class="normal">64</span>
 <span class="normal">65</span>
-<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara_api</span><span class="p">:</span> <span class="s2">&quot;KiaraAPI&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Operation&quot;</span><span class="p">:</span>
+<span class="normal">66</span>
+<span class="normal">67</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara_api</span><span class="p">:</span> <span class="s2">&quot;KiaraAPI&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Operation&quot;</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">module_config</span><span class="p">:</span>
         <span class="n">operation</span> <span class="o">=</span> <span class="n">kiara_api</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">operation</span><span class="p">,</span> <span class="n">allow_external</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -5214,8 +5214,7 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/job.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 69</span>
-<span class="normal"> 70</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 70</span>
 <span class="normal"> 71</span>
 <span class="normal"> 72</span>
 <span class="normal"> 73</span>
@@ -5282,7 +5281,24 @@
 <span class="normal">134</span>
 <span class="normal">135</span>
 <span class="normal">136</span>
-<span class="normal">137</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobTest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">JobTest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">kiara_api</span><span class="p">:</span> <span class="s2">&quot;KiaraAPI&quot;</span><span class="p">,</span>
@@ -5298,15 +5314,229 @@
 
     <span class="k">def</span> <span class="nf">run_tests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running tests for job &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="o">.</span><span class="n">job_alias</span><span class="si">}</span><span class="s2">&#39;...&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
+
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_job</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">check_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">run_job</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueMap&quot;</span><span class="p">:</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara_api</span><span class="o">.</span><span class="n">run_job</span><span class="p">(</span><span class="n">operation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running checks for job &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="o">.</span><span class="n">job_alias</span><span class="si">}</span><span class="s2">&#39;...&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara_api</span><span class="o">.</span><span class="n">run_job</span><span class="p">(</span><span class="n">operation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">exc</span> <span class="o">=</span> <span class="n">KiaraException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to run job &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="o">.</span><span class="n">job_alias</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">terminal_print</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
         <span class="k">return</span> <span class="n">result</span>
 
     <span class="k">def</span> <span class="nf">check_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="s2">&quot;ValueMap&quot;</span><span class="p">):</span>
+
+        <span class="k">try</span><span class="p">:</span>
+
+            <span class="kn">import</span> <span class="nn">inspect</span>
+
+            <span class="kn">from</span> <span class="nn">kiara.api</span> <span class="kn">import</span> <span class="n">Value</span>
+
+            <span class="k">for</span> <span class="n">test_name</span><span class="p">,</span> <span class="n">test</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tests</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
+                    <span class="n">tokens</span> <span class="o">=</span> <span class="n">test_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;::&quot;</span><span class="p">)</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">data_to_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara_api</span><span class="o">.</span><span class="n">query_value</span><span class="p">(</span>
+                            <span class="n">value</span><span class="p">,</span> <span class="s2">&quot;::&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">data_to_test</span> <span class="o">=</span> <span class="n">value</span>
+
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_to_test</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
+                        <span class="n">data_to_test</span> <span class="o">=</span> <span class="n">data_to_test</span><span class="o">.</span><span class="n">data</span>
+
+                    <span class="k">if</span> <span class="n">test</span> <span class="o">!=</span> <span class="n">data_to_test</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Test pattern &#39;</span><span class="si">{</span><span class="n">test_name</span><span class="si">}</span><span class="s2">&#39; for job &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="o">.</span><span class="n">job_alias</span><span class="si">}</span><span class="s2">&#39; failed: </span><span class="si">{</span><span class="n">data_to_test</span><span class="si">}</span><span class="s2"> (result) != </span><span class="si">{</span><span class="n">test</span><span class="si">}</span><span class="s2"> (expected)&quot;</span>
+                        <span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+
+                    <span class="n">args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+                    <span class="n">arg_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+                    <span class="k">for</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">arg_name</span> <span class="o">==</span> <span class="s2">&quot;kiara_api&quot;</span><span class="p">:</span>
+                            <span class="n">arg_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara_api</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">arg_name</span> <span class="o">==</span> <span class="s2">&quot;outputs&quot;</span><span class="p">:</span>
+                            <span class="n">arg_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="p">:</span>
+                            <span class="n">arg_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">arg_name</span><span class="p">))</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="n">KiaraException</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">&quot;Invalid test function: &#39;</span><span class="si">{</span><span class="n">test_name</span><span class="si">}</span><span class="s2">&#39;, argument &#39;</span><span class="si">{</span><span class="n">arg_name</span><span class="si">}</span><span class="s2">&#39; not available in result. Available arguments: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="si">}</span><span class="s2"> or &#39;outputs&#39; for all outputs.&quot;</span>
+                            <span class="p">)</span>
+                    <span class="n">test</span><span class="p">(</span><span class="o">*</span><span class="n">arg_values</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">exc</span> <span class="o">=</span> <span class="n">KiaraException</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Failed to run test &#39;</span><span class="si">{</span><span class="n">test</span><span class="si">}</span><span class="s2">&#39; for job &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="o">.</span><span class="n">job_alias</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">terminal_print</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">e</span>
+        <span class="k">return</span> <span class="n">result</span>
+</code></pre></div></td></tr></table></div>
+        </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<h4 id="kiara.interfaces.python_api.models.job.JobTest-functions">Functions<a href="#kiara.interfaces.python_api.models.job.JobTest-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.job.JobTest.run_tests" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">run_tests</span><span class="p">()</span></code>
+
+<a href="#kiara.interfaces.python_api.models.job.JobTest.run_tests" class="headerlink" title="Permanent link">&para;</a></h5>
+
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/job.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run_tests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running tests for job &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="o">.</span><span class="n">job_alias</span><span class="si">}</span><span class="s2">&#39;...&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_job</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">check_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.job.JobTest.run_job" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">run_job</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span></code>
+
+<a href="#kiara.interfaces.python_api.models.job.JobTest.run_job" class="headerlink" title="Permanent link">&para;</a></h5>
+
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/job.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run_job</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueMap&quot;</span><span class="p">:</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Running checks for job &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="o">.</span><span class="n">job_alias</span><span class="si">}</span><span class="s2">&#39;...&quot;</span><span class="p">)</span>  <span class="c1"># noqa</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara_api</span><span class="o">.</span><span class="n">run_job</span><span class="p">(</span><span class="n">operation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">exc</span> <span class="o">=</span> <span class="n">KiaraException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to run job &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="o">.</span><span class="n">job_alias</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">terminal_print</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">e</span>
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h5 id="kiara.interfaces.python_api.models.job.JobTest.check_result" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">check_result</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span></code>
+
+<a href="#kiara.interfaces.python_api.models.job.JobTest.check_result" class="headerlink" title="Permanent link">&para;</a></h5>
+
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/job.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">check_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="s2">&quot;ValueMap&quot;</span><span class="p">):</span>
+
+    <span class="k">try</span><span class="p">:</span>
 
         <span class="kn">import</span> <span class="nn">inspect</span>
 
@@ -5349,180 +5579,14 @@
                         <span class="k">raise</span> <span class="n">KiaraException</span><span class="p">(</span>
                             <span class="sa">f</span><span class="s2">&quot;Invalid test function: &#39;</span><span class="si">{</span><span class="n">test_name</span><span class="si">}</span><span class="s2">&#39;, argument &#39;</span><span class="si">{</span><span class="n">arg_name</span><span class="si">}</span><span class="s2">&#39; not available in result. Available arguments: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="si">}</span><span class="s2"> or &#39;outputs&#39; for all outputs.&quot;</span>
                         <span class="p">)</span>
-
                 <span class="n">test</span><span class="p">(</span><span class="o">*</span><span class="n">arg_values</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-        </details>
-
-  
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-<h4 id="kiara.interfaces.python_api.models.job.JobTest-functions">Functions<a href="#kiara.interfaces.python_api.models.job.JobTest-functions" class="headerlink" title="Permanent link">&para;</a></h4>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h5 id="kiara.interfaces.python_api.models.job.JobTest.run_tests" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">run_tests</span><span class="p">()</span></code>
-
-<a href="#kiara.interfaces.python_api.models.job.JobTest.run_tests" class="headerlink" title="Permanent link">&para;</a></h5>
-
-
-  <div class="doc doc-contents ">
-
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/job.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">83</span>
-<span class="normal">84</span>
-<span class="normal">85</span>
-<span class="normal">86</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run_tests</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_job</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">check_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-      </details>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h5 id="kiara.interfaces.python_api.models.job.JobTest.run_job" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">run_job</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ValueMap</span></code>
-
-<a href="#kiara.interfaces.python_api.models.job.JobTest.run_job" class="headerlink" title="Permanent link">&para;</a></h5>
-
-
-  <div class="doc doc-contents ">
-
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/job.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">88</span>
-<span class="normal">89</span>
-<span class="normal">90</span>
-<span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run_job</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ValueMap&quot;</span><span class="p">:</span>
-
-    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara_api</span><span class="o">.</span><span class="n">run_job</span><span class="p">(</span><span class="n">operation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">exc</span> <span class="o">=</span> <span class="n">KiaraException</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Failed to run test &#39;</span><span class="si">{</span><span class="n">test</span><span class="si">}</span><span class="s2">&#39; for job &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="o">.</span><span class="n">job_alias</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+        <span class="n">terminal_print</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">e</span>
     <span class="k">return</span> <span class="n">result</span>
-</code></pre></div></td></tr></table></div>
-      </details>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h5 id="kiara.interfaces.python_api.models.job.JobTest.check_result" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">check_result</span><span class="p">(</span><span class="n">result</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">)</span></code>
-
-<a href="#kiara.interfaces.python_api.models.job.JobTest.check_result" class="headerlink" title="Permanent link">&para;</a></h5>
-
-
-  <div class="doc doc-contents ">
-
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/job.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 93</span>
-<span class="normal"> 94</span>
-<span class="normal"> 95</span>
-<span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
-<span class="normal"> 99</span>
-<span class="normal">100</span>
-<span class="normal">101</span>
-<span class="normal">102</span>
-<span class="normal">103</span>
-<span class="normal">104</span>
-<span class="normal">105</span>
-<span class="normal">106</span>
-<span class="normal">107</span>
-<span class="normal">108</span>
-<span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
-<span class="normal">116</span>
-<span class="normal">117</span>
-<span class="normal">118</span>
-<span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
-<span class="normal">123</span>
-<span class="normal">124</span>
-<span class="normal">125</span>
-<span class="normal">126</span>
-<span class="normal">127</span>
-<span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
-<span class="normal">135</span>
-<span class="normal">136</span>
-<span class="normal">137</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">check_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="s2">&quot;ValueMap&quot;</span><span class="p">):</span>
-
-    <span class="kn">import</span> <span class="nn">inspect</span>
-
-    <span class="kn">from</span> <span class="nn">kiara.api</span> <span class="kn">import</span> <span class="n">Value</span>
-
-    <span class="k">for</span> <span class="n">test_name</span><span class="p">,</span> <span class="n">test</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tests</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">test</span><span class="p">):</span>
-            <span class="n">tokens</span> <span class="o">=</span> <span class="n">test_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;::&quot;</span><span class="p">)</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">data_to_test</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kiara_api</span><span class="o">.</span><span class="n">query_value</span><span class="p">(</span>
-                    <span class="n">value</span><span class="p">,</span> <span class="s2">&quot;::&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">data_to_test</span> <span class="o">=</span> <span class="n">value</span>
-
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_to_test</span><span class="p">,</span> <span class="n">Value</span><span class="p">):</span>
-                <span class="n">data_to_test</span> <span class="o">=</span> <span class="n">data_to_test</span><span class="o">.</span><span class="n">data</span>
-
-            <span class="k">if</span> <span class="n">test</span> <span class="o">!=</span> <span class="n">data_to_test</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Test pattern &#39;</span><span class="si">{</span><span class="n">test_name</span><span class="si">}</span><span class="s2">&#39; for job &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_desc</span><span class="o">.</span><span class="n">job_alias</span><span class="si">}</span><span class="s2">&#39; failed: </span><span class="si">{</span><span class="n">data_to_test</span><span class="si">}</span><span class="s2"> (result) != </span><span class="si">{</span><span class="n">test</span><span class="si">}</span><span class="s2"> (expected)&quot;</span>
-                <span class="p">)</span>
-
-        <span class="k">else</span><span class="p">:</span>
-
-            <span class="n">args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
-            <span class="n">arg_values</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-
-            <span class="k">for</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">arg_name</span> <span class="o">==</span> <span class="s2">&quot;kiara_api&quot;</span><span class="p">:</span>
-                    <span class="n">arg_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara_api</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">arg_name</span> <span class="o">==</span> <span class="s2">&quot;outputs&quot;</span><span class="p">:</span>
-                    <span class="n">arg_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="p">:</span>
-                    <span class="n">arg_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">get_value_obj</span><span class="p">(</span><span class="n">arg_name</span><span class="p">))</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="n">KiaraException</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Invalid test function: &#39;</span><span class="si">{</span><span class="n">test_name</span><span class="si">}</span><span class="s2">&#39;, argument &#39;</span><span class="si">{</span><span class="n">arg_name</span><span class="si">}</span><span class="s2">&#39; not available in result. Available arguments: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">field_names</span><span class="si">}</span><span class="s2"> or &#39;outputs&#39; for all outputs.&quot;</span>
-                    <span class="p">)</span>
-
-            <span class="n">test</span><span class="p">(</span><span class="o">*</span><span class="n">arg_values</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>

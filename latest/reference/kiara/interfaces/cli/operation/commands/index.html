@@ -4914,7 +4914,7 @@
       <p>Operation-related sub-commands.</p>
 
       <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/operation/commands.py</code></summary>
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/cli/operation/commands.py</code></summary>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">21</span>
 <span class="normal">22</span>
 <span class="normal">23</span>
@@ -4941,7 +4941,7 @@
   <div class="doc doc-contents ">
 
       <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/operation/commands.py</code></summary>
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/cli/operation/commands.py</code></summary>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">27</span>
 <span class="normal">28</span>
 <span class="normal">29</span>
@@ -5038,7 +5038,7 @@
   <div class="doc doc-contents ">
 
       <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/operation/commands.py</code></summary>
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/cli/operation/commands.py</code></summary>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span>
@@ -5077,7 +5077,7 @@
 
 
 <h3 id="kiara.interfaces.cli.operation.commands.list_operations" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">list_operations</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">by_type</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">full_doc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">include_internal</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="n">list_operations</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">by_type</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">full_doc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">include_internal</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">python_package</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span></code>
 
 <a href="#kiara.interfaces.cli.operation.commands.list_operations" class="headerlink" title="Permanent link">&para;</a></h3>
 
@@ -5085,7 +5085,7 @@
   <div class="doc doc-contents ">
 
       <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/operation/commands.py</code></summary>
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/cli/operation/commands.py</code></summary>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 84</span>
 <span class="normal"> 85</span>
 <span class="normal"> 86</span>
@@ -5155,7 +5155,19 @@
 <span class="normal">150</span>
 <span class="normal">151</span>
 <span class="normal">152</span>
-<span class="normal">153</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@operation</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">)</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@operation</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;list&quot;</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
     <span class="s2">&quot;--by-type&quot;</span><span class="p">,</span>
     <span class="s2">&quot;-t&quot;</span><span class="p">,</span>
@@ -5175,6 +5187,12 @@
     <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Whether to include operations that are mainly used internally.&quot;</span><span class="p">,</span>
     <span class="n">is_flag</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s2">&quot;--python-package&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
+    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Only return modules from this package.&quot;</span><span class="p">,</span>
+    <span class="n">required</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="nd">@output_format_option</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">pass_context</span>
 <span class="k">def</span> <span class="nf">list_operations</span><span class="p">(</span>
@@ -5183,33 +5201,39 @@
     <span class="nb">filter</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">full_doc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
     <span class="n">include_internal</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">python_package</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
     <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="n">kiara_obj</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">kiara</span>
+    <span class="n">api</span><span class="p">:</span> <span class="n">KiaraAPI</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">kiara_api</span>
 
-    <span class="n">operations</span> <span class="o">=</span> <span class="n">kiara_obj</span><span class="o">.</span><span class="n">operation_registry</span><span class="o">.</span><span class="n">operations</span>
+    <span class="n">operations</span> <span class="o">=</span> <span class="n">api</span><span class="o">.</span><span class="n">list_operations</span><span class="p">(</span>
+        <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">,</span> <span class="n">include_internal</span><span class="o">=</span><span class="n">include_internal</span><span class="p">,</span> <span class="n">python_packages</span><span class="o">=</span><span class="n">python_package</span>
+    <span class="p">)</span>
+
+    <span class="c1"># operations = kiara_obj.operation_registry.operations</span>
     <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Available operations&quot;</span>
-    <span class="k">if</span> <span class="nb">filter</span><span class="p">:</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Filtered operations&quot;</span>
-        <span class="n">temp</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">operations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">match</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">filter</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">op_id</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
-                    <span class="n">match</span> <span class="o">=</span> <span class="kc">False</span>
-                    <span class="k">break</span>
-            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-                <span class="n">temp</span><span class="p">[</span><span class="n">op_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">op</span>
-        <span class="n">operations</span> <span class="o">=</span> <span class="n">temp</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">include_internal</span><span class="p">:</span>
-        <span class="n">temp</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">op_id</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">operations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">op</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">is_internal_operation</span><span class="p">:</span>
-                <span class="n">temp</span><span class="p">[</span><span class="n">op_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">op</span>
-
-        <span class="n">operations</span> <span class="o">=</span> <span class="n">temp</span>
+    <span class="c1"># if filter:</span>
+    <span class="c1">#     title = &quot;Filtered operations&quot;</span>
+    <span class="c1">#     temp = {}</span>
+    <span class="c1">#     for op_id, op in operations.items():</span>
+    <span class="c1">#         match = True</span>
+    <span class="c1">#         for f in filter:</span>
+    <span class="c1">#             if f.lower() not in op_id.lower():</span>
+    <span class="c1">#                 match = False</span>
+    <span class="c1">#                 break</span>
+    <span class="c1">#         if match:</span>
+    <span class="c1">#             temp[op_id] = op</span>
+    <span class="c1">#     operations = temp</span>
+    <span class="c1">#</span>
+    <span class="c1"># if not include_internal:</span>
+    <span class="c1">#     temp = {}</span>
+    <span class="c1">#     for op_id, op in operations.items():</span>
+    <span class="c1">#         if not op.operation_details.is_internal_operation:</span>
+    <span class="c1">#             temp[op_id] = op</span>
+    <span class="c1">#</span>
+    <span class="c1">#     operations = temp</span>
 
     <span class="kn">from</span> <span class="nn">kiara.interfaces.python_api</span> <span class="kn">import</span> <span class="n">OperationGroupInfo</span>
 
@@ -5244,20 +5268,8 @@
   <div class="doc doc-contents ">
 
       <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.11/x64/lib/python3.10/site-packages/kiara/interfaces/cli/operation/commands.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">156</span>
-<span class="normal">157</span>
-<span class="normal">158</span>
-<span class="normal">159</span>
-<span class="normal">160</span>
-<span class="normal">161</span>
-<span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span>
-<span class="normal">165</span>
-<span class="normal">166</span>
-<span class="normal">167</span>
-<span class="normal">168</span>
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/cli/operation/commands.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">168</span>
 <span class="normal">169</span>
 <span class="normal">170</span>
 <span class="normal">171</span>
@@ -5280,7 +5292,19 @@
 <span class="normal">188</span>
 <span class="normal">189</span>
 <span class="normal">190</span>
-<span class="normal">191</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@operation</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@operation</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s2">&quot;operation_id&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
     <span class="s2">&quot;--source&quot;</span><span class="p">,</span>

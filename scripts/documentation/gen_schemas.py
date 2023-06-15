@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import inspect
-import mkdocs_gen_files
 import os
 import typing
+
+import mkdocs_gen_files
 
 from kiara.doc.mkdocs_macros_kiara import KIARA_MODEL_CLASSES
 

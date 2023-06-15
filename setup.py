@@ -8,16 +8,16 @@
     PyScaffold helps you to put up the scaffold of your new Python project.
     Learn more under: https://pyscaffold.org/
 """
-from setuptools import setup
-
 import sys
+
+from setuptools import setup
 
 try:
     from pkg_resources import VersionConflict, require
 
     require("setuptools>=38.3")
 except VersionConflict:
-    print("Error: version of setuptools is too old (<38.3)!")
+    print("Error: version of setuptools is too old (<38.3)!")  # noqa: T201
     sys.exit(1)
 
 

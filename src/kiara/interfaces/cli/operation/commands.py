@@ -7,7 +7,7 @@
 
 import os
 import sys
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, Union
 
 import rich_click as click
 
@@ -101,6 +101,12 @@ def explain_type(ctx, operation_type: str, format: str):
     help="Whether to include operations that are mainly used internally.",
     is_flag=True,
 )
+@click.option(
+    "--python-package",
+    "-p",
+    help="Only return modules from this package.",
+    required=False,
+)
 @output_format_option()
 @click.pass_context
 def list_operations(
@@ -109,33 +115,39 @@ def list_operations(
     filter: Iterable[str],
     full_doc: bool,
     include_internal: bool,
+    python_package: Union[str, None],
     format: str,
 ):
 
     kiara_obj: Kiara = ctx.obj.kiara
+    api: KiaraAPI = ctx.obj.kiara_api
 
-    operations = kiara_obj.operation_registry.operations
+    operations = api.list_operations(
+        filter=filter, include_internal=include_internal, python_packages=python_package
+    )
+
+    # operations = kiara_obj.operation_registry.operations
     title = "Available operations"
-    if filter:
-        title = "Filtered operations"
-        temp = {}
-        for op_id, op in operations.items():
-            match = True
-            for f in filter:
-                if f.lower() not in op_id.lower():
-                    match = False
-                    break
-            if match:
-                temp[op_id] = op
-        operations = temp
-
-    if not include_internal:
-        temp = {}
-        for op_id, op in operations.items():
-            if not op.operation_details.is_internal_operation:
-                temp[op_id] = op
-
-        operations = temp
+    # if filter:
+    #     title = "Filtered operations"
+    #     temp = {}
+    #     for op_id, op in operations.items():
+    #         match = True
+    #         for f in filter:
+    #             if f.lower() not in op_id.lower():
+    #                 match = False
+    #                 break
+    #         if match:
+    #             temp[op_id] = op
+    #     operations = temp
+    #
+    # if not include_internal:
+    #     temp = {}
+    #     for op_id, op in operations.items():
+    #         if not op.operation_details.is_internal_operation:
+    #             temp[op_id] = op
+    #
+    #     operations = temp
 
     from kiara.interfaces.python_api import OperationGroupInfo
 

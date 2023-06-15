@@ -173,12 +173,10 @@ def get_pipeline_config(
     - check whether the provided string starts with 'workflow:' and matches a workflow alias (or id), in which case it returns the pipeline config for the workflows current state
 
     Arguments:
-    ---------
         pipeline: a reference to the desired pipeline
         kiara: the kiara context
 
     Returns:
-    -------
         a pipeline config object
     """
     if kiara is None:

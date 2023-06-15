@@ -193,12 +193,10 @@ class KiaraAPI(object):
         Ensure that the specified packages are installed.
 
         Arguments:
-        ---------
           package_names: The names of the packages to install.
           update: If True, update the packages if they are already installed
 
         Returns:
-        -------
             'None' if run in jupyter, 'True' if any packages were installed, 'False' otherwise.
         """
         if isinstance(package_names, str):
@@ -316,7 +314,6 @@ class KiaraAPI(object):
         Create a new context.
 
         Arguments:
-        ---------
             context_name: the name of the new context
             set_active: set the newly created context as the active one
         """
@@ -375,11 +372,9 @@ class KiaraAPI(object):
         Python class that holds the actual data and provides metadata and convenience methods for managing the data internally. Data types are not directly used by users, but they are exposed in the input/output schemas of moudles and other data-related features.
 
         Arguments:
-        ---------
             filter: an optional string or (list of strings) the returned datatype ids have to match (all filters in the case of a list)
 
         Returns:
-        -------
             an object containing all information about all data types
         """
         if filter:
@@ -418,11 +413,9 @@ class KiaraAPI(object):
         Retrieve information about a specific data type.
 
         Arguments:
-        ---------
             data_type: the registered name of the data type
 
         Returns:
-        -------
             an object containing all information about a data type
         """
         dt_cls = self.context.type_registry.get_data_type_cls(data_type_name)
@@ -439,7 +432,9 @@ class KiaraAPI(object):
         return list(self.context.module_registry.get_module_type_names())
 
     def retrieve_module_types_info(
-        self, filter: Union[None, str, Iterable[str]] = None
+        self,
+        filter: Union[None, str, Iterable[str]] = None,
+        python_package: Union[str, None] = None,
     ) -> ModuleTypesInfo:
         """
         Retrieve information for all available module types (or a filtered subset thereof).
@@ -449,43 +444,83 @@ class KiaraAPI(object):
          are instantiated modules (meaning: the module & some (optional) configuration).
 
         Arguments:
-        ---------
             filter: an optional string (or list of string) the returned module names have to match (all filters in case of list)
+            python_package: an optional string, if provided, only modules from the specified python package are returned
 
         Returns:
-        -------
             a mapping object containing module names as keys, and information about the modules as values
         """
-        if filter:
 
-            if isinstance(filter, str):
-                filter = [filter]
-            title = f"Filtered modules: {filter}"
-            module_types_names: Iterable[str] = []
+        if python_package:
 
-            for m in self.context.module_registry.get_module_type_names():
-                match = True
+            modules_type_info = self.context.module_registry.get_context_metadata(
+                only_for_package=python_package
+            )
 
-                for f in filter:
+            if filter:
 
-                    if f.lower() not in m.lower():
-                        match = False
-                        break
+                title = f"All modules in package '{python_package}'"
+                if isinstance(filter, str):
+                    filter = [filter]
 
-                if match:
-                    module_types_names.append(m)  # type: ignore
+                filtered_types: Dict[str, ModuleTypeInfo] = {}
+
+                for m in modules_type_info.item_infos.keys():
+                    match = True
+
+                    for f in filter:
+
+                        if f.lower() not in m.lower():
+                            match = False
+                            break
+
+                    if match:
+                        filtered_types[m] = modules_type_info.item_infos[m]
+
+                module_types_info = ModuleTypesInfo(
+                    group_title=title, item_infos=filtered_types
+                )
+                module_types_info._kiara = self.context
+            else:
+                title = f"Filtered modules: {filter} (in package '{python_package}')"
+                module_types_info = modules_type_info
+                module_types_info.group_title = title
+
         else:
-            title = "All modules"
-            module_types_names = self.context.module_registry.get_module_type_names()
 
-        module_types = {
-            n: self.context.module_registry.get_module_class(n)
-            for n in module_types_names
-        }
+            if filter:
 
-        module_types_info = ModuleTypesInfo.create_from_type_items(  # type: ignore
-            kiara=self.context, group_title=title, **module_types
-        )
+                if isinstance(filter, str):
+                    filter = [filter]
+                title = f"Filtered modules: {filter}"
+                module_types_names: Iterable[str] = []
+
+                for m in self.context.module_registry.get_module_type_names():
+                    match = True
+
+                    for f in filter:
+
+                        if f.lower() not in m.lower():
+                            match = False
+                            break
+
+                    if match:
+                        module_types_names.append(m)  # type: ignore
+            else:
+                title = "All modules"
+                module_types_names = (
+                    self.context.module_registry.get_module_type_names()
+                )
+
+            module_types = {
+                n: self.context.module_registry.get_module_class(n)
+                for n in module_types_names
+            }
+
+            module_types_info = ModuleTypesInfo.create_from_type_items(  # type: ignore
+                kiara=self.context, group_title=title, **module_types
+            )
+
         return module_types_info  # type: ignore
 
     def retrieve_module_type_info(self, module_type: str) -> ModuleTypeInfo:
@@ -495,11 +530,9 @@ class KiaraAPI(object):
         This can be used to retrieve information like module documentation and configuration options.
 
         Arguments:
-        ---------
             module_type: the registered name of the module
 
         Returns:
-        -------
             an object containing all information about a module type
         """
         m_cls = self.context.module_registry.get_module_class(module_type)
@@ -517,12 +550,10 @@ class KiaraAPI(object):
         This can be used to get information about the operation itself, it's inputs & outputs schemas, documentation etc.
 
         Arguments:
-        ---------
             module_type: the registered name of the module
             module_config: (Optional) configuration for the module instance.
 
         Returns:
-        -------
             an Operation instance (which contains all the available information about an instantiated module)
         """
         if module_config is None:
@@ -554,22 +585,24 @@ class KiaraAPI(object):
         self,
         filter: Union[str, None, Iterable[str]] = None,
         include_internal: bool = False,
+        python_packages: Union[str, None, Iterable[str]] = None,
     ) -> List[str]:
         """
         Get a list of all operation ids that match the specified filter.
 
         Arguments:
-        ---------
             filter: an optional single or list of filters (all filters must match the operation id for the operation to be included)
             include_internal: also return internal operations
         """
-        if not filter and include_internal:
+        if not filter and include_internal and not python_packages:
             return sorted(self.context.operation_registry.operation_ids)
 
         else:
             return sorted(
                 self.list_operations(
-                    filter=filter, include_internal=include_internal
+                    filter=filter,
+                    include_internal=include_internal,
+                    python_packages=python_packages,
                 ).keys()
             )
 
@@ -588,12 +621,10 @@ class KiaraAPI(object):
         - if it's a path to an existing file, the content of the file is loaded into a dict and depending on the content a pipeline module will be created, or a 'normal' manifest (if module_type is a key in the dict)
 
         Arguments:
-        ---------
             operation: the operation id, module_type_name, path to a file, or url
             allow_external: if True, allow loading operations from external sources (e.g. a URL), if 'None' is provided, the configured value in the runtime configuration is used.
 
         Returns:
-        -------
             operation instance data
         """
         _module_type = None
@@ -676,13 +707,13 @@ class KiaraAPI(object):
         List all available values, optionally filter.
 
         Arguments:
-        ---------
             filter: the (optional) filter string(s), an operation must match all of them to be included in the result
             input_types: each operation must have at least one input that matches one of the specified types
             output_types: each operation must have at least one output that matches one of the specified types
             operation_types: only include operations of the specified type(s)
             include_internal: whether to include operations that are predominantly used internally in kiara.
             python_packages: only include operations that are contained in one of the provided python packages
+
         Returns:
             a dictionary with the operation id as key, and [kiara.models.module.operation.Operation] instance data as value
         """
@@ -770,7 +801,7 @@ class KiaraAPI(object):
                 )
                 pkg = info.context.labels.get("package", None)
                 if pkg in python_packages:
-                    temp[pkg] = op
+                    temp[op_id] = op
             operations = temp
 
         from kiara.interfaces.python_api.models.doc import OperationsMap
@@ -787,11 +818,9 @@ class KiaraAPI(object):
         'get_operation' if you need the additional info, as it's more expensive to get.
 
         Arguments:
-        ---------
             operation: the operation id
 
         Returns:
-        -------
             augmented operation instance data
         """
         if not allow_external:
@@ -822,7 +851,6 @@ class KiaraAPI(object):
         instead.
 
         Arguments:
-        ---------
             filters: the (optional) filter strings, an operation must match all of them to be included in the result
             include_internal: whether to include operations that are predominantly used internally in kiara.
             output_types: each operation must have at least one output that matches one of the specified types
@@ -861,12 +889,10 @@ class KiaraAPI(object):
         Register a pipelne as new operation into this context.
 
         Arguments:
-        ---------
             data: a dict or a path to a json/yaml file containing the definition
             operation_id: the id to use for the operation (if not specified, the id will be auto-determined)
 
         Returns:
-        -------
             the assembled operation
         """
         return self.context.operation_registry.register_pipeline(
@@ -895,13 +921,11 @@ class KiaraAPI(object):
         in a store, you have to use the 'store_value' function for that.
 
         Arguments:
-        ---------
             data: the data to register
             data_type: (optional) the data type of the data. If not provided, kiara will try to infer the data type.
             reuse_existing: whether to re-use an existing value that is already registered and has the same hash.
 
         Returns:
-        -------
             a [kiara.models.values.value.Value] instance
         """
         if data_type is None:
@@ -925,11 +949,9 @@ class KiaraAPI(object):
         having to look up value details is gone.
 
         Arguments:
-        ---------
             matcher_params: the (optional) filter parameters, check the [ValueMatcher][kiara.models.values.matchers.ValueMatcher] class for available parameters
 
         Returns:
-        -------
             a list of value ids
         """
         if matcher_params:
@@ -947,11 +969,9 @@ class KiaraAPI(object):
         and non-stored).
 
         Arguments:
-        ---------
             matcher_params: the (optional) filter parameters, check the [ValueMatcher][kiara.models.values.matchers.ValueMatcher] class for available parameters
 
         Returns:
-        -------
             a dictionary with value_id as key, and [kiara.models.values.value.Value] as value
         """
         if matcher_params:
@@ -977,11 +997,9 @@ class KiaraAPI(object):
         Raises an exception if no value could be found.
 
         Arguments:
-        ---------
             value: a value id, alias or object that has a 'value_id' attribute.
 
         Returns:
-        -------
             the Value instance
         """
         return self.context.data_registry.get_value(value=value)
@@ -1009,12 +1027,10 @@ class KiaraAPI(object):
         Raises an exception if no value could be found.
 
         Arguments:
-        ---------
             value_or_path: a value or value reference, or a query path containing the value id or alias as first token
             query_path: a query path which will be appended a potential query path computed from the first argument
 
         Returns:
-        -------
             the attribute value
         """
 
@@ -1088,11 +1104,9 @@ class KiaraAPI(object):
         instead.
 
         Arguments:
-        ---------
             value: a value id, alias or object that has a 'value_id' attribute.
 
         Returns:
-        -------
             the ValueInfo instance
 
         """
@@ -1112,11 +1126,9 @@ class KiaraAPI(object):
         instead.
 
         Arguments:
-        ---------
             matcher_params: the (optional) filter parameters, check the [ValueMatcher][kiara.models.values.matchers.ValueMatcher] class for available parameters
 
         Returns:
-        -------
             a wrapper object containing the items as dictionary with value_id as key, and [kiara.interfaces.python_api.models.values.ValueInfo] as value
         """
         values = self.list_values(**matcher_params)
@@ -1137,11 +1149,9 @@ class KiaraAPI(object):
         having to look up value details is gone.
 
         Arguments:
-        ---------
             matcher_params: the (optional) filter parameters, check the [ValueMatcher][kiara.models.values.matchers.ValueMatcher] class for available parameters
 
         Returns:
-        -------
             a list of value ids
         """
         if matcher_params:
@@ -1156,11 +1166,9 @@ class KiaraAPI(object):
         List all available values that have an alias assigned, optionally filter.
 
         Arguments:
-        ---------
             matcher_params: the (optional) filter parameters, check the [ValueMatcher][kiara.models.values.matchers.ValueMatcher] class for available parameters
 
         Returns:
-        -------
             a dictionary with value_id as key, and [kiara.models.values.value.Value] as value
         """
         if matcher_params:
@@ -1202,11 +1210,9 @@ class KiaraAPI(object):
         instead.
 
         Arguments:
-        ---------
             matcher_params: the (optional) filter parameters, check the [ValueMatcher][kiara.models.values.matchers.ValueMatcher] class for available parameters
 
         Returns:
-        -------
             a dictionary with a value alias as key, and [kiara.interfaces.python_api.models.values.ValueInfo] as value
         """
         values = self.list_aliases(**matcher_params)
@@ -1230,14 +1236,12 @@ class KiaraAPI(object):
         auto-register 'raw' data, you need to set the 'register_data' flag to 'True', and provide a schema for each of the fields that are not yet registered.
 
         Arguments:
-        ---------
             values: a dictionary with the values in question
             values_schema: an optional dictionary with the schema for each of the values that are not yet registered
             register_data: whether to allow auto-registration of 'raw' data
             reuse_existing_data: whether to reuse existing data with the same hash as the 'raw' data that is being registered
 
         Returns:
-        -------
             a value map instance
         """
 
@@ -1301,7 +1305,6 @@ class KiaraAPI(object):
         Store the specified value in the (default) value store.
 
         Arguments:
-        ---------
             value: the value (or a reference to it)
             alias: (Optional) aliases for the value
             allow_overwrite: whether to allow overwriting existing aliases
@@ -1346,12 +1349,10 @@ class KiaraAPI(object):
         the 'values' argument.
 
         Arguments:
-        ---------
             values: a map of value keys/values
             alias_map: a map of value keys aliases
 
         Returns:
-        -------
             an object outlining which values (identified by the specified value key) where stored and how
         """
         result = {}
@@ -1386,12 +1387,10 @@ class KiaraAPI(object):
         Try to find the registered operation id for the specified module type and configuration.
 
         Arguments:
-        ---------
             module_type: the module type
             module_config: the module configuration
 
         Returns:
-        -------
             the registered operation id, if found, or None
         """
         manifest = self.context.create_manifest(
@@ -1421,7 +1420,6 @@ class KiaraAPI(object):
         - a map of string pairs: the keys are step ids, the values operation ids or filter names
 
         Arguments:
-        ---------
             data_type: the type of the data to filter
             filters: a list of operation ids or filter names (and potentiall step_ids if type is a mapping)
             endpoint: optional module to put as last step in the created pipeline
@@ -1431,7 +1429,6 @@ class KiaraAPI(object):
             extra_output_aliases: extra output aliases to add to the pipeline config
 
         Returns:
-        -------
             the (pipeline) module configuration of the filter pipeline
         """
         filter_op_type: FilterOperationType = self.context.operation_registry.get_operation_type("filter")  # type: ignore
@@ -1502,14 +1499,12 @@ class KiaraAPI(object):
         the value type of the source value, and the provided target format.
 
         Arguments:
-        ---------
             value: the value (or value id)
             target_format: the format into which to render the value
             filters: a list of filters to apply to the value before rendering it
             use_pretty_print: if True, use a 'pretty_print' operation instead of 'render_value'
 
         Returns:
-        -------
             the manifest for the transformation
         """
         if data_type not in self.context.data_type_names:
@@ -1583,12 +1578,10 @@ class KiaraAPI(object):
         Queue a job using the provided manifest to describe the module and config that should be executed.
 
         Arguments:
-        ---------
             manifest: the manifest
             inputs: the job inputs (can be either references to values, or raw inputs
 
         Returns:
-        -------
             a result value map instance
         """
         if inputs is None:
@@ -1610,12 +1603,10 @@ class KiaraAPI(object):
         Run a job using the provided manifest to describe the module and config that should be executed.
 
         Arguments:
-        ---------
             manifest: the manifest
             inputs: the job inputs (can be either references to values, or raw inputs
 
         Returns:
-        -------
             a result value map instance
         """
         job_id = self.queue_manifest(manifest=manifest, inputs=inputs)
@@ -1633,13 +1624,11 @@ class KiaraAPI(object):
         This is a convenience method that auto-detects what is meant by the 'operation' string input argument.
 
         Arguments:
-        ---------
             operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..
             inputs: the operation inputs
             operation_config: the (optional) module config in case 'operation' is a module name
 
         Returns:
-        -------
             the queued job id
         """
 
@@ -1729,13 +1718,11 @@ class KiaraAPI(object):
         since this is a blocking operation.
 
         Arguments:
-        ---------
             operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..
             inputs: the operation inputs
             operation_config: the (optional) module config in case 'operation' is a module name
 
         Returns:
-        -------
             the job result value map
 
         """
@@ -1778,7 +1765,6 @@ class KiaraAPI(object):
         the value type of the source value, and the provided target format.
 
         Arguments:
-        ---------
             value: the value (or value id)
             target_format: the format into which to render the value
             filters: an (optional) list of filters
@@ -1787,7 +1773,6 @@ class KiaraAPI(object):
             use_pretty_print: use 'pretty_print' operation instead of 'render_value'
 
         Returns:
-        -------
             the rendered value data, and any related scenes, if applicable
         """
         _value = self.get_value(value)

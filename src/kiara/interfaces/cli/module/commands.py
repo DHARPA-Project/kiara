@@ -7,7 +7,7 @@
 
 """Module related subcommands for the cli."""
 
-from typing import TYPE_CHECKING, Any, Iterable
+from typing import TYPE_CHECKING, Any, Iterable, Union
 
 import rich_click as click
 
@@ -36,11 +36,26 @@ def module(ctx):
 )
 @output_format_option()
 @click.argument("filter", nargs=-1, required=False)
+@click.option(
+    "--python-package",
+    "-p",
+    help="Only return modules from this package.",
+    required=False,
+)
 @click.pass_context
-def list_modules(ctx, full_doc: bool, filter: Iterable[str], format: str):
+def list_modules(
+    ctx,
+    full_doc: bool,
+    filter: Iterable[str],
+    format: str,
+    python_package: Union[str, None],
+):
     """List available module data_types."""
     kiara_api: KiaraAPI = ctx.obj.kiara_api
-    module_types_info = kiara_api.retrieve_module_types_info(filter=filter)
+
+    module_types_info = kiara_api.retrieve_module_types_info(
+        filter=filter, python_package=python_package
+    )
 
     if filter:
         title = f"Filtered modules: {filter}"

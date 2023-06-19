@@ -21,7 +21,7 @@
         <link rel="next" href="../documentation/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.16">
     
     
       
@@ -2009,8 +2009,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.models.data_types.DictModel" class="md-nav__link">
-    DictModel
+  <a href="#kiara.models.data_types.KiaraDict" class="md-nav__link">
+    KiaraDict
   </a>
   
 </li>
@@ -4783,8 +4783,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#kiara.models.data_types.DictModel" class="md-nav__link">
-    DictModel
+  <a href="#kiara.models.data_types.KiaraDict" class="md-nav__link">
+    KiaraDict
   </a>
   
 </li>
@@ -4848,11 +4848,11 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 
 
 
-<h3 id="kiara.models.data_types.DictModel" class="doc doc-heading">
-        <code>DictModel</code>
+<h3 id="kiara.models.data_types.KiaraDict" class="doc doc-heading">
+        <code>KiaraDict</code>
 
 
-<a href="#kiara.models.data_types.DictModel" class="headerlink" title="Permanent link">&para;</a></h3>
+<a href="#kiara.models.data_types.KiaraDict" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
@@ -4925,7 +4925,7 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 <span class="normal">80</span>
 <span class="normal">81</span>
 <span class="normal">82</span>
-<span class="normal">83</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">DictModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+<span class="normal">83</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraDict</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A dict implentation that contains (optional) schema information of the dicts items.&quot;&quot;&quot;</span>
 
@@ -4997,13 +4997,13 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 
 
 
-<h4 id="kiara.models.data_types.DictModel-attributes">Attributes<a href="#kiara.models.data_types.DictModel-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+<h4 id="kiara.models.data_types.KiaraDict-attributes">Attributes<a href="#kiara.models.data_types.KiaraDict-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-attribute">
 
 
 
-<h5 id="kiara.models.data_types.DictModel.dict_data" class="doc doc-heading">
+<h5 id="kiara.models.data_types.KiaraDict.dict_data" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">dict_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The data.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
@@ -5011,7 +5011,7 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#kiara.models.data_types.DictModel.dict_data" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.data_types.KiaraDict.dict_data" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5023,7 +5023,7 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 
 
 
-<h5 id="kiara.models.data_types.DictModel.data_schema" class="doc doc-heading">
+<h5 id="kiara.models.data_types.KiaraDict.data_schema" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">data_schema</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The schema.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
@@ -5031,7 +5031,7 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#kiara.models.data_types.DictModel.data_schema" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.data_types.KiaraDict.data_schema" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5043,7 +5043,7 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 
 
 
-<h5 id="kiara.models.data_types.DictModel.python_class" class="doc doc-heading">
+<h5 id="kiara.models.data_types.KiaraDict.python_class" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">python_class</span><span class="p">:</span> <span class="n">PythonClass</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The python class of which model instances are created. This is mostly meant as a hint for client applications.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
@@ -5051,7 +5051,7 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#kiara.models.data_types.DictModel.python_class" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.data_types.KiaraDict.python_class" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5063,14 +5063,14 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 
 
 
-<h5 id="kiara.models.data_types.DictModel.size" class="doc doc-heading">
+<h5 id="kiara.models.data_types.KiaraDict.size" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">size</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
-<a href="#kiara.models.data_types.DictModel.size" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.data_types.KiaraDict.size" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5082,14 +5082,14 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 
 
 
-<h5 id="kiara.models.data_types.DictModel.data_hash" class="doc doc-heading">
+<h5 id="kiara.models.data_types.KiaraDict.data_hash" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">data_hash</span><span class="p">:</span> <span class="nb">int</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
-<a href="#kiara.models.data_types.DictModel.data_hash" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.data_types.KiaraDict.data_hash" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5101,14 +5101,14 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 
 
 
-<h5 id="kiara.models.data_types.DictModel.schema_hash" class="doc doc-heading">
+<h5 id="kiara.models.data_types.KiaraDict.schema_hash" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">schema_hash</span><span class="p">:</span> <span class="nb">int</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
-<a href="#kiara.models.data_types.DictModel.schema_hash" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.data_types.KiaraDict.schema_hash" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5120,31 +5120,31 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 
 
 
-<h5 id="kiara.models.data_types.DictModel.value_hash" class="doc doc-heading">
+<h5 id="kiara.models.data_types.KiaraDict.value_hash" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">value_hash</span><span class="p">:</span> <span class="nb">int</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
-<a href="#kiara.models.data_types.DictModel.value_hash" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.data_types.KiaraDict.value_hash" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
   </div>
 
 </div>
-<h4 id="kiara.models.data_types.DictModel-classes">Classes<a href="#kiara.models.data_types.DictModel-classes" class="headerlink" title="Permanent link">&para;</a></h4>
+<h4 id="kiara.models.data_types.KiaraDict-classes">Classes<a href="#kiara.models.data_types.KiaraDict-classes" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-class">
 
 
 
-<h5 id="kiara.models.data_types.DictModel.Config" class="doc doc-heading">
+<h5 id="kiara.models.data_types.KiaraDict.Config" class="doc doc-heading">
         <code>Config</code>
 
 
-<a href="#kiara.models.data_types.DictModel.Config" class="headerlink" title="Permanent link">&para;</a></h5>
+<a href="#kiara.models.data_types.KiaraDict.Config" class="headerlink" title="Permanent link">&para;</a></h5>
 
 
   <div class="doc doc-contents ">
@@ -5169,13 +5169,13 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 
 
 
-<h6 id="kiara.models.data_types.DictModel.Config-attributes">Attributes<a href="#kiara.models.data_types.DictModel.Config-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
+<h6 id="kiara.models.data_types.KiaraDict.Config-attributes">Attributes<a href="#kiara.models.data_types.KiaraDict.Config-attributes" class="headerlink" title="Permanent link">&para;</a></h6>
 
 <div class="doc doc-object doc-attribute">
 
 
 
-<h7 id="kiara.models.data_types.DictModel.Config.json_loads" class="doc doc-heading">
+<h7 id="kiara.models.data_types.KiaraDict.Config.json_loads" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">json_loads</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span></code>
   
   <span class="doc doc-labels">
@@ -5183,7 +5183,7 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#kiara.models.data_types.DictModel.Config.json_loads" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.models.data_types.KiaraDict.Config.json_loads" class="headerlink" title="Permanent link">&para;</a></h7>
 
 
   <div class="doc doc-contents ">
@@ -5195,7 +5195,7 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 
 
 
-<h7 id="kiara.models.data_types.DictModel.Config.json_dumps" class="doc doc-heading">
+<h7 id="kiara.models.data_types.KiaraDict.Config.json_dumps" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">json_dumps</span> <span class="o">=</span> <span class="n">orjson_dumps</span></code>
   
   <span class="doc doc-labels">
@@ -5203,7 +5203,7 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
-<a href="#kiara.models.data_types.DictModel.Config.json_dumps" class="headerlink" title="Permanent link">&para;</a></h7>
+<a href="#kiara.models.data_types.KiaraDict.Config.json_dumps" class="headerlink" title="Permanent link">&para;</a></h7>
 
 
   <div class="doc doc-contents ">
@@ -5282,7 +5282,7 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
     <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.b4d07000.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.a51614de.min.js"></script>
       
     
   </body>

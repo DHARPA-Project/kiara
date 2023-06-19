@@ -10,7 +10,7 @@ from typing import Any, Iterable, Mapping, Tuple, Union
 from pydantic import Field
 
 from kiara.exceptions import KiaraProcessingException
-from kiara.models.data_types import DictModel
+from kiara.models.data_types import KiaraDict
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.rendering import RenderValueResult
 from kiara.models.values.value import Value, ValueMap
@@ -116,7 +116,7 @@ class RenderValueModule(KiaraModule):
 
         value: Value = inputs.get_value_obj("value")
 
-        render_scene: DictModel = inputs.get_value_data("render_config")
+        render_scene: KiaraDict = inputs.get_value_data("render_config")
         if render_scene:
             rc = render_scene.dict_data
         else:
@@ -197,7 +197,7 @@ class ValueTypeRenderModule(KiaraModule):
         # source_type = self.get_config_value("source_type")
         target_type = self.get_config_value("target_type")
 
-        render_scene: DictModel = inputs.get_value_data("render_config")
+        render_scene: KiaraDict = inputs.get_value_data("render_config")
 
         try:
             data_type_cls = source_value.data_type_info.data_type_class.get_class()

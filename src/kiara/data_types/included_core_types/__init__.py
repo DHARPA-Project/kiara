@@ -29,7 +29,7 @@ from kiara.data_types import TYPE_CONFIG_CLS, TYPE_PYTHON_CLS, DataType, DataTyp
 from kiara.defaults import INVALID_HASH_MARKER, SpecialValue
 from kiara.exceptions import DataTypeUnknownException, KiaraProcessingException
 from kiara.models import KiaraModel
-from kiara.models.data_types import DictModel
+from kiara.models.data_types import KiaraDict
 from kiara.models.python_class import PythonClass
 from kiara.models.rendering import RenderScene, RenderValueResult
 from kiara.models.values import DataTypeCharacteristics
@@ -325,7 +325,7 @@ class BooleanType(AnyType[bool, DataTypeConfig]):
         pass
 
 
-class DictValueType(AnyType[DictModel, DataTypeConfig]):
+class DictValueType(AnyType[KiaraDict, DataTypeConfig]):
 
     """
     A dictionary.
@@ -339,7 +339,7 @@ class DictValueType(AnyType[DictModel, DataTypeConfig]):
 
     @classmethod
     def python_class(cls) -> Type:
-        return DictModel
+        return KiaraDict
 
     # def calculate_size(self, data: DictModel) -> int:
     #     return data.size
@@ -350,7 +350,7 @@ class DictValueType(AnyType[DictModel, DataTypeConfig]):
     def _retrieve_characteristics(self) -> DataTypeCharacteristics:
         return DataTypeCharacteristics(is_scalar=False, is_json_serializable=True)
 
-    def parse_python_obj(self, data: Any) -> DictModel:
+    def parse_python_obj(self, data: Any) -> KiaraDict:
 
         python_cls = data.__class__
         dict_data = None
@@ -364,7 +364,7 @@ class DictValueType(AnyType[DictModel, DataTypeConfig]):
                 and "data_schema" in data.keys()
                 and "python_class" in data.keys()
             ):
-                dict_model = DictModel(
+                dict_model = KiaraDict(
                     dict_data=data["dict_data"],
                     data_schema=data["data_schema"],
                     python_class=data["python_class"],
@@ -391,11 +391,11 @@ class DictValueType(AnyType[DictModel, DataTypeConfig]):
             "data_schema": schema,
             "python_class": PythonClass.from_class(python_cls).dict(),
         }
-        return DictModel(**result)
+        return KiaraDict(**result)
 
-    def _validate(self, data: DictModel) -> None:
+    def _validate(self, data: KiaraDict) -> None:
 
-        if not isinstance(data, DictModel):
+        if not isinstance(data, KiaraDict):
             raise Exception(f"Invalid type: {type(data)}.")
 
     # def render_as__string(self, value: Value, render_config: Mapping[str, Any]) -> str:
@@ -413,7 +413,7 @@ class DictValueType(AnyType[DictModel, DataTypeConfig]):
         table.add_column("key", style="i")
         table.add_column("value")
 
-        data: DictModel = value.data
+        data: KiaraDict = value.data
         data_json = orjson_dumps(data.dict_data, option=orjson.OPT_INDENT_2)
         table.add_row(
             "dict data", Syntax(data_json, "json", background_color="default")
@@ -427,7 +427,7 @@ class DictValueType(AnyType[DictModel, DataTypeConfig]):
 
         return table
 
-    def serialize(self, data: DictModel) -> "SerializedData":
+    def serialize(self, data: KiaraDict) -> "SerializedData":
 
         result = self.serialize_as_json(data.dict())
         return result

@@ -20,7 +20,7 @@ from kiara.utils.hashing import compute_cid
 from kiara.utils.json import orjson_dumps
 
 
-class DictModel(BaseModel, Mapping):
+class KiaraDict(BaseModel, Mapping):
 
     """A dict implentation that contains (optional) schema information of the dicts items."""
 

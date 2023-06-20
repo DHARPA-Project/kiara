@@ -13,7 +13,7 @@ from pydantic import Field
 from rich.console import Group
 
 from kiara.data_types import DataTypeConfig
-from kiara.data_types.included_core_types import AnyType, KiaraModelValueType
+from kiara.data_types.included_core_types import AnyType, KiaraModelValueBaseType
 from kiara.models.filesystem import FileBundle, FileModel
 from kiara.models.values.value import Value
 
@@ -33,7 +33,7 @@ class FileTypeConfig(DataTypeConfig):
 SUPPORTED_FILE_TYPES = ["csv", "json", "text", "binary"]
 
 
-class FileValueType(KiaraModelValueType[FileModel, FileTypeConfig]):
+class FileValueType(KiaraModelValueBaseType[FileModel, FileTypeConfig]):
 
     """A file."""
 

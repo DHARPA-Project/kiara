@@ -911,7 +911,7 @@ class KiaraAPI(object):
     def register_data(
         self,
         data: Any,
-        data_type: Union[None, str] = None,
+        data_type: Union[None, str, ValueSchema] = None,
         reuse_existing: bool = False,
     ) -> Value:
         """
@@ -1286,7 +1286,8 @@ class KiaraAPI(object):
                 else:
                     _v = self.register_data(
                         data=v,
-                        data_type=values_schema[k].type,
+                        # data_type=values_schema[k].type,
+                        data_type=values_schema[k],
                         reuse_existing=reuse_existing_data,
                     )
                     temp[k] = _v

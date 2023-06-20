@@ -718,6 +718,7 @@ class DataRegistry(object):
         -------
             a tuple containing of the value object, and a boolean indicating whether the value was newly created (True), or already existing (False)
         """
+
         if schema is None:
             raise NotImplementedError()
         elif isinstance(schema, str):

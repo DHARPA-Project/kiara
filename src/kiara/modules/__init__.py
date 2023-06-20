@@ -184,6 +184,7 @@ class InputOutputObject(abc.ABC):
                 )
             try:
                 _input_schemas = create_schema_dict(schema_config=_input_schemas_data)
+
             except Exception as e:
                 raise Exception(f"Can't create input schemas for '{self.alias}': {e}")
 

@@ -2,7 +2,7 @@
 from typing import TYPE_CHECKING, Any, Dict, Mapping, Type
 
 from kiara.data_types import DataTypeConfig
-from kiara.data_types.included_core_types import KiaraModelValueType
+from kiara.data_types.included_core_types import KiaraModelValueBaseType
 from kiara.models import KiaraModel
 
 if TYPE_CHECKING:
@@ -19,7 +19,7 @@ class MetadataTypeConfig(DataTypeConfig):
     pass
 
 
-class MetadataValueType(KiaraModelValueType[Metadata, MetadataTypeConfig]):
+class MetadataValueType(KiaraModelValueBaseType[Metadata, MetadataTypeConfig]):
 
     """A file."""
 

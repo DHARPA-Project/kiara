@@ -202,6 +202,7 @@ def set_and_validate_inputs(
             reuse_existing_data=False,
         )
     except Exception as e:
+        log_exception(e)
         terminal_print()
         rg = Group(
             "",

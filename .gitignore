@@ -66,3 +66,6 @@ ci/conda/kiara/meta.yaml
 test.*
 .ipynb_checkpoints/
 environment.yaml
+.tzap-data/
+.tzapignore
+.tzapinclude

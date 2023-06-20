@@ -19,7 +19,6 @@ from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.python_class import PythonClass
 from kiara.models.values.value import SerializedData, Value
-from kiara.registries.models import ModelRegistry
 
 if TYPE_CHECKING:
     from kiara.models.module.manifest import Manifest
@@ -192,32 +191,33 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
 
     @classmethod
     def python_class(cls) -> Type:
+
         return KiaraModel
 
-    @property
-    def model_cls(self) -> Type[KiaraModel]:
-
-        if self._cls_cache is not None:
-            return self._cls_cache
-
-        model_type_id = self.type_config.kiara_model_id
-        assert model_type_id is not None
-
-        model_registry = ModelRegistry.instance()
-
-        model_cls = model_registry.get_model_cls(
-            model_type_id, required_subclass=KiaraModel
-        )
-
-        self._cls_cache = model_cls
-        return self._cls_cache
+    # @property
+    # def model_cls(self) -> Type[KiaraModel]:
+    #
+    #     if self._cls_cache is not None:
+    #         return self._cls_cache
+    #
+    #     model_type_id = self.type_config.kiara_model_id
+    #     assert model_type_id is not None
+    #
+    #     model_registry = ModelRegistry.instance()
+    #
+    #     model_cls = model_registry.get_model_cls(
+    #         model_type_id, required_subclass=KiaraModel
+    #     )
+    #
+    #     self._cls_cache = model_cls
+    #     return self._cls_cache
 
     def parse_python_obj(self, data: Any) -> KiaraModel:
 
         if isinstance(data, KiaraModel):
             return data
-        elif isinstance(data, Mapping):
-            return self.model_cls(**data)
+        # elif isinstance(data, Mapping):
+        #     return self.model_cls(**data)
         else:
             raise ValueError(
                 f"Can't parse data, invalid type '{type(data)}': must be subclass of 'KiaraModel' or Mapping."

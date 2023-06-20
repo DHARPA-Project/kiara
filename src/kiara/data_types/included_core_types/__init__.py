@@ -81,7 +81,8 @@ class NoneType(DataType[SpecialValue, DataTypeConfig]):
 
 
 class AnyType(
-    DataType[TYPE_PYTHON_CLS, DataTypeConfig], Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]
+    DataType[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS],
+    Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS],
 ):
 
     """
@@ -496,7 +497,7 @@ class DictValueType(AnyType[KiaraDict, DataTypeConfig]):
 KIARA_MODEL_CLS = TypeVar("KIARA_MODEL_CLS", bound=KiaraModel)
 
 
-class KiaraModelValueType(
+class KiaraModelValueBaseType(
     AnyType[KIARA_MODEL_CLS, TYPE_CONFIG_CLS], Generic[KIARA_MODEL_CLS, TYPE_CONFIG_CLS]
 ):
 
@@ -509,8 +510,8 @@ class KiaraModelValueType(
     _data_type_name = None  # type: ignore
 
     @classmethod
-    def data_type_config_class(cls) -> Type[DataTypeConfig]:
-        return DataTypeConfig
+    def data_type_config_class(cls) -> Type[TYPE_CONFIG_CLS]:
+        return DataTypeConfig  # type: ignore
 
     @abc.abstractmethod
     def create_model_from_python_obj(self, data: Any) -> KIARA_MODEL_CLS:

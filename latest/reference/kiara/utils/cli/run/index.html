@@ -5326,7 +5326,7 @@
         <span class="n">name</span><span class="p">,</span>
         <span class="n">value_schema</span><span class="p">,</span>
     <span class="p">)</span> <span class="ow">in</span> <span class="n">operation</span><span class="o">.</span><span class="n">operation_details</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">value_schema</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;list&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">value_schema</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;list&quot;</span><span class="p">,</span> <span class="s2">&quot;kiara_model_list&quot;</span><span class="p">]:</span>
             <span class="n">list_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>

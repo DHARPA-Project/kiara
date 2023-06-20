@@ -1336,6 +1336,7 @@ class OperationInfo(ItemInfo):
 
         input_fields = {}
         for field_name, schema in operation.inputs_schema.items():
+
             dt = kiara.type_registry.get_data_type_instance(
                 type_name=schema.type, type_config=schema.type_config
             )

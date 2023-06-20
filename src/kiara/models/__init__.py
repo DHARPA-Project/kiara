@@ -366,3 +366,9 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     #     if exclude:
     #         data = {k: v for (k, v) in data.items() if k not in exclude}
     #     return data
+
+
+# class DummyKiaraModel(KiaraModel):
+#     """A dummy model, used for testing purposes only."""
+#
+#     _kiara_model_type_id = "instance.dummy"

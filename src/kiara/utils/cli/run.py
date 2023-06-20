@@ -185,7 +185,7 @@ def set_and_validate_inputs(
         name,
         value_schema,
     ) in operation.operation_details.inputs_schema.items():
-        if value_schema.type in ["list"]:
+        if value_schema.type in ["list", "kiara_model_list"]:
             list_keys.append(name)
 
     try:

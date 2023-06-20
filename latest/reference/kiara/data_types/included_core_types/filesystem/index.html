@@ -4995,8 +4995,8 @@
 <code class="highlight language-python"><span class="n">content_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The content type of this file.&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.data_types.included_core_types.filesystem.FileTypeConfig.content_type" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5030,7 +5030,7 @@
 
   <div class="doc doc-contents ">
       <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.KiaraModelValueType" href="../__init__/#kiara.data_types.included_core_types.KiaraModelValueType">KiaraModelValueType</a>[<a class="autorefs autorefs-internal" title="kiara.models.filesystem.FileModel" href="../../../models/filesystem/#kiara.models.filesystem.FileModel">FileModel</a>, <a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.filesystem.FileTypeConfig" href="#kiara.data_types.included_core_types.filesystem.FileTypeConfig">FileTypeConfig</a>]</code></p>
+        Bases: <code><a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.KiaraModelValueBaseType" href="../__init__/#kiara.data_types.included_core_types.KiaraModelValueBaseType">KiaraModelValueBaseType</a>[<a class="autorefs autorefs-internal" title="kiara.models.filesystem.FileModel" href="../../../models/filesystem/#kiara.models.filesystem.FileModel">FileModel</a>, <a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.filesystem.FileTypeConfig" href="#kiara.data_types.included_core_types.filesystem.FileTypeConfig">FileTypeConfig</a>]</code></p>
 
   
       <p>A file.</p>
@@ -5166,7 +5166,7 @@
 <span class="normal">161</span>
 <span class="normal">162</span>
 <span class="normal">163</span>
-<span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FileValueType</span><span class="p">(</span><span class="n">KiaraModelValueType</span><span class="p">[</span><span class="n">FileModel</span><span class="p">,</span> <span class="n">FileTypeConfig</span><span class="p">]):</span>
+<span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FileValueType</span><span class="p">(</span><span class="n">KiaraModelValueBaseType</span><span class="p">[</span><span class="n">FileModel</span><span class="p">,</span> <span class="n">FileTypeConfig</span><span class="p">]):</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A file.&quot;&quot;&quot;</span>
 

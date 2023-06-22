@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+import os.path
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, root_validator, validator
 
 from kiara.exceptions import KiaraException
+from kiara.models.documentation import DocumentationMetadataModel
 from kiara.utils.cli import terminal_print
 from kiara.utils.files import get_data_from_file
 from kiara.utils.string_vars import replace_var_names_in_obj
@@ -20,6 +22,11 @@ class JobDesc(BaseModel):
 
     @classmethod
     def create_from_file(cls, path: Union[str, Path]):
+        run_data = cls.parse_from_file(path)
+        return cls(**run_data)
+
+    @classmethod
+    def parse_from_file(cls, path: Union[str, Path]):
 
         if isinstance(path, str):
             path = Path(path)
@@ -31,20 +38,52 @@ class JobDesc(BaseModel):
 
         data = get_data_from_file(path)
 
+        repl_dict: Dict[str, Any] = {"this_dir": path.parent.absolute().as_posix()}
+
+        try:
+            run_data = cls.parse_data(
+                data=data, var_repl_dict=repl_dict, alias=path.stem
+            )
+            return run_data
+        except Exception as e:
+            raise KiaraException(f"Invalid run description in file '{path}': {e}")
+
+    @classmethod
+    def parse_data(
+        cls,
+        data: Mapping[str, Any],
+        var_repl_dict: Mapping[str, Any] = None,
+        alias: Union[str, None] = None,
+    ):
+
         if not isinstance(data, Mapping):
-            raise KiaraException(f"Invalid job description in file: '{path}'")
+            raise KiaraException("Job description data is not a mapping.")
 
         if "operation" not in data.keys():
-            raise KiaraException(
-                f"Invalid job description in file: '{path}', missing 'operation' key"
-            )
+            raise KiaraException("Missing 'operation' key")
 
-        repl_dict: Dict[str, Any] = {"this_dir": path.parent.as_posix()}
-        job_data = replace_var_names_in_obj(data, repl_dict=repl_dict)
-        job_data["job_alias"] = path.stem
-        return cls(**job_data)
+        if var_repl_dict:
+            run_data = replace_var_names_in_obj(data, repl_dict=var_repl_dict)
+        else:
+            run_data = data
 
-    job_alias: str = Field(description="The alias for the job.")
+        if alias:
+            run_data["job_alias"] = alias
+
+        return run_data
+
+    @classmethod
+    def create_from_data(
+        cls,
+        data: Mapping[str, Any],
+        var_repl_dict: Mapping[str, Any] = None,
+        alias: Union[str, None] = None,
+    ) -> "JobDesc":
+
+        run_data = cls.parse_data(data=data, var_repl_dict=var_repl_dict, alias=alias)
+        return cls(**run_data)
+
+    job_alias: str = Field(description="The alias for the job.", default="default")
     operation: str = Field(description="The operation id or module type.")
     module_config: Union[Mapping[str, Any], None] = Field(
         default=None, description="The configuration for the module."
@@ -52,6 +91,34 @@ class JobDesc(BaseModel):
     inputs: Dict[str, Any] = Field(
         description="The inputs for the job.", default_factory=dict
     )
+    doc: DocumentationMetadataModel = Field(
+        description="A description/doc for this job.",
+        default_factory=DocumentationMetadataModel.create,
+    )
+    save: Dict[str, str] = Field(
+        description="Configuration on how/whether to save the job results.",
+        default_factory=dict,
+    )
+
+    @root_validator(pre=True)
+    def validate_inputs(cls, values):
+
+        if len(values) == 1 and "data" in values.keys():
+            data = values["data"]
+            if isinstance(data, str):
+                if os.path.isfile(data):
+                    data = Path(data)
+
+            if isinstance(data, Path):
+                run_data = cls.parse_from_file(data)
+                return run_data
+            else:
+                values = data
+        return values
+
+    @validator("doc", pre=True)
+    def validate_doc(cls, value):
+        return DocumentationMetadataModel.create(value)
 
     def get_operation(self, kiara_api: "KiaraAPI") -> "Operation":
 
@@ -65,6 +132,93 @@ class JobDesc(BaseModel):
             operation = kiara_api.get_operation(operation=data, allow_external=False)
 
         return operation
+
+
+class RunSpec(BaseModel):
+    """A list of jobs, ran one after the other, incl saving of results."""
+
+    @classmethod
+    def create_from_file(cls, path: Union[str, Path]):
+
+        if isinstance(path, str):
+            path = Path(path)
+
+        if not path.is_file():
+            raise KiaraException(f"Can't load run spec, invalid file path: '{path}'")
+
+        data = get_data_from_file(path)
+
+        repl_dict: Dict[str, Any] = {"this_dir": path.parent.absolute().as_posix()}
+
+        try:
+            run = cls.create_from_data(
+                data=data, var_repl_dict=repl_dict, alias=path.stem
+            )
+            return run
+        except Exception as e:
+            raise KiaraException(f"Invalid run description in file '{path}': {e}")
+
+    @classmethod
+    def create_from_data(
+        cls,
+        data: Mapping[str, Any],
+        var_repl_dict: Mapping[str, Any] = None,
+        alias: Union[str, None] = None,
+    ):
+
+        if not isinstance(data, Mapping):
+            raise KiaraException("Run spec data is not a mapping.")
+
+        if "jobs" not in data.keys():
+            raise KiaraException("Missing 'jobs' key")
+
+        if var_repl_dict:
+            run_data = replace_var_names_in_obj(data, repl_dict=var_repl_dict)
+        else:
+            run_data = data
+
+        if alias:
+            run_data["run_alias"] = alias
+
+        instance = cls(**run_data)
+        return instance
+
+    run_alias: str = Field(description="The alias for the run.")
+    jobs: List[JobDesc] = Field(description="The jobs to run.", default_factory=list)
+    doc: DocumentationMetadataModel = Field(
+        description="A description/doc for this run.",
+        default_factory=DocumentationMetadataModel.create,
+    )
+
+    @root_validator(pre=True)
+    def validate_inputs(cls, values):
+        if "jobs" not in values.keys():
+            raise ValueError("Missing required 'jobs' key.")
+
+        jobs = values["jobs"]
+        if not isinstance(jobs, list):
+            raise ValueError("Invalid 'jobs' value, must be a list.")
+
+        new_jobs = []
+        for job in jobs:
+            if isinstance(job, JobDesc):
+                job_spec = job
+            elif isinstance(job, Mapping):
+                job_spec = JobDesc(**job)
+            elif isinstance(job, (str, Path)):
+                job_spec = JobDesc.create_from_file(job)
+            else:
+                raise ValueError(f"Invalid job spec type: {job}")
+
+            # TODO: validate 'save' fields
+            new_jobs.append(job_spec)
+
+        values["jobs"] = new_jobs
+        return values
+
+    @validator("doc", pre=True)
+    def validate_doc(cls, value):
+        return DocumentationMetadataModel.create(value)
 
 
 class JobTest(object):

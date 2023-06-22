@@ -116,7 +116,7 @@ def validate_operation_in_terminal(
 
 
 def calculate_aliases(
-    operation: Operation, alias_tokens: Iterable[str]
+    operation: Operation, alias_tokens: Iterable[str], extra_aliases: Mapping[str, str]
 ) -> Mapping[str, List[str]]:
 
     if not alias_tokens:
@@ -141,7 +141,7 @@ def calculate_aliases(
 
     # =========================================================================
     # check save user input
-    final_aliases = {}
+    final_aliases: Dict[str, List[str]] = {}
     if alias_tokens:
         op_output_names = operation.outputs_schema.keys()
         invalid_fields = []
@@ -161,6 +161,22 @@ def calculate_aliases(
             terminal_print()
             terminal_print(
                 f"Can't run workflow, invalid field name(s) when specifying aliases: {', '.join(invalid_fields)}. Valid field names: {', '.join(op_output_names)}"
+            )
+            sys.exit(1)
+
+    if extra_aliases:
+        op_output_names = operation.outputs_schema.keys()
+        invalid_fields = []
+        for field_name, _alias in extra_aliases.items():
+            if field_name not in op_output_names:
+                invalid_fields.append(field_name)
+            elif _alias not in final_aliases:
+                final_aliases.setdefault(field_name, []).append(_alias)
+
+        if invalid_fields:
+            terminal_print()
+            terminal_print(
+                f"Can't run workflow, invalid field name(s) in extra save aliases: {', '.join(invalid_fields)}. Valid field names: {', '.join(op_output_names)}"
             )
             sys.exit(1)
 

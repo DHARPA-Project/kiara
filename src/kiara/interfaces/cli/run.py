@@ -11,7 +11,7 @@ import os.path
 import sys
 import typing
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Union
+from typing import Any, Dict, Iterable, List, Mapping, Union
 
 import rich_click as click
 
@@ -19,10 +19,10 @@ from kiara.exceptions import InvalidCommandLineInvocation
 from kiara.utils import log_message
 from kiara.utils.cli import dict_from_cli_args, terminal_print
 from kiara.utils.cli.exceptions import handle_exception
+from kiara.utils.files import get_data_from_file
 
 if typing.TYPE_CHECKING:
     from kiara.api import KiaraAPI
-    from kiara.models.module.operation import Operation
 
 
 @click.command()
@@ -65,6 +65,7 @@ def run(
     help: bool,
 ):
     """Run a kiara operation."""
+    from kiara.api import JobDesc, RunSpec
     from kiara.utils.cli.run import (
         _validate_save_option,
         calculate_aliases,
@@ -82,7 +83,7 @@ def run(
     else:
         module_config = {}
 
-    save_results = _validate_save_option(save)
+    _validate_save_option(save)
 
     output_details = OutputDetails.from_data(output)
     silent = False
@@ -113,59 +114,123 @@ def run(
     cmd_arg = ctx.params["module_or_operation"]
     cmd_help = f"[yellow bold]Usage: [/yellow bold][bold]kiara run [OPTIONS] [i]{cmd_arg}[/i] [INPUTS][/bold]"
 
-    if module_config:
-        op: Union[str, Mapping[str, Any]] = {
-            "module_type": module_or_operation,
-            "module_config": module_config,
-        }
-    else:
-        op = module_or_operation
+    # if module_config:
+    #     op: Union[str, Mapping[str, Any]] = {
+    #         "module_type": module_or_operation,
+    #         "module_config": module_config,
+    #     }
+    # else:
+    #     op = module_or_operation
 
-    kiara_op: Union[None, Operation] = None
-    base_inputs: Union[Mapping[str, Any], None] = None
+    # base_inputs: Union[Mapping[str, Any], None] = None
+    # extra_save: Union[None, Dict[str, str]] = None
+    run_type = None
+    job_descs: List[JobDesc] = []
 
     if not module_config and os.path.isfile(module_or_operation):
-        try:
-            from kiara.interfaces.python_api import JobDesc
 
-            job_desc = JobDesc.create_from_file(module_or_operation)
-            kiara_op = job_desc.get_operation(kiara_api=api)
-            base_inputs = job_desc.inputs
-        except Exception as e:
-            log_message("run_arg.no.job_desc", path=module_or_operation, error=e)
+        path: Path = Path(module_or_operation)
+        data = get_data_from_file(path)
+        repl_dict: Dict[str, Any] = {"this_dir": path.parent.absolute().as_posix()}
+        alias = path.stem
 
-    if kiara_op is None:
+        if isinstance(data, list):
+            raise NotImplementedError()
+        elif isinstance(data, Mapping):
+            if "operation" in data.keys():
+                run_type = "job"
+                job_desc = JobDesc.create_from_data(
+                    data, var_repl_dict=repl_dict, alias=alias
+                )
+                job_descs.append(job_desc)
+
+            elif "jobs" in data.keys():
+                run_type = "run"
+
+                if inputs:
+                    terminal_print()
+                    terminal_print(
+                        "Can't specify inputs when running file with a run spec."
+                    )
+                    sys.exit(1)
+
+                run_desc = RunSpec.create_from_data(
+                    data, var_repl_dict=repl_dict, alias=alias
+                )
+                job_descs.extend(run_desc.jobs)
+            elif "steps" not in data.keys():
+
+                terminal_print()
+                terminal_print(
+                    f"Can't run file '{path}', it does not contain a valid pipeline, job or run specification."
+                )
+                sys.exit(1)
+            else:
+                # TODO: check if valid pipeline, otherwise check if 'module_or_operation is an operation name
+                job_desc = JobDesc(
+                    operation="pipeline", module_config=data, job_alias="local_pipeline"
+                )
+                job_descs.append(job_desc)
+
+    else:
+        if module_config:
+            job_desc = JobDesc(
+                operation=module_or_operation,
+                module_config=module_config,
+                job_alias="default",
+            )
+        else:
+            job_desc = JobDesc(operation=module_or_operation, job_alias="default")
+
+        job_descs.append(job_desc)
+
+    assert len(job_descs) > 0
+
+    for job_desc in job_descs:
+
+        if job_desc.module_config:
+            op: Union[str, Mapping[str, Any]] = {
+                "module_type": job_desc.operation,
+                "module_config": job_desc.module_config,
+            }
+        else:
+            op = job_desc.operation
+
         try:
             kiara_op = validate_operation_in_terminal(api=api, module_or_operation=op)
         except InvalidCommandLineInvocation as e:
             ctx.obj.exit(msg=None, exit_code=e.error_code)
             return
 
-    final_aliases = calculate_aliases(operation=kiara_op, alias_tokens=save)
+        log_message(f"run_arg.is.{run_type}")
 
-    try:
-        inputs_value_map = set_and_validate_inputs(
+        final_aliases = calculate_aliases(
+            operation=kiara_op, alias_tokens=save, extra_aliases=job_desc.save
+        )
+
+        try:
+            inputs_value_map = set_and_validate_inputs(
+                api=api,
+                operation=kiara_op,
+                inputs=inputs,
+                explain=explain,
+                print_help=help,
+                click_context=ctx,
+                cmd_help=cmd_help,
+                base_inputs=job_desc.inputs,
+            )
+            if inputs_value_map is None:
+                ctx.obj.exit(msg=None, exit_code=0)
+                return
+        except InvalidCommandLineInvocation as e:
+            ctx.obj.exit(msg=None, exit_code=e.error_code)
+            return
+
+        execute_job(
             api=api,
             operation=kiara_op,
-            inputs=inputs,
-            explain=explain,
-            print_help=help,
-            click_context=ctx,
-            cmd_help=cmd_help,
-            base_inputs=base_inputs,
+            inputs=inputs_value_map,
+            silent=silent,
+            save_results=bool(final_aliases),
+            aliases=final_aliases,
         )
-        if inputs_value_map is None:
-            ctx.obj.exit(msg=None, exit_code=0)
-            return
-    except InvalidCommandLineInvocation as e:
-        ctx.obj.exit(msg=None, exit_code=e.error_code)
-        return
-
-    execute_job(
-        api=api,
-        operation=kiara_op,
-        inputs=inputs_value_map,
-        silent=silent,
-        save_results=save_results,
-        aliases=final_aliases,
-    )

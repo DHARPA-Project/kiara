@@ -20,7 +20,7 @@ from kiara.defaults import (
 from kiara.interfaces import KiaraAPIWrap, get_console
 from kiara.utils import is_debug, log_message
 from kiara.utils.class_loading import find_all_cli_subcommands
-from kiara.utils.cli import terminal_print
+from kiara.utils.cli import kiara_version_option, terminal_print
 
 click.rich_click.USE_RICH_MARKUP = True
 click.rich_click._get_rich_console = get_console
@@ -73,6 +73,7 @@ CLICK_CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
     help="Always use the background service (start if not already running).",
     default=False,
 )
+@kiara_version_option()
 @click.pass_context
 def cli(
     ctx,

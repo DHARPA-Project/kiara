@@ -5,7 +5,8 @@ from enum import Enum
 from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Mapping, TypeVar, Union
 
 import rich_click as click
-from click import Command, Option, Parameter
+from click import Command, Context, Option, Parameter, option
+from rich import box
 from rich.console import ConsoleRenderable, Group, RichCast
 from rich.panel import Panel
 from rich.rule import Rule
@@ -321,3 +322,60 @@ def dict_from_cli_args(
                 config[k] = v
 
     return config
+
+
+def kiara_version_option(
+    **kwargs: Any,
+) -> Callable[[FC], FC]:
+    """Add a ``--version`` option which immediately prints the version
+    number of kiara and all installed plugins.
+    """
+
+    def callback(ctx: Context, param: Parameter, value: bool) -> None:
+
+        from rich.table import Table
+
+        if not value or ctx.resilient_parsing:
+            return
+
+        from kiara.models.runtime_environment.python import (
+            PythonRuntimeEnvironment,
+        )
+        from kiara.registries.environment import EnvironmentRegistry
+
+        registry = EnvironmentRegistry.instance()
+        python_env: PythonRuntimeEnvironment = registry.environments["python"]  # type: ignore
+
+        kiara_version = None
+        plugins = {}
+        for pkg in python_env.packages:
+            if pkg.name == "kiara":
+                kiara_version = pkg.version
+            elif pkg.name.startswith("kiara"):
+                plugins[pkg.name] = pkg.version
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("package")
+        table.add_column("version", style="i")
+
+        table.add_row("kiara", kiara_version)
+        table.add_row("", "")
+        for name in sorted(plugins.keys()):
+            table.add_row(name, plugins[name])
+
+        table.add_row("", "")
+        table.add_row("python", python_env.python_version)
+        terminal_print(table)
+
+        ctx.exit()
+
+    param_decls = ("--version", "-v")
+
+    kwargs.setdefault("is_flag", True)
+    kwargs.setdefault("expose_value", False)
+    kwargs.setdefault("is_eager", True)
+    kwargs.setdefault(
+        "help", ("Show the version of kiara and installed plugins, then exit.")
+    )
+    kwargs["callback"] = callback
+    return option(*param_decls, **kwargs)

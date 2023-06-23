@@ -89,6 +89,7 @@ class PythonRuntimeEnvironment(RuntimeEnvironment):
 
         packages: Dict[str, str] = {}
         all_packages = find_all_distributions()
+
         for name, pkgs in all_packages.items():
             for pkg in pkgs:
                 dist = distribution(pkg)
@@ -153,6 +154,7 @@ class KiaraPluginsRuntimeEnvironment(RuntimeEnvironment):
 
         packages = []
         all_packages = find_all_distributions()
+        all_pkg_names = set()
         for name, pkgs in all_packages.items():
 
             for pkg in pkgs:
@@ -160,11 +162,15 @@ class KiaraPluginsRuntimeEnvironment(RuntimeEnvironment):
                     "kiara-plugin."
                 ):
                     continue
-                dist = distribution(pkg)
-                packages.append({"name": pkg, "version": dist.version})
+                else:
+                    all_pkg_names.add(pkg)
+
+        for pkg in sorted(all_pkg_names):
+            dist = distribution(pkg)
+            packages.append({"name": pkg, "version": dist.version})
 
         result: Dict[str, Any] = {
-            "kiara_plugins": sorted(packages, key=lambda x: x["name"]),
+            "kiara_plugins": packages,
         }
 
         # if config.include_all_info:

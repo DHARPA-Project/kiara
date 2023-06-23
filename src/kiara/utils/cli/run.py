@@ -116,7 +116,9 @@ def validate_operation_in_terminal(
 
 
 def calculate_aliases(
-    operation: Operation, alias_tokens: Iterable[str], extra_aliases: Mapping[str, str]
+    operation: Operation,
+    alias_tokens: Iterable[str],
+    extra_aliases: Union[Mapping[str, str], None] = None,
 ) -> Mapping[str, List[str]]:
 
     if not alias_tokens:

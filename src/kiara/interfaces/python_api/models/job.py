@@ -52,7 +52,7 @@ class JobDesc(BaseModel):
     def parse_data(
         cls,
         data: Mapping[str, Any],
-        var_repl_dict: Mapping[str, Any] = None,
+        var_repl_dict: Union[Mapping[str, Any]] = None,
         alias: Union[str, None] = None,
     ):
 
@@ -76,7 +76,7 @@ class JobDesc(BaseModel):
     def create_from_data(
         cls,
         data: Mapping[str, Any],
-        var_repl_dict: Mapping[str, Any] = None,
+        var_repl_dict: Union[Mapping[str, Any]] = None,
         alias: Union[str, None] = None,
     ) -> "JobDesc":
 
@@ -162,7 +162,7 @@ class RunSpec(BaseModel):
     def create_from_data(
         cls,
         data: Mapping[str, Any],
-        var_repl_dict: Mapping[str, Any] = None,
+        var_repl_dict: Union[Mapping[str, Any]] = None,
         alias: Union[str, None] = None,
     ):
 

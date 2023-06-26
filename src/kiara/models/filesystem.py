@@ -20,6 +20,7 @@ from rich.console import RenderableType
 from rich.table import Table
 
 from kiara.defaults import DEFAULT_EXCLUDE_FILES, KIARA_HASH_FUNCTION
+from kiara.exceptions import KiaraException
 from kiara.models import KiaraModel
 from kiara.utils import log_message
 from kiara.utils.hashing import compute_cid_from_file
@@ -173,6 +174,10 @@ class FileModel(KiaraModel):
 
         return self.file_name.split(".")[0]
 
+    @property
+    def file_extension(self) -> str:
+        return self.file_name.split(".")[-1]
+
     def read_text(self, max_lines: int = -1) -> str:
         """Read the content of a file."""
         with open(self.path, "rt") as f:
@@ -199,6 +204,10 @@ class FileModel(KiaraModel):
 
 
 class FolderImportConfig(BaseModel):
+
+    sub_path: Union[str, None] = Field(
+        description="The sub-path to import from the folder.", default=None
+    )
 
     include_files: Union[List[str], None] = Field(
         description="A list of strings, include all files where the filename ends with that string.",
@@ -233,6 +242,66 @@ class FileBundle(KiaraModel):
         return Path(temp_f)
 
     @classmethod
+    def from_archive(
+        cls,
+        archive_path: str,
+        archive_type_hint: Union[str, None] = None,
+        import_config: Union[FolderImportConfig, None] = None,
+    ) -> "FileBundle":
+        """Extracts the contents of an archive file to a target folder."""
+
+        if not os.path.isfile(archive_path):
+            raise KiaraException(
+                msg=f"Archive file '{archive_path}' does not exist or is not a file."
+            )
+
+        out_dir = tempfile.mkdtemp()
+
+        def del_out_dir():
+            shutil.rmtree(out_dir, ignore_errors=True)
+
+        atexit.register(del_out_dir)
+
+        error = None
+        try:
+            shutil.unpack_archive(archive_path, out_dir)
+        except Exception:
+            # try patool, maybe we're lucky
+            try:
+                import patoolib
+
+                patoolib.extract_archive(archive_path, outdir=out_dir)
+            except Exception as e:
+                error = e
+
+        if error is not None:
+            raise KiaraException(msg=f"Could not extract archive: {error}.")
+
+        path = out_dir
+        if import_config and import_config.sub_path:
+            path = os.path.join(out_dir, import_config.sub_path)
+
+        bundle = FileBundle.import_folder(path, import_config=import_config)
+        return bundle
+
+    @classmethod
+    def from_archive_file(
+        cls,
+        archive_file: FileModel,
+        import_config: Union[FolderImportConfig, None] = None,
+    ) -> "FileBundle":
+        """Extracts the contents of an archive file to a target folder."""
+
+        bundle = FileBundle.from_archive(
+            archive_path=archive_file.path,
+            archive_type_hint=archive_file.file_extension,
+        )
+
+        bundle.metadata = archive_file.metadata
+        bundle.metadata_schema = archive_file.metadata_schema
+        return bundle
+
+    @classmethod
     def import_folder(
         cls,
         source: str,
@@ -253,8 +322,6 @@ class FileBundle(KiaraModel):
         if source.endswith(os.path.sep):
             source = source[0:-1]
 
-        abs_path = os.path.abspath(source)
-
         if import_config is None:
             _import_config = FolderImportConfig()
         elif isinstance(import_config, Mapping):
@@ -265,6 +332,10 @@ class FileBundle(KiaraModel):
             raise TypeError(
                 f"Invalid type for folder import config: {type(import_config)}."
             )
+
+        abs_path = os.path.abspath(source)
+        if _import_config.sub_path:
+            abs_path = os.path.join(abs_path, _import_config.sub_path)
 
         included_files: Dict[str, FileModel] = {}
         exclude_dirs = _import_config.exclude_dirs

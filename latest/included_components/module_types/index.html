@@ -21,7 +21,7 @@
         <link rel="next" href="../kiara_model_types/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.16">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
     
     
       
@@ -5152,10 +5152,19 @@
 
         file: str = files[0]  # type: ignore
 
+        metadata_str = file_metadata.get("metadata", None)
+        if metadata_str:
+            metadata = orjson.loads(metadata_str)
+        else:
+            metadata = {}
+
+        metadata_schema = file_metadata.get("metadata_schema", None)
         fm = FileModel.load_file(
             source=file,
             file_name=file_metadata["file_name"],
         )
+        fm.metadata = metadata
+        fm.metadata_schema = metadata_schema
         return fm
 </td>
     <td>The source code of the process method of the module.</td>
@@ -5339,12 +5348,22 @@
             fm = FileModel.load_file(source=file, file_name=file_name)
             included_files[rel_path] = fm
 
+        bundle_metadata_str = file_metadata.get("metadata", None)
+        if bundle_metadata_str:
+            bundle_metadata = orjson.loads(bundle_metadata_str)
+        else:
+            bundle_metadata = {}
+
+        metadata_schema = file_metadata.get("metadata_schema", None)
+
         fb = FileBundle(
             included_files=included_files,
             bundle_name=bundle_name,
             # import_time=bundle_import_time,
             number_of_files=number_of_files,
             size=sum_size,
+            metadata=bundle_metadata,
+            metadata_schema=metadata_schema,
         )
         return fb
 </td>
@@ -8034,7 +8053,7 @@
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.a51614de.min.js"></script>
+      <script src="../../assets/javascripts/bundle.b425cdc4.min.js"></script>
       
     
   </body>

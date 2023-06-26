@@ -21,7 +21,7 @@
         <link rel="next" href="../pipelines/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.16">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
     
     
       
@@ -4455,6 +4455,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kiara.utils.output.create_table_from_data_and_schema" class="md-nav__link">
+    create_table_from_data_and_schema()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -5026,6 +5033,13 @@
           <li class="md-nav__item">
   <a href="#kiara.utils.output.create_recursive_table_from_model_object" class="md-nav__link">
     create_recursive_table_from_model_object()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiara.utils.output.create_table_from_data_and_schema" class="md-nav__link">
+    create_table_from_data_and_schema()
   </a>
   
 </li>
@@ -8111,6 +8125,51 @@
 
 </div>
 
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="kiara.utils.output.create_table_from_data_and_schema" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">create_table_from_data_and_schema</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span></code>
+
+<a href="#kiara.utils.output.create_table_from_data_and_schema" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/utils/output.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">902</span>
+<span class="normal">903</span>
+<span class="normal">904</span>
+<span class="normal">905</span>
+<span class="normal">906</span>
+<span class="normal">907</span>
+<span class="normal">908</span>
+<span class="normal">909</span>
+<span class="normal">910</span>
+<span class="normal">911</span>
+<span class="normal">912</span>
+<span class="normal">913</span>
+<span class="normal">914</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_table_from_data_and_schema</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">):</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">RichTable</span><span class="p">(</span><span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">,</span> <span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">value_renderable</span> <span class="o">=</span> <span class="n">extract_renderable</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value_renderable</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">table</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
 
 
   </div>
@@ -8162,7 +8221,7 @@
     <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.a51614de.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.b425cdc4.min.js"></script>
       
     
   </body>

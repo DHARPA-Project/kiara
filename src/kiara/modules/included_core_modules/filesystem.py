@@ -92,10 +92,19 @@ class DeserializeFileModule(DeserializeValueModule):
 
         file: str = files[0]  # type: ignore
 
+        metadata_str = file_metadata.get("metadata", None)
+        if metadata_str:
+            metadata = orjson.loads(metadata_str)
+        else:
+            metadata = {}
+
+        metadata_schema = file_metadata.get("metadata_schema", None)
         fm = FileModel.load_file(
             source=file,
             file_name=file_metadata["file_name"],
         )
+        fm.metadata = metadata
+        fm.metadata_schema = metadata_schema
         return fm
 
 
@@ -197,12 +206,22 @@ class DeserializeFileBundleModule(DeserializeValueModule):
             fm = FileModel.load_file(source=file, file_name=file_name)
             included_files[rel_path] = fm
 
+        bundle_metadata_str = file_metadata.get("metadata", None)
+        if bundle_metadata_str:
+            bundle_metadata = orjson.loads(bundle_metadata_str)
+        else:
+            bundle_metadata = {}
+
+        metadata_schema = file_metadata.get("metadata_schema", None)
+
         fb = FileBundle(
             included_files=included_files,
             bundle_name=bundle_name,
             # import_time=bundle_import_time,
             number_of_files=number_of_files,
             size=sum_size,
+            metadata=bundle_metadata,
+            metadata_schema=metadata_schema,
         )
         return fb
 

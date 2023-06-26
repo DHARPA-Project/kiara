@@ -105,6 +105,9 @@ class FileModel(KiaraModel):
         description="Additional, ustructured, user-defined metadata.",
         default_factory=dict,
     )
+    metadata_schema: Union[str, None] = Field(
+        description="The metadata schema (if applicable).", default=None
+    )
 
     _path: Union[str, None] = PrivateAttr(default=None)
     _file_hash: Union[str, None] = PrivateAttr(default=None)
@@ -367,7 +370,9 @@ class FileBundle(KiaraModel):
         description="Additional, ustructured, user-defined metadata.",
         default_factory=dict,
     )
-
+    metadata_schema: Union[str, None] = Field(
+        description="The metadata schema (if applicable).", default=None
+    )
     _path: Union[str, None] = PrivateAttr(default=None)
 
     @property

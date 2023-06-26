@@ -50,9 +50,21 @@ class ModelRegistry(object):
 
         model_info = self.all_models.item_infos.get(kiara_model_id, None)
         if model_info is None:
-            raise Exception(
-                f"Can't retrieve model class for id '{kiara_model_id}': id not registered."
-            )
+            if required_subclass:
+                available = self.get_models_of_type(
+                    required_subclass
+                ).item_infos.values()
+            else:
+                available = self.all_models.item_infos.values()
+
+            msg = f"Can't retrieve model class for id '{kiara_model_id}': id not registered."
+
+            if available:
+                msg = f"{msg}\n\nAvailable models:\n"
+                for model in available:
+                    msg += f"\n - {model.type_name}"
+
+            raise KiaraException(msg=msg)
 
         cls = model_info.python_class.get_class()  # type: ignore
         if required_subclass:

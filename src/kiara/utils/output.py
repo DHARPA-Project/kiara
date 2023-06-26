@@ -897,3 +897,18 @@ def create_recursive_table_from_model_object(
         table.add_row(field_name, Group(*group))
 
     return table
+
+
+def create_table_from_data_and_schema(
+    data: Mapping[str, Any], schema: Union[str, None] = None
+):
+
+    table = RichTable(box=box.SIMPLE, show_header=False)
+    table.add_column("key", style="i")
+    table.add_column("value")
+
+    for key, value in data.items():
+        value_renderable = extract_renderable(value)
+        table.add_row(key, value_renderable)
+
+    return table

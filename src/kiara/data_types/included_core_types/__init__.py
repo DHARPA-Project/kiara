@@ -12,6 +12,7 @@ from typing import (
     Dict,
     Generic,
     Iterable,
+    List,
     Mapping,
     Type,
     TypeVar,
@@ -19,7 +20,7 @@ from typing import (
 )
 
 import orjson
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from rich import box
 from rich.console import RenderableType
 from rich.syntax import Syntax
@@ -226,11 +227,23 @@ class BytesType(AnyType[bytes, DataTypeConfig]):
         return data.decode()
 
 
-class StringType(AnyType[str, DataTypeConfig]):
+class StringTypeConfig(DataTypeConfig):
+
+    allowed_strings: Union[None, List[str]] = Field(
+        description="A list of allowed strings, if empty or None, any string is allowed."
+    )
+
+
+class StringType(AnyType[str, StringTypeConfig]):
 
     """A string."""
 
     _data_type_name = "string"
+
+    @classmethod
+    def data_type_config_class(cls) -> Type[TYPE_CONFIG_CLS]:
+        """The Python class that holds the (optional) configuration for a data type instance."""
+        return StringTypeConfig  # type: ignore
 
     @classmethod
     def python_class(cls) -> Type:
@@ -274,10 +287,18 @@ class StringType(AnyType[str, DataTypeConfig]):
         # TODO: check if this is actually ok to do always
         return str(data)
 
-    def _validate(cls, value: Any) -> None:
+    def _validate(self, value: Any) -> None:
 
         if not isinstance(value, str):
             raise ValueError(f"Invalid type '{type(value)}': string required")
+
+        if (
+            self.type_config.allowed_strings
+            and value not in self.type_config.allowed_strings
+        ):
+            raise ValueError(
+                f"Invalid value '{value}': not in allowed values {self.type_config.allowed_strings}"
+            )
 
     def pretty_print_as__bytes(self, value: "Value", render_config: Mapping[str, Any]):
         value_str: str = value.data

@@ -10,12 +10,16 @@ import humanfriendly
 import orjson.orjson
 import structlog
 from pydantic import Field
+from rich import box
 from rich.console import Group
+from rich.table import Table
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types import AnyType, KiaraModelValueBaseType
 from kiara.models.filesystem import FileBundle, FileModel
 from kiara.models.values.value import Value
+from kiara.utils.json import orjson_dumps
+from kiara.utils.output import create_table_from_data_and_schema
 
 if TYPE_CHECKING:
     from kiara.models.values.value import SerializedData
@@ -56,6 +60,7 @@ class FileValueType(KiaraModelValueBaseType[FileModel, FileTypeConfig]):
 
     def serialize(self, data: FileModel) -> "SerializedData":
 
+        metadata = orjson_dumps(data.metadata)
         _data = {
             data.file_name: {
                 "type": "file",
@@ -68,6 +73,8 @@ class FileValueType(KiaraModelValueBaseType[FileModel, FileTypeConfig]):
                 "inline_data": {
                     "file_name": data.file_name,
                     # "import_time": data.import_time,
+                    "metadata": metadata,
+                    "metadata_schema": data.metadata_schema,
                 },
             },
         }
@@ -151,7 +158,7 @@ class FileValueType(KiaraModelValueBaseType[FileModel, FileTypeConfig]):
                         break
                     lines.append(line.rstrip())
 
-            return Group(*lines)
+            preview = Group(*lines)
         except UnicodeDecodeError:
             # found non-text data
             lines = [
@@ -161,7 +168,20 @@ class FileValueType(KiaraModelValueBaseType[FileModel, FileTypeConfig]):
                 "",
                 data.json(option=orjson.OPT_INDENT_2),
             ]
-            return Group(*lines)
+            preview = Group(*lines)
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("key", style="i")
+        table.add_column("value")
+
+        table.add_row("Preview", preview)
+        if data.metadata:
+            metadata_table = create_table_from_data_and_schema(
+                data=data.metadata, schema=data.metadata_schema
+            )
+            table.add_row("Metadata", metadata_table)
+
+        return table
 
 
 class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
@@ -196,15 +216,19 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
                 # "import_time": file.import_time,
             }
 
+        bundle_metadata = orjson_dumps(data.metadata)
         metadata: Dict[str, Any] = {
             "included_files": file_metadata,
             "bundle_name": data.bundle_name,
             # "import_time": data.import_time,
             "size": data.size,
             "number_of_files": data.number_of_files,
+            "metadata": bundle_metadata,
+            "metadata_schema": data.metadata_schema,
         }
 
         assert "__file_metadata__" not in file_data
+
         file_data["__file_metadata__"] = {
             "type": "inline-json",
             "codec": "json",
@@ -252,7 +276,19 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
 
         bundle: FileBundle = value.data
         renderable = bundle.create_renderable(**render_config)
-        return renderable
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("key", style="i")
+        table.add_column("value")
+
+        table.add_row("File bundle info", renderable)
+        if bundle.metadata:
+            metadata_table = create_table_from_data_and_schema(
+                data=bundle.metadata, schema=bundle.metadata_schema
+            )
+            table.add_row("Metadata", metadata_table)
+
+        return table
 
     def _pretty_print_as__string(
         self, value: "Value", render_config: Mapping[str, Any]

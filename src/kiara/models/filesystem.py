@@ -106,8 +106,9 @@ class FileModel(KiaraModel):
         description="Additional, ustructured, user-defined metadata.",
         default_factory=dict,
     )
-    metadata_schema: Union[str, None] = Field(
-        description="The metadata schema (if applicable).", default=None
+    metadata_schemas: Dict[str, str] = Field(
+        description="The metadata schemas for each of the metadata values (if available).",
+        default_factory=dict,
     )
 
     _path: Union[str, None] = PrivateAttr(default=None)
@@ -247,6 +248,7 @@ class FileBundle(KiaraModel):
         archive_path: str,
         archive_type_hint: Union[str, None] = None,
         import_config: Union[FolderImportConfig, None] = None,
+        bundle_name: Union[str, None] = None,
     ) -> "FileBundle":
         """Extracts the contents of an archive file to a target folder."""
 
@@ -270,18 +272,16 @@ class FileBundle(KiaraModel):
             try:
                 import patoolib
 
-                patoolib.extract_archive(archive_path, outdir=out_dir)
+                patoolib.extract_archive(archive_path, outdir=out_dir, verbosity=-1)
             except Exception as e:
                 error = e
 
         if error is not None:
             raise KiaraException(msg=f"Could not extract archive: {error}.")
 
-        path = out_dir
-        if import_config and import_config.sub_path:
-            path = os.path.join(out_dir, import_config.sub_path)
-
-        bundle = FileBundle.import_folder(path, import_config=import_config)
+        bundle = FileBundle.import_folder(
+            out_dir, import_config=import_config, bundle_name=bundle_name
+        )
         return bundle
 
     @classmethod
@@ -295,10 +295,12 @@ class FileBundle(KiaraModel):
         bundle = FileBundle.from_archive(
             archive_path=archive_file.path,
             archive_type_hint=archive_file.file_extension,
+            bundle_name=archive_file.file_name,
+            import_config=import_config,
         )
 
         bundle.metadata = archive_file.metadata
-        bundle.metadata_schema = archive_file.metadata_schema
+        bundle.metadata_schemas = archive_file.metadata_schemas
         return bundle
 
     @classmethod
@@ -441,8 +443,9 @@ class FileBundle(KiaraModel):
         description="Additional, ustructured, user-defined metadata.",
         default_factory=dict,
     )
-    metadata_schema: Union[str, None] = Field(
-        description="The metadata schema (if applicable).", default=None
+    metadata_schemas: Dict[str, str] = Field(
+        description="The metadata schemas for each metadata value (if available).",
+        default_factory=dict,
     )
     _path: Union[str, None] = PrivateAttr(default=None)
 

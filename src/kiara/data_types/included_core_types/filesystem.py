@@ -11,14 +11,14 @@ import orjson.orjson
 import structlog
 from pydantic import Field
 from rich import box
-from rich.console import Group
+from rich.console import Group, RenderableType
+from rich.panel import Panel
 from rich.table import Table
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types import AnyType, KiaraModelValueBaseType
 from kiara.models.filesystem import FileBundle, FileModel
 from kiara.models.values.value import Value
-from kiara.utils.json import orjson_dumps
 from kiara.utils.output import create_table_from_data_and_schema
 
 if TYPE_CHECKING:
@@ -60,7 +60,8 @@ class FileValueType(KiaraModelValueBaseType[FileModel, FileTypeConfig]):
 
     def serialize(self, data: FileModel) -> "SerializedData":
 
-        metadata = orjson_dumps(data.metadata)
+        # metadata = orjson_dumps(data.metadata)
+        # metadata_schemas = orjson_dumps(data.metadata_schema)
         _data = {
             data.file_name: {
                 "type": "file",
@@ -73,8 +74,8 @@ class FileValueType(KiaraModelValueBaseType[FileModel, FileTypeConfig]):
                 "inline_data": {
                     "file_name": data.file_name,
                     # "import_time": data.import_time,
-                    "metadata": metadata,
-                    "metadata_schema": data.metadata_schema,
+                    "metadata": data.metadata,
+                    "metadata_schemas": data.metadata_schemas,
                 },
             },
         }
@@ -158,17 +159,20 @@ class FileValueType(KiaraModelValueBaseType[FileModel, FileTypeConfig]):
                         break
                     lines.append(line.rstrip())
 
-            preview = Group(*lines)
+            preview: RenderableType = Group(*lines)
         except UnicodeDecodeError:
             # found non-text data
             lines = [
-                "Binary file or non-utf8 enconding, not printing content...",
                 "",
                 "[b]File metadata:[/b]",
                 "",
                 data.json(option=orjson.OPT_INDENT_2),
             ]
-            preview = Group(*lines)
+            preview = Panel(
+                "Binary file or non-utf8 enconding, not printing content...",
+                box=box.HORIZONTALS,
+                padding=(2, 2),
+            )
 
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("key", style="i")
@@ -177,7 +181,7 @@ class FileValueType(KiaraModelValueBaseType[FileModel, FileTypeConfig]):
         table.add_row("Preview", preview)
         if data.metadata:
             metadata_table = create_table_from_data_and_schema(
-                data=data.metadata, schema=data.metadata_schema
+                data=data.metadata, schema=data.metadata_schemas
             )
             table.add_row("Metadata", metadata_table)
 
@@ -216,15 +220,16 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
                 # "import_time": file.import_time,
             }
 
-        bundle_metadata = orjson_dumps(data.metadata)
+        # bundle_metadata = orjson_dumps(data.metadata)
+        # bundle_metadata_schema = orjson_dumps(data.metadata_schema)
         metadata: Dict[str, Any] = {
             "included_files": file_metadata,
             "bundle_name": data.bundle_name,
             # "import_time": data.import_time,
             "size": data.size,
             "number_of_files": data.number_of_files,
-            "metadata": bundle_metadata,
-            "metadata_schema": data.metadata_schema,
+            "metadata": data.metadata,
+            "metadata_schemas": data.metadata_schemas,
         }
 
         assert "__file_metadata__" not in file_data
@@ -284,7 +289,7 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
         table.add_row("File bundle info", renderable)
         if bundle.metadata:
             metadata_table = create_table_from_data_and_schema(
-                data=bundle.metadata, schema=bundle.metadata_schema
+                data=bundle.metadata, schema=bundle.metadata_schemas
             )
             table.add_row("Metadata", metadata_table)
 

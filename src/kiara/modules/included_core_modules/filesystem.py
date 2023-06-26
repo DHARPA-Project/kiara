@@ -92,19 +92,16 @@ class DeserializeFileModule(DeserializeValueModule):
 
         file: str = files[0]  # type: ignore
 
-        metadata_str = file_metadata.get("metadata", None)
-        if metadata_str:
-            metadata = orjson.loads(metadata_str)
-        else:
-            metadata = {}
+        _file_name = file_metadata.pop("file_name")
+        _file_metadata = file_metadata.pop("metadata")
+        _file_metadata_schemas = file_metadata.pop("metadata_schemas")
 
-        metadata_schema = file_metadata.get("metadata_schema", None)
         fm = FileModel.load_file(
             source=file,
-            file_name=file_metadata["file_name"],
+            file_name=_file_name,
         )
-        fm.metadata = metadata
-        fm.metadata_schema = metadata_schema
+        fm.metadata = _file_metadata
+        fm.metadata_schemas = _file_metadata_schemas
         return fm
 
 
@@ -206,13 +203,8 @@ class DeserializeFileBundleModule(DeserializeValueModule):
             fm = FileModel.load_file(source=file, file_name=file_name)
             included_files[rel_path] = fm
 
-        bundle_metadata_str = file_metadata.get("metadata", None)
-        if bundle_metadata_str:
-            bundle_metadata = orjson.loads(bundle_metadata_str)
-        else:
-            bundle_metadata = {}
-
-        metadata_schema = file_metadata.get("metadata_schema", None)
+        fb_metadata = metadata.pop("metadata")
+        fb_metadata_schemas = metadata.pop("metadata_schemas")
 
         fb = FileBundle(
             included_files=included_files,
@@ -220,8 +212,8 @@ class DeserializeFileBundleModule(DeserializeValueModule):
             # import_time=bundle_import_time,
             number_of_files=number_of_files,
             size=sum_size,
-            metadata=bundle_metadata,
-            metadata_schema=metadata_schema,
+            metadata=fb_metadata,
+            metadata_schemas=fb_metadata_schemas,
         )
         return fb
 

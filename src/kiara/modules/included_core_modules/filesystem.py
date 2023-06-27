@@ -13,7 +13,7 @@ from pydantic import Field
 
 from kiara.api import KiaraModuleConfig
 from kiara.exceptions import KiaraProcessingException
-from kiara.models.filesystem import FileBundle, FileModel, FolderImportConfig
+from kiara.models.filesystem import FolderImportConfig, KiaraFile, KiaraFileBundle
 from kiara.models.values.value import SerializedData, ValueMap
 from kiara.modules import (
     DEFAULT_NO_IDEMPOTENT_MODULE_CHARACTERISTICS,
@@ -50,7 +50,7 @@ class ImportLocalFileModule(KiaraModule):
 
         path = inputs.get_value_data("path")
 
-        file = FileModel.load_file(source=path)
+        file = KiaraFile.load_file(source=path)
         outputs.set_value("file", file)
 
 
@@ -62,7 +62,7 @@ class DeserializeFileModule(DeserializeValueModule):
 
     @classmethod
     def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
-        return {"python_object": FileModel}
+        return {"python_object": KiaraFile}
 
     @classmethod
     def retrieve_serialized_value_type(cls) -> str:
@@ -96,7 +96,7 @@ class DeserializeFileModule(DeserializeValueModule):
         _file_metadata = file_metadata.pop("metadata")
         _file_metadata_schemas = file_metadata.pop("metadata_schemas")
 
-        fm = FileModel.load_file(
+        fm = KiaraFile.load_file(
             source=file,
             file_name=_file_name,
         )
@@ -150,7 +150,7 @@ class ImportLocalFileBundleModule(KiaraModule):
 
         config = FolderImportConfig(include_files=include, exclude_files=exclude)
 
-        file_bundle = FileBundle.import_folder(source=path, import_config=config)
+        file_bundle = KiaraFileBundle.import_folder(source=path, import_config=config)
         outputs.set_value("file_bundle", file_bundle)
 
 
@@ -162,7 +162,7 @@ class DeserializeFileBundleModule(DeserializeValueModule):
 
     @classmethod
     def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
-        return {"python_object": FileBundle}
+        return {"python_object": KiaraFileBundle}
 
     @classmethod
     def retrieve_serialized_value_type(cls) -> str:
@@ -200,13 +200,13 @@ class DeserializeFileBundleModule(DeserializeValueModule):
             file: str = files[0]  # type: ignore
             file_name = file_metadata[rel_path]["file_name"]
             # import_time = file_metadata[rel_path]["import_time"]
-            fm = FileModel.load_file(source=file, file_name=file_name)
+            fm = KiaraFile.load_file(source=file, file_name=file_name)
             included_files[rel_path] = fm
 
         fb_metadata = metadata.pop("metadata")
         fb_metadata_schemas = metadata.pop("metadata_schemas")
 
-        fb = FileBundle(
+        fb = KiaraFileBundle(
             included_files=included_files,
             bundle_name=bundle_name,
             # import_time=bundle_import_time,
@@ -224,7 +224,7 @@ class ExportFileModule(DataExportModule):
 
     _module_type_name = "export.file"
 
-    def export__file__as__file(self, value: FileModel, base_path: str, name: str):
+    def export__file__as__file(self, value: KiaraFile, base_path: str, name: str):
 
         target_path = os.path.join(base_path, value.file_name)
 
@@ -256,7 +256,7 @@ class PickFileFromFileBundleModule(KiaraModule):
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
 
-        file_bundle: FileBundle = inputs.get_value_data("file_bundle")
+        file_bundle: KiaraFileBundle = inputs.get_value_data("file_bundle")
         path: str = inputs.get_value_data("path")
 
         if path not in file_bundle.included_files.keys():
@@ -264,7 +264,7 @@ class PickFileFromFileBundleModule(KiaraModule):
                 f"Can't pick file '{path}' from file bundle: file not available."
             )
 
-        file: FileModel = file_bundle.included_files[path]
+        file: KiaraFile = file_bundle.included_files[path]
 
         outputs.set_value("file", file)
 
@@ -297,7 +297,7 @@ class PickSubBundle(KiaraModule):
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
 
-        file_bundle: FileBundle = inputs.get_value_data("file_bundle")
+        file_bundle: KiaraFileBundle = inputs.get_value_data("file_bundle")
         sub_path: str = inputs.get_value_data("sub_path")
 
         result = {}
@@ -310,7 +310,7 @@ class PickSubBundle(KiaraModule):
                 f"Can't pick sub-folder '{sub_path}' from file bundle: no matches."
             )
 
-        new_file_bundle: FileBundle = FileBundle.create_from_file_models(
+        new_file_bundle: KiaraFileBundle = KiaraFileBundle.create_from_file_models(
             result, bundle_name=f"{file_bundle.bundle_name}_{sub_path}"
         )
 

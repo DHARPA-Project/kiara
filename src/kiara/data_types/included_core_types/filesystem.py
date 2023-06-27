@@ -17,7 +17,7 @@ from rich.table import Table
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types import AnyType, KiaraModelValueBaseType
-from kiara.models.filesystem import FileBundle, FileModel
+from kiara.models.filesystem import KiaraFile, KiaraFileBundle
 from kiara.models.values.value import Value
 from kiara.utils.output import create_table_from_data_and_schema
 
@@ -37,7 +37,7 @@ class FileTypeConfig(DataTypeConfig):
 SUPPORTED_FILE_TYPES = ["csv", "json", "text", "binary"]
 
 
-class FileValueType(KiaraModelValueBaseType[FileModel, FileTypeConfig]):
+class FileValueType(KiaraModelValueBaseType[KiaraFile, FileTypeConfig]):
 
     """A file."""
 
@@ -52,13 +52,13 @@ class FileValueType(KiaraModelValueBaseType[FileModel, FileTypeConfig]):
 
     @classmethod
     def python_class(cls) -> Type:
-        return FileModel
+        return KiaraFile
 
     @classmethod
     def data_type_config_class(cls) -> Type[FileTypeConfig]:
         return FileTypeConfig
 
-    def serialize(self, data: FileModel) -> "SerializedData":
+    def serialize(self, data: KiaraFile) -> "SerializedData":
 
         # metadata = orjson_dumps(data.metadata)
         # metadata_schemas = orjson_dumps(data.metadata_schema)
@@ -105,12 +105,12 @@ class FileValueType(KiaraModelValueBaseType[FileModel, FileTypeConfig]):
         serialized = SerializationResult(**serialized_data)
         return serialized
 
-    def create_model_from_python_obj(self, data: Any) -> FileModel:
+    def create_model_from_python_obj(self, data: Any) -> KiaraFile:
 
         if isinstance(data, Mapping):
-            return FileModel(**data)
+            return KiaraFile(**data)
         if isinstance(data, str):
-            return FileModel.load_file(source=data)
+            return KiaraFile.load_file(source=data)
         else:
             raise Exception(f"Can't create FileModel from data of type '{type(data)}'.")
 
@@ -147,7 +147,7 @@ class FileValueType(KiaraModelValueBaseType[FileModel, FileTypeConfig]):
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
-        data: FileModel = value.data
+        data: KiaraFile = value.data
         max_lines = render_config.get("max_lines", 34)
         try:
             lines = []
@@ -188,7 +188,7 @@ class FileValueType(KiaraModelValueBaseType[FileModel, FileTypeConfig]):
         return table
 
 
-class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
+class FileBundleValueType(AnyType[KiaraFileBundle, FileTypeConfig]):
 
     """A bundle of files (like a folder, zip archive, etc.)."""
 
@@ -203,13 +203,13 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
 
     @classmethod
     def python_class(cls) -> Type:
-        return FileBundle
+        return KiaraFileBundle
 
     @classmethod
     def data_type_config_class(cls) -> Type[FileTypeConfig]:
         return FileTypeConfig
 
-    def serialize(self, data: FileBundle) -> "SerializedData":
+    def serialize(self, data: KiaraFileBundle) -> "SerializedData":
 
         file_data: Dict[str, Any] = {}
         file_metadata = {}
@@ -264,12 +264,12 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
         serialized = SerializationResult(**serialized_data)
         return serialized
 
-    def parse_python_obj(self, data: Any) -> FileBundle:
+    def parse_python_obj(self, data: Any) -> KiaraFileBundle:
 
-        if isinstance(data, FileBundle):
+        if isinstance(data, KiaraFileBundle):
             return data
         elif isinstance(data, str):
-            return FileBundle.import_folder(source=data)
+            return KiaraFileBundle.import_folder(source=data)
         else:
             raise Exception(
                 f"Can't create FileBundle from data of type '{type(data)}'."
@@ -279,7 +279,7 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
-        bundle: FileBundle = value.data
+        bundle: KiaraFileBundle = value.data
         renderable = bundle.create_renderable(**render_config)
 
         table = Table(show_header=False, box=box.SIMPLE)
@@ -299,7 +299,7 @@ class FileBundleValueType(AnyType[FileBundle, FileTypeConfig]):
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
-        bundle: FileBundle = value.data
+        bundle: KiaraFileBundle = value.data
         result = []
         result.append(f"File bundle '{bundle.bundle_name}")
         result.append(f"  size: {humanfriendly.format_size(bundle.size)}")

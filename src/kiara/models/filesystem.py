@@ -38,7 +38,7 @@ FILE_BUNDLE_IMPORT_AVAILABLE_COLUMNS = [
 ]
 
 
-class FileModel(KiaraModel):
+class KiaraFile(KiaraModel):
 
     """Describes properties for the 'file' value type."""
 
@@ -87,7 +87,7 @@ class FileModel(KiaraModel):
             else:
                 mime_type = _mime_type.MIME
 
-        m = FileModel(
+        m = KiaraFile(
             # import_time=file_import_time,
             mime_type=mime_type,
             size=size,
@@ -138,13 +138,13 @@ class FileModel(KiaraModel):
     def get_category_alias(self) -> str:
         return "instance.file_model"
 
-    def copy_file(self, target: str, new_name: Union[str, None] = None) -> "FileModel":
+    def copy_file(self, target: str, new_name: Union[str, None] = None) -> "KiaraFile":
 
         target_path: str = os.path.abspath(target)
         os.makedirs(os.path.dirname(target_path), exist_ok=True)
 
         shutil.copy2(self.path, target_path)
-        fm = FileModel.load_file(target, file_name=new_name)
+        fm = KiaraFile.load_file(target, file_name=new_name)
 
         if self._file_hash is not None:
             fm._file_hash = self._file_hash
@@ -224,7 +224,7 @@ class FolderImportConfig(BaseModel):
     )
 
 
-class FileBundle(KiaraModel):
+class KiaraFileBundle(KiaraModel):
 
     """Describes properties for the 'file_bundle' value type."""
 
@@ -249,7 +249,7 @@ class FileBundle(KiaraModel):
         archive_type_hint: Union[str, None] = None,
         import_config: Union[FolderImportConfig, None] = None,
         bundle_name: Union[str, None] = None,
-    ) -> "FileBundle":
+    ) -> "KiaraFileBundle":
         """Extracts the contents of an archive file to a target folder."""
 
         if not os.path.isfile(archive_path):
@@ -279,7 +279,7 @@ class FileBundle(KiaraModel):
         if error is not None:
             raise KiaraException(msg=f"Could not extract archive: {error}.")
 
-        bundle = FileBundle.import_folder(
+        bundle = KiaraFileBundle.import_folder(
             out_dir, import_config=import_config, bundle_name=bundle_name
         )
         return bundle
@@ -287,12 +287,12 @@ class FileBundle(KiaraModel):
     @classmethod
     def from_archive_file(
         cls,
-        archive_file: FileModel,
+        archive_file: KiaraFile,
         import_config: Union[FolderImportConfig, None] = None,
-    ) -> "FileBundle":
+    ) -> "KiaraFileBundle":
         """Extracts the contents of an archive file to a target folder."""
 
-        bundle = FileBundle.from_archive(
+        bundle = KiaraFileBundle.from_archive(
             archive_path=archive_file.path,
             archive_type_hint=archive_file.file_extension,
             bundle_name=archive_file.file_name,
@@ -310,7 +310,7 @@ class FileBundle(KiaraModel):
         bundle_name: Union[str, None] = None,
         import_config: Union[None, Mapping[str, Any], FolderImportConfig] = None,
         # import_time: Optional[datetime.datetime] = None,
-    ) -> "FileBundle":
+    ) -> "KiaraFileBundle":
 
         if not source:
             raise ValueError("No source path provided.")
@@ -339,7 +339,7 @@ class FileBundle(KiaraModel):
         if _import_config.sub_path:
             abs_path = os.path.join(abs_path, _import_config.sub_path)
 
-        included_files: Dict[str, FileModel] = {}
+        included_files: Dict[str, KiaraFile] = {}
         exclude_dirs = _import_config.exclude_dirs
         invalid_extensions = _import_config.exclude_files
 
@@ -377,14 +377,14 @@ class FileBundle(KiaraModel):
                 full_path = os.path.join(root, filename)
                 rel_path = os.path.relpath(full_path, abs_path)
 
-                file_model = FileModel.load_file(full_path)
+                file_model = KiaraFile.load_file(full_path)
                 sum_size = sum_size + file_model.size
                 included_files[rel_path] = file_model
 
         if bundle_name is None:
             bundle_name = os.path.basename(source)
 
-        bundle = FileBundle.create_from_file_models(
+        bundle = KiaraFileBundle.create_from_file_models(
             files=included_files,
             path=abs_path,
             bundle_name=bundle_name,
@@ -395,12 +395,12 @@ class FileBundle(KiaraModel):
     @classmethod
     def create_from_file_models(
         cls,
-        files: Mapping[str, FileModel],
+        files: Mapping[str, KiaraFile],
         bundle_name: str,
         path: Union[str, None] = None,
         sum_size: Union[int, None] = None,
         # import_time: Optional[datetime.datetime] = None,
-    ) -> "FileBundle":
+    ) -> "KiaraFileBundle":
 
         # if import_time:
         #     bundle_import_time = import_time
@@ -422,7 +422,7 @@ class FileBundle(KiaraModel):
                 sum_size = sum_size + f.size
         result["size"] = sum_size
 
-        bundle = FileBundle(**result)
+        bundle = KiaraFileBundle(**result)
         bundle._path = path
         return bundle
 
@@ -435,7 +435,7 @@ class FileBundle(KiaraModel):
     number_of_files: int = Field(
         description="How many files are included in this bundle."
     )
-    included_files: Dict[str, FileModel] = Field(
+    included_files: Dict[str, KiaraFile] = Field(
         description="A map of all the included files, incl. their properties. Uses the relative path of each file as key."
     )
     size: int = Field(description="The size of all files in this folder, combined.")
@@ -474,7 +474,7 @@ class FileBundle(KiaraModel):
             },
         }
 
-    def get_relative_path(self, file: FileModel):
+    def get_relative_path(self, file: KiaraFile):
         return os.path.relpath(file.path, self.path)
 
     def read_text_file_contents(self, ignore_errors: bool = False) -> Mapping[str, str]:
@@ -518,7 +518,7 @@ class FileBundle(KiaraModel):
 
     def copy_bundle(
         self, target_path: str, bundle_name: Union[str, None] = None
-    ) -> "FileBundle":
+    ) -> "KiaraFileBundle":
 
         if target_path == self.path:
             raise Exception(f"Target path and current path are the same: {target_path}")
@@ -532,7 +532,7 @@ class FileBundle(KiaraModel):
         if bundle_name is None:
             bundle_name = os.path.basename(target_path)
 
-        fb = FileBundle.create_from_file_models(
+        fb = KiaraFileBundle.create_from_file_models(
             files=result,
             bundle_name=bundle_name,
             path=target_path,

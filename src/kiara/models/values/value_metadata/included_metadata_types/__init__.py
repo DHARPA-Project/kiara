@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Iterable
 
 from pydantic import Field
 
-from kiara.models.filesystem import FileBundle, FileModel
+from kiara.models.filesystem import KiaraFile, KiaraFileBundle
 from kiara.models.python_class import PythonClass
 from kiara.models.values.value_metadata import ValueMetadata
 
@@ -57,7 +57,7 @@ class FileMetadata(ValueMetadata):
 
         return FileMetadata.construct(file=value.data)
 
-    file: FileModel = Field(description="The file-specific metadata.")
+    file: KiaraFile = Field(description="The file-specific metadata.")
 
 
 class FileBundleMetadata(ValueMetadata):
@@ -76,4 +76,4 @@ class FileBundleMetadata(ValueMetadata):
 
         return FileBundleMetadata.construct(file_bundle=value.data)
 
-    file_bundle: FileBundle = Field(description="The file-specific metadata.")
+    file_bundle: KiaraFileBundle = Field(description="The file-specific metadata.")

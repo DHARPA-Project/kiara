@@ -900,7 +900,7 @@ def create_recursive_table_from_model_object(
 
 
 def create_table_from_data_and_schema(
-    data: Mapping[str, Any], schema: Dict[str, Any] = None
+    data: Mapping[str, Any], schema: Union[None, Dict[str, Any]] = None
 ):
 
     table = RichTable(box=box.SIMPLE, show_header=False)

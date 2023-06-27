@@ -7,7 +7,7 @@
 from functools import lru_cache
 from typing import Any, Dict, Iterable, List, Mapping, Set, Union
 
-import networkx as nx
+import rustworkx as rx
 from pydantic import Field, PrivateAttr, root_validator
 from rich.console import RenderableType
 from rich.tree import Tree
@@ -182,9 +182,9 @@ class PipelineStructure(KiaraModel):
     _constants: Dict[str, Any] = PrivateAttr(default=None)  # type: ignore
     _defaults: Dict[str, Any] = PrivateAttr(None)  # type: ignore
 
-    _execution_graph: nx.DiGraph = PrivateAttr(None)  # type: ignore
-    _data_flow_graph: nx.DiGraph = PrivateAttr(None)  # type: ignore
-    _data_flow_graph_simple: nx.DiGraph = PrivateAttr(None)  # type: ignore
+    _execution_graph: rx.PyDiGraph = PrivateAttr(None)  # type: ignore
+    _data_flow_graph: rx.PyDiGraph = PrivateAttr(None)  # type: ignore
+    _data_flow_graph_simple: rx.PyDiGraph = PrivateAttr(None)  # type: ignore
 
     _processing_stages: List[List[str]] = PrivateAttr(None)  # type: ignore
     # _stages_info: Mapping[int, PipelineStage] = PrivateAttr(None)  # type: ignore
@@ -263,19 +263,19 @@ class PipelineStructure(KiaraModel):
         return d
 
     @property
-    def execution_graph(self) -> nx.DiGraph:
+    def execution_graph(self) -> rx.PyDiGraph:
         if self._execution_graph is None:
             self._process_steps()
         return self._execution_graph
 
     @property
-    def data_flow_graph(self) -> nx.DiGraph:
+    def data_flow_graph(self) -> rx.PyDiGraph:
         if self._data_flow_graph is None:
             self._process_steps()
         return self._data_flow_graph
 
     @property
-    def data_flow_graph_simple(self) -> nx.DiGraph:
+    def data_flow_graph_simple(self) -> rx.PyDiGraph:
         if self._data_flow_graph_simple is None:
             self._process_steps()
         return self._data_flow_graph_simple
@@ -324,7 +324,7 @@ class PipelineStructure(KiaraModel):
         self,
         stages_extraction_type: str = KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
         flatten: bool = True,
-    ) -> nx.DiGraph:
+    ) -> rx.PyDiGraph:
         """
         Creates a networx graph that represents the processing stages of the pipeline and how they are connecte.
 
@@ -341,7 +341,7 @@ class PipelineStructure(KiaraModel):
             stages_extraction_type=stages_extraction_type
         )
 
-        graph = nx.DiGraph()
+        graph = rx.PyDiGraph(check_cycle=True)
         for stage in stages:
             fragment = stage.get_graph_fragment()
             graph = nx.compose(graph, fragment)

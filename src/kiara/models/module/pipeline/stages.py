@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, Any, Dict, List, Set, Union
 
-import networkx as nx
+import rustworkx as rx
 from pydantic import Field, PrivateAttr
 from rich import box
 from rich.console import RenderableType
@@ -214,30 +214,32 @@ class PipelineStage(KiaraModel):
         description="Pipeline outputs that are already computed by this stage."
     )
 
-    _graph: Union[None, nx.DiGraph] = PrivateAttr(default=None)
+    _graph: Union[None, rx.PyDiGraph] = PrivateAttr(default=None)
 
-    def get_graph_fragment(self) -> nx.DiGraph:
+    def get_graph_fragment(self) -> rx.PyDiGraph:
         if self._graph is not None:
             return self._graph
 
-        fragment = nx.DiGraph()
+        fragment = rx.PyDiGraph(check_cycle=True)
         stage_id = f"Stage: {self.stage_index}"
-        fragment.add_node(stage_id, type="stage", stage_index=self.stage_index)
+        _stage_id = fragment.add_node(
+            stage_id, type="stage", stage_index=self.stage_index
+        )
 
         for pi in self.pipeline_inputs:
             node_id = f"Input: {pi}"
-            fragment.add_node(node_id, type="pipeline_input")
-            fragment.add_edge(node_id, stage_id, type="pipeline_input")
+            _node_id = fragment.add_node(node_id, type="pipeline_input")
+            fragment.add_edge(_node_id, _stage_id, type="pipeline_input")
         for co in self.connected_outputs:
-            fragment.add_node(co, type="connected_output")
-            fragment.add_edge(co, stage_id, type="connected_output")
+            _co = fragment.add_node(co, type="connected_output")
+            fragment.add_edge(_co, _stage_id, type="connected_output")
         for so in self.stage_outputs:
-            fragment.add_node(so, type="stage_output")
-            fragment.add_edge(stage_id, so, type="stage_output")
+            _so = fragment.add_node(so, type="stage_output")
+            fragment.add_edge(_stage_id, _so, type="stage_output")
         for po in self.pipeline_outputs:
             node_id = f"Output: {po}"
-            fragment.add_node(node_id, type="pipeline_output")
-            fragment.add_edge(stage_id, node_id, type="pipeline_output")
+            _node_id = fragment.add_node(node_id, type="pipeline_output")
+            fragment.add_edge(_stage_id, _node_id, type="pipeline_output")
 
         self._graph = fragment
         return self._graph

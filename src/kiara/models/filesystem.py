@@ -363,23 +363,28 @@ class KiaraFileBundle(KiaraModel):
             else:
                 return any(filename.endswith(ext) for ext in valid_extensions)
 
-        for root, dirnames, filenames in os.walk(abs_path, topdown=True):
+        if os.path.isfile(abs_path):
+            file_model = KiaraFile.load_file(abs_path)
+            sum_size = file_model.size
+            included_files[file_model.file_name] = file_model
+        else:
+            for root, dirnames, filenames in os.walk(abs_path, topdown=True):
 
-            if exclude_dirs:
-                dirnames[:] = [d for d in dirnames if d not in exclude_dirs]
+                if exclude_dirs:
+                    dirnames[:] = [d for d in dirnames if d not in exclude_dirs]
 
-            for filename in [
-                f
-                for f in filenames
-                if os.path.isfile(os.path.join(root, f)) and include_file(f)
-            ]:
+                for filename in [
+                    f
+                    for f in filenames
+                    if os.path.isfile(os.path.join(root, f)) and include_file(f)
+                ]:
 
-                full_path = os.path.join(root, filename)
-                rel_path = os.path.relpath(full_path, abs_path)
+                    full_path = os.path.join(root, filename)
+                    rel_path = os.path.relpath(full_path, abs_path)
 
-                file_model = KiaraFile.load_file(full_path)
-                sum_size = sum_size + file_model.size
-                included_files[rel_path] = file_model
+                    file_model = KiaraFile.load_file(full_path)
+                    sum_size = sum_size + file_model.size
+                    included_files[rel_path] = file_model
 
         if bundle_name is None:
             bundle_name = os.path.basename(source)

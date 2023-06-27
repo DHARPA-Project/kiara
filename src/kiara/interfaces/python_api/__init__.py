@@ -126,7 +126,10 @@ class KiaraAPI(object):
         else:
             raise NotImplementedError()
 
-    def __init__(self, kiara_config: "KiaraConfig"):
+    def __init__(self, kiara_config: Union["KiaraConfig", None] = None):
+
+        if kiara_config is None:
+            kiara_config = KiaraConfig()
 
         self._kiara_config: KiaraConfig = kiara_config
         self._contexts: Dict[str, Kiara] = {}

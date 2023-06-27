@@ -15,6 +15,7 @@ from multiformats import CID
 from kiara.exceptions import InvalidManifestException
 from kiara.interfaces.python_api.models.info import ModuleTypeInfo, ModuleTypesInfo
 from kiara.models.module.manifest import Manifest
+from kiara.utils import is_debug
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -100,6 +101,10 @@ class ModuleRegistry(object):
             try:
                 resolved = m_cls._resolve_module_config(**manifest.module_config)
             except Exception as e:
+                if is_debug():
+                    import traceback
+
+                    traceback.print_exc()
                 raise InvalidManifestException(
                     f"Error while resolving module config for module '{manifest.module_type}': {e}",
                     module_type=manifest.module_type,

@@ -19,7 +19,11 @@ from rich import box
 from rich.console import RenderableType
 from rich.table import Table
 
-from kiara.defaults import DEFAULT_EXCLUDE_FILES, KIARA_HASH_FUNCTION
+from kiara.defaults import (
+    DEFAULT_EXCLUDE_DIRS,
+    DEFAULT_EXCLUDE_FILES,
+    KIARA_HASH_FUNCTION,
+)
 from kiara.exceptions import KiaraException
 from kiara.models import KiaraModel
 from kiara.utils import log_message
@@ -216,7 +220,7 @@ class FolderImportConfig(BaseModel):
     )
     exclude_dirs: Union[List[str], None] = Field(
         description="A list of strings, exclude all folders whose name ends with that string.",
-        default=None,
+        default=DEFAULT_EXCLUDE_DIRS,
     )
     exclude_files: Union[List[str], None] = Field(
         description=f"A list of strings, exclude all files that match those (takes precedence over 'include_files'). Defaults to: {DEFAULT_EXCLUDE_FILES}.",

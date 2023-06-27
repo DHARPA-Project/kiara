@@ -52795,7 +52795,7 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
     <table>
   <tr>
     <td>$ref</td>
-    <td>#/definitions/FileModel</td>
+    <td>#/definitions/KiaraFile</td>
   </tr>
 </table>
   </li>
@@ -52821,11 +52821,11 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
     <td>definitions</td>
     <td><table>
   <tr>
-    <td>FileModel</td>
+    <td>KiaraFile</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>FileModel</td>
+    <td>KiaraFile</td>
   </tr>
   <tr>
     <td>description</td>
@@ -52907,19 +52907,28 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
 </table></td>
   </tr>
   <tr>
-    <td>metadata_schema</td>
+    <td>metadata_schemas</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>Metadata Schema</td>
+    <td>Metadata Schemas</td>
   </tr>
   <tr>
     <td>description</td>
-    <td>The metadata schema (if applicable).</td>
+    <td>The metadata schemas for each of the metadata values (if available).</td>
   </tr>
   <tr>
     <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>type</td>
     <td>string</td>
+  </tr>
+</table></td>
   </tr>
 </table></td>
   </tr>
@@ -53111,7 +53120,7 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
     <table>
   <tr>
     <td>$ref</td>
-    <td>#/definitions/FileBundle</td>
+    <td>#/definitions/KiaraFileBundle</td>
   </tr>
 </table>
   </li>
@@ -53137,11 +53146,11 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
     <td>definitions</td>
     <td><table>
   <tr>
-    <td>FileModel</td>
+    <td>KiaraFile</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>FileModel</td>
+    <td>KiaraFile</td>
   </tr>
   <tr>
     <td>description</td>
@@ -53223,19 +53232,28 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
 </table></td>
   </tr>
   <tr>
-    <td>metadata_schema</td>
+    <td>metadata_schemas</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>Metadata Schema</td>
+    <td>Metadata Schemas</td>
   </tr>
   <tr>
     <td>description</td>
-    <td>The metadata schema (if applicable).</td>
+    <td>The metadata schemas for each of the metadata values (if available).</td>
   </tr>
   <tr>
     <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>type</td>
     <td>string</td>
+  </tr>
+</table></td>
   </tr>
 </table></td>
   </tr>
@@ -53259,11 +53277,11 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
 </table></td>
   </tr>
   <tr>
-    <td>FileBundle</td>
+    <td>KiaraFileBundle</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>FileBundle</td>
+    <td>KiaraFileBundle</td>
   </tr>
   <tr>
     <td>description</td>
@@ -53330,7 +53348,7 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
     <td><table>
   <tr>
     <td>$ref</td>
-    <td>#/definitions/FileModel</td>
+    <td>#/definitions/KiaraFile</td>
   </tr>
 </table></td>
   </tr>
@@ -53371,19 +53389,28 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
 </table></td>
   </tr>
   <tr>
-    <td>metadata_schema</td>
+    <td>metadata_schemas</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>Metadata Schema</td>
+    <td>Metadata Schemas</td>
   </tr>
   <tr>
     <td>description</td>
-    <td>The metadata schema (if applicable).</td>
+    <td>The metadata schemas for each metadata value (if available).</td>
   </tr>
   <tr>
     <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>type</td>
     <td>string</td>
+  </tr>
+</table></td>
   </tr>
 </table></td>
   </tr>
@@ -53529,7 +53556,7 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
     <td><table>
   <tr>
     <td>python_class_name</td>
-    <td>FileModel</td>
+    <td>KiaraFile</td>
     <td>The name of the Python class.</td>
   </tr>
   <tr>
@@ -53539,7 +53566,7 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
   </tr>
   <tr>
     <td>full_name</td>
-    <td>kiara.models.filesystem.FileModel</td>
+    <td>kiara.models.filesystem.KiaraFile</td>
     <td>The full class namespace.</td>
   </tr>
 </table></td>
@@ -53550,7 +53577,7 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>FileModel</td>
+    <td>KiaraFile</td>
   </tr>
   <tr>
     <td>description</td>
@@ -53632,19 +53659,28 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
 </table></td>
   </tr>
   <tr>
-    <td>metadata_schema</td>
+    <td>metadata_schemas</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>Metadata Schema</td>
+    <td>Metadata Schemas</td>
   </tr>
   <tr>
     <td>description</td>
-    <td>The metadata schema (if applicable).</td>
+    <td>The metadata schemas for each of the metadata values (if available).</td>
   </tr>
   <tr>
     <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>type</td>
     <td>string</td>
+  </tr>
+</table></td>
   </tr>
 </table></td>
   </tr>
@@ -53780,7 +53816,7 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
     <td><table>
   <tr>
     <td>python_class_name</td>
-    <td>FileBundle</td>
+    <td>KiaraFileBundle</td>
     <td>The name of the Python class.</td>
   </tr>
   <tr>
@@ -53790,7 +53826,7 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
   </tr>
   <tr>
     <td>full_name</td>
-    <td>kiara.models.filesystem.FileBundle</td>
+    <td>kiara.models.filesystem.KiaraFileBundle</td>
     <td>The full class namespace.</td>
   </tr>
 </table></td>
@@ -53801,7 +53837,7 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>FileBundle</td>
+    <td>KiaraFileBundle</td>
   </tr>
   <tr>
     <td>description</td>
@@ -53868,7 +53904,7 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
     <td><table>
   <tr>
     <td>$ref</td>
-    <td>#/definitions/FileModel</td>
+    <td>#/definitions/KiaraFile</td>
   </tr>
 </table></td>
   </tr>
@@ -53909,19 +53945,28 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
 </table></td>
   </tr>
   <tr>
-    <td>metadata_schema</td>
+    <td>metadata_schemas</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>Metadata Schema</td>
+    <td>Metadata Schemas</td>
   </tr>
   <tr>
     <td>description</td>
-    <td>The metadata schema (if applicable).</td>
+    <td>The metadata schemas for each metadata value (if available).</td>
   </tr>
   <tr>
     <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>type</td>
     <td>string</td>
+  </tr>
+</table></td>
   </tr>
 </table></td>
   </tr>
@@ -53952,11 +53997,11 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
     <td>definitions</td>
     <td><table>
   <tr>
-    <td>FileModel</td>
+    <td>KiaraFile</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>FileModel</td>
+    <td>KiaraFile</td>
   </tr>
   <tr>
     <td>description</td>
@@ -54038,19 +54083,28 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
 </table></td>
   </tr>
   <tr>
-    <td>metadata_schema</td>
+    <td>metadata_schemas</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>Metadata Schema</td>
+    <td>Metadata Schemas</td>
   </tr>
   <tr>
     <td>description</td>
-    <td>The metadata schema (if applicable).</td>
+    <td>The metadata schemas for each of the metadata values (if available).</td>
   </tr>
   <tr>
     <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>type</td>
     <td>string</td>
+  </tr>
+</table></td>
   </tr>
 </table></td>
   </tr>

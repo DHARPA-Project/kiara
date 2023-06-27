@@ -5044,7 +5044,7 @@
 
   <div class="doc doc-contents ">
       <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.KiaraModelValueBaseType" href="../__init__/#kiara.data_types.included_core_types.KiaraModelValueBaseType">KiaraModelValueBaseType</a>[<a class="autorefs autorefs-internal" title="kiara.models.filesystem.FileModel" href="../../../models/filesystem/#kiara.models.filesystem.FileModel">FileModel</a>, <a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.filesystem.FileTypeConfig" href="#kiara.data_types.included_core_types.filesystem.FileTypeConfig">FileTypeConfig</a>]</code></p>
+        Bases: <code><a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.KiaraModelValueBaseType" href="../__init__/#kiara.data_types.included_core_types.KiaraModelValueBaseType">KiaraModelValueBaseType</a>[<a class="autorefs autorefs-internal" title="kiara.models.filesystem.KiaraFile" href="../../../models/filesystem/#kiara.models.filesystem.KiaraFile">KiaraFile</a>, <a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.filesystem.FileTypeConfig" href="#kiara.data_types.included_core_types.filesystem.FileTypeConfig">FileTypeConfig</a>]</code></p>
 
   
       <p>A file.</p>
@@ -5196,7 +5196,11 @@
 <span class="normal">181</span>
 <span class="normal">182</span>
 <span class="normal">183</span>
-<span class="normal">184</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FileValueType</span><span class="p">(</span><span class="n">KiaraModelValueBaseType</span><span class="p">[</span><span class="n">FileModel</span><span class="p">,</span> <span class="n">FileTypeConfig</span><span class="p">]):</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FileValueType</span><span class="p">(</span><span class="n">KiaraModelValueBaseType</span><span class="p">[</span><span class="n">KiaraFile</span><span class="p">,</span> <span class="n">FileTypeConfig</span><span class="p">]):</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A file.&quot;&quot;&quot;</span>
 
@@ -5211,15 +5215,16 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">python_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">FileModel</span>
+        <span class="k">return</span> <span class="n">KiaraFile</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">FileTypeConfig</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">FileTypeConfig</span>
 
-    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">FileModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">KiaraFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">:</span>
 
-        <span class="n">metadata</span> <span class="o">=</span> <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="c1"># metadata = orjson_dumps(data.metadata)</span>
+        <span class="c1"># metadata_schemas = orjson_dumps(data.metadata_schema)</span>
         <span class="n">_data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">data</span><span class="o">.</span><span class="n">file_name</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span>
@@ -5232,8 +5237,8 @@
                 <span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="p">{</span>
                     <span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
                     <span class="c1"># &quot;import_time&quot;: data.import_time,</span>
-                    <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">,</span>
-                    <span class="s2">&quot;metadata_schema&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">metadata_schema</span><span class="p">,</span>
+                    <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                    <span class="s2">&quot;metadata_schemas&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">metadata_schemas</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">},</span>
         <span class="p">}</span>
@@ -5263,12 +5268,12 @@
         <span class="n">serialized</span> <span class="o">=</span> <span class="n">SerializationResult</span><span class="p">(</span><span class="o">**</span><span class="n">serialized_data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">serialized</span>
 
-    <span class="k">def</span> <span class="nf">create_model_from_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileModel</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">create_model_from_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraFile</span><span class="p">:</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">FileModel</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">KiaraFile</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">FileModel</span><span class="o">.</span><span class="n">load_file</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">KiaraFile</span><span class="o">.</span><span class="n">load_file</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t create FileModel from data of type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
 
@@ -5305,7 +5310,7 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 
-        <span class="n">data</span><span class="p">:</span> <span class="n">FileModel</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">KiaraFile</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
         <span class="n">max_lines</span> <span class="o">=</span> <span class="n">render_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_lines&quot;</span><span class="p">,</span> <span class="mi">34</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
@@ -5317,17 +5322,20 @@
                         <span class="k">break</span>
                     <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
 
-            <span class="n">preview</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="o">*</span><span class="n">lines</span><span class="p">)</span>
+            <span class="n">preview</span><span class="p">:</span> <span class="n">RenderableType</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="o">*</span><span class="n">lines</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
             <span class="c1"># found non-text data</span>
             <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="s2">&quot;Binary file or non-utf8 enconding, not printing content...&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;[b]File metadata:[/b]&quot;</span><span class="p">,</span>
                 <span class="s2">&quot;&quot;</span><span class="p">,</span>
                 <span class="n">data</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="n">option</span><span class="o">=</span><span class="n">orjson</span><span class="o">.</span><span class="n">OPT_INDENT_2</span><span class="p">),</span>
             <span class="p">]</span>
-            <span class="n">preview</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="o">*</span><span class="n">lines</span><span class="p">)</span>
+            <span class="n">preview</span> <span class="o">=</span> <span class="n">Panel</span><span class="p">(</span>
+                <span class="s2">&quot;Binary file or non-utf8 enconding, not printing content...&quot;</span><span class="p">,</span>
+                <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">HORIZONTALS</span><span class="p">,</span>
+                <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="p">)</span>
 
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
         <span class="n">table</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s2">&quot;i&quot;</span><span class="p">)</span>
@@ -5336,7 +5344,7 @@
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Preview&quot;</span><span class="p">,</span> <span class="n">preview</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
             <span class="n">metadata_table</span> <span class="o">=</span> <span class="n">create_table_from_data_and_schema</span><span class="p">(</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">metadata_schema</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">metadata_schemas</span>
             <span class="p">)</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Metadata&quot;</span><span class="p">,</span> <span class="n">metadata_table</span><span class="p">)</span>
 
@@ -5413,7 +5421,7 @@
 <span class="normal">54</span>
 <span class="normal">55</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">python_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">FileModel</span>
+    <span class="k">return</span> <span class="n">KiaraFile</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -5454,7 +5462,7 @@
 
 
 <h5 id="kiara.data_types.included_core_types.filesystem.FileValueType.serialize" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">serialize</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">FileModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SerializedData</span></code>
+<code class="highlight language-python"><span class="n">serialize</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">KiaraFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SerializedData</span></code>
 
 <a href="#kiara.data_types.included_core_types.filesystem.FileValueType.serialize" class="headerlink" title="Permanent link">&para;</a></h5>
 
@@ -5507,9 +5515,11 @@
 <span class="normal">102</span>
 <span class="normal">103</span>
 <span class="normal">104</span>
-<span class="normal">105</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">FileModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">:</span>
+<span class="normal">105</span>
+<span class="normal">106</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">KiaraFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">:</span>
 
-    <span class="n">metadata</span> <span class="o">=</span> <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+    <span class="c1"># metadata = orjson_dumps(data.metadata)</span>
+    <span class="c1"># metadata_schemas = orjson_dumps(data.metadata_schema)</span>
     <span class="n">_data</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">data</span><span class="o">.</span><span class="n">file_name</span><span class="p">:</span> <span class="p">{</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">,</span>
@@ -5522,8 +5532,8 @@
             <span class="s2">&quot;inline_data&quot;</span><span class="p">:</span> <span class="p">{</span>
                 <span class="s2">&quot;file_name&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
                 <span class="c1"># &quot;import_time&quot;: data.import_time,</span>
-                <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">metadata</span><span class="p">,</span>
-                <span class="s2">&quot;metadata_schema&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">metadata_schema</span><span class="p">,</span>
+                <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+                <span class="s2">&quot;metadata_schemas&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">metadata_schemas</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">},</span>
     <span class="p">}</span>
@@ -5563,7 +5573,7 @@
 
 
 <h5 id="kiara.data_types.included_core_types.filesystem.FileValueType.create_model_from_python_obj" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">create_model_from_python_obj</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileModel</span></code>
+<code class="highlight language-python"><span class="n">create_model_from_python_obj</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraFile</span></code>
 
 <a href="#kiara.data_types.included_core_types.filesystem.FileValueType.create_model_from_python_obj" class="headerlink" title="Permanent link">&para;</a></h5>
 
@@ -5572,19 +5582,19 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/data_types/included_core_types/filesystem.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">107</span>
-<span class="normal">108</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">108</span>
 <span class="normal">109</span>
 <span class="normal">110</span>
 <span class="normal">111</span>
 <span class="normal">112</span>
 <span class="normal">113</span>
-<span class="normal">114</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_model_from_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileModel</span><span class="p">:</span>
+<span class="normal">114</span>
+<span class="normal">115</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_model_from_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraFile</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">FileModel</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">KiaraFile</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">FileModel</span><span class="o">.</span><span class="n">load_file</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">KiaraFile</span><span class="o">.</span><span class="n">load_file</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t create FileModel from data of type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -5614,7 +5624,7 @@
 
   <div class="doc doc-contents ">
       <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.AnyType" href="../__init__/#kiara.data_types.included_core_types.AnyType">AnyType</a>[<a class="autorefs autorefs-internal" title="kiara.models.filesystem.FileBundle" href="../../../models/filesystem/#kiara.models.filesystem.FileBundle">FileBundle</a>, <a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.filesystem.FileTypeConfig" href="#kiara.data_types.included_core_types.filesystem.FileTypeConfig">FileTypeConfig</a>]</code></p>
+        Bases: <code><a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.AnyType" href="../__init__/#kiara.data_types.included_core_types.AnyType">AnyType</a>[<a class="autorefs autorefs-internal" title="kiara.models.filesystem.KiaraFileBundle" href="../../../models/filesystem/#kiara.models.filesystem.KiaraFileBundle">KiaraFileBundle</a>, <a class="autorefs autorefs-internal" title="kiara.data_types.included_core_types.filesystem.FileTypeConfig" href="#kiara.data_types.included_core_types.filesystem.FileTypeConfig">FileTypeConfig</a>]</code></p>
 
   
       <p>A bundle of files (like a folder, zip archive, etc.).</p>
@@ -5622,11 +5632,7 @@
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/data_types/included_core_types/filesystem.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">187</span>
-<span class="normal">188</span>
-<span class="normal">189</span>
-<span class="normal">190</span>
-<span class="normal">191</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">191</span>
 <span class="normal">192</span>
 <span class="normal">193</span>
 <span class="normal">194</span>
@@ -5740,7 +5746,12 @@
 <span class="normal">302</span>
 <span class="normal">303</span>
 <span class="normal">304</span>
-<span class="normal">305</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FileBundleValueType</span><span class="p">(</span><span class="n">AnyType</span><span class="p">[</span><span class="n">FileBundle</span><span class="p">,</span> <span class="n">FileTypeConfig</span><span class="p">]):</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">FileBundleValueType</span><span class="p">(</span><span class="n">AnyType</span><span class="p">[</span><span class="n">KiaraFileBundle</span><span class="p">,</span> <span class="n">FileTypeConfig</span><span class="p">]):</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A bundle of files (like a folder, zip archive, etc.).&quot;&quot;&quot;</span>
 
@@ -5755,13 +5766,13 @@
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">python_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">FileBundle</span>
+        <span class="k">return</span> <span class="n">KiaraFileBundle</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">FileTypeConfig</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">FileTypeConfig</span>
 
-    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">FileBundle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">KiaraFileBundle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">:</span>
 
         <span class="n">file_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">file_metadata</span> <span class="o">=</span> <span class="p">{}</span>
@@ -5772,15 +5783,16 @@
                 <span class="c1"># &quot;import_time&quot;: file.import_time,</span>
             <span class="p">}</span>
 
-        <span class="n">bundle_metadata</span> <span class="o">=</span> <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="c1"># bundle_metadata = orjson_dumps(data.metadata)</span>
+        <span class="c1"># bundle_metadata_schema = orjson_dumps(data.metadata_schema)</span>
         <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;included_files&quot;</span><span class="p">:</span> <span class="n">file_metadata</span><span class="p">,</span>
             <span class="s2">&quot;bundle_name&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">bundle_name</span><span class="p">,</span>
             <span class="c1"># &quot;import_time&quot;: data.import_time,</span>
             <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
             <span class="s2">&quot;number_of_files&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">number_of_files</span><span class="p">,</span>
-            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">bundle_metadata</span><span class="p">,</span>
-            <span class="s2">&quot;metadata_schema&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">metadata_schema</span><span class="p">,</span>
+            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+            <span class="s2">&quot;metadata_schemas&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">metadata_schemas</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="k">assert</span> <span class="s2">&quot;__file_metadata__&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_data</span>
@@ -5815,12 +5827,12 @@
         <span class="n">serialized</span> <span class="o">=</span> <span class="n">SerializationResult</span><span class="p">(</span><span class="o">**</span><span class="n">serialized_data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">serialized</span>
 
-    <span class="k">def</span> <span class="nf">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileBundle</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraFileBundle</span><span class="p">:</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">FileBundle</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">KiaraFileBundle</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">data</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">FileBundle</span><span class="o">.</span><span class="n">import_folder</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">KiaraFileBundle</span><span class="o">.</span><span class="n">import_folder</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Can&#39;t create FileBundle from data of type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
@@ -5830,7 +5842,7 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 
-        <span class="n">bundle</span><span class="p">:</span> <span class="n">FileBundle</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">bundle</span><span class="p">:</span> <span class="n">KiaraFileBundle</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
         <span class="n">renderable</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">create_renderable</span><span class="p">(</span><span class="o">**</span><span class="n">render_config</span><span class="p">)</span>
 
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">show_header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">box</span><span class="o">.</span><span class="n">SIMPLE</span><span class="p">)</span>
@@ -5840,7 +5852,7 @@
         <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;File bundle info&quot;</span><span class="p">,</span> <span class="n">renderable</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">bundle</span><span class="o">.</span><span class="n">metadata</span><span class="p">:</span>
             <span class="n">metadata_table</span> <span class="o">=</span> <span class="n">create_table_from_data_and_schema</span><span class="p">(</span>
-                <span class="n">data</span><span class="o">=</span><span class="n">bundle</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">bundle</span><span class="o">.</span><span class="n">metadata_schema</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">bundle</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="n">schema</span><span class="o">=</span><span class="n">bundle</span><span class="o">.</span><span class="n">metadata_schemas</span>
             <span class="p">)</span>
             <span class="n">table</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s2">&quot;Metadata&quot;</span><span class="p">,</span> <span class="n">metadata_table</span><span class="p">)</span>
 
@@ -5850,7 +5862,7 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">render_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 
-        <span class="n">bundle</span><span class="p">:</span> <span class="n">FileBundle</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">bundle</span><span class="p">:</span> <span class="n">KiaraFileBundle</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">data</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File bundle &#39;</span><span class="si">{</span><span class="n">bundle</span><span class="o">.</span><span class="n">bundle_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  size: </span><span class="si">{</span><span class="n">humanfriendly</span><span class="o">.</span><span class="n">format_size</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">size</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -5892,12 +5904,12 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/data_types/included_core_types/filesystem.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">193</span>
-<span class="normal">194</span>
-<span class="normal">195</span>
-<span class="normal">196</span>
-<span class="normal">197</span>
-<span class="normal">198</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">retrieve_available_type_profiles</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">ft</span> <span class="ow">in</span> <span class="n">SUPPORTED_FILE_TYPES</span><span class="p">:</span>
@@ -5927,11 +5939,11 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/data_types/included_core_types/filesystem.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">200</span>
-<span class="normal">201</span>
-<span class="normal">202</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">python_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">FileBundle</span>
+    <span class="k">return</span> <span class="n">KiaraFileBundle</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -5956,9 +5968,9 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/data_types/included_core_types/filesystem.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">204</span>
-<span class="normal">205</span>
-<span class="normal">206</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">data_type_config_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">FileTypeConfig</span><span class="p">]:</span>
     <span class="k">return</span> <span class="n">FileTypeConfig</span>
 </code></pre></div></td></tr></table></div>
@@ -5972,7 +5984,7 @@
 
 
 <h5 id="kiara.data_types.included_core_types.filesystem.FileBundleValueType.serialize" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">serialize</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">FileBundle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SerializedData</span></code>
+<code class="highlight language-python"><span class="n">serialize</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">KiaraFileBundle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SerializedData</span></code>
 
 <a href="#kiara.data_types.included_core_types.filesystem.FileBundleValueType.serialize" class="headerlink" title="Permanent link">&para;</a></h5>
 
@@ -5981,11 +5993,7 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/data_types/included_core_types/filesystem.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">208</span>
-<span class="normal">209</span>
-<span class="normal">210</span>
-<span class="normal">211</span>
-<span class="normal">212</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">212</span>
 <span class="normal">213</span>
 <span class="normal">214</span>
 <span class="normal">215</span>
@@ -6033,7 +6041,12 @@
 <span class="normal">257</span>
 <span class="normal">258</span>
 <span class="normal">259</span>
-<span class="normal">260</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">FileBundle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">:</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">KiaraFileBundle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SerializedData&quot;</span><span class="p">:</span>
 
     <span class="n">file_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">file_metadata</span> <span class="o">=</span> <span class="p">{}</span>
@@ -6044,15 +6057,16 @@
             <span class="c1"># &quot;import_time&quot;: file.import_time,</span>
         <span class="p">}</span>
 
-    <span class="n">bundle_metadata</span> <span class="o">=</span> <span class="n">orjson_dumps</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+    <span class="c1"># bundle_metadata = orjson_dumps(data.metadata)</span>
+    <span class="c1"># bundle_metadata_schema = orjson_dumps(data.metadata_schema)</span>
     <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;included_files&quot;</span><span class="p">:</span> <span class="n">file_metadata</span><span class="p">,</span>
         <span class="s2">&quot;bundle_name&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">bundle_name</span><span class="p">,</span>
         <span class="c1"># &quot;import_time&quot;: data.import_time,</span>
         <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
         <span class="s2">&quot;number_of_files&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">number_of_files</span><span class="p">,</span>
-        <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">bundle_metadata</span><span class="p">,</span>
-        <span class="s2">&quot;metadata_schema&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">metadata_schema</span><span class="p">,</span>
+        <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+        <span class="s2">&quot;metadata_schemas&quot;</span><span class="p">:</span> <span class="n">data</span><span class="o">.</span><span class="n">metadata_schemas</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">assert</span> <span class="s2">&quot;__file_metadata__&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">file_data</span>
@@ -6097,7 +6111,7 @@
 
 
 <h5 id="kiara.data_types.included_core_types.filesystem.FileBundleValueType.parse_python_obj" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">parse_python_obj</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileBundle</span></code>
+<code class="highlight language-python"><span class="n">parse_python_obj</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraFileBundle</span></code>
 
 <a href="#kiara.data_types.included_core_types.filesystem.FileBundleValueType.parse_python_obj" class="headerlink" title="Permanent link">&para;</a></h5>
 
@@ -6106,21 +6120,21 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/data_types/included_core_types/filesystem.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">262</span>
-<span class="normal">263</span>
-<span class="normal">264</span>
-<span class="normal">265</span>
-<span class="normal">266</span>
-<span class="normal">267</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">267</span>
 <span class="normal">268</span>
 <span class="normal">269</span>
 <span class="normal">270</span>
-<span class="normal">271</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FileBundle</span><span class="p">:</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">parse_python_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraFileBundle</span><span class="p">:</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">FileBundle</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">KiaraFileBundle</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">data</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">FileBundle</span><span class="o">.</span><span class="n">import_folder</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">KiaraFileBundle</span><span class="o">.</span><span class="n">import_folder</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Can&#39;t create FileBundle from data of type &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>

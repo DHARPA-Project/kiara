@@ -258,13 +258,34 @@ class ModuleProcessor(abc.ABC):
             job.status = JobStatus.SUCCESS
             job.finished = datetime.now()
             values = self._output_refs[job_id]
-            values.sync_values()
-            value_ids = values.get_all_value_ids()
-            job.results = value_ids
-            job.job_log.percent_finished = 100
-            job_record = JobRecord.from_active_job(active_job=job, kiara=self._kiara)
-            self._job_records[job_id] = job_record
-            self._finished_jobs[job_id] = job
+            try:
+                values.sync_values()
+                value_ids = values.get_all_value_ids()
+                job.results = value_ids
+                job.job_log.percent_finished = 100
+                job_record = JobRecord.from_active_job(
+                    active_job=job, kiara=self._kiara
+                )
+                self._job_records[job_id] = job_record
+                self._finished_jobs[job_id] = job
+            except Exception as e:
+                status = e
+                job.job_log.add_log("job failed")
+                job.status = JobStatus.FAILED
+                job.finished = datetime.now()
+                msg = str(status)
+                job.error = msg
+                job._exception = status
+                self._failed_jobs[job_id] = job
+
+                log.debug(
+                    "job.failed",
+                    job_id=str(job.job_id),
+                    msg=f"failed to sync job results: {job.error}",
+                    module_type=job.job_config.module_type,
+                )
+                status = JobStatus.FAILED
+
         elif status == JobStatus.FAILED or isinstance(status, (str, Exception)):
             self._active_jobs.pop(job_id)
             job.job_log.add_log("job failed")
@@ -283,6 +304,7 @@ class ModuleProcessor(abc.ABC):
                 msg=job.error,
                 module_type=job.job_config.module_type,
             )
+            status = JobStatus.FAILED
         elif status == JobStatus.STARTED:
             job.job_log.add_log("job started")
             job.status = JobStatus.STARTED

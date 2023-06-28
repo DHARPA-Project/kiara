@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 import uuid
 from typing import TYPE_CHECKING, Any, List, Mapping
 
@@ -34,7 +35,7 @@ def create_module_preparation_table(
     job_config: JobConfig,
     job_id: uuid.UUID,
     module: "KiaraModule",
-    **render_config: Any
+    **render_config: Any,
 ) -> Table:
 
     dev_config = get_dev_config()
@@ -92,7 +93,7 @@ def create_post_run_table(
     job: ActiveJob,
     module: "KiaraModule",
     job_config: JobConfig,
-    **render_config: Any
+    **render_config: Any,
 ) -> Table:
 
     dev_config = get_dev_config()
@@ -101,6 +102,17 @@ def create_post_run_table(
     table.add_column("value")
 
     table.add_row("job_id", str(job.job_id))
+    table.add_row("status", job.status.value)
+    if job.error:
+        table.add_row("error", job.error)
+    if job.job_log.log:
+        log_table = Table(show_header=False, box=box.SIMPLE_HEAD)
+        log_table.add_column("log", style="i")
+        log_table.add_column("level")
+        for log in job.job_log.log:
+            log_level = logging.getLevelName(log.log_level)
+            log_table.add_row(log.msg, f"( {log_level} )")
+        table.add_row("logs", log_table)
     module_details = dev_config.log.post_run.module_info
     if module_details not in [DetailLevel.NONE.value, DetailLevel.NONE]:
         if module_details in [DetailLevel.MINIMAL.value, DetailLevel.MINIMAL]:

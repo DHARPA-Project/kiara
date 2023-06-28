@@ -8,7 +8,6 @@
 import inspect
 import os
 import re
-import sys
 from typing import TYPE_CHECKING, Dict, Iterable, List, Type, TypeVar
 
 import structlog
@@ -86,22 +85,23 @@ def log_exception(exc: Exception):
         from kiara.interfaces import get_console
         from kiara.utils.develop import log_dev_message
 
-        exc_info = sys.exc_info()
+        # exc_info = sys.exc_info()
+        exc_info = (type(exc), exc, exc.__traceback__)
 
-        if not exc_info or not exc_info[0]:
-            # TODO: create exc_info from exception?
-            if not is_debug():
-                logger.error(exc)
-        else:
-            console = get_console()
-            from rich.traceback import Traceback
+        # if not exc_info or not exc_info[0]:
+        #     # TODO: create exc_info from exception?
+        #     if not is_debug():
+        #         logger.error(exc)
+        # else:
+        console = get_console()
+        from rich.traceback import Traceback
 
-            log_dev_message(
-                Traceback.from_exception(
-                    type(exc_info[0]), exc_info[1], traceback=exc_info[2], show_locals=show_locals, width=console.width - 4  # type: ignore
-                ),
-                title="Exception details",
-            )
+        log_dev_message(
+            Traceback.from_exception(
+                exc_info[0], exc_info[1], traceback=exc_info[2], show_locals=show_locals, width=console.width - 4  # type: ignore
+            ),
+            title="Exception details",
+        )
 
 
 def log_message(msg: str, **data):

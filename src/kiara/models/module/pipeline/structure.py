@@ -15,6 +15,7 @@ from rich.tree import Tree
 from kiara.defaults import KIARA_DEFAULT_STAGES_EXTRACTION_TYPE
 from kiara.exceptions import InvalidPipelineConfig
 from kiara.models import KiaraModel
+from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module.pipeline import PipelineConfig, PipelineStep
 from kiara.models.module.pipeline.stages import PipelineStage
 from kiara.models.module.pipeline.value_refs import (
@@ -37,7 +38,7 @@ class StepInfo(KiaraModel):
 
     _kiara_model_id = "info.pipeline_step"
 
-    step: PipelineStep = Field(description="The pipeline step object.")
+    step: PipelineStep = Field(description="The pipeline step object.", exclude=True)
     inputs: Dict[str, StepInputRef] = Field(
         description="Reference(s) to the fields that feed this steps inputs."
     )
@@ -46,6 +47,10 @@ class StepInfo(KiaraModel):
     )
     required: bool = Field(
         description="Whether this step is always required or whether all his outputs feed into optional input fields."
+    )
+    doc: DocumentationMetadataModel = Field(
+        description="The step documentation.",
+        default_factory=DocumentationMetadataModel.create,
     )
     # processing_stage: int = Field(
     #     description="The index of the processing stage of this step."
@@ -140,10 +145,10 @@ class PipelineStructure(KiaraModel):
         if invalid_input_aliases:
             msg = "Invalid input reference(s)."
             details = "Invalid reference(s):\n"
-            for iia in invalid_input_aliases:
+            for iia in sorted(invalid_input_aliases):
                 details += f" - {iia}\n"
             details += "\nMust be one of: \n"
-            for name in valid_input_names:
+            for name in sorted(valid_input_names):
                 details += f"  - {name}\n"
 
             raise InvalidPipelineConfig(
@@ -161,10 +166,10 @@ class PipelineStructure(KiaraModel):
 
             msg = "Invalid output reference(s)."
             details = "Invalid reference(s):\n"
-            for iia in invalid_output_names:
+            for iia in sorted(invalid_output_names):
                 details += f" - {iia}\n"
             details += "\nMust be one of: \n"
-            for name in valid_output_names:
+            for name in sorted(valid_output_names):
                 details += f"  - {name}\n"
 
             raise InvalidPipelineConfig(msg, values.get("pipeline_config", {}), details)
@@ -690,6 +695,10 @@ class PipelineStructure(KiaraModel):
 
                 steps_details[step.step_id]["inputs"][input_name] = step_input_point
 
+                if step.doc.is_set:
+                    steps_details[step.step_id]["doc"] = step.doc
+                else:
+                    steps_details[step.step_id]["doc"] = step.module.doc
                 data_flow_graph.add_edge(step_input_point, step)
 
             if other_step_dependency:

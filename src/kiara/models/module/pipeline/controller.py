@@ -6,7 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import uuid
-from typing import Dict, Mapping, Union
+from typing import Callable, Dict, Mapping, Union
 
 import structlog
 
@@ -180,7 +180,9 @@ class SinglePipelineBatchController(SinglePipelineController):
     def auto_process(self, auto_process: bool):
         self._auto_process = auto_process
 
-    def process_pipeline(self) -> Mapping[str, Union[uuid.UUID, Exception]]:
+    def process_pipeline(
+        self, event_callback: Union[Callable, None] = None
+    ) -> Mapping[str, Union[uuid.UUID, Exception]]:
 
         log = logger.bind(pipeline_id=self.pipeline.pipeline_id)
         if self._is_running:
@@ -199,6 +201,9 @@ class SinglePipelineBatchController(SinglePipelineController):
             )
             for idx, stage in enumerate(stages, start=1):
 
+                if event_callback:
+                    event_callback(f"start processing pipeline stage: {idx}")
+
                 log.debug(
                     "execute.pipeline.stage",
                     stage=idx,
@@ -206,6 +211,8 @@ class SinglePipelineBatchController(SinglePipelineController):
 
                 job_ids = {}
                 for step_id in stage:
+                    if event_callback:
+                        event_callback(f"start processing pipeline step: {step_id}")
 
                     log.debug(
                         "execute.pipeline.step",
@@ -215,6 +222,8 @@ class SinglePipelineBatchController(SinglePipelineController):
                     try:
                         job_id = self.process_step(step_id)
                         job_ids[step_id] = job_id
+                        if event_callback:
+                            event_callback(f"finished processing step '{step_id}'")
                     except Exception as e:
                         all_job_ids[step_id] = e
                         # TODO: cancel running jobs?
@@ -224,16 +233,22 @@ class SinglePipelineBatchController(SinglePipelineController):
                             step_id=step_id,
                             error=e,
                         )
+                        if event_callback:
+                            event_callback(f"Error processing step '{step_id}': {e}")
 
                 self.set_processing_results(job_ids=job_ids)
                 log.debug(
                     "execute_finished.pipeline.stage",
                     stage=idx,
                 )
+                if event_callback:
+                    event_callback(f"finished processing pipeline stage: {idx}")
                 all_job_ids.update(job_ids)
 
         finally:
             self._is_running = False
 
         log.debug("execute_finished.pipeline")
+        if event_callback:
+            event_callback("finished processing pipeline")
         return all_job_ids

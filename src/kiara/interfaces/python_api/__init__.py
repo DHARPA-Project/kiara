@@ -1721,6 +1721,9 @@ class KiaraAPI(object):
         In general, try to avoid this method and use 'queue_job', 'get_job' and 'retrieve_job_result' manually instead,
         since this is a blocking operation.
 
+        If the 'operation' is a JobDesc instance, and that JobDesc instance has the 'save' attribute
+        set, it will be ignored, so you'll have to store any results manually.
+
         Arguments:
             operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..
             inputs: the operation inputs

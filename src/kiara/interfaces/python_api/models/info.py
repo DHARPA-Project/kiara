@@ -1212,7 +1212,8 @@ class PipelineStructureInfo(ItemInfo):
             authors=authors,
             context=context,
             pipeline_config=instance.pipeline_config,
-            steps={step.step_id: step for step in instance.steps},
+            pipeline_config_orig=instance.pipeline_config.get_raw_config(),
+            # steps={step.step_id: step for step in instance.steps},
             step_details=instance.steps_details,
             input_aliases=instance.input_aliases,
             output_aliases=instance.output_aliases,
@@ -1232,9 +1233,12 @@ class PipelineStructureInfo(ItemInfo):
     pipeline_config: PipelineConfig = Field(
         description="The underlying pipeline config."
     )
-    steps: Mapping[str, PipelineStep] = Field(
-        description="All steps for this pipeline, indexed by their step_id."
+    pipeline_config_orig: Dict[str, Any] = Field(
+        description="The original, user-provided pipeline config."
     )
+    # steps: Mapping[str, PipelineStep] = Field(
+    #     description="All steps for this pipeline, indexed by their step_id.", exclude=True
+    # )
     step_details: Mapping[str, StepInfo] = Field(
         description="Additional information for each step."
     )
@@ -1279,7 +1283,7 @@ class PipelineStructureInfo(ItemInfo):
     # )
 
     def get_step(self, step_id) -> PipelineStep:
-        return self.steps[step_id]
+        return self.step_details[step_id].step
 
     def get_step_details(self, step_id: str) -> StepInfo:
         return self.step_details[step_id]

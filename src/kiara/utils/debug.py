@@ -106,12 +106,22 @@ def create_post_run_table(
     if job.error:
         table.add_row("error", job.error)
     if job.job_log.log:
+        start_time = job.job_log.log[0].timestamp
+        last_time = start_time
         log_table = Table(show_header=False, box=box.SIMPLE_HEAD)
         log_table.add_column("log", style="i")
         log_table.add_column("level")
+        log_table.add_column("timestamp")
         for log in job.job_log.log:
-            log_level = logging.getLevelName(log.log_level)
-            log_table.add_row(log.msg, f"( {log_level} )")
+            log_time = log.timestamp
+            if log_time == start_time:
+                time_str = str(log_time)
+            else:
+                time_str = f"+ {log_time - last_time}"
+            log_level = logging.getLevelName(log.log_level).lower()
+            log_table.add_row(log.msg, log_level, time_str)
+            last_time = log_time
+        table.add_row("duration", f"{last_time - start_time}")
         table.add_row("logs", log_table)
     module_details = dev_config.log.post_run.module_info
     if module_details not in [DetailLevel.NONE.value, DetailLevel.NONE]:

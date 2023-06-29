@@ -30,6 +30,7 @@ from kiara.defaults import (
     METADATA_DESTINY_STORE_MARKER,
     kiara_app_dirs,
 )
+from kiara.exceptions import KiaraException
 from kiara.registries.environment import EnvironmentRegistry
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils.files import get_data_from_file
@@ -273,6 +274,11 @@ class KiaraConfig(BaseSettings):
 
         context_file = self._available_context_files[context_name]
         context_data = get_data_from_file(context_file, content_type="yaml")
+
+        if not context_data:
+            raise KiaraException(
+                f"Empty/corrupted context file '{context_file.as_posix()}': delete file and try again."
+            )
 
         changed = False
         if "extra_pipeline_folders" in context_data.keys():

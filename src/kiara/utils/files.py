@@ -18,6 +18,12 @@ def get_data_from_file(
     if isinstance(path, str):
         path = Path(os.path.expanduser(path))
 
+    if not path.exists():
+        raise KiaraException(f"File not found: {path}")
+
+    if not path.is_file():
+        raise KiaraException(f"Path is not a file: {path}")
+
     content = path.read_text()
 
     if not content_type:

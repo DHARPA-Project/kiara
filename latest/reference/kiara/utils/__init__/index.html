@@ -4983,13 +4983,13 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/utils/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">28</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">27</span>
+<span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
 <span class="normal">31</span>
 <span class="normal">32</span>
-<span class="normal">33</span>
-<span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">is_debug</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">33</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">is_debug</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 
     <span class="n">debug</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">debug</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
@@ -5016,7 +5016,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/utils/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">37</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">36</span>
+<span class="normal">37</span>
 <span class="normal">38</span>
 <span class="normal">39</span>
 <span class="normal">40</span>
@@ -5024,8 +5025,7 @@
 <span class="normal">42</span>
 <span class="normal">43</span>
 <span class="normal">44</span>
-<span class="normal">45</span>
-<span class="normal">46</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">is_develop</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">45</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">is_develop</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 
     <span class="n">develop</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;DEVELOP&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">develop</span><span class="p">:</span>
@@ -5055,11 +5055,11 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/utils/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">49</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">48</span>
+<span class="normal">49</span>
 <span class="normal">50</span>
 <span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_dev_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraDevSettings&quot;</span><span class="p">:</span>
+<span class="normal">52</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_dev_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraDevSettings&quot;</span><span class="p">:</span>
 
     <span class="kn">from</span> <span class="nn">kiara.utils.develop</span> <span class="kn">import</span> <span class="n">KIARA_DEV_SETTINGS</span>
 
@@ -5084,7 +5084,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/utils/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">56</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">55</span>
+<span class="normal">56</span>
 <span class="normal">57</span>
 <span class="normal">58</span>
 <span class="normal">59</span>
@@ -5096,8 +5097,7 @@
 <span class="normal">65</span>
 <span class="normal">66</span>
 <span class="normal">67</span>
-<span class="normal">68</span>
-<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">is_jupyter</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="normal">68</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">is_jupyter</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">get_ipython</span>  <span class="c1"># type: ignore</span>
@@ -5131,7 +5131,8 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/utils/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 72</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 71</span>
+<span class="normal"> 72</span>
 <span class="normal"> 73</span>
 <span class="normal"> 74</span>
 <span class="normal"> 75</span>
@@ -5180,22 +5181,23 @@
         <span class="kn">from</span> <span class="nn">kiara.interfaces</span> <span class="kn">import</span> <span class="n">get_console</span>
         <span class="kn">from</span> <span class="nn">kiara.utils.develop</span> <span class="kn">import</span> <span class="n">log_dev_message</span>
 
-        <span class="n">exc_info</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()</span>
+        <span class="c1"># exc_info = sys.exc_info()</span>
+        <span class="n">exc_info</span> <span class="o">=</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span> <span class="n">exc</span><span class="p">,</span> <span class="n">exc</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">exc_info</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">exc_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="c1"># TODO: create exc_info from exception?</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_debug</span><span class="p">():</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">console</span> <span class="o">=</span> <span class="n">get_console</span><span class="p">()</span>
-            <span class="kn">from</span> <span class="nn">rich.traceback</span> <span class="kn">import</span> <span class="n">Traceback</span>
+        <span class="c1"># if not exc_info or not exc_info[0]:</span>
+        <span class="c1">#     # TODO: create exc_info from exception?</span>
+        <span class="c1">#     if not is_debug():</span>
+        <span class="c1">#         logger.error(exc)</span>
+        <span class="c1"># else:</span>
+        <span class="n">console</span> <span class="o">=</span> <span class="n">get_console</span><span class="p">()</span>
+        <span class="kn">from</span> <span class="nn">rich.traceback</span> <span class="kn">import</span> <span class="n">Traceback</span>
 
-            <span class="n">log_dev_message</span><span class="p">(</span>
-                <span class="n">Traceback</span><span class="o">.</span><span class="n">from_exception</span><span class="p">(</span>
-                    <span class="nb">type</span><span class="p">(</span><span class="n">exc_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">exc_info</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">traceback</span><span class="o">=</span><span class="n">exc_info</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">show_locals</span><span class="o">=</span><span class="n">show_locals</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">console</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">4</span>  <span class="c1"># type: ignore</span>
-                <span class="p">),</span>
-                <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Exception details&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="n">log_dev_message</span><span class="p">(</span>
+            <span class="n">Traceback</span><span class="o">.</span><span class="n">from_exception</span><span class="p">(</span>
+                <span class="n">exc_info</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">exc_info</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">traceback</span><span class="o">=</span><span class="n">exc_info</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">show_locals</span><span class="o">=</span><span class="n">show_locals</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">console</span><span class="o">.</span><span class="n">width</span> <span class="o">-</span> <span class="mi">4</span>  <span class="c1"># type: ignore</span>
+            <span class="p">),</span>
+            <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Exception details&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>

@@ -5321,7 +5321,29 @@
 <span class="normal">364</span>
 <span class="normal">365</span>
 <span class="normal">366</span>
-<span class="normal">367</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ModuleProcessor</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ModuleProcessor</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">:</span> <span class="n">Kiara</span> <span class="o">=</span> <span class="n">kiara</span>
@@ -5533,13 +5555,34 @@
             <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">SUCCESS</span>
             <span class="n">job</span><span class="o">.</span><span class="n">finished</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
             <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_refs</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span>
-            <span class="n">values</span><span class="o">.</span><span class="n">sync_values</span><span class="p">()</span>
-            <span class="n">value_ids</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get_all_value_ids</span><span class="p">()</span>
-            <span class="n">job</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">value_ids</span>
-            <span class="n">job</span><span class="o">.</span><span class="n">job_log</span><span class="o">.</span><span class="n">percent_finished</span> <span class="o">=</span> <span class="mi">100</span>
-            <span class="n">job_record</span> <span class="o">=</span> <span class="n">JobRecord</span><span class="o">.</span><span class="n">from_active_job</span><span class="p">(</span><span class="n">active_job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_job_records</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_record</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_finished_jobs</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">values</span><span class="o">.</span><span class="n">sync_values</span><span class="p">()</span>
+                <span class="n">value_ids</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get_all_value_ids</span><span class="p">()</span>
+                <span class="n">job</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">value_ids</span>
+                <span class="n">job</span><span class="o">.</span><span class="n">job_log</span><span class="o">.</span><span class="n">percent_finished</span> <span class="o">=</span> <span class="mi">100</span>
+                <span class="n">job_record</span> <span class="o">=</span> <span class="n">JobRecord</span><span class="o">.</span><span class="n">from_active_job</span><span class="p">(</span>
+                    <span class="n">active_job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_job_records</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_record</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_finished_jobs</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="n">e</span>
+                <span class="n">job</span><span class="o">.</span><span class="n">job_log</span><span class="o">.</span><span class="n">add_log</span><span class="p">(</span><span class="s2">&quot;job failed&quot;</span><span class="p">)</span>
+                <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">FAILED</span>
+                <span class="n">job</span><span class="o">.</span><span class="n">finished</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+                <span class="n">job</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="n">msg</span>
+                <span class="n">job</span><span class="o">.</span><span class="n">_exception</span> <span class="o">=</span> <span class="n">status</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_failed_jobs</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span>
+
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="s2">&quot;job.failed&quot;</span><span class="p">,</span>
+                    <span class="n">job_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">job_id</span><span class="p">),</span>
+                    <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;failed to sync job results: </span><span class="si">{</span><span class="n">job</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">module_type</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">job_config</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">FAILED</span>
+
         <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">FAILED</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_active_jobs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
             <span class="n">job</span><span class="o">.</span><span class="n">job_log</span><span class="o">.</span><span class="n">add_log</span><span class="p">(</span><span class="s2">&quot;job failed&quot;</span><span class="p">)</span>
@@ -5558,6 +5601,7 @@
                 <span class="n">msg</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">error</span><span class="p">,</span>
                 <span class="n">module_type</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">job_config</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">FAILED</span>
         <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">STARTED</span><span class="p">:</span>
             <span class="n">job</span><span class="o">.</span><span class="n">job_log</span><span class="o">.</span><span class="n">add_log</span><span class="p">(</span><span class="s2">&quot;job started&quot;</span><span class="p">)</span>
             <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">STARTED</span>
@@ -6205,7 +6249,29 @@
 <span class="normal">338</span>
 <span class="normal">339</span>
 <span class="normal">340</span>
-<span class="normal">341</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">job_status_updated</span><span class="p">(</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">job_status_updated</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">JobStatus</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">]</span>
 <span class="p">):</span>
 
@@ -6223,13 +6289,34 @@
         <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">SUCCESS</span>
         <span class="n">job</span><span class="o">.</span><span class="n">finished</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_refs</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span>
-        <span class="n">values</span><span class="o">.</span><span class="n">sync_values</span><span class="p">()</span>
-        <span class="n">value_ids</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get_all_value_ids</span><span class="p">()</span>
-        <span class="n">job</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">value_ids</span>
-        <span class="n">job</span><span class="o">.</span><span class="n">job_log</span><span class="o">.</span><span class="n">percent_finished</span> <span class="o">=</span> <span class="mi">100</span>
-        <span class="n">job_record</span> <span class="o">=</span> <span class="n">JobRecord</span><span class="o">.</span><span class="n">from_active_job</span><span class="p">(</span><span class="n">active_job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_job_records</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_record</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_finished_jobs</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">sync_values</span><span class="p">()</span>
+            <span class="n">value_ids</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">get_all_value_ids</span><span class="p">()</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">value_ids</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">job_log</span><span class="o">.</span><span class="n">percent_finished</span> <span class="o">=</span> <span class="mi">100</span>
+            <span class="n">job_record</span> <span class="o">=</span> <span class="n">JobRecord</span><span class="o">.</span><span class="n">from_active_job</span><span class="p">(</span>
+                <span class="n">active_job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">kiara</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_kiara</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_job_records</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job_record</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_finished_jobs</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">e</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">job_log</span><span class="o">.</span><span class="n">add_log</span><span class="p">(</span><span class="s2">&quot;job failed&quot;</span><span class="p">)</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">FAILED</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">finished</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="n">msg</span>
+            <span class="n">job</span><span class="o">.</span><span class="n">_exception</span> <span class="o">=</span> <span class="n">status</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_failed_jobs</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span>
+
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s2">&quot;job.failed&quot;</span><span class="p">,</span>
+                <span class="n">job_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">job_id</span><span class="p">),</span>
+                <span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;failed to sync job results: </span><span class="si">{</span><span class="n">job</span><span class="o">.</span><span class="n">error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">module_type</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">job_config</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">FAILED</span>
+
     <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">FAILED</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">)):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_active_jobs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
         <span class="n">job</span><span class="o">.</span><span class="n">job_log</span><span class="o">.</span><span class="n">add_log</span><span class="p">(</span><span class="s2">&quot;job failed&quot;</span><span class="p">)</span>
@@ -6248,6 +6335,7 @@
             <span class="n">msg</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">error</span><span class="p">,</span>
             <span class="n">module_type</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">job_config</span><span class="o">.</span><span class="n">module_type</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">FAILED</span>
     <span class="k">elif</span> <span class="n">status</span> <span class="o">==</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">STARTED</span><span class="p">:</span>
         <span class="n">job</span><span class="o">.</span><span class="n">job_log</span><span class="o">.</span><span class="n">add_log</span><span class="p">(</span><span class="s2">&quot;job started&quot;</span><span class="p">)</span>
         <span class="n">job</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">JobStatus</span><span class="o">.</span><span class="n">STARTED</span>
@@ -6326,16 +6414,16 @@
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/processing/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">343</span>
-<span class="normal">344</span>
-<span class="normal">345</span>
-<span class="normal">346</span>
-<span class="normal">347</span>
-<span class="normal">348</span>
-<span class="normal">349</span>
-<span class="normal">350</span>
-<span class="normal">351</span>
-<span class="normal">352</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">wait_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">job_ids</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">wait_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">job_ids</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wait for the jobs with the specified ids, also optionally sync their outputs with the pipeline value state.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for</span><span class="p">(</span><span class="o">*</span><span class="n">job_ids</span><span class="p">)</span>
 

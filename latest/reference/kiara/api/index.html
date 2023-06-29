@@ -10347,7 +10347,10 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 <span class="normal">2080</span>
 <span class="normal">2081</span>
 <span class="normal">2082</span>
-<span class="normal">2083</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraAPI</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="normal">2083</span>
+<span class="normal">2084</span>
+<span class="normal">2085</span>
+<span class="normal">2086</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraAPI</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Public API for clients.</span>
@@ -11981,6 +11984,9 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 <span class="sd">        In general, try to avoid this method and use &#39;queue_job&#39;, &#39;get_job&#39; and &#39;retrieve_job_result&#39; manually instead,</span>
 <span class="sd">        since this is a blocking operation.</span>
 
+<span class="sd">        If the &#39;operation&#39; is a JobDesc instance, and that JobDesc instance has the &#39;save&#39; attribute</span>
+<span class="sd">        set, it will be ignored, so you&#39;ll have to store any results manually.</span>
+
 <span class="sd">        Arguments:</span>
 <span class="sd">            operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..</span>
 <span class="sd">            inputs: the operation inputs</span>
@@ -12362,8 +12368,8 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 <code class="highlight language-python"><span class="n">doc</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-cached"><code>cached</code></small>
   </span>
 
 <a href="#kiara.interfaces.python_api.KiaraAPI.doc" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -18542,6 +18548,8 @@ the value type of the source value, and the provided target format.</p>
 <p>This is a convenience method that auto-detects what is meant by the 'operation' string input argument.</p>
 <p>In general, try to avoid this method and use 'queue_job', 'get_job' and 'retrieve_job_result' manually instead,
 since this is a blocking operation.</p>
+<p>If the 'operation' is a JobDesc instance, and that JobDesc instance has the 'save' attribute
+set, it will be ignored, so you'll have to store any results manually.</p>
 
   <p><strong>Parameters:</strong></p>
   <table>
@@ -18651,7 +18659,10 @@ since this is a blocking operation.</p>
 <span class="normal">1735</span>
 <span class="normal">1736</span>
 <span class="normal">1737</span>
-<span class="normal">1738</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run_job</span><span class="p">(</span>
+<span class="normal">1738</span>
+<span class="normal">1739</span>
+<span class="normal">1740</span>
+<span class="normal">1741</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run_job</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">operation</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Manifest</span><span class="p">,</span> <span class="n">OperationInfo</span><span class="p">,</span> <span class="n">JobDesc</span><span class="p">],</span>
     <span class="n">inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -18664,6 +18675,9 @@ since this is a blocking operation.</p>
 
 <span class="sd">    In general, try to avoid this method and use &#39;queue_job&#39;, &#39;get_job&#39; and &#39;retrieve_job_result&#39; manually instead,</span>
 <span class="sd">    since this is a blocking operation.</span>
+
+<span class="sd">    If the &#39;operation&#39; is a JobDesc instance, and that JobDesc instance has the &#39;save&#39; attribute</span>
+<span class="sd">    set, it will be ignored, so you&#39;ll have to store any results manually.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..</span>
@@ -18702,13 +18716,13 @@ since this is a blocking operation.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1740</span>
-<span class="normal">1741</span>
-<span class="normal">1742</span>
-<span class="normal">1743</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1743</span>
 <span class="normal">1744</span>
 <span class="normal">1745</span>
-<span class="normal">1746</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ActiveJob</span><span class="p">:</span>
+<span class="normal">1746</span>
+<span class="normal">1747</span>
+<span class="normal">1748</span>
+<span class="normal">1749</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ActiveJob</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the status of the job with the provided id.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">job_id</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
@@ -18737,13 +18751,13 @@ since this is a blocking operation.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1748</span>
-<span class="normal">1749</span>
-<span class="normal">1750</span>
-<span class="normal">1751</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1751</span>
 <span class="normal">1752</span>
 <span class="normal">1753</span>
-<span class="normal">1754</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_job_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ValueMapReadOnly</span><span class="p">:</span>
+<span class="normal">1754</span>
+<span class="normal">1755</span>
+<span class="normal">1756</span>
+<span class="normal">1757</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_job_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ValueMapReadOnly</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the result(s) of the specified job.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">job_id</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span>
@@ -18894,10 +18908,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1756</span>
-<span class="normal">1757</span>
-<span class="normal">1758</span>
-<span class="normal">1759</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1759</span>
 <span class="normal">1760</span>
 <span class="normal">1761</span>
 <span class="normal">1762</span>
@@ -19008,7 +19019,10 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">1867</span>
 <span class="normal">1868</span>
 <span class="normal">1869</span>
-<span class="normal">1870</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">render_value</span><span class="p">(</span>
+<span class="normal">1870</span>
+<span class="normal">1871</span>
+<span class="normal">1872</span>
+<span class="normal">1873</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">render_value</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Value</span><span class="p">],</span>
     <span class="n">target_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;string&quot;</span><span class="p">,</span>
@@ -19145,9 +19159,9 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1875</span>
-<span class="normal">1876</span>
-<span class="normal">1877</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflow_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1878</span>
+<span class="normal">1879</span>
+<span class="normal">1880</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflow_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;List all available workflow ids.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">workflow_registry</span><span class="o">.</span><span class="n">all_workflow_ids</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
@@ -19172,9 +19186,9 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1879</span>
-<span class="normal">1880</span>
-<span class="normal">1881</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflow_alias_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1882</span>
+<span class="normal">1883</span>
+<span class="normal">1884</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflow_alias_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; &quot;List all available workflow aliases.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">workflow_registry</span><span class="o">.</span><span class="n">workflow_aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 </code></pre></div></td></tr></table></div>
@@ -19199,10 +19213,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1883</span>
-<span class="normal">1884</span>
-<span class="normal">1885</span>
-<span class="normal">1886</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1886</span>
 <span class="normal">1887</span>
 <span class="normal">1888</span>
 <span class="normal">1889</span>
@@ -19245,7 +19256,10 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">1926</span>
 <span class="normal">1927</span>
 <span class="normal">1928</span>
-<span class="normal">1929</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_workflow</span><span class="p">(</span>
+<span class="normal">1929</span>
+<span class="normal">1930</span>
+<span class="normal">1931</span>
+<span class="normal">1932</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_workflow</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">],</span> <span class="n">create_if_necessary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Workflow</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve the workflow instance with the specified id or alias.&quot;&quot;&quot;</span>
@@ -19312,16 +19326,16 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1931</span>
-<span class="normal">1932</span>
-<span class="normal">1933</span>
-<span class="normal">1934</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1934</span>
 <span class="normal">1935</span>
 <span class="normal">1936</span>
 <span class="normal">1937</span>
 <span class="normal">1938</span>
 <span class="normal">1939</span>
-<span class="normal">1940</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflow_info</span><span class="p">(</span>
+<span class="normal">1940</span>
+<span class="normal">1941</span>
+<span class="normal">1942</span>
+<span class="normal">1943</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflow_info</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">workflow</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Workflow</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowInfo</span><span class="p">:</span>
 
@@ -19353,10 +19367,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1942</span>
-<span class="normal">1943</span>
-<span class="normal">1944</span>
-<span class="normal">1945</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1945</span>
 <span class="normal">1946</span>
 <span class="normal">1947</span>
 <span class="normal">1948</span>
@@ -19378,7 +19389,10 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">1964</span>
 <span class="normal">1965</span>
 <span class="normal">1966</span>
-<span class="normal">1967</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;WorkflowsMap&quot;</span><span class="p">:</span>
+<span class="normal">1967</span>
+<span class="normal">1968</span>
+<span class="normal">1969</span>
+<span class="normal">1970</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;WorkflowsMap&quot;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;List all available workflow sessions, indexed by their unique id.&quot;&quot;&quot;</span>
 
     <span class="kn">from</span> <span class="nn">kiara.interfaces.python_api.models.doc</span> <span class="kn">import</span> <span class="n">WorkflowsMap</span>
@@ -19426,10 +19440,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1969</span>
-<span class="normal">1970</span>
-<span class="normal">1971</span>
-<span class="normal">1972</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1972</span>
 <span class="normal">1973</span>
 <span class="normal">1974</span>
 <span class="normal">1975</span>
@@ -19454,7 +19465,10 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">1994</span>
 <span class="normal">1995</span>
 <span class="normal">1996</span>
-<span class="normal">1997</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflow_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;WorkflowsMap&quot;</span><span class="p">:</span>
+<span class="normal">1997</span>
+<span class="normal">1998</span>
+<span class="normal">1999</span>
+<span class="normal">2000</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">list_workflow_aliases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;WorkflowsMap&quot;</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;List all available workflow sessions that have an alias, indexed by alias.&quot;&quot;&quot;</span>
 
     <span class="kn">from</span> <span class="nn">kiara.interfaces.python_api.models.doc</span> <span class="kn">import</span> <span class="n">WorkflowsMap</span>
@@ -19505,16 +19519,16 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1999</span>
-<span class="normal">2000</span>
-<span class="normal">2001</span>
-<span class="normal">2002</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2002</span>
 <span class="normal">2003</span>
 <span class="normal">2004</span>
 <span class="normal">2005</span>
 <span class="normal">2006</span>
 <span class="normal">2007</span>
-<span class="normal">2008</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflows_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowGroupInfo</span><span class="p">:</span>
+<span class="normal">2008</span>
+<span class="normal">2009</span>
+<span class="normal">2010</span>
+<span class="normal">2011</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflows_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowGroupInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a map info instances for all available workflows, indexed by (stringified) workflow-id.&quot;&quot;&quot;</span>
     <span class="n">workflows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_workflows</span><span class="p">(</span><span class="o">**</span><span class="n">matcher_params</span><span class="p">)</span>
 
@@ -19546,17 +19560,17 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2010</span>
-<span class="normal">2011</span>
-<span class="normal">2012</span>
-<span class="normal">2013</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2013</span>
 <span class="normal">2014</span>
 <span class="normal">2015</span>
 <span class="normal">2016</span>
 <span class="normal">2017</span>
 <span class="normal">2018</span>
 <span class="normal">2019</span>
-<span class="normal">2020</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflow_aliases_info</span><span class="p">(</span>
+<span class="normal">2020</span>
+<span class="normal">2021</span>
+<span class="normal">2022</span>
+<span class="normal">2023</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">retrieve_workflow_aliases_info</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">matcher_params</span><span class="p">:</span> <span class="n">Any</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WorkflowGroupInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a map info instances for all available workflows, indexed by alias.&quot;&quot;&quot;</span>
@@ -19587,10 +19601,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2022</span>
-<span class="normal">2023</span>
-<span class="normal">2024</span>
-<span class="normal">2025</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">2025</span>
 <span class="normal">2026</span>
 <span class="normal">2027</span>
 <span class="normal">2028</span>
@@ -19641,7 +19652,10 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">2073</span>
 <span class="normal">2074</span>
 <span class="normal">2075</span>
-<span class="normal">2076</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_workflow</span><span class="p">(</span>
+<span class="normal">2076</span>
+<span class="normal">2077</span>
+<span class="normal">2078</span>
+<span class="normal">2079</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_workflow</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">workflow_alias</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">initial_pipeline</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -19729,8 +19743,7 @@ the value type of the source value, and the provided target format.</p>
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/context/config.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">121</span>
-<span class="normal">122</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">122</span>
 <span class="normal">123</span>
 <span class="normal">124</span>
 <span class="normal">125</span>
@@ -20183,7 +20196,13 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">572</span>
 <span class="normal">573</span>
 <span class="normal">574</span>
-<span class="normal">575</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraConfig</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
+<span class="normal">575</span>
+<span class="normal">576</span>
+<span class="normal">577</span>
+<span class="normal">578</span>
+<span class="normal">579</span>
+<span class="normal">580</span>
+<span class="normal">581</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">KiaraConfig</span><span class="p">(</span><span class="n">BaseSettings</span><span class="p">):</span>
     <span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
         <span class="n">env_prefix</span> <span class="o">=</span> <span class="s2">&quot;kiara_&quot;</span>
         <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
@@ -20338,6 +20357,11 @@ the value type of the source value, and the provided target format.</p>
 
         <span class="n">context_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_available_context_files</span><span class="p">[</span><span class="n">context_name</span><span class="p">]</span>
         <span class="n">context_data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">context_file</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;yaml&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">context_data</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KiaraException</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Empty/corrupted context file &#39;</span><span class="si">{</span><span class="n">context_file</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;: delete file and try again.&quot;</span>
+            <span class="p">)</span>
 
         <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="s2">&quot;extra_pipeline_folders&quot;</span> <span class="ow">in</span> <span class="n">context_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -20827,10 +20851,10 @@ the value type of the source value, and the provided target format.</p>
 
         <details class="quote">
           <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/context/config.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">122</span>
-<span class="normal">123</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">123</span>
 <span class="normal">124</span>
-<span class="normal">125</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
+<span class="normal">125</span>
+<span class="normal">126</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">env_prefix</span> <span class="o">=</span> <span class="s2">&quot;kiara_&quot;</span>
     <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
     <span class="n">use_enum_values</span> <span class="o">=</span> <span class="kc">True</span>
@@ -20936,8 +20960,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">127</span>
-<span class="normal">128</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">128</span>
 <span class="normal">129</span>
 <span class="normal">130</span>
 <span class="normal">131</span>
@@ -20952,7 +20975,8 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">140</span>
 <span class="normal">141</span>
 <span class="normal">142</span>
-<span class="normal">143</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">143</span>
+<span class="normal">144</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_in_folder</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraConfig&quot;</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -20993,8 +21017,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">145</span>
-<span class="normal">146</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">146</span>
 <span class="normal">147</span>
 <span class="normal">148</span>
 <span class="normal">149</span>
@@ -21016,7 +21039,8 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span>
-<span class="normal">168</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">168</span>
+<span class="normal">169</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">load_from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;KiaraConfig&quot;</span><span class="p">:</span>
 
     <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -21060,13 +21084,13 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">198</span>
-<span class="normal">199</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">199</span>
 <span class="normal">200</span>
 <span class="normal">201</span>
 <span class="normal">202</span>
 <span class="normal">203</span>
-<span class="normal">204</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;context_search_paths&quot;</span><span class="p">)</span>
+<span class="normal">204</span>
+<span class="normal">205</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@validator</span><span class="p">(</span><span class="s2">&quot;context_search_paths&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">validate_context_search_paths</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
@@ -21093,8 +21117,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">251</span>
-<span class="normal">252</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">252</span>
 <span class="normal">253</span>
 <span class="normal">254</span>
 <span class="normal">255</span>
@@ -21144,7 +21167,13 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">299</span>
 <span class="normal">300</span>
 <span class="normal">301</span>
-<span class="normal">302</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_context_config</span><span class="p">(</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_context_config</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">auto_generate</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -21169,6 +21198,11 @@ the value type of the source value, and the provided target format.</p>
 
     <span class="n">context_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_available_context_files</span><span class="p">[</span><span class="n">context_name</span><span class="p">]</span>
     <span class="n">context_data</span> <span class="o">=</span> <span class="n">get_data_from_file</span><span class="p">(</span><span class="n">context_file</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;yaml&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">context_data</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">KiaraException</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Empty/corrupted context file &#39;</span><span class="si">{</span><span class="n">context_file</span><span class="o">.</span><span class="n">as_posix</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;: delete file and try again.&quot;</span>
+        <span class="p">)</span>
 
     <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">if</span> <span class="s2">&quot;extra_pipeline_folders&quot;</span> <span class="ow">in</span> <span class="n">context_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -21216,13 +21250,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">423</span>
-<span class="normal">424</span>
-<span class="normal">425</span>
-<span class="normal">426</span>
-<span class="normal">427</span>
-<span class="normal">428</span>
-<span class="normal">429</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">429</span>
 <span class="normal">430</span>
 <span class="normal">431</span>
 <span class="normal">432</span>
@@ -21257,7 +21285,13 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">461</span>
 <span class="normal">462</span>
 <span class="normal">463</span>
-<span class="normal">464</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_context_config</span><span class="p">(</span>
+<span class="normal">464</span>
+<span class="normal">465</span>
+<span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_context_config</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">context_alias</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraContextConfig</span><span class="p">:</span>
 
@@ -21319,13 +21353,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">466</span>
-<span class="normal">467</span>
-<span class="normal">468</span>
-<span class="normal">469</span>
-<span class="normal">470</span>
-<span class="normal">471</span>
-<span class="normal">472</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">472</span>
 <span class="normal">473</span>
 <span class="normal">474</span>
 <span class="normal">475</span>
@@ -21360,7 +21388,13 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">504</span>
 <span class="normal">505</span>
 <span class="normal">506</span>
-<span class="normal">507</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_context</span><span class="p">(</span>
+<span class="normal">507</span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span>
+<span class="normal">511</span>
+<span class="normal">512</span>
+<span class="normal">513</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_context</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">context</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">extra_pipelines</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -21422,8 +21456,8 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">509</span>
-<span class="normal">510</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_context_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraContextConfig</span><span class="p">:</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">515</span>
+<span class="normal">516</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">find_context_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">KiaraContextConfig</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
       </details>
@@ -21445,13 +21479,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">512</span>
-<span class="normal">513</span>
-<span class="normal">514</span>
-<span class="normal">515</span>
-<span class="normal">516</span>
-<span class="normal">517</span>
-<span class="normal">518</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">518</span>
 <span class="normal">519</span>
 <span class="normal">520</span>
 <span class="normal">521</span>
@@ -21471,7 +21499,13 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">535</span>
 <span class="normal">536</span>
 <span class="normal">537</span>
-<span class="normal">538</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="normal">538</span>
+<span class="normal">539</span>
+<span class="normal">540</span>
+<span class="normal">541</span>
+<span class="normal">542</span>
+<span class="normal">543</span>
+<span class="normal">544</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">KIARA_MAIN_CONFIG_FILE</span><span class="p">)</span>
 
@@ -21518,13 +21552,7 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">540</span>
-<span class="normal">541</span>
-<span class="normal">542</span>
-<span class="normal">543</span>
-<span class="normal">544</span>
-<span class="normal">545</span>
-<span class="normal">546</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">546</span>
 <span class="normal">547</span>
 <span class="normal">548</span>
 <span class="normal">549</span>
@@ -21546,7 +21574,13 @@ the value type of the source value, and the provided target format.</p>
 <span class="normal">565</span>
 <span class="normal">566</span>
 <span class="normal">567</span>
-<span class="normal">568</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">delete</span><span class="p">(</span>
+<span class="normal">568</span>
+<span class="normal">569</span>
+<span class="normal">570</span>
+<span class="normal">571</span>
+<span class="normal">572</span>
+<span class="normal">573</span>
+<span class="normal">574</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">delete</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">context_name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dry_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ContextInfo&quot;</span><span class="p">:</span>
 
@@ -21595,12 +21629,12 @@ the value type of the source value, and the provided target format.</p>
 
       <details class="quote">
         <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/context/config.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">570</span>
-<span class="normal">571</span>
-<span class="normal">572</span>
-<span class="normal">573</span>
-<span class="normal">574</span>
-<span class="normal">575</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">576</span>
+<span class="normal">577</span>
+<span class="normal">578</span>
+<span class="normal">579</span>
+<span class="normal">580</span>
+<span class="normal">581</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">render_config</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
     <span class="kn">from</span> <span class="nn">kiara.utils.output</span> <span class="kn">import</span> <span class="n">create_recursive_table_from_model_object</span>
 
     <span class="k">return</span> <span class="n">create_recursive_table_from_model_object</span><span class="p">(</span>

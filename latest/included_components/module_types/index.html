@@ -7027,8 +7027,14 @@
             pipeline=pipeline, job_registry=self._job_registry
         )
 
+        job_log.add_log("setting pipeline inputs")
         pipeline.set_pipeline_inputs(inputs=inputs)
-        step_details = controller.process_pipeline()
+        job_log.add_log("starting pipeline processing")
+
+        def event_callback(msg: str):
+            job_log.add_log(msg)
+
+        step_details = controller.process_pipeline(event_callback=event_callback)
 
         errors: Dict[str, Union[Exception, uuid.UUID]] = {}
         for step_id, details in step_details.items():

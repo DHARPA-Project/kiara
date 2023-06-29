@@ -29118,6 +29118,32 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
   </tr>
 </table></td>
   </tr>
+  <tr>
+    <td>doc</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Doc</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The step documentation.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/DocumentationMetadataModel</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
 </table></td>
   </tr>
   <tr>
@@ -59799,28 +59825,19 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
 </table></td>
   </tr>
   <tr>
-    <td>steps</td>
+    <td>pipeline_config_orig</td>
     <td><table>
   <tr>
     <td>title</td>
-    <td>Steps</td>
+    <td>Pipeline Config Orig</td>
   </tr>
   <tr>
     <td>description</td>
-    <td>All steps for this pipeline, indexed by their step_id.</td>
+    <td>The original, user-provided pipeline config.</td>
   </tr>
   <tr>
     <td>type</td>
     <td>object</td>
-  </tr>
-  <tr>
-    <td>additionalProperties</td>
-    <td><table>
-  <tr>
-    <td>$ref</td>
-    <td>#/definitions/PipelineStep</td>
-  </tr>
-</table></td>
   </tr>
 </table></td>
   </tr>
@@ -60147,7 +60164,7 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
     pipeline_config
   </li>
   <li>
-    steps
+    pipeline_config_orig
   </li>
   <li>
     step_details
@@ -61948,6 +61965,32 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
   <tr>
     <td>type</td>
     <td>boolean</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Doc</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The step documentation.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/DocumentationMetadataModel</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
   </tr>
 </table></td>
   </tr>

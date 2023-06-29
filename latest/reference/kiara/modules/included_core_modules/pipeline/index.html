@@ -4941,7 +4941,13 @@
 <span class="normal">102</span>
 <span class="normal">103</span>
 <span class="normal">104</span>
-<span class="normal">105</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PipelineModule</span><span class="p">(</span><span class="n">KiaraModule</span><span class="p">):</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A utility module to run multiple connected inner-modules and present it as its own entity.&quot;&quot;&quot;</span>
 
@@ -4998,8 +5004,14 @@
             <span class="n">pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">job_registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_registry</span>
         <span class="p">)</span>
 
+        <span class="n">job_log</span><span class="o">.</span><span class="n">add_log</span><span class="p">(</span><span class="s2">&quot;setting pipeline inputs&quot;</span><span class="p">)</span>
         <span class="n">pipeline</span><span class="o">.</span><span class="n">set_pipeline_inputs</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">)</span>
-        <span class="n">step_details</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">process_pipeline</span><span class="p">()</span>
+        <span class="n">job_log</span><span class="o">.</span><span class="n">add_log</span><span class="p">(</span><span class="s2">&quot;starting pipeline processing&quot;</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">event_callback</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">job_log</span><span class="o">.</span><span class="n">add_log</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">step_details</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">process_pipeline</span><span class="p">(</span><span class="n">event_callback</span><span class="o">=</span><span class="n">event_callback</span><span class="p">)</span>
 
         <span class="n">errors</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">details</span> <span class="ow">in</span> <span class="n">step_details</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -5215,7 +5227,13 @@
 <span class="normal">102</span>
 <span class="normal">103</span>
 <span class="normal">104</span>
-<span class="normal">105</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMapWritable</span><span class="p">,</span> <span class="n">job_log</span><span class="p">:</span> <span class="n">JobLog</span><span class="p">):</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">ValueMap</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">ValueMapWritable</span><span class="p">,</span> <span class="n">job_log</span><span class="p">:</span> <span class="n">JobLog</span><span class="p">):</span>
 
     <span class="n">pipeline_structure</span><span class="p">:</span> <span class="n">PipelineStructure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">structure</span>
 
@@ -5226,8 +5244,14 @@
         <span class="n">pipeline</span><span class="o">=</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">job_registry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_registry</span>
     <span class="p">)</span>
 
+    <span class="n">job_log</span><span class="o">.</span><span class="n">add_log</span><span class="p">(</span><span class="s2">&quot;setting pipeline inputs&quot;</span><span class="p">)</span>
     <span class="n">pipeline</span><span class="o">.</span><span class="n">set_pipeline_inputs</span><span class="p">(</span><span class="n">inputs</span><span class="o">=</span><span class="n">inputs</span><span class="p">)</span>
-    <span class="n">step_details</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">process_pipeline</span><span class="p">()</span>
+    <span class="n">job_log</span><span class="o">.</span><span class="n">add_log</span><span class="p">(</span><span class="s2">&quot;starting pipeline processing&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">event_callback</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">job_log</span><span class="o">.</span><span class="n">add_log</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">step_details</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">process_pipeline</span><span class="p">(</span><span class="n">event_callback</span><span class="o">=</span><span class="n">event_callback</span><span class="p">)</span>
 
     <span class="n">errors</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="ne">Exception</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">step_id</span><span class="p">,</span> <span class="n">details</span> <span class="ow">in</span> <span class="n">step_details</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>

@@ -27,6 +27,7 @@ from kiara.defaults import (
 from kiara.exceptions import KiaraException
 from kiara.models import KiaraModel
 from kiara.utils import log_message
+from kiara.utils.files import unpack_archive
 from kiara.utils.hashing import compute_cid_from_file
 
 logger = structlog.getLogger()
@@ -250,7 +251,6 @@ class KiaraFileBundle(KiaraModel):
     def from_archive(
         cls,
         archive_path: str,
-        archive_type_hint: Union[str, None] = None,
         import_config: Union[FolderImportConfig, None] = None,
         bundle_name: Union[str, None] = None,
     ) -> "KiaraFileBundle":
@@ -268,20 +268,7 @@ class KiaraFileBundle(KiaraModel):
 
         atexit.register(del_out_dir)
 
-        error = None
-        try:
-            shutil.unpack_archive(archive_path, out_dir)
-        except Exception:
-            # try patool, maybe we're lucky
-            try:
-                import patoolib
-
-                patoolib.extract_archive(archive_path, outdir=out_dir, verbosity=-1)
-            except Exception as e:
-                error = e
-
-        if error is not None:
-            raise KiaraException(msg=f"Could not extract archive: {error}.")
+        unpack_archive(archive_path, out_dir)
 
         bundle = KiaraFileBundle.import_folder(
             out_dir, import_config=import_config, bundle_name=bundle_name
@@ -298,7 +285,6 @@ class KiaraFileBundle(KiaraModel):
 
         bundle = KiaraFileBundle.from_archive(
             archive_path=archive_file.path,
-            archive_type_hint=archive_file.file_extension,
             bundle_name=archive_file.file_name,
             import_config=import_config,
         )

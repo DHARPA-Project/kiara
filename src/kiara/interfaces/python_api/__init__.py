@@ -1823,7 +1823,7 @@ class KiaraAPI(object):
 
         if render_operation is None:
             raise Exception(
-                f"Could not find render operation for value: {_value.value_id}"
+                f"Could not find render operation for value '{_value.value_id}', type: {_value.value_schema.type}"
             )
 
         if render_config and "render_config" in render_config.keys():

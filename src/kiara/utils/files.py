@@ -53,3 +53,38 @@ def get_data_from_file(
                 raise ValueError("Could not determine data format from file extension.")
 
     return data
+
+
+def unpack_archive(
+    archive_file: str, out_dir: str, autodetect_file_type: bool = False
+) -> None:
+
+    if autodetect_file_type:
+        raise NotImplementedError("Autodetecting file type is not implemented yet.")
+        # import puremagic
+        # type_matches = puremagic.magic_file(archive_file)
+        #
+        # for type_match in type_matches:
+        #     print("----")
+        #     dbg(type_match._asdict())
+        #     if type_match.confidence >= 0.6:
+
+    error = None
+    try:
+        import shutil
+
+        shutil.unpack_archive(archive_file, out_dir)
+    except Exception:
+        # try patool, maybe we're lucky
+        try:
+            import patoolib
+
+            patoolib.extract_archive(archive_file, outdir=out_dir)
+        except Exception as e:
+            error = e
+
+    if error is not None:
+        if not autodetect_file_type:
+            unpack_archive(archive_file, out_dir, autodetect_file_type=True)
+        else:
+            raise KiaraException(msg=f"Could not extract archive: {error}.")

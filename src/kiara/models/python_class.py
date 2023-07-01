@@ -6,6 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import importlib
+import inspect
 from types import ModuleType
 from typing import TYPE_CHECKING, Any, Dict, Type
 
@@ -64,6 +65,7 @@ class PythonClass(KiaraModel):
 
     _module_cache: ModuleType = PrivateAttr(default=None)
     _cls_cache: Type = PrivateAttr(default=None)
+    _src_cache: str = PrivateAttr(default=None)
 
     def _retrieve_id(self) -> str:
         return self.full_name
@@ -77,6 +79,12 @@ class PythonClass(KiaraModel):
             m = self.get_python_module()
             self._cls_cache = getattr(m, self.python_class_name)
         return self._cls_cache
+
+    def get_source_code(self) -> str:
+
+        if self._src_cache is None:
+            self._src_cache = inspect.getsource(self.get_class())
+        return self._src_cache
 
     def get_python_module(self) -> ModuleType:
         if self._module_cache is None:

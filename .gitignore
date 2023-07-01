@@ -69,3 +69,4 @@ environment.yaml
 .tzap-data/
 .tzapignore
 .tzapinclude
+.pixi

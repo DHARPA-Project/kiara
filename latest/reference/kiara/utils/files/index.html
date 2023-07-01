@@ -4204,6 +4204,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kiara.utils.files.unpack_archive" class="md-nav__link">
+    unpack_archive()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4836,6 +4843,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#kiara.utils.files.unpack_archive" class="md-nav__link">
+    unpack_archive()
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4995,6 +5009,91 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Could not determine data format from file extension.&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">data</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="kiara.utils.files.unpack_archive" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">unpack_archive</span><span class="p">(</span><span class="n">archive_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">autodetect_file_type</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span></code>
+
+<a href="#kiara.utils.files.unpack_archive" class="headerlink" title="Permanent link">&para;</a></h3>
+
+
+  <div class="doc doc-contents ">
+
+      <details class="quote">
+        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/utils/files.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">unpack_archive</span><span class="p">(</span>
+    <span class="n">archive_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">autodetect_file_type</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="n">autodetect_file_type</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Autodetecting file type is not implemented yet.&quot;</span><span class="p">)</span>
+        <span class="c1"># import puremagic</span>
+        <span class="c1"># type_matches = puremagic.magic_file(archive_file)</span>
+        <span class="c1">#</span>
+        <span class="c1"># for type_match in type_matches:</span>
+        <span class="c1">#     print(&quot;----&quot;)</span>
+        <span class="c1">#     dbg(type_match._asdict())</span>
+        <span class="c1">#     if type_match.confidence &gt;= 0.6:</span>
+
+    <span class="n">error</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">shutil</span>
+
+        <span class="n">shutil</span><span class="o">.</span><span class="n">unpack_archive</span><span class="p">(</span><span class="n">archive_file</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="c1"># try patool, maybe we&#39;re lucky</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">patoolib</span>
+
+            <span class="n">patoolib</span><span class="o">.</span><span class="n">extract_archive</span><span class="p">(</span><span class="n">archive_file</span><span class="p">,</span> <span class="n">outdir</span><span class="o">=</span><span class="n">out_dir</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="n">e</span>
+
+    <span class="k">if</span> <span class="n">error</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">autodetect_file_type</span><span class="p">:</span>
+            <span class="n">unpack_archive</span><span class="p">(</span><span class="n">archive_file</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">,</span> <span class="n">autodetect_file_type</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KiaraException</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Could not extract archive: </span><span class="si">{</span><span class="n">error</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>

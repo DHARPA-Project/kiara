@@ -8603,7 +8603,7 @@ so before you use this, make sure that there is not 'get_</em>' or 'list_*' endp
 
         <span class="k">if</span> <span class="n">render_operation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Could not find render operation for value: </span><span class="si">{</span><span class="n">_value</span><span class="o">.</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not find render operation for value &#39;</span><span class="si">{</span><span class="n">_value</span><span class="o">.</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&#39;, type: </span><span class="si">{</span><span class="n">_value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">render_config</span> <span class="ow">and</span> <span class="s2">&quot;render_config&quot;</span> <span class="ow">in</span> <span class="n">render_config</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -15606,7 +15606,7 @@ the value type of the source value, and the provided target format.</p>
 
     <span class="k">if</span> <span class="n">render_operation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Could not find render operation for value: </span><span class="si">{</span><span class="n">_value</span><span class="o">.</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Could not find render operation for value &#39;</span><span class="si">{</span><span class="n">_value</span><span class="o">.</span><span class="n">value_id</span><span class="si">}</span><span class="s2">&#39;, type: </span><span class="si">{</span><span class="n">_value</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">render_config</span> <span class="ow">and</span> <span class="s2">&quot;render_config&quot;</span> <span class="ow">in</span> <span class="n">render_config</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>

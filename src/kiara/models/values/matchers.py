@@ -50,15 +50,17 @@ class ValueMatcher(KiaraModel):
 
         has_alias = self.has_alias or self.alias_matchers
 
+        match = False
         if self.data_types:
-            match = False
             if not self.allow_sub_types:
                 for data_type in self.data_types:
                     if data_type == value.data_type_name:
                         match = True
                         break
             else:
-                if value.data_type_name not in kiara.type_registry.data_type_names:
+                if value.data_type_name not in kiara.type_registry.get_data_type_names(
+                    include_profiles=True
+                ):
                     return False
                 lineage = kiara.type_registry.get_type_lineage(value.data_type_name)
                 for data_type in self.data_types:

@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Mapping, TypeVa
 import rich_click as click
 from click import Command, Context, Option, Parameter, option
 from rich import box
+from rich.box import Box
 from rich.console import ConsoleRenderable, Group, RichCast
 from rich.panel import Panel
 from rich.rule import Rule
@@ -33,6 +34,18 @@ def _param_memo(f: Union[Callable[..., Any], Command], param: Parameter) -> None
         f.__click_params__.append(param)  # type: ignore
 
 
+HORIZONTALS_NO_TO_AND_BOTTOM: Box = Box(
+    """\
+
+
+ ──
+
+ ──
+ ──
+
+
+"""
+)
 # ======================================================================================================================
 def terminal_print(
     msg: Union[Any, None] = None,

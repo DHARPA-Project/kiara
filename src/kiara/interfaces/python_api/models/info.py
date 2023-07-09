@@ -66,6 +66,7 @@ from kiara.modules import KiaraModule
 from kiara.renderers import KiaraRenderer
 from kiara.utils import log_exception, log_message
 from kiara.utils.class_loading import find_all_kiara_model_classes
+from kiara.utils.cli import HORIZONTALS_NO_TO_AND_BOTTOM
 from kiara.utils.json import orjson_dumps
 from kiara.utils.output import extract_renderable
 
@@ -1666,9 +1667,20 @@ class RendererInfos(InfoItemGroup[RendererInfo]):
     def base_info_class(cls) -> Type[RendererInfo]:
         return RendererInfo
 
+    def get_render_source_types(self) -> List[str]:
+
+        all_source_types = set()
+        item: RendererInfo
+        for item in self.item_infos.values():  # type: ignore
+            all_source_types.update(item.supported_source_types)
+
+        return sorted(all_source_types)
+
     def create_renderable(self, **config: Any) -> RenderableType:
 
-        table = Table(show_header=True, box=box.SIMPLE, show_lines=True)
+        table = Table(
+            show_header=True, box=HORIZONTALS_NO_TO_AND_BOTTOM, show_lines=True
+        )
         table.add_column("Source type(s)")
         table.add_column("Target type(s)")
         table.add_column("Description")

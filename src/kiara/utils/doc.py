@@ -23,3 +23,17 @@ def extract_doc_from_cls(cls: typing.Type, only_first_line: bool = False):
         return first_line(doc)
     else:
         return doc.strip()
+
+
+def extract_doc_from_func(func: typing.Callable, only_first_line: bool = False):
+
+    doc = func.__doc__
+    if not doc:
+        doc = DEFAULT_NO_DESC_VALUE
+    else:
+        doc = cleandoc(doc)
+
+    if only_first_line:
+        return first_line(doc)
+    else:
+        return doc.strip()

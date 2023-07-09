@@ -225,9 +225,11 @@ class TypeRegistry(object):
 
         return result
 
-    @property
-    def data_type_names(self) -> List[str]:
-        return list(self.data_type_profiles.keys())
+    def get_data_type_names(self, include_profiles: bool = False) -> List[str]:
+        if include_profiles:
+            return list(self.data_type_profiles.keys())
+        else:
+            return list(self.data_type_classes.keys())
 
     def get_data_type_cls(self, type_name: str) -> Type[DataType]:
 

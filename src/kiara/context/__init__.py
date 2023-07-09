@@ -300,7 +300,7 @@ class Kiara(object):
 
     @property
     def data_type_names(self) -> List[str]:
-        return self.type_registry.data_type_names
+        return self.type_registry.get_data_type_names(include_profiles=True)
 
     @property
     def module_type_classes(self) -> Mapping[str, Type["KiaraModule"]]:

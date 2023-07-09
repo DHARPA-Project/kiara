@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 import os.path
+import uuid
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
 
+from dag_cbor import IPLDKind
 from pydantic import BaseModel, Field, root_validator, validator
 
 from kiara.exceptions import KiaraException
+from kiara.models import KiaraModel
 from kiara.models.documentation import DocumentationMetadataModel
 from kiara.utils.cli import terminal_print
 from kiara.utils.files import get_data_from_file
@@ -17,8 +20,10 @@ if TYPE_CHECKING:
     from kiara.models.values.value import ValueMap
 
 
-class JobDesc(BaseModel):
+class JobDesc(KiaraModel):
     """An object describing a compute job with both raw or referenced inputs."""
+
+    _kiara_model_id = "instance.job_desc"
 
     @classmethod
     def create_from_file(cls, path: Union[str, Path]):
@@ -99,6 +104,26 @@ class JobDesc(BaseModel):
         description="Configuration on how/whether to save the job results.",
         default_factory=dict,
     )
+
+    def _retrieve_data_to_hash(self) -> IPLDKind:
+        def get_hash(v: Any):
+            if hasattr(v, "instance_cid"):
+                return v.instance_cid
+            elif hasattr(v, "value_id"):
+                return str(v.value_id)
+            elif isinstance(v, uuid.UUID):
+                return str(v)
+            elif isinstance(v, Mapping):
+                return {get_hash(k): get_hash(v) for k, v in v.items()}
+            return v
+
+        inputs_hash = {k: get_hash(v) for k, v in self.inputs.items()}
+        return {
+            "operation": self.operation,
+            "module_config": self.module_config,
+            "inputs": inputs_hash,
+            "save": self.save,
+        }
 
     @root_validator(pre=True)
     def validate_inputs(cls, values):

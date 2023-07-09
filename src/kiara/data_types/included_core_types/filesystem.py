@@ -154,7 +154,7 @@ class FileValueType(KiaraModelValueBaseType[KiaraFile, FileTypeConfig]):
             with open(data.path, "r", encoding="utf-8") as f:
                 for idx, line in enumerate(f):
                     if idx > max_lines:
-                        lines.append("...\n")
+                        lines.append("...")
                         lines.append("...")
                         break
                     lines.append(line.rstrip())

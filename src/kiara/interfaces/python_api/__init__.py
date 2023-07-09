@@ -355,9 +355,16 @@ class KiaraAPI(object):
     # ==================================================================================================================
     # methods for data_types
 
-    def list_data_type_names(self) -> List[str]:
-        """Get a list of all registered data types."""
-        return self.context.type_registry.data_type_names
+    def list_data_type_names(self, include_profiles: bool = False) -> List[str]:
+        """Get a list of all registered data types.
+
+        Arguments:
+            include_profiles: if True, also include the names of all registered data type profiles
+        """
+
+        return self.context.type_registry.get_data_type_names(
+            include_profiles=include_profiles
+        )
 
     def is_internal_data_type(self, data_type_name: str) -> bool:
         """Checks if the data type is prepdominantly used internally by kiara, or whether it should be exposed to the user."""
@@ -366,7 +373,9 @@ class KiaraAPI(object):
         )
 
     def retrieve_data_types_info(
-        self, filter: Union[str, Iterable[str], None]
+        self,
+        filter: Union[str, Iterable[str], None],
+        include_data_type_profiles: bool = False,
     ) -> DataTypeClassesInfo:
         """
         Retrieve information about all data types.
@@ -387,7 +396,9 @@ class KiaraAPI(object):
             title = f"Filtered data_types: {filter}"
             data_type_names: Iterable[str] = []
 
-            for m in self.context.type_registry.data_type_names:
+            for m in self.context.type_registry.get_data_type_names(
+                include_profiles=include_data_type_profiles
+            ):
                 match = True
 
                 for f in filter:
@@ -400,7 +411,9 @@ class KiaraAPI(object):
                     data_type_names.append(m)  # type: ignore
         else:
             title = "All data types"
-            data_type_names = self.context.type_registry.data_type_names
+            data_type_names = self.context.type_registry.get_data_type_names(
+                include_profiles=include_data_type_profiles
+            )
 
         data_types = {
             d: self.context.type_registry.get_data_type_cls(d) for d in data_type_names
@@ -631,13 +644,21 @@ class KiaraAPI(object):
             operation instance data
         """
         _module_type = None
-        _module_config = None
+        _module_config: Any = None
 
         if allow_external is None:
             allow_external = self.get_runtime_config().allow_external
 
         if isinstance(operation, Path):
             operation = operation.as_posix()
+
+        if (
+            isinstance(operation, Mapping)
+            and "module_type" in operation.keys()
+            and "module_config" in operation.keys()
+            and not operation["module_config"]
+        ):
+            operation = operation["module_type"]
 
         if isinstance(operation, str):
 
@@ -684,7 +705,7 @@ class KiaraAPI(object):
                 )
 
         else:
-            _module_config = dict(operation)
+            _module_config = dict(operation)  # type: ignore
 
         if "module_type" in _module_config.keys():
             _module_type = _module_config["module_type"]
@@ -979,7 +1000,6 @@ class KiaraAPI(object):
         """
         if matcher_params:
             matcher = ValueMatcher.create_matcher(**matcher_params)
-
             values = self.context.data_registry.find_values(matcher=matcher)
         else:
             # TODO: make that parallel?

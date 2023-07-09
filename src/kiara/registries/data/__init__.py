@@ -477,6 +477,12 @@ class DataRegistry(object):
                         value.value_id
                     )
             except NotImplementedError:
+                log_message(
+                    "store.feature.missing",
+                    feature="find_value",
+                    reasong="find_values not implemented for store: {store_id}",
+                    solution="return all values",
+                )
                 all_value_ids = store.value_ids
                 if all_value_ids is None:
                     continue

@@ -195,10 +195,11 @@ class RenderRegistry(object):
 
         from importlib_metadata import entry_points
 
-        for name, value in entry_points(group="kiara.plugin"):
+        for entry_point in entry_points(group="kiara.plugin"):
+
             try:
-                template_pkg_loaders[value.value] = PackageLoader(
-                    package_name=value.value, package_path="resources/templates"
+                template_pkg_loaders[entry_point.value] = PackageLoader(
+                    package_name=entry_point.value, package_path="resources/templates"
                 )
             except ValueError:
                 # means no templates directory exists

@@ -191,7 +191,9 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
             )
             return None
 
-        if value_type not in self._kiara.type_registry.data_type_names:
+        if value_type not in self._kiara.type_registry.get_data_type_names(
+            include_profiles=True
+        ):
             log_message(
                 "ignore.operation",
                 reason=f"Invalid value type: {value_type}",

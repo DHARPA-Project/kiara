@@ -120,9 +120,9 @@ class JobDesc(KiaraModel):
         inputs_hash = {k: get_hash(v) for k, v in self.inputs.items()}
         return {
             "operation": self.operation,
-            "module_config": self.module_config,
+            "module_config": self.module_config,  # type: ignore
             "inputs": inputs_hash,
-            "save": self.save,
+            "save": self.save,  # type: ignore
         }
 
     @root_validator(pre=True)

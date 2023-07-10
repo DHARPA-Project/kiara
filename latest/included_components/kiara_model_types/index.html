@@ -21,7 +21,7 @@
         <link rel="next" href="../operation_types/">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
     
     
       
@@ -946,6 +946,13 @@
         <li class="md-nav__item">
   <a href="#kiara_info.kiara_model_types.metadata.module_config" class="md-nav__link">
     metadata.module_config
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.kiara_model_types.instance.job_desc" class="md-nav__link">
+    instance.job_desc
   </a>
   
 </li>
@@ -5824,6 +5831,13 @@
         <li class="md-nav__item">
   <a href="#kiara_info.kiara_model_types.metadata.module_config" class="md-nav__link">
     metadata.module_config
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kiara_info.kiara_model_types.instance.job_desc" class="md-nav__link">
+    instance.job_desc
   </a>
   
 </li>
@@ -72529,6 +72543,362 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
 </table></td>
     <td>The (json) schema for this model data.</td>
   </tr>
+</table><h3 id="kiara_info.kiara_model_types.instance.job_desc"><code>instance.job_desc</code><a class="headerlink" href="#kiara_info.kiara_model_types.instance.job_desc" title="Permanent link">&para;</a></h3>
+<table>
+  <tr>
+    <td>type_name</td>
+    <td>instance.job_desc</td>
+    <td>The registered name for this item type.</td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td>An object describing a compute job with both raw or referenced inputs.</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td>None</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+</table></td>
+    <td>Documentation for the item.</td>
+  </tr>
+  <tr>
+    <td>authors</td>
+    <td><table>
+  <tr>
+    <td>authors</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>name</td>
+    <td>Markus Binsteiner</td>
+    <td>The full name of the author.</td>
+  </tr>
+  <tr>
+    <td>email</td>
+    <td>markus@frkl.io</td>
+    <td>The email address of the author</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+    <td>The authors/creators of this item.</td>
+  </tr>
+</table></td>
+    <td>Information about authorship for the item.</td>
+  </tr>
+  <tr>
+    <td>context</td>
+    <td><table>
+  <tr>
+    <td>references</td>
+    <td><table>
+  <tr>
+    <td>source_repo</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://github.com/DHARPA-Project/kiara</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The kiara project git repository.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>documentation</td>
+    <td><table>
+  <tr>
+    <td>url</td>
+    <td>https://dharpa.org/kiara_documentation/</td>
+    <td>The url.</td>
+  </tr>
+  <tr>
+    <td>desc</td>
+    <td>The url for kiara documentation.</td>
+    <td>A short description of the link content.</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>References for the item.</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td><ul>
+</ul></td>
+    <td>A list of tags for the item.</td>
+  </tr>
+  <tr>
+    <td>labels</td>
+    <td><table>
+  <tr>
+    <td>package</td>
+    <td>kiara</td>
+  </tr>
+</table></td>
+    <td>A list of labels for the item.</td>
+  </tr>
+</table></td>
+    <td>Generic properties of this item (description, tags, labels, references, ...).</td>
+  </tr>
+  <tr>
+    <td>python_class</td>
+    <td><table>
+  <tr>
+    <td>python_class_name</td>
+    <td>JobDesc</td>
+    <td>The name of the Python class.</td>
+  </tr>
+  <tr>
+    <td>python_module_name</td>
+    <td>kiara.interfaces.python_api.models.job</td>
+    <td>The name of the Python module this class lives in.</td>
+  </tr>
+  <tr>
+    <td>full_name</td>
+    <td>kiara.interfaces.python_api.models.job.JobDesc</td>
+    <td>The full class namespace.</td>
+  </tr>
+</table></td>
+    <td>The python class that implements this module type.</td>
+  </tr>
+  <tr>
+    <td>metadata_schema</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>JobDesc</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>An object describing a compute job with both raw or referenced inputs.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>job_alias</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Job Alias</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The alias for the job.</td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td>default</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>operation</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Operation</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The operation id or module type.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>module_config</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Module Config</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The configuration for the module.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>inputs</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Inputs</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>The inputs for the job.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Doc</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>A description/doc for this job.</td>
+  </tr>
+  <tr>
+    <td>allOf</td>
+    <td><ul>
+  <li>
+    <table>
+  <tr>
+    <td>$ref</td>
+    <td>#/definitions/DocumentationMetadataModel</td>
+  </tr>
+</table>
+  </li>
+</ul></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>save</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Save</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Configuration on how/whether to save the job results.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td><table>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>required</td>
+    <td><ul>
+  <li>
+    operation
+  </li>
+</ul></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+  <tr>
+    <td>definitions</td>
+    <td><table>
+  <tr>
+    <td>DocumentationMetadataModel</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Documentation</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Documentation about a resource.</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>object</td>
+  </tr>
+  <tr>
+    <td>properties</td>
+    <td><table>
+  <tr>
+    <td>description</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Description</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Short description of the item.</td>
+  </tr>
+  <tr>
+    <td>default</td>
+    <td>-- n/a --</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>doc</td>
+    <td><table>
+  <tr>
+    <td>title</td>
+    <td>Doc</td>
+  </tr>
+  <tr>
+    <td>description</td>
+    <td>Detailed documentation of the item (in markdown).</td>
+  </tr>
+  <tr>
+    <td>type</td>
+    <td>string</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+  <tr>
+    <td>additionalProperties</td>
+    <td>False</td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+  </tr>
+</table></td>
+    <td>The (json) schema for this model data.</td>
+  </tr>
 </table><h3 id="kiara_info.kiara_model_types.workflow_matcher"><code>workflow_matcher</code><a class="headerlink" href="#kiara_info.kiara_model_types.workflow_matcher" title="Permanent link">&para;</a></h3>
 <table>
   <tr>
@@ -72747,10 +73117,10 @@ a tree hierarchy of the overall kiara context, hashing, etc.</td>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.b425cdc4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.220ee61c.min.js"></script>
       
     
   </body>

@@ -21,7 +21,7 @@
         <link rel="next" href="../../modules/__init__/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
     
     
       
@@ -5057,8 +5057,8 @@
 <code class="highlight language-python"><span class="n">steps</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PipelineStep</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The current steps in the workflow.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowState.steps" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5077,8 +5077,8 @@
 <code class="highlight language-python"><span class="n">inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The current (pipeline) input values.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowState.inputs" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5097,8 +5097,8 @@
 <code class="highlight language-python"><span class="n">pipeline_info</span><span class="p">:</span> <span class="n">PipelineInfo</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Details about the pipeline and its state.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowState.pipeline_info" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5146,7 +5146,7 @@
   </div>
 
 </div>
-
+<h4 id="kiara.models.workflow.WorkflowState-classes">Classes<a href="#kiara.models.workflow.WorkflowState-classes" class="headerlink" title="Permanent link">&para;</a></h4>
 <h4 id="kiara.models.workflow.WorkflowState-functions">Functions<a href="#kiara.models.workflow.WorkflowState-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
@@ -5447,8 +5447,8 @@
 <code class="highlight language-python"><span class="n">workflow_id</span><span class="p">:</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The globaly unique uuid for this workflow.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowMetadata.workflow_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5467,8 +5467,8 @@
 <code class="highlight language-python"><span class="n">documentation</span><span class="p">:</span> <span class="n">DocumentationMetadataModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;A description for this workflow.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">DocumentationMetadataModel</span><span class="o">.</span><span class="n">create</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowMetadata.documentation" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5487,8 +5487,8 @@
 <code class="highlight language-python"><span class="n">authors</span><span class="p">:</span> <span class="n">AuthorsMetadataModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The author(s) of this workflow.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">AuthorsMetadataModel</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowMetadata.authors" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5507,8 +5507,8 @@
 <code class="highlight language-python"><span class="n">context</span><span class="p">:</span> <span class="n">ContextMetadataModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Workflow context details.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="n">ContextMetadataModel</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowMetadata.context" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5527,8 +5527,8 @@
 <code class="highlight language-python"><span class="n">current_state</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;A reference to the current state of this workflow.&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowMetadata.current_state" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5547,8 +5547,8 @@
 <code class="highlight language-python"><span class="n">workflow_history</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;A history of all the states of this workflow.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowMetadata.workflow_history" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5567,8 +5567,8 @@
 <code class="highlight language-python"><span class="n">input_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;A set of aliases that can be used to forward inputs to their (unaliased) pipeline inputs.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowMetadata.input_aliases" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5587,8 +5587,8 @@
 <code class="highlight language-python"><span class="n">output_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;A set of aliases to make output field names more user friendly.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowMetadata.output_aliases" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5607,8 +5607,8 @@
 <code class="highlight language-python"><span class="n">is_persisted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether this workflow is persisted in it&#39;s current state in a kiara store.&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowMetadata.is_persisted" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5637,7 +5637,7 @@
   </div>
 
 </div>
-
+<h4 id="kiara.models.workflow.WorkflowMetadata-classes">Classes<a href="#kiara.models.workflow.WorkflowMetadata-classes" class="headerlink" title="Permanent link">&para;</a></h4>
 <h4 id="kiara.models.workflow.WorkflowMetadata-functions">Functions<a href="#kiara.models.workflow.WorkflowMetadata-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
@@ -5968,8 +5968,8 @@
 <code class="highlight language-python"><span class="n">workflow_metadata</span><span class="p">:</span> <span class="n">WorkflowMetadata</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The workflow details.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowInfo.workflow_metadata" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5988,8 +5988,8 @@
 <code class="highlight language-python"><span class="n">workflow_state_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;All states for this workflow.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowInfo.workflow_state_ids" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6008,8 +6008,8 @@
 <code class="highlight language-python"><span class="n">pipeline_info</span><span class="p">:</span> <span class="n">PipelineInfo</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The current state of the workflows&#39; pipeline.&quot;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowInfo.pipeline_info" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6028,8 +6028,8 @@
 <code class="highlight language-python"><span class="n">current_input_values</span><span class="p">:</span> <span class="n">ValueMap</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The current workflow inputs (after aliasing).&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowInfo.current_input_values" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6048,8 +6048,8 @@
 <code class="highlight language-python"><span class="n">current_output_values</span><span class="p">:</span> <span class="n">ValueMap</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The current workflow outputs (after aliasing).&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowInfo.current_output_values" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6068,8 +6068,8 @@
 <code class="highlight language-python"><span class="n">input_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The (current) input aliases for this workflow.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowInfo.input_aliases" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6088,8 +6088,8 @@
 <code class="highlight language-python"><span class="n">output_aliases</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The (current) output aliases for this workflow.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowInfo.output_aliases" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6099,7 +6099,7 @@
   </div>
 
 </div>
-
+<h4 id="kiara.models.workflow.WorkflowInfo-classes">Classes<a href="#kiara.models.workflow.WorkflowInfo-classes" class="headerlink" title="Permanent link">&para;</a></h4>
 <h4 id="kiara.models.workflow.WorkflowInfo-functions">Functions<a href="#kiara.models.workflow.WorkflowInfo-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
@@ -6588,8 +6588,8 @@
 <code class="highlight language-python"><span class="n">item_infos</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">WorkflowInfo</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The workflow infos objects for each workflow.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowGroupInfo.item_infos" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6608,8 +6608,8 @@
 <code class="highlight language-python"><span class="n">aliases</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The available aliases.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.workflow.WorkflowGroupInfo.aliases" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6619,7 +6619,7 @@
   </div>
 
 </div>
-
+<h4 id="kiara.models.workflow.WorkflowGroupInfo-classes">Classes<a href="#kiara.models.workflow.WorkflowGroupInfo-classes" class="headerlink" title="Permanent link">&para;</a></h4>
 <h4 id="kiara.models.workflow.WorkflowGroupInfo-functions">Functions<a href="#kiara.models.workflow.WorkflowGroupInfo-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
@@ -6848,10 +6848,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.b425cdc4.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.220ee61c.min.js"></script>
       
     
   </body>

@@ -21,7 +21,7 @@
         <link rel="next" href="../persistence/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
     
     
       
@@ -5078,7 +5078,7 @@
 
 
 
-
+<h4 id="kiara.models.module.operation.OperationSchema-attributes">Attributes<a href="#kiara.models.module.operation.OperationSchema-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <h4 id="kiara.models.module.operation.OperationSchema-functions">Functions<a href="#kiara.models.module.operation.OperationSchema-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
@@ -5261,8 +5261,8 @@
 <code class="highlight language-python"><span class="n">operation_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The id of the operation.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.OperationDetails.operation_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5281,8 +5281,8 @@
 <code class="highlight language-python"><span class="n">is_internal_operation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Whether this operation is mainly used kiara-internally. Helps to hide it in UIs (operation lists etc.).&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.OperationDetails.is_internal_operation" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5334,7 +5334,7 @@
   </div>
 
 </div>
-
+<h4 id="kiara.models.module.operation.OperationDetails-classes">Classes<a href="#kiara.models.module.operation.OperationDetails-classes" class="headerlink" title="Permanent link">&para;</a></h4>
 <h4 id="kiara.models.module.operation.OperationDetails-functions">Functions<a href="#kiara.models.module.operation.OperationDetails-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
@@ -5494,8 +5494,8 @@
 <code class="highlight language-python"><span class="n">module_inputs_schema</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The input schemas of the module.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.BaseOperationDetails.module_inputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5514,8 +5514,8 @@
 <code class="highlight language-python"><span class="n">module_outputs_schema</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The output schemas of the module.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.BaseOperationDetails.module_outputs_schema" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5525,7 +5525,7 @@
   </div>
 
 </div>
-
+<h4 id="kiara.models.module.operation.BaseOperationDetails-classes">Classes<a href="#kiara.models.module.operation.BaseOperationDetails-classes" class="headerlink" title="Permanent link">&para;</a></h4>
 <h4 id="kiara.models.module.operation.BaseOperationDetails-functions">Functions<a href="#kiara.models.module.operation.BaseOperationDetails-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
@@ -5650,8 +5650,8 @@
 <code class="highlight language-python"><span class="n">doc</span><span class="p">:</span> <span class="n">DocumentationMetadataModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Documentation for this operation.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.OperationConfig.doc" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5661,7 +5661,7 @@
   </div>
 
 </div>
-
+<h4 id="kiara.models.module.operation.OperationConfig-classes">Classes<a href="#kiara.models.module.operation.OperationConfig-classes" class="headerlink" title="Permanent link">&para;</a></h4>
 <h4 id="kiara.models.module.operation.OperationConfig-functions">Functions<a href="#kiara.models.module.operation.OperationConfig-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
@@ -5822,8 +5822,8 @@
 <code class="highlight language-python"><span class="n">module_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The module type.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.ManifestOperationConfig.module_type" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5842,8 +5842,8 @@
 <code class="highlight language-python"><span class="n">module_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The configuration for the module.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.ManifestOperationConfig.module_config" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5853,7 +5853,7 @@
   </div>
 
 </div>
-
+<h4 id="kiara.models.module.operation.ManifestOperationConfig-classes">Classes<a href="#kiara.models.module.operation.ManifestOperationConfig-classes" class="headerlink" title="Permanent link">&para;</a></h4>
 <h4 id="kiara.models.module.operation.ManifestOperationConfig-functions">Functions<a href="#kiara.models.module.operation.ManifestOperationConfig-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
@@ -6037,8 +6037,8 @@
 <code class="highlight language-python"><span class="n">pipeline_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The pipeline id.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.PipelineOperationConfig.pipeline_name" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6057,8 +6057,8 @@
 <code class="highlight language-python"><span class="n">pipeline_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The pipeline config data.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.PipelineOperationConfig.pipeline_config" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6077,8 +6077,8 @@
 <code class="highlight language-python"><span class="n">module_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;A lookup map to resolves operation ids to module names/configs.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.PipelineOperationConfig.module_map" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6097,8 +6097,8 @@
 <code class="highlight language-python"><span class="n">metadata</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Additional metadata for the pipeline.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.PipelineOperationConfig.metadata" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6127,7 +6127,7 @@
   </div>
 
 </div>
-
+<h4 id="kiara.models.module.operation.PipelineOperationConfig-classes">Classes<a href="#kiara.models.module.operation.PipelineOperationConfig-classes" class="headerlink" title="Permanent link">&para;</a></h4>
 <h4 id="kiara.models.module.operation.PipelineOperationConfig-functions">Functions<a href="#kiara.models.module.operation.PipelineOperationConfig-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
@@ -6708,8 +6708,8 @@
 <code class="highlight language-python"><span class="n">operation_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The (unique) id of this operation.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.Operation.operation_id" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6728,8 +6728,8 @@
 <code class="highlight language-python"><span class="n">operation_details</span><span class="p">:</span> <span class="n">OperationDetails</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The operation specific details of this operation.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.Operation.operation_details" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6748,8 +6748,8 @@
 <code class="highlight language-python"><span class="n">doc</span><span class="p">:</span> <span class="n">DocumentationMetadataModel</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Documentation for this operation.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.Operation.doc" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6768,8 +6768,8 @@
 <code class="highlight language-python"><span class="n">module_details</span><span class="p">:</span> <span class="n">KiaraModuleInstance</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The class of the underlying module.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.Operation.module_details" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6788,8 +6788,8 @@
 <code class="highlight language-python"><span class="n">metadata</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Additional metadata for this operation.&#39;</span><span class="p">,</span> <span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.Operation.metadata" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -6894,7 +6894,7 @@
   </div>
 
 </div>
-
+<h4 id="kiara.models.module.operation.Operation-classes">Classes<a href="#kiara.models.module.operation.Operation-classes" class="headerlink" title="Permanent link">&para;</a></h4>
 <h4 id="kiara.models.module.operation.Operation-functions">Functions<a href="#kiara.models.module.operation.Operation-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <div class="doc doc-object doc-function">
@@ -7388,8 +7388,8 @@
 <code class="highlight language-python"><span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The underlying operation providing which does the filtering.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.Filter.operation" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7408,8 +7408,8 @@
 <code class="highlight language-python"><span class="n">input_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The input name to use for the dataset to filter.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.Filter.input_name" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7428,8 +7428,8 @@
 <code class="highlight language-python"><span class="n">output_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The output name to use for the dataset to filter.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.Filter.output_name" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7448,8 +7448,8 @@
 <code class="highlight language-python"><span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The type of the dataset that gets filtered.&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.models.module.operation.Filter.data_type" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -7459,8 +7459,8 @@
   </div>
 
 </div>
-
-
+<h4 id="kiara.models.module.operation.Filter-classes">Classes<a href="#kiara.models.module.operation.Filter-classes" class="headerlink" title="Permanent link">&para;</a></h4>
+<h4 id="kiara.models.module.operation.Filter-functions">Functions<a href="#kiara.models.module.operation.Filter-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 
 
@@ -7519,10 +7519,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.b425cdc4.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.220ee61c.min.js"></script>
       
     
   </body>

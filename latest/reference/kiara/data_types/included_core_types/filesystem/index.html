@@ -21,7 +21,7 @@
         <link rel="next" href="../internal/__init__/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.17">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
     
     
       
@@ -5009,8 +5009,8 @@
 <code class="highlight language-python"><span class="n">content_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;The content type of this file.&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#kiara.data_types.included_core_types.filesystem.FileTypeConfig.content_type" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5020,8 +5020,8 @@
   </div>
 
 </div>
-
-
+<h4 id="kiara.data_types.included_core_types.filesystem.FileTypeConfig-classes">Classes<a href="#kiara.data_types.included_core_types.filesystem.FileTypeConfig-classes" class="headerlink" title="Permanent link">&para;</a></h4>
+<h4 id="kiara.data_types.included_core_types.filesystem.FileTypeConfig-functions">Functions<a href="#kiara.data_types.included_core_types.filesystem.FileTypeConfig-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
 
 
@@ -5317,7 +5317,7 @@
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;</span> <span class="n">max_lines</span><span class="p">:</span>
-                        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;...</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;...&quot;</span><span class="p">)</span>
                         <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;...&quot;</span><span class="p">)</span>
                         <span class="k">break</span>
                     <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
@@ -5360,7 +5360,7 @@
 
 
 
-
+<h4 id="kiara.data_types.included_core_types.filesystem.FileValueType-attributes">Attributes<a href="#kiara.data_types.included_core_types.filesystem.FileValueType-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <h4 id="kiara.data_types.included_core_types.filesystem.FileValueType-functions">Functions<a href="#kiara.data_types.included_core_types.filesystem.FileValueType-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
@@ -5882,7 +5882,7 @@
 
 
 
-
+<h4 id="kiara.data_types.included_core_types.filesystem.FileBundleValueType-attributes">Attributes<a href="#kiara.data_types.included_core_types.filesystem.FileBundleValueType-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
 
 <h4 id="kiara.data_types.included_core_types.filesystem.FileBundleValueType-functions">Functions<a href="#kiara.data_types.included_core_types.filesystem.FileBundleValueType-functions" class="headerlink" title="Permanent link">&para;</a></h4>
 
@@ -6202,10 +6202,10 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking"], "search": "../../../../../assets/javascripts/workers/search.74e28a9f.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.b425cdc4.min.js"></script>
+      <script src="../../../../../assets/javascripts/bundle.220ee61c.min.js"></script>
       
     
   </body>

@@ -36,14 +36,14 @@ def _param_memo(f: Union[Callable[..., Any], Command], param: Parameter) -> None
 
 HORIZONTALS_NO_TO_AND_BOTTOM: Box = Box(
     """\
-
-
- ──
-
- ──
- ──
-
-
+    
+    
+ ── 
+    
+ ── 
+ ── 
+    
+    
 """
 )
 

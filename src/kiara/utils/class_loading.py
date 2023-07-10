@@ -7,6 +7,7 @@
 
 import importlib
 import inspect
+import logging
 import os
 import sys
 from pkgutil import iter_modules
@@ -25,6 +26,8 @@ from typing import (
     Union,
 )
 
+import structlog
+
 from kiara.utils import (
     _get_all_subclasses,
     camel_case_to_snake_case,
@@ -35,6 +38,8 @@ from kiara.utils import (
 )
 
 if TYPE_CHECKING:
+    from click import Command
+
     from kiara.data_types import DataType
     from kiara.models import KiaraModel
     from kiara.modules import KiaraModule
@@ -42,9 +47,6 @@ if TYPE_CHECKING:
     from kiara.registries import KiaraArchive
     from kiara.renderers import KiaraRenderer
 
-import logging
-
-import structlog
 
 logger = structlog.getLogger()
 
@@ -664,7 +666,7 @@ def find_all_kiara_pipeline_paths(
     return paths
 
 
-def find_all_cli_subcommands():
+def find_all_cli_subcommands() -> Iterable["Command"]:
 
     entry_point_name = "kiara.cli_subcommands"
     log2 = logging.getLogger("stevedore")

@@ -374,8 +374,9 @@ class KiaraAPI(object):
 
     def retrieve_data_types_info(
         self,
-        filter: Union[str, Iterable[str], None],
+        filter: Union[str, Iterable[str], None] = None,
         include_data_type_profiles: bool = False,
+        python_package: Union[None, str] = None,
     ) -> DataTypeClassesInfo:
         """
         Retrieve information about all data types.
@@ -385,42 +386,79 @@ class KiaraAPI(object):
 
         Arguments:
             filter: an optional string or (list of strings) the returned datatype ids have to match (all filters in the case of a list)
+            include_data_type_profiles: if True, also include the names of all registered data type profiles
+            python_package: if provided, only return data types that are defined in the given python package
 
         Returns:
             an object containing all information about all data types
         """
-        if filter:
-            if isinstance(filter, str):
-                filter = [filter]
 
-            title = f"Filtered data_types: {filter}"
-            data_type_names: Iterable[str] = []
-
-            for m in self.context.type_registry.get_data_type_names(
-                include_profiles=include_data_type_profiles
-            ):
-                match = True
-
-                for f in filter:
-
-                    if f.lower() not in m.lower():
-                        match = False
-                        break
-
-                if match:
-                    data_type_names.append(m)  # type: ignore
-        else:
-            title = "All data types"
-            data_type_names = self.context.type_registry.get_data_type_names(
-                include_profiles=include_data_type_profiles
+        if python_package:
+            data_type_info = self.context.type_registry.get_context_metadata(
+                only_for_package=python_package
             )
 
-        data_types = {
-            d: self.context.type_registry.get_data_type_cls(d) for d in data_type_names
-        }
-        data_types_info = DataTypeClassesInfo.create_from_type_items(
-            kiara=self.context, group_title=title, **data_types
-        )
+            if filter:
+                title = f"Filtered data types in package '{python_package}'"
+
+                if isinstance(filter, str):
+                    filter = [filter]
+
+                filtered_types: Dict[str, DataTypeClassInfo] = {}
+
+                for dt in data_type_info.item_infos.keys():
+                    match = True
+
+                    for f in filter:
+                        if f.lower() not in dt.lower():
+                            match = False
+                            break
+                    if match:
+                        filtered_types[dt] = data_type_info.item_infos[dt]
+
+                data_types_info = DataTypeClassesInfo(
+                    group_title=title, item_infos=filtered_types
+                )
+                data_types_info._kiara = self.context
+
+            else:
+                title = f"All data types in package '{python_package}'"
+                data_types_info = data_type_info
+                data_types_info.group_title = title
+        else:
+            if filter:
+                if isinstance(filter, str):
+                    filter = [filter]
+
+                title = f"Filtered data_types: {filter}"
+                data_type_names: Iterable[str] = []
+
+                for m in self.context.type_registry.get_data_type_names(
+                    include_profiles=include_data_type_profiles
+                ):
+                    match = True
+
+                    for f in filter:
+
+                        if f.lower() not in m.lower():
+                            match = False
+                            break
+
+                    if match:
+                        data_type_names.append(m)  # type: ignore
+            else:
+                title = "All data types"
+                data_type_names = self.context.type_registry.get_data_type_names(
+                    include_profiles=include_data_type_profiles
+                )
+
+            data_types = {
+                d: self.context.type_registry.get_data_type_cls(d)
+                for d in data_type_names
+            }
+            data_types_info = DataTypeClassesInfo.create_from_type_items(  # type: ignore
+                kiara=self.context, group_title=title, **data_types
+            )
 
         return data_types_info  # type: ignore
 
@@ -474,8 +512,7 @@ class KiaraAPI(object):
             )
 
             if filter:
-
-                title = f"All modules in package '{python_package}'"
+                title = f"Filtered modules: {filter} (in package '{python_package}')"
                 if isinstance(filter, str):
                     filter = [filter]
 
@@ -498,7 +535,7 @@ class KiaraAPI(object):
                 )
                 module_types_info._kiara = self.context
             else:
-                title = f"Filtered modules: {filter} (in package '{python_package}')"
+                title = f"All modules in package '{python_package}'"
                 module_types_info = modules_type_info
                 module_types_info.group_title = title
 

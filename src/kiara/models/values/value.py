@@ -951,6 +951,7 @@ class Value(ValueDetails):
 
     @property
     def property_values(self) -> "ValueMap":
+        """Return a dictionary of all of this values properties."""
 
         if self._cached_properties is not None:
             return self._cached_properties

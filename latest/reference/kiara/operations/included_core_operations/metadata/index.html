@@ -21,7 +21,7 @@
         <link rel="next" href="../pipeline/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.eebd395e.min.css">
       
       
 
@@ -4845,23 +4845,22 @@
 
 
 <h3 id="kiara.operations.included_core_operations.metadata.ExtractMetadataDetails" class="doc doc-heading">
-        <code>ExtractMetadataDetails</code>
+          <code>ExtractMetadataDetails</code>
 
 
 <a href="#kiara.operations.included_core_operations.metadata.ExtractMetadataDetails" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="kiara.models.module.operation.BaseOperationDetails" href="../../../models/module/operation/#kiara.models.module.operation.BaseOperationDetails">BaseOperationDetails</a></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="kiara.models.module.operation.BaseOperationDetails" href="../../../models/module/operation/#kiara.models.module.operation.BaseOperationDetails">BaseOperationDetails</a></code></p>
 
   
       <p>A model that contains information needed to describe an 'extract_metadata' operation.</p>
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/metadata.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/metadata.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
 <span class="normal">24</span>
 <span class="normal">25</span>
 <span class="normal">26</span>
@@ -4881,7 +4880,7 @@
     <span class="n">input_field_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The input field name.&quot;</span><span class="p">)</span>
     <span class="n">result_field_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The result field name.&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -4972,8 +4971,8 @@
   </div>
 
 </div>
-<h4 id="kiara.operations.included_core_operations.metadata.ExtractMetadataDetails-classes">Classes<a href="#kiara.operations.included_core_operations.metadata.ExtractMetadataDetails-classes" class="headerlink" title="Permanent link">&para;</a></h4>
-<h4 id="kiara.operations.included_core_operations.metadata.ExtractMetadataDetails-functions">Functions<a href="#kiara.operations.included_core_operations.metadata.ExtractMetadataDetails-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
 
 
 
@@ -4988,15 +4987,15 @@
 
 
 <h3 id="kiara.operations.included_core_operations.metadata.ExtractMetadataOperationType" class="doc doc-heading">
-        <code>ExtractMetadataOperationType</code>
+          <code>ExtractMetadataOperationType</code>
 
 
 <a href="#kiara.operations.included_core_operations.metadata.ExtractMetadataOperationType" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="kiara.operations.OperationType" href="../../__init__/#kiara.operations.OperationType">OperationType</a>[<a class="autorefs autorefs-internal" title="kiara.operations.included_core_operations.metadata.ExtractMetadataDetails" href="#kiara.operations.included_core_operations.metadata.ExtractMetadataDetails">ExtractMetadataDetails</a>]</code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="kiara.operations.OperationType" href="../../__init__/#kiara.operations.OperationType">OperationType</a>[<a class="autorefs autorefs-internal" title="kiara.operations.included_core_operations.metadata.ExtractMetadataDetails" href="#kiara.operations.included_core_operations.metadata.ExtractMetadataDetails">ExtractMetadataDetails</a>]</code></p>
 
   
       <p>An operation that extracts metadata of a specific type from value data.</p>
@@ -5005,10 +5004,9 @@
 - that input field must have the same name as its value type, or be 'value'
 - exactly one output field, whose field name is called 'value_metadata', and where the value has the type 'internal_model'</p>
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/metadata.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 54</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/metadata.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 54</span>
 <span class="normal"> 55</span>
 <span class="normal"> 56</span>
 <span class="normal"> 57</span>
@@ -5250,7 +5248,7 @@
 
         <span class="k">return</span> <span class="n">result</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -5260,9 +5258,10 @@
 
 
 
-<h4 id="kiara.operations.included_core_operations.metadata.ExtractMetadataOperationType-attributes">Attributes<a href="#kiara.operations.included_core_operations.metadata.ExtractMetadataOperationType-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
 
 <h4 id="kiara.operations.included_core_operations.metadata.ExtractMetadataOperationType-functions">Functions<a href="#kiara.operations.included_core_operations.metadata.ExtractMetadataOperationType-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+
 
 <div class="doc doc-object doc-function">
 
@@ -5276,9 +5275,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/metadata.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/metadata.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
 <span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span>
@@ -5332,10 +5331,11 @@
 
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -5349,9 +5349,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/metadata.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 95</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/metadata.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 95</span>
 <span class="normal"> 96</span>
 <span class="normal"> 97</span>
 <span class="normal"> 98</span>
@@ -5445,10 +5445,11 @@
 
     <span class="k">return</span> <span class="n">details</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -5470,9 +5471,9 @@
 <div class="codehilite"><pre><span></span><code>a mapping with the metadata type as key, and the operation as value
 </code></pre></div>
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/metadata.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">143</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/metadata.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">143</span>
 <span class="normal">144</span>
 <span class="normal">145</span>
 <span class="normal">146</span>
@@ -5536,7 +5537,7 @@
 
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>

@@ -21,7 +21,7 @@
         <link rel="next" href="../documentation/">
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.eebd395e.min.css">
       
       
 
@@ -4849,23 +4849,22 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 
 
 <h3 id="kiara.models.data_types.KiaraDict" class="doc doc-heading">
-        <code>KiaraDict</code>
+          <code>KiaraDict</code>
 
 
 <a href="#kiara.models.data_types.KiaraDict" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code>, <code><span title="typing.Mapping">Mapping</span></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code>, <code><span title="typing.Mapping">Mapping</span></code></p>
 
   
       <p>A dict implentation that contains (optional) schema information of the dicts items.</p>
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/data_types.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/data_types.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
 <span class="normal">24</span>
 <span class="normal">25</span>
 <span class="normal">26</span>
@@ -4987,7 +4986,7 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict_data</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -5141,7 +5140,7 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
 
 
 <h5 id="kiara.models.data_types.KiaraDict.Config" class="doc doc-heading">
-        <code>Config</code>
+          <code>Config</code>
 
 
 <a href="#kiara.models.data_types.KiaraDict.Config" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5150,16 +5149,15 @@ sub-class a pydantic BaseModel or implement custom base classes.</p>
   <div class="doc doc-contents ">
 
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/data_types.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">27</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/data_types.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">27</span>
 <span class="normal">28</span>
 <span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">json_loads</span> <span class="o">=</span> <span class="n">orjson</span><span class="o">.</span><span class="n">loads</span>
     <span class="n">json_dumps</span> <span class="o">=</span> <span class="n">orjson_dumps</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 

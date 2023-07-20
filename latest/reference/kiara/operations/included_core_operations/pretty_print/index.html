@@ -21,7 +21,7 @@
         <link rel="next" href="../render_data/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.eebd395e.min.css">
       
       
 
@@ -4859,21 +4859,20 @@
 
 
 <h3 id="kiara.operations.included_core_operations.pretty_print.PrettyPrintDetails" class="doc doc-heading">
-        <code>PrettyPrintDetails</code>
+          <code>PrettyPrintDetails</code>
 
 
 <a href="#kiara.operations.included_core_operations.pretty_print.PrettyPrintDetails" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="kiara.models.module.operation.BaseOperationDetails" href="../../../models/module/operation/#kiara.models.module.operation.BaseOperationDetails">BaseOperationDetails</a></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="kiara.models.module.operation.BaseOperationDetails" href="../../../models/module/operation/#kiara.models.module.operation.BaseOperationDetails">BaseOperationDetails</a></code></p>
 
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/pretty_print.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/pretty_print.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
 <span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PrettyPrintDetails</span><span class="p">(</span><span class="n">BaseOperationDetails</span><span class="p">):</span>
@@ -4881,7 +4880,7 @@
     <span class="n">source_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The type of the value to be rendered.&quot;</span><span class="p">)</span>
     <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The type of the render result.&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -4932,8 +4931,8 @@
   </div>
 
 </div>
-<h4 id="kiara.operations.included_core_operations.pretty_print.PrettyPrintDetails-classes">Classes<a href="#kiara.operations.included_core_operations.pretty_print.PrettyPrintDetails-classes" class="headerlink" title="Permanent link">&para;</a></h4>
-<h4 id="kiara.operations.included_core_operations.pretty_print.PrettyPrintDetails-functions">Functions<a href="#kiara.operations.included_core_operations.pretty_print.PrettyPrintDetails-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
 
 
 
@@ -4948,15 +4947,15 @@
 
 
 <h3 id="kiara.operations.included_core_operations.pretty_print.PrettyPrintOperationType" class="doc doc-heading">
-        <code>PrettyPrintOperationType</code>
+          <code>PrettyPrintOperationType</code>
 
 
 <a href="#kiara.operations.included_core_operations.pretty_print.PrettyPrintOperationType" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="kiara.operations.OperationType" href="../../__init__/#kiara.operations.OperationType">OperationType</a>[<a class="autorefs autorefs-internal" title="kiara.operations.included_core_operations.pretty_print.PrettyPrintDetails" href="#kiara.operations.included_core_operations.pretty_print.PrettyPrintDetails">PrettyPrintDetails</a>]</code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="kiara.operations.OperationType" href="../../__init__/#kiara.operations.OperationType">OperationType</a>[<a class="autorefs autorefs-internal" title="kiara.operations.included_core_operations.pretty_print.PrettyPrintDetails" href="#kiara.operations.included_core_operations.pretty_print.PrettyPrintDetails">PrettyPrintDetails</a>]</code></p>
 
   
       <p>An operation that takes a value, and renders into a format that can be printed for output..</p>
@@ -4964,10 +4963,9 @@
 - exactly one output field named "rendered_value"
 - exactly two input fields, one of them named after the type it supports, and the other called 'render_config', of type 'dict'</p>
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/pretty_print.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 60</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/pretty_print.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 60</span>
 <span class="normal"> 61</span>
 <span class="normal"> 62</span>
 <span class="normal"> 63</span>
@@ -5309,7 +5307,7 @@
 
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No pretty_print opration(s) for source type: </span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -5319,9 +5317,10 @@
 
 
 
-<h4 id="kiara.operations.included_core_operations.pretty_print.PrettyPrintOperationType-attributes">Attributes<a href="#kiara.operations.included_core_operations.pretty_print.PrettyPrintOperationType-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
 
 <h4 id="kiara.operations.included_core_operations.pretty_print.PrettyPrintOperationType-functions">Functions<a href="#kiara.operations.included_core_operations.pretty_print.PrettyPrintOperationType-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+
 
 <div class="doc doc-object doc-function">
 
@@ -5335,9 +5334,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/pretty_print.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 81</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/pretty_print.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 81</span>
 <span class="normal"> 82</span>
 <span class="normal"> 83</span>
 <span class="normal"> 84</span>
@@ -5471,10 +5470,11 @@
             <span class="n">result</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;_type_</span><span class="si">{</span><span class="n">data_type_name</span><span class="si">}</span><span class="s2">__</span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oc</span>
     <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -5488,9 +5488,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/pretty_print.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">149</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/pretty_print.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">149</span>
 <span class="normal">150</span>
 <span class="normal">151</span>
 <span class="normal">152</span>
@@ -5510,10 +5510,11 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">details</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -5527,9 +5528,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/pretty_print.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">160</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/pretty_print.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">160</span>
 <span class="normal">161</span>
 <span class="normal">162</span>
 <span class="normal">163</span>
@@ -5595,10 +5596,11 @@
     <span class="n">result</span> <span class="o">=</span> <span class="n">PrettyPrintDetails</span><span class="o">.</span><span class="n">create_operation_details</span><span class="p">(</span><span class="o">**</span><span class="n">details</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -5612,9 +5614,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/pretty_print.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">194</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/pretty_print.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">194</span>
 <span class="normal">195</span>
 <span class="normal">196</span>
 <span class="normal">197</span>
@@ -5646,10 +5648,11 @@
 
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -5663,9 +5666,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/pretty_print.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">211</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/pretty_print.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">211</span>
 <span class="normal">212</span>
 <span class="normal">213</span>
 <span class="normal">214</span>
@@ -5705,7 +5708,7 @@
 
     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No pretty_print opration(s) for source type: </span><span class="si">{</span><span class="n">source_type</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>

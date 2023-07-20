@@ -21,7 +21,7 @@
         <link rel="next" href="../../../python_class/">
       
       <link rel="icon" href="../../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../../../../../assets/stylesheets/main.eebd395e.min.css">
       
       
 
@@ -4957,23 +4957,22 @@
 
 
 <h3 id="kiara.models.module.pipeline.value_refs.StepValueAddress" class="doc doc-heading">
-        <code>StepValueAddress</code>
+          <code>StepValueAddress</code>
 
 
 <a href="#kiara.models.module.pipeline.value_refs.StepValueAddress" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
   
       <p>Small model to describe the address of a value of a step, within a Pipeline/PipelineStructure.</p>
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
 <span class="normal">23</span>
 <span class="normal">24</span>
 <span class="normal">25</span>
@@ -5065,7 +5064,7 @@
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -5164,7 +5163,7 @@
 
 
 <h5 id="kiara.models.module.pipeline.value_refs.StepValueAddress.Config" class="doc doc-heading">
-        <code>Config</code>
+          <code>Config</code>
 
 
 <a href="#kiara.models.module.pipeline.value_refs.StepValueAddress.Config" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5173,14 +5172,13 @@
   <div class="doc doc-contents ">
 
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">26</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">26</span>
 <span class="normal">27</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -5236,15 +5234,15 @@
 
 
 <h3 id="kiara.models.module.pipeline.value_refs.ValueRef" class="doc doc-heading">
-        <code>ValueRef</code>
+          <code>ValueRef</code>
 
 
 <a href="#kiara.models.module.pipeline.value_refs.ValueRef" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><span title="pydantic.BaseModel">BaseModel</span></code></p>
 
   
       <p>An object that holds information about the location of a value within a pipeline (or other structure).</p>
@@ -5260,10 +5258,9 @@ it can update dependent other values). A <code>ValueRef</code> object (obviously
 <p>Several <code>ValueRef</code> objects can target the same value, for example a step output and a connected step input would
 reference the same <code>Value</code> (in most cases)..</p>
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 70</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 70</span>
 <span class="normal"> 71</span>
 <span class="normal"> 72</span>
 <span class="normal"> 73</span>
@@ -5355,7 +5352,7 @@ reference the same <code>Value</code> (in most cases)..</p>
         <span class="n">name</span> <span class="o">=</span> <span class="n">camel_case_to_snake_case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="n">repl</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">)&quot;</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -5411,7 +5408,7 @@ reference the same <code>Value</code> (in most cases)..</p>
 
 
 <h5 id="kiara.models.module.pipeline.value_refs.ValueRef.Config" class="doc doc-heading">
-        <code>Config</code>
+          <code>Config</code>
 
 
 <a href="#kiara.models.module.pipeline.value_refs.ValueRef.Config" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5420,16 +5417,15 @@ reference the same <code>Value</code> (in most cases)..</p>
   <div class="doc doc-contents ">
 
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">89</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">89</span>
 <span class="normal">90</span>
 <span class="normal">91</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">allow_mutation</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="n">extra</span> <span class="o">=</span> <span class="n">Extra</span><span class="o">.</span><span class="n">forbid</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -5505,24 +5501,23 @@ reference the same <code>Value</code> (in most cases)..</p>
 
 
 <h3 id="kiara.models.module.pipeline.value_refs.StepInputRef" class="doc doc-heading">
-        <code>StepInputRef</code>
+          <code>StepInputRef</code>
 
 
 <a href="#kiara.models.module.pipeline.value_refs.StepInputRef" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="kiara.models.module.pipeline.value_refs.ValueRef" href="#kiara.models.module.pipeline.value_refs.ValueRef">ValueRef</a></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="kiara.models.module.pipeline.value_refs.ValueRef" href="#kiara.models.module.pipeline.value_refs.ValueRef">ValueRef</a></code></p>
 
   
       <p>An input to a step.</p>
 <p>This object can either have a 'connected_outputs' set, or a 'connected_pipeline_input', not both.</p>
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">118</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">118</span>
 <span class="normal">119</span>
 <span class="normal">120</span>
 <span class="normal">121</span>
@@ -5604,7 +5599,7 @@ reference the same <code>Value</code> (in most cases)..</p>
         <span class="n">name</span> <span class="o">=</span> <span class="n">camel_case_to_snake_case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="n">repl</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">)&quot;</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -5733,8 +5728,9 @@ reference the same <code>Value</code> (in most cases)..</p>
   </div>
 
 </div>
-<h4 id="kiara.models.module.pipeline.value_refs.StepInputRef-classes">Classes<a href="#kiara.models.module.pipeline.value_refs.StepInputRef-classes" class="headerlink" title="Permanent link">&para;</a></h4>
+
 <h4 id="kiara.models.module.pipeline.value_refs.StepInputRef-functions">Functions<a href="#kiara.models.module.pipeline.value_refs.StepInputRef-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+
 
 <div class="doc doc-object doc-function">
 
@@ -5748,9 +5744,9 @@ reference the same <code>Value</code> (in most cases)..</p>
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">138</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">138</span>
 <span class="normal">139</span>
 <span class="normal">140</span>
 <span class="normal">141</span>
@@ -5768,7 +5764,7 @@ reference the same <code>Value</code> (in most cases)..</p>
 
     <span class="k">return</span> <span class="n">values</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
@@ -5786,23 +5782,22 @@ reference the same <code>Value</code> (in most cases)..</p>
 
 
 <h3 id="kiara.models.module.pipeline.value_refs.StepOutputRef" class="doc doc-heading">
-        <code>StepOutputRef</code>
+          <code>StepOutputRef</code>
 
 
 <a href="#kiara.models.module.pipeline.value_refs.StepOutputRef" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="kiara.models.module.pipeline.value_refs.ValueRef" href="#kiara.models.module.pipeline.value_refs.ValueRef">ValueRef</a></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="kiara.models.module.pipeline.value_refs.ValueRef" href="#kiara.models.module.pipeline.value_refs.ValueRef">ValueRef</a></code></p>
 
   
       <p>An output to a step.</p>
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">161</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">161</span>
 <span class="normal">162</span>
 <span class="normal">163</span>
 <span class="normal">164</span>
@@ -5856,7 +5851,7 @@ reference the same <code>Value</code> (in most cases)..</p>
         <span class="n">name</span> <span class="o">=</span> <span class="n">camel_case_to_snake_case</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">5</span><span class="p">],</span> <span class="n">repl</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value_schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">)&quot;</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -5972,7 +5967,7 @@ reference the same <code>Value</code> (in most cases)..</p>
 
 
 <h5 id="kiara.models.module.pipeline.value_refs.StepOutputRef.Config" class="doc doc-heading">
-        <code>Config</code>
+          <code>Config</code>
 
 
 <a href="#kiara.models.module.pipeline.value_refs.StepOutputRef.Config" class="headerlink" title="Permanent link">&para;</a></h5>
@@ -5981,14 +5976,13 @@ reference the same <code>Value</code> (in most cases)..</p>
   <div class="doc doc-contents ">
 
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">165</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">165</span>
 <span class="normal">166</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Config</span><span class="p">:</span>
     <span class="n">allow_mutation</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -6044,23 +6038,22 @@ reference the same <code>Value</code> (in most cases)..</p>
 
 
 <h3 id="kiara.models.module.pipeline.value_refs.PipelineInputRef" class="doc doc-heading">
-        <code>PipelineInputRef</code>
+          <code>PipelineInputRef</code>
 
 
 <a href="#kiara.models.module.pipeline.value_refs.PipelineInputRef" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="kiara.models.module.pipeline.value_refs.ValueRef" href="#kiara.models.module.pipeline.value_refs.ValueRef">ValueRef</a></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="kiara.models.module.pipeline.value_refs.ValueRef" href="#kiara.models.module.pipeline.value_refs.ValueRef">ValueRef</a></code></p>
 
   
       <p>An input to a pipeline.</p>
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">190</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">190</span>
 <span class="normal">191</span>
 <span class="normal">192</span>
 <span class="normal">193</span>
@@ -6090,7 +6083,7 @@ reference the same <code>Value</code> (in most cases)..</p>
     <span class="k">def</span> <span class="nf">alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">generate_step_alias</span><span class="p">(</span><span class="n">PIPELINE_PARENT_MARKER</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -6160,7 +6153,7 @@ reference the same <code>Value</code> (in most cases)..</p>
   </div>
 
 </div>
-<h4 id="kiara.models.module.pipeline.value_refs.PipelineInputRef-classes">Classes<a href="#kiara.models.module.pipeline.value_refs.PipelineInputRef-classes" class="headerlink" title="Permanent link">&para;</a></h4>
+
 
 
 
@@ -6176,23 +6169,22 @@ reference the same <code>Value</code> (in most cases)..</p>
 
 
 <h3 id="kiara.models.module.pipeline.value_refs.PipelineOutputRef" class="doc doc-heading">
-        <code>PipelineOutputRef</code>
+          <code>PipelineOutputRef</code>
 
 
 <a href="#kiara.models.module.pipeline.value_refs.PipelineOutputRef" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="kiara.models.module.pipeline.value_refs.ValueRef" href="#kiara.models.module.pipeline.value_refs.ValueRef">ValueRef</a></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="kiara.models.module.pipeline.value_refs.ValueRef" href="#kiara.models.module.pipeline.value_refs.ValueRef">ValueRef</a></code></p>
 
   
       <p>An output to a pipeline.</p>
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">207</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">207</span>
 <span class="normal">208</span>
 <span class="normal">209</span>
 <span class="normal">210</span>
@@ -6210,7 +6202,7 @@ reference the same <code>Value</code> (in most cases)..</p>
     <span class="k">def</span> <span class="nf">alias</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">generate_step_alias</span><span class="p">(</span><span class="n">PIPELINE_PARENT_MARKER</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_name</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -6260,7 +6252,7 @@ reference the same <code>Value</code> (in most cases)..</p>
   </div>
 
 </div>
-<h4 id="kiara.models.module.pipeline.value_refs.PipelineOutputRef-classes">Classes<a href="#kiara.models.module.pipeline.value_refs.PipelineOutputRef-classes" class="headerlink" title="Permanent link">&para;</a></h4>
+
 
 
 
@@ -6271,6 +6263,7 @@ reference the same <code>Value</code> (in most cases)..</p>
 
 </div>
 <h2 id="kiara.models.module.pipeline.value_refs-functions">Functions<a href="#kiara.models.module.pipeline.value_refs-functions" class="headerlink" title="Permanent link">&para;</a></h2>
+
 
 <div class="doc doc-object doc-function">
 
@@ -6284,13 +6277,13 @@ reference the same <code>Value</code> (in most cases)..</p>
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/models/module/pipeline/value_refs.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
 <span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">generate_step_alias</span><span class="p">(</span><span class="n">step_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_name</span><span class="p">):</span>
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step_id</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">value_name</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>

@@ -21,7 +21,7 @@
         <link rel="next" href="../export_as/">
       
       <link rel="icon" href="../../../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.eebd395e.min.css">
       
       
 
@@ -4918,21 +4918,20 @@
 
 
 <h3 id="kiara.operations.included_core_operations.create_from.CreateValueFromDetails" class="doc doc-heading">
-        <code>CreateValueFromDetails</code>
+          <code>CreateValueFromDetails</code>
 
 
 <a href="#kiara.operations.included_core_operations.create_from.CreateValueFromDetails" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="kiara.models.module.operation.BaseOperationDetails" href="../../../models/module/operation/#kiara.models.module.operation.BaseOperationDetails">BaseOperationDetails</a></code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="kiara.models.module.operation.BaseOperationDetails" href="../../../models/module/operation/#kiara.models.module.operation.BaseOperationDetails">BaseOperationDetails</a></code></p>
 
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/create_from.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">24</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/create_from.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">24</span>
 <span class="normal">25</span>
 <span class="normal">26</span>
 <span class="normal">27</span>
@@ -4942,7 +4941,7 @@
     <span class="n">target_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The result type.&quot;</span><span class="p">)</span>
     <span class="n">optional_args</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ValueSchema</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;Optional arguments.&quot;</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -5013,8 +5012,8 @@
   </div>
 
 </div>
-<h4 id="kiara.operations.included_core_operations.create_from.CreateValueFromDetails-classes">Classes<a href="#kiara.operations.included_core_operations.create_from.CreateValueFromDetails-classes" class="headerlink" title="Permanent link">&para;</a></h4>
-<h4 id="kiara.operations.included_core_operations.create_from.CreateValueFromDetails-functions">Functions<a href="#kiara.operations.included_core_operations.create_from.CreateValueFromDetails-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+
+
 
 
 
@@ -5029,25 +5028,24 @@
 
 
 <h3 id="kiara.operations.included_core_operations.create_from.CreateFromOperationType" class="doc doc-heading">
-        <code>CreateFromOperationType</code>
+          <code>CreateFromOperationType</code>
 
 
 <a href="#kiara.operations.included_core_operations.create_from.CreateFromOperationType" class="headerlink" title="Permanent link">&para;</a></h3>
 
 
   <div class="doc doc-contents ">
-      <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="kiara.operations.OperationType" href="../../__init__/#kiara.operations.OperationType">OperationType</a>[<a class="autorefs autorefs-internal" title="kiara.operations.included_core_operations.create_from.CreateValueFromDetails" href="#kiara.operations.included_core_operations.create_from.CreateValueFromDetails">CreateValueFromDetails</a>]</code></p>
+          <p class="doc doc-class-bases">
+            Bases: <code><a class="autorefs autorefs-internal" title="kiara.operations.OperationType" href="../../__init__/#kiara.operations.OperationType">OperationType</a>[<a class="autorefs autorefs-internal" title="kiara.operations.included_core_operations.create_from.CreateValueFromDetails" href="#kiara.operations.included_core_operations.create_from.CreateValueFromDetails">CreateValueFromDetails</a>]</code></p>
 
   
       <p>Create a dataset from a dataset of another value.</p>
 <p>This operation always has at least one input named after the source type, and one output named after the target type. It can,
 in addition, also have other, optional inputs, to control how exactly the target value is created.</p>
 
-
-        <details class="quote">
-          <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/create_from.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 50</span>
+            <details class="quote">
+              <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/create_from.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 50</span>
 <span class="normal"> 51</span>
 <span class="normal"> 52</span>
 <span class="normal"> 53</span>
@@ -5331,7 +5329,7 @@ in addition, also have other, optional inputs, to control how exactly the target
         <span class="n">result</span> <span class="o">=</span> <span class="n">CreateValueFromDetails</span><span class="o">.</span><span class="n">create_operation_details</span><span class="p">(</span><span class="o">**</span><span class="n">details</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 </code></pre></div></td></tr></table></div>
-        </details>
+            </details>
 
   
 
@@ -5341,9 +5339,10 @@ in addition, also have other, optional inputs, to control how exactly the target
 
 
 
-<h4 id="kiara.operations.included_core_operations.create_from.CreateFromOperationType-attributes">Attributes<a href="#kiara.operations.included_core_operations.create_from.CreateFromOperationType-attributes" class="headerlink" title="Permanent link">&para;</a></h4>
+
 
 <h4 id="kiara.operations.included_core_operations.create_from.CreateFromOperationType-functions">Functions<a href="#kiara.operations.included_core_operations.create_from.CreateFromOperationType-functions" class="headerlink" title="Permanent link">&para;</a></h4>
+
 
 <div class="doc doc-object doc-function">
 
@@ -5357,9 +5356,9 @@ in addition, also have other, optional inputs, to control how exactly the target
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/create_from.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 68</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/create_from.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 68</span>
 <span class="normal"> 69</span>
 <span class="normal"> 70</span>
 <span class="normal"> 71</span>
@@ -5475,10 +5474,11 @@ in addition, also have other, optional inputs, to control how exactly the target
 
     <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -5492,9 +5492,9 @@ in addition, also have other, optional inputs, to control how exactly the target
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/create_from.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">127</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/operations/included_core_operations/create_from.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">127</span>
 <span class="normal">128</span>
 <span class="normal">129</span>
 <span class="normal">130</span>
@@ -5624,7 +5624,7 @@ in addition, also have other, optional inputs, to control how exactly the target
     <span class="n">result</span> <span class="o">=</span> <span class="n">CreateValueFromDetails</span><span class="o">.</span><span class="n">create_operation_details</span><span class="p">(</span><span class="o">**</span><span class="n">details</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">result</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>

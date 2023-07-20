@@ -21,7 +21,7 @@
         <link rel="next" href="../api/">
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.18">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.19">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.26e3688c.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.eebd395e.min.css">
       
       
 
@@ -4869,7 +4869,7 @@
 
 
 <h3 id="kiara.find_model_classes" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">find_model_classes</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="n">find_kiara_model_classes_under</span><span class="p">,</span> <span class="s1">&#39;kiara.models&#39;</span></code>
+<code class="highlight language-python"><span class="n">find_model_classes</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="p">(</span><span class="n">find_kiara_model_classes_under</span><span class="p">,</span> <span class="s1">&#39;kiara.models&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -4888,7 +4888,7 @@
 
 
 <h3 id="kiara.find_model_classes_api" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">find_model_classes_api</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="n">find_kiara_model_classes_under</span><span class="p">,</span> <span class="s1">&#39;kiara.interfaces.python_api.models&#39;</span></code>
+<code class="highlight language-python"><span class="n">find_model_classes_api</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="p">(</span><span class="n">find_kiara_model_classes_under</span><span class="p">,</span> <span class="s1">&#39;kiara.interfaces.python_api.models&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -4907,7 +4907,7 @@
 
 
 <h3 id="kiara.find_renderer_classes" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">find_renderer_classes</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="n">find_kiara_renderers_under</span><span class="p">,</span> <span class="s1">&#39;kiara.renderers.included_renderers&#39;</span></code>
+<code class="highlight language-python"><span class="n">find_renderer_classes</span><span class="p">:</span> <span class="n">KiaraEntryPointItem</span> <span class="o">=</span> <span class="p">(</span><span class="n">find_kiara_renderers_under</span><span class="p">,</span> <span class="s1">&#39;kiara.renderers.included_renderers&#39;</span><span class="p">)</span></code>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
@@ -4923,6 +4923,7 @@
 
 <h2 id="kiara-functions">Functions<a href="#kiara-functions" class="headerlink" title="Permanent link">&para;</a></h2>
 
+
 <div class="doc doc-object doc-function">
 
 
@@ -4935,9 +4936,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">51</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">51</span>
 <span class="normal">52</span>
 <span class="normal">53</span>
 <span class="normal">54</span>
@@ -4967,10 +4968,11 @@
                 <span class="sa">f</span><span class="s2">&quot;[green]</span><span class="si">{</span><span class="n">obj</span><span class="si">}</span><span class="s2">[/green]&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="n">flush</span>
             <span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -4984,9 +4986,9 @@
 
   <div class="doc doc-contents ">
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">69</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">69</span>
 <span class="normal">70</span>
 <span class="normal">71</span>
 <span class="normal">72</span>
@@ -5014,10 +5016,11 @@
     <span class="p">)</span>
     <span class="n">dbg</span><span class="p">(</span><span class="o">*</span><span class="n">objs</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="n">sep</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">file</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="n">flush</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>
+
 
 <div class="doc doc-object doc-function">
 
@@ -5033,9 +5036,9 @@
   
       <p>Return the current version of <em>Kiara</em>.</p>
 
-      <details class="quote">
-        <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/__init__.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">130</span>
+          <details class="quote">
+            <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/__init__.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">130</span>
 <span class="normal">131</span>
 <span class="normal">132</span>
 <span class="normal">133</span>
@@ -5087,7 +5090,7 @@
 
     <span class="k">return</span> <span class="n">__version__</span>
 </code></pre></div></td></tr></table></div>
-      </details>
+          </details>
   </div>
 
 </div>

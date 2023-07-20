@@ -637,6 +637,8 @@ class KiaraAPI(object):
     def list_operation_ids(
         self,
         filter: Union[str, None, Iterable[str]] = None,
+        input_types: Union[str, Iterable[str], None] = None,
+        output_types: Union[str, Iterable[str], None] = None,
         include_internal: bool = False,
         python_packages: Union[str, None, Iterable[str]] = None,
     ) -> List[str]:
@@ -654,6 +656,8 @@ class KiaraAPI(object):
             return sorted(
                 self.list_operations(
                     filter=filter,
+                    input_types=input_types,
+                    output_types=output_types,
                     include_internal=include_internal,
                     python_packages=python_packages,
                 ).keys()
@@ -914,6 +918,7 @@ class KiaraAPI(object):
         Arguments:
             filters: the (optional) filter strings, an operation must match all of them to be included in the result
             include_internal: whether to include operations that are predominantly used internally in kiara.
+            input_types: each operation must have at least one input that matches one of the specified types
             output_types: each operation must have at least one output that matches one of the specified types
             operation_types: only include operations of the specified type(s)
             include_internal: whether to include operations that are predominantly used internally in kiara.

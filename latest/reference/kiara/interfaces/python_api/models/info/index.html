@@ -12349,7 +12349,23 @@
 <span class="normal">1415</span>
 <span class="normal">1416</span>
 <span class="normal">1417</span>
-<span class="normal">1418</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">OperationInfo</span><span class="p">(</span><span class="n">ItemInfo</span><span class="p">):</span>
+<span class="normal">1418</span>
+<span class="normal">1419</span>
+<span class="normal">1420</span>
+<span class="normal">1421</span>
+<span class="normal">1422</span>
+<span class="normal">1423</span>
+<span class="normal">1424</span>
+<span class="normal">1425</span>
+<span class="normal">1426</span>
+<span class="normal">1427</span>
+<span class="normal">1428</span>
+<span class="normal">1429</span>
+<span class="normal">1430</span>
+<span class="normal">1431</span>
+<span class="normal">1432</span>
+<span class="normal">1433</span>
+<span class="normal">1434</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">OperationInfo</span><span class="p">(</span><span class="n">ItemInfo</span><span class="p">):</span>
 
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;info.operation&quot;</span>
 
@@ -12378,15 +12394,31 @@
         <span class="n">input_fields</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">operation</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
-            <span class="n">dt</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_data_type_instance</span><span class="p">(</span>
-                <span class="n">type_name</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">type_config</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type_config</span>
-            <span class="p">)</span>
-            <span class="n">dt_info</span> <span class="o">=</span> <span class="n">FieldInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-                <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
-                <span class="n">field_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
-                <span class="n">data_type_info</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">info</span><span class="p">,</span>
-                <span class="n">value_required</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">(),</span>
-            <span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dt</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_data_type_instance</span><span class="p">(</span>
+                    <span class="n">type_name</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">type_config</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type_config</span>
+                <span class="p">)</span>
+                <span class="n">dt_info</span> <span class="o">=</span> <span class="n">FieldInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+                    <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
+                    <span class="n">field_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
+                    <span class="n">data_type_info</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">info</span><span class="p">,</span>
+                    <span class="n">value_required</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">(),</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="n">dtc</span> <span class="o">=</span> <span class="n">PythonClass</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+                <span class="n">dti</span> <span class="o">=</span> <span class="n">DataTypeInfo</span><span class="p">(</span>
+                    <span class="n">data_type_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2"> (invalid)&quot;</span><span class="p">,</span>
+                    <span class="n">data_type_config</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type_config</span><span class="p">,</span>
+                    <span class="n">characteristics</span><span class="o">=</span><span class="n">DataTypeCharacteristics</span><span class="p">(),</span>
+                    <span class="n">data_type_class</span><span class="o">=</span><span class="n">dtc</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">dt_info</span> <span class="o">=</span> <span class="n">FieldInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+                    <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
+                    <span class="n">field_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
+                    <span class="n">data_type_info</span><span class="o">=</span><span class="n">dti</span><span class="p">,</span>
+                    <span class="n">value_required</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">(),</span>
+                <span class="p">)</span>
+
             <span class="n">input_fields</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt_info</span>
 
         <span class="n">output_fields</span> <span class="o">=</span> <span class="p">{}</span>
@@ -12679,7 +12711,23 @@
 <span class="normal">1377</span>
 <span class="normal">1378</span>
 <span class="normal">1379</span>
-<span class="normal">1380</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1380</span>
+<span class="normal">1381</span>
+<span class="normal">1382</span>
+<span class="normal">1383</span>
+<span class="normal">1384</span>
+<span class="normal">1385</span>
+<span class="normal">1386</span>
+<span class="normal">1387</span>
+<span class="normal">1388</span>
+<span class="normal">1389</span>
+<span class="normal">1390</span>
+<span class="normal">1391</span>
+<span class="normal">1392</span>
+<span class="normal">1393</span>
+<span class="normal">1394</span>
+<span class="normal">1395</span>
+<span class="normal">1396</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_from_operation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">operation</span><span class="p">:</span> <span class="n">Operation</span><span class="p">):</span>
 
     <span class="n">module</span> <span class="o">=</span> <span class="n">operation</span><span class="o">.</span><span class="n">module</span>
@@ -12695,15 +12743,31 @@
     <span class="n">input_fields</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">schema</span> <span class="ow">in</span> <span class="n">operation</span><span class="o">.</span><span class="n">inputs_schema</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
-        <span class="n">dt</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_data_type_instance</span><span class="p">(</span>
-            <span class="n">type_name</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">type_config</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type_config</span>
-        <span class="p">)</span>
-        <span class="n">dt_info</span> <span class="o">=</span> <span class="n">FieldInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
-            <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
-            <span class="n">field_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
-            <span class="n">data_type_info</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">info</span><span class="p">,</span>
-            <span class="n">value_required</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">(),</span>
-        <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">kiara</span><span class="o">.</span><span class="n">type_registry</span><span class="o">.</span><span class="n">get_data_type_instance</span><span class="p">(</span>
+                <span class="n">type_name</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">type_config</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type_config</span>
+            <span class="p">)</span>
+            <span class="n">dt_info</span> <span class="o">=</span> <span class="n">FieldInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+                <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
+                <span class="n">field_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
+                <span class="n">data_type_info</span><span class="o">=</span><span class="n">dt</span><span class="o">.</span><span class="n">info</span><span class="p">,</span>
+                <span class="n">value_required</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">(),</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">dtc</span> <span class="o">=</span> <span class="n">PythonClass</span><span class="o">.</span><span class="n">from_class</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+            <span class="n">dti</span> <span class="o">=</span> <span class="n">DataTypeInfo</span><span class="p">(</span>
+                <span class="n">data_type_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">schema</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2"> (invalid)&quot;</span><span class="p">,</span>
+                <span class="n">data_type_config</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">type_config</span><span class="p">,</span>
+                <span class="n">characteristics</span><span class="o">=</span><span class="n">DataTypeCharacteristics</span><span class="p">(),</span>
+                <span class="n">data_type_class</span><span class="o">=</span><span class="n">dtc</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">dt_info</span> <span class="o">=</span> <span class="n">FieldInfo</span><span class="o">.</span><span class="n">construct</span><span class="p">(</span>
+                <span class="n">field_name</span><span class="o">=</span><span class="n">field_name</span><span class="p">,</span>
+                <span class="n">field_schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span>
+                <span class="n">data_type_info</span><span class="o">=</span><span class="n">dti</span><span class="p">,</span>
+                <span class="n">value_required</span><span class="o">=</span><span class="n">schema</span><span class="o">.</span><span class="n">is_required</span><span class="p">(),</span>
+            <span class="p">)</span>
+
         <span class="n">input_fields</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt_info</span>
 
     <span class="n">output_fields</span> <span class="o">=</span> <span class="p">{}</span>
@@ -12756,9 +12820,9 @@
 
           <details class="quote">
             <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/info.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1382</span>
-<span class="normal">1383</span>
-<span class="normal">1384</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1398</span>
+<span class="normal">1399</span>
+<span class="normal">1400</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">category_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="k">return</span> <span class="s2">&quot;operation&quot;</span>
 </code></pre></div></td></tr></table></div>
@@ -12782,28 +12846,28 @@
 
           <details class="quote">
             <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/info.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1397</span>
-<span class="normal">1398</span>
-<span class="normal">1399</span>
-<span class="normal">1400</span>
-<span class="normal">1401</span>
-<span class="normal">1402</span>
-<span class="normal">1403</span>
-<span class="normal">1404</span>
-<span class="normal">1405</span>
-<span class="normal">1406</span>
-<span class="normal">1407</span>
-<span class="normal">1408</span>
-<span class="normal">1409</span>
-<span class="normal">1410</span>
-<span class="normal">1411</span>
-<span class="normal">1412</span>
-<span class="normal">1413</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1413</span>
 <span class="normal">1414</span>
 <span class="normal">1415</span>
 <span class="normal">1416</span>
 <span class="normal">1417</span>
-<span class="normal">1418</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+<span class="normal">1418</span>
+<span class="normal">1419</span>
+<span class="normal">1420</span>
+<span class="normal">1421</span>
+<span class="normal">1422</span>
+<span class="normal">1423</span>
+<span class="normal">1424</span>
+<span class="normal">1425</span>
+<span class="normal">1426</span>
+<span class="normal">1427</span>
+<span class="normal">1428</span>
+<span class="normal">1429</span>
+<span class="normal">1430</span>
+<span class="normal">1431</span>
+<span class="normal">1432</span>
+<span class="normal">1433</span>
+<span class="normal">1434</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="n">include_doc</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_doc&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="n">include_op_details</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;include_op_details&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
@@ -12857,23 +12921,7 @@
 
             <details class="quote">
               <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/info.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1421</span>
-<span class="normal">1422</span>
-<span class="normal">1423</span>
-<span class="normal">1424</span>
-<span class="normal">1425</span>
-<span class="normal">1426</span>
-<span class="normal">1427</span>
-<span class="normal">1428</span>
-<span class="normal">1429</span>
-<span class="normal">1430</span>
-<span class="normal">1431</span>
-<span class="normal">1432</span>
-<span class="normal">1433</span>
-<span class="normal">1434</span>
-<span class="normal">1435</span>
-<span class="normal">1436</span>
-<span class="normal">1437</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1437</span>
 <span class="normal">1438</span>
 <span class="normal">1439</span>
 <span class="normal">1440</span>
@@ -13003,7 +13051,23 @@
 <span class="normal">1564</span>
 <span class="normal">1565</span>
 <span class="normal">1566</span>
-<span class="normal">1567</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">OperationGroupInfo</span><span class="p">(</span><span class="n">InfoItemGroup</span><span class="p">):</span>
+<span class="normal">1567</span>
+<span class="normal">1568</span>
+<span class="normal">1569</span>
+<span class="normal">1570</span>
+<span class="normal">1571</span>
+<span class="normal">1572</span>
+<span class="normal">1573</span>
+<span class="normal">1574</span>
+<span class="normal">1575</span>
+<span class="normal">1576</span>
+<span class="normal">1577</span>
+<span class="normal">1578</span>
+<span class="normal">1579</span>
+<span class="normal">1580</span>
+<span class="normal">1581</span>
+<span class="normal">1582</span>
+<span class="normal">1583</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">OperationGroupInfo</span><span class="p">(</span><span class="n">InfoItemGroup</span><span class="p">):</span>
 
     <span class="n">_kiara_model_id</span> <span class="o">=</span> <span class="s2">&quot;info.operations&quot;</span>
 
@@ -13204,9 +13268,9 @@
 
           <details class="quote">
             <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/info.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1425</span>
-<span class="normal">1426</span>
-<span class="normal">1427</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1441</span>
+<span class="normal">1442</span>
+<span class="normal">1443</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">base_info_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">ItemInfo</span><span class="p">]:</span>
     <span class="k">return</span> <span class="n">OperationInfo</span>
 </code></pre></div></td></tr></table></div>
@@ -13234,18 +13298,18 @@
 
           <details class="quote">
             <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/info.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1429</span>
-<span class="normal">1430</span>
-<span class="normal">1431</span>
-<span class="normal">1432</span>
-<span class="normal">1433</span>
-<span class="normal">1434</span>
-<span class="normal">1435</span>
-<span class="normal">1436</span>
-<span class="normal">1437</span>
-<span class="normal">1438</span>
-<span class="normal">1439</span>
-<span class="normal">1440</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1445</span>
+<span class="normal">1446</span>
+<span class="normal">1447</span>
+<span class="normal">1448</span>
+<span class="normal">1449</span>
+<span class="normal">1450</span>
+<span class="normal">1451</span>
+<span class="normal">1452</span>
+<span class="normal">1453</span>
+<span class="normal">1454</span>
+<span class="normal">1455</span>
+<span class="normal">1456</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_from_operations</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">group_title</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">items</span><span class="p">:</span> <span class="n">Operation</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OperationGroupInfo&quot;</span><span class="p">:</span>
@@ -13278,14 +13342,14 @@
 
           <details class="quote">
             <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/info.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1447</span>
-<span class="normal">1448</span>
-<span class="normal">1449</span>
-<span class="normal">1450</span>
-<span class="normal">1451</span>
-<span class="normal">1452</span>
-<span class="normal">1453</span>
-<span class="normal">1454</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1463</span>
+<span class="normal">1464</span>
+<span class="normal">1465</span>
+<span class="normal">1466</span>
+<span class="normal">1467</span>
+<span class="normal">1468</span>
+<span class="normal">1469</span>
+<span class="normal">1470</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="n">by_type</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;by_type&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
@@ -13325,23 +13389,7 @@
 
             <details class="quote">
               <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/info.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1570</span>
-<span class="normal">1571</span>
-<span class="normal">1572</span>
-<span class="normal">1573</span>
-<span class="normal">1574</span>
-<span class="normal">1575</span>
-<span class="normal">1576</span>
-<span class="normal">1577</span>
-<span class="normal">1578</span>
-<span class="normal">1579</span>
-<span class="normal">1580</span>
-<span class="normal">1581</span>
-<span class="normal">1582</span>
-<span class="normal">1583</span>
-<span class="normal">1584</span>
-<span class="normal">1585</span>
-<span class="normal">1586</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1586</span>
 <span class="normal">1587</span>
 <span class="normal">1588</span>
 <span class="normal">1589</span>
@@ -13417,7 +13465,23 @@
 <span class="normal">1659</span>
 <span class="normal">1660</span>
 <span class="normal">1661</span>
-<span class="normal">1662</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RendererInfo</span><span class="p">(</span><span class="n">ItemInfo</span><span class="p">[</span><span class="n">KiaraRenderer</span><span class="p">]):</span>
+<span class="normal">1662</span>
+<span class="normal">1663</span>
+<span class="normal">1664</span>
+<span class="normal">1665</span>
+<span class="normal">1666</span>
+<span class="normal">1667</span>
+<span class="normal">1668</span>
+<span class="normal">1669</span>
+<span class="normal">1670</span>
+<span class="normal">1671</span>
+<span class="normal">1672</span>
+<span class="normal">1673</span>
+<span class="normal">1674</span>
+<span class="normal">1675</span>
+<span class="normal">1676</span>
+<span class="normal">1677</span>
+<span class="normal">1678</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RendererInfo</span><span class="p">(</span><span class="n">ItemInfo</span><span class="p">[</span><span class="n">KiaraRenderer</span><span class="p">]):</span>
 
     <span class="n">renderer_config</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s2">&quot;The renderer config.&quot;</span><span class="p">)</span>
     <span class="n">renderer_cls</span><span class="p">:</span> <span class="n">PythonClass</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
@@ -13664,9 +13728,9 @@
 
           <details class="quote">
             <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/info.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1589</span>
-<span class="normal">1590</span>
-<span class="normal">1591</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1605</span>
+<span class="normal">1606</span>
+<span class="normal">1607</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">base_instance_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">KiaraRenderer</span><span class="p">]:</span>
     <span class="k">return</span> <span class="n">KiaraRenderer</span>
 </code></pre></div></td></tr></table></div>
@@ -13694,23 +13758,7 @@
 
           <details class="quote">
             <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/info.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1593</span>
-<span class="normal">1594</span>
-<span class="normal">1595</span>
-<span class="normal">1596</span>
-<span class="normal">1597</span>
-<span class="normal">1598</span>
-<span class="normal">1599</span>
-<span class="normal">1600</span>
-<span class="normal">1601</span>
-<span class="normal">1602</span>
-<span class="normal">1603</span>
-<span class="normal">1604</span>
-<span class="normal">1605</span>
-<span class="normal">1606</span>
-<span class="normal">1607</span>
-<span class="normal">1608</span>
-<span class="normal">1609</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1609</span>
 <span class="normal">1610</span>
 <span class="normal">1611</span>
 <span class="normal">1612</span>
@@ -13728,7 +13776,23 @@
 <span class="normal">1624</span>
 <span class="normal">1625</span>
 <span class="normal">1626</span>
-<span class="normal">1627</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+<span class="normal">1627</span>
+<span class="normal">1628</span>
+<span class="normal">1629</span>
+<span class="normal">1630</span>
+<span class="normal">1631</span>
+<span class="normal">1632</span>
+<span class="normal">1633</span>
+<span class="normal">1634</span>
+<span class="normal">1635</span>
+<span class="normal">1636</span>
+<span class="normal">1637</span>
+<span class="normal">1638</span>
+<span class="normal">1639</span>
+<span class="normal">1640</span>
+<span class="normal">1641</span>
+<span class="normal">1642</span>
+<span class="normal">1643</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">create_from_instance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">kiara</span><span class="p">:</span> <span class="s2">&quot;Kiara&quot;</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">KiaraRenderer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
     <span class="n">doc</span> <span class="o">=</span> <span class="n">instance</span><span class="o">.</span><span class="n">doc</span>
@@ -13784,23 +13848,7 @@
 
           <details class="quote">
             <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/info.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1629</span>
-<span class="normal">1630</span>
-<span class="normal">1631</span>
-<span class="normal">1632</span>
-<span class="normal">1633</span>
-<span class="normal">1634</span>
-<span class="normal">1635</span>
-<span class="normal">1636</span>
-<span class="normal">1637</span>
-<span class="normal">1638</span>
-<span class="normal">1639</span>
-<span class="normal">1640</span>
-<span class="normal">1641</span>
-<span class="normal">1642</span>
-<span class="normal">1643</span>
-<span class="normal">1644</span>
-<span class="normal">1645</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1645</span>
 <span class="normal">1646</span>
 <span class="normal">1647</span>
 <span class="normal">1648</span>
@@ -13817,7 +13865,23 @@
 <span class="normal">1659</span>
 <span class="normal">1660</span>
 <span class="normal">1661</span>
-<span class="normal">1662</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+<span class="normal">1662</span>
+<span class="normal">1663</span>
+<span class="normal">1664</span>
+<span class="normal">1665</span>
+<span class="normal">1666</span>
+<span class="normal">1667</span>
+<span class="normal">1668</span>
+<span class="normal">1669</span>
+<span class="normal">1670</span>
+<span class="normal">1671</span>
+<span class="normal">1672</span>
+<span class="normal">1673</span>
+<span class="normal">1674</span>
+<span class="normal">1675</span>
+<span class="normal">1676</span>
+<span class="normal">1677</span>
+<span class="normal">1678</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="n">show_metadata</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_metadata&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
@@ -13883,23 +13947,7 @@
 
             <details class="quote">
               <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/info.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1665</span>
-<span class="normal">1666</span>
-<span class="normal">1667</span>
-<span class="normal">1668</span>
-<span class="normal">1669</span>
-<span class="normal">1670</span>
-<span class="normal">1671</span>
-<span class="normal">1672</span>
-<span class="normal">1673</span>
-<span class="normal">1674</span>
-<span class="normal">1675</span>
-<span class="normal">1676</span>
-<span class="normal">1677</span>
-<span class="normal">1678</span>
-<span class="normal">1679</span>
-<span class="normal">1680</span>
-<span class="normal">1681</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1681</span>
 <span class="normal">1682</span>
 <span class="normal">1683</span>
 <span class="normal">1684</span>
@@ -13923,7 +13971,23 @@
 <span class="normal">1702</span>
 <span class="normal">1703</span>
 <span class="normal">1704</span>
-<span class="normal">1705</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RendererInfos</span><span class="p">(</span><span class="n">InfoItemGroup</span><span class="p">[</span><span class="n">RendererInfo</span><span class="p">]):</span>
+<span class="normal">1705</span>
+<span class="normal">1706</span>
+<span class="normal">1707</span>
+<span class="normal">1708</span>
+<span class="normal">1709</span>
+<span class="normal">1710</span>
+<span class="normal">1711</span>
+<span class="normal">1712</span>
+<span class="normal">1713</span>
+<span class="normal">1714</span>
+<span class="normal">1715</span>
+<span class="normal">1716</span>
+<span class="normal">1717</span>
+<span class="normal">1718</span>
+<span class="normal">1719</span>
+<span class="normal">1720</span>
+<span class="normal">1721</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RendererInfos</span><span class="p">(</span><span class="n">InfoItemGroup</span><span class="p">[</span><span class="n">RendererInfo</span><span class="p">]):</span>
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">base_info_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">RendererInfo</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">RendererInfo</span>
@@ -13998,9 +14062,9 @@
 
           <details class="quote">
             <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/info.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1666</span>
-<span class="normal">1667</span>
-<span class="normal">1668</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1682</span>
+<span class="normal">1683</span>
+<span class="normal">1684</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@classmethod</span>
 <span class="k">def</span> <span class="nf">base_info_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">RendererInfo</span><span class="p">]:</span>
     <span class="k">return</span> <span class="n">RendererInfo</span>
 </code></pre></div></td></tr></table></div>
@@ -14024,14 +14088,14 @@
 
           <details class="quote">
             <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/info.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1670</span>
-<span class="normal">1671</span>
-<span class="normal">1672</span>
-<span class="normal">1673</span>
-<span class="normal">1674</span>
-<span class="normal">1675</span>
-<span class="normal">1676</span>
-<span class="normal">1677</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_render_source_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1686</span>
+<span class="normal">1687</span>
+<span class="normal">1688</span>
+<span class="normal">1689</span>
+<span class="normal">1690</span>
+<span class="normal">1691</span>
+<span class="normal">1692</span>
+<span class="normal">1693</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_render_source_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 
     <span class="n">all_source_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="n">item</span><span class="p">:</span> <span class="n">RendererInfo</span>
@@ -14060,23 +14124,7 @@
 
           <details class="quote">
             <summary>Source code in <code>/opt/hostedtoolcache/Python/3.10.12/x64/lib/python3.10/site-packages/kiara/interfaces/python_api/models/info.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1679</span>
-<span class="normal">1680</span>
-<span class="normal">1681</span>
-<span class="normal">1682</span>
-<span class="normal">1683</span>
-<span class="normal">1684</span>
-<span class="normal">1685</span>
-<span class="normal">1686</span>
-<span class="normal">1687</span>
-<span class="normal">1688</span>
-<span class="normal">1689</span>
-<span class="normal">1690</span>
-<span class="normal">1691</span>
-<span class="normal">1692</span>
-<span class="normal">1693</span>
-<span class="normal">1694</span>
-<span class="normal">1695</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1695</span>
 <span class="normal">1696</span>
 <span class="normal">1697</span>
 <span class="normal">1698</span>
@@ -14086,7 +14134,23 @@
 <span class="normal">1702</span>
 <span class="normal">1703</span>
 <span class="normal">1704</span>
-<span class="normal">1705</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
+<span class="normal">1705</span>
+<span class="normal">1706</span>
+<span class="normal">1707</span>
+<span class="normal">1708</span>
+<span class="normal">1709</span>
+<span class="normal">1710</span>
+<span class="normal">1711</span>
+<span class="normal">1712</span>
+<span class="normal">1713</span>
+<span class="normal">1714</span>
+<span class="normal">1715</span>
+<span class="normal">1716</span>
+<span class="normal">1717</span>
+<span class="normal">1718</span>
+<span class="normal">1719</span>
+<span class="normal">1720</span>
+<span class="normal">1721</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">create_renderable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RenderableType</span><span class="p">:</span>
 
     <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
         <span class="n">show_header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">box</span><span class="o">=</span><span class="n">HORIZONTALS_NO_TO_AND_BOTTOM</span><span class="p">,</span> <span class="n">show_lines</span><span class="o">=</span><span class="kc">True</span>

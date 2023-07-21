@@ -452,7 +452,12 @@ class OperationRegistry(object):
         ops = {}
         for op_id, op_data in pipeline_data.items():
             # TODO: what to do with the additional data, like source and source type?
-            op = self.register_pipeline(data=op_data["data"], operation_id=op_id)
+            try:
+                op = self.register_pipeline(data=op_data["data"], operation_id=op_id)
+            except Exception as e:
+                log_message("invalid.pipeline", pipeline_id=op_id, reason=str(e))
+                # log_exception(e)
+                continue
             ops[op.operation_id] = op
         return ops
 

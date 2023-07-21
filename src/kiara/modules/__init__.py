@@ -179,6 +179,7 @@ class InputOutputObject(abc.ABC):
                 )
 
             if not _input_schemas_data and not self._allow_empty_inputs:
+
                 raise Exception(
                     f"Invalid inputs implementation for '{self.alias}': empty inputs schema"
                 )

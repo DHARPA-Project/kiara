@@ -51,7 +51,7 @@ from kiara.models.module.pipeline.structure import (
 )
 from kiara.models.module.pipeline.value_refs import PipelineInputRef, PipelineOutputRef
 from kiara.models.python_class import PythonClass
-from kiara.models.values import ValueStatus
+from kiara.models.values import DataTypeCharacteristics, ValueStatus
 from kiara.models.values.lineage import ValueLineage
 from kiara.models.values.value import (
     ORPHAN,
@@ -1342,15 +1342,31 @@ class OperationInfo(ItemInfo):
         input_fields = {}
         for field_name, schema in operation.inputs_schema.items():
 
-            dt = kiara.type_registry.get_data_type_instance(
-                type_name=schema.type, type_config=schema.type_config
-            )
-            dt_info = FieldInfo.construct(
-                field_name=field_name,
-                field_schema=schema,
-                data_type_info=dt.info,
-                value_required=schema.is_required(),
-            )
+            try:
+                dt = kiara.type_registry.get_data_type_instance(
+                    type_name=schema.type, type_config=schema.type_config
+                )
+                dt_info = FieldInfo.construct(
+                    field_name=field_name,
+                    field_schema=schema,
+                    data_type_info=dt.info,
+                    value_required=schema.is_required(),
+                )
+            except Exception:
+                dtc = PythonClass.from_class(object)
+                dti = DataTypeInfo(
+                    data_type_name=f"{schema.type} (invalid)",
+                    data_type_config=schema.type_config,
+                    characteristics=DataTypeCharacteristics(),
+                    data_type_class=dtc,
+                )
+                dt_info = FieldInfo.construct(
+                    field_name=field_name,
+                    field_schema=schema,
+                    data_type_info=dti,
+                    value_required=schema.is_required(),
+                )
+
             input_fields[field_name] = dt_info
 
         output_fields = {}

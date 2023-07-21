@@ -87,9 +87,7 @@ def explain_context(
 @click.option(
     "--force", "-f", help="Delete without prompt.", is_flag=True, default=False
 )
-@click.option(
-    "--all-contexts", "-a", help="Delete all contexts.", is_flag=True, default=False
-)
+@click.option("--all", "-a", help="Delete all contexts.", is_flag=True, default=False)
 @click.pass_context
 def delete_context(
     ctx,

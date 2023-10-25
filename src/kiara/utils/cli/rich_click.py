@@ -52,7 +52,7 @@ from rich_click.rich_click import (
     STYLE_OPTIONS_TABLE_SHOW_LINES,
     STYLE_REQUIRED_SHORT,
     USE_CLICK_SHORT_HELP,
-    _get_parameter_help,
+    _get_option_help,
     _make_command_help,
     _make_rich_rext,
     highlighter,
@@ -157,6 +157,7 @@ def rich_format_operation_help(
         ctx (click.Context): Click Context object
         table: a rich table, including all the inputs of the current operation
     """
+
     renderables: List[RenderableType] = []
     # Header text if we have it
     if HEADER_TEXT:
@@ -296,13 +297,12 @@ def rich_format_operation_help(
                 ]
 
             metavar_highlighter = MetavarHighlighter()
-
             rows = [
                 required,
                 highlighter(highlighter(",".join(opt_long_strs))),
                 highlighter(highlighter(",".join(opt_short_strs))),
                 metavar_highlighter(metavar),
-                _get_parameter_help(param, ctx),  # type: ignore
+                _get_option_help(param, ctx),
             ]
 
             # Remove metavar if specified in config

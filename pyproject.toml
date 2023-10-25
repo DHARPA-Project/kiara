@@ -63,7 +63,7 @@ dependencies = [
     "pyzmq>=25.0.0",
     "regex>=2022.4.0",
     "rich>=12.4.0",
-    "rich-click>=1.0.0",
+    "rich-click==1.7.0",
     "ruamel.yaml>=0.17.0,<0.18.0",
     "sortedcontainers>=2.4.0",
     "stevedore>=5.0.0,<6.0.0",

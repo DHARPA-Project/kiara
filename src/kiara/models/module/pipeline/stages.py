@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import TYPE_CHECKING, Any, Dict, List, Set, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Set, Union
 
 import networkx as nx
 from pydantic import Field, PrivateAttr
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 class PipelineStage(KiaraModel):
 
-    _kiara_model_id = "info.pipeline_stage"
+    _kiara_model_id: ClassVar = "info.pipeline_stage"
 
     @classmethod
     def extract_stages(

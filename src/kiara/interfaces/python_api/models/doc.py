@@ -2,10 +2,7 @@
 import collections.abc
 from typing import TYPE_CHECKING, Dict
 
-import orjson
-from pydantic import BaseModel, Extra
-
-from kiara.utils.json import orjson_dumps
+from pydantic import RootModel
 
 if TYPE_CHECKING:
     # we don't want those imports (yet), since they take a while to load
@@ -18,43 +15,33 @@ if TYPE_CHECKING:
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 
-class OperationsMap(BaseModel, collections.abc.Mapping):
+class OperationsMap(RootModel, collections.abc.Mapping):
 
     """A list of available context names."""
 
-    class Config(object):
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
-        extra = Extra.forbid
-
-    __root__: Dict[str, "Operation"]
+    root: Dict[str, "Operation"]
 
     def __getitem__(self, key):
-        return self.__root__.__getitem__(key)
+        return self.root.__getitem__(key)
 
     def __iter__(self):
-        return self.__root__.__iter__()
+        return self.root.__iter__()
 
     def __len__(self):
-        return self.__root__.__len__()
+        return self.root.__len__()
 
 
-class WorkflowsMap(BaseModel, collections.abc.Mapping):
+class WorkflowsMap(RootModel, collections.abc.Mapping):
 
     """A list of available context names."""
 
-    class Config(object):
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
-        extra = Extra.forbid
-
-    __root__: Dict[str, "Workflow"]
+    root: Dict[str, "Workflow"]
 
     def __getitem__(self, key):
-        return self.__root__.__getitem__(key)
+        return self.root.__getitem__(key)
 
     def __iter__(self):
-        return self.__root__.__iter__()
+        return self.root.__iter__()
 
     def __len__(self):
-        return self.__root__.__len__()
+        return self.root.__len__()

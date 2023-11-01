@@ -6,12 +6,12 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Mapping, Union
 
 import orjson
 from dag_cbor import IPLDKind
 from multiformats import CID
-from pydantic import Extra, Field, PrivateAttr, validator
+from pydantic import ConfigDict, Field, PrivateAttr, field_validator
 from rich.console import RenderableType
 from rich.syntax import Syntax
 
@@ -19,6 +19,7 @@ from kiara.defaults import INVALID_HASH_MARKER, NONE_VALUE_ID
 from kiara.models import KiaraModel
 from kiara.utils.hashing import compute_cid
 from kiara.utils.json import orjson_dumps
+from kiara.utils.pipelines import extract_data_to_hash_from_pipeline_config
 
 if TYPE_CHECKING:
     from kiara.registries.data import DataRegistry
@@ -28,11 +29,8 @@ class Manifest(KiaraModel):
 
     """A class to hold the type and configuration for a module instance."""
 
-    _kiara_model_id = "instance.manifest"
-
-    class Config:
-        extra = Extra.forbid
-        validate_all = True
+    _kiara_model_id: ClassVar = "instance.manifest"
+    model_config = ConfigDict(extra="forbid", validate_default=True)
 
     _manifest_data: Union[Mapping[str, Any], None] = PrivateAttr(default=None)
     _manifest_cid: Union[CID, None] = PrivateAttr(default=None)
@@ -61,14 +59,16 @@ class Manifest(KiaraModel):
         if self._manifest_data is not None:
             return self._manifest_data
 
+        mc = extract_data_to_hash_from_pipeline_config(self.module_config)
         self._manifest_data = {
             "module_type": self.module_type,
-            "module_config": self.module_config,
+            "module_config": mc,
         }
         return self._manifest_data
 
     @property
     def manifest_cid(self) -> CID:
+
         if self._manifest_cid is not None:
             return self._manifest_cid
 
@@ -81,10 +81,17 @@ class Manifest(KiaraModel):
 
     def manifest_data_as_json(self):
 
-        return self.json(include={"module_type", "module_config"})
+        return self.model_dump_json(include={"module_type", "module_config"})
 
     def _retrieve_data_to_hash(self) -> Any:
-        return self.manifest_data
+
+        module_config = extract_data_to_hash_from_pipeline_config(self.module_config)
+        result = {
+            "module_type": "pipeline",
+            "module_config": module_config,
+        }
+
+        return result
 
     def create_renderable(self, **config: Any) -> RenderableType:
         """Create a renderable for this module configuration."""
@@ -107,7 +114,7 @@ class Manifest(KiaraModel):
 
 class InputsManifest(Manifest):
 
-    _kiara_model_id = "instance.manifest_with_inputs"
+    _kiara_model_id: ClassVar = "instance.manifest_with_inputs"
 
     inputs: Mapping[str, uuid.UUID] = Field(
         description="A map of all the input fields and value references."
@@ -116,7 +123,8 @@ class InputsManifest(Manifest):
     _jobs_cid: Union[CID, None] = PrivateAttr(default=None)
     _inputs_data_cid: Union[bool, CID, None] = PrivateAttr(default=None)
 
-    @validator("inputs")
+    @field_validator("inputs")
+    @classmethod
     def replace_none_values(cls, value):
         result = {}
         for k, v in value.items():

@@ -11,10 +11,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
 
 import structlog
-from pydantic import BaseModel, root_validator, validator
-from pydantic.config import Extra
-from pydantic.env_settings import BaseSettings
+from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 from pydantic.fields import Field, PrivateAttr
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from ruamel import yaml as r_yaml
 
 from kiara.context.runtime_config import KiaraRuntimeConfig
@@ -71,8 +70,7 @@ class KiaraArchiveConfig(BaseModel):
 
 
 class KiaraContextConfig(BaseModel):
-    class Config:
-        extra = Extra.forbid
+    model_config = ConfigDict(extra="forbid")
 
     context_id: str = Field(description="A globally unique id for this kiara context.")
 
@@ -105,10 +103,9 @@ class KiaraContextConfig(BaseModel):
 
 
 class KiaraSettings(BaseSettings):
-    class Config:
-        extra = Extra.forbid
-        validate_assignment = True
-        env_prefix = "kiara_setting_"
+    model_config = SettingsConfigDict(
+        extra="forbid", validate_assignment=True, env_prefix="kiara_setting_"
+    )
 
     syntax_highlight_background: str = Field(
         description="The background color for code blocks when rendering to terminal, Jupyter, etc.",
@@ -120,10 +117,9 @@ KIARA_SETTINGS = KiaraSettings()
 
 
 class KiaraConfig(BaseSettings):
-    class Config:
-        env_prefix = "kiara_"
-        extra = Extra.forbid
-        use_enum_values = True
+    model_config = SettingsConfigDict(
+        env_prefix="kiara_", extra="forbid", use_enum_values=True
+    )
 
     @classmethod
     def create_in_folder(cls, path: Union[Path, str]) -> "KiaraConfig":
@@ -196,7 +192,8 @@ class KiaraConfig(BaseSettings):
     _context_data: Dict[str, KiaraContextConfig] = PrivateAttr(default_factory=dict)
     _config_path: Union[Path, None] = PrivateAttr(default=None)
 
-    @validator("context_search_paths")
+    @field_validator("context_search_paths")
+    @classmethod
     def validate_context_search_paths(cls, v):
 
         if not v or not v[0]:
@@ -204,7 +201,8 @@ class KiaraConfig(BaseSettings):
 
         return v
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def _set_paths(cls, values: Any):
 
         base_path = values.get("base_data_path", None)

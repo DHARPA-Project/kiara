@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Union
 
 import humanfriendly
 import structlog
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, RootModel
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.panel import Panel
@@ -21,10 +21,11 @@ class StoreValueResult(BaseModel):
         description="The aliases that where assigned to the value when stored."
     )
     persisted_data: Union[None, PersistedData] = Field(
-        description="The structure describing the data that was persisted, 'None' if the data was already stored before (or storing failed)."
+        None,
+        description="The structure describing the data that was persisted, 'None' if the data was already stored before (or storing failed).",
     )
     error: Union[str, None] = Field(
-        description="An error that occured while trying to store."
+        None, description="An error that occured while trying to store."
     )
 
     def _repr_html_(self):
@@ -63,9 +64,9 @@ class StoreValueResult(BaseModel):
         return Panel(table, title="Store operation result", title_align="left")
 
 
-class StoreValuesResult(BaseModel):
+class StoreValuesResult(RootModel):
 
-    __root__: Dict[str, StoreValueResult]
+    root: Dict[str, StoreValueResult]
 
     def create_renderable(self, **config: Any) -> RenderableType:
 
@@ -75,7 +76,7 @@ class StoreValuesResult(BaseModel):
         table.add_column("stored id", style="i")
         table.add_column("alias(es)")
 
-        for field_name, value_result in self.__root__.items():
+        for field_name, value_result in self.root.items():
             row = [
                 field_name,
                 str(value_result.value.value_schema.type),
@@ -90,4 +91,4 @@ class StoreValuesResult(BaseModel):
         return table
 
     def __len__(self):
-        return len(self.__root__)
+        return len(self.root)

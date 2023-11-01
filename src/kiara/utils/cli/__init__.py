@@ -133,24 +133,33 @@ def output_format_option(*param_decls: str) -> Callable[[FC], FC]:
 
 def render_json_str(model: "BaseModel"):
 
-    import orjson
+    # import orjson
 
-    try:
-        json_str = model.json(option=orjson.OPT_INDENT_2 | orjson.OPT_NON_STR_KEYS)
-    except TypeError:
-        json_str = model.json(indent=2)
+    # TODO: pydantic refactor
+    json_str = model.model_dump_json(indent=2)
+
+    # try:
+    #     json_str = model.json(option=orjson.OPT_INDENT_2 | orjson.OPT_NON_STR_KEYS)
+    # except TypeError:
+    #     json_str = model.model_dump_json(indent=2)
 
     return json_str
 
 
 def render_json_schema_str(model: "BaseModel"):
 
-    import orjson
+    #
+    # try:
+    #     json_str = model.schema_json(option=orjson.OPT_INDENT_2)
+    # except TypeError:
+    #     json_str = model.schema_json(indent=2)
 
-    try:
-        json_str = model.schema_json(option=orjson.OPT_INDENT_2)
-    except TypeError:
-        json_str = model.schema_json(indent=2)
+    from orjson import orjson
+
+    from kiara.utils.json import orjson_dumps
+
+    schema = model.model_json_schema()
+    json_str = orjson_dumps(schema, option=orjson.OPT_INDENT_2)
 
     return json_str
 
@@ -225,8 +234,10 @@ def terminal_print_model(
 
     elif format == OutputFormat.JSON_SCHEMA:
         if len(models) == 1:
+            _schema = models[0].model_json_schema()
+            schema_str = orjson_dumps(_schema, option=orjson.OPT_INDENT_2)
             syntax = Syntax(
-                models[0].schema_json(option=orjson.OPT_INDENT_2),
+                schema_str,
                 "json",
                 background_color="default",
             )

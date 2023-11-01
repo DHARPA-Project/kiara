@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, Any, List, Union
 
-from pydantic import Field, validator
+from pydantic import Field, field_validator
 
 from kiara.models import KiaraModel
 from kiara.models.values.value import Value
@@ -37,7 +37,8 @@ class ValueMatcher(KiaraModel):
         default=None,
     )
 
-    @validator("alias_matchers")
+    @field_validator("alias_matchers")
+    @classmethod
     def validate_matchers(cls, v):
         if v is None:
             return v

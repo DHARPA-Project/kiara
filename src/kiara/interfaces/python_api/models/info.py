@@ -8,6 +8,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
+    ClassVar,
     Dict,
     Generic,
     Iterable,
@@ -21,12 +22,7 @@ from typing import (
 
 import humanfriendly
 import orjson
-from pydantic import BaseModel, Field, PrivateAttr, validator
-from pydantic.schema import (
-    get_flat_models_from_model,
-    get_model_name_map,
-    model_process_schema,
-)
+from pydantic import BaseModel, Field, PrivateAttr, field_validator
 from rich import box
 from rich.console import RenderableType
 from rich.markdown import Markdown
@@ -159,23 +155,22 @@ class ValueTypeAndDescription(BaseModel):
     required: bool = Field(description="Whether this value is required")
 
 
-class ItemInfo(KiaraModel, Generic[INFO_BASE_INSTANCE_TYPE]):
+class ItemInfo(KiaraModel):
 
     """Base class that holds/manages information about an item within kiara."""
 
     @classmethod
     @abc.abstractmethod
-    def base_instance_class(cls) -> Type[INFO_BASE_INSTANCE_TYPE]:
+    def base_instance_class(cls) -> Type:
         pass
 
     @classmethod
     @abc.abstractmethod
-    def create_from_instance(
-        cls, kiara: "Kiara", instance: INFO_BASE_INSTANCE_TYPE, **kwargs
-    ):
+    def create_from_instance(cls, kiara: "Kiara", instance: Type, **kwargs):
         pass
 
-    @validator("documentation", pre=True)
+    @field_validator("documentation", mode="before")
+    @classmethod
     def validate_doc(cls, value):
 
         return DocumentationMetadataModel.create(value)
@@ -255,7 +250,7 @@ class InfoItemGroup(KiaraModel, Generic[INFO_ITEM_TYPE]):
     def create_from_instances(
         cls,
         kiara: "Kiara",
-        instances: Mapping[str, INFO_BASE_INSTANCE_TYPE],
+        instances: Mapping[str, Type],
         **kwargs: Any,
     ) -> "InfoItemGroup[INFO_ITEM_TYPE]":
 
@@ -324,13 +319,15 @@ class TypeInfoItemGroup(InfoItemGroup[TypeInfo]):
             k: cls.base_info_class().create_from_type_class(type_cls=v, kiara=kiara)
             for k, v in items.items()
         }
-        data_types_info = cls.construct(group_alias=group_title, item_infos=type_infos)  # type: ignore
+        data_types_info = cls.model_construct(
+            group_alias=group_title, item_infos=type_infos
+        )
         return data_types_info
 
 
 class KiaraModelTypeInfo(TypeInfo[Type[KiaraModel]]):
 
-    _kiara_model_id = "info.kiara_model"
+    _kiara_model_id: ClassVar = "info.kiara_model"
 
     @classmethod
     def create_from_type_class(
@@ -390,7 +387,7 @@ class KiaraModelTypeInfo(TypeInfo[Type[KiaraModel]]):
 
 class KiaraModelClassesInfo(TypeInfoItemGroup):
 
-    _kiara_model_id = "info.kiara_models"
+    _kiara_model_id: ClassVar = "info.kiara_models"
 
     @classmethod
     def find_kiara_models(
@@ -425,9 +422,9 @@ class KiaraModelClassesInfo(TypeInfoItemGroup):
     )
 
 
-class ValueInfo(ItemInfo[Value]):
+class ValueInfo(ItemInfo):
 
-    _kiara_model_id = "info.value"
+    _kiara_model_id: ClassVar = "info.value"
 
     @classmethod
     def base_instance_class(cls) -> Type[Value]:
@@ -724,7 +721,7 @@ class ValuesInfo(InfoItemGroup[ValueInfo]):
 
 class KiaraModuleConfigMetadata(KiaraModel):
 
-    _kiara_model_id = "metadata.module_config"
+    _kiara_model_id: ClassVar = "metadata.module_config"
 
     @classmethod
     def from_config_class(
@@ -732,10 +729,8 @@ class KiaraModuleConfigMetadata(KiaraModel):
         config_cls: Type[KiaraModuleConfig],
     ):
 
-        flat_models = get_flat_models_from_model(config_cls)
-        model_name_map = get_model_name_map(flat_models)
-        m_schema, _, _ = model_process_schema(config_cls, model_name_map=model_name_map)
-        fields = m_schema["properties"]
+        schema = config_cls.model_json_schema()
+        fields = schema["properties"]
 
         config_values = {}
         for field_name, details in fields.items():
@@ -745,12 +740,12 @@ class KiaraModuleConfigMetadata(KiaraModel):
                 type_str = details["type"]
 
             desc = details.get("description", DEFAULT_NO_DESC_VALUE)
-            default = config_cls.__fields__[field_name].default
+            default = config_cls.model_fields[field_name].default
             if default is None:
-                if callable(config_cls.__fields__[field_name].default_factory):
-                    default = config_cls.__fields__[field_name].default_factory()  # type: ignore
+                if callable(config_cls.model_fields[field_name].default_factory):
+                    default = config_cls.model_fields[field_name].default_factory()  # type: ignore
 
-            req = config_cls.__fields__[field_name].required
+            req = config_cls.model_fields[field_name].is_required()
 
             config_values[field_name] = ValueTypeAndDescription(
                 description=desc, type=type_str, value_default=default, required=req
@@ -775,7 +770,7 @@ class KiaraModuleConfigMetadata(KiaraModel):
 
 class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
 
-    _kiara_model_id = "info.data_type"
+    _kiara_model_id: ClassVar = "info.data_type"
 
     @classmethod
     def create_from_type_class(
@@ -889,7 +884,7 @@ class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
 
 class DataTypeClassesInfo(TypeInfoItemGroup):
 
-    _kiara_model_id = "info.data_types"
+    _kiara_model_id: ClassVar = "info.data_types"
 
     # @classmethod
     # def create_from_type_items(
@@ -992,7 +987,7 @@ class DataTypeClassesInfo(TypeInfoItemGroup):
 
 class ModuleTypeInfo(TypeInfo[Type["KiaraModule"]]):
 
-    _kiara_model_id = "info.kiara_module_type"
+    _kiara_model_id: ClassVar = "info.kiara_module_type"
 
     @classmethod
     def create_from_type_class(cls, type_cls: Type["KiaraModule"], kiara: "Kiara") -> "ModuleTypeInfo":  # type: ignore
@@ -1084,7 +1079,7 @@ class ModuleTypeInfo(TypeInfo[Type["KiaraModule"]]):
 
 class ModuleTypesInfo(TypeInfoItemGroup):
 
-    _kiara_model_id = "info.module_types"
+    _kiara_model_id: ClassVar = "info.module_types"
 
     @classmethod
     def base_info_class(cls) -> Type[TypeInfo]:
@@ -1098,7 +1093,7 @@ class ModuleTypesInfo(TypeInfoItemGroup):
 
 class OperationTypeInfo(TypeInfo[Type["OperationType"]]):
 
-    _kiara_model_id = "info.operation_type"
+    _kiara_model_id: ClassVar = "info.operation_type"
 
     @classmethod
     def create_from_type_class(  # type: ignore
@@ -1137,7 +1132,7 @@ class OperationTypeInfo(TypeInfo[Type["OperationType"]]):
 
 class OperationTypeClassesInfo(TypeInfoItemGroup):
 
-    _kiara_model_id = "info.operation_types"
+    _kiara_model_id: ClassVar = "info.operation_types"
 
     @classmethod
     def base_info_class(cls) -> Type[OperationTypeInfo]:  # type: ignore
@@ -1163,7 +1158,7 @@ class FieldInfo(BaseModel):
 
 class PipelineStructureInfo(ItemInfo):
 
-    _kiara_model_id = "info.pipeline_structure"
+    _kiara_model_id: ClassVar = "info.pipeline_structure"
 
     @classmethod
     def base_instance_class(cls) -> Type[PipelineStructure]:
@@ -1315,7 +1310,7 @@ class PipelineStructureInfo(ItemInfo):
 
 class OperationInfo(ItemInfo):
 
-    _kiara_model_id = "info.operation"
+    _kiara_model_id: ClassVar = "info.operation"
 
     @classmethod
     def base_instance_class(cls) -> Type[Operation]:
@@ -1436,7 +1431,7 @@ class OperationInfo(ItemInfo):
 
 class OperationGroupInfo(InfoItemGroup):
 
-    _kiara_model_id = "info.operations"
+    _kiara_model_id: ClassVar = "info.operations"
 
     @classmethod
     def base_info_class(cls) -> Type[ItemInfo]:
@@ -1583,7 +1578,7 @@ class OperationGroupInfo(InfoItemGroup):
         return table
 
 
-class RendererInfo(ItemInfo[KiaraRenderer]):
+class RendererInfo(ItemInfo):
 
     renderer_config: Mapping[str, Any] = Field(description="The renderer config.")
     renderer_cls: PythonClass = Field(

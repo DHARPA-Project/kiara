@@ -8,7 +8,7 @@
 import importlib
 import inspect
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, Dict, Type
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Type
 
 from pydantic.fields import Field, PrivateAttr
 
@@ -25,7 +25,7 @@ class PythonClass(KiaraModel):
 
     """Python class and module information."""
 
-    _kiara_model_id = "instance.wrapped_python_class"
+    _kiara_model_id: ClassVar = "instance.wrapped_python_class"
 
     @classmethod
     def from_class(cls, item_cls: Type, attach_context_metadata: bool = False):
@@ -94,7 +94,7 @@ class PythonClass(KiaraModel):
 
 class KiaraModuleInstance(PythonClass):
 
-    _kiara_model_id: str = "metadata.kiara_module_class"
+    _kiara_model_id: ClassVar[str] = "metadata.kiara_module_class"
 
     @classmethod
     def from_module(cls, module: "KiaraModule"):

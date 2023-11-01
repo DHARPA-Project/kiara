@@ -9,20 +9,16 @@ import abc
 import uuid
 from typing import TYPE_CHECKING, Generic, Iterable, Type, TypeVar, Union
 
-import orjson
 import structlog
-from pydantic import BaseModel, Field
-
-from kiara.utils.json import orjson_dumps
+from pydantic import BaseModel, ConfigDict, Field
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
 
 
 class ArchiveConfig(BaseModel):
-    class Config:
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
+
+    model_config = ConfigDict()
 
 
 ARCHIVE_CONFIG_CLS = TypeVar("ARCHIVE_CONFIG_CLS", bound=ArchiveConfig)

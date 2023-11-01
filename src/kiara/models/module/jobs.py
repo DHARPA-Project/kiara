@@ -10,9 +10,9 @@ import os
 import uuid
 from datetime import datetime
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Mapping, Union
 
-from pydantic import validator
+from pydantic import field_validator
 from pydantic.fields import Field, PrivateAttr
 from pydantic.main import BaseModel
 from rich import box
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
 class ExecutionContext(KiaraModel):
 
-    _kiara_model_id = "instance.execution_context"
+    _kiara_model_id: ClassVar = "instance.execution_context"
 
     working_dir: str = Field(
         description="The path of the working directory.", default_factory=os.getcwd
@@ -76,7 +76,7 @@ class JobLog(BaseModel):
 
 class JobConfig(InputsManifest):
 
-    _kiara_model_id = "instance.job_config"
+    _kiara_model_id: ClassVar = "instance.job_config"
 
     @classmethod
     def create_from_module(
@@ -109,7 +109,7 @@ class JobConfig(InputsManifest):
 
 class ActiveJob(KiaraModel):
 
-    _kiara_model_id = "instance.active_job"
+    _kiara_model_id: ClassVar = "instance.active_job"
 
     job_id: uuid.UUID = Field(description="The job id.")
 
@@ -181,7 +181,7 @@ class JobRuntimeDetails(BaseModel):
 
 class JobRecord(JobConfig):
 
-    _kiara_model_id = "instance.job_record"
+    _kiara_model_id: ClassVar = "instance.job_record"
 
     @classmethod
     def from_active_job(self, kiara: "Kiara", active_job: ActiveJob):
@@ -238,7 +238,8 @@ class JobRecord(JobConfig):
     _is_stored: bool = PrivateAttr(default=None)
     _outputs_hash: Union[int, None] = PrivateAttr(default=None)
 
-    @validator("job_metadata", pre=True)
+    @field_validator("job_metadata", mode="before")
+    @classmethod
     def validate_metadata(cls, value):
 
         if value is None:
@@ -261,7 +262,7 @@ class JobRecord(JobConfig):
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")
         table.add_column("Value")
-        for k in self.__fields__.keys():
+        for k in self.model_fields.keys():
             if include is not None and k not in include:
                 continue
             attr = getattr(self, k)

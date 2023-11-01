@@ -9,7 +9,7 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, List, Mapping, Union
+from typing import Any, ClassVar, Dict, List, Mapping, Union
 
 import structlog
 from deepdiff import DeepHash
@@ -22,13 +22,12 @@ from rich.table import Table
 from kiara.defaults import (
     DEFAULT_EXCLUDE_DIRS,
     DEFAULT_EXCLUDE_FILES,
-    KIARA_HASH_FUNCTION,
 )
 from kiara.exceptions import KiaraException
 from kiara.models import KiaraModel
 from kiara.utils import log_message
 from kiara.utils.files import unpack_archive
-from kiara.utils.hashing import compute_cid_from_file
+from kiara.utils.hashing import KIARA_HASH_FUNCTION, compute_cid_from_file
 
 logger = structlog.getLogger()
 
@@ -47,7 +46,7 @@ class KiaraFile(KiaraModel):
 
     """Describes properties for the 'file' value type."""
 
-    _kiara_model_id = "instance.data.file"
+    _kiara_model_id: ClassVar = "instance.data.file"
 
     @classmethod
     def load_file(
@@ -233,7 +232,7 @@ class KiaraFileBundle(KiaraModel):
 
     """Describes properties for the 'file_bundle' value type."""
 
-    _kiara_model_id = "instance.data.file_bundle"
+    _kiara_model_id: ClassVar = "instance.data.file_bundle"
 
     @classmethod
     def create_tmp_dir(self) -> Path:

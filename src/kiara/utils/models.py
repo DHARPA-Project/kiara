@@ -7,6 +7,7 @@
 from typing import TYPE_CHECKING, Any, Iterable, Mapping, Type, Union
 
 import networkx as nx
+from pydantic import RootModel
 from pydantic.main import BaseModel
 from rich.panel import Panel
 from rich.tree import Tree
@@ -33,17 +34,17 @@ def create_pydantic_model(
 
 def retrieve_data_subcomponent_keys(data: Any) -> Iterable[str]:
 
-    if hasattr(data, "__custom_root_type__") and data.__custom_root_type__:
-        if isinstance(data.__root__, Mapping):  # type: ignore
+    if isinstance(data, RootModel):
+        if isinstance(data.root, Mapping):
             result = set()
-            for k, v in data.__root__.items():  # type: ignore
+            for k, v in data.root.items():
                 if isinstance(v, BaseModel):
                     result.add(k.split(".")[0])
             return result
         else:
             return []
     elif isinstance(data, BaseModel):
-        matches = sorted(data.__fields__.keys())
+        matches = sorted(data.model_fields.keys())
         return matches
     else:
         log_message(
@@ -59,16 +60,17 @@ def get_subcomponent_from_model(data: "KiaraModel", path: str) -> "KiaraModel":
         sc = data.get_subcomponent(first_token)
         return sc.get_subcomponent(rest)
 
-    if hasattr(data, "__custom_root_type__") and data.__custom_root_type__:
-        if isinstance(data.__root__, Mapping):  # type: ignore
-            if path in data.__root__.keys():  # type: ignore
-                return data.__root__[path]  # type: ignore
+    # TODO: pydantic refactor
+    if isinstance(data, RootModel):
+        if isinstance(data.root, Mapping):  # type: ignore
+            if path in data.root.keys():  # type: ignore
+                return data.root[path]  # type: ignore
             else:
                 matches = {}
-                for k in data.__root__.keys():  # type: ignore
+                for k in data.root.keys():  # type: ignore
                     if k.startswith(f"{path}."):
                         rest = k[len(path) + 1 :]
-                        matches[rest] = data.__root__[k]  # type: ignore
+                        matches[rest] = data.root[k]  # type: ignore
 
                 if not matches:
                     raise KeyError(f"No child models under '{path}'.")
@@ -80,7 +82,7 @@ def get_subcomponent_from_model(data: "KiaraModel", path: str) -> "KiaraModel":
         else:
             raise NotImplementedError()
     else:
-        if path in data.__fields__.keys():
+        if path in data.model_fields.keys():
             return getattr(data, path)
         else:
             raise KeyError(

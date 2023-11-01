@@ -31,7 +31,7 @@
 
 # class DataTypeClassInfo(TypeInfo[DataType]):
 #
-#     _kiara_model_id = "info.data_type"
+#     _kiara_model_id: ClassVar = "info.data_type"
 #
 #     @classmethod
 #     def create_from_type_class(
@@ -143,7 +143,7 @@
 
 # class DataTypeClassesInfo(TypeInfoModelGroup):
 #
-#     _kiara_model_id = "info.data_types"
+#     _kiara_model_id: ClassVar = "info.data_types"
 #
 #     @classmethod
 #     def create_from_type_items(

@@ -3,9 +3,8 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-from typing import TYPE_CHECKING, Any, Generic, Iterable, Mapping, Type, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Generic, Iterable, Mapping, Type, Union
 
-import orjson
 import structlog
 from pydantic import Field, PrivateAttr
 from rich import box
@@ -34,7 +33,7 @@ class InternalType(
 
     """'A 'marker' base data type for data types that are (mainly) used internally in kiara.."""
 
-    _data_type_name = "internal"
+    _data_type_name: ClassVar[str] = "internal"
 
     @classmethod
     def python_class(cls) -> Type:
@@ -102,7 +101,7 @@ class TerminalRenderable(InternalType[object, DataTypeConfig]):
     Internally, the result list items can be either a string, a 'rich.console.ConsoleRenderable', or a 'rich.console.RichCast'.
     """
 
-    _data_type_name = "terminal_renderable"
+    _data_type_name: ClassVar[str] = "terminal_renderable"
 
     @classmethod
     def python_class(cls) -> Type:
@@ -139,7 +138,7 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
     This type should not be used by user-facing modules and/or operations.
     """
 
-    _data_type_name = "internal_model"
+    _data_type_name: ClassVar[str] = "internal_model"
     _cls_cache: Union[Type[KiaraModel], None] = PrivateAttr(default=None)
 
     @classmethod
@@ -231,7 +230,9 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
     def _pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ):
-        json_str = value.data.json(option=orjson.OPT_INDENT_2)
+
+        data: KiaraModel = value.data
+        json_str = data.model_dump_json(indent=2)
         return Syntax(json_str, "json", background_color="default")
 
 
@@ -239,7 +240,7 @@ class DocumentationModelValueType(InternalModelValueType):
 
     """Documentation for an internal entity."""
 
-    _data_type_name = "doc"
+    _data_type_name: ClassVar[str] = "doc"
 
     def parse_python_obj(self, data: Any) -> DocumentationMetadataModel:
 
@@ -252,5 +253,7 @@ class DocumentationModelValueType(InternalModelValueType):
     def _pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ):
-        json_str = value.data.json(option=orjson.OPT_INDENT_2)
+
+        data: DocumentationMetadataModel = value.data
+        json_str = data.model_dump_json(indent=2)
         return Syntax(json_str, "json", background_color="default")

@@ -70,6 +70,7 @@ class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
         result = []
         for name, module_cls in self._kiara.module_type_classes.items():
             mod_conf = module_cls._config_cls
+
             if mod_conf.requires_config():
                 logger.debug(
                     "ignore.custom_operation",

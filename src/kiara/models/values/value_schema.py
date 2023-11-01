@@ -5,10 +5,9 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-import typing
+from typing import Any, ClassVar, Dict
 
-from pydantic import Field
-from pydantic.class_validators import validator
+from pydantic import ConfigDict, Field, field_validator
 
 from kiara.defaults import SpecialValue
 from kiara.models import KiaraModel
@@ -26,20 +25,15 @@ class ValueSchema(KiaraModel):
     For more complex container data_types like array, tables, unions etc, data_types can also be configured with values from the ``type_config`` field.
     """
 
-    _kiara_model_id = "instance.value_schema"
-
-    class Config:
-        use_enum_values = True
-        # extra = Extra.forbid
+    _kiara_model_id: ClassVar = "instance.value_schema"
+    model_config = ConfigDict(use_enum_values=True)
 
     type: str = Field(description="The type of the value.")
-    type_config: typing.Dict[str, typing.Any] = Field(
+    type_config: Dict[str, Any] = Field(
         description="Configuration for the type, in case it's complex.",
         default_factory=dict,
     )
-    default: typing.Any = Field(
-        description="A default value.", default=SpecialValue.NOT_SET
-    )
+    default: Any = Field(description="A default value.", default=SpecialValue.NOT_SET)
 
     optional: bool = Field(
         description="Whether this value is required (True), or whether 'None' value is allowed (False).",
@@ -54,12 +48,13 @@ class ValueSchema(KiaraModel):
         description="A description for the value of this input field.",
     )
 
-    @validator("doc", pre=True)
+    @field_validator("doc", mode="before")
+    @classmethod
     def validate_doc(cls, value):
         doc = DocumentationMetadataModel.create(value)
         return doc
 
-    def _retrieve_data_to_hash(self) -> typing.Any:
+    def _retrieve_data_to_hash(self) -> Any:
 
         return {"type": self.type, "type_config": self.type_config}
 

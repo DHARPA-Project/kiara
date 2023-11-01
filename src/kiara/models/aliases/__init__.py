@@ -6,7 +6,7 @@
 import copy
 import datetime
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Mapping, Union
 
 import structlog
 from pydantic import Field, PrivateAttr
@@ -30,7 +30,7 @@ class AliasValueMap(ValueMap):
 
     """A model class that holds a tree of values and their schemas."""
 
-    _kiara_model_id = "instance.value_map.aliases"
+    _kiara_model_id: ClassVar = "instance.value_map.aliases"
 
     alias: Union[str, None] = Field(description="This maps own (full) alias.")
     version: int = Field(description="The version of this map (in this maps parent).")

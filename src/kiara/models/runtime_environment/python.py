@@ -6,7 +6,7 @@
 
 import sys
 from functools import lru_cache
-from typing import Any, Dict, List, Literal, Mapping, Union
+from typing import Any, ClassVar, Dict, List, Literal, Mapping, Union
 
 from pydantic import BaseModel, Field
 from rich import box
@@ -36,7 +36,7 @@ def find_all_distributions():
 
 class PythonRuntimeEnvironment(RuntimeEnvironment):
 
-    _kiara_model_id = "info.runtime.python"
+    _kiara_model_id: ClassVar = "info.runtime.python"
 
     environment_type: Literal["python"]
     python_version: str = Field(description="The version of Python.")
@@ -116,7 +116,7 @@ class PythonRuntimeEnvironment(RuntimeEnvironment):
 
 class KiaraPluginsRuntimeEnvironment(RuntimeEnvironment):
 
-    _kiara_model_id = "info.runtime.kiara_plugins"
+    _kiara_model_id: ClassVar = "info.runtime.kiara_plugins"
 
     environment_type: Literal["kiara_plugins"]
     kiara_plugins: List[PythonPackage] = Field(

@@ -6,11 +6,10 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Iterable, Mapping, Union
 
-import orjson
 import structlog
-from pydantic import Field, PrivateAttr, validator
+from pydantic import Field, PrivateAttr, field_validator
 from rich import box
 from rich.console import Group, RenderableType
 from rich.syntax import Syntax
@@ -65,7 +64,7 @@ class OperationSchema(InputOutputObject):
 
 class OperationDetails(KiaraModel):
 
-    _kiara_model_id = "instance.operation_details"
+    _kiara_model_id: ClassVar = "instance.operation_details"
 
     # inputs_map: Dict[str, str] = Field(description="A map with the operations input fields as keys, and the underlying modules input fields as values, used to translate input value maps.")
     # outputs_map: Dict[str, str] = Field(description="A map with the operations input fields as keys, and the underlying modules input fields as values, used to translate input value maps.")
@@ -105,7 +104,7 @@ class OperationDetails(KiaraModel):
 
 class BaseOperationDetails(OperationDetails):
 
-    _kiara_model_id = "instance.operation_details.base"
+    _kiara_model_id: ClassVar = "instance.operation_details.base"
 
     module_inputs_schema: Mapping[str, ValueSchema] = Field(
         description="The input schemas of the module."
@@ -134,7 +133,8 @@ class OperationConfig(KiaraModel):
         description="Documentation for this operation."
     )
 
-    @validator("doc", pre=True)
+    @field_validator("doc", mode="before")
+    @classmethod
     def validate_doc(cls, value):
         return DocumentationMetadataModel.create(value)
 
@@ -149,7 +149,7 @@ class OperationConfig(KiaraModel):
 
 class ManifestOperationConfig(OperationConfig):
 
-    _kiara_model_id = "instance.operation_config.manifest"
+    _kiara_model_id: ClassVar = "instance.operation_config.manifest"
 
     module_type: str = Field(description="The module type.")
     module_config: Dict[str, Any] = Field(
@@ -165,7 +165,7 @@ class ManifestOperationConfig(OperationConfig):
 
 class PipelineOperationConfig(OperationConfig):
 
-    _kiara_model_id = "instance.operation_config.pipeline"
+    _kiara_model_id: ClassVar = "instance.operation_config.pipeline"
 
     pipeline_name: str = Field(description="The pipeline id.")
     pipeline_config: Mapping[str, Any] = Field(description="The pipeline config data.")
@@ -177,7 +177,8 @@ class PipelineOperationConfig(OperationConfig):
         description="Additional metadata for the pipeline.", default_factory=dict
     )
 
-    @validator("pipeline_config")
+    @field_validator("pipeline_config")
+    @classmethod
     def validate_pipeline_config(cls, value):
         # TODO
         assert isinstance(value, Mapping)
@@ -197,7 +198,10 @@ class PipelineOperationConfig(OperationConfig):
             kiara=kiara,
             module_map=self.module_map,
         )
-        return pipeline_config.dict()
+        # ODO: pydantic refactoring -- maybe test that the dumped config is equivalent to the original one?
+        result = pipeline_config.model_dump(warnings=False)
+
+        return result
 
     @property
     def required_module_types(self) -> Iterable[str]:
@@ -206,12 +210,12 @@ class PipelineOperationConfig(OperationConfig):
 
     def __repr__(self):
 
-        return f"{self.__class__.__name__}(pipeline_name={self.pipeline_name} required_modules={list(self.required_module_types)} instance_id={self.instance_id} fields=[{', '.join(self.__fields__.keys())}])"
+        return f"{self.__class__.__name__}(pipeline_name={self.pipeline_name} required_modules={list(self.required_module_types)} instance_id={self.instance_id} fields=[{', '.join(self.model_fields.keys())}])"
 
 
 class Operation(Manifest):
 
-    _kiara_model_id = "instance.operation"
+    _kiara_model_id: ClassVar = "instance.operation"
 
     @classmethod
     def create_from_module(
@@ -397,7 +401,7 @@ class Operation(Manifest):
         if include_module_details:
             table.add_row("Module type", self.module_type)
 
-            module_config = self.module.config.json(option=orjson.OPT_INDENT_2)
+            module_config = self.module.config.model_dump_json(indent=2)
             conf = Syntax(
                 module_config,
                 "json",

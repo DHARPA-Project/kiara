@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Type
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Mapping, Type
 
 from kiara.data_types import DataTypeConfig
 from kiara.data_types.included_core_types import KiaraModelValueBaseType
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 class Metadata(KiaraModel):
 
-    _kiara_model_id = "instance.metadata"
+    _kiara_model_id: ClassVar = "instance.metadata"
 
 
 class MetadataTypeConfig(DataTypeConfig):
@@ -23,7 +23,7 @@ class MetadataValueType(KiaraModelValueBaseType[Metadata, MetadataTypeConfig]):
 
     """A file."""
 
-    _data_type_name = "file"
+    _data_type_name: ClassVar[str] = "file"
 
     @classmethod
     def retrieve_available_type_profiles(cls) -> Mapping[str, Mapping[str, Any]]:

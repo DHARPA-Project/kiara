@@ -5,7 +5,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, ClassVar, Iterable
 
 from pydantic import Field
 
@@ -21,8 +21,8 @@ class PythonClassMetadata(ValueMetadata):
 
     """Python class and module information."""
 
-    _metadata_key = "python_class"
-    _kiara_model_id = "metadata.python_class"
+    _metadata_key: ClassVar[str] = "python_class"
+    _kiara_model_id: ClassVar = "metadata.python_class"
 
     @classmethod
     def retrieve_supported_data_types(cls) -> Iterable[str]:
@@ -45,8 +45,8 @@ class FileMetadata(ValueMetadata):
 
     """File stats."""
 
-    _metadata_key = "file"
-    _kiara_model_id = "metadata.file"
+    _metadata_key: ClassVar[str] = "file"
+    _kiara_model_id: ClassVar = "metadata.file"
 
     @classmethod
     def retrieve_supported_data_types(cls) -> Iterable[str]:
@@ -64,8 +64,8 @@ class FileBundleMetadata(ValueMetadata):
 
     """File bundle stats."""
 
-    _metadata_key = "file_bundle"
-    _kiara_model_id = "metadata.file_bundle"
+    _metadata_key: ClassVar[str] = "file_bundle"
+    _kiara_model_id: ClassVar = "metadata.file_bundle"
 
     @classmethod
     def retrieve_supported_data_types(cls) -> Iterable[str]:

@@ -6,7 +6,7 @@
 
 import os
 import platform
-import typing
+from typing import Any, ClassVar, Dict, Literal
 
 from pydantic import Field
 
@@ -21,22 +21,22 @@ class OSRuntimeEnvironment(RuntimeEnvironment):
     # TODO: details for other OS's (mainly BSDs)
     """
 
-    _kiara_model_id = "info.runtime.os"
+    _kiara_model_id: ClassVar = "info.runtime.os"
 
-    environment_type: typing.Literal["operating_system"]
+    environment_type: Literal["operating_system"]
     operation_system: str = Field(description="The operation system name.")
     platform: str = Field(description="The platform name.")
     release: str = Field(description="The platform release name.")
     version: str = Field(description="The platform version name.")
     machine: str = Field(description="The architecture.")
-    os_specific: typing.Dict[str, typing.Any] = Field(
+    os_specific: Dict[str, Any] = Field(
         description="OS specific platform metadata.", default_factory=dict
     )
 
     @classmethod
-    def retrieve_environment_data(self) -> typing.Dict[str, typing.Any]:
+    def retrieve_environment_data(self) -> Dict[str, Any]:
 
-        os_specific: typing.Dict[str, typing.Any] = {}
+        os_specific: Dict[str, Any] = {}
         platform_system = platform.system()
         if platform_system == "Linux":
             import distro

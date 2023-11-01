@@ -419,7 +419,7 @@ class Kiara(object):
                     persisted_data=None,
                 )
 
-        return StoreValuesResult.construct(__root__=stored)
+        return StoreValuesResult.model_construct(root=stored)
 
     def create_context_summary(self) -> ContextInfo:
         return ContextInfo.create_from_context(kiara=self)

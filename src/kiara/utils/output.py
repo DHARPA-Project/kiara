@@ -23,7 +23,7 @@ from typing import (
 
 import orjson
 import structlog
-from pydantic import BaseModel, Field, root_validator
+from pydantic import BaseModel, Field, model_validator
 from rich import box
 from rich.console import ConsoleRenderable, Group, RenderableType, RichCast
 from rich.markdown import Markdown
@@ -82,7 +82,8 @@ class OutputDetails(BaseModel):
         description="Output configuration.", default_factory=dict
     )
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def _set_defaults(cls, values) -> Dict[str, Any]:
 
         target: str = values.pop("target", "terminal")
@@ -405,7 +406,7 @@ def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
 
     props = model_cls.schema().get("properties", {})
 
-    for field_name, field in sorted(model_cls.__fields__.items()):
+    for field_name, field in sorted(model_cls.model_fields.items()):
         row = [field_name]
         p = props.get(field_name, None)
         p_type = None
@@ -420,7 +421,7 @@ def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
         row.append(p_type)
 
         row.append(desc)
-        row.append("yes" if field.required else "no")
+        row.append("yes" if field.is_required() else "no")
         default = field.default
         if callable(default):
             default = default()
@@ -675,7 +676,7 @@ def create_table_from_model_object(
 
     props = model_cls.schema().get("properties", {})
 
-    for field_name, field in sorted(model_cls.__fields__.items()):
+    for field_name, field in sorted(model_cls.model_fields.items()):
         if exclude_fields and field_name in exclude_fields:
             continue
         row: List[RenderableType] = [field_name]
@@ -792,7 +793,7 @@ def create_renderable_from_values(
             if value.pedigree == ORPHAN:
                 pedigree = "-- n/a --"
             else:
-                pedigree = value.pedigree.json(option=orjson.OPT_INDENT_2)
+                pedigree = value.pedigree.model_dump_json(indent=2)
             row.append(pedigree)
         if show_data:
             data = value._data_registry.pretty_print_data(
@@ -856,7 +857,7 @@ def create_recursive_table_from_model_object(
 
     props = model_cls.schema().get("properties", {})
 
-    for field_name in sorted(model_cls.__fields__.keys()):
+    for field_name in sorted(model_cls.model_fields.keys()):
 
         data = getattr(model, field_name)
         p = props.get(field_name, None)

@@ -2,11 +2,11 @@
 import os
 import uuid
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Iterable, List, Mapping, Union
 
 import orjson
 from boltons.strutils import slugify
-from pydantic import Extra, Field, PrivateAttr, root_validator, validator
+from pydantic import ConfigDict, Field, PrivateAttr, field_validator, model_validator
 from rich import box
 from rich.console import RenderableType
 from rich.markdown import Markdown
@@ -27,7 +27,10 @@ from kiara.utils.files import get_data_from_file
 from kiara.utils.json import orjson_dumps
 from kiara.utils.modules import module_config_is_empty
 from kiara.utils.output import create_table_from_field_schemas
-from kiara.utils.pipelines import ensure_step_value_addresses
+from kiara.utils.pipelines import (
+    ensure_step_value_addresses,
+    extract_data_to_hash_from_pipeline_config,
+)
 from kiara.utils.string_vars import replace_var_names_in_obj
 
 #  Copyright (c) 2021, Markus Binsteiner
@@ -54,11 +57,8 @@ class PipelineStep(Manifest):
 
     """A step within a pipeline-structure, includes information about it's connection(s) and other metadata."""
 
-    _kiara_model_id = "instance.pipeline_step"
-
-    class Config:
-        validate_assignment = True
-        extra = Extra.forbid
+    _kiara_model_id: ClassVar = "instance.pipeline_step"
+    model_config = ConfigDict(validate_assignment=True, extra="forbid")
 
     @classmethod
     def create_step(
@@ -201,7 +201,8 @@ class PipelineStep(Manifest):
 
         return result
 
-    @validator("step_id")
+    @field_validator("step_id")
+    @classmethod
     def _validate_step_id(cls, v):
 
         assert isinstance(v, str)
@@ -242,7 +243,8 @@ class PipelineStep(Manifest):
     )
     _module: Union["KiaraModule", None] = PrivateAttr(default=None)
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def create_step_id(cls, values):
 
         if "module_type" not in values:
@@ -252,12 +254,22 @@ class PipelineStep(Manifest):
 
         return values
 
-    @validator("doc", pre=True)
+    def _retrieve_data_to_hash(self) -> Any:
+
+        data = extract_data_to_hash_from_pipeline_config(self.module_config)
+        return {
+            "module_type": self.module_type,
+            "module_config": data,
+        }
+
+    @field_validator("doc", mode="before")
+    @classmethod
     def validate_doc(cls, value):
         doc = DocumentationMetadataModel.create(value)
         return doc
 
-    @validator("step_id")
+    @field_validator("step_id")
+    @classmethod
     def ensure_valid_id(cls, v):
 
         # TODO: check with regex
@@ -268,14 +280,16 @@ class PipelineStep(Manifest):
 
         return v
 
-    @validator("module_config", pre=True)
+    @field_validator("module_config", mode="before")
+    @classmethod
     def ensure_dict(cls, v):
 
         if v is None:
             v = {}
         return v
 
-    @validator("input_links", pre=True)
+    @field_validator("input_links", mode="before")
+    @classmethod
     def ensure_input_links_valid(cls, v):
 
         if v is None:
@@ -471,7 +485,7 @@ class PipelineConfig(KiaraModuleConfig):
         ```
     """
 
-    _kiara_model_id = "instance.module_config.pipeline"
+    _kiara_model_id: ClassVar = "instance.module_config.pipeline"
 
     @classmethod
     def from_file(
@@ -563,7 +577,7 @@ class PipelineConfig(KiaraModuleConfig):
         module_map: Union[Mapping[str, Any], None] = None,
         execution_context: Union[ExecutionContext, None] = None,
         auto_step_ids: bool = False,
-    ):
+    ) -> "PipelineConfig":
 
         if execution_context is None:
             execution_context = ExecutionContext()
@@ -610,9 +624,7 @@ class PipelineConfig(KiaraModuleConfig):
         result = cls(pipeline_name=_pipeline_name, **data)
         return result
 
-    class Config:
-        extra = Extra.ignore
-        validate_assignment = True
+    model_config = ConfigDict(extra="ignore", validate_assignment=True)
 
     pipeline_name: str = Field(description="The name of this pipeline.")
     steps: List[PipelineStep] = Field(
@@ -632,11 +644,13 @@ class PipelineConfig(KiaraModuleConfig):
     )
     _structure: Union["PipelineStructure", None] = PrivateAttr(default=None)
 
-    @validator("doc", pre=True)
+    @field_validator("doc", mode="before")
+    @classmethod
     def validate_doc(cls, value):
         return DocumentationMetadataModel.create(value)
 
-    @validator("steps", pre=True)
+    @field_validator("steps", mode="before")
+    @classmethod
     def _validate_steps(cls, v):
 
         steps = []
@@ -686,6 +700,18 @@ class PipelineConfig(KiaraModuleConfig):
             "input_aliases": self.input_aliases,
             "output_aliases": self.output_aliases,
         }
+
+    def _retrieve_data_to_hash(self) -> Any:
+
+        data = {
+            "defaults": self.defaults,
+            "constants": self.constants,
+            "steps": [step.model_dump() for step in self.steps],
+            "input_aliases": self.input_aliases,
+            "output_aliases": self.output_aliases,
+        }
+        hash_data = extract_data_to_hash_from_pipeline_config(data)
+        return hash_data
 
     def create_renderable(self, **config: Any) -> RenderableType:
 

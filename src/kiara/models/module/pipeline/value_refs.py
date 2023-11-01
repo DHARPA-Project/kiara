@@ -8,7 +8,7 @@
 import uuid
 from typing import Any, Dict, List, Union
 
-from pydantic import BaseModel, Extra, Field, PrivateAttr, root_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, model_validator
 
 from kiara.defaults import PIPELINE_PARENT_MARKER
 from kiara.models.values.value_schema import ValueSchema
@@ -23,8 +23,7 @@ class StepValueAddress(BaseModel):
 
     """Small model to describe the address of a value of a step, within a Pipeline/PipelineStructure."""
 
-    class Config:
-        extra = Extra.forbid
+    model_config = ConfigDict(extra="forbid")
 
     step_id: str = Field(description="The id of a step within a pipeline.")
     value_name: str = Field(
@@ -86,9 +85,7 @@ class ValueRef(BaseModel):
     reference the same `Value` (in most cases)..
     """
 
-    class Config:
-        allow_mutation = True
-        extra = Extra.forbid
+    model_config = ConfigDict(frozen=False, extra="forbid")
 
     _id: uuid.UUID = PrivateAttr(default_factory=uuid.uuid4)
     value_name: str
@@ -135,7 +132,8 @@ class StepInputRef(ValueRef):
         description="Whether this input is a constant and can't be changed by the user."
     )
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def ensure_single_connected_item(cls, values):
 
         if values.get("connected_outputs", None) and values.get(
@@ -162,8 +160,7 @@ class StepOutputRef(ValueRef):
 
     """An output to a step."""
 
-    class Config:
-        allow_mutation = True
+    model_config = ConfigDict(frozen=False)
 
     step_id: str = Field(description="The step id.")
     pipeline_output: Union[str, None] = Field(

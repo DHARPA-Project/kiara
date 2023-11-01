@@ -5,10 +5,10 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 from functools import lru_cache
-from typing import Any, Dict, Iterable, List, Mapping, Set, Union
+from typing import Any, ClassVar, Dict, Iterable, List, Mapping, Set, Union
 
 import networkx as nx
-from pydantic import Field, PrivateAttr, root_validator
+from pydantic import Field, PrivateAttr, model_validator
 from rich.console import RenderableType
 from rich.tree import Tree
 
@@ -36,7 +36,7 @@ def generate_pipeline_endpoint_name(step_id: str, value_name: str):
 
 class StepInfo(KiaraModel):
 
-    _kiara_model_id = "info.pipeline_step"
+    _kiara_model_id: ClassVar = "info.pipeline_step"
 
     step: PipelineStep = Field(description="The pipeline step object.", exclude=True)
     inputs: Dict[str, StepInputRef] = Field(
@@ -90,7 +90,7 @@ class PipelineStructure(KiaraModel):
 
     """An object that holds one or several steps, and describes the connections between them."""
 
-    _kiara_model_id = "instance.pipeline_structure"
+    _kiara_model_id: ClassVar = "instance.pipeline_structure"
 
     pipeline_config: PipelineConfig = Field(
         description="The underlying pipeline config."
@@ -100,7 +100,8 @@ class PipelineStructure(KiaraModel):
     input_aliases: Dict[str, str] = Field(description="The input aliases.")
     output_aliases: Dict[str, str] = Field(description="The output aliases.")
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def validate_pipeline_config(cls, values) -> Dict[str, Any]:
 
         pipeline_config = values.get("pipeline_config", None)
@@ -199,6 +200,7 @@ class PipelineStructure(KiaraModel):
     # _info: "PipelineStructureInfo" = PrivateAttr(None)  # type: ignore
 
     def _retrieve_data_to_hash(self) -> Any:
+
         return {
             "steps": [step.instance_cid for step in self.steps],
             "input_aliases": self.input_aliases,

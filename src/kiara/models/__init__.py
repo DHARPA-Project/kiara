@@ -9,11 +9,10 @@ from abc import ABC
 from typing import Any, ClassVar, Dict, Iterable, List, Mapping, Union
 
 import networkx as nx
-import orjson
 from dag_cbor import IPLDKind
 from deepdiff import DeepHash
 from multiformats import CID
-from pydantic import Extra
+from pydantic import ConfigDict, Extra
 from pydantic.fields import PrivateAttr
 from pydantic.main import BaseModel
 from rich import box
@@ -24,7 +23,6 @@ from rich.table import Table
 from rich.tree import Tree
 
 from kiara.defaults import (
-    KIARA_HASH_FUNCTION,
     KIARA_MODEL_DATA_KEY,
     KIARA_MODEL_ID_KEY,
     KIARA_MODEL_SCHEMA_KEY,
@@ -32,8 +30,7 @@ from kiara.defaults import (
 from kiara.registries.templates import TemplateRegistry
 from kiara.utils.class_loading import _default_id_func
 from kiara.utils.develop import log_dev_message
-from kiara.utils.hashing import compute_cid
-from kiara.utils.json import orjson_dumps
+from kiara.utils.hashing import KIARA_HASH_FUNCTION, compute_cid
 from kiara.utils.models import (
     assemble_subcomponent_graph,
     create_subcomponent_tree_renderable,
@@ -53,10 +50,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
 
     __slots__ = ["__weakref__"]
 
-    class Config(object):
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
-        extra = Extra.forbid
+    model_config = ConfigDict(extra=Extra.forbid)
 
     # @classmethod
     # def get_model_title(cls):
@@ -90,7 +84,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         This returns the relevant data that makes this model unique, excluding any secondary metadata that is not
         necessary for this model to be used functionally. Like for example documentation.
         """
-        return self.dict()
+        return self.model_dump()
 
     @property
     def instance_id(self) -> str:
@@ -252,7 +246,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")
         table.add_column("Value")
-        for k in self.__fields__.keys():
+        for k in self.model_fields.keys():
             if include is not None and k not in include:
                 continue
             attr = getattr(self, k)
@@ -271,7 +265,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         include = config.get("include", None)
 
         result = {}
-        for k in self.__fields__.keys():
+        for k in self.model_fields.keys():
             if include is not None and k not in include:
                 continue
             attr = getattr(self, k)
@@ -335,7 +329,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         except Exception:
             model_id = "-- n/a --"
 
-        return f"{self.__class__.__name__}(model_id={model_id}, category={self.model_type_id}, fields=[{', '.join(self.__fields__.keys())}])"
+        return f"{self.__class__.__name__}(model_id={model_id}, category={self.model_type_id}, fields=[{', '.join(self.model_fields.keys())}])"
 
     def __str__(self):
         return self.__repr__()

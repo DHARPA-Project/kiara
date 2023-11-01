@@ -7,7 +7,7 @@
 
 from typing import Any, Iterable, Mapping, Tuple, Union
 
-from pydantic import Field, validator
+from pydantic import Field, field_validator
 
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.values.value import ValueMap
@@ -25,7 +25,8 @@ class PrettyPrintConfig(KiaraModuleConfig):
     source_type: str = Field(description="The value type of the source value.")
     target_type: str = Field(description="The value type of the rendered value.")
 
-    @validator("source_type")
+    @field_validator("source_type")
+    @classmethod
     def validate_source_type(cls, value):
         if value == "render_config":
             raise ValueError(f"Invalid source type: {value}.")

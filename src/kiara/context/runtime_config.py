@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
 
-from pydantic import BaseSettings, Extra, Field
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class JobCacheStrategy(Enum):
@@ -12,10 +13,9 @@ class JobCacheStrategy(Enum):
 
 
 class KiaraRuntimeConfig(BaseSettings):
-    class Config:
-        extra = Extra.forbid
-        validate_assignment = True
-        env_prefix = "kiara_runtime_"
+    model_config = SettingsConfigDict(
+        extra="forbid", validate_assignment=True, env_prefix="kiara_runtime_"
+    )
 
     job_cache: JobCacheStrategy = Field(
         description="Name of the strategy that determines when to re-run jobs or use cached results.",

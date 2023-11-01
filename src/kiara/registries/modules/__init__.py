@@ -98,6 +98,7 @@ class ModuleRegistry(object):
         m_cls: Type[KiaraModule] = self.get_module_class(manifest.module_type)
 
         if not manifest.is_resolved:
+            # dbg(manifest.module_config)
             try:
                 resolved = m_cls._resolve_module_config(**manifest.module_config)
             except Exception as e:
@@ -105,13 +106,14 @@ class ModuleRegistry(object):
                     import traceback
 
                     traceback.print_exc()
+
                 raise InvalidManifestException(
                     f"Error while resolving module config for module '{manifest.module_type}': {e}",
                     module_type=manifest.module_type,
                     module_config=manifest.module_config,
                     parent=e,
                 )
-            manifest.module_config = resolved.dict()
+            manifest.module_config = resolved.model_dump()
             manifest.is_resolved = True
 
         if self._cached_modules.setdefault(manifest.module_type, {}).get(

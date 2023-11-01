@@ -6,18 +6,12 @@
 
 import uuid
 
-import orjson
 from pydantic import BaseModel, Field
 
 from kiara.utils import camel_case_to_snake_case
-from kiara.utils.json import orjson_dumps
 
 
 class KiaraEvent(BaseModel):
-    class Config:
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
-
     def get_event_type(self) -> str:
 
         if hasattr(self, "event_type"):

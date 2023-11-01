@@ -12,21 +12,13 @@ sub-class a pydantic BaseModel or implement custom base classes.
 
 from typing import Any, Dict, Mapping
 
-import orjson
 from pydantic import BaseModel, Field, PrivateAttr
 
 from kiara.models.python_class import PythonClass
 from kiara.utils.hashing import compute_cid
-from kiara.utils.json import orjson_dumps
 
 
 class KiaraDict(BaseModel, Mapping):
-
-    """A dict implentation that contains (optional) schema information of the dicts items."""
-
-    class Config:
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
 
     dict_data: Dict[str, Any] = Field(description="The data.")
     data_schema: Dict[str, Any] = Field(description="The schema.")

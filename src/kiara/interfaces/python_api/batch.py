@@ -7,7 +7,14 @@ import os
 import uuid
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
 
-from pydantic import BaseModel, Field, PrivateAttr, root_validator, validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    PrivateAttr,
+    model_validator,
+    validator,
+)
 
 from kiara.context import Kiara
 from kiara.interfaces.python_api.utils import create_save_config
@@ -22,8 +29,7 @@ if TYPE_CHECKING:
 
 
 class BatchOperation(BaseModel):
-    class Config:
-        validate_assignment = True
+    model_config = ConfigDict(validate_assignment=True)
 
     @classmethod
     def from_file(
@@ -92,7 +98,8 @@ class BatchOperation(BaseModel):
 
     _kiara: Kiara = PrivateAttr(default=None)
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def add_alias(cls, values):
 
         if not values.get("alias", None):
@@ -107,6 +114,8 @@ class BatchOperation(BaseModel):
 
         return values
 
+    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
     @validator("save_defaults", always=True, pre=True)
     def validate_save(cls, save, values):
 

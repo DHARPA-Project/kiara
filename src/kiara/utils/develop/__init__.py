@@ -4,7 +4,8 @@ import os.path
 from enum import Enum
 from typing import Any, ClassVar, Dict, Union
 
-from pydantic import BaseModel, BaseSettings, Extra, Field
+from pydantic import BaseModel, ConfigDict, Extra, Field
+from pydantic_settings import BaseSettings
 from rich.console import Group, RenderableType
 from rich.panel import Panel
 
@@ -62,11 +63,8 @@ def profile_settings_source(settings: BaseSettings) -> Dict[str, Any]:
 
     profile_name = profile_name.lower()
 
-    from pydantic.fields import ModelField
-
-    model: ModelField
-
-    for model in KiaraDevSettings.__fields__.values():
+    for model in KiaraDevSettings.model_fields.values():
+        raise NotImplementedError("TODO: fix this after pydantic v2 refactoring")
         if not issubclass(model.type_, BaseModel):
             continue
 
@@ -90,10 +88,9 @@ class DetailLevel(Enum):
 
 
 class PreRunMsgDetails(BaseModel):
-    class Config:
-        extra = Extra.forbid
-        validate_assignment = True
-        use_enum_values = True
+    model_config = ConfigDict(
+        extra="forbid", validate_assignment=True, use_enum_values=True
+    )
 
     pipeline_steps: bool = Field(
         description="Whether to also display information for modules that are run as part of a pipeline.",
@@ -114,10 +111,9 @@ class PreRunMsgDetails(BaseModel):
 
 
 class PostRunMsgDetails(BaseModel):
-    class Config:
-        extra = Extra.forbid
-        validate_assignment = True
-        use_enum_values = True
+    model_config = ConfigDict(
+        extra="forbid", validate_assignment=True, use_enum_values=True
+    )
 
     pipeline_steps: bool = Field(
         description="Whether to also display information for modules that are run as part of a pipeline",
@@ -164,11 +160,9 @@ class KiaraDevLogSettings(BaseModel):
             "post_run": {"internal_modules": True},
         },
     }
-
-    class Config:
-        extra = Extra.forbid
-        validate_assignment = True
-        use_enum_values = True
+    model_config = ConfigDict(
+        extra="forbid", validate_assignment=True, use_enum_values=True
+    )
 
     exc: DetailLevel = Field(
         description="How detailed to print exceptions", default=DetailLevel.MINIMAL
@@ -191,6 +185,8 @@ class KiaraDevLogSettings(BaseModel):
 
 
 class KiaraDevSettings(BaseSettings):
+    # TODO[pydantic]: We couldn't refactor this class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config:
 
         extra = Extra.forbid

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import uuid
-from typing import Any, Dict, Mapping, TypeVar, Union
+from typing import Any, ClassVar, Dict, Mapping, TypeVar, Union
 
 import orjson
 from dag_cbor import IPLDKind
-from pydantic import Field, validator
+from pydantic import Field, field_validator
 from rich.console import RenderableType
 from rich.syntax import Syntax
 from rich.table import Table
@@ -20,7 +20,7 @@ DataT = TypeVar("DataT")
 
 class RenderScene(KiaraModel):
 
-    _kiara_model_id = "instance.render_scene"
+    _kiara_model_id: ClassVar = "instance.render_scene"
 
     title: str = Field(description="The title of this scene.")
     disabled: bool = Field(
@@ -42,7 +42,8 @@ class RenderScene(KiaraModel):
         description="Other render scenes, related to this one.", default_factory=dict
     )
 
-    @validator("manifest_hash", pre=True)
+    @field_validator("manifest_hash", mode="before")
+    @classmethod
     def validate_manifest_hash(cls, value):
 
         if hasattr(value, "manifest_hash"):

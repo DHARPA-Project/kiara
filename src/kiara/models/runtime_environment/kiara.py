@@ -4,7 +4,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from typing import TYPE_CHECKING, Any, Dict, Literal, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Literal, Union
 
 from pydantic import Field
 
@@ -45,7 +45,7 @@ def find_archive_types(
 
 class KiaraTypesRuntimeEnvironment(RuntimeEnvironment):
 
-    _kiara_model_id = "info.runtime.kiara_types"
+    _kiara_model_id: ClassVar = "info.runtime.kiara_types"
 
     environment_type: Literal["kiara_types"]
     archive_types: ArchiveTypeClassesInfo = Field(

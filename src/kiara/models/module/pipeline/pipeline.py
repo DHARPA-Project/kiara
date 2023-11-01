@@ -7,7 +7,17 @@
 
 import abc
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    ClassVar,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    Type,
+    Union,
+)
 
 import dpath
 import networkx as nx
@@ -137,7 +147,11 @@ class Pipeline(object):
         value item is allocated, since those refer to the same value.
         """
         values = AliasValueMap(
-            alias=str(self.id), version=0, assoc_value=None, values_schema={}
+            alias=str(self.id),
+            version=0,
+            assoc_value=None,
+            values_schema={},
+            assoc_schema=None,
         )
         values._data_registry = self._data_registry
         inputs_schema = self._structure.pipeline_inputs_schema
@@ -617,9 +631,9 @@ class Pipeline(object):
         ).create_renderable(**config)
 
 
-class PipelineInfo(ItemInfo[Pipeline]):
+class PipelineInfo(ItemInfo):
 
-    _kiara_model_id = "info.pipeline"
+    _kiara_model_id: ClassVar = "info.pipeline"
 
     @classmethod
     def base_instance_class(cls) -> Type[Pipeline]:

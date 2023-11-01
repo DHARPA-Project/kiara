@@ -2,10 +2,10 @@
 import os.path
 import uuid
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Mapping, Union
 
 from dag_cbor import IPLDKind
-from pydantic import BaseModel, Field, root_validator, validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from kiara.exceptions import KiaraException
 from kiara.models import KiaraModel
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 class JobDesc(KiaraModel):
     """An object describing a compute job with both raw or referenced inputs."""
 
-    _kiara_model_id = "instance.job_desc"
+    _kiara_model_id: ClassVar = "instance.job_desc"
 
     @classmethod
     def create_from_file(cls, path: Union[str, Path]):
@@ -125,7 +125,8 @@ class JobDesc(KiaraModel):
             "save": self.save,  # type: ignore
         }
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def validate_inputs(cls, values):
 
         if len(values) == 1 and "data" in values.keys():
@@ -141,7 +142,8 @@ class JobDesc(KiaraModel):
                 values = data
         return values
 
-    @validator("doc", pre=True)
+    @field_validator("doc", mode="before")
+    @classmethod
     def validate_doc(cls, value):
         return DocumentationMetadataModel.create(value)
 
@@ -215,7 +217,8 @@ class RunSpec(BaseModel):
         default_factory=DocumentationMetadataModel.create,
     )
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def validate_inputs(cls, values):
         if "jobs" not in values.keys():
             raise ValueError("Missing required 'jobs' key.")
@@ -241,7 +244,8 @@ class RunSpec(BaseModel):
         values["jobs"] = new_jobs
         return values
 
-    @validator("doc", pre=True)
+    @field_validator("doc", mode="before")
+    @classmethod
     def validate_doc(cls, value):
         return DocumentationMetadataModel.create(value)
 

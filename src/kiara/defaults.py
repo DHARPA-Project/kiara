@@ -10,7 +10,6 @@ import typing
 import uuid
 from enum import Enum
 
-import mmh3
 from appdirs import AppDirs
 
 kiara_app_dirs = AppDirs("kiara", "DHARPA")
@@ -172,13 +171,11 @@ INVALID_SIZE_MARKER = -1
 NO_SERIALIZATION_MARKER = "-- serialization not supported --"
 KIARA_ROOT_TYPE_NAME = "__kiara__"
 
-SERIALIZED_DATA_TYPE_NAME = "serialized_data"
-LOAD_CONFIG_DATA_TYPE_NAME = "load_config"
+SERIALIZED_data_type_name = "serialized_data"
+LOAD_CONFIG_data_type_name = "load_config"
 
 PYDANTIC_USE_CONSTRUCT: bool = False
 STRICT_CHECKS: bool = False
-
-KIARA_HASH_FUNCTION = mmh3.hash
 
 ANY_TYPE_NAME = "any"
 

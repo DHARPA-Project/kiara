@@ -18,7 +18,7 @@ class KiaraZmqServiceDetails(BaseModel):
 
     context_name: str = Field(description="The name of the kiara context.")
     process_id: Union[None, int] = Field(
-        description="The process id of the kiara service."
+        None, description="The process id of the kiara service."
     )
     stdout: str = Field(description="The stdout handle.")
     stderr: str = Field(description="The stderr handle.")

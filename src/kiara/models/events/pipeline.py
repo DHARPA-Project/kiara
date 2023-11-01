@@ -6,17 +6,25 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, MutableMapping, Set, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    ClassVar,
+    Dict,
+    List,
+    Mapping,
+    MutableMapping,
+    Set,
+    Union,
+)
 
-import orjson
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from sortedcontainers import SortedDict
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
 from kiara.models import KiaraModel
 from kiara.models.events import KiaraEvent
 from kiara.models.module.pipeline import PipelineStep, StepStatus
-from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from kiara.models.module.pipeline.pipeline import Pipeline
@@ -24,8 +32,8 @@ if TYPE_CHECKING:
 
 class ChangedValue(BaseModel):
 
-    old: Union[uuid.UUID, None]
-    new: Union[uuid.UUID, None]
+    old: Union[uuid.UUID, None] = None
+    new: Union[uuid.UUID, None] = None
 
 
 class StepDetails(BaseModel):
@@ -47,7 +55,8 @@ class StepDetails(BaseModel):
         description="The current outputs of this step."
     )
 
-    @validator("inputs")
+    @field_validator("inputs")
+    @classmethod
     def replace_none_values_inputs(cls, value):
 
         result = {}
@@ -57,7 +66,8 @@ class StepDetails(BaseModel):
             result[k] = v
         return result
 
-    @validator("outputs")
+    @field_validator("outputs")
+    @classmethod
     def replace_none_values_outputs(cls, value):
 
         result = {}
@@ -76,11 +86,7 @@ class StepDetails(BaseModel):
 
 class PipelineState(KiaraModel):
 
-    _kiara_model_id = "instance.pipeline_state"
-
-    class Config:
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
+    _kiara_model_id: ClassVar = "instance.pipeline_state"
 
     kiara_id: uuid.UUID = Field(description="The id of the kiara context.")
     pipeline_id: uuid.UUID = Field(description="The id of the pipeline.")
@@ -160,8 +166,7 @@ class PipelineEvent(KiaraEvent):
         )
         return event
 
-    class Config:
-        allow_mutation = False
+    model_config = ConfigDict(frozen=True)
 
     kiara_id: uuid.UUID = Field(
         description="The id of the kiara context that created the pipeline."

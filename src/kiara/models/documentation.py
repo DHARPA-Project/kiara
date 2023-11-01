@@ -6,12 +6,12 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import inspect
-from typing import Any, Callable, Dict, List, Mapping, Tuple, Type, Union
+from typing import Any, Callable, ClassVar, Dict, List, Mapping, Tuple, Type, Union
 
-from pydantic import Extra
+from pydantic import ConfigDict
 from pydantic.fields import Field
 from pydantic.main import BaseModel
-from pydantic.networks import AnyUrl, EmailStr
+from pydantic.networks import EmailStr
 from rich import box
 from rich.console import RenderableType
 from rich.markdown import Markdown
@@ -27,8 +27,7 @@ class AuthorModel(BaseModel):
 
     """Details about an author of a resource."""
 
-    class Config:
-        title = "Author"
+    model_config = ConfigDict(title="Author")
 
     name: str = Field(description="The full name of the author.")
     email: Union[EmailStr, None] = Field(
@@ -40,10 +39,10 @@ class LinkModel(BaseModel):
 
     """A description and url for a reference of any kind."""
 
-    class Config:
-        title = "Link"
+    model_config = ConfigDict(title="Link")
 
-    url: AnyUrl = Field(description="The url.")
+    # TODO: use AnyUrl instead of str
+    url: str = Field(description="The url.")
     desc: Union[str, None] = Field(
         description="A short description of the link content.",
         default=DEFAULT_NO_DESC_VALUE,
@@ -54,13 +53,10 @@ class AuthorsMetadataModel(KiaraModel):
 
     """Information about all authors of a resource."""
 
-    _kiara_model_id = "metadata.authors"
+    _kiara_model_id: ClassVar[str] = "metadata.authors"
+    model_config = ConfigDict(extra="ignore", title="Authors")
 
-    class Config:
-        extra = Extra.ignore
-        title = "Authors"
-
-    _metadata_key = "origin"
+    _metadata_key: ClassVar[str] = "origin"
 
     @classmethod
     def from_class(cls, item_cls: Type):
@@ -93,11 +89,8 @@ class ContextMetadataModel(KiaraModel):
 
     """Information about the context of a resource."""
 
-    _kiara_model_id = "metadata.context"
-
-    class Config:
-        extra = Extra.ignore
-        title = "Context"
+    _kiara_model_id: ClassVar = "metadata.context"
+    model_config = ConfigDict(extra="ignore", title="Context")
 
     @classmethod
     def from_class(cls, item_cls: Type):
@@ -106,7 +99,7 @@ class ContextMetadataModel(KiaraModel):
         merged = merge_dicts(*data)
         return cls.parse_obj(merged)
 
-    _metadata_key = "properties"
+    _metadata_key: ClassVar[str] = "properties"
 
     references: Dict[str, LinkModel] = Field(
         description="References for the item.", default_factory=dict
@@ -167,12 +160,11 @@ class DocumentationMetadataModel(KiaraModel):
 
     """Documentation about a resource."""
 
-    class Config:
-        title = "Documentation"
+    model_config = ConfigDict(title="Documentation")
 
-    _kiara_model_id = "metadata.documentation"
+    _kiara_model_id: ClassVar = "metadata.documentation"
 
-    _metadata_key = "documentation"
+    _metadata_key: ClassVar[str] = "documentation"
 
     @classmethod
     def from_class_doc(cls, item_cls: Type):

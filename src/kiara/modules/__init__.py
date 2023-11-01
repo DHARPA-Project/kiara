@@ -23,7 +23,7 @@ from typing import (
 
 import structlog
 from multiformats import CID
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from rich.console import RenderableType
 
 from kiara.exceptions import (
@@ -271,8 +271,7 @@ class InputOutputObject(abc.ABC):
 
 
 class ModuleCharacteristics(BaseModel):
-    class Config:
-        allow_mutation = False
+    model_config = ConfigDict(frozen=True)
 
     is_idempotent: bool = Field(
         description="Whether this module is idempotent (aka always produces the same output with the same inputs.",
@@ -343,12 +342,14 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
     ) -> CID:
 
         if isinstance(module_type_config, Mapping):
+            print("RESOLVING")
             module_type_config = cls._resolve_module_config(**module_type_config)
 
         obj = {
             "module_type": cls._module_type_name,  # type: ignore
-            "module_type_config": module_type_config.dict(),
+            "module_type_config": module_type_config.instance_cid,
         }
+
         _, cid = compute_cid(data=obj)
         return cid
 

@@ -47,7 +47,7 @@ def generate_html(
         props = model_cls.schema().get("properties", {})
 
         rows = []
-        for field_name, field in model_cls.__fields__.items():
+        for field_name, field in model_cls.model_fields.items():
 
             if exclude_fields and field_name in exclude_fields:
                 continue

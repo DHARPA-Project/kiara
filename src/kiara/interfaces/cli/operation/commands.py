@@ -152,7 +152,7 @@ def list_operations(
     from kiara.interfaces.python_api import OperationGroupInfo
 
     ops_info = OperationGroupInfo.create_from_operations(
-        kiara=kiara_obj, group_title=title, **operations
+        kiara=kiara_obj, group_title=title, **operations.root
     )
 
     terminal_print_model(

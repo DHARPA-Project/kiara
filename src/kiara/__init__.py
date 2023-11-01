@@ -17,6 +17,7 @@ import sys
 import structlog
 import typing
 
+from .utils import is_develop, is_debug
 from .utils.class_loading import (
     KiaraEntryPointItem,
     find_kiara_model_classes_under,
@@ -86,6 +87,13 @@ try:
 except ImportError:  # Graceful fallback if IceCream isn't installed.
     pass
 
+if is_develop() or is_debug():
+    try:
+        from icecream import install
+
+        install()
+    except ImportError:  # Graceful fallback if IceCream isn't installed.
+        pass
 
 """Top-level package for kiara."""
 

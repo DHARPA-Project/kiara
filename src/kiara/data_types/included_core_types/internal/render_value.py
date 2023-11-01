@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from typing import TYPE_CHECKING, Any, Mapping, Type, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Mapping, Type, Union
 
-import orjson.orjson
 from pydantic import Field
 from rich import box
 from rich.syntax import Syntax
@@ -29,7 +28,7 @@ class RenderSceneDataType(InternalType[RenderScene, RenderSceneTypeConfig]):
 
     """A value type to contain information about how to render a value in a specific render scenario."""
 
-    _data_type_name = "render_scene"
+    _data_type_name: ClassVar[str] = "render_scene"
 
     def __init__(self, **type_config: Any):
 
@@ -89,7 +88,7 @@ class RenderSceneDataType(InternalType[RenderScene, RenderSceneTypeConfig]):
 
         data: RenderScene = value.data
 
-        ri_json = data.json(option=orjson.orjson.OPT_INDENT_2)
+        ri_json = data.model_dump_json(indent=2)
         return Syntax(ri_json, "json", background_color="default")
 
 
@@ -97,7 +96,7 @@ class RenderValueResultDataType(InternalType[RenderValueResult, DataTypeConfig])
 
     """A value type to contain information about how to render a value in a specific render scenario."""
 
-    _data_type_name = "render_value_result"
+    _data_type_name: ClassVar[str] = "render_value_result"
 
     def __init__(self, **type_config: Any):
 
@@ -134,7 +133,7 @@ class RenderValueResultDataType(InternalType[RenderValueResult, DataTypeConfig])
 
         data: RenderValueResult = value.data
 
-        ri_json = data.json(option=orjson.orjson.OPT_INDENT_2, exclude={"rendered"})
+        ri_json = data.model_dump_json(indent=2, exclude={"rendered"})
         rendered = extract_renderable(data.rendered)
 
         metadata = Syntax(ri_json, "json", background_color="default")

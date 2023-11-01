@@ -250,7 +250,7 @@ class OperationRegistry(object):
                 else:
                     module_config = op_config.retrieve_module_config(kiara=self._kiara)
 
-                    manifest = Manifest.construct(
+                    manifest = Manifest.model_construct(
                         module_type=module_type, module_config=module_config
                     )
 
@@ -298,6 +298,7 @@ class OperationRegistry(object):
                     continue
 
                 for op_config in deferred_module_names[missing_op_id]:
+
                     try:
 
                         if isinstance(op_config, PipelineOperationConfig):
@@ -307,6 +308,7 @@ class OperationRegistry(object):
                                 or mt in operations.keys()
                                 for mt in op_config.required_module_types
                             ):
+
                                 module_map = {}
                                 for mt in op_config.required_module_types:
                                     if mt in operations.keys():
@@ -321,7 +323,7 @@ class OperationRegistry(object):
                                     kiara=self._kiara
                                 )
 
-                                manifest = Manifest.construct(
+                                manifest = Manifest.model_construct(
                                     module_type="pipeline",
                                     module_config=module_config,
                                 )
@@ -403,6 +405,7 @@ class OperationRegistry(object):
                 deferred_module_names.pop(rdn)
 
             if len(deferred_module_names) == deferred_length:
+
                 for mn in deferred_module_names:
                     if mn in operations.keys():
                         continue

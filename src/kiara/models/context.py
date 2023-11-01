@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Union
 
 import humanfriendly
 from humanfriendly import format_size
-from pydantic import BaseModel, Field, PrivateAttr
+from pydantic import Field, PrivateAttr, RootModel
 from rich import box
 from rich.console import Group, RenderableType
 from rich.markdown import Markdown
@@ -230,8 +230,8 @@ class ContextInfo(KiaraModel):
         return table
 
 
-class ContextInfos(BaseModel):
-    __root__: Dict[str, ContextInfo]
+class ContextInfos(RootModel):
+    root: Dict[str, ContextInfo]
 
     @classmethod
     def create_context_infos(
@@ -243,7 +243,7 @@ class ContextInfos(BaseModel):
             contexts = kc.context_configs
 
         return ContextInfos(
-            __root__={
+            root={
                 a: ContextInfo.create_from_context_config(c, context_name=a)
                 for a, c in contexts.items()
             }
@@ -261,7 +261,7 @@ class ContextInfos(BaseModel):
             table.add_column("size of all values")
             table.add_column("no. values")
             table.add_column("no. aliaes")
-            for context_name, context_summary in self.__root__.items():
+            for context_name, context_summary in self.root.items():
                 size_on_disk = context_summary.archives.combined_size
                 value_summary = context_summary.value_summary()
                 size = humanfriendly.format_size(value_summary["size"])
@@ -281,7 +281,7 @@ class ContextInfos(BaseModel):
             table.add_column("context_name", style="i")
             table.add_column("details")
 
-            for context_name, context_summary in self.__root__.items():
+            for context_name, context_summary in self.root.items():
 
                 table.add_row(context_name, context_summary.create_renderable(**config))
 

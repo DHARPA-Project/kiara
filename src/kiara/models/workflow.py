@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import datetime
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Type, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Mapping, Type, Union
 
 from dag_cbor import IPLDKind
-from pydantic import Field, PrivateAttr, validator
+from pydantic import Field, PrivateAttr, field_validator
 from rich import box
 from rich.console import RenderableType
 from rich.panel import Panel
@@ -102,7 +102,7 @@ class WorkflowState(KiaraModel):
 
 
 class WorkflowMetadata(KiaraModel):
-    _kiara_model_id = "instance.workflow"
+    _kiara_model_id: ClassVar = "instance.workflow"
 
     workflow_id: uuid.UUID = Field(
         description="The globaly unique uuid for this workflow."
@@ -143,7 +143,8 @@ class WorkflowMetadata(KiaraModel):
     _kiara: Union["Kiara", None] = PrivateAttr(default=None)
     # _last_update: datetime.datetime = PrivateAttr(default_factory=datetime.datetime.now)
 
-    @validator("documentation", pre=True)
+    @field_validator("documentation", mode="before")
+    @classmethod
     def validate_doc(cls, value):
         if not isinstance(value, DocumentationMetadataModel):
             return DocumentationMetadataModel.create(value)
@@ -162,7 +163,7 @@ class WorkflowMetadata(KiaraModel):
 
 class WorkflowInfo(ItemInfo):
 
-    _kiara_model_id = "info.workflow"
+    _kiara_model_id: ClassVar = "info.workflow"
 
     @classmethod
     def create_from_workflow(cls, workflow: "Workflow"):
@@ -289,7 +290,7 @@ class WorkflowInfo(ItemInfo):
 
 class WorkflowGroupInfo(InfoItemGroup):
 
-    _kiara_model_id = "info.workflows"
+    _kiara_model_id: ClassVar = "info.workflows"
 
     @classmethod
     def base_info_class(cls) -> Type[ItemInfo]:

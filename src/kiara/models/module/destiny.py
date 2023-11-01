@@ -6,7 +6,7 @@
 
 import copy
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Mapping, Union
 
 from pydantic import Field, PrivateAttr
 
@@ -30,7 +30,7 @@ class Destiny(Manifest):
     This is similar to what is usually called a 'future' in programming languages, but more deterministic, sorta.
     """
 
-    _kiara_model_id = "instance.destiny"
+    _kiara_model_id: ClassVar = "instance.destiny"
 
     @classmethod
     def create_from_values(

@@ -5,12 +5,12 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Mapping, Union
 
-import orjson.orjson
-from pydantic import Extra, PrivateAttr
+from pydantic import ConfigDict, PrivateAttr
 from pydantic.fields import Field
 from pydantic.main import BaseModel
+from pydantic_core import PydanticUndefined
 from rich import box
 from rich.console import RenderableType
 from rich.table import Table
@@ -38,13 +38,21 @@ class KiaraModuleConfig(KiaraModel):
      value is set for an input field, an error is thrown.
     """
 
-    _kiara_model_id = "instance.module_config"
+    _kiara_model_id: ClassVar = "instance.module_config"
 
     @classmethod
     def requires_config(cls, config: Union[Mapping[str, Any], None] = None) -> bool:
         """Return whether this class can be used as-is, or requires configuration before an instance can be created."""
-        for field_name, field in cls.__fields__.items():
-            if field.required and field.default is None:
+
+        for field_name, field in cls.model_fields.items():
+
+            if not field.is_required():
+                continue
+
+            if (
+                field.default in [None, PydanticUndefined]
+                and field.default_factory is None
+            ):
                 if config:
                     if config.get(field_name, None) is None:
                         return True
@@ -59,14 +67,11 @@ class KiaraModuleConfig(KiaraModel):
     defaults: Dict[str, Any] = Field(
         default_factory=dict, description="Value defaults for this module."
     )
-
-    class Config:
-        extra = Extra.forbid
-        validate_assignment = True
+    model_config = ConfigDict(extra="forbid", validate_assignment=True)
 
     def get(self, key: str) -> Any:
         """Get the value for the specified configuation key."""
-        if key not in self.__fields__:
+        if key not in self.model_fields:
             raise Exception(
                 f"No config value '{key}' in module config class '{self.__class__.__name__}'."
             )
@@ -78,14 +83,14 @@ class KiaraModuleConfig(KiaraModel):
         my_table = Table(box=box.MINIMAL, show_header=False)
         my_table.add_column("Field name", style="i")
         my_table.add_column("Value")
-        for field in self.__fields__:
+        for field in self.model_fields:
             attr = getattr(self, field)
             if isinstance(attr, str):
                 attr_str = attr
             elif hasattr(attr, "create_renderable"):
                 attr_str = attr.create_renderable()
             elif isinstance(attr, BaseModel):
-                attr_str = attr.json(option=orjson.orjson.OPT_INDENT_2)
+                attr_str = attr.model_dump_json(indent=2)
             else:
                 attr_str = str(attr)
             my_table.add_row(field, attr_str)

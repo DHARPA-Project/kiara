@@ -28,10 +28,9 @@ import abc
 import uuid
 from typing import TYPE_CHECKING, Any, Generic, Mapping, Tuple, Type, TypeVar, Union
 
-import orjson
 import structlog
 from deepdiff import DeepHash
-from pydantic import BaseModel, Extra, PrivateAttr, ValidationError
+from pydantic import BaseModel, ConfigDict, PrivateAttr, ValidationError
 from rich import box
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.rule import Rule
@@ -41,7 +40,6 @@ from rich.table import Table
 from kiara.defaults import (
     INVALID_HASH_MARKER,
     INVALID_SIZE_MARKER,
-    KIARA_HASH_FUNCTION,
     NO_SERIALIZATION_MARKER,
     SpecialValue,
 )
@@ -49,13 +47,13 @@ from kiara.exceptions import KiaraValueException, ValueTypeConfigException
 from kiara.models.python_class import PythonClass
 from kiara.models.values import DataTypeCharacteristics, ValueStatus
 from kiara.models.values.value_schema import ValueSchema
+from kiara.utils.hashing import KIARA_HASH_FUNCTION
 
 #
 #     if obj.__class__.__module__ == "builtins":
 #         return obj.__class__.__name__
 #     else:
 #         return f"{obj.__class__.__module__}.{obj.__class__.__name__}"
-from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from kiara.models.values.value import (
@@ -80,16 +78,13 @@ class DataTypeConfig(BaseModel):
     a ``DataType`` is not configurable, unless the ``_config_cls`` class attribute points to a sub-class of this class.
     """
 
-    class Config:
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
-        extra = Extra.forbid
+    model_config = ConfigDict(extra="forbid")
 
     @classmethod
     def requires_config(cls) -> bool:
         """Return whether this class can be used as-is, or requires configuration before an instance can be created."""
-        for field_name, field in cls.__fields__.items():
-            if field.required and field.default is None:
+        for field_name, field in cls.model_fields.items():
+            if field.is_required() and field.default is None:
                 return True
         return False
 
@@ -97,7 +92,7 @@ class DataTypeConfig(BaseModel):
 
     def get(self, key: str) -> Any:
         """Get the value for the specified configuation key."""
-        if key not in self.__fields__:
+        if key not in self.model_fields.keys():
             raise Exception(
                 f"No config value '{key}' in module config class '{self.__class__.__name__}'."
             )
@@ -131,7 +126,7 @@ class DataTypeConfig(BaseModel):
         my_table = Table(box=box.MINIMAL, show_header=False)
         my_table.add_column("Field name", style="i")
         my_table.add_column("Value")
-        for field in self.__fields__:
+        for field in self.model_fields.keys():
             my_table.add_row(field, getattr(self, field))
 
         yield my_table
@@ -193,7 +188,9 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
     def __init__(self, **type_config: Any):
 
         try:
-            self._type_config: TYPE_CONFIG_CLS = self.__class__.data_type_config_class()(**type_config)  # type: ignore  # TODO: double-check this is only a mypy issue
+            self._type_config: TYPE_CONFIG_CLS = (
+                self.__class__.data_type_config_class()(**type_config)
+            )
         except ValidationError as ve:
             raise ValueTypeConfigException(
                 f"Error creating object for type: {ve}",
@@ -496,9 +493,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
         table.add_column("key")
         table.add_column("value", style="i")
         table.add_row("type_name", self.data_type_name)
-        config_json = self.type_config.json(
-            exclude_unset=True, option=orjson.OPT_INDENT_2
-        )
+        config_json = self.type_config.model_dump_json(exclude_unset=True, indent=2)
         config = Syntax(config_json, "json", background_color="default")
         table.add_row("type_config", config)
 

@@ -8,7 +8,7 @@ from typing import Any, Dict, Mapping, Union, get_args
 
 import orjson
 import structlog
-from pydantic import PrivateAttr
+from pydantic import ConfigDict, PrivateAttr
 from rich import box
 from rich.console import RenderableType
 from rich.syntax import Syntax
@@ -24,15 +24,13 @@ logger = structlog.get_logger()
 
 
 class RuntimeEnvironment(KiaraModel):
-    class Config:
-        underscore_attrs_are_private = False
-        allow_mutation = False
+    model_config = ConfigDict(frozen=True)
 
     @classmethod
     def get_environment_type_name(cls) -> str:
 
-        env_type = cls.__fields__["environment_type"]
-        args = get_args(env_type.type_)
+        env_type = cls.model_fields["environment_type"]
+        args = get_args(env_type.annotation)
         assert len(args) == 1
 
         return args[0]
@@ -110,7 +108,7 @@ class RuntimeEnvironment(KiaraModel):
             "environment hashes", Syntax(hashes_str, "json", background_color="default")
         )
 
-        for field_name, field in self.__fields__.items():
+        for field_name, field in self.model_fields.items():
             summary_item = self._create_renderable_for_field(
                 field_name, for_summary=summary
             )

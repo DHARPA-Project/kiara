@@ -1,6 +1,16 @@
 # -*- coding: utf-8 -*-
 import uuid
-from typing import TYPE_CHECKING, Any, Iterable, List, Literal, Mapping, Type, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    ClassVar,
+    Iterable,
+    List,
+    Literal,
+    Mapping,
+    Type,
+    Union,
+)
 
 import orjson
 from pydantic import Field
@@ -31,7 +41,7 @@ if TYPE_CHECKING:
 
 class ArchiveTypeInfo(TypeInfo):
 
-    _kiara_model_id = "info.archive_type"
+    _kiara_model_id: ClassVar = "info.archive_type"
 
     @classmethod
     def create_from_type_class(
@@ -96,7 +106,7 @@ class ArchiveTypeInfo(TypeInfo):
 
 class ArchiveTypeClassesInfo(TypeInfoItemGroup):
 
-    _kiara_model_id = "info.archive_types"
+    _kiara_model_id: ClassVar = "info.archive_types"
 
     @classmethod
     def base_info_class(cls) -> Type[ArchiveTypeInfo]:
@@ -164,7 +174,7 @@ class ArchiveInfo(ItemInfo):
 
 class ArchiveGroupInfo(InfoItemGroup):
 
-    _kiara_model_id = "info.archives"
+    _kiara_model_id: ClassVar = "info.archives"
 
     @classmethod
     def base_info_class(cls) -> Type[ItemInfo]:

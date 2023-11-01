@@ -15,6 +15,7 @@ import uuid
 from typing import (
     TYPE_CHECKING,
     Any,
+    ClassVar,
     Dict,
     Iterable,
     List,
@@ -31,7 +32,7 @@ from humanfriendly import format_size
 from multiformats import CID, multihash
 from multiformats.multihash import Multihash
 from multiformats.varint import BytesLike
-from pydantic import BaseModel, Extra, PrivateAttr, root_validator
+from pydantic import BaseModel, ConfigDict, PrivateAttr, model_validator
 from pydantic.fields import Field
 from rich import box
 from rich.console import Group, RenderableType
@@ -69,10 +70,8 @@ if TYPE_CHECKING:
 
 
 class SerializedChunks(BaseModel, abc.ABC):
-    class Config:
-        json_loads = orjson.loads
-        json_dumps = orjson_dumps
-        extra = Extra.forbid
+
+    model_config = ConfigDict(extra="forbid")
 
     _size_cache: Union[int, None] = PrivateAttr(default=None)
     _hashes_cache: Dict[str, Sequence[CID]] = PrivateAttr(default_factory=dict)
@@ -320,7 +319,8 @@ class SerializedInlineJson(SerializedPreStoreChunks):
 
     type: Literal["inline-json"] = "inline-json"
     inline_data: Any = Field(
-        description="Data that will not be stored externally, but inline in the containing model. This should only contain data types that can be serialized reliably using json (scalars, etc.)."
+        None,
+        description="Data that will not be stored externally, but inline in the containing model. This should only contain data types that can be serialized reliably using json (scalars, etc.).",
     )
     _json_cache: Union[bytes, None] = PrivateAttr(default=None)
 
@@ -359,7 +359,7 @@ class SerializedChunkIDs(SerializedChunks):
         description="A list of chunk ids, which will be resolved via the attached data registry."
     )
     archive_id: Union[uuid.UUID, None] = Field(
-        description="The preferred data archive to get the chunks from."
+        None, description="The preferred data archive to get the chunks from."
     )
     size: int = Field(description="The size of all chunks combined.")
     _data_registry: "DataRegistry" = PrivateAttr(default=None)
@@ -419,7 +419,7 @@ SERIALIZE_TYPES = {
 
 class SerializationMetadata(KiaraModel):
 
-    _kiara_model_id = "metadata.serialized_data"
+    _kiara_model_id: ClassVar = "metadata.serialized_data"
 
     environment: Mapping[str, int] = Field(
         description="Hash(es) for the environments the value was created/serialized.",
@@ -506,7 +506,7 @@ class SerializedData(KiaraModel):
 
 class SerializationResult(SerializedData):
 
-    _kiara_model_id = "instance.serialization_result"
+    _kiara_model_id: ClassVar[str] = "instance.serialization_result"
 
     data: Dict[
         str,
@@ -527,7 +527,8 @@ class SerializationResult(SerializedData):
     def get_serialized_data(self, key: str) -> SerializedChunks:
         return self.data[key]
 
-    @root_validator(pre=True)
+    @model_validator(mode="before")
+    @classmethod
     def validate_data(cls, values):
 
         codec = values.get("codec", None)
@@ -594,7 +595,7 @@ class SerializationResult(SerializedData):
 
 class PersistedData(SerializedData):
 
-    _kiara_model_id = "instance.persisted_data"
+    _kiara_model_id: ClassVar = "instance.persisted_data"
 
     archive_id: uuid.UUID = Field(
         description="The id of the store that persisted the data."
@@ -612,7 +613,7 @@ class PersistedData(SerializedData):
 
 class ValuePedigree(InputsManifest):
 
-    _kiara_model_id = "instance.value_pedigree"
+    _kiara_model_id: ClassVar = "instance.value_pedigree"
 
     kiara_id: uuid.UUID = Field(
         description="The id of the kiara context a value was created in."
@@ -637,7 +638,7 @@ class ValuePedigree(InputsManifest):
 
 class DataTypeInfo(KiaraModel):
 
-    _kiara_model_id = "info.data_type_instance"
+    _kiara_model_id: ClassVar = "info.data_type_instance"
 
     data_type_name: str = Field(description="The registered name of this data type.")
     data_type_config: Mapping[str, Any] = Field(
@@ -668,7 +669,7 @@ class ValueDetails(KiaraModel):
 
     """A wrapper class that manages and retieves value data and its details."""
 
-    _kiara_model_id = "instance.value_details"
+    _kiara_model_id: ClassVar = "instance.value_details"
 
     value_id: uuid.UUID = Field(description="The id of the value.")
 
@@ -758,7 +759,7 @@ class ValueDetails(KiaraModel):
 
 class Value(ValueDetails):
 
-    _kiara_model_id = "instance.value"
+    _kiara_model_id: ClassVar = "instance.value"
 
     _value_data: Any = PrivateAttr(default=SpecialValue.NOT_SET)
     _serialized_data: Union[None, str, SerializedData] = PrivateAttr(default=None)
@@ -1037,7 +1038,7 @@ class Value(ValueDetails):
         if "kiara_id" not in ignore_fields:
             table["kiara_id"] = self.kiara_id
 
-        for k in sorted(self.__fields__.keys()):
+        for k in sorted(self.model_fields.keys()):
 
             if (
                 k
@@ -1301,7 +1302,7 @@ class UnloadableData(KiaraModel):
     In most cases, the reason this happens is because the current kiara context is missing some value types and/or modules.
     """
 
-    _kiara_model_id = "instance.unloadable_data"
+    _kiara_model_id: ClassVar = "instance.unloadable_data"
 
     value: Value = Field(description="A reference to the value.")
 
@@ -1504,7 +1505,7 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
 
 class ValueMapReadOnly(ValueMap):  # type: ignore
 
-    _kiara_model_id = "instance.value_map.readonly"
+    _kiara_model_id: ClassVar = "instance.value_map.readonly"
 
     @classmethod
     def create_from_ids(cls, data_registry: "DataRegistry", **value_ids: uuid.UUID):
@@ -1538,7 +1539,7 @@ class ValueMapReadOnly(ValueMap):  # type: ignore
 
 class ValueMapWritable(ValueMap):  # type: ignore
 
-    _kiara_model_id = "instance.value_map.writeable"
+    _kiara_model_id: ClassVar = "instance.value_map.writeable"
 
     @classmethod
     def create_from_schema(

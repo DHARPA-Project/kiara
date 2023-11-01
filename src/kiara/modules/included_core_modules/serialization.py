@@ -9,7 +9,7 @@ import abc
 from typing import Any, Mapping, Type, Union
 
 import orjson
-from pydantic import Field, validator
+from pydantic import Field, field_validator
 
 from kiara.models import KiaraModel
 from kiara.models.module import KiaraModuleConfig
@@ -36,7 +36,8 @@ class SerializeConfig(KiaraModuleConfig):
         description="The name of the serialization profile used to serialize the source value."
     )
 
-    @validator("value_type")
+    @field_validator("value_type")
+    @classmethod
     def validate_source_type(cls, value):
         if value == "serialization_config":
             raise ValueError(f"Invalid source type: {value}.")

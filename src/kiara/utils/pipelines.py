@@ -309,3 +309,33 @@ def find_pipeline_data_in_paths(
         pipelines[name] = pipeline
 
     return pipelines
+
+
+def extract_data_to_hash_from_pipeline_config(
+    pipeline_config: Mapping[str, Any]
+) -> Dict[str, Any]:
+
+    if "steps" not in pipeline_config:
+        return pipeline_config
+
+    step_configs = []
+    # TODO: make sure order is unique so hashes are stable?
+    for step in pipeline_config["steps"]:
+        step_module_config = extract_data_to_hash_from_pipeline_config(
+            step["module_config"]
+        )
+        data = {
+            "module_type": step["module_type"],
+            "module_config": step_module_config,
+            "step_id": step["step_id"],
+        }
+        step_configs.append(data)
+
+    result = {
+        "steps": step_configs,
+        "constants": pipeline_config.get("constants", {}),
+        "defaults": pipeline_config.get("defaults", {}),
+        "input_aliases": pipeline_config.get("input_aliases", {}),
+        "output_aliases": pipeline_config.get("output_aliases", {}),
+    }
+    return result

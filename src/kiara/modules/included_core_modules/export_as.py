@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Union
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 from kiara.exceptions import KiaraProcessingException
 from kiara.models.module import KiaraModuleConfig
@@ -15,7 +15,8 @@ class DataExportResult(BaseModel):
 
     files: List[str] = Field(description="A list of exported files.")
 
-    @validator("files", pre=True)
+    @field_validator("files", mode="before")
+    @classmethod
     def validate_files(cls, value):
 
         if isinstance(value, str):

@@ -4,10 +4,9 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Type, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Mapping, Type, Union
 
 import humanfriendly
-import orjson.orjson
 import structlog
 from pydantic import Field
 from rich import box
@@ -41,7 +40,7 @@ class FileValueType(KiaraModelValueBaseType[KiaraFile, FileTypeConfig]):
 
     """A file."""
 
-    _data_type_name = "file"
+    _data_type_name: ClassVar[str] = "file"
 
     @classmethod
     def retrieve_available_type_profiles(cls) -> Mapping[str, Mapping[str, Any]]:
@@ -118,7 +117,7 @@ class FileValueType(KiaraModelValueBaseType[KiaraFile, FileTypeConfig]):
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
 
-        data: Any = value.data
+        data: KiaraFile = value.data
         max_lines = render_config.get("max_lines", 34)
         try:
             lines = []
@@ -139,9 +138,9 @@ class FileValueType(KiaraModelValueBaseType[KiaraFile, FileTypeConfig]):
                 "",
                 "[b]File metadata:[/b]",
                 "",
-                data.json(option=orjson.OPT_INDENT_2),
+                data.model_dump_json(indent=2),
             ]
-            return "\n".join("lines")
+            return "\n".join(lines)
 
     def _pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
@@ -166,7 +165,7 @@ class FileValueType(KiaraModelValueBaseType[KiaraFile, FileTypeConfig]):
                 "",
                 "[b]File metadata:[/b]",
                 "",
-                data.json(option=orjson.OPT_INDENT_2),
+                data.model_dump_json(indent=2),
             ]
             preview = Panel(
                 "Binary file or non-utf8 enconding, not printing content...",
@@ -192,7 +191,7 @@ class FileBundleValueType(AnyType[KiaraFileBundle, FileTypeConfig]):
 
     """A bundle of files (like a folder, zip archive, etc.)."""
 
-    _data_type_name = "file_bundle"
+    _data_type_name: ClassVar[str] = "file_bundle"
 
     @classmethod
     def retrieve_available_type_profiles(cls) -> Mapping[str, Mapping[str, Any]]:

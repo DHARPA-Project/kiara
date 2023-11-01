@@ -9,6 +9,7 @@ import abc
 from typing import (
     TYPE_CHECKING,
     Any,
+    ClassVar,
     Dict,
     Generic,
     Iterable,
@@ -50,7 +51,7 @@ class NoneType(DataType[SpecialValue, DataTypeConfig]):
 
     """Type indicating a 'None' value."""
 
-    _data_type_name = "none"
+    _data_type_name: ClassVar[str] = "none"
 
     @classmethod
     def python_class(cls) -> Type:
@@ -96,7 +97,7 @@ class AnyType(
     this might or might not change).
     """
 
-    _data_type_name = "any"
+    _data_type_name: ClassVar[str] = "any"
 
     @classmethod
     def python_class(cls) -> Type:
@@ -185,7 +186,7 @@ class BytesType(AnyType[bytes, DataTypeConfig]):
 
     """An array of bytes."""
 
-    _data_type_name = "bytes"
+    _data_type_name: ClassVar[str] = "bytes"
 
     @classmethod
     def python_class(cls) -> Type:
@@ -230,7 +231,8 @@ class BytesType(AnyType[bytes, DataTypeConfig]):
 class StringTypeConfig(DataTypeConfig):
 
     allowed_strings: Union[None, List[str]] = Field(
-        description="A list of allowed strings, if empty or None, any string is allowed."
+        description="A list of allowed strings, if empty or None, any string is allowed.",
+        default=None,
     )
 
 
@@ -238,7 +240,7 @@ class StringType(AnyType[str, StringTypeConfig]):
 
     """A string."""
 
-    _data_type_name = "string"
+    _data_type_name: ClassVar[str] = "string"
 
     @classmethod
     def data_type_config_class(cls) -> Type[TYPE_CONFIG_CLS]:
@@ -309,7 +311,7 @@ class BooleanType(AnyType[bool, DataTypeConfig]):
 
     "A boolean."
 
-    _data_type_name = "boolean"
+    _data_type_name: ClassVar[str] = "boolean"
 
     @classmethod
     def python_class(cls) -> Type:
@@ -357,7 +359,7 @@ class DictValueType(AnyType[KiaraDict, DataTypeConfig]):
     [DictModel][kiara_plugin.core_types.models.DictModel] class.
     """
 
-    _data_type_name = "dict"
+    _data_type_name: ClassVar[str] = "dict"
 
     @classmethod
     def python_class(cls) -> Type:
@@ -528,7 +530,7 @@ class KiaraModelValueBaseType(
     This type should not be used by user-facing modules and/or operations.
     """
 
-    _data_type_name = None  # type: ignore
+    _data_type_name: ClassVar[str] = None  # type: ignore
 
     @classmethod
     def data_type_config_class(cls) -> Type[TYPE_CONFIG_CLS]:

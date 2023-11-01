@@ -8,11 +8,14 @@ import hashlib
 from typing import Tuple, Union
 
 import dag_cbor
+import mmh3
 from dag_cbor import IPLDKind
 from multiformats import CID, multihash
 from multiformats.multicodec import Multicodec
 from multiformats.multihash import Multihash
 from multiformats.varint import BytesLike
+
+KIARA_HASH_FUNCTION = mmh3.hash
 
 
 def compute_cid(
@@ -22,6 +25,7 @@ def compute_cid(
 ) -> Tuple[bytes, CID]:
 
     encoded = dag_cbor.encode(data)
+
     hash_func = multihash.get(hash_codec)
     digest = hash_func.digest(encoded)
 

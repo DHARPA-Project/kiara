@@ -125,7 +125,7 @@ class AliasRegistry(object):
                 is_default_store = True
                 self._default_alias_store = alias
 
-        event = AliasArchiveAddedEvent.construct(
+        event = AliasArchiveAddedEvent(
             kiara_id=self._kiara.id,
             alias_archive_id=archive.archive_id,
             alias_archive_alias=alias,

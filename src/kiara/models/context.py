@@ -65,7 +65,7 @@ class ContextInfo(KiaraModel):
             for k, err in errors.items():
                 comment = f"{comment}  - {k}: {err}"
 
-        result = ContextInfo.construct(
+        result = ContextInfo(
             kiara_id=kiara.id,
             value_ids=value_ids,
             aliases=aliases,

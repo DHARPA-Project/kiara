@@ -82,7 +82,7 @@ class ValueLink(Protocol):
     value_id: uuid.UUID
 
 
-NONE_PERSISTED_DATA = PersistedData.construct(
+NONE_PERSISTED_DATA = PersistedData(
     data_type="none",
     data_type_config={},
     serialization_profile="none",
@@ -166,7 +166,7 @@ class DataRegistry(object):
 
         # initialize special values
         special_value_cls = PythonClass.from_class(NoneType)
-        data_type_info = DataTypeInfo.construct(
+        data_type_info = DataTypeInfo(
             data_type_name="none",
             characteristics=DEFAULT_SCALAR_DATATYPE_CHARACTERISTICS,
             data_type_class=special_value_cls,
@@ -268,7 +268,7 @@ class DataRegistry(object):
                 is_default_store = True
                 self._default_data_store = alias
 
-        event = DataArchiveAddedEvent.construct(
+        event = DataArchiveAddedEvent(
             kiara_id=self._kiara.id,
             data_archive_id=archive.archive_id,
             data_archive_alias=alias,
@@ -424,7 +424,7 @@ class DataRegistry(object):
                 self.store_value(value=value_id, store_id=store_id)
 
         if not store.has_value(_value.value_id):
-            event = ValuePreStoreEvent.construct(kiara_id=self._kiara.id, value=_value)
+            event = ValuePreStoreEvent(kiara_id=self._kiara.id, value=_value)
             self._event_callback(event)
             persisted_value = store.store_value(_value)
             _value._is_stored = True
@@ -437,7 +437,7 @@ class DataRegistry(object):
         else:
             persisted_value = None
 
-        store_event = ValueStoredEvent.construct(kiara_id=self._kiara.id, value=_value)
+        store_event = ValueStoredEvent(kiara_id=self._kiara.id, value=_value)
         self._event_callback(store_event)
 
         return persisted_value

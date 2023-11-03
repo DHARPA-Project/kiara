@@ -219,7 +219,7 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
             "is_internal_operation": True,
         }
 
-        result = DeSerializeDetails.construct(**details)
+        result = DeSerializeDetails(**details)
         return result
 
     def find_deserialization_operations_for_type(

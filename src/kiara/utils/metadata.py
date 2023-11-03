@@ -30,7 +30,7 @@ def find_metadata_models(
             if _info.context.labels.get("package") == only_for_package:
                 temp[key] = _info
 
-        group = MetadataTypeClassesInfo.construct(
+        group = MetadataTypeClassesInfo(
             group_id=group.instance_id, group_alias=group.group_alias, item_infos=temp  # type: ignore
         )
 

@@ -97,7 +97,7 @@ class JobConfig(InputsManifest):
             raise InvalidValuesException(invalid_values=invalid)
 
         value_ids = values.get_all_value_ids()
-        return JobConfig.construct(
+        return JobConfig(
             module_type=module.module_type_name,
             module_config=module.config.dict(),
             inputs=value_ids,
@@ -189,7 +189,7 @@ class JobRecord(JobConfig):
         assert active_job.status == JobStatus.SUCCESS
         assert active_job.results is not None
 
-        job_details = JobRuntimeDetails.construct(
+        job_details = JobRuntimeDetails(
             job_log=active_job.job_log,
             submitted=active_job.submitted,
             started=active_job.started,  # type: ignore

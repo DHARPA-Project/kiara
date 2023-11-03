@@ -157,7 +157,7 @@ class FileSystemDestinyArchive(DestinyArchive):
 
         destiny_data = orjson.loads(destiny_path.read_text())
 
-        destiny = Destiny.construct(**destiny_data)
+        destiny = Destiny(**destiny_data)
         return destiny
 
 

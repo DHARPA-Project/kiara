@@ -72,7 +72,7 @@ def filter_operations(
         #         kiara=kiara, operation=op
         #     )
 
-    return OperationGroupInfo.construct(item_infos=result)  # type: ignore
+    return OperationGroupInfo(item_infos=result)  # type: ignore
 
 
 def create_operation(

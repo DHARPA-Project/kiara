@@ -319,9 +319,7 @@ class TypeInfoItemGroup(InfoItemGroup[TypeInfo]):
             k: cls.base_info_class().create_from_type_class(type_cls=v, kiara=kiara)
             for k, v in items.items()
         }
-        data_types_info = cls.model_construct(
-            group_title=group_title, item_infos=type_infos
-        )
+        data_types_info = cls(group_title=group_title, item_infos=type_infos)
         return data_types_info
 
 
@@ -341,7 +339,7 @@ class KiaraModelTypeInfo(TypeInfo[Type[KiaraModel]]):
         type_name = type_cls._kiara_model_id  # type: ignore
         schema = type_cls.schema()
 
-        return KiaraModelTypeInfo.construct(
+        return KiaraModelTypeInfo(
             type_name=type_name,
             documentation=doc,
             authors=authors_md,
@@ -406,7 +404,7 @@ class KiaraModelClassesInfo(TypeInfoItemGroup):
                 if info.context.labels.get("package") == only_for_package:
                     temp[key] = info
 
-            group = KiaraModelClassesInfo.construct(
+            group = KiaraModelClassesInfo(
                 group_id=group.instance_id, group_alias=group.group_alias, item_infos=temp  # type: ignore
             )
 
@@ -791,7 +789,7 @@ class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
             lineage = None
 
         try:
-            result = DataTypeClassInfo.construct(
+            result = DataTypeClassInfo(
                 type_name=type_cls._data_type_name,  # type: ignore
                 python_class=PythonClass.from_class(type_cls),
                 value_cls=PythonClass.from_class(type_cls.python_class()),
@@ -898,7 +896,7 @@ class DataTypeClassesInfo(TypeInfoItemGroup):
     #     type_infos = {
     #         k: cls.base_info_class().create_from_type_class(v) for k, v in items.items()  # type: ignore
     #     }
-    #     data_types_info = cls.construct(group_alias=group_title, item_infos=type_infos)  # type: ignore
+    #     data_types_info = cls(group_alias=group_title, item_infos=type_infos)  # type: ignore
     #     return data_types_info
     #
     # @classmethod
@@ -912,7 +910,7 @@ class DataTypeClassesInfo(TypeInfoItemGroup):
     #     type_infos = {
     #         k: cls.base_info_class().create_from_type_class(v, kiara=kiara) for k, v in items.items()  # type: ignore
     #     }
-    #     data_types_info = cls.construct(group_alias=group_alias, item_infos=type_infos)  # type: ignore
+    #     data_types_info = cls(group_alias=group_alias, item_infos=type_infos)  # type: ignore
     #     data_types_info._kiara = kiara
     #     return data_types_info
 
@@ -995,7 +993,7 @@ class ModuleTypeInfo(TypeInfo[Type["KiaraModule"]]):
     def create_from_type_class(cls, type_cls: Type["KiaraModule"], kiara: "Kiara") -> "ModuleTypeInfo":  # type: ignore
 
         module_attrs = cls.extract_module_attributes(module_cls=type_cls)
-        return cls.construct(**module_attrs)
+        return cls(**module_attrs)
 
     @classmethod
     def base_class(self) -> Type["KiaraModule"]:
@@ -1107,7 +1105,7 @@ class OperationTypeInfo(TypeInfo[Type["OperationType"]]):
         python_class = PythonClass.from_class(type_cls)
         properties_md = ContextMetadataModel.from_class(type_cls)
 
-        return OperationTypeInfo.construct(
+        return OperationTypeInfo(
             type_name=type_cls._operation_type_name,  # type: ignore
             documentation=doc,
             authors=authors_md,
@@ -1183,7 +1181,7 @@ class PipelineStructureInfo(ItemInfo):
             dt = kiara.type_registry.get_data_type_instance(
                 type_name=schema.type, type_config=schema.type_config
             )
-            dt_info = FieldInfo.construct(
+            dt_info = FieldInfo(
                 field_name=field_name,
                 field_schema=schema,
                 data_type_info=dt.info,
@@ -1196,7 +1194,7 @@ class PipelineStructureInfo(ItemInfo):
             dt = kiara.type_registry.get_data_type_instance(
                 type_name=schema.type, type_config=schema.type_config
             )
-            dt_info = FieldInfo.construct(
+            dt_info = FieldInfo(
                 field_name=field_name,
                 field_schema=schema,
                 data_type_info=dt.info,
@@ -1345,7 +1343,7 @@ class OperationInfo(ItemInfo):
                 dt = kiara.type_registry.get_data_type_instance(
                     type_name=schema.type, type_config=schema.type_config
                 )
-                dt_info = FieldInfo.construct(
+                dt_info = FieldInfo(
                     field_name=field_name,
                     field_schema=schema,
                     data_type_info=dt.info,
@@ -1359,7 +1357,7 @@ class OperationInfo(ItemInfo):
                     characteristics=DataTypeCharacteristics(),
                     data_type_class=dtc,
                 )
-                dt_info = FieldInfo.construct(
+                dt_info = FieldInfo(
                     field_name=field_name,
                     field_schema=schema,
                     data_type_info=dti,
@@ -1373,7 +1371,7 @@ class OperationInfo(ItemInfo):
             dt = kiara.type_registry.get_data_type_instance(
                 type_name=schema.type, type_config=schema.type_config
             )
-            dt_info = FieldInfo.construct(
+            dt_info = FieldInfo(
                 field_name=field_name,
                 field_schema=schema,
                 data_type_info=dt.info,
@@ -1381,7 +1379,7 @@ class OperationInfo(ItemInfo):
             )
             output_fields[field_name] = dt_info
 
-        op_info = OperationInfo.construct(
+        op_info = OperationInfo(
             type_name=operation.operation_id,
             operation_types=list(op_types),
             input_fields=input_fields,
@@ -1451,7 +1449,7 @@ class OperationGroupInfo(InfoItemGroup):
             for k, v in items.items()
         }
 
-        op_group_info = cls.construct(group_title=group_title, item_infos=op_infos)
+        op_group_info = cls(group_title=group_title, item_infos=op_infos)
         return op_group_info
 
     # type_name: Literal["operation_type"] = "operation_type"

@@ -168,7 +168,7 @@ class WorkflowInfo(ItemInfo):
     @classmethod
     def create_from_workflow(cls, workflow: "Workflow") -> "WorkflowInfo":
 
-        wf_info = WorkflowInfo.model_construct(
+        wf_info = WorkflowInfo(
             type_name=str(workflow.workflow_id),
             workflow_metadata=workflow.workflow_metadata,
             workflow_state_ids=workflow.all_state_ids,
@@ -310,7 +310,7 @@ class WorkflowGroupInfo(InfoItemGroup):
         }
         if alias_map is None:
             alias_map = {}
-        workflow_group_info = cls.construct(
+        workflow_group_info = cls(
             group_title=group_title, item_infos=workflow_infos, aliases=alias_map
         )
         return workflow_group_info

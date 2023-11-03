@@ -78,7 +78,7 @@ class OperationDetails(KiaraModel):
     def create_operation_details(cls, **details: Any) -> Self:
 
         if PYDANTIC_USE_CONSTRUCT:
-            result = cls.model_construct(**details)
+            result = cls(**details)
         else:
             result = cls(**details)
 
@@ -204,7 +204,7 @@ class PipelineOperationConfig(OperationConfig):
             module_map=self.module_map,
         )
         # ODO: pydantic refactoring -- maybe test that the dumped config is equivalent to the original one?
-        result = pipeline_config.model_dump(warnings=False)
+        result = pipeline_config.model_dump()
 
         return result
 

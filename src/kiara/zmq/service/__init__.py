@@ -96,7 +96,7 @@ class KiaraZmqAPI(object):
 
         os.makedirs(os.path.dirname(service_info_file), exist_ok=True)
 
-        details = KiaraZmqServiceDetails.construct(
+        details = KiaraZmqServiceDetails(
             context_name=self._api_wrap.kiara_context_name,
             process_id=os.getpid(),
             stdout=stdout,

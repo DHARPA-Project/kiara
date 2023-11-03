@@ -82,7 +82,7 @@ class ModuleRegistry(object):
             else:
                 result[type_name] = md
 
-        return ModuleTypesInfo.construct(group_alias=alias, item_infos=result)  # type: ignore
+        return ModuleTypesInfo(group_alias=alias, item_infos=result)  # type: ignore
 
     def create_module(self, manifest: Union[Manifest, str]) -> "KiaraModule":
         """
@@ -93,7 +93,7 @@ class ModuleRegistry(object):
             manifest: the module configuration
         """
         if isinstance(manifest, str):
-            manifest = Manifest.construct(module_type=manifest, module_config={})
+            manifest = Manifest(module_type=manifest, module_config={})
 
         m_cls: Type[KiaraModule] = self.get_module_class(manifest.module_type)
 
@@ -123,7 +123,7 @@ class ModuleRegistry(object):
 
         if manifest.module_type in self.get_module_type_names():
             kiara_module = m_cls(module_config=manifest.module_config)
-            kiara_module._manifest_cache = Manifest.construct(
+            kiara_module._manifest_cache = Manifest(
                 module_type=manifest.module_type,
                 module_config=manifest.module_config,
                 is_resolved=manifest.is_resolved,

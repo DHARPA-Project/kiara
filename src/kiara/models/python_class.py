@@ -49,7 +49,7 @@ class PythonClass(KiaraModel):
             ctx_md = ContextMetadataModel.from_class(item_cls=item_cls)
             conf["items"] = ctx_md
 
-        result = PythonClass.construct(**conf)
+        result = PythonClass(**conf)
         result._cls_cache = item_cls
         return result
 
@@ -114,11 +114,11 @@ class KiaraModuleInstance(PythonClass):
             "full_name": full_name,
         }
 
-        conf["module_config"] = module.config
+        conf["module_config"] = module.config.model_dump()
         conf["inputs_schema"] = module.inputs_schema
         conf["outputs_schema"] = module.outputs_schema
 
-        result = KiaraModuleInstance.construct(**conf)
+        result = KiaraModuleInstance(**conf)
         result._cls_cache = item_cls
         result._module_instance_cache = module
         return result

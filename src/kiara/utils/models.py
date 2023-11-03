@@ -27,7 +27,7 @@ def create_pydantic_model(
 
     if _use_pydantic_construct:
         raise NotImplementedError()
-        return model_cls.construct(**field_values)
+        return model_cls(**field_values)
     else:
         return model_cls(**field_values)
 

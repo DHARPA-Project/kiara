@@ -245,7 +245,7 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
                 )
 
         output_field = outp_match[0]
-        filter = Filter.construct(
+        filter = Filter(
             operation=op,
             input_name=input_field,
             output_name=output_field,

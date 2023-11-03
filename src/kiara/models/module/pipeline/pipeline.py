@@ -300,7 +300,7 @@ class Pipeline(object):
             d = self.get_step_details(step_id)
             step_states[step_id] = d
 
-        details = PipelineState.construct(
+        details = PipelineState(
             kiara_id=self._data_registry.kiara_id,
             pipeline_id=self.pipeline_id,
             pipeline_status=status,
@@ -334,7 +334,7 @@ class Pipeline(object):
         else:
             status = StepStatus.INPUTS_INVALID
 
-        details = StepDetails.construct(
+        details = StepDetails(
             kiara_id=self._data_registry.kiara_id,
             pipeline_id=self.pipeline_id,
             step=self._structure.get_step(step_id=step_id),

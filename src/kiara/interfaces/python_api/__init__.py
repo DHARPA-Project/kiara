@@ -1396,7 +1396,7 @@ class KiaraAPI(object):
                 self.context.alias_registry.register_aliases(
                     value_obj.value_id, *alias, allow_overwrite=allow_overwrite
                 )
-            result = StoreValueResult.construct(
+            result = StoreValueResult(
                 value=value_obj,
                 aliases=sorted(alias) if alias else [],
                 error=None,
@@ -1404,7 +1404,7 @@ class KiaraAPI(object):
             )
         except Exception as e:
             log_exception(e)
-            result = StoreValueResult.construct(
+            result = StoreValueResult(
                 value=value_obj,
                 aliases=sorted(alias) if alias else [],
                 error=str(e),
@@ -1438,7 +1438,7 @@ class KiaraAPI(object):
             store_result = self.store_value(value=value_obj, alias=aliases)
             result[field_name] = store_result
 
-        return StoreValuesResult.model_construct(root=result)
+        return StoreValuesResult(root=result)
 
     # ------------------------------------------------------------------------------------------------------------------
     # operation-related methods
@@ -2030,16 +2030,12 @@ class KiaraAPI(object):
 
                 workflow = self.get_workflow(workflow=workflow_id)
                 workflows[workflow.workflow_id] = workflow
-            return WorkflowsMap.model_construct(
-                root={str(k): v for k, v in workflows.items()}
-            )
+            return WorkflowsMap(root={str(k): v for k, v in workflows.items()})
         else:
             for workflow_id in self.context.workflow_registry.all_workflow_ids:
                 workflow = self.get_workflow(workflow=workflow_id)
                 workflows[workflow_id] = workflow
-            return WorkflowsMap.model_construct(
-                root={str(k): v for k, v in workflows.items()}
-            )
+            return WorkflowsMap(root={str(k): v for k, v in workflows.items()})
 
     def list_workflow_aliases(self, **matcher_params) -> "WorkflowsMap":
         """List all available workflow sessions that have an alias, indexed by alias."""
@@ -2069,7 +2065,7 @@ class KiaraAPI(object):
                 for a in sorted(all_aliases.keys())
             }
 
-        return WorkflowsMap.model_construct(root=result)
+        return WorkflowsMap(root=result)
 
     def retrieve_workflows_info(self, **matcher_params: Any) -> WorkflowGroupInfo:
         """Get a map info instances for all available workflows, indexed by (stringified) workflow-id."""

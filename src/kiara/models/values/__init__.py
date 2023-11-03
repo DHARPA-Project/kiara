@@ -31,6 +31,6 @@ class DataTypeCharacteristics(BaseModel):
     )
 
 
-DEFAULT_SCALAR_DATATYPE_CHARACTERISTICS = DataTypeCharacteristics.construct(
+DEFAULT_SCALAR_DATATYPE_CHARACTERISTICS = DataTypeCharacteristics(
     is_scalar=True, is_json_serializable=True
 )

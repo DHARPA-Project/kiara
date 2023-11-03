@@ -253,7 +253,7 @@ class JobRegistry(object):
             if self._default_job_store is None:
                 self._default_job_store = alias
 
-        event = JobArchiveAddedEvent.construct(
+        event = JobArchiveAddedEvent(
             kiara_id=self._kiara.id,
             job_archive_id=archive.archive_id,
             job_archive_alias=alias,
@@ -334,14 +334,14 @@ class JobRegistry(object):
             module_type=job_record.module_type,
         )
 
-        pre_store_event = JobRecordPreStoreEvent.construct(
+        pre_store_event = JobRecordPreStoreEvent(
             kiara_id=self._kiara.id, job_record=job_record
         )
         self._event_callback(pre_store_event)
 
         store.store_job_record(job_record)
 
-        stored_event = JobRecordStoredEvent.construct(
+        stored_event = JobRecordStoredEvent(
             kiara_id=self._kiara.id, job_record=job_record
         )
         self._event_callback(stored_event)

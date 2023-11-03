@@ -36,7 +36,7 @@ def find_archive_types(
             if info.context.labels.get("package") == only_for_package:
                 temp[key] = info  # type: ignore
 
-        group = ArchiveTypeClassesInfo.construct(
+        group = ArchiveTypeClassesInfo(
             group_id=group.group_id, group_alias=group.group_alias, item_infos=temp  # type: ignore
         )
 

@@ -97,7 +97,7 @@ class DestinyRegistry(object):
                 is_default_store = True
                 self._default_destiny_store = alias
 
-        event = DestinyArchiveAddedEvent.construct(
+        event = DestinyArchiveAddedEvent(
             kiara_id=self._kiara.id,
             destiny_archive_id=archive.archive_id,
             destiny_archive_alias=alias,

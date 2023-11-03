@@ -184,7 +184,7 @@ def start_zmq_service(
         response = zmq_client.request("ping")
         assert response == "pong"
 
-        return KiaraZmqServiceDetails.construct(
+        return KiaraZmqServiceDetails(
             context_name=api_wrap.kiara_context_name,
             process_id=_process_id,
             stdout=_stdout,

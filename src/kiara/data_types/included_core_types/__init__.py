@@ -480,7 +480,7 @@ class DictValueType(AnyType[KiaraDict, DataTypeConfig]):
 
             rendered = Syntax(json_string, "json")
             related_scenes["data"] = None
-            related_scenes["schema"] = RenderScene.construct(
+            related_scenes["schema"] = RenderScene(
                 title="schema",
                 description="The (json) schema for the data.",
                 manifest_hash=manifest.manifest_hash,
@@ -492,7 +492,7 @@ class DictValueType(AnyType[KiaraDict, DataTypeConfig]):
             json_string = orjson_dumps(schema, option=orjson.OPT_INDENT_2)
 
             rendered = Syntax(json_string, "json")
-            related_scenes["data"] = RenderScene.construct(
+            related_scenes["data"] = RenderScene(
                 title="data",
                 description="The actual data of the dictionary.",
                 manifest_hash=manifest.manifest_hash,

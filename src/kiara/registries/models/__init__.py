@@ -85,7 +85,7 @@ class ModelRegistry(object):
             if info.context.labels.get("package") == package_name:
                 temp[key] = info
 
-        group = KiaraModelClassesInfo.construct(
+        group = KiaraModelClassesInfo(
             group_alias=f"kiara_models.{package_name}", item_infos=temp  # type: ignore
         )
 

@@ -282,7 +282,7 @@ class TypeRegistry(object):
             else:
                 result[type_name] = md
 
-        _result = DataTypeClassesInfo.construct(group_alias=alias, item_infos=result)  # type: ignore
+        _result = DataTypeClassesInfo(group_alias=alias, item_infos=result)  # type: ignore
         _result._kiara = self._kiara
         return _result
 

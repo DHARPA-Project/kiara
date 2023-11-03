@@ -50,7 +50,7 @@
 #             lineage = None
 #
 #         try:
-#             result = DataTypeClassInfo.construct(
+#             result = DataTypeClassInfo(
 #                 type_name=type_cls._data_type_name,  # type: ignore
 #                 python_class=PythonClass.from_class(type_cls),
 #                 value_cls=PythonClass.from_class(type_cls.python_class()),
@@ -155,7 +155,7 @@
 #         type_infos = {
 #             k: cls.base_info_class().create_from_type_class(v) for k, v in items.items()  # type: ignore
 #         }
-#         data_types_info = cls.construct(group_alias=group_title, item_infos=type_infos)  # type: ignore
+#         data_types_info = cls(group_alias=group_title, item_infos=type_infos)  # type: ignore
 #         return data_types_info
 #
 #     @classmethod
@@ -169,7 +169,7 @@
 #         type_infos = {
 #             k: cls.base_info_class().create_from_type_class(v, kiara=kiara) for k, v in items.items()  # type: ignore
 #         }
-#         data_types_info = cls.construct(group_alias=group_alias, item_infos=type_infos)  # type: ignore
+#         data_types_info = cls(group_alias=group_alias, item_infos=type_infos)  # type: ignore
 #         data_types_info._kiara = kiara
 #         return data_types_info
 #

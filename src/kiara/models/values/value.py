@@ -1512,17 +1512,13 @@ class ValueMapReadOnly(ValueMap):  # type: ignore
 
         values = {k: data_registry.get_value(v) for k, v in value_ids.items()}
         values_schema = {k: v.value_schema for k, v in values.items()}
-        return ValueMapReadOnly.construct(
-            value_items=values, values_schema=values_schema
-        )
+        return ValueMapReadOnly(value_items=values, values_schema=values_schema)
 
     @classmethod
     def create_from_values(cls, **values: Value) -> "ValueMapReadOnly":
 
         values_schema = {k: v.value_schema for k, v in values.items()}
-        return ValueMapReadOnly.model_construct(
-            value_items=values, values_schema=values_schema
-        )
+        return ValueMapReadOnly(value_items=values, values_schema=values_schema)
 
     value_items: Dict[str, Value] = Field(
         description="The values contained in this set."

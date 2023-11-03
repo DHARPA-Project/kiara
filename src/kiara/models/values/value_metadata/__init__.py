@@ -83,7 +83,7 @@ class MetadataTypeInfo(TypeInfo):
         type_name = type_cls._metadata_key  # type: ignore
         schema = type_cls.schema()
 
-        return MetadataTypeInfo.construct(
+        return MetadataTypeInfo(
             type_name=type_name,
             documentation=doc,
             authors=authors_md,

@@ -133,7 +133,7 @@ class EnvironmentRegistry(object):
             d["metadata_hash"] = str(hashes[k2])
             d["metadata_schema"] = schemas[k]
             data[k2] = d
-        model = cls.construct(**data)  # type: ignore
+        model = cls(**data)  # type: ignore
         self._full_env_model = model
         return self._full_env_model
 

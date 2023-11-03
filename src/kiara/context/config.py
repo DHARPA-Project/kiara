@@ -328,7 +328,7 @@ class KiaraConfig(BaseSettings):
                     )
                 )
             }
-            data_store = KiaraArchiveConfig.construct(
+            data_store = KiaraArchiveConfig(
                 archive_id=str(data_store_id),
                 archive_type=data_store_type,
                 config=data_archive_config,
@@ -349,7 +349,7 @@ class KiaraConfig(BaseSettings):
                     )
                 )
             }
-            job_store = KiaraArchiveConfig.construct(
+            job_store = KiaraArchiveConfig(
                 archive_id=str(job_store_id),
                 archive_type=job_store_type,
                 config=job_archive_config,
@@ -370,7 +370,7 @@ class KiaraConfig(BaseSettings):
                     )
                 )
             }
-            alias_store = KiaraArchiveConfig.construct(
+            alias_store = KiaraArchiveConfig(
                 archive_id=str(alias_store_id),
                 archive_type=alias_store_type,
                 config=alias_store_config,
@@ -395,7 +395,7 @@ class KiaraConfig(BaseSettings):
                     )
                 )
             }
-            workflow_store = KiaraArchiveConfig.construct(
+            workflow_store = KiaraArchiveConfig(
                 archive_id=str(workflow_store_id),
                 archive_type=workflow_store_type,
                 config=workflow_store_config,
@@ -415,7 +415,7 @@ class KiaraConfig(BaseSettings):
                     )
                 )
             }
-            destiny_store = KiaraArchiveConfig.construct(
+            destiny_store = KiaraArchiveConfig(
                 archive_id=str(destiny_store_id),
                 archive_type=destiny_store_type,
                 config=destiny_store_config,

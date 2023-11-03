@@ -54,7 +54,7 @@ class ArchiveTypeInfo(TypeInfo):
         properties_md = ContextMetadataModel.from_class(type_cls)
         type_name = type_cls._archive_type_name  # type: ignore
 
-        return ArchiveTypeInfo.construct(
+        return ArchiveTypeInfo(
             type_name=type_name,
             documentation=doc,
             authors=authors_md,

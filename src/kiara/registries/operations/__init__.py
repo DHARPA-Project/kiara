@@ -164,7 +164,7 @@ class OperationRegistry(object):
             else:
                 result[type_name] = md
 
-        return OperationTypeClassesInfo.construct(group_alias=alias, item_infos=result)  # type: ignore
+        return OperationTypeClassesInfo(group_alias=alias, item_infos=result)  # type: ignore
 
     @property
     def operation_type_classes(
@@ -250,7 +250,7 @@ class OperationRegistry(object):
                 else:
                     module_config = op_config.retrieve_module_config(kiara=self._kiara)
 
-                    manifest = Manifest.model_construct(
+                    manifest = Manifest(
                         module_type=module_type, module_config=module_config
                     )
 
@@ -323,7 +323,7 @@ class OperationRegistry(object):
                                     kiara=self._kiara
                                 )
 
-                                manifest = Manifest.model_construct(
+                                manifest = Manifest(
                                     module_type="pipeline",
                                     module_config=module_config,
                                 )
@@ -355,7 +355,7 @@ class OperationRegistry(object):
                             # new_module_config = dict(base_config)
                             # new_module_config.update(module_config)
                             #
-                            # manifest = Manifest.construct(module_type=operation.module_type,
+                            # manifest = Manifest(module_type=operation.module_type,
                             #                       module_config=new_module_config)
 
                         for op_type_name, _op in ops.items():
@@ -520,7 +520,7 @@ class OperationRegistry(object):
                 f"Can't register pipeline with id '{_operation_id}': operation id already in use."
             )
 
-        manifest = Manifest.construct(
+        manifest = Manifest(
             module_type="pipeline", module_config=pipeline_config.dict()
         )
         module = self._kiara.module_registry.create_module(manifest)

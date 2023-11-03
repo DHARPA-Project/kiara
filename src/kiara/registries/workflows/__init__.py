@@ -185,7 +185,7 @@ class WorkflowRegistry(object):
                 is_default_store = True
                 self._default_alias_store = alias
 
-        event = WorkflowArchiveAddedEvent.construct(
+        event = WorkflowArchiveAddedEvent(
             kiara_id=self._kiara.id,
             workflow_archive_id=archive.archive_id,
             workflow_archive_alias=alias,

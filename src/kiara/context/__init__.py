@@ -419,7 +419,7 @@ class Kiara(object):
                     persisted_data=None,
                 )
 
-        return StoreValuesResult.model_construct(root=stored)
+        return StoreValuesResult(root=stored)
 
     def create_context_summary(self) -> ContextInfo:
         return ContextInfo.create_from_context(kiara=self)
@@ -472,7 +472,7 @@ class KiaraContextInfo(KiaraModel):
 
         # metadata_types = find_metadata_models(only_for_package=package_filter)
 
-        return KiaraContextInfo.construct(
+        return KiaraContextInfo(
             kiara_id=kiara.id,
             package_filter=package_filter,
             data_types=data_types,

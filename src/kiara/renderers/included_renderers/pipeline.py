@@ -77,7 +77,7 @@ class PipelineRendererHtml(BaseJinjaRenderer[Type[Pipeline], RenderInputsSchema]
         self, instance: Any, render_config: RenderInputsSchema
     ) -> Mapping[str, Any]:
 
-        inputs = render_config.dict()
+        inputs = render_config.model_dump()
         inputs["pipeline"] = instance
         return inputs
 
@@ -112,7 +112,7 @@ class PipelineRendererMarkdown(BaseJinjaRenderer[Type[Pipeline], RenderInputsSch
         self, instance: Any, render_config: RenderInputsSchema
     ) -> Mapping[str, Any]:
 
-        inputs = render_config.dict()
+        inputs = render_config.model_dump()
         inputs["pipeline"] = instance
         return inputs
 

@@ -521,7 +521,7 @@ class OperationRegistry(object):
             )
 
         manifest = Manifest(
-            module_type="pipeline", module_config=pipeline_config.dict()
+            module_type="pipeline", module_config=pipeline_config.model_dump()
         )
         module = self._kiara.module_registry.create_module(manifest)
 

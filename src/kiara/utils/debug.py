@@ -141,7 +141,7 @@ def create_post_run_table(
                     module.module_type_name
                 ].documentation.full_doc,
             )
-            if module_config_is_empty(module.config.dict()):
+            if module_config_is_empty(module.config.model_dump()):
                 table.add_row("module_config", "-- no config --")
             else:
                 table.add_row("module_config", module.config)

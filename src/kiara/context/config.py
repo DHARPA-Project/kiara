@@ -300,7 +300,7 @@ class KiaraConfig(BaseSettings):
             )
             context_file.parent.mkdir(parents=True, exist_ok=True)
             with open(context_file, "wt") as f:
-                yaml.dump(context.dict(), f)
+                yaml.dump(context.model_dump(), f)
 
         context._context_config_path = context_file
 
@@ -460,7 +460,7 @@ class KiaraConfig(BaseSettings):
 
         context_file.parent.mkdir(parents=True, exist_ok=True)
         with open(context_file, "wt") as f:
-            yaml.dump(context_config.dict(), f)
+            yaml.dump(context_config.model_dump(), f)
 
         context_config._context_config_path = context_file
 
@@ -528,7 +528,7 @@ class KiaraConfig(BaseSettings):
 
         with path.open("wt") as f:
             yaml.dump(
-                self.dict(
+                self.model_dump(
                     exclude={
                         "context",
                         "auto_generate_contexts",

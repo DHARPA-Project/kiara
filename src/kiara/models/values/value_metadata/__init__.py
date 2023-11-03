@@ -64,7 +64,7 @@ class ValueMetadata(KiaraModel):
         return self._metadata_key  # type: ignore
 
     def _retrieve_data_to_hash(self) -> Any:
-        return {"metadata": self.dict(), "schema": self.schema_json()}
+        return {"metadata": self.model_dump(), "schema": self.schema_json()}
 
 
 class MetadataTypeInfo(TypeInfo):

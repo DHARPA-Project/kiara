@@ -397,7 +397,7 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         if self._manifest_cache is None:
             self._manifest_cache = Manifest(
                 module_type=self.module_type_name,
-                module_config=self.config.dict(),
+                module_config=self.config.model_dump(),
                 is_resolved=True,
             )
         return self._manifest_cache
@@ -505,7 +505,7 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         result_pedigree = ValuePedigree(
             kiara_id=kiara.id,
             module_type=self.module_type_name,
-            module_config=self.config.dict(),
+            module_config=self.config.model_dump(),
             inputs={k: v.value_id for k, v in _inputs.items()},
             environments=environments,
         )

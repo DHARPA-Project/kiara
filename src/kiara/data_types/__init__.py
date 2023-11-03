@@ -103,7 +103,7 @@ class DataTypeConfig(BaseModel):
     def config_hash(self) -> int:
 
         if self._config_hash is None:
-            _d = self.dict()
+            _d = self.model_dump()
             hashes = DeepHash(_d)
             self._config_hash = hashes[_d]
         return self._config_hash
@@ -113,7 +113,7 @@ class DataTypeConfig(BaseModel):
         if self.__class__ != other.__class__:
             return False
 
-        return self.dict() == other.dict()
+        return self.model_dump() == other.model_dump()
 
     def __hash__(self):
 
@@ -226,7 +226,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
         self._info = DataTypeInfo(
             data_type_name=self.data_type_name,
-            data_type_config=self.type_config.dict(),
+            data_type_config=self.type_config.model_dump(),
             characteristics=self.characteristics,
             data_type_class=PythonClass.from_class(self.__class__),
         )
@@ -262,7 +262,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
         serialized_data = {
             "data_type": self.data_type_name,
-            "data_type_config": self.type_config.dict(),
+            "data_type_config": self.type_config.model_dump(),
             "data": _data,
             "serialization_profile": "json",
             "metadata": {

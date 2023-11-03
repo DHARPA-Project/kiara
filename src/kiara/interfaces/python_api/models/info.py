@@ -1611,7 +1611,7 @@ class RendererInfo(ItemInfo):
         properties_md = ContextMetadataModel.from_class(instance.__class__)
 
         renderer_name = instance._renderer_name  # type: ignore
-        renderer_config = instance.renderer_config.dict()
+        renderer_config = instance.renderer_config.model_dump()
         renderer_cls = PythonClass.from_class(item_cls=instance.__class__)
         supported_inputs = list(instance.supported_inputs_descs)
         supported_python_classes = [

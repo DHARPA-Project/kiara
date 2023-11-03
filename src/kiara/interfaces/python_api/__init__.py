@@ -732,7 +732,7 @@ class KiaraAPI(object):
                     pipeline_conf = PipelineConfig.from_file(
                         path=operation, kiara=self.context
                     )
-                    _module_config = pipeline_conf.dict()
+                    _module_config = pipeline_conf.model_dump()
                 except Exception as e:
                     log_exception(e)
                     _module_config = get_data_from_file(operation)
@@ -1636,7 +1636,7 @@ class KiaraAPI(object):
                 extra_output_aliases=extra_output_aliases,
             )
             manifest = Manifest(
-                module_type="pipeline", module_config=pipeline_config.dict()
+                module_type="pipeline", module_config=pipeline_config.model_dump()
             )
             module = self.context.module_registry.create_module(manifest=manifest)
             operation = Operation.create_from_module(module, doc=pipeline_config.doc)

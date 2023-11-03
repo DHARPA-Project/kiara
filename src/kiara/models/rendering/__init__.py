@@ -107,7 +107,7 @@ class RenderValueResult(KiaraModel):
                 if v is None:
                     related_scenes[k] = "-- disabled --"
                 else:
-                    related_scenes[k] = v.dict()
+                    related_scenes[k] = v.model_dump()
             rel_scenes_json = orjson_dumps(related_scenes, option=orjson.OPT_INDENT_2)
             table.add_row(
                 "related scenes",

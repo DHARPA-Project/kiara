@@ -779,7 +779,7 @@ def extract_renderable(
         result = {}
         for k, v in item.items():
             if isinstance(v, BaseModel):
-                v = v.dict()
+                v = v.model_dump()
             result[k] = v
         return orjson_dumps(
             result, option=orjson.OPT_INDENT_2 | orjson.OPT_NON_STR_KEYS

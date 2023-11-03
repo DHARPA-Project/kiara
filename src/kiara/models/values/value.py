@@ -989,7 +989,9 @@ class Value(ValueDetails):
 
         flat = {}
         for k, v in result.items():
-            if hasattr(v, "dict"):
+            if hasattr(v, "model_dump"):
+                flat[k] = v.model_dump()
+            elif hasattr(v, "dict"):
                 flat[k] = v.dict()
             else:
                 flat[k] = v

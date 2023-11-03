@@ -58,7 +58,7 @@ class MetadataValueType(KiaraModelValueBaseType[Metadata, MetadataTypeConfig]):
 
         serialized_data = {
             "data_type": self.data_type_name,
-            "data_type_config": self.type_config.dict(),
+            "data_type_config": self.type_config.model_dump(),
             "data": _data,
             "serialization_profile": "copy",
             "metadata": {

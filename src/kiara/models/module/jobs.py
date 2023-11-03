@@ -99,7 +99,7 @@ class JobConfig(InputsManifest):
         value_ids = values.get_all_value_ids()
         return JobConfig(
             module_type=module.module_type_name,
-            module_config=module.config.dict(),
+            module_config=module.config.model_dump(),
             inputs=value_ids,
         )
 

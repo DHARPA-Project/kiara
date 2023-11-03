@@ -253,7 +253,7 @@ class Operation(Manifest):
 
         operation = Operation(
             module_type=module.module_type_name,
-            module_config=module.config.dict(),
+            module_config=module.config.model_dump(),
             operation_id=op_id,
             operation_details=details,
             module_details=KiaraModuleInstance.from_module(module),

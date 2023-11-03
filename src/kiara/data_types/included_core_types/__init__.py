@@ -198,7 +198,7 @@ class BytesType(AnyType[bytes, DataTypeConfig]):
 
         serialized_data = {
             "data_type": self.data_type_name,
-            "data_type_config": self.type_config.dict(),
+            "data_type_config": self.type_config.model_dump(),
             "data": _data,
             "serialization_profile": "raw",
             "metadata": {
@@ -259,7 +259,7 @@ class StringType(AnyType[str, StringTypeConfig]):
 
         serialized_data = {
             "data_type": self.data_type_name,
-            "data_type_config": self.type_config.dict(),
+            "data_type_config": self.type_config.model_dump(),
             "data": _data,
             "serialization_profile": "raw",
             "metadata": {
@@ -398,8 +398,8 @@ class DictValueType(AnyType[KiaraDict, DataTypeConfig]):
             schema = {"title": "dict", "type": "object"}
             dict_data = data
         elif isinstance(data, BaseModel):
-            dict_data = data.dict()
-            schema = data.schema()
+            dict_data = data.model_dump()
+            schema = data.model_json_schema()
         elif isinstance(data, str):
             try:
                 dict_data = orjson.loads(data)
@@ -413,7 +413,7 @@ class DictValueType(AnyType[KiaraDict, DataTypeConfig]):
         result = {
             "dict_data": dict_data,
             "data_schema": schema,
-            "python_class": PythonClass.from_class(python_cls).dict(),
+            "python_class": PythonClass.from_class(python_cls).model_dump(),
         }
         return KiaraDict(**result)
 
@@ -453,7 +453,7 @@ class DictValueType(AnyType[KiaraDict, DataTypeConfig]):
 
     def serialize(self, data: KiaraDict) -> "SerializedData":
 
-        result = self.serialize_as_json(data.dict())
+        result = self.serialize_as_json(data.model_dump())
         return result
 
     def render_as__terminal_renderable(

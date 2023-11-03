@@ -657,7 +657,7 @@ class Workflow(object):
                 elif step_details.status == StepStatus.INPUTS_READY:
                     job_config = JobConfig(
                         module_type=step_details.step.module_type,
-                        module_config=step_details.step.module.config.dict(),
+                        module_config=step_details.step.module.config.model_dump(),
                         inputs=step_details.inputs,
                     )
                     match = self._kiara.job_registry.find_matching_job_record(
@@ -1008,7 +1008,7 @@ class Workflow(object):
         step = PipelineStep(
             step_id=step_id,
             module_type=module.module_type_name,
-            module_config=module.config.dict(),
+            module_config=module.config.model_dump(),
             module_details=KiaraModuleInstance.from_module(module=module),
             doc=doc,
             manifest_src=manifest_src,

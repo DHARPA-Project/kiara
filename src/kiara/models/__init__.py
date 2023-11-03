@@ -274,7 +274,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         return result
 
     def as_dict_with_schema(self) -> Dict[str, Dict[str, Any]]:
-        return {"data": self.dict(), "schema": self.schema()}
+        return {"data": self.model_dump(), "schema": self.schema()}
 
     def as_json_with_schema(self, incl_model_id: bool = False) -> str:
 

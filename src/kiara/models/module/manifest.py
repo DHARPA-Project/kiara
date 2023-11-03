@@ -95,7 +95,7 @@ class Manifest(KiaraModel):
 
     def create_renderable(self, **config: Any) -> RenderableType:
         """Create a renderable for this module configuration."""
-        data = self.dict(exclude_none=True)
+        data = self.model_dump(exclude_none=True)
         conf = Syntax(
             orjson_dumps(data, option=orjson.OPT_INDENT_2),
             "json",

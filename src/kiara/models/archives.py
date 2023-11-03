@@ -151,7 +151,7 @@ class ArchiveInfo(ItemInfo):
             context=archive_type_info.context,
             archive_id=archive.archive_id,
             details=archive.get_archive_details(),
-            config=archive.config.dict(),
+            config=archive.config.model_dump(),
             aliases=archive_aliases,
         )
 

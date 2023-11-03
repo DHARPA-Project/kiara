@@ -107,7 +107,7 @@ class KiaraZmqAPI(object):
         )
 
         with open(service_info_file, "wb") as f:
-            f.write(orjson.dumps(details.dict()))
+            f.write(orjson.dumps(details.model_dump()))
 
         def delete_info_file():
             os.unlink(service_info_file)

@@ -127,7 +127,7 @@ class EnvironmentRegistry(object):
         cls: Type[BaseModel] = create_model("KiaraRuntimeInfo", **models)  # type: ignore
         data = {}
         for k2, v2 in self.environments.items():
-            d = v2.dict()
+            d = v2.model_dump()
             assert "metadata_hash" not in d.keys()
             assert "metadata_schema" not in d.keys()
             d["metadata_hash"] = str(hashes[k2])

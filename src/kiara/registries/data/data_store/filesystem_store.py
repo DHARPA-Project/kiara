@@ -386,7 +386,7 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
             value_dir.mkdir(parents=True, exist_ok=False)
 
         value_file = value_dir / VALUE_DETAILS_FILE_NAME
-        value_data = value.dict()
+        value_data = value.model_dump()
         value_file.write_text(orjson_dumps(value_data, option=orjson.OPT_NON_STR_KEYS))
 
     def _persist_destiny_backlinks(self, value: Value):

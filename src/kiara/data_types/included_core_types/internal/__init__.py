@@ -160,14 +160,14 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
         _data = {
             "data": {
                 "type": "inline-json",
-                "inline_data": data.dict(),
+                "inline_data": data.model_dump(),
                 "codec": "json",
             },
         }
 
         serialized_data = {
             "data_type": self.data_type_name,
-            "data_type_config": self.type_config.dict(),
+            "data_type_config": self.type_config.model_dump(),
             "data": _data,
             "serialization_profile": "json",
             "metadata": {

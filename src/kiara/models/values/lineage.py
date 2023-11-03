@@ -104,7 +104,7 @@ def fill_dict_with_lineage(
 
     if include_module_info:
         info = kiara.module_registry.get_module_type_metadata(title)
-        main["module"]["info"] = info.dict()
+        main["module"]["info"] = info.model_dump()
 
     for input_name in sorted(pedigree.inputs.keys()):
 

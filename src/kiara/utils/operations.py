@@ -136,7 +136,9 @@ def create_operation(
             execution_context=execution_context,
         )
 
-        manifest = kiara.create_manifest("pipeline", config=pipeline_config.dict())
+        manifest = kiara.create_manifest(
+            "pipeline", config=pipeline_config.model_dump()
+        )
         module = kiara.module_registry.create_module(manifest=manifest)
 
         operation = Operation.create_from_module(module, doc=pipeline_config.doc)
@@ -176,7 +178,7 @@ def create_operation(
                 )
 
                 manifest = kiara.create_manifest(
-                    "pipeline", config=pipeline_config.dict()
+                    "pipeline", config=pipeline_config.model_dump()
                 )
                 module = kiara.module_registry.create_module(manifest=manifest)
 

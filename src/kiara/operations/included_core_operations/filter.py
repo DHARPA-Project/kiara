@@ -351,7 +351,7 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
                 )
             step_data = {
                 "module_type": endpoint_module.module_type_name,
-                "module_config": endpoint_module.config.dict(),
+                "module_config": endpoint_module.config.model_dump(),
                 "step_id": endpoint_step_id,
             }
             step_data["input_links"] = {
@@ -402,7 +402,7 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
         )
 
         manifest = Manifest(
-            module_type="pipeline", module_config=pipeline_config.dict()
+            module_type="pipeline", module_config=pipeline_config.model_dump()
         )
         module = self._kiara.module_registry.create_module(manifest=manifest)
 

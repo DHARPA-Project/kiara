@@ -582,7 +582,7 @@ class PipelineConfig(KiaraModuleConfig):
         if execution_context is None:
             execution_context = ExecutionContext()
 
-        repl_dict = execution_context.dict()
+        repl_dict = execution_context.model_dump()
 
         data = dict(data)
 

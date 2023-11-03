@@ -259,8 +259,8 @@ def terminal_print_model(
             )
     elif format == OutputFormat.JSON_INCL_SCHEMA:
         if len(models) == 1:
-            data = models[0].dict()
-            schema = models[0].schema()
+            data = models[0].model_dump()
+            schema = models[0].model_json_schema()
             all = {"data": data, "schema": schema}
             json_str = orjson_dumps(all, option=orjson.OPT_INDENT_2)
             syntax = Syntax(json_str, "json", background_color="default")
@@ -272,8 +272,8 @@ def terminal_print_model(
         else:
             all_data = []
             for model in models:
-                data = model.dict()
-                schema = model.schema()
+                data = model.model_dump()
+                schema = model.model_json_schema()
                 all_data.append({"data": data, "schema": schema})
             json_str = orjson_dumps(all_data, option=orjson.OPT_INDENT_2)
             # print(json_str)

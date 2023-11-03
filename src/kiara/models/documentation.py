@@ -167,7 +167,7 @@ class DocumentationMetadataModel(KiaraModel):
     _metadata_key: ClassVar[str] = "documentation"
 
     @classmethod
-    def from_class_doc(cls, item_cls: Type):
+    def from_class_doc(cls, item_cls: Type) -> "DocumentationMetadataModel":
         doc = item_cls.__doc__
 
         if not doc:
@@ -177,7 +177,7 @@ class DocumentationMetadataModel(KiaraModel):
         return cls.from_string(doc)
 
     @classmethod
-    def from_function(cls, func: Callable):
+    def from_function(cls, func: Callable) -> "DocumentationMetadataModel":
 
         doc = func.__doc__
 
@@ -188,7 +188,7 @@ class DocumentationMetadataModel(KiaraModel):
         return cls.from_string(doc)
 
     @classmethod
-    def from_string(cls, doc: Union[str, None]):
+    def from_string(cls, doc: Union[str, None]) -> "DocumentationMetadataModel":
 
         if not doc:
             doc = DEFAULT_NO_DESC_VALUE
@@ -205,7 +205,7 @@ class DocumentationMetadataModel(KiaraModel):
         return cls(description=desc.strip(), doc=doc)
 
     @classmethod
-    def from_dict(cls, data: Mapping):
+    def from_dict(cls, data: Mapping) -> "DocumentationMetadataModel":
 
         doc = data.get("doc", None)
         desc = data.get("description", None)
@@ -222,7 +222,7 @@ class DocumentationMetadataModel(KiaraModel):
             return cls(description=desc, doc=doc)
 
     @classmethod
-    def create(cls, item: Union[Any, None] = None):
+    def create(cls, item: Union[Any, None] = None) -> "DocumentationMetadataModel":
 
         if not item:
             return cls.from_string(DEFAULT_NO_DESC_VALUE)

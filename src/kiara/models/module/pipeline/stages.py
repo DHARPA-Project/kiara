@@ -35,7 +35,7 @@ class PipelineStage(KiaraModel):
                 details += f" - {avail.replace('extract_stages__', '')}\n"
             raise KiaraException(msg, details=details)
 
-        result = getattr(cls, func_name)(structure=structure)
+        result: List[List[str]] = getattr(cls, func_name)(structure=structure)
         return result
 
     @classmethod

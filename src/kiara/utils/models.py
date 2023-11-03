@@ -80,10 +80,12 @@ def get_subcomponent_from_model(data: "KiaraModel", path: str) -> "KiaraModel":
                     # return subcomponent_group
 
         else:
-            raise NotImplementedError()
+            raise NotImplementedError("Only mapping root models are supported for now.")
     else:
         if path in data.model_fields.keys():
-            return getattr(data, path)
+            result: KiaraModel = getattr(data, path)
+            # TODO: test isinstance?
+            return result
         else:
             raise KeyError(
                 f"No subcomponent for key '{path}' in model: {data.instance_id}."

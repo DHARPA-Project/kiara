@@ -128,7 +128,7 @@ class ModuleProcessor(abc.ABC):
             pedigree=result_pedigree,
             unique_value_ids=unique_result_values,
         )
-        job_id = ID_REGISTRY.generate(kiara_id=self._kiara.id)
+        job_id: uuid.UUID = ID_REGISTRY.generate(kiara_id=self._kiara.id)
         job_log = JobLog()
 
         job = ActiveJob(

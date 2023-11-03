@@ -166,7 +166,7 @@ class ItemInfo(KiaraModel):
 
     @classmethod
     @abc.abstractmethod
-    def create_from_instance(cls, kiara: "Kiara", instance: Type, **kwargs):
+    def create_from_instance(cls, kiara: "Kiara", instance: Any, **kwargs):
         pass
 
     @field_validator("documentation", mode="before")
@@ -225,7 +225,7 @@ class TypeInfo(ItemInfo, Generic[INFO_BASE_CLASS]):
     @abc.abstractmethod
     def create_from_type_class(
         self, type_cls: INFO_BASE_CLASS, kiara: "Kiara"
-    ) -> "ItemInfo":
+    ) -> "TypeInfo":
         pass
 
     @classmethod
@@ -250,7 +250,7 @@ class InfoItemGroup(KiaraModel, Generic[INFO_ITEM_TYPE]):
     def create_from_instances(
         cls,
         kiara: "Kiara",
-        instances: Mapping[str, Type],
+        instances: Mapping[str, Any],
         **kwargs: Any,
     ) -> "InfoItemGroup[INFO_ITEM_TYPE]":
 
@@ -315,12 +315,12 @@ class TypeInfoItemGroup(InfoItemGroup[TypeInfo]):
         cls, kiara: "Kiara", group_title: Union[str, None] = None, **items: Type
     ) -> "TypeInfoItemGroup":
 
-        type_infos = {
+        type_infos: Mapping[str, TypeInfo[Any]] = {
             k: cls.base_info_class().create_from_type_class(type_cls=v, kiara=kiara)
             for k, v in items.items()
         }
         data_types_info = cls.model_construct(
-            group_alias=group_title, item_infos=type_infos
+            group_title=group_title, item_infos=type_infos
         )
         return data_types_info
 
@@ -431,7 +431,9 @@ class ValueInfo(ItemInfo):
         return Value
 
     @classmethod
-    def create_from_instance(cls, kiara: "Kiara", instance: Value, **kwargs: Any):
+    def create_from_instance(
+        cls, kiara: "Kiara", instance: Value, **kwargs: Any
+    ) -> "ValueInfo":
 
         resolve_aliases = kwargs.get("resolve_aliases", True)
         resolve_destinies = kwargs.get("resolve_destinies", True)
@@ -1322,7 +1324,9 @@ class OperationInfo(ItemInfo):
         return cls.create_from_operation(kiara=kiara, operation=instance)
 
     @classmethod
-    def create_from_operation(cls, kiara: "Kiara", operation: Operation):
+    def create_from_operation(
+        cls, kiara: "Kiara", operation: Operation
+    ) -> "OperationInfo":
 
         module = operation.module
         module_cls = module.__class__
@@ -1464,7 +1468,7 @@ class OperationGroupInfo(InfoItemGroup):
         else:
             return self._create_renderable_list(**config)
 
-    def _create_renderable_list(self, **config):
+    def _create_renderable_list(self, **config) -> RenderableType:
 
         include_internal_operations = config.get("include_internal_operations", True)
         full_doc = config.get("full_doc", False)

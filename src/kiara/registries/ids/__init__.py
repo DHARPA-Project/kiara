@@ -41,7 +41,7 @@ class IdRegistry(object):
         else:
             lock = self._process_context_locks[context_id]
 
-        aquired = lock.acquire(blocking=False)
+        aquired: bool = lock.acquire(blocking=False)
         return aquired
 
     def unlock_context(self, context_id: uuid.UUID):
@@ -59,7 +59,7 @@ class IdRegistry(object):
         obj_type: Union[Type, None] = None,
         obj: Union[Any, None] = None,
         **metadata: Any,
-    ):
+    ) -> uuid.UUID:
 
         if id is None:
             id = uuid.uuid4()

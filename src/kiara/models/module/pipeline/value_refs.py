@@ -15,7 +15,7 @@ from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import camel_case_to_snake_case
 
 
-def generate_step_alias(step_id: str, value_name):
+def generate_step_alias(step_id: str, value_name) -> str:
     return f"{step_id}.{value_name}"
 
 

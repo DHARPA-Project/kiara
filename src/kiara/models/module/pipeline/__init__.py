@@ -545,7 +545,7 @@ class PipelineConfig(KiaraModuleConfig):
         module_map: Union[Mapping[str, Any], None] = None,
         execution_context: Union[ExecutionContext, None] = None,
         auto_step_ids: bool = False,
-    ):
+    ) -> "PipelineConfig":
 
         if kiara is None:
             from kiara.context import Kiara

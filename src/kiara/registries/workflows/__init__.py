@@ -42,7 +42,7 @@ class WorkflowArchive(BaseArchive):
         pass
 
     @abc.abstractmethod
-    def retrieve_workflow_metadata(self, workflow_id: uuid.UUID):
+    def retrieve_workflow_metadata(self, workflow_id: uuid.UUID) -> WorkflowMetadata:
         pass
 
     # @abc.abstractmethod

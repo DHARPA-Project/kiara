@@ -6,11 +6,9 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import os
-from typing import Any, Mapping
+from typing import Any
 
 import orjson
-
-from kiara.utils.json import orjson_dumps
 
 
 def get_kiara_db_url(base_path: str):
@@ -20,17 +18,17 @@ def get_kiara_db_url(base_path: str):
     return db_url
 
 
-def orm_json_serialize(obj: Any) -> str:
-
-    if hasattr(obj, "json"):
-        return obj.json()
-
-    if isinstance(obj, str):
-        return obj
-    elif isinstance(obj, Mapping):
-        return orjson_dumps(obj, default=None)
-    else:
-        raise Exception(f"Unsupported type for json serialization: {type(obj)}")
+# def orm_json_serialize(obj: Any) -> str:
+#
+#     if hasattr(obj, "json"):
+#         return obj.json()
+#
+#     if isinstance(obj, str):
+#         return obj
+#     elif isinstance(obj, Mapping):
+#         return orjson_dumps(obj, default=None)
+#     else:
+#         raise Exception(f"Unsupported type for json serialization: {type(obj)}")
 
 
 def orm_json_deserialize(obj: str) -> Any:

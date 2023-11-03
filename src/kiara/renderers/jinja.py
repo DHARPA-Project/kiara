@@ -86,7 +86,7 @@ class BaseJinjaRenderer(
             raise KiaraException(msg=f"Could not find requested template for renderer '{self.__class__._renderer_name}'", details=msg)  # type: ignore
 
         inputs = self.assemble_render_inputs(instance, render_config=render_config)
-        rendered = template.render(**inputs)
+        rendered: str = template.render(**inputs)
         return rendered
 
 

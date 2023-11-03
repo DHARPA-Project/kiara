@@ -11,7 +11,7 @@ DEFAULT_ORJSON_OPTIONS = (
 DEFAULT_ORJSON_DUMP_ARGS = {"option": DEFAULT_ORJSON_OPTIONS}
 
 
-def orjson_dumps(v, *, default=None, **args):
+def orjson_dumps(v, *, default=None, **args) -> str:
     # orjson.dumps returns bytes, to match standard json.dumps we need to decode
 
     if not args:

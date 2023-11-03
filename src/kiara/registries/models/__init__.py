@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, Dict, Type, Union
 
-from orjson import orjson
+import orjson
 
 from kiara.defaults import KIARA_MODEL_DATA_KEY, KIARA_MODEL_ID_KEY
 from kiara.exceptions import KiaraException

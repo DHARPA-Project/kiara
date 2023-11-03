@@ -37,7 +37,7 @@ def dev_config_file_settings_source(settings: BaseSettings) -> Dict[str, Any]:
     when reading `config.json`
     """
     if os.path.exists(KIARA_DEV_CONFIG_FILE):
-        dev_config = get_data_from_file(KIARA_DEV_CONFIG_FILE)
+        dev_config: Dict[str, Any] = get_data_from_file(KIARA_DEV_CONFIG_FILE)
     else:
         dev_config = {}
     return dev_config

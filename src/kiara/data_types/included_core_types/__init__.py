@@ -105,7 +105,7 @@ class AnyType(
 
     def pretty_print_as__string(
         self, value: "Value", render_config: Mapping[str, Any]
-    ) -> Any:
+    ) -> str:
 
         if hasattr(self, "_pretty_print_as__string"):
             return self._pretty_print_as__string(value=value, render_config=render_config)  # type: ignore
@@ -117,7 +117,7 @@ class AnyType(
 
     def pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
-    ):
+    ) -> RenderableType:
 
         if hasattr(self, "_pretty_print_as__terminal_renderable"):
             return self._pretty_print_as__terminal_renderable(value=value, render_config=render_config)  # type: ignore
@@ -156,7 +156,7 @@ class AnyType(
 
     def render_as__string(
         self, value: "Value", render_config: Mapping[str, Any], manifest: "Manifest"
-    ):
+    ) -> str:
         if hasattr(self, "_render_as__string"):
             return self._render_as__string(value=value, render_scene=render_config, manifest=manifest)  # type: ignore
         else:
@@ -545,8 +545,8 @@ class KiaraModelValueBaseType(
         if isinstance(data, self.__class__.python_class()):
             return data  # type: ignore
 
-        data = self.create_model_from_python_obj(data)
-        return data
+        _data = self.create_model_from_python_obj(data)
+        return _data
 
     def _validate(self, data: KiaraModel) -> None:
 

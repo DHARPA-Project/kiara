@@ -33,13 +33,13 @@ repos:
 #    - id: flake8
 
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: 'v0.942'  # Use the sha / tag you want to point at
+  rev: 'v1.6.1'  # Use the sha / tag you want to point at
   hooks:
   - id: mypy
     files: "^src/kiara"
     pass_filenames: true
-    args: ["--config-file", "setup.cfg"]
-    additional_dependencies: [pydantic>=1.8.0, rich>=10.0.0, ruamel.yaml, anyio>=3.0.0, pyzmq>=22.0.3, bidict, sqlalchemy-stubs, types-python-slugify, types-setuptools, types-python-dateutil, dag_cbor>=0.3.0, multiformats>=0.2.0, textual, regex, types-pytz, types-orjson, dag_cbor>=0.3.2]
+    args: ["--config-file", "pyproject.toml"]
+    additional_dependencies: [pydantic>=2.0.0, pydantic_settings, rich>=10.0.0, ruamel.yaml, anyio>=3.0.0, pyzmq>=22.0.3, bidict, sqlalchemy-stubs, types-python-slugify, types-setuptools, types-python-dateutil, dag_cbor>=0.3.0, multiformats>=0.2.0, textual, regex, types-pytz, types-orjson, dag_cbor>=0.3.2]
 
 - repo: https://github.com/charliermarsh/ruff-pre-commit
   # Ruff version.

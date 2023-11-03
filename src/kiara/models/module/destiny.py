@@ -40,7 +40,7 @@ class Destiny(Manifest):
         values: Mapping[str, uuid.UUID],
         manifest: Manifest,
         result_field_name: Union[str, None] = None,
-    ):
+    ) -> "Destiny":
 
         module = kiara.module_registry.create_module(manifest=manifest)
 

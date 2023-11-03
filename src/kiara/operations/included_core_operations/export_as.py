@@ -157,5 +157,7 @@ class ExportAsOperationType(OperationType[ExportAsOperationDetails]):
             "is_internal_operation": False,
         }
 
-        result = ExportAsOperationDetails.create_operation_details(**details)
+        result: ExportAsOperationDetails = (
+            ExportAsOperationDetails.create_operation_details(**details)
+        )
         return result

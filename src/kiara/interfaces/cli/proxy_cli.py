@@ -12,12 +12,13 @@ import logging
 import rich_click as click
 import structlog
 
-from kiara.interfaces import get_console
 from kiara.utils import is_debug
 from kiara.utils.class_loading import find_all_cli_subcommands
 
 click.rich_click.USE_RICH_MARKUP = True
-click.rich_click._get_rich_console = get_console
+
+# TODO: rich_click refactoring, how to backport this?
+# click.rich_click._get_rich_console = get_console
 
 
 if is_debug():

@@ -35,4 +35,6 @@ def get_data_from_url(
             except Exception:
                 raise ValueError(f"Can't parse data from url '{url}'")
 
+    if not isinstance(result, Mapping):
+        raise ValueError(f"Data from url '{url}' is not a Mapping")
     return result

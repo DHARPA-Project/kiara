@@ -166,9 +166,9 @@ class WorkflowInfo(ItemInfo):
     _kiara_model_id: ClassVar = "info.workflow"
 
     @classmethod
-    def create_from_workflow(cls, workflow: "Workflow"):
+    def create_from_workflow(cls, workflow: "Workflow") -> "WorkflowInfo":
 
-        wf_info = WorkflowInfo.construct(
+        wf_info = WorkflowInfo.model_construct(
             type_name=str(workflow.workflow_id),
             workflow_metadata=workflow.workflow_metadata,
             workflow_state_ids=workflow.all_state_ids,

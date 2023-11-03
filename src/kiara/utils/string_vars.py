@@ -122,8 +122,7 @@ def replace_var_names_in_string(
             result = repl_dict[key]
             return result
 
-    result = regex.sub(sub, template_string)
-
+    result: str = regex.sub(sub, template_string)
     return result
 
 

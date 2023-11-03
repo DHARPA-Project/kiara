@@ -191,7 +191,7 @@ class HashFS(object):
 
         return tmp.name
 
-    def get(self, file):
+    def get(self, file) -> Union[None, "HashAddress"]:
         """
         Return :class:`HashAdress` from given id or path. If `file` does not
         refer to a valid file, then ``None`` is returned.

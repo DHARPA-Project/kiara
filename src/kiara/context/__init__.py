@@ -536,7 +536,8 @@ class KiaraContextInfo(KiaraModel):
             raise Exception(
                 f"Can't determine item type '{item_type}', use one of: {', '.join(item_types)}"
             )
-        return group_info[item_id]
+        result: ItemInfo = group_info.item_infos[item_id]
+        return result
 
     def get_all_info(self, skip_empty_types: bool = True) -> Dict[str, InfoItemGroup]:
 

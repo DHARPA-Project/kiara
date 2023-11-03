@@ -1517,10 +1517,10 @@ class ValueMapReadOnly(ValueMap):  # type: ignore
         )
 
     @classmethod
-    def create_from_values(cls, **values: Value):
+    def create_from_values(cls, **values: Value) -> "ValueMapReadOnly":
 
         values_schema = {k: v.value_schema for k, v in values.items()}
-        return ValueMapReadOnly.construct(
+        return ValueMapReadOnly.model_construct(
             value_items=values, values_schema=values_schema
         )
 

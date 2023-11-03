@@ -31,7 +31,7 @@ class PythonClassMetadata(ValueMetadata):
     @classmethod
     def create_value_metadata(cls, value: "Value") -> "PythonClassMetadata":
 
-        return PythonClassMetadata.construct(
+        return PythonClassMetadata.model_construct(
             python_class=PythonClass.from_class(value.data.__class__)
         )
 
@@ -55,7 +55,7 @@ class FileMetadata(ValueMetadata):
     @classmethod
     def create_value_metadata(cls, value: "Value") -> "FileMetadata":
 
-        return FileMetadata.construct(file=value.data)
+        return FileMetadata.model_construct(file=value.data)
 
     file: KiaraFile = Field(description="The file-specific metadata.")
 

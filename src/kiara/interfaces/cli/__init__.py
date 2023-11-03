@@ -17,13 +17,14 @@ import structlog
 from kiara.defaults import (
     SYMLINK_ISSUE_MSG,
 )
-from kiara.interfaces import KiaraAPIWrap, get_console
+from kiara.interfaces import KiaraAPIWrap
 from kiara.utils import is_debug, log_message
 from kiara.utils.class_loading import find_all_cli_subcommands
 from kiara.utils.cli import kiara_version_option, terminal_print
 
 click.rich_click.USE_RICH_MARKUP = True
-click.rich_click._get_rich_console = get_console
+# TODO: rich_click backport this
+# click.rich_click._get_rich_console = get_console
 
 
 if is_debug():

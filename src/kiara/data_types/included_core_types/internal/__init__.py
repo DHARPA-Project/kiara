@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any, ClassVar, Generic, Iterable, Mapping, Typ
 import structlog
 from pydantic import Field, PrivateAttr
 from rich import box
+from rich.console import RenderableType
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
@@ -50,19 +51,19 @@ class InternalType(
 
     def pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
-    ):
+    ) -> RenderableType:
 
         if hasattr(self, "_pretty_print_as__terminal_renderable"):
             return self._pretty_print_as__terminal_renderable(value=value, render_config=render_config)  # type: ignore
 
-        data = value.data
+        data: Any = value.data
 
         from pydantic import BaseModel
 
         if isinstance(data, BaseModel):
             from kiara.utils.output import create_table_from_model_object
 
-            rendered = create_table_from_model_object(
+            rendered: RenderableType = create_table_from_model_object(
                 model=data, render_config=render_config
             )
         elif isinstance(data, Iterable):

@@ -3,8 +3,8 @@ import inspect
 from typing import Any, Callable, Dict, Iterable, List, Mapping, Type, Union
 
 from docstring_parser import Docstring, parse
-from pydantic import BaseModel
-from pydantic.decorator import ValidatedFunction
+from pydantic.v1.decorator import ValidatedFunction
+from pydantic.v1.main import BaseModel as BaseModel1
 from rich import box
 from rich.console import Group, RenderableType
 from rich.markdown import Markdown
@@ -74,7 +74,8 @@ class ApiEndpoint(object):
 
         for p in self.parsed_doc.params:
             if p.arg_name == arg_name:
-                return p.description if p.description else ""
+                desc: Union[str, None] = p.description
+                return desc if desc else ""
 
         return ""
 
@@ -88,9 +89,11 @@ class ApiEndpoint(object):
         return self._wrapped
 
     @property
-    def arg_model(self) -> Type[BaseModel]:
+    def arg_model(self) -> Type[BaseModel1]:
 
-        return self.validated_func.model
+        # TODO: pydantic refactoring, find a different way to do this in version 2
+        result: Type[BaseModel1] = self.validated_func.model
+        return result
 
     @property
     def argument_names(self) -> List[str]:
@@ -131,16 +134,14 @@ class ApiEndpoint(object):
     @property
     def result_type(self) -> Type:
 
-        return self.signature_metadata["return_type"]
+        result: Type = self.signature_metadata["return_type"]
+        return result
 
     @property
     def result_doc(self) -> str:
         if self.parsed_doc.returns:
-            return (
-                self.parsed_doc.returns.description
-                if self.parsed_doc.returns.description
-                else DEFAULT_NO_DESC_VALUE
-            )
+            desc: Union[None, str] = self.parsed_doc.returns.description
+            return desc if desc else DEFAULT_NO_DESC_VALUE
         else:
             return DEFAULT_NO_DESC_VALUE
 
@@ -149,7 +150,7 @@ class ApiEndpoint(object):
         result = self.validated_func.call(instance, **kwargs)
         return result
 
-    def validate_and_assemble_args(self, **kwargs) -> BaseModel:
+    def validate_and_assemble_args(self, **kwargs) -> BaseModel1:
 
         kwargs.pop("self", None)
         return self.validated_func.init_model_instance(None, **kwargs)

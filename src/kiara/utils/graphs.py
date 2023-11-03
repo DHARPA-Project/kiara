@@ -81,7 +81,7 @@ def create_image(graph: nx.Graph) -> bytes:
     # G.unflatten().layout(prog="dot")
     G.layout(prog="dot")
 
-    b = G.draw(format="png")
+    b: bytes = G.draw(format="png")
     return b
 
 

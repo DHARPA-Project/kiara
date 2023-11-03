@@ -183,7 +183,8 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
             "type_config": data_type_config.config_hash,
         }
         h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
-        return h[obj]
+        result: int = h[obj]
+        return result
 
     def __init__(self, **type_config: Any):
 
@@ -476,7 +477,10 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
         -------
             'None', if no parsing was done and the original value should be used, otherwise return the parsed Python object
         """
-        return data
+
+        # this would in most cases be overwritten by an implementing class
+        # if not, then the _validate method should catch the issue
+        return data  # type: ignore
 
     def _validate(self, value: TYPE_PYTHON_CLS) -> None:
         """Validate the value. This expects an instance of the defined Python class (from 'backing_python_type)."""

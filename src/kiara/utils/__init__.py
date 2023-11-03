@@ -139,7 +139,7 @@ def get_auto_workflow_alias(module_type: str, use_incremental_ids: bool = False)
     return f"{module_type}_{nr}"
 
 
-def camel_case_to_snake_case(camel_text: str, repl: str = "_"):
+def camel_case_to_snake_case(camel_text: str, repl: str = "_") -> str:
     return CAMEL_TO_SNAKE_REGEX.sub(repl, camel_text).lower()
 
 

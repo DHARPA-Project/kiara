@@ -640,7 +640,7 @@ class PipelineInfo(ItemInfo):
         return Pipeline
 
     @classmethod
-    def create_from_instance(cls, kiara: "Kiara", instance: Pipeline, **kwargs):
+    def create_from_instance(cls, kiara: "Kiara", instance: Any, **kwargs):
 
         return cls.create_from_pipeline(kiara=kiara, pipeline=instance)
 
@@ -649,7 +649,7 @@ class PipelineInfo(ItemInfo):
         return "pipeline"
 
     @classmethod
-    def create_from_pipeline(cls, kiara: "Kiara", pipeline: Pipeline):
+    def create_from_pipeline(cls, kiara: "Kiara", pipeline: Pipeline) -> "PipelineInfo":
 
         doc = DocumentationMetadataModel.create(None)
         authors = AuthorsMetadataModel()

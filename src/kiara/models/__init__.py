@@ -62,7 +62,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         if cls._schema_hash_cache is not None:
             return cls._schema_hash_cache
 
-        obj = cls.schema_json()
+        obj = cls.model_json_schema()
         h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
         cls._schema_hash_cache = h[obj]
         return cls._schema_hash_cache
@@ -72,7 +72,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     _dynamic_subcomponents: Dict[str, "KiaraModel"] = PrivateAttr(default_factory=dict)
     _id_cache: Union[str, None] = PrivateAttr(default=None)
     _category_id_cache: Union[str, None] = PrivateAttr(default=None)
-    _schema_hash_cache: ClassVar = None
+    _schema_hash_cache: ClassVar[Union[None, int]] = None
     _cid_cache: Union[CID, None] = PrivateAttr(default=None)
     _dag_cache: Union[bytes, None] = PrivateAttr(default=None)
     _size_cache: Union[int, None] = PrivateAttr(default=None)
@@ -214,7 +214,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
 
         if template:
             try:
-                result = template.render(instance=self)
+                result: str = template.render(instance=self)
                 return result
             except Exception as e:
                 log_dev_message(
@@ -225,7 +225,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         try:
             from kiara.utils.html import generate_html
 
-            html = generate_html(item=self, add_header=False)
+            html: str = generate_html(item=self, add_header=False)
             return html
         except Exception as e:
             log_dev_message(
@@ -234,7 +234,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
             )
 
         r = self.create_renderable(**config)
-        mime_bundle = r._repr_mimebundle_(include=[], exclude=[])  # type: ignore
+        mime_bundle: Mapping[str, str] = r._repr_mimebundle_(include=[], exclude=[])  # type: ignore
         return mime_bundle["text/html"]
 
     def create_renderable(self, **config: Any) -> RenderableType:

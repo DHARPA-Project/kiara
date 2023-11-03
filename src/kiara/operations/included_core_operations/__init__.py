@@ -92,11 +92,13 @@ class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
             is_internal = module.characteristics.is_internal
             # inputs_map = {k: k for k in module.inputs_schema.keys()}
             # outputs_map = {k: k for k in module.outputs_schema.keys()}
-            op_details = CustomModuleOperationDetails.create_operation_details(
-                operation_id=module.module_type_name,
-                module_inputs_schema=module.inputs_schema,
-                module_outputs_schema=module.outputs_schema,
-                is_internal_operation=is_internal,
+            op_details: CustomModuleOperationDetails = (
+                CustomModuleOperationDetails.create_operation_details(
+                    operation_id=module.module_type_name,
+                    module_inputs_schema=module.inputs_schema,
+                    module_outputs_schema=module.outputs_schema,
+                    is_internal_operation=is_internal,
+                )
             )
             return op_details
         else:

@@ -77,7 +77,7 @@ def _default_id_func(cls: Type) -> str:
 
 def _cls_name_id_func(cls: Type) -> str:
     """Utility method to auto-generate a more or less nice looking id_or_alias for a class."""
-    name = camel_case_to_snake_case(cls.__name__)
+    name: str = camel_case_to_snake_case(cls.__name__)
     return name
 
 
@@ -199,7 +199,7 @@ def _process_subclass(
     if type_id_key:
 
         if hasattr(sub_class, type_id_key):
-            type_id = getattr(sub_class, type_id_key)
+            type_id: Union[str, None] = getattr(sub_class, type_id_key)
             if type_id is None and ignore_modules_with_null_module_name:
                 log_message(
                     "ignore.subclass",

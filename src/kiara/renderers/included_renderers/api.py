@@ -19,7 +19,9 @@ from kiara.renderers import (
     RenderInputsSchema,
 )
 from kiara.utils.cli import terminal_print
-from kiara.utils.output import create_table_from_base_model_cls
+from kiara.utils.output import (
+    create_table_from_base_model_v1_cls,
+)
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -92,7 +94,7 @@ class ApiDocRenderer(ApiRenderer):
         #     print(k)
         #     print(type(v))
 
-        terminal_print(create_table_from_base_model_cls(details.arg_model))
+        terminal_print(create_table_from_base_model_v1_cls(details.arg_model))
 
         return "xxx"
 

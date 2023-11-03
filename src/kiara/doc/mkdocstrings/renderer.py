@@ -29,5 +29,5 @@ class KiaraInfoRenderer(BaseRenderer):
         # final_config = ChainMap(config, self.default_config)
 
         obj = data["obj"]
-        html = obj.create_html()
+        html: str = obj.create_html()
         return html

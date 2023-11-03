@@ -24,7 +24,7 @@ class ContextInfo(KiaraModel):
         config: "KiaraContextConfig",
         context_name: Union[str, None] = None,
         runtime_config: Union["KiaraRuntimeConfig", None] = None,
-    ):
+    ) -> "ContextInfo":
 
         from kiara.context import Kiara
 
@@ -32,7 +32,9 @@ class ContextInfo(KiaraModel):
         return cls.create_from_context(kiara=kiara, context_name=context_name)
 
     @classmethod
-    def create_from_context(cls, kiara: "Kiara", context_name: Union[str, None] = None):
+    def create_from_context(
+        cls, kiara: "Kiara", context_name: Union[str, None] = None
+    ) -> "ContextInfo":
 
         errors = {}
         try:
@@ -236,7 +238,7 @@ class ContextInfos(RootModel):
     @classmethod
     def create_context_infos(
         cls, contexts: Union[Mapping[str, "KiaraContextConfig"], None] = None
-    ):
+    ) -> "ContextInfos":
 
         if not contexts:
             kc = KiaraConfig()

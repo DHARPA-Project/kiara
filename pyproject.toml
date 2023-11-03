@@ -6,6 +6,29 @@ requires = [
 ]
 build-backend = 'setuptools.build_meta'
 
+[options]
+packages = { find = { where = "src", exclude = ["tests"] } }
+include_package_data = true
+package_dir = { "" = "src" }
+zip_safe = false
+
+[options.entry_points]
+mkdocs.plugins = [
+    "frkl-docgen = kiara.doc:FrklDocumentationPlugin"
+]
+
+[tool.aliases]
+build = "bdist_wheel"
+release = "build upload"
+
+[tool.bdist_wheel]
+universal = 0
+
+[tool.devpi.upload]
+no-vcs = 1
+formats = ["sdist", "bdist_wheel"]
+
+testpaths = ["tests"]
 [project]
 name = "kiara"
 description = "Data-centric workflow orchestration."
@@ -64,7 +87,7 @@ dependencies = [
     "pyzmq>=25.0.0",
     "regex>=2022.4.0",
     "rich>=12.4.0",
-    "rich-click==1.7.0",
+    "rich-click>=1.7.0,<1.8.0",
     "ruamel.yaml>=0.17.0,<0.18.0",
     "sortedcontainers>=2.4.0",
     "stevedore>=5.0.0,<6.0.0",
@@ -302,6 +325,40 @@ write_to = "src/kiara/version.txt"
 pythonpath = [
     "src"
 ]
+addopts = "--verbose"
+norecursedirs = [
+    "dist",
+    "build",
+    ".tox"
+]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["kiara"]
+omit = [
+    "src/kiara/doc/*"
+]
+
+[tool.coverage.paths]
+source = [
+    "src/",
+    "*/site-packages/"
+]
+relative_files = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self\\.debug",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "if typing.TYPE_CHECKING:",
+    "if kiara is None:"
+]
 
 [tool.ruff]
 line-length = 88
@@ -390,3 +447,80 @@ reportMissingTypeStubs = false
 
 executionEnvironments = [
 ]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+mypy_path = "src"
+namespace_packages = false
+plugins = [
+    "pydantic.mypy"
+]
+
+
+# mypy per-module options:
+
+[[tool.mypy.overrides]]
+module = "airium.*"
+ignore_missing_imports = true
+
+
+[[tool.mypy.overrides]]
+module = "mycode.bar"
+warn_return_any = false
+
+[[tool.mypy.overrides]]
+module = [
+    "airium.*",
+    "alembic.*",
+    "appdirs",
+    "asciinet.*",
+    "black",
+    "boltons.*",
+    "click",
+    "deepdiff",
+    "devtools",
+    "distro",
+    "dpath.*",
+    "docstring_parser.*",
+    "fastapi.*",
+    "fasteners.*",
+    "filetype",
+    "httpx.*",
+    "humanfriendly",
+    "hypercorn.*",
+    "ipydagred3",
+    "jinja2",
+    "kiara_modules.*",
+    "kiara_streamlit.*",
+    "kiara.doc.mkdocstrings.handler.*",
+    "icecream.*",
+    "IPython.*",
+    "importlib_metadata.*",
+    "importlib_resources.*",
+    "jupytext",
+    "mmh3",
+    "pickle5",
+    "pp",
+    "mkdocstrings.*",
+    "mkdocs.*",
+    "mkdocs_gen_files.*",
+    "mistune",
+    "networkx",
+    "orjson.*",
+    "patoolib.*",
+    "pyarrow.*",
+    "pygraphviz",
+    "regex.*",
+    "structlog",
+    "rich_click.*",
+    "ruamel.*",
+    "sortedcontainers",
+    "stevedore",
+    "streamlit.*",
+    "textual.*",
+    "uvloop",
+    "uvicorn"
+]
+ignore_missing_imports = true

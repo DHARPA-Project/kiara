@@ -27,6 +27,11 @@ from kiara.models.values.value_schema import ValueSchema
 from kiara.modules import InputOutputObject, KiaraModule, ValueMapSchema
 from kiara.utils.output import create_table_from_field_schemas
 
+try:
+    from typing import Self  # type: ignore
+except ImportError:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.models.module.pipeline.structure import PipelineStructure
@@ -70,10 +75,10 @@ class OperationDetails(KiaraModel):
     # outputs_map: Dict[str, str] = Field(description="A map with the operations input fields as keys, and the underlying modules input fields as values, used to translate input value maps.")
 
     @classmethod
-    def create_operation_details(cls, **details: Any):
+    def create_operation_details(cls, **details: Any) -> Self:
 
         if PYDANTIC_USE_CONSTRUCT:
-            result = cls.construct(**details)
+            result = cls.model_construct(**details)
         else:
             result = cls(**details)
 

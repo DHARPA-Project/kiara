@@ -54,7 +54,7 @@ class KiaraFile(KiaraModel):
         source: str,
         file_name: Union[str, None] = None,
         # import_time: Optional[datetime.datetime] = None,
-    ):
+    ) -> "KiaraFile":
         """Utility method to read metadata of a file from disk."""
         import mimetypes
 

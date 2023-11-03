@@ -4,7 +4,7 @@ import sys
 import typing
 from typing import Dict, List, Union
 
-from orjson import orjson
+import orjson
 from pydantic import BaseModel, Field
 
 from kiara.defaults import KIARA_MAIN_CONTEXT_DATA_PATH, KIARA_MAIN_CONTEXT_LOCKS_PATH
@@ -70,7 +70,8 @@ def get_context_details(context_name: str) -> Union[Dict, None]:
         return None
 
     with open(service_info_file, "r") as f:
-        return orjson.loads(f.read())
+        result: Dict = orjson.loads(f.read())
+        return result
 
 
 def start_zmq_service(

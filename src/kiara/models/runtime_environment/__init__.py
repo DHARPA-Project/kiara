@@ -4,7 +4,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 from abc import abstractmethod
-from typing import Any, Dict, Mapping, Union, get_args
+from typing import Any, Dict, Mapping, Sequence, Union, get_args
 
 import orjson
 import structlog
@@ -30,7 +30,7 @@ class RuntimeEnvironment(KiaraModel):
     def get_environment_type_name(cls) -> str:
 
         env_type = cls.model_fields["environment_type"]
-        args = get_args(env_type.annotation)
+        args: Sequence[str] = get_args(env_type.annotation)
         assert len(args) == 1
 
         return args[0]

@@ -154,7 +154,7 @@ def render_json_schema_str(model: "BaseModel"):
     # except TypeError:
     #     json_str = model.schema_json(indent=2)
 
-    from orjson import orjson
+    import orjson
 
     from kiara.utils.json import orjson_dumps
 
@@ -403,4 +403,5 @@ def kiara_version_option(
         "help", ("Show the version of kiara and installed plugins, then exit.")
     )
     kwargs["callback"] = callback
-    return option(*param_decls, **kwargs)
+    result: Callable[[FC], FC] = option(*param_decls, **kwargs)
+    return result

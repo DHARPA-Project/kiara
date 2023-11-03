@@ -342,7 +342,6 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
     ) -> CID:
 
         if isinstance(module_type_config, Mapping):
-            print("RESOLVING")
             module_type_config = cls._resolve_module_config(**module_type_config)
 
         obj = {
@@ -356,7 +355,7 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
     @classmethod
     def _resolve_module_config(cls, **config: Any) -> KIARA_CONFIG:
 
-        _config = cls._config_cls(**config)  # type: ignore
+        _config: KIARA_CONFIG = cls._config_cls(**config)
 
         return _config
 

@@ -190,7 +190,7 @@ class TypeRegistry(object):
 
         import networkx as nx
 
-        desc = nx.descendants(self.data_type_hierarchy, data_type_name)
+        desc: Set[str] = nx.descendants(self.data_type_hierarchy, data_type_name)
         return desc
 
     def is_profile(self, data_type_name: str) -> bool:

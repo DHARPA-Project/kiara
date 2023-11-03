@@ -188,7 +188,9 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
             "is_internal_operation": True,
         }
 
-        result = PrettyPrintDetails.create_operation_details(**details)
+        result: PrettyPrintDetails = PrettyPrintDetails.create_operation_details(
+            **details
+        )
         return result
 
     def get_target_types_for(self, source_type: str) -> Mapping[str, Operation]:

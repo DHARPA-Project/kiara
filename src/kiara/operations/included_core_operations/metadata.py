@@ -127,15 +127,17 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
         else:
             op_id = f"extract.{metadata_key}.metadata.from.{data_type_name}"
 
-        details = ExtractMetadataDetails.create_operation_details(
-            module_inputs_schema=module.inputs_schema,
-            module_outputs_schema=module.outputs_schema,
-            operation_id=op_id,
-            data_type=data_type_name,
-            metadata_key=metadata_key,
-            input_field_name=input_field_name,
-            result_field_name="value_metadata",
-            is_internal_operation=True,
+        details: ExtractMetadataDetails = (
+            ExtractMetadataDetails.create_operation_details(
+                module_inputs_schema=module.inputs_schema,
+                module_outputs_schema=module.outputs_schema,
+                operation_id=op_id,
+                data_type=data_type_name,
+                metadata_key=metadata_key,
+                input_field_name=input_field_name,
+                result_field_name="value_metadata",
+                is_internal_operation=True,
+            )
         )
 
         return details

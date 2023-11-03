@@ -32,7 +32,7 @@ def fill_renderable_lineage_tree(
     node: Union[Tree, None] = None,
     include_ids: bool = False,
     level: int = 0,
-):
+) -> Tree:
 
     color = COLOR_LIST[level % len(COLOR_LIST)]
     title = f"[b {color}]{pedigree.module_type}[/b {color}]"

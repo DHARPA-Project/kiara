@@ -175,7 +175,9 @@ class TemplateRegistry(object):
     @property
     def template_names(self) -> List[str]:
         """List all available template names."""
-        return self.environment.list_templates()
+
+        templates: List[str] = self.environment.list_templates()
+        return templates
 
     def get_template_for_model_type(
         self,

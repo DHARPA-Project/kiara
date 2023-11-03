@@ -187,5 +187,7 @@ class CreateFromOperationType(OperationType[CreateValueFromDetails]):
             "is_internal_operation": is_internal,
         }
 
-        result = CreateValueFromDetails.create_operation_details(**details)
+        result: CreateValueFromDetails = (
+            CreateValueFromDetails.create_operation_details(**details)
+        )
         return result

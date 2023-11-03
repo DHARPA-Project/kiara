@@ -7,7 +7,7 @@
 import uuid
 from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Type, Union
 
-from orjson import orjson
+import orjson
 
 from kiara.defaults import NOT_AVAILBLE_MARKER
 from kiara.utils.json import orjson_dumps
@@ -26,7 +26,9 @@ if TYPE_CHECKING:
 
 class KiaraException(Exception):
     @classmethod
-    def get_root_details(cls, e: Exception, default=None) -> Union[str, None]:
+    def get_root_details(
+        cls, e: Exception, default: Union[None, str] = None
+    ) -> Union[str, None]:
 
         if isinstance(e, KiaraException):
             return e.root_details()
@@ -50,7 +52,8 @@ class KiaraException(Exception):
     @property
     def details(self) -> Union[str, None]:
 
-        return self._properties.get("details", None)
+        result: Union[None, str] = self._properties.get("details", None)
+        return result
 
     @property
     def parent(self) -> Union[Exception, None]:

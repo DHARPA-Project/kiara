@@ -116,11 +116,13 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
 
         if isinstance(module, PipelineModule):
 
-            op_details = PipelineOperationDetails.create_operation_details(
-                operation_id=module.config.pipeline_name,
-                pipeline_inputs_schema=module.inputs_schema,
-                pipeline_outputs_schema=module.outputs_schema,
-                pipeline_config=module.config,
+            op_details: PipelineOperationDetails = (
+                PipelineOperationDetails.create_operation_details(
+                    operation_id=module.config.pipeline_name,
+                    pipeline_inputs_schema=module.inputs_schema,
+                    pipeline_outputs_schema=module.outputs_schema,
+                    pipeline_config=module.config,
+                )
             )
             return op_details
         else:

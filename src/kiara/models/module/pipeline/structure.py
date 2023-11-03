@@ -102,7 +102,7 @@ class PipelineStructure(KiaraModel):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_pipeline_config(cls, values) -> Dict[str, Any]:
+    def validate_pipeline_config(cls, values: Dict[str, Any]) -> Dict[str, Any]:
 
         pipeline_config = values.get("pipeline_config", None)
         if not pipeline_config:
@@ -130,11 +130,15 @@ class PipelineStructure(KiaraModel):
             )
         invalid_output_aliases = [a for a in _input_aliases.values() if "." in a]
         if invalid_input_aliases:
-            raise InvalidPipelineConfig(
-                f"Invalid input aliases, aliases can't contain special characters: {', '.join(invalid_output_aliases)}.",
-                config=values.get("pipeline_config"),
-                details=f"Invalid characters: {', '.join(invalid_output_aliases)}.",
-            )
+            pc = values.get("pipeline_config", None)
+            if pc is None:
+                raise ValueError("No pipeline config provided.")
+            else:
+                raise InvalidPipelineConfig(
+                    f"Invalid input aliases, aliases can't contain special characters: {', '.join(invalid_output_aliases)}.",
+                    config=pc,
+                    details=f"Invalid characters: {', '.join(invalid_output_aliases)}.",
+                )
 
         valid_input_names = set()
         for step in _steps:

@@ -176,7 +176,7 @@ class KiaraRenderer(
     ) -> TARGET_TYPE:
         pass
 
-    def _post_process(self, rendered: Any) -> TARGET_TYPE:
+    def _post_process(self, rendered: TARGET_TYPE) -> TARGET_TYPE:
         return rendered
 
     def render(self, instance: SOURCE_TYPE, render_config: INPUTS_SCHEMA) -> Any:

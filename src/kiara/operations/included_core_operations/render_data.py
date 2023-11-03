@@ -149,7 +149,7 @@ class RenderDataOperationType(OperationType[RenderDataDetails]):
         else:
             op_id = f"render.{source_type}.as.{target_type}"
 
-        details = RenderDataDetails.create_operation_details(
+        details: RenderDataDetails = RenderDataDetails.create_operation_details(
             module_inputs_schema=module.inputs_schema,
             module_outputs_schema=module.outputs_schema,
             operation_id=op_id,

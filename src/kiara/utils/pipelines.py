@@ -313,7 +313,7 @@ def find_pipeline_data_in_paths(
 
 def extract_data_to_hash_from_pipeline_config(
     pipeline_config: Mapping[str, Any]
-) -> Dict[str, Any]:
+) -> Mapping[str, Any]:
 
     if "steps" not in pipeline_config:
         return pipeline_config

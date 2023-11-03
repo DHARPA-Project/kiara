@@ -46,7 +46,9 @@ yaml.default_flow_style = False
 
 def config_file_settings_source(settings: BaseSettings) -> Dict[str, Any]:
     if os.path.isfile(KIARA_MAIN_CONFIG_FILE):
-        config = get_data_from_file(KIARA_MAIN_CONFIG_FILE, content_type="yaml")
+        config: Dict[str, Any] = get_data_from_file(
+            KIARA_MAIN_CONFIG_FILE, content_type="yaml"
+        )
         if not isinstance(config, Mapping):
             raise ValueError(
                 f"Invalid config file format, can't parse file: {KIARA_MAIN_CONFIG_FILE}"

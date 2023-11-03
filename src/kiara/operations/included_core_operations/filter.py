@@ -173,7 +173,9 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
             "is_internal_operation": False,
         }
 
-        result = FilterOperationDetails.create_operation_details(**details)
+        result: FilterOperationDetails = (
+            FilterOperationDetails.create_operation_details(**details)
+        )
         return result
 
     def find_filter_operations_for_data_type(

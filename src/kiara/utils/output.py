@@ -24,6 +24,7 @@ from typing import (
 import orjson
 import structlog
 from pydantic import BaseModel, Field, model_validator
+from pydantic.v1.main import BaseModel as BaseModel1
 from rich import box
 from rich.console import ConsoleRenderable, Group, RenderableType, RichCast
 from rich.markdown import Markdown
@@ -345,17 +346,17 @@ class ArrowTabularWrap(TabularWrap):
         self._table: "ArrowTable" = table
         super().__init__()
 
-    def retrieve_column_names(self) -> Iterable[str]:
-        return self._table.column_names
+    def retrieve_column_names(self) -> List[str]:
+        return self._table.column_names  # type: ignore
 
     def retrieve_number_of_rows(self) -> int:
-        return self._table.num_rows
+        return self._table.num_rows  # type: ignore
 
     def slice(self, offset: int = 0, length: Union[int, None] = None):
         return self._table.slice(offset=offset, length=length)
 
-    def to_pydict(self) -> Mapping:
-        return self._table.to_pydict()
+    def to_pydict(self) -> Mapping[str, Any]:
+        return self._table.to_pydict()  # type: ignore
 
 
 class DictTabularWrap(TabularWrap):
@@ -422,6 +423,50 @@ def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
 
         row.append(desc)
         row.append("yes" if field.is_required() else "no")
+        default = field.default
+        if callable(default):
+            default = default()
+
+        if default is None:
+            default = ""
+        else:
+            try:
+                default = json.dumps(default, indent=2)
+            except Exception:
+                default = str(default)
+        row.append(default)
+        table.add_row(*row)
+
+    return table
+
+
+def create_table_from_base_model_v1_cls(model_cls: Type[BaseModel1]):
+
+    table = RichTable(box=box.SIMPLE, show_lines=True)
+    table.add_column("Field")
+    table.add_column("Type")
+    table.add_column("Description")
+    table.add_column("Required")
+    table.add_column("Default")
+
+    props = model_cls.schema().get("properties", {})
+
+    for field_name, field in sorted(model_cls.__fields__.items()):
+        row = [field_name]
+        p = props.get(field_name, None)
+        p_type = None
+        desc = ""
+        if p is not None:
+            p_type = p.get("type", None)
+            # TODO: check 'anyOf' keys
+            desc = p.get("description", "")
+
+        if p_type is None:
+            p_type = "-- check source --"
+        row.append(p_type)
+
+        row.append(desc)
+        row.append("yes" if field.required else "no")
         default = field.default
         if callable(default):
             default = default()
@@ -650,7 +695,7 @@ def create_table_from_model_object(
     model: BaseModel,
     render_config: Union[Mapping[str, Any], None] = None,
     exclude_fields: Union[Set[str], None] = None,
-):
+) -> RichTable:
 
     model_cls = model.__class__
 
@@ -716,7 +761,7 @@ def extract_renderable(
     inline_models_as_json = render_config.setdefault("inline_models_as_json", True)
 
     if hasattr(item, "create_renderable"):
-        return item.create_renderable(**render_config)
+        return item.create_renderable(**render_config)  # type: ignore
     elif isinstance(item, (ConsoleRenderable, RichCast, str)):
         return item
     elif isinstance(item, BaseModel) and not inline_models_as_json:

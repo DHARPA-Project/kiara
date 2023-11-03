@@ -84,7 +84,7 @@ class JobConfig(InputsManifest):
         data_registry: "DataRegistry",
         module: "KiaraModule",
         inputs: Mapping[str, Any],
-    ):
+    ) -> "JobConfig":
 
         augmented = module.augment_module_inputs(inputs=inputs)
 

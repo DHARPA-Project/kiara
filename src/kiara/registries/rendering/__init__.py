@@ -376,4 +376,5 @@ class RenderRegistry(object):
     def get_template_names(self, template_base: Union[str, None] = None) -> List[str]:
         """List all available template names."""
         env = self.retrieve_jinja_env(template_base=template_base)
-        return env.list_templates()
+        result: List[str] = env.list_templates()
+        return result

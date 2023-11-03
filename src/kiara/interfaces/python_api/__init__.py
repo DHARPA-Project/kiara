@@ -8,7 +8,17 @@ import textwrap
 import uuid
 from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    MutableMapping,
+    Type,
+    Union,
+)
 
 import dpath
 
@@ -1196,7 +1206,7 @@ class KiaraAPI(object):
         Returns:
             a wrapper object containing the items as dictionary with value_id as key, and [kiara.interfaces.python_api.models.values.ValueInfo] as value
         """
-        values = self.list_values(**matcher_params)
+        values: MutableMapping[str, Value] = self.list_values(**matcher_params)
 
         infos = ValuesInfo.create_from_instances(
             kiara=self.context, instances={str(k): v for k, v in values.items()}
@@ -1921,7 +1931,7 @@ class KiaraAPI(object):
 
         if use_pretty_print:
             render_result: Value = result["rendered_value"]
-            value_render_data = render_result.data
+            value_render_data: RenderValueResult = render_result.data
         else:
             render_result = result["render_value_result"]
 
@@ -1930,7 +1940,7 @@ class KiaraAPI(object):
                     f"Invalid result type for render operation: {render_result.data_type_name}"
                 )
 
-            value_render_data: RenderValueResult = render_result.data  # type: ignore
+            value_render_data = render_result.data  # type: ignore
 
         return value_render_data
 

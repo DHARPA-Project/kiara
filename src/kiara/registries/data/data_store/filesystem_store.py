@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Any, Iterable, Mapping, Set, Union
 import orjson
 import structlog
 
+from kiara.exceptions import KiaraException
 from kiara.models.module.jobs import JobRecord
 from kiara.models.values.value import (
     SERIALIZE_TYPES,
@@ -149,7 +150,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
                 f"Can't load environment details, file does not exist: {env_details_file.as_posix()}"
             )
 
-        environment = orjson.loads(env_details_file.read_text())
+        environment: Mapping[str, Any] = orjson.loads(env_details_file.read_text())
         return environment
 
     def retrieve_all_job_hashes(
@@ -316,7 +317,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
                 f"Can't retrieve details for value with id '{value_id}': no value with that id stored."
             )
 
-        value_data = orjson.loads(base_path.read_text())
+        value_data: Mapping[str, Any] = orjson.loads(base_path.read_text())
         return value_data
 
     def _retrieve_serialized_value(self, value: Value) -> PersistedData:
@@ -337,9 +338,12 @@ class FileSystemDataArchive(DataArchive, JobArchive):
     ) -> Union[bytes, str]:
 
         addr = self.hashfs.get(chunk_id)
+        if addr is None:
+            raise KiaraException(f"Can't find chunk with id '{chunk_id}'")
 
         if as_file in (None, True):
-            return addr.abspath
+            result: str = addr.abspath
+            return result
         elif as_file is False:
             return Path(addr.abspath).read_bytes()
         else:

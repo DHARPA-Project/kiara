@@ -87,7 +87,7 @@ class Manifest(KiaraModel):
 
         module_config = extract_data_to_hash_from_pipeline_config(self.module_config)
         result = {
-            "module_type": "pipeline",
+            "module_type": self.module_type,
             "module_config": module_config,
         }
 

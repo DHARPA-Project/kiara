@@ -28,7 +28,6 @@ universal = 0
 no-vcs = 1
 formats = ["sdist", "bdist_wheel"]
 
-testpaths = ["tests"]
 [project]
 name = "kiara"
 description = "Data-centric workflow orchestration."
@@ -50,7 +49,8 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11"
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12"
 ]
 
 
@@ -462,16 +462,6 @@ plugins = [
 
 
 # mypy per-module options:
-
-[[tool.mypy.overrides]]
-module = "airium.*"
-ignore_missing_imports = true
-
-
-[[tool.mypy.overrides]]
-module = "mycode.bar"
-warn_return_any = false
-
 [[tool.mypy.overrides]]
 module = [
     "airium.*",

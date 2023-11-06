@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
-from typing import Any, ClassVar, Dict, Union
+from typing import Any, ClassVar, Dict, Type, Union
 
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic_settings import (
@@ -221,7 +221,7 @@ class KiaraDevSettings(BaseSettings):
     @classmethod
     def settings_customise_sources(
         cls,
-        settings_cls: type[BaseSettings],
+        settings_cls: Type[BaseSettings],
         init_settings: PydanticBaseSettingsSource,
         env_settings: PydanticBaseSettingsSource,
         dotenv_settings: PydanticBaseSettingsSource,

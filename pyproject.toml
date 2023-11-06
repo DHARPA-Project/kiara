@@ -92,8 +92,8 @@ dependencies = [
     "sortedcontainers>=2.4.0",
     "stevedore>=5.0.0,<6.0.0",
     "structlog>=21.5.0",
-    "typing_extensions>=4.6.0",
-    "typing_validation@git+https://github.com/makkus/typing-validation#egg=2531b8186d31a2f1359dc485390c5e08107e0aea",
+#    "typing_extensions>=4.6.0",
+#    "typing_validation@git+https://github.com/makkus/typing-validation#egg=2531b8186d31a2f1359dc485390c5e08107e0aea",
     "tzlocal>=2.1,<5.0",
 ]
 dynamic = ["version"]

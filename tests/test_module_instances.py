@@ -19,13 +19,13 @@ from kiara_plugin.core_types.modules.boolean import AndModule
 def test_module_instance_creation(kiara: Kiara):
 
     l_and = kiara.module_registry.create_module("logic.and")
-    assert l_and.config.dict() == {"constants": {}, "defaults": {}, "delay": 0}
+    assert l_and.config.model_dump() == {"constants": {}, "defaults": {}, "delay": 0}
 
     with pytest.raises(InvalidManifestException):
         kiara.module_registry.create_module("logic.xor")
 
     l_and = kiara.module_registry.create_module("logic.and")
-    assert "delay" in l_and.config.dict().keys()
+    assert "delay" in l_and.config.model_dump().keys()
 
     with pytest.raises(InvalidManifestException) as e_info:
         manifest = Manifest(module_type="logic.and", module_config={"xxx": "fff"})
@@ -33,7 +33,7 @@ def test_module_instance_creation(kiara: Kiara):
 
     msg = KiaraException.get_root_details(e_info.value)
     assert "xxx" in msg
-    assert "extra fields" in msg
+    assert "Extra inputs" in msg
 
 
 def test_module_instance_run(kiara: Kiara):

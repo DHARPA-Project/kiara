@@ -212,5 +212,5 @@ class PipelineOutputRef(ValueRef):
         return generate_step_alias(PIPELINE_PARENT_MARKER, self.value_name)
 
 
-StepInputRef.update_forward_refs()
-StepOutputRef.update_forward_refs()
+StepInputRef.model_rebuild()
+StepOutputRef.model_rebuild()

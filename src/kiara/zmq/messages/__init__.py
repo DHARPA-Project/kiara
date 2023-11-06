@@ -21,8 +21,10 @@ class KiaraApiMsgBuilder(object):
 
         try:
             if args:
-                if hasattr(args, "json"):
-                    _args = args.json().encode()
+                if hasattr(args, "model_dump_json"):
+                    _args = args.model_dump_json()
+                elif hasattr(args, "json"):
+                    _args = args.json()
                 else:
                     _args = orjson.dumps(args, option=DEFAULT_ORJSON_OPTIONS)
                 return [self._version, endpoint_name.encode(), _args]

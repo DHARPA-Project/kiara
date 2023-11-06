@@ -152,7 +152,7 @@ class FileSystemWorkflowStore(FileSystemWorkflowArchive, WorkflowStore):
 
         workflow_path.parent.mkdir(parents=True, exist_ok=False)
 
-        workflow_json = workflow_metadata.json(option=orjson.OPT_NON_STR_KEYS)
+        workflow_json = workflow_metadata.model_dump_json()
         workflow_path.write_text(workflow_json)
 
     def _update_workflow_metadata(self, workflow_metadata: WorkflowMetadata):
@@ -204,5 +204,5 @@ class FileSystemWorkflowStore(FileSystemWorkflowArchive, WorkflowStore):
             self.workflow_states_path / f"{workflow_state.instance_id}.state"
         )
 
-        workflow_state_json = workflow_state.json(option=orjson.OPT_NON_STR_KEYS)
+        workflow_state_json = workflow_state.model_dump_json()
         workflow_state_path.write_text(workflow_state_json)

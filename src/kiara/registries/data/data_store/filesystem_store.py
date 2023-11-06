@@ -372,7 +372,7 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
         data_dir = working_dir / value.data_type_name / str(value.value_hash)
         sv_file = data_dir / ".serialized_value.json"
         data_dir.mkdir(exist_ok=True, parents=True)
-        sv_file.write_text(persisted_value.json())
+        sv_file.write_text(persisted_value.model_dump_json())
 
     def _persist_value_details(self, value: Value):
 

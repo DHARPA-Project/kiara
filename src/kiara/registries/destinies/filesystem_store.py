@@ -173,7 +173,7 @@ class FileSystemDestinyStore(FileSystemDestinyArchive, DestinyStore):
 
         destiny_path = self._translate_destiny_id_to_path(destiny_id=destiny.destiny_id)
         destiny_path.parent.mkdir(parents=True, exist_ok=True)
-        destiny_path.write_text(destiny.json())
+        destiny_path.write_text(destiny.model_dump_json())
 
         for value_id in destiny.fixed_inputs.values():
 

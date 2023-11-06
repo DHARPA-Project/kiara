@@ -337,7 +337,7 @@ class KiaraModelTypeInfo(TypeInfo[Type[KiaraModel]]):
         python_class = PythonClass.from_class(type_cls)
         properties_md = ContextMetadataModel.from_class(type_cls)
         type_name = type_cls._kiara_model_id  # type: ignore
-        schema = type_cls.schema()
+        schema = type_cls.model_json_schema()
 
         return KiaraModelTypeInfo(
             type_name=type_name,
@@ -1028,10 +1028,13 @@ class ModuleTypeInfo(TypeInfo[Type["KiaraModule"]]):
             "authors": authors_md,
             "context": properties_md,
             "python_class": python_class,
-            "config": config,
+            "module_config": config,
             "module_src": module_src,
         }
 
+    module_config: KiaraModuleConfigMetadata = Field(
+        description="The module config metadata."
+    )
     module_src: str = Field(
         description="The source code of the process method of the module."
     )

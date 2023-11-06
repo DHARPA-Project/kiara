@@ -418,6 +418,7 @@ exclude = [
     "dist",
     "node_modules",
     "venv",
+    "examples/"
 ]
 per-file-ignores = { }
 

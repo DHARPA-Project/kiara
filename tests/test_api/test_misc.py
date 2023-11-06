@@ -20,7 +20,7 @@ def test_api_doc(api: KiaraAPI):
 def test_runtime_config(api: KiaraAPI):
 
     rtc = api.get_runtime_config()
-    assert "job_cache" in rtc.dict().keys()
+    assert "job_cache" in rtc.model_dump().keys()
 
 
 def test_context_names(api: KiaraAPI):

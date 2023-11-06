@@ -81,7 +81,7 @@ class MetadataTypeInfo(TypeInfo):
         python_class = PythonClass.from_class(type_cls)
         properties_md = ContextMetadataModel.from_class(type_cls)
         type_name = type_cls._metadata_key  # type: ignore
-        schema = type_cls.schema()
+        schema = type_cls.model_json_schema()
 
         return MetadataTypeInfo(
             type_name=type_name,

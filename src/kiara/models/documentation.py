@@ -59,11 +59,11 @@ class AuthorsMetadataModel(KiaraModel):
     _metadata_key: ClassVar[str] = "origin"
 
     @classmethod
-    def from_class(cls, item_cls: Type):
+    def from_class(cls, item_cls: Type) -> "AuthorsMetadataModel":
 
         data = get_metadata_for_python_module_or_class(item_cls)  # type: ignore
         merged = merge_dicts(*data)
-        return cls.parse_obj(merged)
+        return cls(**merged)
 
     authors: List[AuthorModel] = Field(
         description="The authors/creators of this item.", default_factory=list
@@ -97,7 +97,7 @@ class ContextMetadataModel(KiaraModel):
 
         data = get_metadata_for_python_module_or_class(item_cls)  # type: ignore
         merged = merge_dicts(*data)
-        return cls.parse_obj(merged)
+        return cls(**merged)
 
     _metadata_key: ClassVar[str] = "properties"
 

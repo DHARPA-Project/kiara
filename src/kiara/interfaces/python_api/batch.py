@@ -12,9 +12,10 @@ from pydantic import (
     ConfigDict,
     Field,
     PrivateAttr,
+    field_validator,
     model_validator,
-    validator,
 )
+from pydantic_core.core_schema import ValidationInfo
 
 from kiara.context import Kiara
 from kiara.interfaces.python_api.utils import create_save_config
@@ -94,6 +95,7 @@ class BatchOperation(BaseModel):
     save_defaults: Dict[str, List[str]] = Field(
         description="Configuration which values to save, under which alias(es).",
         default_factory=dict,
+        validate_default=True,
     )
 
     _kiara: Kiara = PrivateAttr(default=None)
@@ -114,15 +116,14 @@ class BatchOperation(BaseModel):
 
         return values
 
-    # TODO[pydantic]: We couldn't refactor the `validator`, please replace it by `field_validator` manually.
-    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-validators for more information.
-    @validator("save_defaults", always=True, pre=True)
-    def validate_save(cls, save, values):
+    @field_validator("save_defaults", mode="before")
+    @classmethod
+    def validate_save(cls, save_defaults: Dict[str, List[str]], info: ValidationInfo):
 
-        alias = values["alias"]
-        pipeline_config = values["pipeline_config"]
+        alias = info.data["alias"]
+        pipeline_config = info.data["pipeline_config"]
         return cls.create_save_aliases(
-            save=save, alias=alias, pipeline_config=pipeline_config
+            save=save_defaults, alias=alias, pipeline_config=pipeline_config
         )
 
     @classmethod

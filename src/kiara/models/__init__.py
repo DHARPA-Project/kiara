@@ -12,7 +12,7 @@ import networkx as nx
 from dag_cbor import IPLDKind
 from deepdiff import DeepHash
 from multiformats import CID
-from pydantic import ConfigDict, Extra
+from pydantic import ConfigDict
 from pydantic.fields import PrivateAttr
 from pydantic.main import BaseModel
 from rich import box
@@ -31,6 +31,7 @@ from kiara.registries.templates import TemplateRegistry
 from kiara.utils.class_loading import _default_id_func
 from kiara.utils.develop import log_dev_message
 from kiara.utils.hashing import KIARA_HASH_FUNCTION, compute_cid
+from kiara.utils.json import orjson_dumps
 from kiara.utils.models import (
     assemble_subcomponent_graph,
     create_subcomponent_tree_renderable,
@@ -50,7 +51,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
 
     __slots__ = ["__weakref__"]
 
-    model_config = ConfigDict(extra=Extra.forbid)
+    model_config = ConfigDict(extra="forbid")
 
     # @classmethod
     # def get_model_title(cls):
@@ -274,12 +275,13 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         return result
 
     def as_dict_with_schema(self) -> Dict[str, Dict[str, Any]]:
-        return {"data": self.model_dump(), "schema": self.schema()}
+        return {"data": self.model_dump(), "schema": self.model_json_schema()}
 
     def as_json_with_schema(self, incl_model_id: bool = False) -> str:
 
-        data_json = self.json()
-        schema_json = self.schema_json()
+        data_json = self.model_dump_json()
+        schema_json = self.model_json_schema()
+        schema_json_str = orjson_dumps(schema_json)
         if not incl_model_id:
             return (
                 '{"'
@@ -289,7 +291,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
                 + ', "'
                 + KIARA_MODEL_SCHEMA_KEY
                 + '": '
-                + schema_json
+                + schema_json_str
                 + "}"
             )
         else:
@@ -301,7 +303,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
                 + ', "'
                 + KIARA_MODEL_SCHEMA_KEY
                 + '": '
-                + schema_json
+                + schema_json_str
                 + ', "'
                 + KIARA_MODEL_ID_KEY
                 + '": "'

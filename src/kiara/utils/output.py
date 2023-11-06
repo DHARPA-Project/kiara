@@ -25,6 +25,7 @@ import orjson
 import structlog
 from pydantic import BaseModel, Field, model_validator
 from pydantic.v1.main import BaseModel as BaseModel1
+from pydantic_core import PydanticUndefined
 from rich import box
 from rich.console import ConsoleRenderable, Group, RenderableType, RichCast
 from rich.markdown import Markdown
@@ -405,7 +406,7 @@ def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
     table.add_column("Required")
     table.add_column("Default")
 
-    props = model_cls.schema().get("properties", {})
+    props = model_cls.model_json_schema().get("properties", {})
 
     for field_name, field in sorted(model_cls.model_fields.items()):
         row = [field_name]
@@ -427,7 +428,7 @@ def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
         if callable(default):
             default = default()
 
-        if default is None:
+        if default in [None, PydanticUndefined]:
             default = ""
         else:
             try:
@@ -767,7 +768,7 @@ def extract_renderable(
     elif isinstance(item, BaseModel) and not inline_models_as_json:
         return create_table_from_model_object(item)
     elif isinstance(item, BaseModel):
-        return item.json(indent=2)
+        return item.model_dump_json(indent=2)
     elif isinstance(item, Mapping) and not inline_models_as_json:
         table = RichTable(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")

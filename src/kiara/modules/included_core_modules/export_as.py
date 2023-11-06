@@ -184,7 +184,7 @@ class DataExportModule(KiaraModule):
         if export_metadata:
             metadata_file = Path(os.path.join(base_path, f"{name}.metadata"))
             value_info = source_obj.create_info()
-            value_json = value_info.json()
+            value_json = value_info.model_dump_json()
             metadata_file.write_text(value_json)
 
             result.files.append(metadata_file.as_posix())

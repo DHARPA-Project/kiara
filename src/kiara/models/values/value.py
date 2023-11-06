@@ -1646,7 +1646,7 @@ class ValueMapWritable(ValueMap):  # type: ignore
             self.get_value_obj(field_name=field_name)
 
 
-ValuePedigree.update_forward_refs()
+ValuePedigree.model_rebuild()
 ORPHAN = ValuePedigree(
     kiara_id=VOID_KIARA_ID, environments={}, module_type=NO_MODULE_TYPE, inputs={}
 )

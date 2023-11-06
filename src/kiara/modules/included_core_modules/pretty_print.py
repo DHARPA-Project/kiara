@@ -197,6 +197,6 @@ class PrettyPrintAnyValueModule(PrettyPrintModule):
     #
     #     data = value.data
     #     if isinstance(data, KiaraModel):
-    #         return data.json(option=orjson.OPT_INDENT_2)
+    #         return data.model_dump_json(option=orjson.OPT_INDENT_2)
     #     else:
     #         return str(data)

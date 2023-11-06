@@ -187,7 +187,7 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
             )
             shutil.move(job_details_file.as_posix(), backup)
 
-        job_details_file.write_text(job_record.json())
+        job_details_file.write_text(job_record.model_dump_json())
 
         for output_name, output_v_id in job_record.outputs.items():
 

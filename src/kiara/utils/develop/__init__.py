@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
-from typing import Any, ClassVar, Dict, Type, Union
+from typing import Any, ClassVar, Dict, Tuple, Type, Union
 
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic_settings import (
@@ -226,7 +226,7 @@ class KiaraDevSettings(BaseSettings):
         env_settings: PydanticBaseSettingsSource,
         dotenv_settings: PydanticBaseSettingsSource,
         file_secret_settings: PydanticBaseSettingsSource,
-    ) -> tuple[PydanticBaseSettingsSource, ...]:
+    ) -> Tuple[PydanticBaseSettingsSource, ...]:
         return (
             init_settings,
             env_settings,

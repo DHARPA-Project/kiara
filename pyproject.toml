@@ -340,13 +340,13 @@ source = ["kiara"]
 omit = [
     "src/kiara/doc/*"
 ]
+relative_files = true
 
 [tool.coverage.paths]
 source = [
     "src/",
     "*/site-packages/"
 ]
-relative_files = true
 
 [tool.coverage.report]
 exclude_lines = [

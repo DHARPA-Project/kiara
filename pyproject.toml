@@ -78,7 +78,7 @@ dependencies = [
     "makkus.multiformats>=0.2.0,<0.3.0",
     "makkus.multiformats-config>=0.2.0,<0.3.0",
     "networkx>=3.0,<4.0",
-    "orjson==3.8.10",
+    "orjson==3.9.10",
     "pp-ez>=0.2.0",
     "puremagic>=1.15",
     "pydantic>=2.0.0,<3.0.0",

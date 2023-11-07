@@ -92,7 +92,7 @@ dependencies = [
     "sortedcontainers>=2.4.0",
     "stevedore>=5.0.0,<6.0.0",
     "structlog>=21.5.0",
-    "tzlocal>=2.1,<5.0",
+    "tzlocal>=2.1,<6.0",
 ]
 dynamic = ["version"]
 

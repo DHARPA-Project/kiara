@@ -174,7 +174,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: install pip
-        run: pip install pip==21.2.4 setuptools==57.4.0
+        run: pip install -U pip setuptools
       - name: install kiara
         run: pip install -U -e .
       - name: install 'build' package

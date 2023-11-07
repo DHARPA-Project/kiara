@@ -94,7 +94,7 @@ class ContextInfo(KiaraModel):
     )
     invalid: bool = Field(description="Whether this context has errors.", bool=False)
     comment: Union[str, None] = Field(
-        description="(Optional) comment about this context.", default=None
+        default=None, description="(Optional) comment about this context."
     )
 
     _kiara: Union["Kiara", None] = PrivateAttr()

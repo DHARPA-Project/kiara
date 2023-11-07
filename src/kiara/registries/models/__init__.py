@@ -86,7 +86,7 @@ class ModelRegistry(object):
                 temp[key] = info
 
         group = KiaraModelClassesInfo(
-            group_alias=f"kiara_models.{package_name}", item_infos=temp  # type: ignore
+            group_title=f"kiara_models.{package_name}", item_infos=temp  # type: ignore
         )
 
         self._models_per_package[package_name] = group

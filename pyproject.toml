@@ -219,7 +219,7 @@ dev_documentation = [
     "mkdocs-material>=8.0.0",
     "mkdocs-section-index>0.3.0",
     "mkdocstrings[python]>=0.18",
-    "mkdocs-gen-files>=0.3.1;python_version>='3.7'"
+    "mkdocs-gen-files>=0.3.1"
 ]
 
 dev_testing = [

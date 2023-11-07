@@ -405,7 +405,7 @@ class KiaraModelClassesInfo(TypeInfoItemGroup):
                     temp[key] = info
 
             group = KiaraModelClassesInfo(
-                group_id=group.instance_id, group_alias=group.group_alias, item_infos=temp  # type: ignore
+                group_id=group.instance_id, group_title=group.group_alias, item_infos=temp  # type: ignore
             )
 
         return group

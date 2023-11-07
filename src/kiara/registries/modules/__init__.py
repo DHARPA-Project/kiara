@@ -82,7 +82,7 @@ class ModuleRegistry(object):
             else:
                 result[type_name] = md
 
-        return ModuleTypesInfo(group_alias=alias, item_infos=result)  # type: ignore
+        return ModuleTypesInfo(group_title=alias, item_infos=result)  # type: ignore
 
     def create_module(self, manifest: Union[Manifest, str]) -> "KiaraModule":
         """

@@ -164,7 +164,7 @@ class OperationRegistry(object):
             else:
                 result[type_name] = md
 
-        return OperationTypeClassesInfo(group_alias=alias, item_infos=result)  # type: ignore
+        return OperationTypeClassesInfo(group_title=alias, item_infos=result)  # type: ignore
 
     @property
     def operation_type_classes(

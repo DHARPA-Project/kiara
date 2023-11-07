@@ -6,14 +6,17 @@
 
 import typing
 
-from mkdocstrings.handlers.base import BaseHandler
+from mkdocstrings.handlers.base import BaseHandler, CollectionError, CollectorItem
 
 __all__ = ["get_handler"]
 
+from kiara.context import KiaraContextInfo
 
 # from kiara.defaults import KIARA_RESOURCES_FOLDER
-from kiara.doc.mkdocstrings.collector import KiaraCollector
-from kiara.doc.mkdocstrings.renderer import KiaraInfoRenderer
+# from kiara.doc.mkdocstrings.collector import KiaraCollector
+# from kiara.doc.mkdocstrings.renderer import KiaraInfoRenderer
+from kiara.interfaces.python_api.models.info import ItemInfo
+from kiara.utils import log_exception
 
 
 class KiaraHandler(BaseHandler):
@@ -31,42 +34,68 @@ class KiaraHandler(BaseHandler):
     domain: str = "kiara"
     enable_inventory: bool = True
 
-    # load_inventory = staticmethod(inventory.list_object_urls)
-    #
-    # @classmethod
-    # def load_inventory(
-    #     cls,
-    #     in_file: typing.BinaryIO,
-    #     url: str,
-    #     base_url: typing.Optional[str] = None,
-    #     **kwargs: typing.Any,
-    # ) -> typing.Iterator[typing.Tuple[str, str]]:
-    #     """Yield items and their URLs from an inventory file streamed from `in_file`.
-    #     This implements mkdocstrings' `load_inventory` "protocol" (see plugin.py).
-    #     Arguments:
-    #         in_file: The binary file-like object to read the inventory from.
-    #         url: The URL that this file is being streamed from (used to guess `base_url`).
-    #         base_url: The URL that this inventory's sub-paths are relative to.
-    #         **kwargs: Ignore additional arguments passed from the config.
-    #     Yields:
-    #         Tuples of (item identifier, item URL).
-    #     """
-    #
-    #     print("XXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-    #
-    #     if base_url is None:
-    #         base_url = posixpath.dirname(url)
-    #
-    #     for item in Inventory.parse_sphinx(
-    #         in_file, domain_filter=("py",)
-    #     ).values():
-    #         yield item.name, posixpath.join(base_url, item.uri)
+    def collect(
+        self, identifier: str, config: typing.MutableMapping[str, typing.Any]
+    ) -> CollectorItem:
+        """
+        Collect the documentation tree given an identifier and selection options.
+
+        Arguments:
+        ---------
+            identifier: The dotted-path of a Python object available in the Python path.
+            config: Selection options, used to alter the data collection done by `pytkdocs`.
+
+
+        Raises:
+        ------
+            CollectionError: When there was a problem collecting the object documentation.
+
+
+        Returns:
+        -------
+            The collected object-tree.
+        """
+        tokens = identifier.split(".")
+
+        if tokens[0] != "kiara_info":
+            return None
+
+        item_type = tokens[1]
+        item_id = ".".join(tokens[2:])
+        if not item_id:
+            raise CollectionError(f"Invalid id: {identifier}")
+
+        ctx: KiaraContextInfo = builtins.plugin_package_context_info  # type: ignore  # noqa
+        try:
+            item: ItemInfo = ctx.get_info(item_type=item_type, item_id=item_id)
+        except Exception as e:
+            log_exception(e)
+            raise CollectionError(f"Invalid id: {identifier}")
+
+        return {"obj": item, "identifier": identifier}
+
+    def get_anchors(self, data: CollectorItem) -> typing.Tuple[str, ...]:
+
+        if data is None:
+            return ()
+
+        return (data["identifier"], data["kiara_id"], data["obj"].get_id())
+
+    def render(
+        self, data: CollectorItem, config: typing.Mapping[str, typing.Any]
+    ) -> str:
+
+        # final_config = ChainMap(config, self.default_config)
+
+        obj = data["obj"]
+        html: str = obj.create_html()
+        return html
 
 
 def get_handler(
     theme: str,
     custom_templates: typing.Union[str, None] = None,
-    **config: typing.Any,
+    config_file_path: typing.Union[None, str] = None,
 ) -> KiaraHandler:
     """
     Simply return an instance of `PythonHandler`.
@@ -90,7 +119,7 @@ def get_handler(
     # )
 
     return KiaraHandler(
-        collector=KiaraCollector(),
-        # renderer=KiaraInfoRenderer("kiara", theme, custom_templates),
-        renderer=KiaraInfoRenderer("kiara", theme),
+        "kiara",
+        theme=theme,
+        custom_templates=custom_templates,
     )

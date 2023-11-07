@@ -174,11 +174,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: install pip
-        run: pip install -U pip setuptools
-      - name: install kiara
-        run: pip install -U -e .
-      - name: install 'build' package
-        run: pip install -U build
+        run: pip install -U pip setuptools setuptools_scm build wheel
+#      - name: install kiara
+#        run: pip install -U -e .
+#      - name: install 'build' package
+#        run: pip install -U build
       - name: create packages
         run: python -m build
       - name: upload source package

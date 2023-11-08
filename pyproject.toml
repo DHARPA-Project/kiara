@@ -92,7 +92,7 @@ dependencies = [
     "sortedcontainers>=2.4.0",
     "stevedore>=5.0.0,<6.0.0",
     "structlog>=21.5.0",
-    "tzlocal>=2.1,<5.0",
+    "tzlocal>=2.1,<6.0",
 ]
 dynamic = ["version"]
 
@@ -215,7 +215,7 @@ dev_documentation = [
     "mike>=1.0.1",
     "mkdocs-awesome-pages-plugin>=2.5.0",
     "mkdocs-literate-nav>=0.4.0",
-    "mkdocs-macros-plugin>=0.7.0,<0.8.0",
+    "mkdocs-macros-plugin>=0.7.0,<1.1.0",
     "mkdocs-material>=8.0.0",
     "mkdocs-section-index>0.3.0",
     "mkdocstrings[python]>=0.18",
@@ -260,7 +260,7 @@ dev_utils = [
     "pytest>=6.2.2",
     "pytest-xdist>=3.2.1",
     "setup-cfg-fmt>=1.16.0",
-    "ruff==0.0.272",
+    "ruff>=0.0.272",
     "types-Deprecated",
     "types-PyYAML",
     "types-pkg-resources",

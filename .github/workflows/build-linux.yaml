@@ -165,6 +165,8 @@ jobs:
       - linting-linux
     env:
         GEMFURY_PUSH_TOKEN: ${{ secrets.GEMFURY_PUSH_TOKEN }}
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
       - name: Set up Python 3.10
         uses: actions/setup-python@v4

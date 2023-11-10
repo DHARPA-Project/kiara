@@ -93,18 +93,18 @@ def delete_context(
     ctx,
     context_name: Union[str, None] = None,
     force: bool = False,
-    all_contexts: bool = False,
+    all: bool = False,
 ):
     """Delete a context and all its stored values."""
     kiara_config: KiaraConfig = ctx.obj.kiara_config
 
     if not context_name:
-        if all_contexts:
+        if all:
             _context_name = "ALL_CONTEXTS"
         else:
             _context_name = ctx.obj.kiara_context_name
     else:
-        if all_contexts:
+        if all:
             if context_name != "ALL_CONTEXTS":
                 terminal_print()
                 terminal_print(

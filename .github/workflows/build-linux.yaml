@@ -191,7 +191,7 @@ jobs:
     permissions:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
-      - name: Retrieve release distributions
+      - name: Retrieve build distributions
         uses: actions/download-artifact@v3
         with:
           name: build-dists

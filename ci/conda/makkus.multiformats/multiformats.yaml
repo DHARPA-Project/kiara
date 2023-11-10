@@ -2,4 +2,4 @@ channels:
   - conda-forge
   - dharpa
 requirements:
-  multiformats-config: ""
+  makkus.multiformats-config: ""

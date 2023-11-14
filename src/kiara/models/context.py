@@ -92,7 +92,7 @@ class ContextInfo(KiaraModel):
     archives: ArchiveGroupInfo = Field(
         description="The archives registered in this context."
     )
-    invalid: bool = Field(description="Whether this context has errors.", bool=False)
+    invalid: bool = Field(description="Whether this context has errors.", default=False)
     comment: Union[str, None] = Field(
         default=None, description="(Optional) comment about this context."
     )

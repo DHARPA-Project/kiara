@@ -494,7 +494,7 @@ class PipelineConfig(KiaraModuleConfig):
         kiara: Union["Kiara", None] = None,
         pipeline_name: Union[None, str] = None,
         # module_map: Optional[Mapping[str, Any]] = None,
-    ):
+    ) -> "PipelineConfig":
 
         data = get_data_from_file(path)
         _pipeline_name = data.pop("pipeline_name", None)
@@ -522,7 +522,7 @@ class PipelineConfig(KiaraModuleConfig):
         kiara: Union["Kiara", None] = None,
         pipeline_name: Union[None, str] = None,
         # module_map: Optional[Mapping[str, Any]] = None,
-    ):
+    ) -> "PipelineConfig":
 
         data = get_data_from_string(string_data)
         _pipeline_name = data.pop("pipeline_name", None)

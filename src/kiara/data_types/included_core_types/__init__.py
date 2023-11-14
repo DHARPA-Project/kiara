@@ -438,7 +438,9 @@ class DictValueType(AnyType[KiaraDict, DataTypeConfig]):
         table.add_column("value")
 
         data: KiaraDict = value.data
-        data_json = orjson_dumps(data.dict_data, option=orjson.OPT_INDENT_2)
+        data_json = orjson_dumps(
+            data.dict_data, option=orjson.OPT_INDENT_2 | orjson.OPT_NON_STR_KEYS
+        )
         table.add_row(
             "dict data", Syntax(data_json, "json", background_color="default")
         )

@@ -10,7 +10,7 @@ Metadata models must be a sub-class of [kiara.metadata.MetadataModel][kiara.meta
 sub-class a pydantic BaseModel or implement custom base classes.
 """
 
-from typing import Any, Dict, Mapping
+from typing import Any, Dict, Hashable, Mapping
 
 from pydantic import BaseModel, Field, PrivateAttr
 
@@ -20,7 +20,7 @@ from kiara.utils.hashing import compute_cid
 
 class KiaraDict(BaseModel, Mapping):
 
-    dict_data: Dict[str, Any] = Field(description="The data.")
+    dict_data: Dict[Hashable, Any] = Field(description="The data.")
     data_schema: Dict[str, Any] = Field(description="The schema.")
     python_class: PythonClass = Field(
         description="The python class of which model instances are created. This is mostly meant as a hint for client applications."

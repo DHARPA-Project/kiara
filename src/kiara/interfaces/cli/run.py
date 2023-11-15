@@ -167,8 +167,19 @@ def run(
                 sys.exit(1)
             else:
                 # TODO: check if valid pipeline, otherwise check if 'module_or_operation is an operation name
+
+                from kiara.models.module.jobs import ExecutionContext
+                from kiara.models.module.pipeline import PipelineConfig
+
+                pipeline_dir = os.path.abspath(os.path.dirname(path))
+                execution_context = ExecutionContext(pipeline_dir=pipeline_dir)
+                pc = PipelineConfig.from_config(
+                    data, execution_context=execution_context
+                )
                 job_desc = JobDesc(
-                    operation="pipeline", module_config=data, job_alias="local_pipeline"
+                    operation="pipeline",
+                    module_config=pc.model_dump(),
+                    job_alias="local_pipeline",
                 )
                 job_descs.append(job_desc)
 

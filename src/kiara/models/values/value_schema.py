@@ -7,7 +7,7 @@
 
 from typing import Any, ClassVar, Dict
 
-from pydantic import ConfigDict, Field, field_validator
+from pydantic import ConfigDict, Field, field_serializer, field_validator
 
 from kiara.defaults import SpecialValue
 from kiara.models import KiaraModel
@@ -47,6 +47,15 @@ class ValueSchema(KiaraModel):
         default_factory=DocumentationMetadataModel,
         description="A description for the value of this input field.",
     )
+
+    @field_serializer("default")
+    def serialize_default(self, value):
+        if value in [SpecialValue.NOT_SET, SpecialValue.NO_VALUE]:
+            return None
+        elif callable(value):
+            return value()
+        else:
+            return value
 
     @field_validator("doc", mode="before")
     @classmethod

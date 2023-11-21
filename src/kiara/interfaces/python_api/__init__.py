@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import inspect
 import json
@@ -21,10 +22,6 @@ from typing import (
 )
 
 import dpath
-
-#  Copyright (c) 2021, Markus Binsteiner
-#
-#  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import structlog
 from ruamel.yaml import YAML
 
@@ -59,7 +56,6 @@ from kiara.models.context import ContextInfo, ContextInfos
 from kiara.models.module.jobs import ActiveJob
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
-from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.rendering import RenderValueResult
 from kiara.models.runtime_environment.python import PythonRuntimeEnvironment
 from kiara.models.values.matchers import ValueMatcher
@@ -91,7 +87,14 @@ from kiara.utils.string_vars import replace_var_names_in_obj
 
 if TYPE_CHECKING:
     from kiara.context import Kiara, KiaraConfig, KiaraRuntimeConfig
-    from kiara.interfaces.python_api.models.doc import OperationsMap, WorkflowsMap
+    from kiara.interfaces.python_api.models.doc import (
+        OperationsMap,
+        PipelinesMap,
+        WorkflowsMap,
+    )
+    from kiara.models.module.pipeline import PipelineConfig, PipelineStructure
+    from kiara.models.module.pipeline.pipeline import PipelineGroupInfo, PipelineInfo
+
 
 logger = structlog.getLogger()
 yaml = YAML(typ="safe")
@@ -649,6 +652,7 @@ class KiaraAPI(object):
         filter: Union[str, None, Iterable[str]] = None,
         input_types: Union[str, Iterable[str], None] = None,
         output_types: Union[str, Iterable[str], None] = None,
+        operation_types: Union[str, Iterable[str], None] = None,
         include_internal: bool = False,
         python_packages: Union[str, None, Iterable[str]] = None,
     ) -> List[str]:
@@ -656,8 +660,12 @@ class KiaraAPI(object):
         Get a list of all operation ids that match the specified filter.
 
         Arguments:
-            filter: an optional single or list of filters (all filters must match the operation id for the operation to be included)
-            include_internal: also return internal operations
+            filter: the (optional) filter string(s), an operation must match all of them to be included in the result
+            input_types: each operation must have at least one input that matches one of the specified types
+            output_types: each operation must have at least one output that matches one of the specified types
+            operation_types: only include operations of the specified type(s)
+            include_internal: whether to include operations that are predominantly used internally in kiara.
+            python_packages: only include operations that are contained in one of the provided python packages
         """
         if not filter and include_internal and not python_packages:
             return sorted(self.context.operation_registry.operation_ids)
@@ -668,6 +676,7 @@ class KiaraAPI(object):
                     filter=filter,
                     input_types=input_types,
                     output_types=output_types,
+                    operation_types=operation_types,
                     include_internal=include_internal,
                     python_packages=python_packages,
                 ).keys()
@@ -726,6 +735,8 @@ class KiaraAPI(object):
 
             if os.path.isfile(operation):
                 try:
+                    from kiara.models.module.pipeline import PipelineConfig
+
                     # we use the 'from_file' here, because that will resolve any relative paths in the pipeline
                     # if this doesn't work, we just assume the file is not a pipeline configuration but
                     # a manifest file with 'module_type' and optional 'module_config' keys
@@ -779,7 +790,7 @@ class KiaraAPI(object):
         include_internal: bool = False,
     ) -> "OperationsMap":
         """
-        List all available values, optionally filter.
+        List all available operations, optionally filter.
 
         Arguments:
             filter: the (optional) filter string(s), an operation must match all of them to be included in the result
@@ -956,6 +967,198 @@ class KiaraAPI(object):
 
     # ==================================================================================================================
     # methods relating to pipelines
+
+    def list_pipeline_ids(
+        self,
+        filter: Union[str, None, Iterable[str]] = None,
+        input_types: Union[str, Iterable[str], None] = None,
+        output_types: Union[str, Iterable[str], None] = None,
+        include_internal: bool = False,
+        python_packages: Union[str, None, Iterable[str]] = None,
+    ) -> List[str]:
+        """
+        Get a list of all pipeline (operation) ids that match the specified filter.
+
+        Arguments:
+            filter: an optional single or list of filters (all filters must match the operation id for the operation to be included)
+            include_internal: also return internal pipelines
+        """
+
+        return self.list_operation_ids(
+            filter=filter,
+            input_types=input_types,
+            output_types=output_types,
+            operation_types=["pipeline"],
+            include_internal=include_internal,
+            python_packages=python_packages,
+        )
+
+    def list_pipelines(
+        self,
+        filter: Union[str, None, Iterable[str]] = None,
+        input_types: Union[str, Iterable[str], None] = None,
+        output_types: Union[str, Iterable[str], None] = None,
+        python_packages: Union[str, Iterable[str], None] = None,
+        include_internal: bool = False,
+    ) -> "PipelinesMap":
+        """List all available pipelines, optionally filter.
+
+        Arguments:
+            filter: the (optional) filter string(s), an operation must match all of them to be included in the result
+            input_types: each operation must have at least one input that matches one of the specified types
+            output_types: each operation must have at least one output that matches one of the specified types
+            operation_types: only include operations of the specified type(s)
+            include_internal: whether to include operations that are predominantly used internally in kiara.
+            python_packages: only include operations that are contained in one of the provided python packages
+
+        Returns:
+            a dictionary with the operation id as key, and [kiara.models.module.operation.Operation] instance data as value
+        """
+        from kiara.interfaces.python_api.models.doc import PipelinesMap
+
+        ops = self.list_operations(
+            filter=filter,
+            input_types=input_types,
+            output_types=output_types,
+            operation_types=["pipeline"],
+            python_packages=python_packages,
+            include_internal=include_internal,
+        )
+
+        result: Dict[str, PipelineStructure] = {}
+        for op in ops.values():
+            details: PipelineOperationDetails = op.operation_details
+            config: "PipelineConfig" = details.pipeline_config
+            structure = config.structure
+            result[op.operation_id] = structure
+
+        return PipelinesMap.model_construct(root=result)
+
+    def get_pipeline(
+        self,
+        pipeline: Union[Mapping[str, Any], str, Path],
+        allow_external: Union[bool, None] = None,
+    ) -> "PipelineStructure":
+        """
+        Return the pipeline (Structure) instance with the specified id.
+
+        This can be used to get information about a pipeline, like inputs/outputs scheman, documentation, included steps, stages, etc.
+
+        The order in which the operation argument is resolved:
+        - if it's a string, and an existing, registered operation_id, the associated operation is returned
+        - if it's a path to an existing file, the content of the file is loaded into a dict and a pipeline operation will be created
+
+        Arguments:
+            pipeline: the pipeline id, module_type_name, path to a file, or url
+            allow_external: if True, allow loading operations from external sources (e.g. a URL), if 'None' is provided, the configured value in the runtime configuration is used.
+
+        Returns:
+            pipeline structure data
+        """
+
+        op = self.get_operation(operation=pipeline, allow_external=allow_external)
+        if op.module_type != "pipeline":
+            raise KiaraException(
+                f"Operation '{op.operation_id}' is not a pipeline, but a '{op.module_type}'"
+            )
+        details: PipelineOperationDetails = op.operation_details  # type: ignore
+        config: "PipelineConfig" = details.pipeline_config
+
+        return config.structure
+
+    def retrieve_pipeline_info(
+        self, pipeline: str, allow_external: bool = False
+    ) -> "PipelineInfo":
+        """
+        Return the full information for the specified pipeline id.
+
+        This is similar to the 'get_pipeline' method, but returns additional information. Only use this instead of
+        'get_pipeline' if you need the additional info, as it's more expensive to get.
+
+        Arguments:
+            pipeline: the pipeline (operation) id
+
+        Returns:
+            augmented pipeline instance data
+        """
+        if not allow_external:
+            op = self.context.operation_registry.get_operation(operation_id=pipeline)
+        else:
+            op = create_operation(module_or_operation=pipeline)
+
+        if op.module_type != "pipeline":
+            raise KiaraException(
+                f"Operation '{op.operation_id}' is not a pipeline, but a '{op.module_type}'"
+            )
+
+        from kiara.models.module.pipeline.pipeline import Pipeline, PipelineInfo
+
+        details: PipelineOperationDetails = op.operation_details  # type: ignore
+        config: "PipelineConfig" = details.pipeline_config
+        pipeline_instance = Pipeline(structure=config.structure, kiara=self.context)
+
+        p_info: PipelineInfo = PipelineInfo.create_from_instance(
+            kiara=self.context, instance=pipeline_instance
+        )
+        return p_info
+
+    def retrieve_pipelines_info(
+        self,
+        *filters,
+        input_types: Union[str, Iterable[str], None] = None,
+        output_types: Union[str, Iterable[str], None] = None,
+        python_packages: Union[str, Iterable[str], None] = None,
+        include_internal: bool = False,
+    ) -> "PipelineGroupInfo":
+        """
+        Retrieve information about the matching pipelines.
+
+        This retrieves the same list of pipelines as [list_pipelines][kiara.interfaces.python_api.KiaraAPI.list_pipelines],
+        but augments each result instance with additional information that might be useful in frontends.
+
+        'PipelineInfo' objects contains augmented information on top of what 'normal' [PipelineStructure][kiara.models.module.pipeline.PipelineStructure] objects
+        hold, but they can take longer to create/resolve. If you don't need any
+        of the augmented information, just use the [list_pipelines][kiara.interfaces.python_api.KiaraAPI.list_pipelines] method
+        instead.
+
+        Arguments:
+            filters: the (optional) filter strings, an operation must match all of them to be included in the result
+            include_internal: whether to include operations that are predominantly used internally in kiara.
+            input_types: each operation must have at least one input that matches one of the specified types
+            output_types: each operation must have at least one output that matches one of the specified types
+            include_internal: whether to include operations that are predominantly used internally in kiara.
+            python_packages: only include operations that are contained in one of the provided python packages
+        Returns:
+            a wrapper object containing a dictionary of items with value_id as key, and [kiara.interfaces.python_api.models.info.OperationInfo] as value
+        """
+
+        title = "Available pipelines"
+        if filters:
+            title = "Filtered pipelines"
+
+        operations = self.list_operations(
+            filters,
+            input_types=input_types,
+            output_types=output_types,
+            include_internal=include_internal,
+            operation_types=["pipeline"],
+            python_packages=python_packages,
+        )
+
+        from kiara.models.module.pipeline.pipeline import Pipeline, PipelineGroupInfo
+
+        pipelines = {}
+        for op_id, op in operations.items():
+            details: PipelineOperationDetails = op.operation_details  # type: ignore
+            config: "PipelineConfig" = details.pipeline_config
+            pipeline = Pipeline(structure=config.structure, kiara=self.context)
+            pipelines[op_id] = pipeline
+
+        ps_info = PipelineGroupInfo.create_from_pipelines(
+            kiara=self.context, group_title=title, **pipelines
+        )
+        return ps_info
+
     def register_pipeline(
         self,
         data: Union[Path, str, Mapping[str, Any]],
@@ -1483,7 +1686,7 @@ class KiaraAPI(object):
         endpoint_step_id: Union[str, None] = None,
         extra_input_aliases: Union[None, Mapping[str, str]] = None,
         extra_output_aliases: Union[None, Mapping[str, str]] = None,
-    ) -> PipelineConfig:
+    ) -> "PipelineConfig":
         """
         Assemble a (pipeline) module config to filter values of a specific data type.
 

@@ -70,3 +70,4 @@ environment.yaml
 .tzapignore
 .tzapinclude
 .pixi
+dev.py

@@ -35,7 +35,12 @@ class ImportLocalFileModule(KiaraModule):
         self,
     ) -> ValueMapSchema:
 
-        return {"path": {"type": "string", "doc": "The local path to the file."}}
+        return {
+            "path": {
+                "type": "string",
+                "doc": "The local path to the file (absolute, or relative to current directory.",
+            }
+        }
 
     def create_outputs_schema(
         self,

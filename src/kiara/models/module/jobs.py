@@ -135,6 +135,9 @@ class ActiveJob(KiaraModel):
     )
     _exception: Union[Exception, None] = PrivateAttr(default=None)
 
+    def is_finished(self) -> bool:
+        return self.finished is not None
+
     def _retrieve_id(self) -> str:
         return str(self.job_id)
 

@@ -1,6 +1,17 @@
 # Changelog
 
-## Version 0.3.0 (Upcoming)
+## Version 0.5.5 (Upcoming)
+
+- added pipeline related api endpoints:
+  - `list_pipeline_ids`
+  - `list_pipelines`
+  - `get_pipeline`
+  - `retrieve_pipeline_info`
+  - 'retrieve_pipelines_info'
+
+## Version 0.3.1 - 0.5.4
+
+- changes not tracked
 
 ## Version 0.3.1
 

@@ -253,7 +253,11 @@ def find_pipeline_data_in_paths(
 
             for root, dirnames, filenames in os.walk(path, topdown=True):
 
-                dirnames[:] = [d for d in dirnames if d not in DEFAULT_EXCLUDE_DIRS]
+                dirnames[:] = [
+                    d
+                    for d in dirnames
+                    if d not in DEFAULT_EXCLUDE_DIRS and not d.startswith(".")
+                ]
 
                 for filename in [
                     f

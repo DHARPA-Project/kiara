@@ -24,12 +24,13 @@ import networkx as nx
 from pydantic import Field, PrivateAttr
 from rich import box
 from rich.console import RenderableType
+from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID, SpecialValue
 from kiara.exceptions import InvalidValuesException
-from kiara.interfaces.python_api.models.info import ItemInfo
+from kiara.interfaces.python_api.models.info import InfoItemGroup, ItemInfo
 from kiara.models.aliases import AliasValueMap
 from kiara.models.documentation import (
     AuthorsMetadataModel,
@@ -640,7 +641,9 @@ class PipelineInfo(ItemInfo):
         return Pipeline
 
     @classmethod
-    def create_from_instance(cls, kiara: "Kiara", instance: Any, **kwargs):
+    def create_from_instance(
+        cls, kiara: "Kiara", instance: Any, **kwargs
+    ) -> "PipelineInfo":
 
         return cls.create_from_pipeline(kiara=kiara, pipeline=instance)
 
@@ -651,7 +654,9 @@ class PipelineInfo(ItemInfo):
     @classmethod
     def create_from_pipeline(cls, kiara: "Kiara", pipeline: Pipeline) -> "PipelineInfo":
 
-        doc = DocumentationMetadataModel.create(None)
+        # doc = DocumentationMetadataModel.create(None)
+
+        doc = pipeline.doc
         authors = AuthorsMetadataModel()
         context = ContextMetadataModel()
 
@@ -803,5 +808,71 @@ class PipelineInfo(ItemInfo):
                 "Pipeline structure",
                 self.pipeline_structure.create_renderable(**config),
             )
+
+        return table
+
+
+class PipelineGroupInfo(InfoItemGroup):
+
+    _kiara_model_id: ClassVar = "info.pipelines"
+
+    @classmethod
+    def base_info_class(cls) -> Type[ItemInfo]:
+        return PipelineInfo
+
+    @classmethod
+    def create_from_pipelines(
+        cls, kiara: "Kiara", group_title: Union[str, None] = None, **items: Pipeline
+    ) -> "PipelineGroupInfo":
+
+        p_infos = {
+            k: PipelineInfo.create_from_pipeline(kiara=kiara, pipeline=v)
+            for k, v in items.items()
+        }
+
+        op_group_info = cls(group_title=group_title, item_infos=p_infos)
+        return op_group_info
+
+    # type_name: Literal["operation_type"] = "operation_type"
+    item_infos: Mapping[str, PipelineInfo] = Field(
+        description="The pipeline info instances for each type."
+    )
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        return self._create_renderable_list(**config)
+
+    def _create_renderable_list(self, **config) -> RenderableType:
+
+        full_doc = config.get("full_doc", False)
+        filter = config.get("filter", [])
+
+        table = Table(box=box.SIMPLE, show_header=True)
+        table.add_column("Id", no_wrap=True, style="i")
+        table.add_column("Description")
+
+        p_info: PipelineInfo
+        for op_id, p_info in self.item_infos.items():
+
+            desc_str = p_info.documentation.description
+            if full_doc:
+                desc = Markdown(p_info.documentation.full_doc)
+            else:
+                desc = Markdown(p_info.documentation.description)
+
+            if filter:
+                match = True
+                for f in filter:
+                    if (
+                        f.lower() not in op_id.lower()
+                        and f.lower() not in desc_str.lower()
+                    ):
+                        match = False
+                        break
+                if match:
+                    table.add_row(op_id, desc)
+
+            else:
+                table.add_row(op_id, desc)
 
         return table

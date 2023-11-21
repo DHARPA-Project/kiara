@@ -19,6 +19,7 @@ from rich.table import Table
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
 from kiara.models import KiaraModel
+from kiara.utils import log_exception
 from kiara.utils.dicts import merge_dicts
 from kiara.utils.global_metadata import get_metadata_for_python_module_or_class
 
@@ -168,12 +169,23 @@ class DocumentationMetadataModel(KiaraModel):
 
     @classmethod
     def from_class_doc(cls, item_cls: Type) -> "DocumentationMetadataModel":
-        doc = item_cls.__doc__
+
+        doc: Union[str, None] = None
+
+        if hasattr(item_cls, "type_doc"):
+            try:
+                doc = item_cls.type_doc()
+            except Exception as e:
+                log_exception(e)
+
+        if not doc:
+            doc = item_cls.__doc__
 
         if not doc:
             doc = DEFAULT_NO_DESC_VALUE
 
         doc = inspect.cleandoc(doc)
+
         return cls.from_string(doc)
 
     @classmethod

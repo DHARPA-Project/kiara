@@ -775,7 +775,7 @@ class PipelineStructure(KiaraModel):
                             inps.add(f"[i]{pi}[i]")
                 if step.doc.is_set:
                     step_node.add(f"desc: {step.doc.description}")
-                step_node.add(f"module: {step.manifest_src.module_type}")
+                step_node.add(f"operation: {step.manifest_src.module_type}")
 
         outputs = tree.add("outputs")
         for field_name, schema in self.pipeline_outputs_schema.items():

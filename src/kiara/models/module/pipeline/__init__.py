@@ -154,6 +154,12 @@ class PipelineStep(Manifest):
                 input_links[input_field] = sources
 
             doc = step.get("doc", None)
+            if doc is None:
+                if module.module_type_name == "pipeline":
+                    pc: PipelineConfig = module.config
+                    doc = pc.doc
+                else:
+                    doc = module.doc
 
             # TODO: do we really need the deepcopy here?
             _s = PipelineStep(

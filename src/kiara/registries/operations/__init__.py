@@ -23,6 +23,7 @@ from typing import (
 )
 
 import structlog
+from rich.console import Group, RenderableType
 from ruamel.yaml import YAML
 
 from kiara.exceptions import InvalidOperationException, NoSuchOperationException
@@ -38,9 +39,12 @@ from kiara.models.module.operation import (
     PipelineOperationConfig,
 )
 from kiara.models.module.pipeline import PipelineConfig
+from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.models.python_class import KiaraModuleInstance
 from kiara.operations import OperationType
-from kiara.utils import log_exception, log_message
+from kiara.utils import is_develop, log_exception, log_message
+from kiara.utils.cli import terminal_print
+from kiara.utils.output import extract_renderable
 from kiara.utils.pipelines import find_pipeline_data_in_paths
 
 if TYPE_CHECKING:
@@ -459,6 +463,13 @@ class OperationRegistry(object):
                 op = self.register_pipeline(data=op_data["data"], operation_id=op_id)
             except Exception as e:
                 log_message("invalid.pipeline", pipeline_id=op_id, reason=str(e))
+                if is_develop():
+                    renderables: List[RenderableType] = []
+                    renderables.append("")
+                    renderables.append(extract_renderable(e))
+                    renderables.append("")
+                    label = f"[red]Invalid Pipeline [/red][i]'{op_id}'[/i]"
+                    terminal_print(Group(*renderables), in_panel=label)
                 # log_exception(e)
                 continue
             ops[op.operation_id] = op
@@ -546,13 +557,22 @@ class OperationRegistry(object):
             metadata=metadata,
             doc=pipeline_config.doc,
         )
+
+        pc: PipelineConfig = module.config
+        # make sure the pipeline can be created
+        Pipeline(structure=pc.structure, kiara=self._kiara)
+
         operation._module = module
         assert self._operations is not None
         self._operations[_operation_id] = operation
-        current_pipelines = self.operations_by_type.get("pipeline", [])
+        current_pipelines = self.operations_by_type.get("pipeline", None)
+        if not current_pipelines:
+            current_pipelines = []
+            self._operations_by_type["pipeline"] = current_pipelines  # type: ignore
+
         current_pipelines.append(_operation_id)  # type: ignore
         assert self._operations_by_type is not None
-        self._operations_by_type["pipeline"] = sorted(current_pipelines)
+        # self._operations_by_type["pipeline"] = sorted(current_pipelines)
 
         logger.debug("pipeline.registered", operation_id=_operation_id)
         return operation

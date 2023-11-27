@@ -4,6 +4,7 @@
 import inspect
 import json
 import os.path
+import re
 import sys
 import textwrap
 import uuid
@@ -39,6 +40,7 @@ from kiara.exceptions import (
 from kiara.interfaces.python_api.models.info import (
     DataTypeClassesInfo,
     DataTypeClassInfo,
+    KiaraPluginInfo,
     ModuleTypeInfo,
     ModuleTypesInfo,
     OperationGroupInfo,
@@ -170,6 +172,51 @@ class KiaraAPI(object):
 
         return result
 
+    def get_available_plugins(self, regex: str = "^kiara[-_]plugin\\..*") -> List[str]:
+        """
+        Get a list of all available plugins.
+
+        Arguments:
+            regex: an optional regex to indicate the plugin naming scheme (default: /$kiara[_-]plugin\..*/)
+
+        Returns:
+            a list of plugin names
+        """
+
+        registry = self.context.environment_registry
+        python_env: PythonRuntimeEnvironment = registry.environments["python"]  # type: ignore
+
+        regex_c = re.compile(regex)
+
+        result = []
+        for pkg in python_env.packages:
+            pkg_name = pkg.name
+            if pkg_name == "kiara":
+                continue
+
+            # check if the package is a kiara plugin
+            match = regex_c.search(pkg_name)
+            if match:
+                result.append(pkg_name)
+
+        return result
+
+    def get_plugin_info(self, plugin_name: str) -> KiaraPluginInfo:
+        """
+        Get information about a plugin.
+
+        Arguments:
+            plugin_name: the name of the plugin
+
+        Returns:
+            a dictionary with information about the plugin
+        """
+
+        info = KiaraPluginInfo.create_from_instance(
+            kiara=self.context, instance=plugin_name
+        )
+        return info
+
     @property
     def context(self) -> "Kiara":
         """
@@ -207,6 +254,8 @@ class KiaraAPI(object):
     ) -> Union[bool, None]:
         """
         Ensure that the specified packages are installed.
+
+        This functionality is provisional, don't rely on it being available long-term. Ideally, we'll have other, external ways to manage the environment.
 
         Arguments:
           package_names: The names of the packages to install.
@@ -815,6 +864,7 @@ class KiaraAPI(object):
                     raise Exception(f"Operation type not registered: {op_type_name}")
 
                 temp.update(op_type.operations)
+
             operations: Mapping[str, Operation] = temp
         else:
             operations = self.context.operation_registry.operations
@@ -2149,6 +2199,7 @@ class KiaraAPI(object):
 
     # ------------------------------------------------------------------------------------------------------------------
     # workflow-related methods
+    # all of the workflow-related methods are provisional experiments, so don't rely on them to be availale long term
 
     def list_workflow_ids(self) -> List[uuid.UUID]:
         """List all available workflow ids."""

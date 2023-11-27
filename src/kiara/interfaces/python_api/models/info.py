@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import abc
+import importlib
 import inspect
+import re
 import textwrap
 import uuid
 from typing import (
@@ -32,8 +34,10 @@ from rich.table import Table
 from rich.tree import Tree
 
 from kiara.defaults import DEFAULT_NO_DESC_VALUE
+from kiara.exceptions import KiaraException
 from kiara.models import KiaraModel
 from kiara.models.documentation import (
+    AuthorModel,
     AuthorsMetadataModel,
     ContextMetadataModel,
     DocumentationMetadataModel,
@@ -69,6 +73,7 @@ from kiara.utils.output import extract_renderable
 if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.data_types import DataType
+    from kiara.models.runtime_environment.python import PythonRuntimeEnvironment
     from kiara.operations import OperationType
     from kiara.registries.aliases import AliasRegistry
     from kiara.registries.data import DataRegistry
@@ -1302,7 +1307,7 @@ class PipelineStructureInfo(ItemInfo):
                 step = self.get_step(step_id=step_id)
                 if step.doc.is_set:
                     step_node.add(f"desc: {step.doc.description}")
-                step_node.add(f"module: {step.manifest_src.module_type}")
+                step_node.add(f"operation: {step.manifest_src.module_type}")
 
         outputs = tree.add("outputs")
         for field_name, field_info in self.pipeline_output_fields.items():
@@ -1717,5 +1722,172 @@ class RendererInfos(InfoItemGroup[RendererInfo]):
             for target in sorted(rows[source].keys()):
                 row = rows[source][target]
                 table.add_row(*row)
+
+        return table
+
+
+class KiaraPluginInfo(ItemInfo):
+    @classmethod
+    def base_instance_class(cls) -> Type[str]:
+        return str
+
+    @classmethod
+    def create_from_instance(
+        cls, kiara: "Kiara", instance: str, **kwargs
+    ) -> "KiaraPluginInfo":
+
+        registry = kiara.environment_registry
+        python_env: PythonRuntimeEnvironment = registry.environments["python"]  # type: ignore
+
+        match: Union[str, None] = None
+        for pkg in python_env.packages:
+            pkg_name = pkg.name
+            if pkg_name == instance:
+                match = pkg.name
+            elif pkg_name.replace("kiara-plugin", "kiara_plugin") == instance:
+                match = pkg.name
+            elif pkg_name.replace("kiara_plugin", "kiara-plugin") == instance:
+                match = pkg.name
+
+        if not match:
+            raise KiaraException(
+                msg=f"Can't provide information for plugin '{instance}'.",
+                reason="Plugin not installed.",
+            )
+
+        match = "kiara_plugin.tabular"
+
+        match = match.replace("kiara-plugin", "kiara_plugin")
+
+        from kiara.utils.operations import filter_operations
+
+        data_types = kiara.type_registry.get_context_metadata(only_for_package=match)
+        modules = kiara.module_registry.get_context_metadata(only_for_package=match)
+        operation_types = kiara.operation_registry.get_context_metadata(
+            only_for_package=match
+        )
+        operations = filter_operations(
+            kiara=kiara, pkg_name=match, **kiara.operation_registry.operations
+        )
+
+        model_registry = kiara.kiara_model_registry
+        kiara_models = model_registry.get_models_for_package(package_name=match)
+
+        final_pkg_name = match.replace("kiara-plugin", "kiara_plugin")
+        base_module = importlib.import_module(final_pkg_name)
+        from importlib.metadata import metadata
+
+        pkg_metadata = metadata(final_pkg_name)
+
+        summary = pkg_metadata.get("Summary", None)
+        desc = pkg_metadata.get("Description", None)
+
+        if not summary and not desc:
+            doc = DocumentationMetadataModel.create()
+        elif not summary:
+            doc = DocumentationMetadataModel.create(desc)
+        elif not desc:
+            doc = DocumentationMetadataModel.create(summary)
+        else:
+            doc = DocumentationMetadataModel.create(f"{summary}\n\n{desc}")
+
+        def parse_name_email(s):
+            match = re.match(r"(.*)\s*<(.+)>", s)
+            if match:
+                name = match.group(1).strip()
+                email = match.group(2).strip()
+                return name, email
+            else:
+                return None, None
+
+        authors: List[AuthorModel] = []
+        for key in pkg_metadata.keys():
+            if key == "Author-email":
+                author, email = parse_name_email(pkg_metadata[key])
+                if not author:
+                    author = email.split("@")[0]
+            elif key == "Author":
+                author = pkg_metadata[key]
+                email = None
+            else:
+                continue
+
+            author_obj = AuthorModel(name=author, email=email)
+            authors.append(author_obj)
+
+        author_md = AuthorsMetadataModel(authors=authors)
+
+        context = ContextMetadataModel.from_class(base_module)  # type: ignore
+
+        info = KiaraPluginInfo(
+            type_name=instance,
+            documentation=doc,
+            authors=author_md,
+            context=context,
+            data_types=data_types,
+            module_types=modules,
+            kiara_model_types=kiara_models,
+            operation_types=operation_types,
+            operations=operations,
+        )
+        return info
+
+    data_types: DataTypeClassesInfo = Field(description="The included data types.")
+    module_types: ModuleTypesInfo = Field(
+        description="The included kiara module types."
+    )
+    kiara_model_types: KiaraModelClassesInfo = Field(
+        description="The included model classes."
+    )
+    # metadata_types: MetadataTypeClassesInfo = Field(
+    #     description="The included value metadata types."
+    # )
+    operation_types: OperationTypeClassesInfo = Field(
+        description="The included operation types."
+    )
+    operations: OperationGroupInfo = Field(description="The included operations.")
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        include_doc = config.get("include_doc", True)
+        include_full_doc = config.get("include_full_doc", False)
+        include_data_types = config.get("include_data_types", True)
+        include_module_types = config.get("include_module_types", True)
+        include_operations = config.get("include_operations", True)
+        include_operation_types = config.get("include_operation_types", False)
+        include_model_types = config.get("include_model_types", False)
+
+        table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
+        table.add_column("property", style="i")
+        table.add_column("value")
+
+        if include_doc:
+            if include_full_doc:
+                title = "Documentation"
+                doc_str = self.documentation.full_doc
+            else:
+                title = "Description"
+                doc_str = self.documentation.description
+            table.add_row(
+                title,
+                Panel(doc_str, box=box.SIMPLE),
+            )
+        table.add_row("Author(s)", self.authors.create_renderable())
+        table.add_row("Context", self.context.create_renderable())
+
+        if include_data_types:
+            table.add_row("data_types", self.data_types.create_renderable(**config))
+        if include_module_types:
+            table.add_row("module_types", self.module_types.create_renderable(**config))
+        if include_operations:
+            table.add_row("operations", self.operations.create_renderable(**config))
+        if include_operation_types:
+            table.add_row(
+                "operation_types", self.operation_types.create_renderable(**config)
+            )
+        if include_model_types:
+            table.add_row(
+                "kiara_model_types", self.kiara_model_types.create_renderable(**config)
+            )
 
         return table

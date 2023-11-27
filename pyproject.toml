@@ -115,7 +115,7 @@ filesystem_workflow_store = "kiara.registries.workflows.archives:FileSystemWorkf
 [project.entry-points."kiara.cli_subcommands"]
 
 run = "kiara.interfaces.cli.run:run"
-config = "kiara.interfaces.cli.config.commands:config"
+info = "kiara.interfaces.cli.info.commands:info"
 context = "kiara.interfaces.cli.context.commands:context"
 data = "kiara.interfaces.cli.data.commands:data"
 module = "kiara.interfaces.cli.module.commands:module"

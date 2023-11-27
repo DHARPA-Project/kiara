@@ -23,7 +23,10 @@ logger = structlog.getLogger()
 @click.group()
 @click.pass_context
 def workflow(ctx):
-    """Workflow-related sub-commands."""
+    """Workflow-related sub-commands.
+
+    All of those are experiments at the moment, so don't expect them to be available in the future.
+    """
 
 
 @workflow.command()

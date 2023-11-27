@@ -4,7 +4,6 @@
 import inspect
 import json
 import os.path
-import re
 import sys
 import textwrap
 import uuid
@@ -41,6 +40,7 @@ from kiara.interfaces.python_api.models.info import (
     DataTypeClassesInfo,
     DataTypeClassInfo,
     KiaraPluginInfo,
+    KiaraPluginInfos,
     ModuleTypeInfo,
     ModuleTypesInfo,
     OperationGroupInfo,
@@ -172,7 +172,9 @@ class KiaraAPI(object):
 
         return result
 
-    def get_available_plugins(self, regex: str = "^kiara[-_]plugin\\..*") -> List[str]:
+    def list_available_plugin_names(
+        self, regex: str = "^kiara[-_]plugin\\..*"
+    ) -> List[str]:
         """
         Get a list of all available plugins.
 
@@ -183,25 +185,14 @@ class KiaraAPI(object):
             a list of plugin names
         """
 
-        registry = self.context.environment_registry
-        python_env: PythonRuntimeEnvironment = registry.environments["python"]  # type: ignore
+        if not regex:
+            regex = "^kiara[-_]plugin\\..*"
 
-        regex_c = re.compile(regex)
+        return KiaraPluginInfos.get_available_plugin_names(
+            kiara=self.context, regex=regex
+        )
 
-        result = []
-        for pkg in python_env.packages:
-            pkg_name = pkg.name
-            if pkg_name == "kiara":
-                continue
-
-            # check if the package is a kiara plugin
-            match = regex_c.search(pkg_name)
-            if match:
-                result.append(pkg_name)
-
-        return result
-
-    def get_plugin_info(self, plugin_name: str) -> KiaraPluginInfo:
+    def retrieve_plugin_info(self, plugin_name: str) -> KiaraPluginInfo:
         """
         Get information about a plugin.
 
@@ -216,6 +207,15 @@ class KiaraAPI(object):
             kiara=self.context, instance=plugin_name
         )
         return info
+
+    def retrieve_plugin_infos(self, plugin_name_regex: str = "^kiara[-_]plugin\\..*"):
+
+        if not plugin_name_regex:
+            plugin_name_regex = "^kiara[-_]plugin\\..*"
+
+        KiaraPluginInfos.get_available_plugin_names(
+            kiara=self.context, regex=plugin_name_regex
+        )
 
     @property
     def context(self) -> "Kiara":

@@ -1755,8 +1755,6 @@ class KiaraPluginInfo(ItemInfo):
                 reason="Plugin not installed.",
             )
 
-        match = "kiara_plugin.tabular"
-
         match = match.replace("kiara-plugin", "kiara_plugin")
 
         from kiara.utils.operations import filter_operations
@@ -1773,7 +1771,7 @@ class KiaraPluginInfo(ItemInfo):
         model_registry = kiara.kiara_model_registry
         kiara_models = model_registry.get_models_for_package(package_name=match)
 
-        final_pkg_name = match.replace("kiara-plugin", "kiara_plugin")
+        final_pkg_name = match.replace("-", "_")
         base_module = importlib.import_module(final_pkg_name)
         from importlib.metadata import metadata
 
@@ -1800,6 +1798,7 @@ class KiaraPluginInfo(ItemInfo):
             else:
                 return None, None
 
+        version = pkg_metadata["Version"]
         authors: List[AuthorModel] = []
         for key in pkg_metadata.keys():
             if key == "Author-email":
@@ -1821,6 +1820,7 @@ class KiaraPluginInfo(ItemInfo):
 
         info = KiaraPluginInfo(
             type_name=instance,
+            version=version,
             documentation=doc,
             authors=author_md,
             context=context,
@@ -1832,6 +1832,7 @@ class KiaraPluginInfo(ItemInfo):
         )
         return info
 
+    version: str = Field(description="The version of the plugin.")
     data_types: DataTypeClassesInfo = Field(description="The included data types.")
     module_types: ModuleTypesInfo = Field(
         description="The included kiara module types."
@@ -1872,6 +1873,8 @@ class KiaraPluginInfo(ItemInfo):
                 title,
                 Panel(doc_str, box=box.SIMPLE),
             )
+
+        table.add_row("Version", Panel(self.version, box.SIMPLE))
         table.add_row("Author(s)", self.authors.create_renderable())
         table.add_row("Context", self.context.create_renderable())
 
@@ -1889,5 +1892,91 @@ class KiaraPluginInfo(ItemInfo):
             table.add_row(
                 "kiara_model_types", self.kiara_model_types.create_renderable(**config)
             )
+
+        return table
+
+
+class KiaraPluginInfos(InfoItemGroup[KiaraPluginInfo]):
+    @classmethod
+    def get_available_plugin_names(
+        cls, kiara: "Kiara", regex: str = "^kiara[-_]plugin\\..*"
+    ) -> List[str]:
+        """
+        Get a list of all available plugins.
+
+        Arguments:
+            regex: an optional regex to indicate the plugin naming scheme (default: /$kiara[_-]plugin\..*/)
+
+        Returns:
+            a list of plugin names
+        """
+
+        registry = kiara.environment_registry
+        python_env: PythonRuntimeEnvironment = registry.environments["python"]  # type: ignore
+
+        if not regex:
+            regex = "^kiara[-_]plugin\\..*"
+        regex_c = re.compile(regex)
+
+        result = []
+        for pkg in python_env.packages:
+            pkg_name = pkg.name
+            if pkg_name == "kiara":
+                continue
+
+            # check if the package is a kiara plugin
+            match = regex_c.search(pkg_name)
+            if match:
+                result.append(pkg_name)
+
+        return result
+
+    @classmethod
+    def base_info_class(cls) -> Type[KiaraPluginInfo]:
+        return KiaraPluginInfo
+
+    @classmethod
+    def create_group(
+        cls,
+        kiara: "Kiara",
+        group_title: Union[str, None] = None,
+        plugin_name_regex: str = "^kiara[-_]plugin\\..*",
+    ) -> "KiaraPluginInfos":
+
+        names = cls.get_available_plugin_names(kiara=kiara, regex=plugin_name_regex)
+        result = cls.create_from_plugin_names(kiara, group_title, *names)
+        return result
+
+    @classmethod
+    def create_from_plugin_names(
+        cls, kiara: "Kiara", group_title: Union[str, None] = None, *items: str
+    ) -> "KiaraPluginInfos":
+        """Create the info group from a list of plugin names."""
+
+        plugin_infos = {
+            k: KiaraPluginInfo.create_from_instance(kiara=kiara, instance=k)
+            for k in items
+        }
+
+        op_group_info = cls(group_title=group_title, item_infos=plugin_infos)
+        return op_group_info
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        full_doc = config.get("full_doc", False)
+
+        table = Table(show_header=True, box=box.SIMPLE, show_lines=full_doc)
+        table.add_column("Name", style="i")
+        table.add_column("Version")
+        table.add_column("Description")
+
+        for type_name in sorted(self.item_infos.keys()):
+            t_md = self.item_infos[type_name]
+            version = t_md.version
+            if full_doc:
+                md = Markdown(t_md.documentation.full_doc)
+            else:
+                md = Markdown(t_md.documentation.description)
+            table.add_row(type_name, version, md)
 
         return table

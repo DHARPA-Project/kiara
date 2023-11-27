@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import rich_click as click
 
+from kiara.interfaces.python_api import KiaraPluginInfos
 from kiara.utils.cli import output_format_option, terminal_print_model
 
 if TYPE_CHECKING:
@@ -48,20 +49,32 @@ def plugin(ctx):
 
 
 @plugin.command("list")
+@click.argument("filter-regex", nargs=1, required=False)
+@output_format_option()
 @click.pass_context
-def list_plugins(ctx):
+def list_plugins(ctx, filter_regex: str, format):
     """List installed kiara plugins."""
 
+    api: KiaraAPI = ctx.obj.kiara_api
 
-@plugin.command("print")
+    title = "All available plugins"
+    if filter_regex:
+        title = "Matching plugins"
+
+    plugin_infos = KiaraPluginInfos.create_group(api.context, title, filter_regex)
+
+    terminal_print_model(plugin_infos, format=format, in_panel=title)
+
+
+@plugin.command("explain")
 @click.argument("plugin_name", nargs=1)
 @output_format_option()
 @click.pass_context
-def print_plugin_info(ctx, plugin_name: str, format: str):
+def explain_plugin_info(ctx, plugin_name: str, format: str):
 
     kiara_api: KiaraAPI = ctx.obj.kiara_api
 
-    plugin_info = kiara_api.get_plugin_info(plugin_name)
+    plugin_info = kiara_api.retrieve_plugin_info(plugin_name)
     title = f"Info for plugin: [i]{plugin_name}[/i]"
 
     terminal_print_model(plugin_info, format=format, in_panel=title)

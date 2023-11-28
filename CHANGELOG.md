@@ -1,6 +1,7 @@
 # Changelog
 
-## Version 0.5.5 (Upcoming)
+
+## Version 0.5.5
 
 - added pipeline related api endpoints:
   - `list_pipeline_ids`
@@ -8,6 +9,13 @@
   - `get_pipeline`
   - `retrieve_pipeline_info`
   - 'retrieve_pipelines_info'
+
+- added support for quering plugin information
+  - cli: `kiara info plugin`
+  - api endpoints:
+    - `list_available_plugin_names`
+    - `retrieve_plugin_info`
+    - `retrieve_plugin_infos`
 
 ## Version 0.3.1 - 0.5.4
 

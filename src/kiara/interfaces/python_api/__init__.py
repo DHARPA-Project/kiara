@@ -213,9 +213,10 @@ class KiaraAPI(object):
         if not plugin_name_regex:
             plugin_name_regex = "^kiara[-_]plugin\\..*"
 
-        KiaraPluginInfos.get_available_plugin_names(
-            kiara=self.context, regex=plugin_name_regex
+        plugin_infos = KiaraPluginInfos.create_group(
+            self.context, None, plugin_name_regex
         )
+        return plugin_infos
 
     @property
     def context(self) -> "Kiara":

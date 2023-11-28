@@ -9,6 +9,7 @@ import rich_click as click
 
 from kiara.interfaces.python_api import KiaraPluginInfos
 from kiara.utils.cli import output_format_option, terminal_print_model
+from kiara.utils.cli.exceptions import handle_exception
 
 if TYPE_CHECKING:
     from kiara.interfaces import KiaraAPI, KiaraAPIWrap
@@ -69,6 +70,7 @@ def list_plugins(ctx, filter_regex: str, format):
 @plugin.command("explain")
 @click.argument("plugin_name", nargs=1)
 @output_format_option()
+@handle_exception()
 @click.pass_context
 def explain_plugin_info(ctx, plugin_name: str, format: str):
 

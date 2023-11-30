@@ -215,6 +215,7 @@ class JobRecord(JobConfig):
             job_id=active_job.job_id,
             module_type=active_job.job_config.module_type,
             module_config=active_job.job_config.module_config,
+            is_resolved=active_job.job_config.is_resolved,
             inputs=active_job.job_config.inputs,
             outputs=active_job.results,
             runtime_details=job_details,

@@ -16,7 +16,7 @@ from pydantic import ConfigDict
 from pydantic.fields import PrivateAttr
 from pydantic.main import BaseModel
 from rich import box
-from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
+from rich.console import Console, ConsoleOptions, Group, RenderableType, RenderResult
 from rich.jupyter import JupyterMixin
 from rich.panel import Panel
 from rich.table import Table
@@ -28,7 +28,6 @@ from kiara.defaults import (
     KIARA_MODEL_SCHEMA_KEY,
 )
 from kiara.registries.templates import TemplateRegistry
-from kiara.utils import log_exception
 from kiara.utils.class_loading import _default_id_func
 from kiara.utils.develop import log_dev_message
 from kiara.utils.hashing import KIARA_HASH_FUNCTION, compute_cid
@@ -137,7 +136,12 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         try:
             dag, cid = compute_cid(data=obj)
         except Exception as e:
-            log_exception(e)
+            from kiara.utils.output import extract_renderable
+
+            msg = "Failed to compute cid for model instance."
+            item = extract_renderable(obj)
+            renderable = Group(msg, item, extract_renderable(e))
+            log_dev_message(renderable, title="cid computation error")
             raise e
 
         self._cid_cache = cid

@@ -43,7 +43,7 @@ def test_module_explain_subcommand():
     result = runner.invoke(cli, "module explain logic.or")
 
     assert result.exit_code == 0
-    assert "Processing source code" in result.stdout
+    assert "Returns 'True' if one of the inputs is 'True'" in result.stdout
 
 
 def test_module_explain_instance_subcommand():

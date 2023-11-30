@@ -14,10 +14,12 @@ from multiformats import CID
 from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 from rich.console import RenderableType
 from rich.syntax import Syntax
+from rich.table import Table
 
 from kiara.defaults import INVALID_HASH_MARKER, NONE_VALUE_ID
 from kiara.exceptions import KiaraException
 from kiara.models import KiaraModel
+from kiara.utils.develop import log_dev_message
 from kiara.utils.hashing import compute_cid
 from kiara.utils.json import orjson_dumps
 from kiara.utils.pipelines import extract_data_to_hash_from_pipeline_config
@@ -83,9 +85,26 @@ class Manifest(KiaraModel):
             return self._manifest_cid
 
         if not self.is_resolved:
-            raise KiaraException(
-                msg="Cannot calculate manifest CID for unresolved manifest."
+
+            msg = "Cannot calculate manifest CID for unresolved manifest."
+            item = Syntax(
+                self.model_dump_json(indent=2),
+                "json",
+                background_color="default",
             )
+            table = Table(show_header=False)
+            table.add_column("key")
+            table.add_column("value")
+
+            table.add_row("", msg)
+            table.add_row()
+            table.add_row("type", str(type(self)))
+            table.add_row()
+            table.add_row("manifest", item)
+
+            log_dev_message(table, title="cid computation error")
+
+            raise KiaraException(msg=msg)
 
         _, self._manifest_cid = compute_cid(self.manifest_data)
         return self._manifest_cid

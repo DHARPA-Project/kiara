@@ -797,6 +797,9 @@ class DataRegistry(object):
             else:
                 raise NotImplementedError()
 
+        if not pedigree.is_resolved:
+            pedigree = self._kiara.module_registry.resolve_manifest(pedigree)  # type: ignore
+
         v_id = ID_REGISTRY.generate(
             type="value", kiara_id=self._kiara.id, pre_registered=False
         )

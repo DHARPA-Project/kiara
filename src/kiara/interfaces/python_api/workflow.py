@@ -656,8 +656,9 @@ class Workflow(object):
                     break
                 elif step_details.status == StepStatus.INPUTS_READY:
                     job_config = JobConfig(
-                        module_type=step_details.step.module_type,
-                        module_config=step_details.step.module.config.model_dump(),
+                        module_type=step_details.step.module.manifest.module_type,
+                        module_config=step_details.step.module.manifest.module_config,
+                        is_resolved=step_details.step.module.manifest.is_resolved,
                         inputs=step_details.inputs,
                     )
                     match = self._kiara.job_registry.find_matching_job_record(

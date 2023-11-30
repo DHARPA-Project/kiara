@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import TYPE_CHECKING, Iterable, Mapping, Union
+from typing import TYPE_CHECKING, ClassVar, Iterable, Mapping, Union
 
 import structlog
 from pydantic import Field
@@ -45,7 +45,7 @@ class ImportDataOpDetails(BaseOperationDetails):
 
 class ImportDataOperationType(OperationType[ImportDataOpDetails]):
 
-    _operation_type_name = "import_data"
+    _operation_type_name: ClassVar[str] = "import_data"
 
     def _calculate_op_id(self, source_type: str, target_type: str):
 

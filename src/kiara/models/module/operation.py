@@ -161,11 +161,26 @@ class ManifestOperationConfig(OperationConfig):
         default_factory=dict, description="The configuration for the module."
     )
 
+    _manifest_cache: Union[None, Manifest] = PrivateAttr(default=None)
+
+    @field_validator("doc", mode="before")
+    @classmethod
+    def validate_doc(cls, value):
+        return DocumentationMetadataModel.create(value)
+
     def retrieve_module_type(self, kiara: "Kiara") -> str:
         return self.module_type
 
     def retrieve_module_config(self, kiara: "Kiara") -> Mapping[str, Any]:
         return self.module_config
+
+    def get_manifest(self) -> Manifest:
+
+        if self._manifest_cache is None:
+            self._manifest_cache = Manifest(
+                module_type=self.module_type, module_config=self.module_config
+            )
+        return self._manifest_cache
 
 
 class PipelineOperationConfig(OperationConfig):

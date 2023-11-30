@@ -28,6 +28,7 @@ from kiara.defaults import (
     KIARA_MODEL_SCHEMA_KEY,
 )
 from kiara.registries.templates import TemplateRegistry
+from kiara.utils import log_exception
 from kiara.utils.class_loading import _default_id_func
 from kiara.utils.develop import log_dev_message
 from kiara.utils.hashing import KIARA_HASH_FUNCTION, compute_cid
@@ -133,7 +134,11 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
             return
 
         obj = self._retrieve_data_to_hash()
-        dag, cid = compute_cid(data=obj)
+        try:
+            dag, cid = compute_cid(data=obj)
+        except Exception as e:
+            log_exception(e)
+            raise e
 
         self._cid_cache = cid
         self._dag_cache = dag

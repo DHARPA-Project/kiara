@@ -5,7 +5,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from typing import Dict, Iterable, Mapping, Union
+from typing import ClassVar, Dict, Iterable, Mapping, Union
 
 import structlog
 from pydantic import Field
@@ -53,7 +53,7 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
 
     """
 
-    _operation_type_name = "render_value"
+    _operation_type_name: ClassVar[str] = "render_value"
 
     def _calculate_op_id(cls, source_type: str, target_type: str):
 

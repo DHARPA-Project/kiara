@@ -11,11 +11,12 @@ from typing import TYPE_CHECKING, Any, ClassVar, Dict, Mapping, Union
 import orjson
 from dag_cbor import IPLDKind
 from multiformats import CID
-from pydantic import ConfigDict, Field, PrivateAttr, field_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
 from rich.console import RenderableType
 from rich.syntax import Syntax
 
 from kiara.defaults import INVALID_HASH_MARKER, NONE_VALUE_ID
+from kiara.exceptions import KiaraException
 from kiara.models import KiaraModel
 from kiara.utils.hashing import compute_cid
 from kiara.utils.json import orjson_dumps
@@ -53,6 +54,14 @@ class Manifest(KiaraModel):
     #
     #     return value
 
+    @field_validator("module_config")
+    @classmethod
+    def validate_module_config(cls, value):
+        if isinstance(value, BaseModel):
+            raise ValueError(f"Invalid module config type: {type(value)}")
+
+        return value
+
     @property
     def manifest_data(self):
         """The configuration data for this module instance."""
@@ -60,6 +69,7 @@ class Manifest(KiaraModel):
             return self._manifest_data
 
         mc = extract_data_to_hash_from_pipeline_config(self.module_config)
+
         self._manifest_data = {
             "module_type": self.module_type,
             "module_config": mc,
@@ -71,6 +81,11 @@ class Manifest(KiaraModel):
 
         if self._manifest_cid is not None:
             return self._manifest_cid
+
+        if not self.is_resolved:
+            raise KiaraException(
+                msg="Cannot calculate manifest CID for unresolved manifest."
+            )
 
         _, self._manifest_cid = compute_cid(self.manifest_data)
         return self._manifest_cid
@@ -85,13 +100,7 @@ class Manifest(KiaraModel):
 
     def _retrieve_data_to_hash(self) -> Any:
 
-        module_config = extract_data_to_hash_from_pipeline_config(self.module_config)
-        result = {
-            "module_type": self.module_type,
-            "module_config": module_config,
-        }
-
-        return result
+        return self.manifest_data
 
     def create_renderable(self, **config: Any) -> RenderableType:
         """Create a renderable for this module configuration."""

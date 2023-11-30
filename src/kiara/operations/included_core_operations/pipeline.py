@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Iterable, Mapping, Union
 
 import structlog
 from pydantic import Field, PrivateAttr
@@ -65,7 +65,7 @@ class PipelineOperationDetails(OperationDetails):
 
 class PipelineOperationType(OperationType[PipelineOperationDetails]):
 
-    _operation_type_name = "pipeline"
+    _operation_type_name: ClassVar[str] = "pipeline"
 
     def __init__(self, kiara: "Kiara", op_type_name: str) -> None:
 

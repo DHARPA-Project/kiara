@@ -19,7 +19,7 @@ from rich import box
 from rich.console import RenderableType
 from rich.table import Table
 
-from kiara.exceptions import InvalidValuesException
+from kiara.exceptions import InvalidValuesException, KiaraException
 from kiara.models import KiaraModel
 from kiara.models.module.manifest import InputsManifest
 
@@ -97,9 +97,16 @@ class JobConfig(InputsManifest):
             raise InvalidValuesException(invalid_values=invalid)
 
         value_ids = values.get_all_value_ids()
+
+        if not module.manifest.is_resolved:
+            raise KiaraException(
+                msg="Cannot create job config from unresolved manifest."
+            )
+
         return JobConfig(
-            module_type=module.module_type_name,
-            module_config=module.config.model_dump(),
+            module_type=module.manifest.module_type,
+            module_config=module.manifest.module_config,
+            is_resolved=module.manifest.is_resolved,
             inputs=value_ids,
         )
 

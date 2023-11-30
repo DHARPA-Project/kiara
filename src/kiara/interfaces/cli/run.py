@@ -51,6 +51,13 @@ if typing.TYPE_CHECKING:
     required=False,
     multiple=True,
 )
+@click.option(
+    "--print-properties",
+    "-p",
+    help="Also display the properties of the result values.",
+    required=False,
+    is_flag=True,
+)
 @click.option("--help", "-h", help="Show this message and exit.", is_flag=True)
 @click.pass_context
 @handle_exception()
@@ -62,6 +69,7 @@ def run(
     output: Iterable[str],
     explain: bool,
     save: Iterable[str],
+    print_properties: bool,
     help: bool,
 ):
     """Run a kiara operation."""
@@ -244,4 +252,5 @@ def run(
             silent=silent,
             save_results=bool(final_aliases),
             aliases=final_aliases,
+            properties=print_properties,
         )

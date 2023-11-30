@@ -5,7 +5,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from typing import Dict, Iterable, Mapping, Union
+from typing import ClassVar, Dict, Iterable, Mapping, Union
 
 from pydantic import Field
 
@@ -67,7 +67,7 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
     - exactly two input fields, one of them named after the type it supports, and the other called 'render_config', of type 'dict'
     """
 
-    _operation_type_name = "pretty_print"
+    _operation_type_name: ClassVar[str] = "pretty_print"
 
     def _calculate_op_id(self, source_type: str, target_type: str):
 

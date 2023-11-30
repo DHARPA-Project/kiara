@@ -1047,7 +1047,7 @@ class ModuleTypeInfo(TypeInfo[Type["KiaraModule"]]):
     def create_renderable(self, **config: Any) -> RenderableType:
 
         include_config_schema = config.get("include_config_schema", True)
-        include_src = config.get("include_src", True)
+        include_src = config.get("include_src", False)
         include_doc = config.get("include_doc", True)
 
         table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))

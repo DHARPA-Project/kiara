@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import rich_click as click
 
-from kiara.interfaces.python_api import KiaraPluginInfos
 from kiara.utils.cli import output_format_option, terminal_print_model
 from kiara.utils.cli.exceptions import handle_exception
 
@@ -55,6 +54,8 @@ def plugin(ctx):
 @click.pass_context
 def list_plugins(ctx, filter_regex: str, format):
     """List installed kiara plugins."""
+
+    from kiara.interfaces.python_api import KiaraPluginInfos
 
     api: KiaraAPI = ctx.obj.kiara_api
 

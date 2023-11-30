@@ -5,7 +5,7 @@
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from typing import Iterable, Mapping, Type, Union
+from typing import ClassVar, Iterable, Mapping, Type, Union
 
 from pydantic import Field
 
@@ -62,7 +62,7 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
     - exactly one output field, whose field name is called 'value_metadata', and where the value has the type 'internal_model'
     """
 
-    _operation_type_name = "extract_metadata"
+    _operation_type_name: ClassVar[str] = "extract_metadata"
 
     def retrieve_included_operation_configs(
         self,

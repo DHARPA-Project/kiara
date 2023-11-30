@@ -22,7 +22,7 @@ from kiara.models.module.operation import Operation
 
 # from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.utils import log_exception
-from kiara.utils.cli import dict_from_cli_args, terminal_print
+from kiara.utils.cli import dict_from_cli_args, terminal_print, terminal_print_model
 from kiara.utils.cli.rich_click import rich_format_operation_help
 from kiara.utils.operations import create_operation_status_renderable
 from kiara.utils.output import create_table_from_base_model_cls
@@ -332,6 +332,7 @@ def execute_job(
     silent: bool,
     save_results: bool,
     aliases: Union[None, Mapping[str, List[str]]],
+    properties: bool = False,
 ) -> uuid.UUID:
     """Execute the job."""
     job_id = api.queue_job(operation=operation, inputs=inputs)
@@ -366,6 +367,31 @@ def execute_job(
         terminal_print(
             outputs, in_panel=title, empty_line_before=True, show_data_type=True
         )
+
+    if properties:
+        render_config = {
+            "show_pedigree": False,
+            "show_serialized": False,
+            "show_data_preview": False,
+            "show_properties": True,
+            "show_destinies": False,
+            "show_destiny_backlinks": False,
+            "show_lineage": False,
+            "show_environment_hashes": False,
+            "show_environment_data": False,
+        }
+
+        title = "Result details"
+        format = "terminal"
+
+        from kiara.interfaces.python_api import ValueInfo
+
+        v_infos = (
+            ValueInfo.create_from_instance(kiara=api.context, instance=v)
+            for v in outputs.values()
+        )
+
+        terminal_print_model(*v_infos, format=format, in_panel=title, **render_config)
 
     # for k, v in outputs.items():
     #     rendered = kiara_obj.data_registry.render_data(v)

@@ -5,7 +5,7 @@
 #
 # Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Iterable, List, Mapping, Union
 
 from pydantic import Field
 
@@ -78,7 +78,7 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
       - an input field called 'value'
     """
 
-    _operation_type_name = "deserialize"
+    _operation_type_name: ClassVar[str] = "deserialize"
 
     def retrieve_included_operation_configs(
         self,

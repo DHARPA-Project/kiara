@@ -1648,6 +1648,10 @@ class ValueMapWritable(ValueMap):  # type: ignore
 
 ValuePedigree.model_rebuild()
 ORPHAN = ValuePedigree(
-    kiara_id=VOID_KIARA_ID, environments={}, module_type=NO_MODULE_TYPE, inputs={}
+    kiara_id=VOID_KIARA_ID,
+    environments={},
+    module_type=NO_MODULE_TYPE,
+    inputs={},
+    is_resolved=True,
 )
 # GENESIS_PEDIGREE = None

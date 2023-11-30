@@ -395,6 +395,8 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
     @property
     def manifest(self) -> "Manifest":
         if self._manifest_cache is None:
+            from kiara.models.module.manifest import Manifest
+
             self._manifest_cache = Manifest(
                 module_type=self.module_type_name,
                 module_config=self.config.model_dump(),

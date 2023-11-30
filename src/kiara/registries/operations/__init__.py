@@ -26,7 +26,10 @@ import structlog
 from rich.console import Group, RenderableType
 from ruamel.yaml import YAML
 
-from kiara.exceptions import InvalidOperationException, NoSuchOperationException
+from kiara.exceptions import (
+    InvalidOperationException,
+    NoSuchOperationException,
+)
 from kiara.interfaces.python_api.models.info import (
     OperationTypeClassesInfo,
     OperationTypeInfo,
@@ -207,7 +210,8 @@ class OperationRegistry(object):
 
         for data_type in self._kiara.data_type_classes.values():
             if hasattr(data_type, "retrieve_included_operations"):
-                for op in all_op_configs:
+                included_ops = data_type.retrieve_included_operations()
+                for op in included_ops:
                     if isinstance(op, Mapping):
                         op = ManifestOperationConfig(**op)
                     all_op_configs.add(op)
@@ -257,7 +261,6 @@ class OperationRegistry(object):
                     manifest = Manifest(
                         module_type=module_type, module_config=module_config
                     )
-
                     ops = self._create_operations(manifest=manifest, doc=op_config.doc)
 
                     for op_type_name, _op in ops.items():

@@ -84,6 +84,35 @@ class ModuleRegistry(object):
 
         return ModuleTypesInfo(group_title=alias, item_infos=result)  # type: ignore
 
+    def resolve_manifest(self, manifest: Manifest) -> Manifest:
+        """Returns a cloned manifest with resolved module config."""
+
+        if manifest.is_resolved:
+            return manifest.model_copy()
+
+        m_cls = self.get_module_class(manifest.module_type)
+
+        try:
+            resolved = m_cls._resolve_module_config(**manifest.module_config)
+            resolved_dict = resolved.model_dump()
+            manifest_clone = manifest.model_copy(
+                update={"module_config": resolved_dict, "is_resolved": True}
+            )
+            return manifest_clone
+
+        except Exception as e:
+            if is_debug():
+                import traceback
+
+                traceback.print_exc()
+
+            raise InvalidManifestException(
+                f"Error while resolving module config for module '{manifest.module_type}': {e}",
+                module_type=manifest.module_type,
+                module_config=manifest.module_config,
+                parent=e,
+            )
+
     def create_module(self, manifest: Union[Manifest, str]) -> "KiaraModule":
         """
         Create a [KiaraModule][kiara.module.KiaraModule] object from a module configuration.
@@ -98,23 +127,7 @@ class ModuleRegistry(object):
         m_cls: Type[KiaraModule] = self.get_module_class(manifest.module_type)
 
         if not manifest.is_resolved:
-            # dbg(manifest.module_config)
-            try:
-                resolved = m_cls._resolve_module_config(**manifest.module_config)
-            except Exception as e:
-                if is_debug():
-                    import traceback
-
-                    traceback.print_exc()
-
-                raise InvalidManifestException(
-                    f"Error while resolving module config for module '{manifest.module_type}': {e}",
-                    module_type=manifest.module_type,
-                    module_config=manifest.module_config,
-                    parent=e,
-                )
-            manifest.module_config = resolved.model_dump()
-            manifest.is_resolved = True
+            manifest = self.resolve_manifest(manifest)
 
         if self._cached_modules.setdefault(manifest.module_type, {}).get(
             manifest.instance_cid, None
@@ -123,11 +136,7 @@ class ModuleRegistry(object):
 
         if manifest.module_type in self.get_module_type_names():
             kiara_module = m_cls(module_config=manifest.module_config)
-            kiara_module._manifest_cache = Manifest(
-                module_type=manifest.module_type,
-                module_config=manifest.module_config,
-                is_resolved=manifest.is_resolved,
-            )
+            kiara_module._manifest_cache = self.resolve_manifest(manifest)
 
         else:
             raise Exception(

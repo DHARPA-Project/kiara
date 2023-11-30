@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Iterable, List, Mapping, Union
 
 import structlog
 from pydantic import Field
@@ -84,7 +84,7 @@ class FilterOperationDetails(BaseOperationDetails):
 
 class FilterOperationType(OperationType[FilterOperationDetails]):
 
-    _operation_type_name = "filter"
+    _operation_type_name: ClassVar[str] = "filter"
 
     def retrieve_included_operation_configs(
         self,

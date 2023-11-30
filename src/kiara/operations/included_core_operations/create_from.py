@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import TYPE_CHECKING, Iterable, Mapping, Union
+from typing import TYPE_CHECKING, ClassVar, Iterable, Mapping, Union
 
 import structlog
 from pydantic import Field
@@ -54,7 +54,7 @@ class CreateFromOperationType(OperationType[CreateValueFromDetails]):
     in addition, also have other, optional inputs, to control how exactly the target value is created.
     """
 
-    _operation_type_name = "create_from"
+    _operation_type_name: ClassVar[str] = "create_from"
 
     def _calculate_op_id(self, source_type: str, target_type: str):
 

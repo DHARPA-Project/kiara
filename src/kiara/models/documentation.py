@@ -173,10 +173,13 @@ class DocumentationMetadataModel(KiaraModel):
         doc: Union[str, None] = None
 
         if hasattr(item_cls, "type_doc"):
-            try:
-                doc = item_cls.type_doc()
-            except Exception as e:
-                log_exception(e)
+            if callable(item_cls.type_doc):
+                try:
+                    doc = item_cls.type_doc()
+                except Exception as e:
+                    log_exception(e)
+            else:
+                doc = item_cls.type_doc
 
         if not doc:
             doc = item_cls.__doc__

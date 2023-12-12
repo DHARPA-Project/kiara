@@ -385,7 +385,7 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         self._module_cid: Union[CID, None] = None
         self._characteristics: Union[ModuleCharacteristics, None] = None
 
-        self._doc: Union[None, DocumentationMetadataModel] = None
+        self._cached_doc: Union[None, DocumentationMetadataModel] = None
         super().__init__(alias=self.__class__._module_type_name, config=self._config)  # type: ignore
 
         self._operation: Union[Operation, None] = None
@@ -406,10 +406,10 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
 
     @property
     def doc(self) -> "DocumentationMetadataModel":
-        if self._doc is None:
 
-            self._doc = DocumentationMetadataModel.from_class_doc(self.__class__)
-        return self._doc
+        if self._cached_doc is None:
+            self._cached_doc = DocumentationMetadataModel.from_class_doc(self.__class__)
+        return self._cached_doc
 
     @property
     def module_id(self) -> uuid.UUID:

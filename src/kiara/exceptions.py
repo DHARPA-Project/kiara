@@ -283,13 +283,22 @@ class KiaraProcessingException(KiaraException):
     ):
         self._module: Union["KiaraModule", None] = module
         self._inputs: Union[Mapping[str, Value], None] = inputs
-        if isinstance(msg, Exception):
-            self._parent: Union[Exception, None] = msg
+        _properties = None
+
+        if isinstance(msg, KiaraException):
+            _parent: Union[Exception, None] = msg.parent
+            _msg = msg.msg
+            _properties = msg._properties
+        elif isinstance(msg, Exception):
+            _parent = msg
             _msg = str(msg)
         else:
-            self._parent = None
+            _parent = None
             _msg = msg
-        super().__init__(_msg)
+        if _properties:
+            super().__init__(msg=_msg, parent=_parent, **_properties)
+        else:
+            super().__init__(_msg)
 
     @property
     def module(self) -> "KiaraModule":
@@ -397,11 +406,14 @@ class FailedJobException(KiaraException):
         msg: Union[str, None] = None,
         parent: Union[Exception, None] = None,
     ):
-
         self.job: ActiveJob = job
-        if msg is None:
-            msg = "Job failed."
-        super().__init__(msg=msg, parent=parent)
+
+        if isinstance(parent, KiaraException):
+            super().__init__(msg=parent.msg, parent=parent.parent, **parent._properties)
+        else:
+            if msg is None:
+                msg = "Job failed."
+            super().__init__(msg=msg, parent=parent)
 
     # @property
     # def details(self) -> Union[str, None]:

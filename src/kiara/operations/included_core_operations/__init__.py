@@ -88,18 +88,19 @@ class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
         cache: List[ManifestOperationConfig] = []
         lookup_cache: Dict["CID", str] = {}
 
-        if not module_cls._config_cls.requires_config():
-            doc = DocumentationMetadataModel.from_class_doc(module_cls)
-            mopc = ManifestOperationConfig(module_type=this_module_type_name, doc=doc)
-            resolved = self._kiara.module_registry.resolve_manifest(mopc.get_manifest())
-            mopc._manifest_cache = resolved
-
-            cache.append(mopc)
-            lookup_cache[resolved.manifest_cid] = this_module_type_name
+        op_ids: List[str] = []
 
         if hasattr(module_cls, "retrieve_included_operations"):
             manifests = module_cls.retrieve_included_operations()  # type: ignore
             for op_id, op in manifests.items():
+
+                if op_id in op_ids:
+                    raise KiaraException(
+                        msg=f"Included operation '{op_id}' invalid.",
+                        reason="Duplicate operation id.",
+                    )
+                op_ids.append(op_id)
+
                 if isinstance(op, Mapping):
                     mtn = op.get("module_type", None)
                     if not mtn:
@@ -131,6 +132,18 @@ class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
                 )
                 mopc._manifest_cache = resolved
                 lookup_cache[resolved.manifest_cid] = op_id
+
+        if (
+            this_module_type_name not in op_ids
+            and not module_cls._config_cls.requires_config()
+        ):
+            doc = DocumentationMetadataModel.from_class_doc(module_cls)
+            mopc = ManifestOperationConfig(module_type=this_module_type_name, doc=doc)
+            resolved = self._kiara.module_registry.resolve_manifest(mopc.get_manifest())
+            mopc._manifest_cache = resolved
+
+            cache.append(mopc)
+            lookup_cache[resolved.manifest_cid] = this_module_type_name
 
         self._included_operations_cache[module_cls] = cache
         self._included_operations_lookup_cache[module_cls] = lookup_cache

@@ -12,6 +12,7 @@ import structlog
 from pydantic import Field, PrivateAttr, field_validator
 from rich import box
 from rich.console import Group, RenderableType
+from rich.markdown import Markdown
 from rich.syntax import Syntax
 from rich.table import Table
 
@@ -389,9 +390,13 @@ class Operation(Manifest):
 
         if self.doc:
             if include_full_doc:
-                table.add_row("Documentation", self.doc.full_doc)
+                doc = self.doc.full_doc
+                title = "Documentation"
             else:
-                table.add_row("Description", self.doc.description)
+                doc = self.doc.description
+                title = "Description"
+
+            table.add_row(title, Markdown(doc))
 
         # module_type_md = self.module.get_type_metadata()
 

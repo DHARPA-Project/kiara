@@ -218,6 +218,7 @@ def create_operation_status_renderable(
 
     show_operation_name = render_config.get("show_operation_name", True)
     show_operation_doc = render_config.get("show_operation_doc", True)
+    show_only_description = render_config.get("show_only_description", True)
     show_inputs = render_config.get("show_inputs", False)
     show_outputs_schema = render_config.get("show_outputs_schema", False)
     show_headers = render_config.get("show_headers", True)
@@ -228,7 +229,10 @@ def create_operation_status_renderable(
         items.append(f"Operation: [bold]{operation.operation_id}[/bold]")
     if show_operation_doc and operation.doc.is_set:
         items.append("")
-        items.append(Markdown(operation.doc.full_doc, style="i"))
+        if show_only_description:
+            items.append(Markdown(operation.doc.description))
+        else:
+            items.append(Markdown(operation.doc.full_doc))
 
     if show_inputs:
         assert inputs is not None

@@ -341,9 +341,10 @@ def execute_job(
         outputs = api.get_job_result(job_id=job_id)
     except FailedJobException as fje:
         terminal_print()
-        error: Union[str, None] = KiaraException.get_root_details(fje)
-        if not error:
-            error = str(fje)
+        error = fje.msg
+        details: Union[str, None] = KiaraException.get_root_details(fje)
+        if details:
+            error = f"{error}\n\n{details}"
         _error = Markdown(error)
         terminal_print(_error, in_panel="Processing error")
 

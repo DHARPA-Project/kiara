@@ -1,0 +1,41 @@
+{{ pipeline.doc.full_doc }}
+
+{% set pipeline_input_refs = pipeline.pipeline_input_refs %}
+{% set pipeline_output_refs = pipeline.pipeline_output_refs %}
+{%  for idx, steps in pipeline.get_steps_by_stage().items() %}
+# Stage: {{ idx }}
+
+{% for step_id, step in steps.items() -%}
+{% set pipeline_inputs = step.find_pipeline_inputs(pipeline) %}
+{% set pipeline_outputs = step.find_pipeline_outputs(pipeline) %}
+## Step: {{ step.step_id }}
+
+{{ step.doc.description }}
+
+- step module type: **{{ step.module_type }}**
+{%  if step.module_config -%}
+- step_config: {{ step.module_config }}
+
+### Step inputs:
+{% for field_name, input_ref in pipeline_inputs.items() %}
+    - *{{ input_ref.value_name }}* (pipeline input): **{{ step_id }}.{{ field_name }}**
+{% endfor -%}
+{%  endif -%}
+{% if step.input_links or step.output_links -%}
+{% if step.input_links -%}
+{%- for field_name, connections in step.input_links.items() -%}
+{% for connection in connections %}
+    - *{{ connection.step_id }}.{{ connection.value_name }}*: **{{ step_id }}.{{ field_name }}**
+{% endfor -%}
+{% endfor -%}
+{% endif %}
+
+### Step outputs
+
+{% for field_name, output_ref in pipeline_outputs.items() %}
+    - **{{ step_id }}.{{ field_name }}**: *{{ output_ref.value_name }}* (pipeline output)
+{% endfor -%}
+{%  endif -%}
+
+{% endfor -%}
+{%  endfor -%}

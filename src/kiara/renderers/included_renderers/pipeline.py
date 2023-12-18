@@ -228,7 +228,7 @@ class PipelineInfoRenderer(BaseJinjaRenderer[Pipeline, RenderInputsSchema]):
 
     def retrieve_jinja_env(self) -> JinjaEnv:
 
-        jinja_env = JinjaEnv(template_base="kiara_plugin.jupyter")
+        jinja_env = JinjaEnv(template_base="kiara")
         return jinja_env
 
     def get_template(self, render_config: RenderInputsSchema) -> Template:
@@ -304,7 +304,7 @@ class PipelinePythonScriptRenderer(
 
     def retrieve_jinja_env(self) -> JinjaEnv:
 
-        jinja_env = JinjaEnv(template_base="kiara_plugin.jupyter")
+        jinja_env = JinjaEnv(template_base="kiara")
         return jinja_env
 
     def get_template(self, render_config: PythonScriptRenderInputSchema) -> Template:

@@ -16,7 +16,6 @@ from jinja2 import Template
 from pydantic import Field
 
 from kiara.defaults import KIARA_DEFAULT_STAGES_EXTRACTION_TYPE
-from kiara.exceptions import KiaraException
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.models.module.pipeline.structure import PipelineStructure
@@ -315,43 +314,50 @@ class PipelinePythonScriptRenderer(
         self, instance: Any, render_config: PythonScriptRenderInputSchema
     ) -> Mapping[str, Any]:
 
-        from kiara.defaults import SpecialValue
+        from kiara.utils.rendering import create_pipeline_render_inputs
 
-        pipeline_inputs_user = render_config.inputs
         pipeline: Pipeline = instance
+        pipeline_user_inputs: Mapping[str, Any] = render_config.inputs
+        result = create_pipeline_render_inputs(pipeline, pipeline_user_inputs)
+        return result
 
-        invalid = []
-        for field_name in pipeline_inputs_user.keys():
-            if field_name not in pipeline.pipeline_inputs_schema.keys():
-                invalid.append(field_name)
-
-        if invalid:
-            msg = "Valid pipeline inputs:\n"
-            for field_name, field in pipeline.pipeline_inputs_schema.items():
-                msg = f"{msg}  - *{field_name}*: {field.doc.description}\n"
-            raise KiaraException(
-                msg=f"Invalid pipeline inputs: {', '.join(invalid)}.", details=msg
-            )
-
-        pipeline_inputs = {}
-        for field_name, schema in pipeline.pipeline_inputs_schema.items():
-            if field_name in pipeline_inputs_user.keys():
-                value = pipeline_inputs_user[field_name]
-            elif schema.default not in [SpecialValue.NOT_SET]:
-                if callable(schema.default):
-                    value = schema.default()
-                else:
-                    value = schema.default
-            elif not schema.is_required():
-                value = None
-            else:
-                value = "<TODO_SET_INPUT>"
-
-            if isinstance(value, str):
-                value = f'"{value}"'
-            pipeline_inputs[field_name] = value
-
-        inputs: MutableMapping[str, Any] = render_config.model_dump()
-        inputs["pipeline"] = pipeline
-        inputs["pipeline_inputs"] = pipeline_inputs
-        return inputs
+        # from kiara.defaults import SpecialValue
+        #
+        # pipeline_inputs_user = render_config.inputs
+        # pipeline: Pipeline = instance
+        #
+        # invalid = []
+        # for field_name in pipeline_inputs_user.keys():
+        #     if field_name not in pipeline.pipeline_inputs_schema.keys():
+        #         invalid.append(field_name)
+        #
+        # if invalid:
+        #     msg = "Valid pipeline inputs:\n"
+        #     for field_name, field in pipeline.pipeline_inputs_schema.items():
+        #         msg = f"{msg}  - *{field_name}*: {field.doc.description}\n"
+        #     raise KiaraException(
+        #         msg=f"Invalid pipeline inputs: {', '.join(invalid)}.", details=msg
+        #     )
+        #
+        # pipeline_inputs = {}
+        # for field_name, schema in pipeline.pipeline_inputs_schema.items():
+        #     if field_name in pipeline_inputs_user.keys():
+        #         value = pipeline_inputs_user[field_name]
+        #     elif schema.default not in [SpecialValue.NOT_SET]:
+        #         if callable(schema.default):
+        #             value = schema.default()
+        #         else:
+        #             value = schema.default
+        #     elif not schema.is_required():
+        #         value = None
+        #     else:
+        #         value = "<TODO_SET_INPUT>"
+        #
+        #     if isinstance(value, str):
+        #         value = f'"{value}"'
+        #     pipeline_inputs[field_name] = value
+        #
+        # inputs: MutableMapping[str, Any] = render_config.model_dump()
+        # inputs["pipeline"] = pipeline
+        # inputs["pipeline_inputs"] = pipeline_inputs
+        # return inputs

@@ -73,3 +73,10 @@ class KiaraDict(BaseModel, Mapping):
 
     def __len__(self):
         return self.dict_data.__len__()
+
+    def __repr__(self):
+        full = {
+            "dict_data": self.dict_data,
+            "data_schema": self.data_schema,
+        }
+        return full.__repr__()

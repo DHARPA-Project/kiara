@@ -408,7 +408,13 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
     def doc(self) -> "DocumentationMetadataModel":
 
         if self._cached_doc is None:
-            self._cached_doc = DocumentationMetadataModel.from_class_doc(self.__class__)
+            if hasattr(self, "get_operation_doc"):
+                doc = self.get_operation_doc()
+                self._cached_doc = DocumentationMetadataModel.create(doc)
+            else:
+                self._cached_doc = DocumentationMetadataModel.from_class_doc(
+                    self.__class__
+                )
         return self._cached_doc
 
     @property

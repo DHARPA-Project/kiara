@@ -1778,14 +1778,20 @@ class KiaraAPI(object):
     # render-related methods
 
     def retrieve_renderer_infos(
-        self, source_type: Union[str, None] = None
+        self, source_type: Union[str, None] = None, target_type: Union[str, None] = None
     ) -> RendererInfos:
 
-        if not source_type:
+        if not source_type and not target_type:
             renderers = self.context.render_registry.registered_renderers
-        else:
+        elif source_type and not target_type:
             renderers = self.context.render_registry.retrieve_renderers_for_source_type(
                 source_type=source_type
+            )
+        elif target_type and not source_type:
+            raise KiaraException(msg="Cannot retrieve renderers for target type only.")
+        else:
+            renderers = self.context.render_registry.retrieve_renderers_for_source_target_combination(
+                source_type=source_type, target_type=target_type  # type: ignore
             )
 
         group = {k.get_renderer_alias(): k for k in renderers}

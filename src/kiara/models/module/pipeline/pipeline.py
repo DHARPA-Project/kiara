@@ -46,7 +46,11 @@ from kiara.models.events.pipeline import (
 from kiara.models.module.jobs import JobConfig
 from kiara.models.module.pipeline import PipelineConfig, StepStatus
 from kiara.models.module.pipeline.structure import PipelineStep, PipelineStructure
-from kiara.models.module.pipeline.value_refs import ValueRef
+from kiara.models.module.pipeline.value_refs import (
+    PipelineInputRef,
+    PipelineOutputRef,
+    ValueRef,
+)
 from kiara.models.values.value import ORPHAN
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries.data import DataRegistry
@@ -208,6 +212,14 @@ class Pipeline(object):
     @property
     def structure(self) -> PipelineStructure:
         return self._structure
+
+    @property
+    def pipeline_inputs_schema(self):
+        return self._structure.pipeline_inputs_schema
+
+    @property
+    def pipeline_outputs_schema(self):
+        return self._structure.pipeline_outputs_schema
 
     @property
     def config(self) -> PipelineConfig:
@@ -588,6 +600,20 @@ class Pipeline(object):
     def get_step(self, step_id: str) -> PipelineStep:
         """Return the object representing a step in this workflow, identified by the step id."""
         return self._structure.get_step(step_id)
+
+    def get_pipeline_inputs_schema_for_step(
+        self, step_id: str
+    ) -> Mapping[str, ValueSchema]:
+        """Return the schema for the inputs of the specified step."""
+        return self._structure.get_pipeline_inputs_schema_for_step(step_id=step_id)
+
+    @property
+    def pipeline_input_refs(self) -> Dict[str, PipelineInputRef]:
+        return self._structure.pipeline_input_refs
+
+    @property
+    def pipeline_output_refs(self) -> Dict[str, PipelineOutputRef]:
+        return self._structure.pipeline_output_refs
 
     def get_steps_by_stage(
         self,

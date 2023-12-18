@@ -282,6 +282,7 @@ class RenderRegistry(object):
     ) -> List[KiaraRenderer]:
 
         result = []
+
         for renderer in self.registered_renderers:
             if (
                 source_type in renderer.retrieve_supported_render_sources()
@@ -312,6 +313,8 @@ class RenderRegistry(object):
             )
 
         renderer_instance = next(iter(renderers))
+        if render_config is None:
+            render_config = {}
         rc = renderer_instance.__class__._inputs_schema(**render_config)
 
         return renderer_instance.render(item, render_config=rc)

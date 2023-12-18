@@ -14,39 +14,78 @@ from typing import Tuple, Union
 import rich_click as click
 from rich.markdown import Markdown
 
-from kiara.utils.cli import dict_from_cli_args, terminal_print, terminal_print_model
+from kiara.utils.cli import (
+    dict_from_cli_args,
+    output_format_option,
+    terminal_print,
+    terminal_print_model,
+)
+from kiara.utils.cli.exceptions import handle_exception
 
 if typing.TYPE_CHECKING:
     from kiara.api import KiaraAPI
+    from kiara.interfaces import KiaraAPIWrap
 
 
-def list_renderers(ctx, param, value) -> None:
-    """List all available renderers."""
+# def list_renderers(ctx, param, value) -> None:
+#     """List all available renderers."""
+#
+#     if not value or ctx.resilient_parsing:
+#         return
+#     kiara_api: KiaraAPI = ctx.obj.kiara_api
+#
+#     infos = kiara_api.retrieve_renderer_infos()
+#     terminal_print()
+#     terminal_print_model(infos, in_panel="Available renderers")
+#     sys.exit(0)
 
-    if not value or ctx.resilient_parsing:
-        return
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
 
-    infos = kiara_api.retrieve_renderer_infos()
-    terminal_print()
-    terminal_print_model(infos, in_panel="Available renderers")
-    sys.exit(0)
-
-
-@click.command(name="render")
-@click.option(
-    "--list",
-    "-l",
-    is_flag=True,
-    help="List all available renderers and exit.",
-    callback=list_renderers,
-    expose_value=False,
-    is_eager=True,
-)
+@click.group(name="render")
 @click.option(
     "--source-type", "-s", required=False, help="Source type of the item to render."
 )
 @click.option("--target-type", "-t", required=False, help="Target type to render to.")
+@click.pass_context
+def render(
+    ctx, source_type: Union[None, str] = None, target_type: Union[None, str] = None
+) -> None:
+    """Render-related sub-commands."""
+
+    api_wrap: KiaraAPIWrap = ctx.obj
+    api_wrap.add_item("source_type", source_type)
+    api_wrap.add_item("target_type", target_type)
+
+
+@render.command("list-renderers")
+@output_format_option()
+@click.pass_context
+@handle_exception()
+def list_render_combinations(ctx, format: str):
+
+    api_wrap: KiaraAPIWrap = ctx.obj
+    kiara_api: KiaraAPI = api_wrap.kiara_api
+
+    source_type = api_wrap.get_item("source_type")
+    target_type = api_wrap.get_item("target_type")
+
+    infos = kiara_api.retrieve_renderer_infos(
+        source_type=source_type, target_type=target_type
+    )
+    terminal_print()
+    terminal_print_model(infos, in_panel="Available renderers", format=format)
+    sys.exit(0)
+
+
+@render.command(name="item")
+# @click.option(
+#     "--list",
+#     "-l",
+#     is_flag=True,
+#     help="List all available renderers and exit.",
+#     callback=list_renderers,
+#     expose_value=False,
+#     is_eager=True,
+# )
 @click.option(
     "--output", "-o", help="Write the rendered output to a file using this path."
 )
@@ -54,18 +93,22 @@ def list_renderers(ctx, param, value) -> None:
 @click.argument("item_to_render", nargs=1)
 @click.argument("render_config", nargs=-1)
 @click.pass_context
+@handle_exception()
 def render_item(
     ctx,
-    source_type: str,
     item_to_render: Union[str, None],
-    target_type: Union[None, str],
     render_config: Tuple[str],
     output: str,
     force: bool,
 ) -> None:
     """Render an internal kiara item."""
 
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    api_wrap: KiaraAPIWrap = ctx.obj
+    kiara_api: KiaraAPI = api_wrap.kiara_api
+
+    source_type = api_wrap.get_item("source_type")
+    target_type = api_wrap.get_item("target_type")
+
     infos = kiara_api.retrieve_renderer_infos()
 
     available_render_source_types = infos.get_render_source_types()

@@ -89,7 +89,7 @@ class KiaraException(Exception):
 
         from rich.console import Group
 
-        rows: List[RenderableType] = [f"[red]Error[/red]: {str(self)}"]
+        rows: List[RenderableType] = [f"[red]Error[/red]: {str(self._msg)}"]
         root_details = self.root_details()
         if root_details:
             from rich.markdown import Markdown

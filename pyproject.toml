@@ -123,7 +123,7 @@ operation = "kiara.interfaces.cli.operation.commands:operation"
 pipeline = "kiara.interfaces.cli.pipeline.commands:pipeline"
 data-type = "kiara.interfaces.cli.type.commands:type_group"
 workflow = "kiara.interfaces.cli.workflow.commands:workflow"
-render = "kiara.interfaces.cli.render.commands:render_item"
+render = "kiara.interfaces.cli.render.commands:render"
 
 [project.entry-points."kiara.data_types"]
 

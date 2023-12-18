@@ -1,10 +1,22 @@
 # -*- coding: utf-8 -*-
-from typing import TYPE_CHECKING, Any, Iterable, Literal, Mapping, Set, Type, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    Literal,
+    Mapping,
+    MutableMapping,
+    Set,
+    Type,
+    Union,
+)
 
 from jinja2 import Template
 from pydantic import Field
 
 from kiara.defaults import KIARA_DEFAULT_STAGES_EXTRACTION_TYPE
+from kiara.exceptions import KiaraException
 from kiara.models.module.pipeline import PipelineConfig
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.models.module.pipeline.structure import PipelineStructure
@@ -197,64 +209,149 @@ class PipelineRendererPng(
         return image
 
 
-# class PipelineRendererStages(
-#     KiaraRenderer[Pipeline, RenderInputsSchema, bytes, KiaraRendererConfig]
-# ):
-#
-#     _renderer_name = "pipeline_stages"
-#     _renderer_config_cls = KiaraRendererConfig  # type: ignore
-#
-#     def retrieve_source_transformers(self) -> Iterable[SourceTransformer]:
-#         return [PipelineTransformer(kiara=self._kiara)]
-#
-#     def retrieve_supported_render_sources(self) -> str:
-#         return "pipeline"
-#
-#     def retrieve_supported_render_targets(self) -> Union[Iterable[str], str]:
-#         return "stage_pipelines"
-#
-#     def _render(self, instance: Pipeline, render_config: RenderInputsSchema) -> str:
-#
-#         structure = instance.structure
-#
-#         stages = []
-#         current_stage = []
-#         for idx, stage in enumerate(instance.structure.processing_stages):
-#             if idx == 0:
-#                 current_stage.extend(stage)
-#                 continue
-#
-#             new_inputs = set()
-#             connected_inputs = set()
-#             pipeline_inputs = []
-#             for step_id in stage:
-#
-#                 match = False
-#                 for pipeline_input_name, inputs in structure.pipeline_input_refs.items():
-#                     for inp_ref in inputs.connected_inputs:
-#                         if inp_ref.step_id == step_id:
-#                             match = True
-#                             if pipeline_input_name not in pipeline_inputs:
-#                                 pipeline_inputs.append(pipeline_input_name)
-#                 if match:
-#                     new_inputs.add(step_id)
-#                 else:
-#                     connected_inputs.add(step_id)
-#
-#             if not new_inputs:
-#                 current_stage.extend(connected_inputs)
-#             else:
-#                 stages.append({
-#                     "steps": current_stage,
-#                     "pipeline_inputs": pipeline_inputs
-#                 })
-#                 pipeline_inputs = set()
-#                 current_stage = list(new_inputs)
-#                 current_stage.extend(connected_inputs)
-#
-#         if current_stage:
-#             stages.append({"steps": current_stage, "pipeline_inputs": pipeline_inputs})
-#
-#         dbg(stages)
-#
-#         return ""
+class PipelineInfoRenderer(BaseJinjaRenderer[Pipeline, RenderInputsSchema]):
+    """Renders a basic text file containing pipeline details from a pipeline.
+
+    This is mostly used for debugging and as a base template to show how this is done.
+    """
+
+    _renderer_name = "pipeline_info"
+
+    def retrieve_supported_render_sources(self) -> str:
+        return "pipeline"
+
+    def retrieve_supported_render_targets(cls) -> Union[Iterable[str], str]:
+        return "pipeline_info"
+
+    def retrieve_source_transformers(self) -> Iterable[SourceTransformer]:
+        return [PipelineTransformer(kiara=self._kiara)]
+
+    def retrieve_jinja_env(self) -> JinjaEnv:
+
+        jinja_env = JinjaEnv(template_base="kiara_plugin.jupyter")
+        return jinja_env
+
+    def get_template(self, render_config: RenderInputsSchema) -> Template:
+
+        return self.get_jinja_env().get_template("pipeline/pipeline_info.md.j2")
+
+    def assemble_render_inputs(
+        self, instance: Any, render_config: RenderInputsSchema
+    ) -> Mapping[str, Any]:
+
+        inputs: MutableMapping[str, Any] = render_config.model_dump()
+        inputs["pipeline"] = instance
+        return inputs
+
+
+class PythonScriptRenderInputSchema(RenderInputsSchema):
+    inputs: Dict[str, Any] = Field(
+        description="The pipeline inputs.", default_factory=dict
+    )
+
+
+class PipelinePythonScriptRenderer(
+    BaseJinjaRenderer[Pipeline, PythonScriptRenderInputSchema]
+):
+    """Renders a simple executable python script from a pipeline.
+
+        If the pipeline inputs have required inputs, you can either specify those in in the render config, or you have to edit the rendered Python in the places indicted with `<TODO_SET_INPUT>` before execution.
+
+    ## Examples
+
+    ### Terminal
+
+    Example invoication from the command line (using [this](https://github.com/DHARPA-Project/kiara_plugin.tabular/blob/develop/examples/pipelines/tables_from_csv_files.yaml) pipeline):
+
+    ```
+    kiara render --source-type pipeline --target-type python_script item tables_from_csv_files.yaml inputs='{"path": "/home/markus/projects/kiara/kiara_plugin.tabular/examples/data/journals"}' > tables_from_csv_files.py
+
+    python tables_from_csv_files.py
+    ```
+
+    ### Python API
+
+    Example usage from the Python API:
+
+    ``` python
+    from kiara.api import KiaraAPI
+
+    kiara = KiaraAPI.instance()
+
+    pipeline = "logic.xor"  # any valid pipeline operation (or reference to one)
+    pipeline_inputs = {
+        "a": True,
+        "b": False,
+    }
+    rendered = kiara.render(pipeline, source_type="pipeline", target_type="python_script", render_config={"inputs": pipeline_inputs})
+    print("# Rendered python script for pipeline 'logic.xor':")
+    print(rendered)
+    ```
+
+    """
+
+    _renderer_name = "python_script"
+    _inputs_schema = PythonScriptRenderInputSchema
+
+    def retrieve_supported_render_sources(self) -> str:
+        return "pipeline"
+
+    def retrieve_supported_render_targets(cls) -> Union[Iterable[str], str]:
+        return "python_script"
+
+    def retrieve_source_transformers(self) -> Iterable[SourceTransformer]:
+        return [PipelineTransformer(kiara=self._kiara)]
+
+    def retrieve_jinja_env(self) -> JinjaEnv:
+
+        jinja_env = JinjaEnv(template_base="kiara_plugin.jupyter")
+        return jinja_env
+
+    def get_template(self, render_config: PythonScriptRenderInputSchema) -> Template:
+
+        return self.get_jinja_env().get_template("pipeline/python_script.py.j2")
+
+    def assemble_render_inputs(
+        self, instance: Any, render_config: PythonScriptRenderInputSchema
+    ) -> Mapping[str, Any]:
+
+        from kiara.defaults import SpecialValue
+
+        pipeline_inputs_user = render_config.inputs
+        pipeline: Pipeline = instance
+
+        invalid = []
+        for field_name in pipeline_inputs_user.keys():
+            if field_name not in pipeline.pipeline_inputs_schema.keys():
+                invalid.append(field_name)
+
+        if invalid:
+            msg = "Valid pipeline inputs:\n"
+            for field_name, field in pipeline.pipeline_inputs_schema.items():
+                msg = f"{msg}  - *{field_name}*: {field.doc.description}\n"
+            raise KiaraException(
+                msg=f"Invalid pipeline inputs: {', '.join(invalid)}.", details=msg
+            )
+
+        pipeline_inputs = {}
+        for field_name, schema in pipeline.pipeline_inputs_schema.items():
+            if field_name in pipeline_inputs_user.keys():
+                value = pipeline_inputs_user[field_name]
+            elif schema.default not in [SpecialValue.NOT_SET]:
+                if callable(schema.default):
+                    value = schema.default()
+                else:
+                    value = schema.default
+            elif not schema.is_required():
+                value = None
+            else:
+                value = "<TODO_SET_INPUT>"
+
+            if isinstance(value, str):
+                value = f'"{value}"'
+            pipeline_inputs[field_name] = value
+
+        inputs: MutableMapping[str, Any] = render_config.model_dump()
+        inputs["pipeline"] = pipeline
+        inputs["pipeline_inputs"] = pipeline_inputs
+        return inputs

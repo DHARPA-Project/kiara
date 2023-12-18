@@ -19,7 +19,11 @@ from kiara.models.documentation import DocumentationMetadataModel
 from kiara.models.module import KiaraModuleConfig
 from kiara.models.module.jobs import ExecutionContext
 from kiara.models.module.manifest import Manifest
-from kiara.models.module.pipeline.value_refs import StepValueAddress
+from kiara.models.module.pipeline.value_refs import (
+    PipelineInputRef,
+    PipelineOutputRef,
+    StepValueAddress,
+)
 from kiara.models.python_class import KiaraModuleInstance
 from kiara.utils import find_free_id, is_jupyter
 from kiara.utils.data import get_data_from_string
@@ -40,6 +44,7 @@ from kiara.utils.string_vars import replace_var_names_in_obj
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+    from kiara.models.module.pipeline.pipeline import Pipeline
     from kiara.models.module.pipeline.structure import PipelineStructure
     from kiara.modules import KiaraModule
 
@@ -317,6 +322,32 @@ class PipelineStep(Manifest):
             m_cls = self.module_details.get_class()
             self._module = m_cls(module_config=self.module_config)
         return self._module
+
+    def find_pipeline_inputs(
+        self, pipeline: Union["Pipeline", "PipelineStructure"]
+    ) -> Dict[str, PipelineInputRef]:
+        """Return all the pipeline inputs that are connected to this step.
+
+        Returns a dictionary with the name of the step input as key, and a reference to the pipeline input as value.
+        """
+
+        result = {}
+        for field, field_ref in pipeline.pipeline_input_refs.items():
+            for con_inp in field_ref.connected_inputs:
+                if con_inp.step_id == self.step_id:
+                    result[con_inp.value_name] = field_ref
+
+        return result
+
+    def find_pipeline_outputs(
+        self, pipeline: Union["Pipeline", "PipelineStructure"]
+    ) -> Dict[str, PipelineOutputRef]:
+
+        result = {}
+        for field, field_ref in pipeline.pipeline_output_refs.items():
+            if field_ref.connected_output.step_id == self.step_id:
+                result[field] = field_ref
+        return result
 
     def __repr__(self):
 

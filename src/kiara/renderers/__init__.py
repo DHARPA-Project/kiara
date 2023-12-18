@@ -134,7 +134,9 @@ class KiaraRenderer(
                 doc = ""
             doc = f"{inspect.cleandoc(doc)}\n\n"
 
-        transformers_list = "Supported inputs:\n\n"
+        transformers_list = (
+            "## Supported inputs:\n\nThis renderer supports the following inputs:\n\n"
+        )
         for transformer in self.supported_inputs_descs:
             transformers_list += f"- {transformer}\n"
 

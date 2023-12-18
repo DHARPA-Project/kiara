@@ -54,6 +54,13 @@ class CreateFromModule(KiaraModule):
             result.append(data)
         return result
 
+    def get_operation_doc(self) -> str:
+        source_type = self.get_config_value("source_type")
+        target_type = self.get_config_value("target_type")
+
+        doc = f"Creates a '{target_type}' instance from a source value of type '{source_type}'."
+        return doc
+
     def create_optional_inputs(
         self, source_type: str, target_type
     ) -> Union[Mapping[str, Mapping[str, Any]], None]:

@@ -1780,6 +1780,16 @@ class KiaraAPI(object):
     def retrieve_renderer_infos(
         self, source_type: Union[str, None] = None, target_type: Union[str, None] = None
     ) -> RendererInfos:
+        """Retrieve information about the available renderers.
+
+        Arguments:
+            source_type: the type of the item to render (optional filter)
+            target_type: the type/profile of the rendered result (optional filter)
+
+        Returns:
+            a wrapper object containing the items as dictionary with renderer alias as key, and [kiara.interfaces.python_api.models.info.RendererInfo] as value
+
+        """
 
         if not source_type and not target_type:
             renderers = self.context.render_registry.registered_renderers
@@ -1811,6 +1821,27 @@ class KiaraAPI(object):
         target_type: str,
         render_config: Union[Mapping[str, Any], None] = None,
     ) -> Any:
+        """Render an internal instance of a supported source type into one of the supported target types.
+
+        To find out the supported source/target combinations, you can use the kiara cli:
+
+        ```
+        kiara render list-renderers
+        ```
+        or, for a filtered list:
+        ````
+        kiara render --source-type pipeline list-renderers
+        ```
+
+        What Python types are actually supported for the 'item' argument depends on the source_type of the renderer you are calling, for example if that is a pipeline, most of the ways to specify a pipeline would be supported (operation_id, pipeline file, etc.). This might need more documentation, let me know what exactly is needed in a support ticket and I'll add that information.
+
+        Arguments:
+            item: the item to render
+            source_type: the type of the item to render
+            target_type: the type/profile of the rendered result
+            render_config: optional configuration, depends on the renderer that is called
+
+        """
 
         registry = self.context.render_registry
         result = registry.render(
@@ -1830,6 +1861,8 @@ class KiaraAPI(object):
     ) -> Operation:
         """
         Create a manifest describing a transformation that renders a value of the specified data type in the target format.
+
+        NOTE: this is a preliminary endpoint, don't use in anger yet.
 
         If a list is provided as value for 'target_format', all items are tried until a 'render_value' operation is found that matches
         the value type of the source value, and the provided target format.
@@ -2100,6 +2133,8 @@ class KiaraAPI(object):
         """
         Render a value in the specified target format.
 
+        NOTE: this is a preliminary endpoint, don't use in anger yet.
+
         If a list is provided as value for 'target_format', all items are tried until a 'render_value' operation is found that matches
         the value type of the source value, and the provided target format.
 
@@ -2209,17 +2244,26 @@ class KiaraAPI(object):
     # all of the workflow-related methods are provisional experiments, so don't rely on them to be availale long term
 
     def list_workflow_ids(self) -> List[uuid.UUID]:
-        """List all available workflow ids."""
+        """List all available workflow ids.
+
+        NOTE: this is a provisional endpoint, don't use in anger yet
+        """
         return list(self.context.workflow_registry.all_workflow_ids)
 
     def list_workflow_alias_names(self) -> List[str]:
-        """ "List all available workflow aliases."""
+        """ "List all available workflow aliases.
+
+        NOTE: this is a provisional endpoint, don't use in anger yet
+        """
         return list(self.context.workflow_registry.workflow_aliases.keys())
 
     def get_workflow(
         self, workflow: Union[str, uuid.UUID], create_if_necessary: bool = True
     ) -> Workflow:
-        """Retrieve the workflow instance with the specified id or alias."""
+        """Retrieve the workflow instance with the specified id or alias.
+
+        NOTE: this is a provisional endpoint, don't use in anger yet
+        """
         no_such_alias: bool = False
         workflow_id: Union[uuid.UUID, None] = None
         workflow_alias: Union[str, None] = None
@@ -2267,6 +2311,10 @@ class KiaraAPI(object):
     def retrieve_workflow_info(
         self, workflow: Union[str, uuid.UUID, Workflow]
     ) -> WorkflowInfo:
+        """Retrieve information about the specified workflow.
+
+        NOTE: this is a provisional endpoint, don't use in anger yet
+        """
 
         if isinstance(workflow, Workflow):
             _workflow: Workflow = workflow
@@ -2299,7 +2347,10 @@ class KiaraAPI(object):
             return WorkflowsMap(root={str(k): v for k, v in workflows.items()})
 
     def list_workflow_aliases(self, **matcher_params) -> "WorkflowsMap":
-        """List all available workflow sessions that have an alias, indexed by alias."""
+        """List all available workflow sessions that have an alias, indexed by alias.
+
+        NOTE: this is a provisional endpoint, don't use in anger yet
+        """
 
         from kiara.interfaces.python_api.models.doc import WorkflowsMap
 
@@ -2329,7 +2380,10 @@ class KiaraAPI(object):
         return WorkflowsMap(root=result)
 
     def retrieve_workflows_info(self, **matcher_params: Any) -> WorkflowGroupInfo:
-        """Get a map info instances for all available workflows, indexed by (stringified) workflow-id."""
+        """Get a map info instances for all available workflows, indexed by (stringified) workflow-id.
+
+        NOTE: this is a provisional endpoint, don't use in anger yet
+        """
         workflows = self.list_workflows(**matcher_params)
 
         workflow_infos = WorkflowGroupInfo.create_from_workflows(
@@ -2342,7 +2396,10 @@ class KiaraAPI(object):
     def retrieve_workflow_aliases_info(
         self, **matcher_params: Any
     ) -> WorkflowGroupInfo:
-        """Get a map info instances for all available workflows, indexed by alias."""
+        """Get a map info instances for all available workflows, indexed by alias.
+
+        NOTE: this is a provisional endpoint, don't use in anger yet
+        """
         workflows = self.list_workflow_aliases(**matcher_params)
         workflow_infos = WorkflowGroupInfo.create_from_workflows(
             *workflows.values(),
@@ -2360,6 +2417,10 @@ class KiaraAPI(object):
         save: bool = False,
         force_alias: bool = False,
     ) -> Workflow:
+        """Create a workflow instance.
+
+        NOTE: this is a provisional endpoint, don't use in anger yet
+        """
 
         if workflow_alias is not None:
             try:

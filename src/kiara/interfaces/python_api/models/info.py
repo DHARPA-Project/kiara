@@ -740,9 +740,13 @@ class KiaraModuleConfigMetadata(KiaraModel):
         config_values = {}
         for field_name, details in fields.items():
 
-            type_str = "-- n/a --"
+            type_str = "unknown"
             if "type" in details.keys():
                 type_str = details["type"]
+            elif "anyOf" in details.keys():
+                type_str = f"anyOf: {details['anyOf']}"
+            elif "allOf" in details.keys():
+                type_str = f"allOf: {details['allOf']}"
 
             desc = details.get("description", DEFAULT_NO_DESC_VALUE)
             default = config_cls.model_fields[field_name].default

@@ -575,7 +575,7 @@ class DataRegistry(object):
     def register_data(
         self,
         data: Any,
-        schema: Union[ValueSchema, str, None] = None,
+        schema: Union[ValueSchema, str, None, Mapping[str, Any]] = None,
         pedigree: Union[ValuePedigree, None] = None,
         pedigree_output_name: Union[str, None] = None,
         reuse_existing: bool = True,
@@ -707,7 +707,7 @@ class DataRegistry(object):
     def _create_value(
         self,
         data: Any,
-        schema: Union[None, str, ValueSchema] = None,
+        schema: Union[None, str, ValueSchema, Mapping[str, Any]] = None,
         pedigree: Union[ValuePedigree, None] = None,
         pedigree_output_name: Union[str, None] = None,
         reuse_existing: bool = True,
@@ -729,6 +729,12 @@ class DataRegistry(object):
             raise NotImplementedError()
         elif isinstance(schema, str):
             schema = ValueSchema(type=schema)
+        elif isinstance(schema, Mapping):
+            schema = ValueSchema(**schema)
+        elif not isinstance(schema, ValueSchema):
+            raise Exception(
+                f"Invalid schema type: {type(schema)}, expected: {ValueSchema}"
+            )
 
         if schema.type not in self._kiara.data_type_names:
             raise Exception(

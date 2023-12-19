@@ -238,7 +238,10 @@ class StringTypeConfig(DataTypeConfig):
 
 class StringType(AnyType[str, StringTypeConfig]):
 
-    """A string."""
+    """A string.
+
+    Can be configured to only allow a list of specific strings by using the `allowed_strings` configuration option.
+    """
 
     _data_type_name: ClassVar[str] = "string"
 

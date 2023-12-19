@@ -1241,7 +1241,7 @@ class KiaraAPI(object):
     def register_data(
         self,
         data: Any,
-        data_type: Union[None, str, ValueSchema] = None,
+        data_type: Union[None, str, ValueSchema, Mapping[str, Any]] = None,
         reuse_existing: bool = False,
     ) -> Value:
         """

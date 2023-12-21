@@ -1,0 +1,23 @@
+pipeline_name: mock_pipeline_1
+doc: A pipeline only using the mock module
+steps:
+  - step_id: step_1
+    module_type: mock
+    module_config:
+      inputs_schema:
+        first:
+          type: string
+          doc: The first string
+        second:
+          type: string
+          doc: The second string
+      outputs:
+        combined:
+          field_schema:
+            type: string
+            doc: The combined string
+          data: "Hello World!"
+
+input_aliases:
+  step_1.first: first
+  step_1.second: second

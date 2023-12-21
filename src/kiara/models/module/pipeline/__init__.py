@@ -103,22 +103,49 @@ class PipelineStep(Manifest):
             if module_type not in kiara.module_type_names:
 
                 if module_type in module_map.keys():
+
                     resolved_module_type = module_map[module_type]["module_type"]
                     resolved_module_config = module_map[module_type]["module_config"]
+
+                    if module_config:
+                        merged_module_config = dict(resolved_module_config)
+                        merged_module_config.setdefault("defaults", {})
+                        merged_module_config.setdefault("constants", {})
+                        defaults = module_config.get("defaults", {})
+                        constants = module_config.get("constants", {})
+                        merged_module_config["defaults"].update(defaults)
+                        merged_module_config["constants"].update(constants)
+                    else:
+                        merged_module_config = resolved_module_config
+
                     manifest = kiara.create_manifest(
                         module_or_operation=resolved_module_type,
-                        config=resolved_module_config,
+                        config=merged_module_config,
                     )
+
                 elif (
                     kiara.operation_registry.is_initialized
                     and module_type in kiara.operation_registry.operation_ids
                 ):
+
                     op = kiara.operation_registry.operations[module_type]
                     resolved_module_type = op.module_type
                     resolved_module_config = op.module_config
+
+                    if module_config:
+                        merged_module_config = dict(resolved_module_config)
+                        merged_module_config.setdefault("defaults", {})
+                        merged_module_config.setdefault("constants", {})
+                        defaults = module_config.get("defaults", {})
+                        constants = module_config.get("constants", {})
+                        merged_module_config["defaults"].update(defaults)
+                        merged_module_config["constants"].update(constants)
+                    else:
+                        merged_module_config = resolved_module_config
+
                     manifest = kiara.create_manifest(
                         module_or_operation=resolved_module_type,
-                        config=resolved_module_config,
+                        config=merged_module_config,
                     )
                 else:
                     raise InvalidPipelineStepConfig(

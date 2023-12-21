@@ -55,7 +55,6 @@ classifiers = [
 
 
 dependencies = [
-    "anyio>=3.7.0",
     "appdirs>=1.4.4,<2.0.0",
     "bidict>=0.21.0",
     "boltons>=21.0.0",
@@ -173,6 +172,7 @@ python_api = "kiara:find_model_classes_api"
 "file_bundle.pick.sub_folder" = "kiara.modules.included_core_modules.filesystem:PickSubBundle"
 "export.file" = "kiara.modules.included_core_modules.filesystem:ExportFileModule"
 "render.value" = "kiara.modules.included_core_modules.render_value:ValueTypeRenderModule"
+"mock" = "kiara.modules.included_core_modules.mock:MockKiaraModule"
 
 [project.entry-points."kiara.operation_types"]
 

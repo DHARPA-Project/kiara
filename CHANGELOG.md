@@ -1,5 +1,8 @@
 # Changelog
 
+## Version 0.5.8 (upcoming)
+
+- add 'mock' module type
 
 ## Version 0.5.5
 

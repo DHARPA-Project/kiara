@@ -69,6 +69,9 @@ class RenderValueModule(KiaraModule):
     _config_cls = RenderValueModuleConfig
     _module_type_name: str = None  # type: ignore
 
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+        return DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS
+
     def create_inputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:

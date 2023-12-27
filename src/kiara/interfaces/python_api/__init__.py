@@ -1992,6 +1992,9 @@ class KiaraAPI(object):
 
         This is a convenience method that auto-detects what is meant by the 'operation' string input argument.
 
+        If the 'operation' is a JobDesc instance, and that JobDesc instance has the 'save' attribute
+        set, it will be ignored, so you'll have to store any results manually.
+
         Arguments:
             operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..
             inputs: the operation inputs

@@ -45,6 +45,8 @@ KIARA_MAIN_CONTEXT_LOCKS_PATH = os.path.join(
 
 KIARA_DEFAULT_STAGES_EXTRACTION_TYPE = "early"
 
+INIT_EXAMPLE_NAME = "init"
+
 # USER_PIPELINES_FOLDER = os.path.join(kiara_app_dirs.user_config_dir, "pipelines")
 
 

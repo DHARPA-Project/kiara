@@ -4,13 +4,34 @@ from inspect import getmembers, isfunction
 from pathlib import Path
 from typing import Any, Callable, Dict, Mapping, Union
 
+from kiara.defaults import INIT_EXAMPLE_NAME
 from kiara.interfaces.python_api import JobDesc
 from kiara.utils import log_exception
 from kiara.utils.files import get_data_from_file
 
 
+def get_init_job(jobs_folder: Path) -> Union[None, JobDesc]:
+
+    init_test_yaml = jobs_folder / f"{INIT_EXAMPLE_NAME}.yaml"
+    if init_test_yaml.is_file():
+        return JobDesc.create_from_file(init_test_yaml)
+
+    init_test_json = jobs_folder / f"{INIT_EXAMPLE_NAME}.json"
+    if init_test_json.is_file():
+        return JobDesc.create_from_file(init_test_json)
+
+    return None
+
+
 def list_job_descs(jobs_folder: Path):
-    for f in jobs_folder.glob("*"):
+
+    init_job = get_init_job(jobs_folder)
+    if init_job is not None:
+        yield init_job
+
+    for f in sorted(jobs_folder.glob("*")):
+        if f.name in [f"{INIT_EXAMPLE_NAME}.yaml", f"{INIT_EXAMPLE_NAME}.json"]:
+            continue
         try:
             job_desc = JobDesc.create_from_file(f)
             yield job_desc

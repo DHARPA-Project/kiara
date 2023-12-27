@@ -26,12 +26,12 @@ class JobDesc(KiaraModel):
     _kiara_model_id: ClassVar = "instance.job_desc"
 
     @classmethod
-    def create_from_file(cls, path: Union[str, Path]):
+    def create_from_file(cls, path: Union[str, Path]) -> "JobDesc":
         run_data = cls.parse_from_file(path)
         return cls(**run_data)
 
     @classmethod
-    def parse_from_file(cls, path: Union[str, Path]):
+    def parse_from_file(cls, path: Union[str, Path]) -> Mapping[str, Any]:
 
         if isinstance(path, str):
             path = Path(path)
@@ -59,7 +59,7 @@ class JobDesc(KiaraModel):
         data: Mapping[str, Any],
         var_repl_dict: Union[Mapping[str, Any], None] = None,
         alias: Union[str, None] = None,
-    ):
+    ) -> Mapping[str, Any]:
 
         if not isinstance(data, Mapping):
             raise KiaraException("Job description data is not a mapping.")
@@ -68,9 +68,11 @@ class JobDesc(KiaraModel):
             raise KiaraException("Missing 'operation' key")
 
         if var_repl_dict:
-            run_data = replace_var_names_in_obj(data, repl_dict=var_repl_dict)
+            run_data: Dict[str, Any] = replace_var_names_in_obj(
+                data, repl_dict=var_repl_dict
+            )
         else:
-            run_data = data
+            run_data = dict(data)
 
         if alias:
             run_data["job_alias"] = alias
@@ -101,7 +103,7 @@ class JobDesc(KiaraModel):
         default_factory=DocumentationMetadataModel.create,
     )
     save: Dict[str, str] = Field(
-        description="Configuration on how/whether to save the job results.",
+        description="Configuration on how/whether to save the job results. Key is the output field name, value is the alias to use for saving.",
         default_factory=dict,
     )
 

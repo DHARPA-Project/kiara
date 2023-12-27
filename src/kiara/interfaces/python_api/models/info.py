@@ -1483,10 +1483,13 @@ class OperationGroupInfo(InfoItemGroup):
         include_internal_operations = config.get("include_internal_operations", True)
         full_doc = config.get("full_doc", False)
         filter = config.get("filter", [])
+        show_internal_column = config.get("show_internal_column", False)
 
         table = Table(box=box.SIMPLE, show_header=True)
         table.add_column("Id", no_wrap=True, style="i")
         table.add_column("Type(s)", style="green")
+        if show_internal_column:
+            table.add_column("Internal", justify="center")
         table.add_column("Description")
 
         for op_id, op_info in self.item_infos.items():
@@ -1508,6 +1511,9 @@ class OperationGroupInfo(InfoItemGroup):
             else:
                 desc = Markdown(op_info.documentation.description)
 
+            is_internal = op_info.operation.module.characteristics.is_internal
+            is_internal_str = "\u2714" if is_internal else ""
+
             if filter:
                 match = True
                 for f in filter:
@@ -1518,10 +1524,16 @@ class OperationGroupInfo(InfoItemGroup):
                         match = False
                         break
                 if match:
-                    table.add_row(op_id, ", ".join(types), desc)
+                    if not show_internal_column:
+                        table.add_row(op_id, ", ".join(types), desc)
+                    else:
+                        table.add_row(op_id, ", ".join(types), is_internal_str, desc)
 
             else:
-                table.add_row(op_id, ", ".join(types), desc)
+                if not show_internal_column:
+                    table.add_row(op_id, ", ".join(types), desc)
+                else:
+                    table.add_row(op_id, ", ".join(types), is_internal_str, desc)
 
         return table
 
@@ -1887,7 +1899,9 @@ class KiaraPluginInfo(ItemInfo):
         if include_module_types:
             table.add_row("module_types", self.module_types.create_renderable(**config))
         if include_operations:
-            table.add_row("operations", self.operations.create_renderable(**config))
+            config_ops = config.copy()
+            config_ops["show_internal_column"] = True
+            table.add_row("operations", self.operations.create_renderable(**config_ops))
         if include_operation_types:
             table.add_row(
                 "operation_types", self.operation_types.create_renderable(**config)

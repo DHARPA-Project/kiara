@@ -1577,7 +1577,6 @@ class KiaraAPI(object):
         if register_data:
             temp: Dict[str, Union[str, Value, uuid.UUID, None]] = {}
             for k, v in values.items():
-
                 if isinstance(v, (Value, uuid.UUID)):
                     temp[k] = v
                     continue
@@ -1595,6 +1594,11 @@ class KiaraAPI(object):
                     )
 
                 if isinstance(v, str):
+
+                    if v.startswith("alias:"):
+                        temp[k] = v
+                        continue
+
                     try:
                         v = uuid.UUID(v)
                         temp[k] = v
@@ -2103,6 +2107,7 @@ class KiaraAPI(object):
         """
         if inputs is None:
             inputs = {}
+
         job_id = self.queue_job(
             operation=operation, inputs=inputs, operation_config=operation_config
         )

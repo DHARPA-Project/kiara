@@ -223,7 +223,7 @@ dev_documentation = [
 ]
 
 dev_testing = [
-    "coveralls>=3.2.0",
+    "pytest-cov>=4.1.0",
     "flake8>=3.8.4",
     "jsonschema>=4.0.0",
     "mypy>=0.800",

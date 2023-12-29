@@ -40,7 +40,7 @@ jobs:
       - name: display installed kiara and module package versions
         run: pip list | grep kiara
       - name: test with pytest
-        run: make test
+        run: pytest --cov=kiara tests
       - name: Coveralls
         uses: coverallsapp/github-action@v2
         with:

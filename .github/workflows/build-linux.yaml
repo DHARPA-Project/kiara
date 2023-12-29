@@ -40,12 +40,13 @@ jobs:
       - name: display installed kiara and module package versions
         run: pip list | grep kiara
       - name: test with pytest
-        run: pytest --cov=kiara tests
+        run: pytest --cov-report=xml --cov=kiara tests
       - name: Coveralls
         uses: coverallsapp/github-action@v2
         with:
           parallel: true
           flag-name: run ${{ join(matrix.*, ' - ') }}
+          format: python
 
   coverage:
     name: test coverage

@@ -47,6 +47,7 @@ jobs:
           parallel: true
           flag-name: run ${{ join(matrix.*, ' - ') }}
           format: python
+          file: coverage.xml
 
   coverage:
     name: test coverage

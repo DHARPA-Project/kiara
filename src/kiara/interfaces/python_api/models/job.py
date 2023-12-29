@@ -276,6 +276,7 @@ class JobTest(object):
     def run_job(self) -> "ValueMap":
 
         print(f"Running checks for job '{self._job_desc.job_alias}'...")  # noqa
+
         try:
             result = self._kiara_api.run_job(operation=self._job_desc)
         except Exception as e:

@@ -16,6 +16,10 @@ def get_init_job(jobs_folder: Path) -> Union[None, JobDesc]:
     if init_test_yaml.is_file():
         return JobDesc.create_from_file(init_test_yaml)
 
+    init_test_yaml = jobs_folder / f"{INIT_EXAMPLE_NAME}.yml"
+    if init_test_yaml.is_file():
+        return JobDesc.create_from_file(init_test_yaml)
+
     init_test_json = jobs_folder / f"{INIT_EXAMPLE_NAME}.json"
     if init_test_json.is_file():
         return JobDesc.create_from_file(init_test_json)
@@ -29,8 +33,17 @@ def list_job_descs(jobs_folder: Path):
     if init_job is not None:
         yield init_job
 
-    for f in sorted(jobs_folder.glob("*")):
-        if f.name in [f"{INIT_EXAMPLE_NAME}.yaml", f"{INIT_EXAMPLE_NAME}.json"]:
+    files = (
+        list(jobs_folder.glob("*.yaml"))
+        + list(jobs_folder.glob("*.yml"))
+        + list(jobs_folder.glob("*.json"))
+    )
+    for f in sorted(files):
+        if f.name in [
+            f"{INIT_EXAMPLE_NAME}.yaml",
+            f"{INIT_EXAMPLE_NAME}.yml",
+            "{INIT_EXAMPLE_NAME}.json",
+        ]:
             continue
         try:
             job_desc = JobDesc.create_from_file(f)
@@ -70,6 +83,8 @@ def get_tests_for_job(
 
     if test_checks.is_file():
         test_data: Dict[str, Any] = get_data_from_file(test_checks)
+        if test_data is None:
+            test_data = {}
     else:
         test_data = {}
 

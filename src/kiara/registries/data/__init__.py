@@ -368,7 +368,6 @@ class DataRegistry(object):
                         raise Exception(
                             f"Can't retrieve value for '{value}': invalid type '{type(value)}'."
                         )
-
                     _value_id = self._alias_resolver.resolve_alias(value)
         else:
             _value_id = value
@@ -1018,6 +1017,7 @@ class DataRegistry(object):
     ) -> ValueMap:
         """Extract a set of [Value][kiara.data.values.Value] from Python data and ValueSchemas."""
         input_details = {}
+
         for input_name, value_schema in schema.items():
             input_details[input_name] = {"schema": value_schema}
 
@@ -1042,7 +1042,15 @@ class DataRegistry(object):
                 try:
                     _d = uuid.UUID(_d)
                 except Exception:
-                    pass
+                    if schema[input_name].type == "string" and not (
+                        _d.startswith("alias:") or _d.startswith("value:")
+                    ):
+                        pass
+                    else:
+                        try:
+                            _d = self._alias_resolver.resolve_alias(_d)
+                        except Exception:
+                            pass
 
             if isinstance(_d, Value):
                 _resolved[input_name] = _d

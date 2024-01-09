@@ -1665,7 +1665,9 @@ class KiaraAPI(object):
             result = StoreValueResult(
                 value=value_obj,
                 aliases=sorted(alias) if alias else [],
-                error=str(e),
+                error=str(e)
+                if str(e)
+                else f"Unknown error (type '{type(e).__name__}').",
                 persisted_data=persisted_data,
             )
 

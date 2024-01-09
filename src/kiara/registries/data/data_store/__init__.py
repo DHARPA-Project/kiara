@@ -25,8 +25,16 @@ logger = structlog.getLogger()
 
 
 class DataArchive(BaseArchive):
+    """Base class for data archiv implementationss."""
+
+    @classmethod
+    def is_writeable(cls) -> bool:
+        """Archives are never writable."""
+        return False
+
     @classmethod
     def supported_item_types(cls) -> Iterable[str]:
+        """This archive type only supports storing data."""
 
         return ["data"]
 
@@ -42,6 +50,7 @@ class DataArchive(BaseArchive):
     def retrieve_serialized_value(
         self, value: Union[uuid.UUID, Value]
     ) -> PersistedData:
+        """Retrieve a 'PersistedData' instance from a value id or value instance."""
 
         if isinstance(value, Value):
             value_id: uuid.UUID = value.value_id
@@ -64,9 +73,21 @@ class DataArchive(BaseArchive):
 
     @abc.abstractmethod
     def _retrieve_serialized_value(self, value: Value) -> PersistedData:
+        """Retrieve a 'PersistedData' instance from a value instance.
+
+        This method basically implements the store-specific logic to serialize/deserialize the value data to/from disk.
+
+        Raise an exception if the value is not persisted in this archive.
+        """
         pass
 
     def retrieve_value(self, value_id: uuid.UUID) -> Value:
+        """Retrieve the value for the specified value_id.
+
+        Looks up the value in the cache first, and if not found, calls the '_retrieve_value_details' method to retrieve
+
+        Raises an exception if the value is not persisted in this archive.
+        """
 
         cached = self._value_cache.get(value_id, None)
         if cached is not None:
@@ -100,12 +121,18 @@ class DataArchive(BaseArchive):
 
     @abc.abstractmethod
     def _retrieve_value_details(self, value_id: uuid.UUID) -> Mapping[str, Any]:
+        """Retrieve the value details for the specified value_id from disk.
+
+        This method basically implements the store-specific logic to retrieve the value details from disk.
+
+        """
         pass
 
     @property
     def value_ids(self) -> Union[None, Iterable[uuid.UUID]]:
         return self._retrieve_all_value_ids()
 
+    @abc.abstractmethod
     def _retrieve_all_value_ids(
         self, data_type_name: Union[str, None] = None
     ) -> Union[None, Iterable[uuid.UUID]]:
@@ -153,6 +180,11 @@ class DataArchive(BaseArchive):
     def _retrieve_environment_details(
         self, env_type: str, env_hash: str
     ) -> Mapping[str, Any]:
+        """Retrieve the environment details with the specified type and hash.
+
+        Each store needs to implement this so environemnt details related to a value can be retrieved later on. Since in most cases the environment details will not change, a lookup is more efficient than having to store the full information with each value.
+        """
+
         pass
 
     def find_values(self, matcher: ValueMatcher) -> Iterable[Value]:
@@ -164,12 +196,16 @@ class DataArchive(BaseArchive):
         value_size: Union[int, None] = None,
         data_type_name: Union[str, None] = None,
     ) -> Set[uuid.UUID]:
+        """Find all values that have data that match the specifid hash.
 
-        if data_type_name is not None:
-            raise NotImplementedError()
+        If the data type name is specified, only values of that type are considered, which should speed up the search. Same with 'value_size'. But both filters are not implemented yet.
+        """
 
-        if value_size is not None:
-            raise NotImplementedError()
+        # if data_type_name is not None:
+        #     raise NotImplementedError()
+        #
+        # if value_size is not None:
+        #     raise NotImplementedError()
 
         if value_hash in self._value_hash_index.keys():
             value_ids: Union[Set[uuid.UUID], None] = self._value_hash_index[value_hash]
@@ -182,6 +218,9 @@ class DataArchive(BaseArchive):
             self._value_hash_index[value_hash] = value_ids
 
         assert value_ids is not None
+
+        # TODO: if data_type_name or value_size are specified, validate the results?
+
         return value_ids
 
     @abc.abstractmethod
@@ -191,11 +230,23 @@ class DataArchive(BaseArchive):
         value_size: Union[int, None] = None,
         data_type_name: Union[str, None] = None,
     ) -> Union[Set[uuid.UUID], None]:
+        """Find all values that have data that match the specifid hash.
+
+        If the data type name is specified, only values of that type are considered, which should speed up the search. Same with 'value_size'.
+        This needs to be implemented in the implementing store though, and might or might not be used.
+        """
+
         pass
 
     def find_destinies_for_value(
         self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
     ) -> Union[Mapping[str, uuid.UUID], None]:
+        """Find all destinies for the specified value id.
+
+        TODO: explain destinies, and when they would be used.
+
+        For now, you can just return 'None' in your implementation.
+        """
 
         return self._find_destinies_for_value(
             value_id=value_id, alias_filter=alias_filter
@@ -205,6 +256,13 @@ class DataArchive(BaseArchive):
     def _find_destinies_for_value(
         self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
     ) -> Union[Mapping[str, uuid.UUID], None]:
+        """Find all destinies for the specified value id.
+
+        TODO: explain destinies, and when they would be used.
+
+        For now, you can just return 'None' in your implementation.
+        """
+
         pass
 
     @abc.abstractmethod
@@ -214,18 +272,11 @@ class DataArchive(BaseArchive):
         as_file: Union[bool, str, None] = None,
         symlink_ok: bool = True,
     ) -> Union[bytes, str]:
-        pass
+        """Retrieve the chunk with the specified id.
 
-    # def retrieve_job_record(self, inputs_manifest: InputsManifest) -> Optional[JobRecord]:
-    #     return self._retrieve_job_record(
-    #         manifest_hash=inputs_manifest.manifest_hash, jobs_hash=inputs_manifest.jobs_hash
-    #     )
-    #
-    # @abc.abstractmethod
-    # def _retrieve_job_record(
-    #     self, manifest_hash: int, jobs_hash: int
-    # ) -> Optional[JobRecord]:
-    #     pass
+        If 'as_file' is specified, the chunk is written to a file, and the file path is returned. Otherwise, the chunk is returned as 'bytes'.
+        """
+        pass
 
 
 class DataStore(DataArchive):
@@ -255,6 +306,10 @@ class BaseDataStore(DataStore):
 
     @abc.abstractmethod
     def _persist_stored_value_info(self, value: Value, persisted_value: PersistedData):
+        """Store the details about the persisted data.
+
+        This is used so an archive of this type can load the value data again later on. Value metadata is stored separately, later, using the '_persist_value_details' method.
+        """
         pass
 
     @abc.abstractmethod
@@ -263,6 +318,7 @@ class BaseDataStore(DataStore):
 
     @abc.abstractmethod
     def _persist_value_data(self, value: Value) -> PersistedData:
+        """Persist the actual value data."""
         pass
 
     @abc.abstractmethod
@@ -278,6 +334,10 @@ class BaseDataStore(DataStore):
     def _persist_environment_details(
         self, env_type: str, env_hash: str, env_data: Mapping[str, Any]
     ):
+        """Persist the environment details.
+
+        Each store type needs to store this for lookup purposes.
+        """
         pass
 
     @abc.abstractmethod

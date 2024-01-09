@@ -110,6 +110,8 @@ filesystem_destiny_archive = "kiara.registries.destinies.filesystem_store:FileSy
 filesystem_destiny_store = "kiara.registries.destinies.filesystem_store:FileSystemDestinyStore"
 filesystem_workflow_archive = "kiara.registries.workflows.archives:FileSystemWorkflowArchive"
 filesystem_workflow_store = "kiara.registries.workflows.archives:FileSystemWorkflowStore"
+sqlite_data_archive = "kiara.registries.data.data_store.sqlite_store:SqliteDataArchive"
+sqlite_data_store = "kiara.registries.data.data_store.sqlite_store:SqliteDataStore"
 
 [project.entry-points."kiara.cli_subcommands"]
 

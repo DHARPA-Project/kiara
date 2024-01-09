@@ -25,7 +25,6 @@ from kiara.models.values.value import (
 )
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
 from kiara.registries.data.data_store import BaseDataStore, DataArchive
-from kiara.registries.jobs import JobArchive
 from kiara.utils import log_message
 from kiara.utils.hashfs import HashAddress, HashFS
 from kiara.utils.json import orjson_dumps
@@ -53,21 +52,12 @@ DEFAULT_HASHFS_WIDTH = 1
 DEFAULT_HASH_FS_ALGORITHM = "sha256"
 
 
-class FileSystemDataArchive(DataArchive, JobArchive):
+class FileSystemDataArchive(DataArchive):
 
     """Data store that loads data from the local filesystem."""
 
     _archive_type_name = "filesystem_data_archive"
     _config_cls = FileSystemArchiveConfig  # type: ignore
-
-    # @classmethod
-    # def supported_item_types(cls) -> Iterable[str]:
-    #
-    #     return ["data", "job_record"]
-
-    @classmethod
-    def is_writeable(cls) -> bool:
-        return False
 
     def __init__(self, archive_id: uuid.UUID, config: FileSystemArchiveConfig):
 

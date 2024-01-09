@@ -317,7 +317,9 @@ class KiaraConfig(BaseSettings):
 
         changed = False
         if DEFAULT_DATA_STORE_MARKER not in context_config.archives.keys():
-            data_store_type = "filesystem_data_store"
+            # data_store_type = "filesystem_data_store"
+            # TODO: change that back
+            data_store_type = "sqlite_data_store"
             assert data_store_type in available_archives.item_infos.keys()
 
             data_store_id = ID_REGISTRY.generate(comment="default data store id")

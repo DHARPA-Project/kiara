@@ -147,3 +147,10 @@ class FileSystemArchiveConfig(ArchiveConfig):
     archive_path: str = Field(
         description="The path where the data for this archive is stored."
     )
+
+
+class SqliteArchiveConfig(ArchiveConfig):
+
+    archive_path: str = Field(
+        description="The path where the data for this archive is stored."
+    )

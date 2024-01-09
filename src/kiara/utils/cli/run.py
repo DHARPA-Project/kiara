@@ -407,6 +407,17 @@ def execute_job(
 
             saved_results = api.store_values(outputs, alias_map=alias_map)
 
+            error = False
+            for field, v in saved_results.root.items():
+                if v.error:
+                    error = True
+                    terminal_print()
+                    terminal_print(
+                        f"[red]Error saving result for field '{field}'[/red]: {v.error}"
+                    )
+            if error:
+                sys.exit(1)
+
             api.context.job_registry.store_job_record(job_id=job_id)
 
             if len(saved_results) == 1:

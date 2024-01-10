@@ -17,10 +17,7 @@ import structlog
 from kiara.exceptions import KiaraException
 from kiara.models.module.jobs import JobRecord
 from kiara.models.values.value import (
-    SERIALIZE_TYPES,
     PersistedData,
-    SerializedChunkIDs,
-    SerializedData,
     Value,
 )
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
@@ -398,57 +395,65 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
 
             fix_windows_symlink(value_file, destiny_file)
 
-    def _persist_value_data(self, value: Value) -> PersistedData:
+    def _persist_chunk(self, chunk_id: str, chunk: Union[str, BytesIO]):
 
-        serialized_value: SerializedData = value.serialized_data
+        addr: HashAddress = self.hashfs.put_with_precomputed_hash(chunk, chunk_id)
 
-        chunk_id_map = {}
-        for key in serialized_value.get_keys():
+        assert addr.id == chunk_id
+        # return addr
+        # chunk_ids.append(addr.id)
 
-            data_model = serialized_value.get_serialized_data(key)
-
-            if data_model.type == "chunk":  # type: ignore
-                chunks: Iterable[Union[str, BytesIO]] = [BytesIO(data_model.chunk)]  # type: ignore
-            elif data_model.type == "chunks":  # type: ignore
-                chunks = (BytesIO(c) for c in data_model.chunks)  # type: ignore
-            elif data_model.type == "file":  # type: ignore
-                chunks = [data_model.file]  # type: ignore
-            elif data_model.type == "files":  # type: ignore
-                chunks = data_model.files  # type: ignore
-            elif data_model.type == "inline-json":  # type: ignore
-                chunks = [BytesIO(data_model.as_json())]  # type: ignore
-            else:
-                raise Exception(
-                    f"Invalid serialized data type: {type(data_model)}. Available types: {', '.join(SERIALIZE_TYPES)}"
-                )
-
-            chunk_ids = []
-            for item in zip(serialized_value.get_cids_for_key(key), chunks):
-                cid = item[0]
-                _chunk = item[1]
-                addr: HashAddress = self.hashfs.put_with_precomputed_hash(
-                    _chunk, str(cid)
-                )
-                chunk_ids.append(addr.id)
-
-            scids = SerializedChunkIDs(
-                chunk_id_list=chunk_ids,
-                archive_id=self.archive_id,
-                size=data_model.get_size(),
-            )
-            scids._data_registry = self.kiara_context.data_registry
-            chunk_id_map[key] = scids
-
-        pers_value = PersistedData(
-            archive_id=self.archive_id,
-            chunk_id_map=chunk_id_map,
-            data_type=serialized_value.data_type,
-            data_type_config=serialized_value.data_type_config,
-            serialization_profile=serialized_value.serialization_profile,
-            metadata=serialized_value.metadata,
-        )
-
-        return pers_value
+    # def _persist_value_data(self, value: Value) -> PersistedData:
+    #
+    #     serialized_value: SerializedData = value.serialized_data
+    #
+    #     chunk_id_map = {}
+    #     for key in serialized_value.get_keys():
+    #
+    #         data_model = serialized_value.get_serialized_data(key)
+    #
+    #         if data_model.type == "chunk":  # type: ignore
+    #             chunks: Iterable[Union[str, BytesIO]] = [BytesIO(data_model.chunk)]  # type: ignore
+    #         elif data_model.type == "chunks":  # type: ignore
+    #             chunks = (BytesIO(c) for c in data_model.chunks)  # type: ignore
+    #         elif data_model.type == "file":  # type: ignore
+    #             chunks = [data_model.file]  # type: ignore
+    #         elif data_model.type == "files":  # type: ignore
+    #             chunks = data_model.files  # type: ignore
+    #         elif data_model.type == "inline-json":  # type: ignore
+    #             chunks = [BytesIO(data_model.as_json())]  # type: ignore
+    #         else:
+    #             raise Exception(
+    #                 f"Invalid serialized data type: {type(data_model)}. Available types: {', '.join(SERIALIZE_TYPES)}"
+    #             )
+    #
+    #         chunk_ids = []
+    #         for item in zip(serialized_value.get_cids_for_key(key), chunks):
+    #             cid = item[0]
+    #             _chunk = item[1]
+    #             addr: HashAddress = self.hashfs.put_with_precomputed_hash(
+    #                 _chunk, str(cid)
+    #             )
+    #             chunk_ids.append(addr.id)
+    #
+    #         scids = SerializedChunkIDs(
+    #             chunk_id_list=chunk_ids,
+    #             archive_id=self.archive_id,
+    #             size=data_model.get_size(),
+    #         )
+    #         scids._data_registry = self.kiara_context.data_registry
+    #         chunk_id_map[key] = scids
+    #
+    #     pers_value = PersistedData(
+    #         archive_id=self.archive_id,
+    #         chunk_id_map=chunk_id_map,
+    #         data_type=serialized_value.data_type,
+    #         data_type_config=serialized_value.data_type_config,
+    #         serialization_profile=serialized_value.serialization_profile,
+    #         metadata=serialized_value.metadata,
+    #     )
+    #
+    #     return pers_value
 
     def _persist_value_pedigree(self, value: Value):
 

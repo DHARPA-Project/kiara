@@ -1,14 +1,20 @@
 # -*- coding: utf-8 -*-
+import os
 import uuid
+from io import BytesIO
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Set, Union
 
+from orjson import orjson
 from sqlalchemy import Engine, create_engine, text
 
-from kiara.models.values.value import PersistedData, SerializedData, Value
+from kiara.defaults import kiara_app_dirs
+from kiara.models.values.value import PersistedData, Value
 from kiara.registries import SqliteArchiveConfig
 from kiara.registries.data import DataArchive
 from kiara.registries.data.data_store import BaseDataStore
+from kiara.utils.hashfs import shard
+from kiara.utils.json import orjson_dumps
 from kiara.utils.windows import fix_windows_longpath
 
 
@@ -22,6 +28,11 @@ class SqliteDataArchive(DataArchive):
         DataArchive.__init__(self, archive_id=archive_id, config=config)
         self._db_path: Union[Path, None] = None
         self._cached_engine: Union[Engine, None] = None
+        self._data_cache_dir = Path(kiara_app_dirs.user_cache_dir) / "data" / "chunks"
+        self._data_cache_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
+        self._cache_dir_depth = 2
+        self._cache_dir_width = 1
+        self._value_id_cache: Union[Iterable[uuid.UUID], None] = None
         # self._lock: bool = True
 
     @property
@@ -43,6 +54,19 @@ class SqliteDataArchive(DataArchive):
     def db_url(self) -> str:
         return f"sqlite:///{self.sqlite_path}"
 
+    def get_chunk_path(self, chunk_id: str) -> Path:
+
+        chunk_id = chunk_id.replace("-", "")
+        chunk_id = chunk_id.lower()
+
+        prefix = chunk_id[0:5]
+        rest = chunk_id[5:]
+
+        paths = shard(rest, self._cache_dir_depth, self._cache_dir_width)
+
+        chunk_path = Path(os.path.join(self._data_cache_dir, prefix, *paths))
+        return chunk_path
+
     @property
     def sqlite_engine(self) -> "Engine":
 
@@ -59,13 +83,23 @@ CREATE TABLE IF NOT EXISTS values_metadata (
     value_hash TEXT NOT NULL,
     value_size INTEGER NOT NULL,
     data_type_name TEXT NOT NULL,
-    metadata TEXT NOT NULL
+    value_metadata TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS persisted_values (
+    value_id TEXT PRIMARY KEY,
+    value_hash TEXT NOT NULL,
+    value_size INTEGER NOT NULL,
+    data_type_name TEXT NOT NULL,
+    persisted_value_metadata TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS values_data (
     chunk_id TEXT PRIMARY KEY,
-    chunk_type TEXT NOT NULL,
     chunk_data BLOB NOT NULL,
-    compression_type TEXT NULL,
+    compression_type TEXT NULL
+);
+CREATE TABLE IF NOT EXISTS values_pedigree (
+    value_id TEXT NOT NULL PRIMARY KEY,
+    pedigree TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS environments (
     environment_type TEXT NOT NULL,
@@ -85,17 +119,28 @@ CREATE TABLE IF NOT EXISTS environments (
         return self._cached_engine
 
     def _retrieve_serialized_value(self, value: Value) -> PersistedData:
-        raise NotImplementedError()
+
+        value_id = str(value.value_id)
+        sql = text(
+            "SELECT persisted_value_metadata FROM persisted_values WHERE value_id = :value_id"
+        )
+        with self.sqlite_engine.connect() as conn:
+            cursor = conn.execute(sql, {"value_id": value_id})
+            result = cursor.fetchone()
+            data = orjson.loads(result[0])
+            return PersistedData(**data)
 
     def _retrieve_value_details(self, value_id: uuid.UUID) -> Mapping[str, Any]:
 
-        sql = text("SELECT metadata FROM values_metadata WHERE value_id = ?")
+        sql = text(
+            "SELECT value_metadata FROM values_metadata WHERE value_id = :value_id"
+        )
+        params = {"value_id": str(value_id)}
         with self.sqlite_engine.connect() as conn:
-            cursor = conn.execute(sql, (str(value_id),))
+            cursor = conn.execute(sql, params)
             result = cursor.fetchone()
-            return result[0]
-
-        raise NotImplementedError()
+            data = orjson.loads(result[0])
+            return data
 
     def _retrieve_environment_details(
         self, env_type: str, env_hash: str
@@ -116,13 +161,16 @@ CREATE TABLE IF NOT EXISTS environments (
         self, data_type_name: Union[str, None] = None
     ) -> Union[None, Iterable[uuid.UUID]]:
 
-        dbg("RETRIEVE ALL")
+        if self._value_id_cache is not None:
+            return self._value_id_cache
 
         sql = text("SELECT value_id FROM values_metadata")
         with self.sqlite_engine.connect() as conn:
             cursor = conn.execute(sql)
             result = cursor.fetchall()
-            return {uuid.UUID(x[0]) for x in result}
+            result_set = {uuid.UUID(x[0]) for x in result}
+            self._value_id_cache = result_set
+            return result_set
 
     def _find_values_with_hash(
         self,
@@ -157,13 +205,25 @@ CREATE TABLE IF NOT EXISTS environments (
     ) -> Union[bytes, str]:
 
         if as_file:
-            raise NotImplementedError()
+            chunk_path = self.get_chunk_path(chunk_id)
 
-        sql = text("SELECT data FROM value_data WHERE chunk_id = ?")
+            if chunk_path.exists():
+                return chunk_path.as_posix()
+
+        sql = text("SELECT chunk_data FROM values_data WHERE chunk_id = :chunk_id")
+        params = {"chunk_id": chunk_id}
         with self.sqlite_engine.connect() as conn:
-            cursor = conn.execute(sql, (chunk_id,))
+            cursor = conn.execute(sql, params)
             result_bytes = cursor.fetchone()
+
+        if not as_file:
             return result_bytes[0]
+
+        chunk_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        with open(chunk_path, "wb") as file:
+            file.write(result_bytes[0])
+
+        return chunk_path.as_posix()
 
 
 class SqliteDataStore(SqliteDataArchive, BaseDataStore):
@@ -173,23 +233,120 @@ class SqliteDataStore(SqliteDataArchive, BaseDataStore):
     def _persist_environment_details(
         self, env_type: str, env_hash: str, env_data: Mapping[str, Any]
     ):
-        raise NotImplementedError()
 
-    def _persist_value_data(self, value: Value) -> PersistedData:
+        sql = text(
+            "INSERT OR IGNORE INTO environments (environment_type, environment_hash, environment_data) VALUES (:environment_type, :environment_hash, :environment_data)"
+        )
+        env_data_json = orjson_dumps(env_data)
+        with self.sqlite_engine.connect() as conn:
+            params = {
+                "environment_type": env_type,
+                "environment_hash": env_hash,
+                "environment_data": env_data_json,
+            }
+            conn.execute(sql, params)
+            conn.commit()
+        # print(env_type)
+        # print(env_hash)
+        # print(env_data_json)
+        # raise NotImplementedError()
 
-        serialized_value: SerializedData = value.serialized_data
-        dbg(serialized_value)
+    # def _persist_value_data(self, value: Value) -> PersistedData:
+    #
+    #     serialized_value: SerializedData = value.serialized_data
+    #     dbg(serialized_value.model_dump())
+    #     dbg(serialized_value.get_keys())
+    #
+    #     raise NotImplementedError()
 
-        raise NotImplementedError()
+    def _persist_chunk(self, chunk_id: str, chunk: Union[str, BytesIO]):
+
+        sql = text(
+            "SELECT EXISTS(SELECT 1 FROM values_data WHERE chunk_id = :chunk_id)"
+        )
+        with self.sqlite_engine.connect() as conn:
+            result = conn.execute(sql, {"chunk_id": chunk_id}).scalar()
+            if result:
+                return
+
+        if isinstance(chunk, str):
+            with open(chunk, "rb") as file:
+                file_data = file.read()
+                bytes_io = BytesIO(file_data)
+        else:
+            bytes_io = chunk
+
+        sql = text(
+            "INSERT INTO values_data (chunk_id, chunk_data) VALUES (:chunk_id, :chunk_data)"
+        )
+        with self.sqlite_engine.connect() as conn:
+            params = {"chunk_id": chunk_id, "chunk_data": bytes_io.getvalue()}
+
+            conn.execute(sql, params)
+            conn.commit()
 
     def _persist_stored_value_info(self, value: Value, persisted_value: PersistedData):
-        raise NotImplementedError()
+
+        self._value_id_cache = None
+
+        value_id = str(value.value_id)
+        value_hash = value.value_hash
+        value_size = value.value_size
+        data_type_name = value.data_type_name
+
+        metadata = persisted_value.model_dump_json()
+
+        sql = text(
+            "INSERT INTO persisted_values (value_id, value_hash, value_size, data_type_name, persisted_value_metadata) VALUES (:value_id, :value_hash, :value_size, :data_type_name, :metadata)"
+        )
+
+        with self.sqlite_engine.connect() as conn:
+            params = {
+                "value_id": value_id,
+                "value_hash": value_hash,
+                "value_size": value_size,
+                "data_type_name": data_type_name,
+                "metadata": metadata,
+            }
+            conn.execute(sql, params)
+            conn.commit()
 
     def _persist_value_details(self, value: Value):
-        raise NotImplementedError()
+
+        value_id = str(value.value_id)
+        value_hash = value.value_hash
+        value_size = value.value_size
+        data_type_name = value.data_type_name
+
+        metadata = value.model_dump_json()
+
+        sql = text(
+            "INSERT INTO values_metadata (value_id, value_hash, value_size, data_type_name, value_metadata) VALUES (:value_id, :value_hash, :value_size, :data_type_name, :metadata)"
+        )
+        with self.sqlite_engine.connect() as conn:
+            params = {
+                "value_id": value_id,
+                "value_hash": value_hash,
+                "value_size": value_size,
+                "data_type_name": data_type_name,
+                "metadata": metadata,
+            }
+            conn.execute(sql, params)
+            conn.commit()
 
     def _persist_destiny_backlinks(self, value: Value):
+
         raise NotImplementedError()
 
     def _persist_value_pedigree(self, value: Value):
-        raise NotImplementedError()
+
+        value_id = str(value.value_id)
+        pedigree = value.pedigree.manifest_data_as_json()
+
+        sql = text(
+            "INSERT INTO values_pedigree (value_id, pedigree) VALUES (:value_id, :pedigree)"
+        )
+        with self.sqlite_engine.connect() as conn:
+            params = {"value_id": value_id, "pedigree": pedigree}
+            conn.execute(sql, params)
+            conn.commit()

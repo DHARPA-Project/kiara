@@ -43,6 +43,7 @@ KIARA_MAIN_CONTEXT_LOCKS_PATH = os.path.join(
     kiara_app_dirs.user_data_dir, "context_locks"
 )
 
+
 KIARA_DEFAULT_STAGES_EXTRACTION_TYPE = "early"
 
 INIT_EXAMPLE_NAME = "init"

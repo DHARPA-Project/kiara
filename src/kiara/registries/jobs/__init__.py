@@ -43,6 +43,14 @@ class JobArchive(BaseArchive):
     # ) -> Optional[JobRecord]:
     #     pass
 
+    @classmethod
+    def is_writeable(cls) -> bool:
+        return False
+
+    @classmethod
+    def supported_item_types(cls) -> Iterable[str]:
+        return ["job_record"]
+
     @abc.abstractmethod
     def retrieve_all_job_hashes(
         self,
@@ -68,6 +76,10 @@ class JobArchive(BaseArchive):
 
 
 class JobStore(JobArchive):
+    @classmethod
+    def is_writeable(cls) -> bool:
+        return True
+
     @abc.abstractmethod
     def store_job_record(self, job_record: JobRecord):
         pass
@@ -361,10 +373,18 @@ class JobRegistry(object):
         except Exception:
             pass
 
-        job = self._processor.get_job(job_id=job_id)
-        if job is not None:
-            if job.status == JobStatus.FAILED:
-                return None
+        try:
+            job = self._processor.get_job(job_id=job_id)
+            if job is not None:
+                if job.status == JobStatus.FAILED:
+                    return None
+        except Exception:
+            pass
+
+        all_job_records = self.retrieve_all_job_records()
+        for r in all_job_records.values():
+            if r.job_id == job_id:
+                return r
 
         raise NotImplementedError()
 

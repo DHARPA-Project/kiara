@@ -150,11 +150,17 @@ def delete_context(
             context_summary = kiara_config.delete(
                 context_name=_context_name, dry_run=True
             )
-            terminal_print_model(
-                context_summary,
-                full_details=True,
-                in_panel=f"Context details: {_context_name}",
-            )
+            terminal_print()
+            if not context_summary:
+                terminal_print(
+                    f"Can't determine context details for context '{_context_name}'."
+                )
+            else:
+                terminal_print_model(
+                    context_summary,
+                    full_details=True,
+                    in_panel=f"Context details: {_context_name}",
+                )
             terminal_print()
             user_input = get_console().input(
                 f"Deleting context '[b i]{_context_name}[/b i]', are you sure? \[yes/no]: "

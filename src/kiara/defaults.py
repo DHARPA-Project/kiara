@@ -94,7 +94,7 @@ DEFAULT_ALIAS_STORE_MARKER = "default_alias_store"
 DEFAULT_WORKFLOW_STORE_MARKER = "default_workflow_store"
 """Name for the default context workflow store."""
 
-METADATA_DESTINY_STORE_MARKER = "metadata"
+METADATA_DESTINY_STORE_MARKER = "default_destiny_store"
 """Name for the default context destiny store."""
 
 PIPELINE_PARENT_MARKER = "__pipeline__"

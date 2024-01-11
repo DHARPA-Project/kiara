@@ -65,6 +65,10 @@ class AliasStore(AliasArchive):
     def register_aliases(self, value_id: uuid.UUID, *aliases: str):
         pass
 
+    @classmethod
+    def is_writeable(cls) -> bool:
+        return True
+
 
 class AliasItem(NamedTuple):
     full_alias: str

@@ -187,9 +187,13 @@ class ArchiveGroupInfo(InfoItemGroup):
 
         archives = {}
         for archive, aliases in kiara.get_all_archives().items():
-            archives[str(archive.archive_id)] = ArchiveInfo.create_from_archive(
+            title = str(archive.archive_id) + ", ".join(aliases)
+            archives[title] = ArchiveInfo.create_from_archive(
                 kiara=kiara, archive=archive, archive_aliases=aliases
             )
+            # archives[str(archive.archive_id)] = ArchiveInfo.create_from_archive(
+            #     kiara=kiara, archive=archive, archive_aliases=aliases
+            # )
 
         info = cls(group_title=group_title, item_infos=archives)
         return info

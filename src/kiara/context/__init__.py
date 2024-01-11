@@ -160,6 +160,7 @@ class Kiara(object):
         self._archives: Dict[str, KiaraArchive] = {}
 
         for archive_alias, archive in self._config.archives.items():
+
             archive_cls = self._archive_types.get(archive.archive_type, None)
             if archive_cls is None:
                 raise Exception(

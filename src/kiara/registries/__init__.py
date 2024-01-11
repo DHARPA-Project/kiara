@@ -6,17 +6,31 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
+import os
 import uuid
 from typing import TYPE_CHECKING, Generic, Iterable, Type, TypeVar, Union
 
 import structlog
 from pydantic import BaseModel, ConfigDict, Field
 
+from kiara.utils import log_message
+
+try:
+    from typing import Self  # type: ignore
+except ImportError:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
     from kiara.context import Kiara
 
 
-class ArchiveConfig(BaseModel):
+class ArchiveConfig(BaseModel, abc.ABC):
+    @classmethod
+    @abc.abstractmethod
+    def create_new_store_config(cls, store_id: str, stores_base_path: str) -> Self:
+        raise NotImplementedError(
+            f"Store config type '{cls}' does not implement 'create_new_config'."
+        )
 
     model_config = ConfigDict()
 
@@ -94,11 +108,12 @@ class KiaraArchive(abc.ABC):
         pass
 
     def __hash__(self):
-        return hash(self.archive_id)
+
+        return hash(self.__class__) + hash(self.archive_id)
 
     def __eq__(self, other):
 
-        if not isinstance(other, self.__class__):
+        if self.__class__ != other.__class__:
             return False
 
         return self.archive_id == other.archive_id
@@ -106,7 +121,23 @@ class KiaraArchive(abc.ABC):
 
 class BaseArchive(KiaraArchive, Generic[ARCHIVE_CONFIG_CLS]):
 
-    _config_cls: Type[ARCHIVE_CONFIG_CLS] = ArchiveConfig  # type: ignore
+    _config_cls: Type[ARCHIVE_CONFIG_CLS] = None  # type: ignore
+
+    @classmethod
+    def create_new_config(
+        cls, store_id: str, stores_base_path: str
+    ) -> ARCHIVE_CONFIG_CLS:
+
+        log_message(
+            "create_new_store",
+            store_id=store_id,
+            stores_base_path=stores_base_path,
+            store_type=cls.__name__,
+        )
+
+        return cls._config_cls.create_new_store_config(
+            store_id=store_id, stores_base_path=stores_base_path
+        )
 
     def __init__(self, archive_id: uuid.UUID, config: ARCHIVE_CONFIG_CLS):
 
@@ -143,6 +174,16 @@ class BaseArchive(KiaraArchive, Generic[ARCHIVE_CONFIG_CLS]):
 
 
 class FileSystemArchiveConfig(ArchiveConfig):
+    @classmethod
+    def create_new_store_config(
+        cls, store_id: str, stores_base_path: str
+    ) -> "FileSystemArchiveConfig":
+
+        archive_path = os.path.abspath(
+            os.path.join(stores_base_path, "filesystem_data_store", store_id)
+        )
+
+        return FileSystemArchiveConfig(archive_path=archive_path)
 
     archive_path: str = Field(
         description="The path where the data for this archive is stored."
@@ -150,7 +191,17 @@ class FileSystemArchiveConfig(ArchiveConfig):
 
 
 class SqliteArchiveConfig(ArchiveConfig):
+    @classmethod
+    def create_new_store_config(
+        cls, store_id: str, stores_base_path: str
+    ) -> "SqliteArchiveConfig":
 
-    archive_path: str = Field(
+        archive_path = os.path.abspath(
+            os.path.join(stores_base_path, "sqlite_stores", f"{store_id}.sqlite")
+        )
+
+        return SqliteArchiveConfig(sqlite_db_path=archive_path)
+
+    sqlite_db_path: str = Field(
         description="The path where the data for this archive is stored."
     )

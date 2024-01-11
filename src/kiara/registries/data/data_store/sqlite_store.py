@@ -41,7 +41,7 @@ class SqliteDataArchive(DataArchive):
         if self._db_path is not None:
             return self._db_path
 
-        db_path = Path(self.config.archive_path).resolve()
+        db_path = Path(self.config.sqlite_db_path).resolve()
         self._db_path = fix_windows_longpath(db_path)
 
         if self._db_path.exists():
@@ -100,6 +100,10 @@ CREATE TABLE IF NOT EXISTS values_data (
 CREATE TABLE IF NOT EXISTS values_pedigree (
     value_id TEXT NOT NULL PRIMARY KEY,
     pedigree TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS values_destinies (
+    value_id TEXT NOT NULL,
+    destiny_name TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS environments (
     environment_type TEXT NOT NULL,
@@ -194,8 +198,15 @@ CREATE TABLE IF NOT EXISTS environments (
         self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
     ) -> Union[Mapping[str, uuid.UUID], None]:
 
-        # TODO: implement this
-        return None
+        sql = text(
+            "SELECT destiny_name FROM values_destinies WHERE value_id = :value_id"
+        )
+        params = {"value_id": str(value_id)}
+        with self.sqlite_engine.connect() as conn:
+            cursor = conn.execute(sql, params)
+            result = cursor.fetchall()
+            result_destinies = {x[0]: value_id for x in result}
+            return result_destinies
 
     def retrieve_chunk(
         self,
@@ -336,7 +347,22 @@ class SqliteDataStore(SqliteDataArchive, BaseDataStore):
 
     def _persist_destiny_backlinks(self, value: Value):
 
-        raise NotImplementedError()
+        value_id = str(value.value_id)
+
+        with self.sqlite_engine.connect() as conn:
+
+            for destiny_value_id, destiny_name in value.destiny_backlinks.items():
+
+                sql = text(
+                    "INSERT INTO values_destinies (value_id, destiny_name) VALUES (:value_id, :destiny_name)"
+                )
+                params = {
+                    "value_id": value_id,
+                    "destiny_name": destiny_name,
+                }
+                conn.execute(sql, params)
+
+            conn.commit()
 
     def _persist_value_pedigree(self, value: Value):
 

@@ -469,8 +469,8 @@ class BaseDataStore(DataStore):
         )
         self._persist_value_details(value=value)
         # TODO: re-enable?
-        # if value.destiny_backlinks:
-        #     self._persist_destiny_backlinks(value=value)
+        if value.destiny_backlinks:
+            self._persist_destiny_backlinks(value=value)
 
         return persisted_value_info
 

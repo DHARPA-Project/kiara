@@ -187,8 +187,8 @@ def _process_subclass(
 
         log_message(
             "ignore.subclass",
-            sub_class=sub_class,
-            base_class=base_class,
+            sub_class=f"{sub_class.__module__}.{sub_class.__name__}",
+            base_class=f"{base_class.__module__}.{base_class.__name__}",
             reason="subclass is abstract",
         )
         return None
@@ -203,8 +203,8 @@ def _process_subclass(
             if type_id is None and ignore_modules_with_null_module_name:
                 log_message(
                     "ignore.subclass",
-                    sub_class=sub_class,
-                    base_class=base_class,
+                    sub_class=f"{sub_class.__module__}.{sub_class.__name__}",
+                    base_class=f"{base_class.__module__}.{base_class.__name__}",
                     reason=f"'{ type_id_key }' subclass is set to 'None'",
                 )
                 return None

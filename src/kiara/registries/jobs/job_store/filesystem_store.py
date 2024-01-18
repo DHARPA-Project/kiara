@@ -27,10 +27,6 @@ class FileSystemJobArchive(JobArchive):
     _config_cls = FileSystemArchiveConfig  # type: ignore
 
     @classmethod
-    def is_writeable(cls) -> bool:
-        return False
-
-    @classmethod
     def supported_item_types(cls) -> Iterable[str]:
         return ["job_record"]
 
@@ -143,10 +139,6 @@ class FileSystemJobArchive(JobArchive):
 class FileSystemJobStore(FileSystemJobArchive, JobStore):
 
     _archive_type_name = "filesystem_job_store"
-
-    @classmethod
-    def is_writeable(cls) -> bool:
-        return False
 
     def store_job_record(self, job_record: JobRecord):
 

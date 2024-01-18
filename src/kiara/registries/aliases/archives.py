@@ -132,10 +132,6 @@ class FileSystemAliasStore(FileSystemAliasArchive, AliasStore):
 
     _archive_type_name = "filesystem_alias_store"
 
-    @classmethod
-    def is_writeable(cls) -> bool:
-        return True
-
     def register_aliases(self, value_id: uuid.UUID, *aliases: str):
 
         value_path = self._translate_value_id(value_id=value_id)

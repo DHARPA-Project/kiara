@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
+import functools
 
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
 import importlib
 import inspect
 import logging
@@ -445,6 +445,7 @@ def find_all_kiara_model_classes() -> Dict[str, Type["KiaraModel"]]:
 #     )
 
 
+@functools.lru_cache(maxsize=1)
 def find_all_archive_types() -> Dict[str, Type["KiaraArchive"]]:
     """Find all [KiaraArchive][kiara.registries.KiaraArchive] subclasses via package entry points."""
     from kiara.registries import KiaraArchive

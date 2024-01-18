@@ -23,9 +23,16 @@ class SqliteDataArchive(DataArchive):
     _archive_type_name = "sqlite_data_archive"
     _config_cls = SqliteArchiveConfig
 
-    def __init__(self, archive_id: uuid.UUID, config: SqliteArchiveConfig):
+    def __init__(
+        self,
+        archive_id: uuid.UUID,
+        config: SqliteArchiveConfig,
+        force_read_only: bool = False,
+    ):
 
-        DataArchive.__init__(self, archive_id=archive_id, config=config)
+        DataArchive.__init__(
+            self, archive_id=archive_id, config=config, force_read_only=force_read_only
+        )
         self._db_path: Union[Path, None] = None
         self._cached_engine: Union[Engine, None] = None
         self._data_cache_dir = Path(kiara_app_dirs.user_cache_dir) / "data" / "chunks"

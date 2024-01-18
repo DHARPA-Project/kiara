@@ -34,10 +34,12 @@ from kiara.registries.environment import EnvironmentRegistry
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import log_message
 from kiara.utils.files import get_data_from_file
+from kiara.utils.stores import create_store
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.models.context import ContextInfo
+    from kiara.registries import KiaraArchive
 
 logger = structlog.getLogger()
 
@@ -96,13 +98,22 @@ class KiaraContextConfig(BaseModel):
                     "ignore.pipeline", reason="path does not exist", path=pipeline
                 )
 
-    # @property
-    # def db_url(self):
-    #     return get_kiara_db_url(self.context_folder)
-    #
-    # @property
-    # def data_directory(self) -> str:
-    #     return os.path.join(self.context_folder, "data")
+    def create_archive(
+        self, archive_alias: str, allow_write_access: bool = False
+    ) -> "KiaraArchive":
+        """Create the kiara archive with the specified alias.
+
+        Make sure you know what you are doing when setting 'allow_write_access' to True.
+        """
+
+        store_config = self.archives[archive_alias]
+        store = create_store(
+            archive_id=store_config.archive_uuid,
+            store_type=store_config.archive_type,
+            store_config=store_config.config,
+            allow_write_access=allow_write_access,
+        )
+        return store
 
 
 class KiaraSettings(BaseSettings):
@@ -120,7 +131,7 @@ KIARA_SETTINGS = KiaraSettings()
 
 
 def create_default_store(
-    store_id: str, store_type: str, stores_base_path: str
+    store_id: uuid.UUID, store_type: str, stores_base_path: str
 ) -> KiaraArchiveConfig:
 
     env_registry = EnvironmentRegistry.instance()
@@ -167,10 +178,12 @@ class KiaraConfig(BaseSettings):
         return config
 
     @classmethod
-    def load_from_file(cls, path: Union[Path, None] = None) -> "KiaraConfig":
+    def load_from_file(cls, path: Union[Path, str, None] = None) -> "KiaraConfig":
 
         if path is None:
             path = Path(KIARA_MAIN_CONFIG_FILE)
+        elif isinstance(path, str):
+            path = Path(path)
 
         if not path.exists():
             raise Exception(

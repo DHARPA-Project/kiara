@@ -44,10 +44,6 @@ class JobArchive(BaseArchive):
     #     pass
 
     @classmethod
-    def is_writeable(cls) -> bool:
-        return False
-
-    @classmethod
     def supported_item_types(cls) -> Iterable[str]:
         return ["job_record"]
 
@@ -77,7 +73,7 @@ class JobArchive(BaseArchive):
 
 class JobStore(JobArchive):
     @classmethod
-    def is_writeable(cls) -> bool:
+    def _is_writeable(cls) -> bool:
         return True
 
     @abc.abstractmethod

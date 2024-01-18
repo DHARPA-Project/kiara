@@ -125,8 +125,6 @@ class SqliteJobStore(SqliteJobArchive, JobStore):
 
     def store_job_record(self, job_record: JobRecord):
 
-        print("STORING JOB RECORD")
-
         manifest_hash = str(job_record.manifest_cid)
         inputs_hash = job_record.inputs_hash
 

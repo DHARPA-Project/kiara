@@ -56,9 +56,16 @@ class FileSystemDataArchive(DataArchive):
     _archive_type_name = "filesystem_data_archive"
     _config_cls = FileSystemArchiveConfig  # type: ignore
 
-    def __init__(self, archive_id: uuid.UUID, config: FileSystemArchiveConfig):
+    def __init__(
+        self,
+        archive_id: uuid.UUID,
+        config: FileSystemArchiveConfig,
+        force_read_only: bool = False,
+    ):
 
-        DataArchive.__init__(self, archive_id=archive_id, config=config)
+        DataArchive.__init__(
+            self, archive_id=archive_id, config=config, force_read_only=force_read_only
+        )
         self._base_path: Union[Path, None] = None
         self._hashfs_path: Union[Path, None] = None
         self._hashfs: Union[HashFS, None] = None

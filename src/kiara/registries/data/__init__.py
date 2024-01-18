@@ -110,6 +110,8 @@ class DefaultAliasResolver(AliasResolver):
 
     def resolve_alias(self, alias: str) -> uuid.UUID:
 
+        dbg(f"RESOLVE: {alias}")
+
         if ":" in alias:
             ref_type, rest = alias.split(":", maxsplit=1)
 
@@ -230,7 +232,9 @@ class DataRegistry(object):
     def retrieve_all_available_value_ids(self) -> Set[uuid.UUID]:
 
         result: Set[uuid.UUID] = set()
-        for store in self._data_archives.values():
+        for alias, store in self._data_archives.items():
+            print(alias)
+            dbg(store.config.model_dump())
             ids = store.value_ids
             if ids:
                 result.update(ids)
@@ -378,24 +382,35 @@ class DataRegistry(object):
             _value = self._registered_values[_value_id]
             return _value
 
-        matches = []
-        for store_id, store in self.data_archives.items():
-            match = store.has_value(value_id=_value_id)
-            if match:
-                matches.append(store_id)
+        default_store: DataArchive = self.get_archive(
+            archive_id=self.default_data_store
+        )
+        if not default_store.has_value(value_id=_value_id):
 
-        if len(matches) == 0:
-            raise NoSuchValueIdException(
-                value_id=_value_id, msg=f"No value registered with id: {value}"
-            )
-        elif len(matches) > 1:
-            raise NoSuchValueIdException(
-                value_id=_value_id,
-                msg=f"Found value with id '{value}' in multiple archives, this is not supported (yet): {matches}",
-            )
+            matches = []
+            for store_id, store in self.data_archives.items():
+                match = store.has_value(value_id=_value_id)
+                if match:
+                    matches.append(store_id)
 
-        self._value_archive_lookup_map[_value_id] = matches[0]
-        stored_value = self.get_archive(matches[0]).retrieve_value(value_id=_value_id)
+            if len(matches) == 0:
+                raise NoSuchValueIdException(
+                    value_id=_value_id, msg=f"No value registered with id: {value}"
+                )
+            elif len(matches) > 1:
+                raise NoSuchValueIdException(
+                    value_id=_value_id,
+                    msg=f"Found value with id '{value}' in multiple archives, this is not supported (yet): {matches}",
+                )
+            store_that_has_it = matches[0]
+        else:
+            store_that_has_it = self.default_data_store
+
+        self._value_archive_lookup_map[_value_id] = store_that_has_it
+
+        stored_value = self.get_archive(store_that_has_it).retrieve_value(
+            value_id=_value_id
+        )
         stored_value._set_registry(self)
         stored_value._is_stored = True
 

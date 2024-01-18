@@ -19,6 +19,8 @@ from typing import (
 
 import structlog
 
+from kiara.defaults import INVALID_ALIAS_NAMES
+from kiara.exceptions import KiaraException
 from kiara.models.events.alias_registry import AliasArchiveAddedEvent
 from kiara.registries import BaseArchive
 from kiara.registries.data import ValueLink
@@ -55,10 +57,6 @@ class AliasArchive(BaseArchive):
     def find_aliases_for_value_id(self, value_id: uuid.UUID) -> Union[Set[str], None]:
         pass
 
-    @classmethod
-    def is_writeable(cls) -> bool:
-        return False
-
 
 class AliasStore(AliasArchive):
     @abc.abstractmethod
@@ -66,7 +64,7 @@ class AliasStore(AliasArchive):
         pass
 
     @classmethod
-    def is_writeable(cls) -> bool:
+    def _is_writeable(cls) -> bool:
         return True
 
 
@@ -277,6 +275,13 @@ class AliasRegistry(object):
         *aliases: str,
         allow_overwrite: bool = False,
     ):
+
+        for alias in aliases:
+            if alias in INVALID_ALIAS_NAMES:
+                raise KiaraException(
+                    msg=f"Invalid alias name: {alias}.",
+                    details=f"The following names can't be used as alias: {', '.join(INVALID_ALIAS_NAMES)}.",
+                )
 
         value_id = self._get_value_id(value_id=value_id)
         store_name = self.default_alias_store

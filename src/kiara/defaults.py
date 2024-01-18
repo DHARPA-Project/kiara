@@ -80,6 +80,7 @@ INVALID_VALUE_NAMES = [
     "kiara",
     "callbacks",
 ]
+INVALID_ALIAS_NAMES = ["kiara", "__default__", "alias", "value", "value_id"]
 """List of reserved names, inputs/outputs can't use those."""
 
 DEFAULT_DATA_STORE_MARKER = "default_data_store"
@@ -94,7 +95,7 @@ DEFAULT_ALIAS_STORE_MARKER = "default_alias_store"
 DEFAULT_WORKFLOW_STORE_MARKER = "default_workflow_store"
 """Name for the default context workflow store."""
 
-METADATA_DESTINY_STORE_MARKER = "default_destiny_store"
+METADATA_DESTINY_STORE_MARKER = "metadata"
 """Name for the default context destiny store."""
 
 PIPELINE_PARENT_MARKER = "__pipeline__"

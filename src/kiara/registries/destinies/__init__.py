@@ -44,3 +44,7 @@ class DestinyStore(DestinyArchive):
     @abc.abstractmethod
     def persist_destiny(self, destiny: Destiny):
         pass
+
+    @classmethod
+    def _is_writeable(cls) -> bool:
+        return True

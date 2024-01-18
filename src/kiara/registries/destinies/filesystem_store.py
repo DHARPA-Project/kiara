@@ -26,10 +26,6 @@ class FileSystemDestinyArchive(DestinyArchive):
     _archive_type_name = "filesystem_destiny_archive"
     _config_cls = FileSystemArchiveConfig  # type: ignore
 
-    @classmethod
-    def is_writeable(cls) -> bool:
-        return False
-
     # @classmethod
     # def create_from_kiara_context(cls, kiara: "Kiara"):
     #
@@ -164,10 +160,6 @@ class FileSystemDestinyArchive(DestinyArchive):
 class FileSystemDestinyStore(FileSystemDestinyArchive, DestinyStore):
 
     _archive_type_name = "filesystem_destiny_store"
-
-    @classmethod
-    def is_writeable(cls) -> bool:
-        return True
 
     def persist_destiny(self, destiny: Destiny):
 

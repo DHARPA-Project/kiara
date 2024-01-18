@@ -29,10 +29,6 @@ class WorkflowArchive(BaseArchive):
     def supported_item_types(cls) -> Iterable[str]:
         return ["workflow"]
 
-    @classmethod
-    def is_writeable(cls) -> bool:
-        return False
-
     @abc.abstractmethod
     def retrieve_all_workflow_aliases(self) -> Mapping[str, uuid.UUID]:
         pass
@@ -78,7 +74,7 @@ class WorkflowArchive(BaseArchive):
 
 class WorkflowStore(WorkflowArchive):
     @classmethod
-    def is_writeable(cls) -> bool:
+    def _is_writeable(cls) -> bool:
         return True
 
     def register_workflow(

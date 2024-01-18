@@ -144,6 +144,8 @@ class KiaraAPI(object):
     def __init__(self, kiara_config: Union["KiaraConfig", None] = None):
 
         if kiara_config is None:
+            from kiara.context import Kiara, KiaraConfig
+
             kiara_config = KiaraConfig()
 
         self._kiara_config: KiaraConfig = kiara_config

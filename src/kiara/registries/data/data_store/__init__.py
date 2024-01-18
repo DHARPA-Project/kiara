@@ -36,19 +36,21 @@ class DataArchive(BaseArchive):
     """Base class for data archiv implementationss."""
 
     @classmethod
-    def is_writeable(cls) -> bool:
-        """Archives are never writable."""
-        return False
-
-    @classmethod
     def supported_item_types(cls) -> Iterable[str]:
         """This archive type only supports storing data."""
 
         return ["data"]
 
-    def __init__(self, archive_id: uuid.UUID, config: ARCHIVE_CONFIG_CLS):
+    def __init__(
+        self,
+        archive_id: uuid.UUID,
+        config: ARCHIVE_CONFIG_CLS,
+        force_read_only: bool = False,
+    ):
 
-        super().__init__(archive_id=archive_id, config=config)
+        super().__init__(
+            archive_id=archive_id, config=config, force_read_only=force_read_only
+        )
 
         self._env_cache: Dict[str, Dict[str, Mapping[str, Any]]] = {}
         self._value_cache: Dict[uuid.UUID, Value] = {}
@@ -289,7 +291,7 @@ class DataArchive(BaseArchive):
 
 class DataStore(DataArchive):
     @classmethod
-    def is_writeable(cls) -> bool:
+    def _is_writeable(cls) -> bool:
         return True
 
     @abc.abstractmethod
@@ -411,6 +413,13 @@ class BaseDataStore(DataStore):
                 chunks = data_model.files  # type: ignore
             elif data_model.type == "inline-json":  # type: ignore
                 chunks = [BytesIO(data_model.as_json())]  # type: ignore
+            elif data_model.type == "chunk-ids":  # type: ignore
+                # means this is already serialized in a different store
+                data_model_instance: SerializedChunkIDs = data_model
+                chunks = (
+                    BytesIO(x) for x in data_model_instance.get_chunks(as_files=False)
+                )
+
             else:
                 raise Exception(
                     f"Invalid serialized data type: {type(data_model)}. Available types: {', '.join(SERIALIZE_TYPES)}"

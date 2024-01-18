@@ -8,7 +8,7 @@
 import abc
 import os
 import uuid
-from typing import TYPE_CHECKING, Generic, Iterable, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Generic, Iterable, Mapping, Type, TypeVar, Union
 
 import structlog
 from pydantic import BaseModel, ConfigDict, Field
@@ -22,12 +22,15 @@ except ImportError:
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+    from kiara.context.config import KiaraArchiveConfig
 
 
 class ArchiveConfig(BaseModel, abc.ABC):
     @classmethod
     @abc.abstractmethod
-    def create_new_store_config(cls, store_id: str, stores_base_path: str) -> Self:
+    def create_new_store_config(
+        cls, store_id: uuid.UUID, stores_base_path: str
+    ) -> Self:
         raise NotImplementedError(
             f"Store config type '{cls}' does not implement 'create_new_config'."
         )
@@ -56,14 +59,40 @@ class KiaraArchive(abc.ABC):
     _config_cls = ArchiveConfig  # type: ignore
 
     @classmethod
+    def create_config(
+        cls, config: Union["KiaraArchiveConfig", BaseModel, Mapping[str, Any]]
+    ) -> "BaseArchive":
+
+        from kiara.context.config import KiaraArchiveConfig
+
+        if isinstance(config, cls._config_cls):
+            config = config
+        elif isinstance(config, KiaraArchiveConfig):
+            config = cls._config_cls(**config.config)
+        elif isinstance(config, BaseModel):
+            config = cls._config_cls(**config.model_dump())
+        elif isinstance(config, Mapping):
+            config = cls._config_cls(**config)
+
+        return config
+
+    def __init__(self, force_read_only: bool = False, **kwargs):
+        self._force_read_only: bool = force_read_only
+
+    @classmethod
     @abc.abstractmethod
     def supported_item_types(cls) -> Iterable[str]:
         pass
 
     @classmethod
     @abc.abstractmethod
-    def is_writeable(cls) -> bool:
+    def _is_writeable(cls) -> bool:
         pass
+
+    def is_writeable(self) -> bool:
+        if self._force_read_only:
+            return False
+        return self.__class__._is_writeable()
 
     @abc.abstractmethod
     def register_archive(self, kiara: "Kiara"):
@@ -125,7 +154,7 @@ class BaseArchive(KiaraArchive, Generic[ARCHIVE_CONFIG_CLS]):
 
     @classmethod
     def create_new_config(
-        cls, store_id: str, stores_base_path: str
+        cls, store_id: uuid.UUID, stores_base_path: str
     ) -> ARCHIVE_CONFIG_CLS:
 
         log_message(
@@ -139,11 +168,21 @@ class BaseArchive(KiaraArchive, Generic[ARCHIVE_CONFIG_CLS]):
             store_id=store_id, stores_base_path=stores_base_path
         )
 
-    def __init__(self, archive_id: uuid.UUID, config: ARCHIVE_CONFIG_CLS):
+    def __init__(
+        self,
+        archive_id: uuid.UUID,
+        config: ARCHIVE_CONFIG_CLS,
+        force_read_only: bool = False,
+    ):
 
+        super().__init__(force_read_only=force_read_only)
         self._archive_id: uuid.UUID = archive_id
         self._config: ARCHIVE_CONFIG_CLS = config
         self._kiara: Union["Kiara", None] = None
+
+    @classmethod
+    def _is_writeable(cls) -> bool:
+        return False
 
     def _get_config(self) -> ARCHIVE_CONFIG_CLS:
         return self._config

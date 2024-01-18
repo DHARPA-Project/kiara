@@ -251,9 +251,8 @@ def explain_value(
 
     All of the 'show-additional-information' flags are only applied when the 'terminal' output format is selected. This might change in the future.
     """
-    from kiara.interfaces.python_api import ValueInfo
 
-    kiara_obj: Kiara = ctx.obj.kiara
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
 
     render_config = {
         "show_pedigree": pedigree,
@@ -270,26 +269,26 @@ def explain_value(
     all_values = []
     for v_id in value_id:
         try:
-            value = kiara_obj.data_registry.get_value(v_id)
+            value_info = kiara_api.retrieve_value_info(v_id)
         except Exception as e:
             terminal_print()
             terminal_print(f"[red]Error[/red]: {e}")
             sys.exit(1)
-        if not value:
+        if not value_info:
             terminal_print(f"[red]Error[/red]: No value found for: {v_id}")
             sys.exit(1)
-        all_values.append(value)
+        all_values.append(value_info)
 
     if len(all_values) == 1:
         title = f"Value details for: [b i]{value_id[0]}[/b i]"
     else:
         title = "Value details"
 
-    v_infos = (
-        ValueInfo.create_from_instance(kiara=kiara_obj, instance=v) for v in all_values
-    )
+    # v_infos = (
+    #     ValueInfo.create_from_instance(kiara=kiara_obj, instance=v) for v in all_values
+    # )
 
-    terminal_print_model(*v_infos, format=format, in_panel=title, **render_config)
+    terminal_print_model(*all_values, format=format, in_panel=title, **render_config)
 
 
 @data.command(name="load")

@@ -71,3 +71,4 @@ environment.yaml
 .tzapinclude
 .pixi
 dev.py
+store.sqlite

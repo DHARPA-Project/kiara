@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+message: "Please use the following information when citing this software"
+title: kiara
+abstract: This is my awesome research software. It does many things.
+authors:
+  - family-names: Binsteiner
+    given-names: Markus
+  - family-names: Takats
+    given-names: Sean
+    orcid: "https://orcid.org/0000-0002-7851-5069"
+  - name: "Digital History Advanced Research Projects Accelerator (DHARPA)"
+version: 0.5.9
+date-released: "2023-12-29"
+identifiers:
+  - description: An introduction to the research project behind kiara
+    type: doi
+    value: "10.5281/zenodo.5109974"
+license: MPL-2.0
+repository-code: "https://github.com/DHARPA-Project/kiara"
+references:
+  - authors:
+      - family-names: Viola
+        given-names: Lorella
+        orcid: "https://orcid.org/0000-0001-9994-0841"
+      - family-names: Cunningham
+        given-names: Angela
+        orcid: "https://orcid.org/0000-0001-7379-5383"
+      - family-names: Jaskov
+        given-names: Helena
+        orcid: "https://orcid.org/0000-0002-2280-497X"
+    doi: 10.5281/zenodo.5109974
+    journal: "DH Benelux 2021"
+    scope: "An introduction to the research project behind kiara."
+    title: "Introducing the DHARPA Project: An interdisciplinary lab to enable critical DH practice"
+    type: conference-paper
+    year: 2021

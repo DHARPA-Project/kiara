@@ -24,18 +24,27 @@ license: MPL-2.0
 repository-code: "https://github.com/DHARPA-Project/kiara"
 references:
   - authors:
-      - family-names: Viola
-        given-names: Lorella
-        orcid: "https://orcid.org/0000-0001-9994-0841"
       - family-names: Cunningham
         given-names: Angela
         orcid: "https://orcid.org/0000-0001-7379-5383"
       - family-names: Jaskov
         given-names: Helena
         orcid: "https://orcid.org/0000-0002-2280-497X"
-    doi: 10.5281/zenodo.5109974
-    journal: "DH Benelux 2021"
+    - family-names: Takats
+        given-names: Sean
+        orcid: "https://orcid.org/0000-0002-7851-5069"
+      - family-names: Viola
+        given-names: Lorella
+        orcid: "https://orcid.org/0000-0001-9994-0841"
+      - family-names: Binsteiner
+        given-names: Markus
+      - family-names: Crouy-Chanel
+        given-names: Mariella
+        name-particle: de
+    doi: https://doi.org/10.17613/03ds-9973.
+    journal: "DH Benelux Journal, The Humanities in a Digital World"
     scope: "An introduction to the research project behind kiara."
-    title: "Introducing the DHARPA Project: An interdisciplinary lab to enable critical DH practice"
-    type: conference-paper
-    year: 2021
+    title: "Introducing the DHARPA Project: An Interdisciplinary Lab to Enable Critical DH Practice"
+    type: article
+    year: 2022
+

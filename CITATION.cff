@@ -1,7 +1,12 @@
 cff-version: 1.2.0
 message: "Please use the following information when citing this software"
 title: kiara
-abstract: This is my awesome research software. It does many things.
+abstract: >-
+  Kiara is the data orchestration engine developed by the DHARPA project. 
+  It uses a modular approach to let users re-use tried and tested data 
+  also helps you manage your research data, and augment it orchestration 
+  pipelines, as well as create new ones from existing building blocks. It
+  with automatically-, semi-automatically-, and manually-created metadata.
 authors:
   - family-names: Binsteiner
     given-names: Markus
@@ -12,9 +17,9 @@ authors:
 version: 0.5.9
 date-released: "2023-12-29"
 identifiers:
-  - description: An introduction to the research project behind kiara
-    type: doi
-    value: "10.5281/zenodo.5109974"
+  - description: "The research project behind kiara."
+    type: url
+    value: "https://dharpa.org"
 license: MPL-2.0
 repository-code: "https://github.com/DHARPA-Project/kiara"
 references:

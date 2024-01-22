@@ -9,7 +9,7 @@ import structlog
 # from alembic import command  # type: ignore
 from pydantic import Field
 
-from kiara.context.config import KiaraConfig, KiaraContextConfig
+from kiara.context.config import KiaraArchiveReference, KiaraConfig, KiaraContextConfig
 from kiara.context.runtime_config import KiaraRuntimeConfig
 from kiara.data_types import DataType
 from kiara.exceptions import KiaraContextException
@@ -45,7 +45,7 @@ from kiara.registries.operations import OperationRegistry
 from kiara.registries.rendering import RenderRegistry
 from kiara.registries.types import TypeRegistry
 from kiara.registries.workflows import WorkflowRegistry
-from kiara.utils import log_exception
+from kiara.utils import log_exception, log_message
 from kiara.utils.class_loading import find_all_archive_types
 from kiara.utils.operations import filter_operations
 
@@ -169,23 +169,23 @@ class Kiara(object):
 
             config_cls = archive_cls._config_cls
             archive_config = config_cls(**archive.config)
-            archive_obj = archive_cls(archive_id=archive.archive_uuid, config=archive_config)  # type: ignore
+            archive_obj = archive_cls(archive_alias=archive_alias, archive_config=archive_config)  # type: ignore
             for supported_type in archive_obj.supported_item_types():
                 if supported_type == "data":
                     self.data_registry.register_data_archive(
-                        archive_obj, alias=archive_alias  # type: ignore
+                        archive_obj,  # type: ignore
                     )
                 if supported_type == "job_record":
-                    self.job_registry.register_job_archive(archive_obj, alias=archive_alias)  # type: ignore
+                    self.job_registry.register_job_archive(archive_obj)  # type: ignore
 
                 if supported_type == "alias":
-                    self.alias_registry.register_archive(archive_obj, alias=archive_alias)  # type: ignore
+                    self.alias_registry.register_archive(archive_obj)  # type: ignore
 
                 if supported_type == "destiny":
-                    self.destiny_registry.register_destiny_archive(archive_obj, alias=archive_alias)  # type: ignore
+                    self.destiny_registry.register_destiny_archive(archive_obj)  # type: ignore
 
                 if supported_type == "workflow":
-                    self.workflow_registry.register_archive(archive_obj, alias=archive_alias)  # type: ignore
+                    self.workflow_registry.register_archive(archive_obj)  # type: ignore
 
         if self._runtime_config.lock_context:
             self.lock_context()
@@ -313,6 +313,40 @@ class Kiara(object):
 
     # ===================================================================================================
     # kiara session API methods
+
+    def register_external_archive(
+        self,
+        archive: Union[str, KiaraArchive, List[KiaraArchive], List[str]],
+        allow_write_access: bool = False,
+    ):
+
+        if isinstance(archive, (KiaraArchive, str)):
+            _archives = [archive]
+        else:
+            _archives = archive
+
+        archive_instances = set()
+        for _archive in _archives:
+
+            if isinstance(_archive, KiaraArchive):
+                archive_instances.add(_archive)
+                # TODO: handle write access
+                continue
+
+            loaded = KiaraArchiveReference.load_existing_archive(
+                archive_uri=_archive, allow_write_access=allow_write_access
+            )
+
+            archive_instances.update(loaded)
+
+        for _archve_inst in archive_instances:
+            log_message(
+                "register.external.archive",
+                archive=_archve_inst.archive_alias,
+                allow_write_access=allow_write_access,
+            )
+
+        return list(archive_instances)
 
     def create_manifest(
         self, module_or_operation: str, config: Union[Mapping[str, Any], None] = None

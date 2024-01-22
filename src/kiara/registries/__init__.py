@@ -7,8 +7,10 @@
 
 import abc
 import os
+import typing
 import uuid
-from typing import TYPE_CHECKING, Any, Generic, Iterable, Mapping, Type, TypeVar, Union
+from pathlib import Path
+from typing import TYPE_CHECKING, Generic, Iterable, Type, TypeVar, Union
 
 import structlog
 from pydantic import BaseModel, ConfigDict, Field
@@ -22,20 +24,23 @@ except ImportError:
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
-    from kiara.context.config import KiaraArchiveConfig
 
 
 class ArchiveConfig(BaseModel, abc.ABC):
     @classmethod
     @abc.abstractmethod
-    def create_new_store_config(
-        cls, store_id: uuid.UUID, stores_base_path: str
-    ) -> Self:
+    def create_new_store_config(cls, store_base_path: str, **kwargs) -> Self:
         raise NotImplementedError(
             f"Store config type '{cls}' does not implement 'create_new_config'."
         )
 
     model_config = ConfigDict()
+
+    # @abc.abstractmethod
+    # def get_archive_id(self) -> uuid.UUID:
+    #     raise NotImplementedError(
+    #         f"Store config type '{self.__class__.__name__}' does not implement 'get_archive_id'."
+    #     )
 
 
 ARCHIVE_CONFIG_CLS = TypeVar("ARCHIVE_CONFIG_CLS", bound=ArchiveConfig)
@@ -54,30 +59,88 @@ class ArchiveDetails(BaseModel):
 NON_ARCHIVE_DETAILS = ArchiveDetails()
 
 
-class KiaraArchive(abc.ABC):
+class KiaraArchive(abc.ABC, typing.Generic[ARCHIVE_CONFIG_CLS]):
 
-    _config_cls = ArchiveConfig  # type: ignore
+    _config_cls: Type[ARCHIVE_CONFIG_CLS] = None  # type: ignore
+
+    # @classmethod
+    # def create_store_config_instance(
+    #     cls, config: Union[ARCHIVE_CONFIG_CLS, BaseModel, Mapping[str, Any]]
+    # ) -> "BaseArchive":
+    #     """Create a store config instance from a config instance of a few different types."""
+    #
+    #     from kiara.context.config import KiaraArchiveConfig
+    #
+    #     if isinstance(config, cls._config_cls):
+    #         config = config
+    #     elif isinstance(config, KiaraArchiveConfig):
+    #         config = cls._config_cls(**config.config)
+    #     elif isinstance(config, BaseModel):
+    #         config = cls._config_cls(**config.model_dump())
+    #     elif isinstance(config, Mapping):
+    #         config = cls._config_cls(**config)
+    #
+    #     return config
+
+    # @classmethod
+    # def is_valid_archive(cls, store_uri: str, **kwargs: Any) -> bool:
+    #     return False
 
     @classmethod
-    def create_config(
-        cls, config: Union["KiaraArchiveConfig", BaseModel, Mapping[str, Any]]
-    ) -> "BaseArchive":
+    def _load_store_config(
+        cls, store_uri: str, allow_write_access: bool, **kwargs
+    ) -> Union[ARCHIVE_CONFIG_CLS, None]:
+        """Tries to assemble an archive config from an uri (and optional paramters).
 
-        from kiara.context.config import KiaraArchiveConfig
+        If the archive type supports the archive at the uri, then a valid config will be returned,
+        otherwise 'None'.
+        """
 
-        if isinstance(config, cls._config_cls):
-            config = config
-        elif isinstance(config, KiaraArchiveConfig):
-            config = cls._config_cls(**config.config)
-        elif isinstance(config, BaseModel):
-            config = cls._config_cls(**config.model_dump())
-        elif isinstance(config, Mapping):
-            config = cls._config_cls(**config)
+        return None
 
-        return config
+    @classmethod
+    def load_store_config(
+        cls, store_uri: str, allow_write_access: bool, **kwargs
+    ) -> Union[ARCHIVE_CONFIG_CLS, None]:
 
-    def __init__(self, force_read_only: bool = False, **kwargs):
+        log_message(
+            "attempt_loading_existing_store",
+            store_uri=store_uri,
+            store_type=cls.__name__,
+        )
+
+        return cls._load_store_config(
+            store_uri=store_uri, allow_write_access=allow_write_access, **kwargs
+        )
+
+    @classmethod
+    def create_new_store_config(
+        cls, store_base_path: str, **kwargs
+    ) -> ARCHIVE_CONFIG_CLS:
+
+        log_message(
+            "create_new_store",
+            store_base_path=store_base_path,
+            store_type=cls.__name__,
+        )
+
+        Path(store_base_path).mkdir(parents=True, exist_ok=True)
+
+        return cls._config_cls.create_new_store_config(
+            store_base_path=store_base_path, **kwargs
+        )
+
+    def __init__(
+        self,
+        archive_alias: str,
+        archive_config: ARCHIVE_CONFIG_CLS,
+        force_read_only: bool = False,
+    ):
+
+        self._archive_alias: str = archive_alias
+        self._config: ARCHIVE_CONFIG_CLS = archive_config
         self._force_read_only: bool = force_read_only
+        self._archive_id: Union[uuid.UUID, None] = None
 
     @classmethod
     @abc.abstractmethod
@@ -89,30 +152,36 @@ class KiaraArchive(abc.ABC):
     def _is_writeable(cls) -> bool:
         pass
 
+    @abc.abstractmethod
+    def register_archive(self, kiara: "Kiara"):
+        pass
+
+    @property
+    def archive_alias(self) -> str:
+        return self._archive_alias
+
     def is_writeable(self) -> bool:
         if self._force_read_only:
             return False
         return self.__class__._is_writeable()
 
-    @abc.abstractmethod
-    def register_archive(self, kiara: "Kiara"):
-        pass
+    # @abc.abstractmethod
+    # def register_archive(self, kiara: "Kiara"):
+    #     pass
 
     @abc.abstractmethod
-    def retrieve_archive_id(self) -> uuid.UUID:
-        pass
+    def _retrieve_archive_id(self) -> uuid.UUID:
+        raise NotImplementedError()
 
     @property
     def archive_id(self) -> uuid.UUID:
-        return self.retrieve_archive_id()
+        if self._archive_id is None:
+            self._archive_id = self._retrieve_archive_id()
+        return self._archive_id
 
     @property
-    def config(self) -> ArchiveConfig:
-        return self._get_config()
-
-    @abc.abstractmethod
-    def _get_config(self) -> ArchiveConfig:
-        pass
+    def config(self) -> ARCHIVE_CONFIG_CLS:
+        return self._config
 
     def get_archive_details(self) -> ArchiveDetails:
         return NON_ARCHIVE_DETAILS
@@ -148,47 +217,26 @@ class KiaraArchive(abc.ABC):
         return self.archive_id == other.archive_id
 
 
-class BaseArchive(KiaraArchive, Generic[ARCHIVE_CONFIG_CLS]):
-
-    _config_cls: Type[ARCHIVE_CONFIG_CLS] = None  # type: ignore
-
-    @classmethod
-    def create_new_config(
-        cls, store_id: uuid.UUID, stores_base_path: str
-    ) -> ARCHIVE_CONFIG_CLS:
-
-        log_message(
-            "create_new_store",
-            store_id=store_id,
-            stores_base_path=stores_base_path,
-            store_type=cls.__name__,
-        )
-
-        return cls._config_cls.create_new_store_config(
-            store_id=store_id, stores_base_path=stores_base_path
-        )
+class BaseArchive(KiaraArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CLS]):
+    """A base class that can be used to implement a kiara archive."""
 
     def __init__(
         self,
-        archive_id: uuid.UUID,
-        config: ARCHIVE_CONFIG_CLS,
+        archive_alias: str,
+        archive_config: ARCHIVE_CONFIG_CLS,
         force_read_only: bool = False,
     ):
 
-        super().__init__(force_read_only=force_read_only)
-        self._archive_id: uuid.UUID = archive_id
-        self._config: ARCHIVE_CONFIG_CLS = config
+        super().__init__(
+            archive_alias=archive_alias,
+            archive_config=archive_config,
+            force_read_only=force_read_only,
+        )
         self._kiara: Union["Kiara", None] = None
 
     @classmethod
     def _is_writeable(cls) -> bool:
         return False
-
-    def _get_config(self) -> ARCHIVE_CONFIG_CLS:
-        return self._config
-
-    def retrieve_archive_id(self) -> uuid.UUID:
-        return self._archive_id
 
     @property
     def kiara_context(self) -> "Kiara":
@@ -214,13 +262,23 @@ class BaseArchive(KiaraArchive, Generic[ARCHIVE_CONFIG_CLS]):
 
 class FileSystemArchiveConfig(ArchiveConfig):
     @classmethod
+    def load_store_config(cls, store_uri: str, **kwargs) -> Self:
+        raise NotImplementedError(
+            f"Store config type '{cls}' does not implement 'create_config'."
+        )
+
+    @classmethod
     def create_new_store_config(
-        cls, store_id: str, stores_base_path: str
+        cls, store_base_path: str, **kwargs
     ) -> "FileSystemArchiveConfig":
 
-        archive_path = os.path.abspath(
-            os.path.join(stores_base_path, "filesystem_data_store", store_id)
-        )
+        store_id = str(uuid.uuid4())
+        if "path" in kwargs:
+            file_name = kwargs["path"]
+        else:
+            file_name = store_id
+
+        archive_path = os.path.abspath(os.path.join(store_base_path, file_name))
 
         return FileSystemArchiveConfig(archive_path=archive_path)
 
@@ -232,12 +290,46 @@ class FileSystemArchiveConfig(ArchiveConfig):
 class SqliteArchiveConfig(ArchiveConfig):
     @classmethod
     def create_new_store_config(
-        cls, store_id: str, stores_base_path: str
+        cls, store_base_path: str, **kwargs
     ) -> "SqliteArchiveConfig":
 
-        archive_path = os.path.abspath(
-            os.path.join(stores_base_path, "sqlite_stores", f"{store_id}.sqlite")
+        store_id = str(uuid.uuid4())
+
+        if "file_name" in kwargs:
+            file_name = kwargs["file_name"]
+        else:
+            file_name = f"{store_id}.sqlite"
+
+        archive_path = os.path.abspath(os.path.join(store_base_path, file_name))
+
+        if os.path.exists(archive_path):
+            raise Exception(f"Archive path '{archive_path}' already exists.")
+
+        Path(archive_path).parent.mkdir(exist_ok=True, parents=True)
+
+        # Connect to the SQLite database (or create it if it doesn't exist)
+        import sqlite3
+
+        print(archive_path)
+        conn = sqlite3.connect(archive_path)
+
+        # Create a cursor object
+        c = conn.cursor()
+
+        # Create table
+        c.execute(
+            """CREATE TABLE archive_metadata
+                     (key text PRIMARY KEY , value text NOT NULL)"""
         )
+
+        # Insert a row of data
+        c.execute(f"INSERT INTO archive_metadata VALUES ('archive_id','{store_id}')")
+
+        # Save (commit) the changes
+        conn.commit()
+
+        # Close the connection
+        conn.close()
 
         return SqliteArchiveConfig(sqlite_db_path=archive_path)
 

@@ -6,6 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import abc
+import typing
 import uuid
 from io import BytesIO
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Set, Union
@@ -32,7 +33,7 @@ if TYPE_CHECKING:
 logger = structlog.getLogger()
 
 
-class DataArchive(BaseArchive):
+class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG_CLS]):
     """Base class for data archiv implementationss."""
 
     @classmethod
@@ -43,13 +44,15 @@ class DataArchive(BaseArchive):
 
     def __init__(
         self,
-        archive_id: uuid.UUID,
-        config: ARCHIVE_CONFIG_CLS,
+        archive_alias: str,
+        archive_config: ARCHIVE_CONFIG_CLS,
         force_read_only: bool = False,
     ):
 
         super().__init__(
-            archive_id=archive_id, config=config, force_read_only=force_read_only
+            archive_alias=archive_alias,
+            archive_config=archive_config,
+            force_read_only=force_read_only,
         )
 
         self._env_cache: Dict[str, Dict[str, Mapping[str, Any]]] = {}

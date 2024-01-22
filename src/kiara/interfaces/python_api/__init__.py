@@ -1321,7 +1321,7 @@ class KiaraAPI(object):
         )
         return result
 
-    def get_value(self, value: Union[str, Value, uuid.UUID]) -> Value:
+    def get_value(self, value: Union[str, Value, uuid.UUID, Path]) -> Value:
         """
         Retrieve a value instance with the specified id or alias.
 
@@ -1425,7 +1425,9 @@ class KiaraAPI(object):
 
         return current_result
 
-    def retrieve_value_info(self, value: Union[str, uuid.UUID, Value]) -> ValueInfo:
+    def retrieve_value_info(
+        self, value: Union[str, uuid.UUID, Value, Path]
+    ) -> ValueInfo:
         """
         Retrieve an info object for a value.
 

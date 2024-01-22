@@ -17,12 +17,24 @@ class SqliteJobArchive(JobArchive):
     _archive_type_name = "sqlite_job_archive"
     _config_cls = SqliteArchiveConfig
 
-    def __init__(self, archive_id: uuid.UUID, config: SqliteArchiveConfig):
+    def __init__(self, archive_alias: str, archive_config: SqliteArchiveConfig):
 
-        JobArchive.__init__(self, archive_id=archive_id, config=config)
+        JobArchive.__init__(
+            self, archive_alias=archive_alias, archive_config=archive_config
+        )
         self._db_path: Union[Path, None] = None
         self._cached_engine: Union[Engine, None] = None
         # self._lock: bool = True
+
+    def _retrieve_archive_id(self) -> uuid.UUID:
+        sql = text("SELECT value FROM archive_metadata WHERE key='archive_id'")
+
+        with self.sqlite_engine.connect() as connection:
+            result = connection.execute(sql)
+            row = result.fetchone()
+            if row is None:
+                raise Exception("No archive ID found in metadata")
+            return uuid.UUID(row[0])
 
     @property
     def sqlite_path(self):

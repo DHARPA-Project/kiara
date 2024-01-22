@@ -38,9 +38,9 @@ class FileSystemDestinyArchive(DestinyArchive):
     #     )
     #     return result
 
-    def __init__(self, archive_id: uuid.UUID, config: FileSystemArchiveConfig):
+    def __init__(self, archive_alias: str, archive_config: FileSystemArchiveConfig):
 
-        super().__init__(archive_id=archive_id, config=config)
+        super().__init__(archive_alias=archive_alias, archive_config=archive_config)
         self._base_path: Union[Path, None] = None
 
         # base_path = config.archive_path
@@ -53,6 +53,10 @@ class FileSystemDestinyArchive(DestinyArchive):
         # self._base_path: Path = base_path
         # self._destinies_path: Path = self._base_path / "destinies"
         # self._value_id_path: Path = self._base_path / "value_ids"
+
+    def _retrieve_archive_id(self) -> uuid.UUID:
+
+        return uuid.UUID(self.destiny_store_path.name)
 
     @property
     def destiny_store_path(self) -> Path:

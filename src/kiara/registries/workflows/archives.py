@@ -18,12 +18,16 @@ class FileSystemWorkflowArchive(WorkflowArchive):
     _archive_type_name = "filesystem_workflow_archive"
     _config_cls = FileSystemArchiveConfig  # type: ignore
 
-    def __init__(self, archive_id: uuid.UUID, config: ARCHIVE_CONFIG_CLS):
+    def __init__(self, archive_alias: str, archive_config: ARCHIVE_CONFIG_CLS):
 
-        super().__init__(archive_id=archive_id, config=config)
+        super().__init__(archive_alias=archive_alias, archive_config=archive_config)
 
         self._base_path: Union[Path, None] = None
         self.alias_store_path.mkdir(parents=True, exist_ok=True)
+
+    def _retrieve_archive_id(self) -> uuid.UUID:
+
+        return uuid.UUID(self.workflow_store_path.name)
 
     @property
     def workflow_store_path(self) -> Path:

@@ -18,20 +18,57 @@ from kiara.utils.json import orjson_dumps
 from kiara.utils.windows import fix_windows_longpath
 
 
-class SqliteDataArchive(DataArchive):
+class SqliteDataArchive(DataArchive[SqliteArchiveConfig]):
 
     _archive_type_name = "sqlite_data_archive"
     _config_cls = SqliteArchiveConfig
 
+    @classmethod
+    def _load_store_config(
+        cls, store_uri: str, allow_write_access: bool, **kwargs
+    ) -> Union[SqliteArchiveConfig, None]:
+
+        if allow_write_access:
+            return None
+
+        if not Path(store_uri).is_file():
+            return None
+
+        import sqlite3
+
+        con = sqlite3.connect(store_uri)
+
+        cursor = con.cursor()
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        tables = {x[0] for x in cursor.fetchall()}
+        con.close()
+
+        if tables != {
+            "values_pedigree",
+            "values_destinies",
+            "archive_metadata",
+            "persisted_values",
+            "values_metadata",
+            "values_data",
+            "environments",
+        }:
+            return None
+
+        config = SqliteArchiveConfig(sqlite_db_path=store_uri)
+        return config
+
     def __init__(
         self,
-        archive_id: uuid.UUID,
-        config: SqliteArchiveConfig,
+        archive_alias: str,
+        archive_config: SqliteArchiveConfig,
         force_read_only: bool = False,
     ):
 
         DataArchive.__init__(
-            self, archive_id=archive_id, config=config, force_read_only=force_read_only
+            self,
+            archive_alias=archive_alias,
+            archive_config=archive_config,
+            force_read_only=force_read_only,
         )
         self._db_path: Union[Path, None] = None
         self._cached_engine: Union[Engine, None] = None
@@ -41,6 +78,16 @@ class SqliteDataArchive(DataArchive):
         self._cache_dir_width = 1
         self._value_id_cache: Union[Iterable[uuid.UUID], None] = None
         # self._lock: bool = True
+
+    def _retrieve_archive_id(self) -> uuid.UUID:
+        sql = text("SELECT value FROM archive_metadata WHERE key='archive_id'")
+
+        with self.sqlite_engine.connect() as connection:
+            result = connection.execute(sql)
+            row = result.fetchone()
+            if row is None:
+                raise Exception("No archive ID found in metadata")
+            return uuid.UUID(row[0])
 
     @property
     def sqlite_path(self):
@@ -243,10 +290,47 @@ CREATE TABLE IF NOT EXISTS environments (
 
         return chunk_path.as_posix()
 
+    def _delete_archive(self):
+        os.unlink(self.sqlite_path)
+
 
 class SqliteDataStore(SqliteDataArchive, BaseDataStore):
 
     _archive_type_name = "sqlite_data_store"
+
+    @classmethod
+    def _load_store_config(
+        cls, store_uri: str, allow_write_access: bool, **kwargs
+    ) -> Union[SqliteArchiveConfig, None]:
+
+        if not allow_write_access:
+            return None
+
+        if not Path(store_uri).is_file():
+            return None
+
+        import sqlite3
+
+        con = sqlite3.connect(store_uri)
+
+        cursor = con.cursor()
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        tables = {x[0] for x in cursor.fetchall()}
+        con.close()
+
+        if tables != {
+            "values_pedigree",
+            "values_destinies",
+            "archive_metadata",
+            "persisted_values",
+            "values_metadata",
+            "values_data",
+            "environments",
+        }:
+            return None
+
+        config = SqliteArchiveConfig(sqlite_db_path=store_uri)
+        return config
 
     def _persist_environment_details(
         self, env_type: str, env_hash: str, env_data: Mapping[str, Any]

@@ -7,6 +7,7 @@
 import abc
 import copy
 import uuid
+from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -103,14 +104,15 @@ class AliasResolver(abc.ABC):
         pass
 
 
+STORE_REF_TYPE_NAME = "store"
+
+
 class DefaultAliasResolver(AliasResolver):
     def __init__(self, kiara: "Kiara"):
 
         super().__init__(kiara=kiara)
 
     def resolve_alias(self, alias: str) -> uuid.UUID:
-
-        dbg(f"RESOLVE: {alias}")
 
         if ":" in alias:
             ref_type, rest = alias.split(":", maxsplit=1)
@@ -126,6 +128,20 @@ class DefaultAliasResolver(AliasResolver):
                         alias=rest,
                         msg=f"Can't retrive value for alias '{rest}': no such alias registered.",
                     )
+            elif ref_type == STORE_REF_TYPE_NAME:
+
+                if "#" in rest:
+                    raise NotImplementedError()
+
+                archives = load_existing_archives(store=rest)
+                if archives:
+                    for archive in archives:
+                        archive_ref = self._kiara.data_registry.register_data_archive(
+                            archive
+                        )
+                        print(archive_ref)
+
+                raise NotImplementedError("x")
             else:
                 raise Exception(
                     f"Can't retrieve value for '{alias}': invalid reference type '{ref_type}'."
@@ -233,8 +249,6 @@ class DataRegistry(object):
 
         result: Set[uuid.UUID] = set()
         for alias, store in self._data_archives.items():
-            print(alias)
-            dbg(store.config.model_dump())
             ids = store.value_ids
             if ids:
                 result.update(ids)
@@ -246,7 +260,7 @@ class DataRegistry(object):
         archive: DataArchive,
         alias: Union[str, None] = None,
         set_as_default_store: Union[bool, None] = None,
-    ):
+    ) -> str:
 
         data_store_id = archive.archive_id
         archive.register_archive(kiara=self._kiara)
@@ -280,6 +294,8 @@ class DataRegistry(object):
             is_default_store=is_default_store,
         )
         self._event_callback(event)
+
+        return alias
 
     @property
     def default_data_store(self) -> str:
@@ -348,7 +364,7 @@ class DataRegistry(object):
         self._value_archive_lookup_map[value_id] = matches[0]
         return matches[0]
 
-    def get_value(self, value: Union[uuid.UUID, ValueLink, str]) -> Value:
+    def get_value(self, value: Union[uuid.UUID, ValueLink, str, Path]) -> Value:
         _value_id = None
 
         if not isinstance(value, uuid.UUID):
@@ -367,7 +383,8 @@ class DataRegistry(object):
                     _value_id = None
 
                 if _value_id is None:
-
+                    if isinstance(value, Path):
+                        raise NotImplementedError()
                     if not isinstance(value, str):
                         raise Exception(
                             f"Can't retrieve value for '{value}': invalid type '{type(value)}'."

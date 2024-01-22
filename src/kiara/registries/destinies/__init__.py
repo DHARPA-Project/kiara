@@ -17,9 +17,9 @@ class DestinyArchive(BaseArchive):
     def supported_item_types(cls) -> Iterable[str]:
         return ["destiny"]
 
-    def __init__(self, archive_id: uuid.UUID, config: ARCHIVE_CONFIG_CLS):
+    def __init__(self, archive_alias: str, archive_config: ARCHIVE_CONFIG_CLS):
 
-        super().__init__(archive_id=archive_id, config=config)
+        super().__init__(archive_alias=archive_alias, archive_config=archive_config)
 
     @abc.abstractmethod
     def get_all_value_ids(self) -> Set[uuid.UUID]:

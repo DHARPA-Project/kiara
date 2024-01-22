@@ -34,7 +34,6 @@ from kiara.registries.environment import EnvironmentRegistry
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import log_message
 from kiara.utils.files import get_data_from_file
-from kiara.utils.stores import create_store
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -62,16 +61,137 @@ def config_file_settings_source(settings: BaseSettings) -> Dict[str, Any]:
 
 
 class KiaraArchiveConfig(BaseModel):
+    """Configuration data that can be used to load an existing kiara archive."""
 
-    archive_id: str = Field(description="The unique archive id.")
+    # archive_alias: str = Field(description="The unique archive id.")
     archive_type: str = Field(description="The archive type.")
     config: Mapping[str, Any] = Field(
         description="Archive type specific config.", default_factory=dict
     )
 
+
+class KiaraArchiveReference(BaseModel):
+    @classmethod
+    def load_existing_archive(
+        cls,
+        archive_uri: str,
+        store_type: Union[str, None, Iterable[str]] = None,
+        allow_write_access: bool = False,
+        **kwargs: Any,
+    ) -> "KiaraArchiveReference":
+
+        from kiara.utils.class_loading import find_all_archive_types
+
+        archive_types = find_all_archive_types()
+
+        archive_configs: List[KiaraArchiveConfig] = []
+        archives: List[KiaraArchive] = []
+
+        archive_alias = archive_uri
+
+        if store_type:
+            if isinstance(store_type, str):
+                archive_cls: Type[KiaraArchive] = archive_types.get(store_type, None)
+                if archive_cls is None:
+                    raise Exception(
+                        f"Can't create context: no archive type '{store_type}' available. Available types: {', '.join(archive_types.keys())}"
+                    )
+                data = archive_cls.load_store_config(
+                    store_uri=archive_uri,
+                    allow_write_access=allow_write_access,
+                    **kwargs,
+                )
+                archive: KiaraArchive = archive_cls(
+                    archive_alias=archive_alias, archive_config=data
+                )
+                archive_configs.append(data)
+                archives.append(archive)
+            else:
+                for st in store_type:
+                    archive_cls = archive_types.get(st, None)
+                    if archive_cls is None:
+                        raise Exception(
+                            f"Can't create context: no archive type '{store_type}' available. Available types: {', '.join(archive_types.keys())}"
+                        )
+                    data = archive_cls.load_store_config(
+                        store_uri=archive_uri,
+                        allow_write_access=allow_write_access,
+                        **kwargs,
+                    )
+                    archive: KiaraArchive = archive_cls(
+                        archive_alias=archive_alias, archive_config=data
+                    )
+                    archive_configs.append(data)
+                    archives.append(archive)
+        else:
+            for archive_type, archive_cls in archive_types.items():
+
+                data = archive_cls.load_store_config(
+                    store_uri=archive_uri,
+                    allow_write_access=allow_write_access,
+                    **kwargs,
+                )
+                if data is None:
+                    continue
+                archive: KiaraArchive = archive_cls(
+                    archive_alias=archive_alias, archive_config=data
+                )
+                archive_configs.append(data)
+                archives.append(archive)
+
+        if archives is None:
+            raise Exception(
+                f"Can't create context: no valid archive found at '{archive_uri}'"
+            )
+
+        result = cls(
+            archive_uri=archive_uri,
+            archive_alias=archive_alias,
+            allow_write_access=allow_write_access,
+            archive_configs=archive_configs,
+        )
+        result._archives = archives
+        return result
+
+    archive_uri: str = Field(description="The uri that points to the archive.")
+    archive_alias: str = Field(
+        description="The alias that is used for the archives contained in here."
+    )
+    allow_write_access: bool = Field(
+        description="Whether to allow write access to the archives contained here.",
+        default=False,
+    )
+    archive_configs: List[KiaraArchiveConfig] = Field(
+        description="All the archives this kiara context can use and the aliases they are registered with."
+    )
+    _archives: Union[None, List["KiaraArchive"]] = PrivateAttr(default=None)
+
     @property
-    def archive_uuid(self) -> uuid.UUID:
-        return uuid.UUID(self.archive_id)
+    def archives(self) -> List["KiaraArchive"]:
+
+        if self._archives is not None:
+            return self._archives
+
+        from kiara.utils.class_loading import find_all_archive_types
+
+        archive_types = find_all_archive_types()
+
+        result = []
+        for config in self.archive_configs:
+            if config.archive_type not in archive_types.keys():
+                raise Exception(
+                    f"Can't create context: no archive type '{config.archive_type}' available. Available types: {', '.join(archive_types.keys())}"
+                )
+
+            archive_cls = archive_types[config.archive_type]
+            archive = archive_cls.load_store_config(
+                archive_uri=self.archive_uri,
+                allow_write_access=self.allow_write_access,
+            )
+            result.append(archive)
+
+        self._archives = result
+        return self._archives
 
 
 class KiaraContextConfig(BaseModel):
@@ -98,22 +218,22 @@ class KiaraContextConfig(BaseModel):
                     "ignore.pipeline", reason="path does not exist", path=pipeline
                 )
 
-    def create_archive(
-        self, archive_alias: str, allow_write_access: bool = False
-    ) -> "KiaraArchive":
-        """Create the kiara archive with the specified alias.
-
-        Make sure you know what you are doing when setting 'allow_write_access' to True.
-        """
-
-        store_config = self.archives[archive_alias]
-        store = create_store(
-            archive_id=store_config.archive_uuid,
-            store_type=store_config.archive_type,
-            store_config=store_config.config,
-            allow_write_access=allow_write_access,
-        )
-        return store
+    # def create_archive(
+    #     self, archive_alias: str, allow_write_access: bool = False
+    # ) -> "KiaraArchive":
+    #     """Create the kiara archive with the specified alias.
+    #
+    #     Make sure you know what you are doing when setting 'allow_write_access' to True.
+    #     """
+    #
+    #     store_config = self.archives[archive_alias]
+    #     store = create_store(
+    #         archive_id=store_config.archive_uuid,
+    #         store_type=store_config.archive_type,
+    #         store_config=store_config.config,
+    #         allow_write_access=allow_write_access,
+    #     )
+    #     return store
 
 
 class KiaraSettings(BaseSettings):
@@ -130,8 +250,8 @@ class KiaraSettings(BaseSettings):
 KIARA_SETTINGS = KiaraSettings()
 
 
-def create_default_store(
-    store_id: uuid.UUID, store_type: str, stores_base_path: str
+def create_default_store_config(
+    store_type: str, stores_base_path: str
 ) -> KiaraArchiveConfig:
 
     env_registry = EnvironmentRegistry.instance()
@@ -144,10 +264,18 @@ def create_default_store(
 
     archive_info: ArchiveTypeInfo = available_archives.item_infos[store_type]
     cls: Type[BaseArchive] = archive_info.python_class.get_class()  # type: ignore
-    config = cls.create_new_config(store_id=store_id, stores_base_path=stores_base_path)
+
+    log_message(
+        "create_new_store",
+        stores_base_path=stores_base_path,
+        store_type=cls.__name__,
+    )
+
+    config = cls._config_cls.create_new_store_config(store_base_path=stores_base_path)
+
+    # store_id: uuid.UUID = config.get_archive_id()
 
     data_store = KiaraArchiveConfig(
-        archive_id=store_id,
         archive_type=store_type,
         config=config.model_dump(),
     )
@@ -349,17 +477,18 @@ class KiaraConfig(BaseSettings):
 
         changed = False
 
-        default_store_id = context_config.context_id
+
+        sqlite_base_path = os.path.join(self.stores_base_path, "sqlite_stores")
+        filesystem_base_path = os.path.join(self.stores_base_path, "filesystem_stores")
 
         if DEFAULT_DATA_STORE_MARKER not in context_config.archives.keys():
             # data_store_type = "filesystem_data_store"
             # TODO: change that back
             data_store_type = "sqlite_data_store"
 
-            data_store = create_default_store(
-                store_id=default_store_id,
+            data_store = create_default_store_config(
                 store_type=data_store_type,
-                stores_base_path=self.stores_base_path,
+                stores_base_path=sqlite_base_path,
             )
             context_config.archives[DEFAULT_DATA_STORE_MARKER] = data_store
             changed = True
@@ -369,10 +498,9 @@ class KiaraConfig(BaseSettings):
             # job_store_type = "filesystem_job_store"
             job_store_type = "sqlite_job_store"
 
-            job_store = create_default_store(
-                store_id=default_store_id,
+            job_store = create_default_store_config(
                 store_type=job_store_type,
-                stores_base_path=self.stores_base_path,
+                stores_base_path=sqlite_base_path,
             )
 
             context_config.archives[DEFAULT_JOB_STORE_MARKER] = job_store
@@ -383,8 +511,7 @@ class KiaraConfig(BaseSettings):
             alias_store_type = "filesystem_alias_store"
             alias_store_type = "sqlite_alias_store"
 
-            alias_store = create_default_store(
-                store_id=default_store_id,
+            alias_store = create_default_store_config(
                 store_type=alias_store_type,
                 stores_base_path=self.stores_base_path,
             )
@@ -394,10 +521,9 @@ class KiaraConfig(BaseSettings):
         if DEFAULT_WORKFLOW_STORE_MARKER not in context_config.archives.keys():
 
             workflow_store_type = "filesystem_workflow_store"
-            workflow_store = create_default_store(
-                store_id=default_store_id,
+            workflow_store = create_default_store_config(
                 store_type=workflow_store_type,
-                stores_base_path=self.stores_base_path,
+                stores_base_path=os.path.join(filesystem_base_path, "workflows"),
             )
             context_config.archives[DEFAULT_WORKFLOW_STORE_MARKER] = workflow_store
             changed = True
@@ -406,10 +532,9 @@ class KiaraConfig(BaseSettings):
 
             destiny_store_type = "filesystem_destiny_store"
 
-            destiny_store = create_default_store(
-                store_id=default_store_id,
+            destiny_store = create_default_store_config(
                 store_type=destiny_store_type,
-                stores_base_path=self.stores_base_path,
+                stores_base_path=os.path.join(filesystem_base_path, "destinies"),
             )
             context_config.archives[METADATA_DESTINY_STORE_MARKER] = destiny_store
             changed = True

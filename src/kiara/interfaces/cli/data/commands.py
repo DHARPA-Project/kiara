@@ -507,15 +507,35 @@ def filter_value(
             terminal_print(f"[red]Error saving results[/red]: {e}")
             sys.exit(1)
 
-    # if save_results:
-    #     try:
-    #         saved_results = kiara_op.save_result(job_id=job_id, aliases=final_aliases)
-    #         if len(saved_results) == 1:
-    #             title = "[b]Stored result value[/b]"
-    #         else:
-    #             title = "[b]Stored result values[/b]"
-    #         terminal_print(saved_results, in_panel=title, empty_line_before=True)
-    #     except Exception as e:
-    #         log_exception(e)
-    #         terminal_print(f"[red]Error saving results[/red]: {e}")
-    #         sys.exit(1)
+
+@data.command(name="export")
+@click.argument("alias", nargs=1, required=True)
+@click.pass_context
+def export_data_store(ctx, alias: str):
+
+    from kiara.utils.stores import create_new_store
+
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
+
+    value = kiara_api.get_value(alias)
+    base_path = "."
+
+    store = create_new_store(
+        archive_alias=f"export_store_{alias}",
+        store_base_path=base_path,
+        store_type="sqlite_data_store",
+        file_name=f"{alias}.sqlite",
+    )
+
+    store_alias = kiara_api.context.data_registry.register_data_archive(store)
+
+    try:
+        persisted_data = kiara_api.context.data_registry.store_value(
+            value, store_id=store_alias
+        )
+        dbg(persisted_data)
+    except Exception as e:
+        store.delete_archive(archive_id=store.archive_id)
+        log_exception(e)
+        terminal_print(f"[red]Error saving results[/red]: {e}")
+        sys.exit(1)

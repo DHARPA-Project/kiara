@@ -13,6 +13,7 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Iterable,
     List,
     Mapping,
     Protocol,
@@ -74,6 +75,8 @@ from kiara.utils.hashing import NONE_CID
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+    from kiara.models.module.destiny import Destiny
+    from kiara.models.module.manifest import Manifest
 
 logger = structlog.getLogger()
 
@@ -232,6 +235,13 @@ class DataRegistry(object):
         self._cached_data[NONE_VALUE_ID] = SpecialValue.NO_VALUE
         self._registered_values[NONE_VALUE_ID] = self._none_value
         self._persisted_value_descs[NONE_VALUE_ID] = NONE_PERSISTED_DATA
+
+        self._cached_value_aliases: Dict[
+            uuid.UUID, Dict[str, Union[Destiny, None]]
+        ] = {}
+
+        self._destinies: Dict[uuid.UUID, Destiny] = {}
+        self._destinies_by_value: Dict[uuid.UUID, Dict[str, Destiny]] = {}
 
     @property
     def kiara_id(self) -> uuid.UUID:
@@ -582,7 +592,10 @@ class DataRegistry(object):
 
         return {self.get_value(value=v_id) for v_id in stored}
 
-    def find_destinies_for_value(
+    # ==============================================================================================
+    # destiny stuff
+
+    def retrieve_destinies_for_value_from_archives(
         self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
     ) -> Mapping[str, uuid.UUID]:
 
@@ -604,6 +617,117 @@ class DataRegistry(object):
                 all_destinies[k] = v
 
         return all_destinies
+
+    def get_destiny_aliases_for_value(
+        self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
+    ) -> Iterable[str]:
+
+        # TODO: cache the result of this
+
+        if alias_filter is not None:
+            raise NotImplementedError()
+
+        aliases: Set[str] = set()
+        aliases.update(
+            self.retrieve_destinies_for_value_from_archives(value_id=value_id).keys()
+        )
+
+        # all_stores = self._all_values_store_map.get(value_id)
+        # if all_stores:
+        #     for prefix in all_stores:
+        #         all_aliases = self._destiny_archives[
+        #             prefix
+        #         ].get_destiny_aliases_for_value(value_id=value_id)
+        #         if all_aliases is not None:
+        #             aliases.update((f"{prefix}.{a}" for a in all_aliases))
+
+        current = self._destinies_by_value.get(value_id, None)
+        if current:
+            aliases.update(current.keys())
+
+        return sorted(aliases)
+
+    def register_destiny(
+        self,
+        destiny_alias: str,
+        values: Dict[str, uuid.UUID],
+        manifest: "Manifest",
+        result_field_name: Union[str, None] = None,
+    ) -> "Destiny":
+        """
+        Add a destiny for one (or in some rare cases several) values.
+
+        A destiny alias must be unique for every one of the involved input values.
+        """
+        if not values:
+            raise Exception("Can't add destiny, no values provided.")
+
+        from kiara.models.module.destiny import Destiny
+
+        destiny = Destiny.create_from_values(
+            kiara=self._kiara,
+            destiny_alias=destiny_alias,
+            manifest=manifest,
+            result_field_name=result_field_name,
+            values=values,
+        )
+
+        for value_id in destiny.fixed_inputs.values():
+
+            self._destinies[destiny.destiny_id] = destiny
+            # TODO: store history?
+            self._destinies_by_value.setdefault(value_id, {})[destiny_alias] = destiny
+            self._cached_value_aliases.setdefault(value_id, {})[destiny_alias] = destiny
+
+        return destiny
+
+    def attach_destiny_as_property(
+        self,
+        destiny: Union[uuid.UUID, "Destiny"],
+        field_names: Union[Iterable[str], None] = None,
+    ):
+
+        if field_names:
+            raise NotImplementedError()
+
+        if isinstance(destiny, uuid.UUID):
+            destiny = self._destinies[destiny]
+
+        values = self.load_values(destiny.fixed_inputs)
+
+        already_stored: List[uuid.UUID] = []
+        for v in values.values():
+            if v.is_stored:
+                already_stored.append(v.value_id)
+
+        if already_stored:
+            stored = (str(v) for v in already_stored)
+            raise Exception(
+                f"Can't attach destiny as property, value(s) already stored: {', '.join(stored)}"
+            )
+
+        if destiny.result_value_id is None:
+            destiny.execute(kiara=self._kiara)
+
+        for v in values.values():
+            assert destiny.result_value_id is not None
+            v.add_property(
+                value_id=destiny.result_value_id,
+                property_path=destiny.destiny_alias,
+                add_origin_to_property_value=True,
+            )
+
+    def get_registered_destiny(
+        self, value_id: uuid.UUID, destiny_alias: str
+    ) -> "Destiny":
+
+        destiny = self._destinies_by_value.get(value_id, {}).get(destiny_alias, None)
+        if destiny is None:
+            raise Exception(
+                f"No destiny '{destiny_alias}' available for value '{value_id}'."
+            )
+
+        return destiny
 
     def register_data(
         self,

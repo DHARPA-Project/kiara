@@ -18,6 +18,7 @@ from kiara.registries.ids import ID_REGISTRY
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+    from kiara.models.values.value import Value
     from kiara.modules import KiaraModule
 
 
@@ -163,6 +164,19 @@ class Destiny(Manifest):
             m_cls = self.module_details.get_class()
             self._module = m_cls(module_config=self.module_config)
         return self._module
+
+    def execute(self, kiara: "Kiara") -> "Value":
+
+        if self.result_value_id is not None:
+            raise Exception("Destiny already resolved.")
+
+        results = kiara.job_registry.execute_and_retrieve(
+            manifest=self, inputs=self.merged_inputs
+        )
+        value = results.get_value_obj(field_name=self.result_field_name)
+
+        self.result_value_id = value.value_id
+        return value
 
     # def _retrieve_job_config_hash(self) -> int:
     #     obj = {"module_config": self.manifest_data, "inputs": self.merged_inputs}

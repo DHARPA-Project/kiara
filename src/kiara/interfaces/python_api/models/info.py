@@ -465,8 +465,10 @@ class ValueInfo(ItemInfo):
             is_internal = False
 
         if resolve_destinies:
-            destiny_links = kiara.data_registry.find_destinies_for_value(
-                value_id=instance.value_id
+            destiny_links = (
+                kiara.data_registry.retrieve_destinies_for_value_from_archives(
+                    value_id=instance.value_id
+                )
             )
             filtered_destinies = {}
             for alias, value_id in destiny_links.items():
@@ -602,8 +604,10 @@ class ValueInfo(ItemInfo):
 
     def resolve_destinies(self):
         if self.destiny_links is None:
-            destiny_links = self._value._data_registry.find_destinies_for_value(
-                value_id=self.value_id
+            destiny_links = (
+                self._value._data_registry.retrieve_destinies_for_value_from_archives(
+                    value_id=self.value_id
+                )
             )
             filtered_destinies = {}
             for alias, value_id in destiny_links.items():

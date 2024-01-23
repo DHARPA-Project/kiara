@@ -125,6 +125,7 @@ class DestinyRegistry(object):
 
     def _extract_archive(self, alias: str) -> Tuple[str, str]:
 
+        print(alias)
         if "." not in alias:
             assert self._default_destiny_store is not None
             return (self._default_destiny_store, alias)

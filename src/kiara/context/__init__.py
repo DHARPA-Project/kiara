@@ -33,7 +33,6 @@ from kiara.models.values.value import ValueMap
 from kiara.registries import KiaraArchive
 from kiara.registries.aliases import AliasRegistry
 from kiara.registries.data import DataRegistry
-from kiara.registries.destinies.registry import DestinyRegistry
 from kiara.registries.environment import EnvironmentRegistry
 from kiara.registries.events.metadata import CreateMetadataDestinies
 from kiara.registries.events.registry import EventRegistry
@@ -140,7 +139,7 @@ class Kiara(object):
         self._kiara_model_registry: ModelRegistry = ModelRegistry.instance()
 
         self._alias_registry: AliasRegistry = AliasRegistry(kiara=self)
-        self._destiny_registry: DestinyRegistry = DestinyRegistry(kiara=self)
+        # self._destiny_registry: DestinyRegistry = DestinyRegistry(kiara=self)
 
         self._workflow_registry: WorkflowRegistry = WorkflowRegistry(kiara=self)
 
@@ -181,8 +180,8 @@ class Kiara(object):
                 if supported_type == "alias":
                     self.alias_registry.register_archive(archive_obj)  # type: ignore
 
-                if supported_type == "destiny":
-                    self.destiny_registry.register_destiny_archive(archive_obj)  # type: ignore
+                # if supported_type == "destiny":
+                #     self.destiny_registry.register_destiny_archive(archive_obj)  # type: ignore
 
                 if supported_type == "workflow":
                     self.workflow_registry.register_archive(archive_obj)  # type: ignore
@@ -259,9 +258,9 @@ class Kiara(object):
     def alias_registry(self) -> AliasRegistry:
         return self._alias_registry
 
-    @property
-    def destiny_registry(self) -> DestinyRegistry:
-        return self._destiny_registry
+    # @property
+    # def destiny_registry(self) -> DestinyRegistry:
+    #     return self._destiny_registry
 
     @property
     def job_registry(self) -> JobRegistry:
@@ -468,8 +467,8 @@ class Kiara(object):
             result.setdefault(archive, set()).add(alias)
         for alias, archive in self.alias_registry.alias_archives.items():
             result.setdefault(archive, set()).add(alias)
-        for alias, archive in self.destiny_registry.destiny_archives.items():
-            result.setdefault(archive, set()).add(alias)
+        # for alias, archive in self.destiny_registry.destiny_archives.items():
+        #     result.setdefault(archive, set()).add(alias)
         for alias, archive in self.job_registry.job_archives.items():
             result.setdefault(archive, set()).add(alias)
         for alias, archive in self.workflow_registry.workflow_archives.items():

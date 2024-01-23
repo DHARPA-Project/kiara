@@ -58,7 +58,14 @@ class CreateMetadataDestinies(object):
             op_details: ExtractMetadataDetails = op.operation_details  # type: ignore
             input_field_name = op_details.input_field_name
             result_field_name = op_details.result_field_name
-            self._kiara.destiny_registry.add_destiny(
+
+            # self._kiara.destiny_registry.add_destiny(
+            #     destiny_alias=f"metadata.{metadata_key}",
+            #     values={input_field_name: value.value_id},
+            #     manifest=op,
+            #     result_field_name=result_field_name,
+            # )
+            self._kiara.data_registry.register_destiny(
                 destiny_alias=f"metadata.{metadata_key}",
                 values={input_field_name: value.value_id},
                 manifest=op,
@@ -77,13 +84,18 @@ class CreateMetadataDestinies(object):
 
         assert not value.is_stored
 
-        aliases = self._kiara.destiny_registry.get_destiny_aliases_for_value(
+        # aliases = self._kiara.destiny_registry.get_destiny_aliases_for_value(
+        #     value_id=value.value_id
+        # )
+
+        aliases = self._kiara.data_registry.get_destiny_aliases_for_value(
             value_id=value.value_id
         )
 
         for alias in aliases:
-            destiny = self._kiara.destiny_registry.get_destiny(
+            destiny = self._kiara.data_registry.get_registered_destiny(
                 value_id=value.value_id, destiny_alias=alias
             )
-            self._kiara.destiny_registry.resolve_destiny(destiny)
-            self._kiara.destiny_registry.attach_as_property(destiny)
+            # self._kiara.destiny_registry.resolve_destiny(destiny)
+            # self._kiara.destiny_registry.attach_as_property(destiny)
+            self._kiara.data_registry.attach_destiny_as_property(destiny)

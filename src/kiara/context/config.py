@@ -26,7 +26,6 @@ from kiara.defaults import (
     KIARA_CONFIG_FILE_NAME,
     KIARA_MAIN_CONFIG_FILE,
     KIARA_MAIN_CONTEXTS_PATH,
-    METADATA_DESTINY_STORE_MARKER,
     kiara_app_dirs,
 )
 from kiara.exceptions import KiaraException
@@ -528,16 +527,16 @@ class KiaraConfig(BaseSettings):
             context_config.archives[DEFAULT_WORKFLOW_STORE_MARKER] = workflow_store
             changed = True
 
-        if METADATA_DESTINY_STORE_MARKER not in context_config.archives.keys():
-
-            destiny_store_type = "filesystem_destiny_store"
-
-            destiny_store = create_default_store_config(
-                store_type=destiny_store_type,
-                stores_base_path=os.path.join(filesystem_base_path, "destinies"),
-            )
-            context_config.archives[METADATA_DESTINY_STORE_MARKER] = destiny_store
-            changed = True
+        # if METADATA_DESTINY_STORE_MARKER not in context_config.archives.keys():
+        #
+        #     destiny_store_type = "filesystem_destiny_store"
+        #
+        #     destiny_store = create_default_store_config(
+        #         store_type=destiny_store_type,
+        #         stores_base_path=os.path.join(filesystem_base_path, "destinies"),
+        #     )
+        #     context_config.archives[METADATA_DESTINY_STORE_MARKER] = destiny_store
+        #     changed = True
 
         return changed
 

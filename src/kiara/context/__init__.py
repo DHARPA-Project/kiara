@@ -160,7 +160,12 @@ class Kiara(object):
 
         for archive_alias, archive in self._config.archives.items():
 
+            # this is just to make old context that still had that not error out
+            if "_destiny_" in archive.archive_type:
+                continue
+
             archive_cls = self._archive_types.get(archive.archive_type, None)
+
             if archive_cls is None:
                 raise Exception(
                     f"Can't create context: no archive type '{archive.archive_type}' available. Available types: {', '.join(self._archive_types.keys())}"

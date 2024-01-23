@@ -310,7 +310,6 @@ class SqliteArchiveConfig(ArchiveConfig):
         # Connect to the SQLite database (or create it if it doesn't exist)
         import sqlite3
 
-        print(archive_path)
         conn = sqlite3.connect(archive_path)
 
         # Create a cursor object

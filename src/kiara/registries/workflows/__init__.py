@@ -147,15 +147,11 @@ class WorkflowRegistry(object):
     def register_archive(
         self,
         archive: WorkflowArchive,
-        alias: Union[str, None] = None,
         set_as_default_store: Union[bool, None] = None,
     ):
-
-        workflow_archive_id = archive.archive_id
-        archive.register_archive(kiara=self._kiara)
-
-        if alias is None:
-            alias = str(workflow_archive_id)
+        alias = archive.archive_alias
+        if not alias:
+            raise Exception("Invalid workflows archive alias: can't be empty.")
 
         if "." in alias:
             raise Exception(
@@ -166,6 +162,8 @@ class WorkflowRegistry(object):
             raise Exception(
                 f"Can't add store, workflow archive alias '{alias}' already registered."
             )
+
+        archive.register_archive(kiara=self._kiara)
 
         self._workflow_archives[alias] = archive
         is_store = False

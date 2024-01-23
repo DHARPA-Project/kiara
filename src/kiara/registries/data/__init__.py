@@ -258,19 +258,21 @@ class DataRegistry(object):
     def register_data_archive(
         self,
         archive: DataArchive,
-        alias: Union[str, None] = None,
         set_as_default_store: Union[bool, None] = None,
     ) -> str:
 
-        data_store_id = archive.archive_id
-        archive.register_archive(kiara=self._kiara)
-        if alias is None:
-            alias = str(data_store_id)
+        alias = archive.archive_alias
+
+        if not alias:
+            raise Exception("Invalid data archive alias: can't be empty.")
 
         if alias in self._data_archives.keys():
             raise Exception(
                 f"Can't add data archive, alias '{alias}' already registered."
             )
+
+        archive.register_archive(kiara=self._kiara)
+
         self._data_archives[alias] = archive
         is_store = False
         is_default_store = False

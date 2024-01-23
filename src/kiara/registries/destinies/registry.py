@@ -66,14 +66,14 @@ class DestinyRegistry(object):
     def register_destiny_archive(
         self,
         archive: DestinyArchive,
-        alias: Union[str, None] = None,
         set_as_default_store: Union[bool, None] = None,
     ):
 
-        destiny_store_id = archive.archive_id
+        alias = archive.archive_alias
         archive.register_archive(kiara=self._kiara)
-        if alias is None:
-            alias = str(destiny_store_id)
+
+        if not alias:
+            raise Exception("Invalid destiny archive alias: can't be empty.")
 
         if alias in self._destiny_archives.keys():
             raise Exception(
@@ -288,22 +288,22 @@ class DestinyRegistry(object):
                 add_origin_to_property_value=True,
             )
 
-    def store_destiny(self, destiny_id: Union[Destiny, uuid.UUID]):
-
-        try:
-            _destiny_id: uuid.UUID = destiny_id.destiny_id  # type: ignore
-        except Exception:
-            # just in case this is a 'Destiny' object
-            _destiny_id = destiny_id  # type: ignore
-
-        store_id = self._destiny_store_map[_destiny_id]
-        destiny = self._destinies[_destiny_id]
-        store: DestinyStore = self._destiny_archives[store_id]  # type: ignore
-
-        if not isinstance(store, DestinyStore):
-            full_alias = f"{store_id}.{destiny.destiny_alias}"
-            raise Exception(
-                f"Can't store destiny '{full_alias}': prefix '{store_id}' not writable in this kiara context."
-            )
-
-        store.persist_destiny(destiny=destiny)
+    # def store_destiny(self, destiny_id: Union[Destiny, uuid.UUID]):
+    #
+    #     try:
+    #         _destiny_id: uuid.UUID = destiny_id.destiny_id  # type: ignore
+    #     except Exception:
+    #         # just in case this is a 'Destiny' object
+    #         _destiny_id = destiny_id  # type: ignore
+    #
+    #     store_id = self._destiny_store_map[_destiny_id]
+    #     destiny = self._destinies[_destiny_id]
+    #     store: DestinyStore = self._destiny_archives[store_id]  # type: ignore
+    #
+    #     if not isinstance(store, DestinyStore):
+    #         full_alias = f"{store_id}.{destiny.destiny_alias}"
+    #         raise Exception(
+    #             f"Can't store destiny '{full_alias}': prefix '{store_id}' not writable in this kiara context."
+    #         )
+    #
+    #     store.persist_destiny(destiny=destiny)

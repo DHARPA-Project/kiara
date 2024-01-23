@@ -242,16 +242,19 @@ class JobRegistry(object):
 
         return [JobArchiveAddedEvent, JobRecordPreStoreEvent, JobRecordStoredEvent]
 
-    def register_job_archive(self, archive: JobArchive, alias: Union[str, None] = None):
+    def register_job_archive(self, archive: JobArchive):
 
-        if alias is None:
-            alias = str(archive.archive_id)
+        alias = archive.archive_alias
+
+        if not alias:
+            raise Exception("Invalid job archive alias: can't be empty.")
 
         if alias in self._job_archives.keys():
             raise Exception(
                 f"Can't register job store, store id already registered: {alias}."
             )
 
+        archive.register_archive(self._kiara)
         self._job_archives[alias] = archive
 
         is_store = False

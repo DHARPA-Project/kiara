@@ -95,15 +95,13 @@ class AliasRegistry(object):
     def register_archive(
         self,
         archive: AliasArchive,
-        alias: Union[str, None] = None,
         set_as_default_store: Union[bool, None] = None,
     ):
 
-        alias_archive_id = archive.archive_id
-        archive.register_archive(kiara=self._kiara)
+        alias = archive.archive_alias
 
-        if alias is None:
-            alias = str(alias_archive_id)
+        if not alias:
+            raise Exception("Invalid alias archive alias: can't be empty.")
 
         if "." in alias:
             raise Exception(
@@ -112,6 +110,8 @@ class AliasRegistry(object):
 
         if alias in self._alias_archives.keys():
             raise Exception(f"Can't add store, alias '{alias}' already registered.")
+
+        archive.register_archive(kiara=self._kiara)
 
         self._alias_archives[alias] = archive
         is_store = False

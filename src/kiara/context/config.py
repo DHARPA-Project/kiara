@@ -477,7 +477,6 @@ class KiaraConfig(BaseSettings):
 
         changed = False
 
-
         sqlite_base_path = os.path.join(self.stores_base_path, "sqlite_stores")
         filesystem_base_path = os.path.join(self.stores_base_path, "filesystem_stores")
 
@@ -521,6 +520,7 @@ class KiaraConfig(BaseSettings):
         if DEFAULT_WORKFLOW_STORE_MARKER not in context_config.archives.keys():
 
             workflow_store_type = "filesystem_workflow_store"
+
             workflow_store = create_default_store_config(
                 store_type=workflow_store_type,
                 stores_base_path=os.path.join(filesystem_base_path, "workflows"),

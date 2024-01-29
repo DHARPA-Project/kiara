@@ -100,10 +100,14 @@ class KiaraArchiveReference(BaseModel):
                     allow_write_access=allow_write_access,
                     **kwargs,
                 )
+                archive_config = archive_cls._config_cls(**data)
                 archive: KiaraArchive = archive_cls(
-                    archive_alias=archive_alias, archive_config=data
+                    archive_alias=archive_alias, archive_config=archive_config
                 )
-                archive_configs.append(data)
+                wrapped_archive_config = KiaraArchiveConfig(
+                    archive_type=store_type, config=data
+                )
+                archive_configs.append(wrapped_archive_config)
                 archives.append(archive)
             else:
                 for st in store_type:
@@ -117,25 +121,33 @@ class KiaraArchiveReference(BaseModel):
                         allow_write_access=allow_write_access,
                         **kwargs,
                     )
+                    archive_config = archive_cls._config_cls(**data)
                     archive: KiaraArchive = archive_cls(
-                        archive_alias=archive_alias, archive_config=data
+                        archive_alias=archive_alias, archive_config=archive_config
                     )
-                    archive_configs.append(data)
+                    wrapped_archive_config = KiaraArchiveConfig(
+                        archive_type=st, config=data
+                    )
+                    archive_configs.append(wrapped_archive_config)
                     archives.append(archive)
         else:
             for archive_type, archive_cls in archive_types.items():
-
                 data = archive_cls.load_store_config(
                     store_uri=archive_uri,
                     allow_write_access=allow_write_access,
                     **kwargs,
                 )
+
                 if data is None:
                     continue
+                archive_config = archive_cls._config_cls(**data)
                 archive: KiaraArchive = archive_cls(
-                    archive_alias=archive_alias, archive_config=data
+                    archive_alias=archive_alias, archive_config=archive_config
                 )
-                archive_configs.append(data)
+                wrapped_archive_config = KiaraArchiveConfig(
+                    archive_type=archive_type, config=data
+                )
+                archive_configs.append(wrapped_archive_config)
                 archives.append(archive)
 
         if archives is None:
@@ -183,9 +195,13 @@ class KiaraArchiveReference(BaseModel):
                 )
 
             archive_cls = archive_types[config.archive_type]
-            archive = archive_cls.load_store_config(
+            archive_config_data = archive_cls.load_store_config(
                 archive_uri=self.archive_uri,
                 allow_write_access=self.allow_write_access,
+            )
+            archive_config = archive_cls._config_cls(**archive_config_data)
+            archive = archive_cls(
+                archive_alias=self.archive_alias, archive_config=archive_config
             )
             result.append(archive)
 
@@ -479,26 +495,61 @@ class KiaraConfig(BaseSettings):
         sqlite_base_path = os.path.join(self.stores_base_path, "sqlite_stores")
         filesystem_base_path = os.path.join(self.stores_base_path, "filesystem_stores")
 
-        if DEFAULT_DATA_STORE_MARKER not in context_config.archives.keys():
-            # data_store_type = "filesystem_data_store"
-            # TODO: change that back
-            data_store_type = "sqlite_data_store"
+        def create_default_sqlite_archive_config() -> Dict[str, Any]:
 
-            data_store = create_default_store_config(
-                store_type=data_store_type,
-                stores_base_path=sqlite_base_path,
+            store_id = str(uuid.uuid4())
+            file_name = f"{store_id}.sqlite"
+            archive_path = Path(
+                os.path.abspath(os.path.join(sqlite_base_path, file_name))
             )
+
+            if archive_path.exists():
+                raise Exception(
+                    f"Archive path '{archive_path.as_posix()}' already exists."
+                )
+
+            archive_path.parent.mkdir(exist_ok=True, parents=True)
+
+            # Connect to the SQLite database (or create it if it doesn't exist)
+            import sqlite3
+
+            conn = sqlite3.connect(archive_path)
+
+            # Create a cursor object
+            c = conn.cursor()
+            # Create table
+            c.execute(
+                """CREATE TABLE archive_metadata
+                         (key text PRIMARY KEY , value text NOT NULL)"""
+            )
+            c.execute(
+                f"INSERT INTO archive_metadata VALUES ('archive_id','{store_id}')"
+            )
+            conn.commit()
+            conn.close()
+
+            return {"sqlite_db_path": archive_path.as_posix()}
+
+        default_sqlite_config: Union[Dict[str, Any], None] = None
+
+        if DEFAULT_DATA_STORE_MARKER not in context_config.archives.keys():
+
+            default_sqlite_config = create_default_sqlite_archive_config()
+
+            data_store = KiaraArchiveConfig(
+                archive_type="sqlite_data_store", config=default_sqlite_config
+            )
+
             context_config.archives[DEFAULT_DATA_STORE_MARKER] = data_store
             changed = True
 
         if DEFAULT_JOB_STORE_MARKER not in context_config.archives.keys():
 
-            # job_store_type = "filesystem_job_store"
-            job_store_type = "sqlite_job_store"
+            if default_sqlite_config is None:
+                default_sqlite_config = create_default_sqlite_archive_config()
 
-            job_store = create_default_store_config(
-                store_type=job_store_type,
-                stores_base_path=sqlite_base_path,
+            job_store = KiaraArchiveConfig(
+                archive_type="sqlite_job_store", config=default_sqlite_config
             )
 
             context_config.archives[DEFAULT_JOB_STORE_MARKER] = job_store
@@ -506,19 +557,20 @@ class KiaraConfig(BaseSettings):
 
         if DEFAULT_ALIAS_STORE_MARKER not in context_config.archives.keys():
 
-            alias_store_type = "filesystem_alias_store"
-            alias_store_type = "sqlite_alias_store"
+            if default_sqlite_config is None:
+                default_sqlite_config = create_default_sqlite_archive_config()
 
-            alias_store = create_default_store_config(
-                store_type=alias_store_type,
-                stores_base_path=self.stores_base_path,
+            alias_store = KiaraArchiveConfig(
+                archive_type="sqlite_alias_store", config=default_sqlite_config
             )
+
             context_config.archives[DEFAULT_ALIAS_STORE_MARKER] = alias_store
             changed = True
 
         if DEFAULT_WORKFLOW_STORE_MARKER not in context_config.archives.keys():
 
             workflow_store_type = "filesystem_workflow_store"
+            # workflow_store_type = "sqlite_workflow_store"
 
             workflow_store = create_default_store_config(
                 store_type=workflow_store_type,
@@ -526,17 +578,6 @@ class KiaraConfig(BaseSettings):
             )
             context_config.archives[DEFAULT_WORKFLOW_STORE_MARKER] = workflow_store
             changed = True
-
-        # if METADATA_DESTINY_STORE_MARKER not in context_config.archives.keys():
-        #
-        #     destiny_store_type = "filesystem_destiny_store"
-        #
-        #     destiny_store = create_default_store_config(
-        #         store_type=destiny_store_type,
-        #         stores_base_path=os.path.join(filesystem_base_path, "destinies"),
-        #     )
-        #     context_config.archives[METADATA_DESTINY_STORE_MARKER] = destiny_store
-        #     changed = True
 
         return changed
 

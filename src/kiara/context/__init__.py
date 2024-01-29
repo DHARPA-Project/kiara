@@ -9,7 +9,7 @@ import structlog
 # from alembic import command  # type: ignore
 from pydantic import Field
 
-from kiara.context.config import KiaraArchiveReference, KiaraConfig, KiaraContextConfig
+from kiara.context.config import KiaraConfig, KiaraContextConfig
 from kiara.context.runtime_config import KiaraRuntimeConfig
 from kiara.data_types import DataType
 from kiara.exceptions import KiaraContextException
@@ -47,6 +47,7 @@ from kiara.registries.workflows import WorkflowRegistry
 from kiara.utils import log_exception, log_message
 from kiara.utils.class_loading import find_all_archive_types
 from kiara.utils.operations import filter_operations
+from kiara.utils.stores import check_external_archive
 
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #  Copyright (c) 2021, Markus Binsteiner
@@ -322,35 +323,35 @@ class Kiara(object):
         self,
         archive: Union[str, KiaraArchive, List[KiaraArchive], List[str]],
         allow_write_access: bool = False,
-    ):
+    ) -> Dict[str, str]:
+        """Register one or several external archives with the context.
 
-        if isinstance(archive, (KiaraArchive, str)):
-            _archives = [archive]
-        else:
-            _archives = archive
+        In case you provide KiaraArchive instances, they will be modified in case the provided 'allow_write_access' is different from the 'is_force_read_only' attribute of the archive.
+        """
 
-        archive_instances = set()
-        for _archive in _archives:
+        archive_instances = check_external_archive(
+            archive=archive, allow_write_access=allow_write_access
+        )
 
-            if isinstance(_archive, KiaraArchive):
-                archive_instances.add(_archive)
-                # TODO: handle write access
-                continue
-
-            loaded = KiaraArchiveReference.load_existing_archive(
-                archive_uri=_archive, allow_write_access=allow_write_access
-            )
-
-            archive_instances.update(loaded)
-
-        for _archve_inst in archive_instances:
+        result = {}
+        for _archive_inst in archive_instances:
             log_message(
                 "register.external.archive",
-                archive=_archve_inst.archive_alias,
+                archive=_archive_inst.archive_alias,
                 allow_write_access=allow_write_access,
             )
 
-        return list(archive_instances)
+            _archive_inst.set_force_read_only(not allow_write_access)
+
+            supported_item_types = _archive_inst.supported_item_types()
+            if "data" in supported_item_types:
+                result["data"] = self.data_registry.register_data_archive(_archive_inst)  # type: ignore
+            if "alias" in supported_item_types:
+                result["alias"] = self.alias_registry.register_archive(_archive_inst)  # type: ignore
+            if "job_record" in supported_item_types:
+                result["job_record"] = self.job_registry.register_job_archive(_archive_inst)  # type: ignore
+
+        return result
 
     def create_manifest(
         self, module_or_operation: str, config: Union[Mapping[str, Any], None] = None

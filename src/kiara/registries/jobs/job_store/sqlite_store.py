@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import uuid
 from pathlib import Path
-from typing import Iterable, Union
+from typing import Any, Iterable, Mapping, Union
 
 from orjson import orjson
 from sqlalchemy import Engine, create_engine, text
@@ -16,6 +16,36 @@ class SqliteJobArchive(JobArchive):
 
     _archive_type_name = "sqlite_job_archive"
     _config_cls = SqliteArchiveConfig
+
+    @classmethod
+    def _load_store_config(
+        cls, store_uri: str, allow_write_access: bool, **kwargs
+    ) -> Union[Mapping[str, Any], None]:
+
+        if allow_write_access:
+            return None
+
+        if not Path(store_uri).is_file():
+            return None
+
+        import sqlite3
+
+        con = sqlite3.connect(store_uri)
+
+        cursor = con.cursor()
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        tables = {x[0] for x in cursor.fetchall()}
+        con.close()
+
+        required_tables = {
+            "job_records",
+        }
+
+        if not required_tables.issubset(tables):
+            return None
+
+        # config = SqliteArchiveConfig(sqlite_db_path=store_uri)
+        return {"sqlite_db_path": store_uri}
 
     def __init__(self, archive_alias: str, archive_config: SqliteArchiveConfig):
 
@@ -134,6 +164,36 @@ CREATE TABLE IF NOT EXISTS job_records (
 class SqliteJobStore(SqliteJobArchive, JobStore):
 
     _archive_type_name = "sqlite_job_store"
+
+    @classmethod
+    def _load_store_config(
+        cls, store_uri: str, allow_write_access: bool, **kwargs
+    ) -> Union[Mapping[str, Any], None]:
+
+        if not allow_write_access:
+            return None
+
+        if not Path(store_uri).is_file():
+            return None
+
+        import sqlite3
+
+        con = sqlite3.connect(store_uri)
+
+        cursor = con.cursor()
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        tables = {x[0] for x in cursor.fetchall()}
+        con.close()
+
+        required_tables = {
+            "job_records",
+        }
+
+        if not required_tables.issubset(tables):
+            return None
+
+        # config = SqliteArchiveConfig(sqlite_db_path=store_uri)
+        return {"sqlite_db_path": store_uri}
 
     def store_job_record(self, job_record: JobRecord):
 

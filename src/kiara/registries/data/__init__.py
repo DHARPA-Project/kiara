@@ -72,6 +72,7 @@ from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import log_exception, log_message
 from kiara.utils.data import pretty_print_data
 from kiara.utils.hashing import NONE_CID
+from kiara.utils.stores import check_external_archive
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -136,13 +137,16 @@ class DefaultAliasResolver(AliasResolver):
                 if "#" in rest:
                     raise NotImplementedError()
 
-                archives = load_existing_archives(store=rest)
+                archives = check_external_archive(
+                    archive=rest, allow_write_access=False
+                )
                 if archives:
                     for archive in archives:
-                        archive_ref = self._kiara.data_registry.register_data_archive(
-                            archive
-                        )
-                        print(archive_ref)
+                        print(archive)
+                    #     archive_ref = self._kiara.data_registry.register_data_archive(
+                    #         archive
+                    #     )
+                    #     print(archive_ref)
 
                 raise NotImplementedError("x")
             else:

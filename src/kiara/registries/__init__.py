@@ -89,7 +89,7 @@ class KiaraArchive(abc.ABC, typing.Generic[ARCHIVE_CONFIG_CLS]):
     @classmethod
     def _load_store_config(
         cls, store_uri: str, allow_write_access: bool, **kwargs
-    ) -> Union[ARCHIVE_CONFIG_CLS, None]:
+    ) -> Union[typing.Dict[str, typing.Any], None]:
         """Tries to assemble an archive config from an uri (and optional paramters).
 
         If the archive type supports the archive at the uri, then a valid config will be returned,
@@ -101,7 +101,7 @@ class KiaraArchive(abc.ABC, typing.Generic[ARCHIVE_CONFIG_CLS]):
     @classmethod
     def load_store_config(
         cls, store_uri: str, allow_write_access: bool, **kwargs
-    ) -> Union[ARCHIVE_CONFIG_CLS, None]:
+    ) -> Union[typing.Dict[str, typing.Any], None]:
 
         log_message(
             "attempt_loading_existing_store",
@@ -159,6 +159,12 @@ class KiaraArchive(abc.ABC, typing.Generic[ARCHIVE_CONFIG_CLS]):
     @property
     def archive_alias(self) -> str:
         return self._archive_alias
+
+    def is_force_read_only(self) -> bool:
+        return self._force_read_only
+
+    def set_force_read_only(self, force_read_only: bool):
+        self._force_read_only = force_read_only
 
     def is_writeable(self) -> bool:
         if self._force_read_only:

@@ -5,7 +5,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import uuid
-from typing import Iterable, Literal
+from typing import Iterable, Literal, Union
 
 from pydantic import Field
 
@@ -26,6 +26,9 @@ class AliasArchiveAddedEvent(RegistryEvent):
     )
     is_default_store: bool = Field(
         description="Whether this store acts as default store."
+    )
+    mount_point: Union[str, None] = Field(
+        description="The mountpoint of this alias archive (if specified)."
     )
 
 

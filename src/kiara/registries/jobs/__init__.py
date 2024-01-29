@@ -242,7 +242,7 @@ class JobRegistry(object):
 
         return [JobArchiveAddedEvent, JobRecordPreStoreEvent, JobRecordStoredEvent]
 
-    def register_job_archive(self, archive: JobArchive):
+    def register_job_archive(self, archive: JobArchive) -> str:
 
         alias = archive.archive_alias
 
@@ -272,6 +272,8 @@ class JobRegistry(object):
             is_default_store=is_default_store,
         )
         self._event_callback(event)
+
+        return alias
 
     @property
     def default_job_store(self) -> str:

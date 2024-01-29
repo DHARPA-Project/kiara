@@ -85,6 +85,8 @@ class AliasRegistry(object):
 
         self._alias_archives: Dict[str, AliasArchive] = {}
         """All registered archives/stores."""
+        self._mountpoints: Dict[str, str] = {}
+        """All registered mountpoints (key: mountpoint, value: archive_alias)."""
 
         self._default_alias_store: Union[str, None] = None
         """The alias of the store where new aliases are stored by default."""
@@ -96,24 +98,34 @@ class AliasRegistry(object):
         self,
         archive: AliasArchive,
         set_as_default_store: Union[bool, None] = None,
-    ):
+        mount_point: Union[str, None] = None,
+    ) -> str:
 
         alias = archive.archive_alias
 
         if not alias:
             raise Exception("Invalid alias archive alias: can't be empty.")
 
-        if "." in alias:
+        if mount_point and "." in mount_point:
             raise Exception(
-                f"Can't register alias archive with as '{alias}': registered name is not allowed to contain a '.' character (yet)."
+                f"Can't register alias archive with mountpoint '{alias}': mountpoint is not allowed to contain a '.' character (yet, anyway)."
             )
 
         if alias in self._alias_archives.keys():
             raise Exception(f"Can't add store, alias '{alias}' already registered.")
 
-        archive.register_archive(kiara=self._kiara)
+        if mount_point:
+            if mount_point in self.aliases:
+                raise Exception(
+                    f"Can't mount alias archive: mountpoint '{mount_point}' already in use as alias."
+                )
+            if mount_point in self._mountpoints.keys():
+                raise Exception(f"Mountpoint '{mount_point}' already registered.")
+            self._mountpoints[mount_point] = alias
 
+        archive.register_archive(kiara=self._kiara)
         self._alias_archives[alias] = archive
+
         is_store = False
         is_default_store = False
         if isinstance(archive, AliasStore):
@@ -133,8 +145,11 @@ class AliasRegistry(object):
             alias_archive_alias=alias,
             is_store=is_store,
             is_default_store=is_default_store,
+            mount_point=mount_point,
         )
         self._event_callback(event)
+
+        return alias
 
     @property
     def default_alias_store(self) -> str:
@@ -216,7 +231,10 @@ class AliasRegistry(object):
         if "." not in alias:
             return None
 
-        archive_id, rest = alias.split(".", maxsplit=2)
+        mountpoint, rest = alias.split(".", maxsplit=2)
+        if mountpoint not in self._mountpoints.keys():
+            return None
+        archive_id = self._mountpoints[mountpoint]
         archive = self.get_archive(archive_id=archive_id)
 
         if archive is None:
@@ -281,6 +299,11 @@ class AliasRegistry(object):
                 raise KiaraException(
                     msg=f"Invalid alias name: {alias}.",
                     details=f"The following names can't be used as alias: {', '.join(INVALID_ALIAS_NAMES)}.",
+                )
+            if alias in self._mountpoints.keys():
+                raise KiaraException(
+                    msg=f"Invalid alias name: {alias}.",
+                    details="Alias is used as mountpoint in this context.",
                 )
 
         value_id = self._get_value_id(value_id=value_id)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import TYPE_CHECKING, Any, Type
+from typing import TYPE_CHECKING, Any, List, Type, Union
 
 if TYPE_CHECKING:
     from kiara.registries import KiaraArchive
@@ -31,3 +31,33 @@ def create_new_store(
 
     archive_instance = archive_cls(archive_alias=archive_alias, archive_config=config, force_read_only=force_read_only)  # type: ignore
     return archive_instance
+
+
+def check_external_archive(
+    archive: Union[str, "KiaraArchive"], allow_write_access: bool = False
+) -> List["KiaraArchive"]:
+
+    from kiara.context import KiaraArchiveReference
+    from kiara.registries import KiaraArchive
+
+    if isinstance(archive, (KiaraArchive, str)):
+        _archives = [archive]
+    else:
+        _archives = archive
+
+    archive_instances: List[KiaraArchive] = []
+    for _archive in _archives:
+
+        if isinstance(_archive, KiaraArchive):
+            archive_instances.append(_archive)
+            # TODO: handle write access
+            continue
+
+        loaded = KiaraArchiveReference.load_existing_archive(
+            archive_uri=_archive, allow_write_access=allow_write_access
+        )
+
+        for _archive_inst in loaded.archives:
+            archive_instances.append(_archive_inst)
+
+    return archive_instances

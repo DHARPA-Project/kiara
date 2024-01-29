@@ -26,7 +26,7 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig]):
     @classmethod
     def _load_store_config(
         cls, store_uri: str, allow_write_access: bool, **kwargs
-    ) -> Union[SqliteArchiveConfig, None]:
+    ) -> Union[Mapping[str, Any], None]:
 
         if allow_write_access:
             return None
@@ -43,7 +43,7 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig]):
         tables = {x[0] for x in cursor.fetchall()}
         con.close()
 
-        if tables != {
+        required_tables = {
             "values_pedigree",
             "values_destinies",
             "archive_metadata",
@@ -51,11 +51,13 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig]):
             "values_metadata",
             "values_data",
             "environments",
-        }:
+        }
+
+        if not required_tables.issubset(tables):
             return None
 
-        config = SqliteArchiveConfig(sqlite_db_path=store_uri)
-        return config
+        # config = SqliteArchiveConfig(sqlite_db_path=store_uri)
+        return {"sqlite_db_path": store_uri}
 
     def __init__(
         self,

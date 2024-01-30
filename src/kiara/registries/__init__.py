@@ -8,6 +8,7 @@
 import abc
 import os
 import uuid
+from enum import Enum
 from pathlib import Path
 from typing import (
     TYPE_CHECKING,
@@ -26,6 +27,10 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from kiara.utils import log_message
 
+try:
+    from typing import Literal  # type: ignore
+except ImportError:
+    from typing_extensions import Literal  # type: ignore
 try:
     from typing import Self  # type: ignore
 except ImportError:
@@ -371,4 +376,19 @@ class SqliteArchiveConfig(ArchiveConfig):
 
     sqlite_db_path: str = Field(
         description="The path where the data for this archive is stored."
+    )
+
+
+class CHUNK_COMPRESSION_TYPE(Enum):
+    NONE = 0
+    ZSTD = 1
+    LZMA = 2
+    LZ4 = 3
+
+
+class SqliteDataStoreConfig(SqliteArchiveConfig):
+
+    default_compression_type: Literal["none", "lz4", "zstd"] = Field(
+        description="The default compression type to use for data in this store.",
+        default="zstd",
     )

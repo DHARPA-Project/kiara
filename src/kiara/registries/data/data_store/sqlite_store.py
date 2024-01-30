@@ -3,14 +3,19 @@ import os
 import uuid
 from io import BytesIO
 from pathlib import Path
-from typing import Any, Iterable, Iterator, Mapping, Set, Tuple, Union
+from typing import Any, Generic, Iterable, Iterator, Mapping, Set, Tuple, Union
 
 from orjson import orjson
 from sqlalchemy import Engine, create_engine, text
 
 from kiara.defaults import kiara_app_dirs
 from kiara.models.values.value import PersistedData, Value
-from kiara.registries import SqliteArchiveConfig
+from kiara.registries import (
+    ARCHIVE_CONFIG_CLS,
+    CHUNK_COMPRESSION_TYPE,
+    SqliteArchiveConfig,
+    SqliteDataStoreConfig,
+)
 from kiara.registries.data import DataArchive
 from kiara.registries.data.data_store import BaseDataStore
 from kiara.utils.hashfs import shard
@@ -18,7 +23,7 @@ from kiara.utils.json import orjson_dumps
 from kiara.utils.windows import fix_windows_longpath
 
 
-class SqliteDataArchive(DataArchive[SqliteArchiveConfig]):
+class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG_CLS]):
 
     _archive_type_name = "sqlite_data_archive"
     _config_cls = SqliteArchiveConfig
@@ -62,7 +67,7 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig]):
     def __init__(
         self,
         archive_alias: str,
-        archive_config: SqliteArchiveConfig,
+        archive_config: ARCHIVE_CONFIG_CLS,
         force_read_only: bool = False,
     ):
 
@@ -159,7 +164,7 @@ CREATE TABLE IF NOT EXISTS persisted_values (
 CREATE TABLE IF NOT EXISTS values_data (
     chunk_id TEXT PRIMARY KEY,
     chunk_data BLOB NOT NULL,
-    compression_type TEXT NULL
+    compression_type INTEGER NULL
 );
 CREATE TABLE IF NOT EXISTS values_pedigree (
     value_id TEXT NOT NULL PRIMARY KEY,
@@ -279,24 +284,47 @@ CREATE TABLE IF NOT EXISTS environments (
         symlink_ok: bool = True,
     ) -> Union[bytes, str]:
 
+        import lzma
+
+        import lz4.frame
+        from zstandard import ZstdDecompressor
+
+        dctx = ZstdDecompressor()
+
         if as_file:
             chunk_path = self.get_chunk_path(chunk_id)
 
             if chunk_path.exists():
                 return chunk_path.as_posix()
 
-        sql = text("SELECT chunk_data FROM values_data WHERE chunk_id = :chunk_id")
+        sql = text(
+            "SELECT chunk_data, compression_type FROM values_data WHERE chunk_id = :chunk_id"
+        )
         params = {"chunk_id": chunk_id}
         with self.sqlite_engine.connect() as conn:
             cursor = conn.execute(sql, params)
             result_bytes = cursor.fetchone()
 
+        chunk_data = result_bytes[0]
+        compression_type = result_bytes[1]
+        if compression_type not in (None, 0):
+            if CHUNK_COMPRESSION_TYPE(compression_type) == CHUNK_COMPRESSION_TYPE.ZSTD:
+                chunk_data = dctx.decompress(chunk_data)
+            elif (
+                CHUNK_COMPRESSION_TYPE(compression_type) == CHUNK_COMPRESSION_TYPE.LZMA
+            ):
+                chunk_data = lzma.decompress(chunk_data)
+            elif CHUNK_COMPRESSION_TYPE(compression_type) == CHUNK_COMPRESSION_TYPE.LZ4:
+                chunk_data = lz4.frame.decompress(chunk_data)
+            else:
+                raise ValueError(f"Unsupported compression type: {compression_type}")
+
         if not as_file:
-            return result_bytes[0]
+            return chunk_data
 
         chunk_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
         with open(chunk_path, "wb") as file:
-            file.write(result_bytes[0])
+            file.write(chunk_data)
 
         return chunk_path.as_posix()
 
@@ -304,9 +332,10 @@ CREATE TABLE IF NOT EXISTS environments (
         os.unlink(self.sqlite_path)
 
 
-class SqliteDataStore(SqliteDataArchive, BaseDataStore):
+class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
 
     _archive_type_name = "sqlite_data_store"
+    _config_cls = SqliteDataStoreConfig
 
     @classmethod
     def _load_store_config(
@@ -378,7 +407,12 @@ class SqliteDataStore(SqliteDataArchive, BaseDataStore):
 
     def _persist_chunk(self, chunk_id: str, chunk: Union[str, BytesIO]):
 
-        # print(f"sqlite: persisting chunk {chunk_id}")
+        import lzma
+
+        import lz4.frame
+        from zstandard import ZstdCompressor
+
+        cctx = ZstdCompressor()
 
         sql = text(
             "SELECT EXISTS(SELECT 1 FROM values_data WHERE chunk_id = :chunk_id)"
@@ -395,11 +429,41 @@ class SqliteDataStore(SqliteDataArchive, BaseDataStore):
         else:
             bytes_io = chunk
 
+        compression_type = CHUNK_COMPRESSION_TYPE[
+            self.config.default_compression_type.upper()
+        ]
+
+        if compression_type == CHUNK_COMPRESSION_TYPE.NONE:
+            final_bytes = bytes_io.getvalue()
+        elif compression_type == CHUNK_COMPRESSION_TYPE.ZSTD:
+            bytes_io.seek(0)
+            data = bytes_io.read()
+            final_bytes = cctx.compress(data)
+        elif compression_type == CHUNK_COMPRESSION_TYPE.LZMA:
+            final_bytes = lzma.compress(bytes_io.getvalue())
+        elif compression_type == CHUNK_COMPRESSION_TYPE.LZ4:
+            bytes_io.seek(0)
+            data = bytes_io.read()
+            final_bytes = lz4.frame.compress(data)
+        else:
+            raise ValueError(
+                f"Unsupported compression type: {self.config.default_compression_type}"
+            )
+
+        compression_type_value = (
+            compression_type.value
+            if compression_type is not CHUNK_COMPRESSION_TYPE.NONE
+            else None
+        )
         sql = text(
-            "INSERT INTO values_data (chunk_id, chunk_data) VALUES (:chunk_id, :chunk_data)"
+            "INSERT INTO values_data (chunk_id, chunk_data, compression_type) VALUES (:chunk_id, :chunk_data, :compression_type)"
         )
         with self.sqlite_engine.connect() as conn:
-            params = {"chunk_id": chunk_id, "chunk_data": bytes_io.getvalue()}
+            params = {
+                "chunk_id": chunk_id,
+                "chunk_data": final_bytes,
+                "compression_type": compression_type_value,
+            }
 
             conn.execute(sql, params)
             conn.commit()

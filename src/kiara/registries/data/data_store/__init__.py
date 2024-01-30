@@ -453,7 +453,7 @@ class BaseDataStore(DataStore):
             scids._data_registry = self.kiara_context.data_registry
             chunk_id_map[key] = scids
 
-        print("chunks_to_persist")
+        # print("chunks_to_persist")
         # print(chunks_to_persist)
 
         pers_value = PersistedData(

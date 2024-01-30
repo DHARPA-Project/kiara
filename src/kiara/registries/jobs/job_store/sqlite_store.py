@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import uuid
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Union
 
@@ -56,15 +55,23 @@ class SqliteJobArchive(JobArchive):
         self._cached_engine: Union[Engine, None] = None
         # self._lock: bool = True
 
-    def _retrieve_archive_id(self) -> uuid.UUID:
-        sql = text("SELECT value FROM archive_metadata WHERE key='archive_id'")
+    # def _retrieve_archive_id(self) -> uuid.UUID:
+    #     sql = text("SELECT value FROM archive_metadata WHERE key='archive_id'")
+    #
+    #     with self.sqlite_engine.connect() as connection:
+    #         result = connection.execute(sql)
+    #         row = result.fetchone()
+    #         if row is None:
+    #             raise Exception("No archive ID found in metadata")
+    #         return uuid.UUID(row[0])
+
+    def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
+
+        sql = text("SELECT key, value FROM archive_metadata")
 
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(sql)
-            row = result.fetchone()
-            if row is None:
-                raise Exception("No archive ID found in metadata")
-            return uuid.UUID(row[0])
+            return {row[0]: row[1] for row in result}
 
     @property
     def sqlite_path(self):

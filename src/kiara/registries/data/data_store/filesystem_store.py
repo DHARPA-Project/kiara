@@ -9,7 +9,7 @@ import uuid
 from enum import Enum
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Set, Union
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Set, Tuple, Union
 
 import orjson
 import structlog
@@ -58,20 +58,47 @@ class FileSystemDataArchive(DataArchive):
 
     def __init__(
         self,
-        archive_id: uuid.UUID,
-        config: FileSystemArchiveConfig,
+        archive_alias: str,
+        archive_config: FileSystemArchiveConfig,
         force_read_only: bool = False,
     ):
 
-        DataArchive.__init__(
-            self, archive_id=archive_id, config=config, force_read_only=force_read_only
+        super().__init__(
+            archive_alias=archive_alias,
+            archive_config=archive_config,
+            force_read_only=force_read_only,
         )
         self._base_path: Union[Path, None] = None
         self._hashfs_path: Union[Path, None] = None
         self._hashfs: Union[HashFS, None] = None
+        self._archive_metadata: Union[Mapping[str, Any], None] = None
 
-    # def get_job_archive_id(self) -> uuid.UUID:
-    #     return self._kiara.id
+    def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
+
+        if self._archive_metadata is not None:
+            return self._archive_metadata
+
+        if not self.archive_metadata_path.is_file():
+            _archive_metadata = {}
+        else:
+            _archive_metadata = orjson.loads(self.archive_metadata_path.read_bytes())
+
+        archive_id = _archive_metadata.get("archive_id", None)
+        if not archive_id:
+            try:
+                _archive_id = uuid.UUID(self.data_store_path.name)
+                _archive_metadata["archive_id"] = _archive_id
+            except Exception:
+                raise Exception(
+                    f"Could not retrieve archive id for alias archive '{self.archive_alias}'."
+                )
+
+        self._archive_metadata = _archive_metadata
+        return self._archive_metadata
+
+    @property
+    def archive_metadata_path(self) -> Path:
+        return self.data_store_path / "store_metadata.json"
 
     def get_archive_details(self) -> ArchiveDetails:
 
@@ -401,6 +428,10 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
             assert value_file.exists()
 
             fix_windows_symlink(value_file, destiny_file)
+
+    def _persist_chunks(self, *chunks: Tuple[str, Union[str, BytesIO]]):
+
+        raise NotImplementedError()
 
     def _persist_chunk(self, chunk_id: str, chunk: Union[str, BytesIO]):
 

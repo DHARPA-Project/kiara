@@ -9,7 +9,7 @@ import abc
 import typing
 import uuid
 from io import BytesIO
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Set, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Set, Tuple, Union
 
 import structlog
 from rich.console import RenderableType
@@ -390,7 +390,7 @@ class BaseDataStore(DataStore):
         return persisted_value
 
     @abc.abstractmethod
-    def _persist_chunk(self, chunk_id: str, chunk: Union[str, BytesIO]):
+    def _persist_chunks(self, chunks: typing.Iterator[Tuple[str, BytesIO]]):
         """Persist the specified chunk, and return the chunk id.
 
         If the chunk is a string, it represents a local file path, otherwise it is a BytesIO instance representing the actual data of the chunk.
@@ -400,6 +400,8 @@ class BaseDataStore(DataStore):
     def _persist_value_data(self, value: Value) -> PersistedData:
 
         serialized_value: SerializedData = value.serialized_data
+
+        # dbg(serialized_value.model_dump())
 
         chunk_id_map = {}
         for key in serialized_value.get_keys():
@@ -428,13 +430,21 @@ class BaseDataStore(DataStore):
                     f"Invalid serialized data type: {type(data_model)}. Available types: {', '.join(SERIALIZE_TYPES)}"
                 )
 
+            cids = serialized_value.get_cids_for_key(key)
+            chunk_iterable = zip(cids, chunks)
+            # chunks_to_persist.update(chunk_iterable)
+            # print(key)
+            # print(type(chunks))
+            # self._persist_chunks(chunk_iterable)
+
             chunk_ids = []
-            for item in zip(serialized_value.get_cids_for_key(key), chunks):
+            for item in chunk_iterable:
                 cid = item[0]
                 _chunk = item[1]
                 self._persist_chunk(str(cid), _chunk)
                 chunk_ids.append(str(cid))
 
+            chunk_ids = [str(cid) for cid in cids]
             scids = SerializedChunkIDs(
                 chunk_id_list=chunk_ids,
                 archive_id=self.archive_id,
@@ -442,6 +452,9 @@ class BaseDataStore(DataStore):
             )
             scids._data_registry = self.kiara_context.data_registry
             chunk_id_map[key] = scids
+
+        print("chunks_to_persist")
+        # print(chunks_to_persist)
 
         pers_value = PersistedData(
             archive_id=self.archive_id,

@@ -7,10 +7,19 @@
 
 import abc
 import os
-import typing
 import uuid
 from pathlib import Path
-from typing import TYPE_CHECKING, Generic, Iterable, Type, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Generic,
+    Iterable,
+    Mapping,
+    Type,
+    TypeVar,
+    Union,
+)
 
 import structlog
 from pydantic import BaseModel, ConfigDict, Field
@@ -56,10 +65,17 @@ class ArchiveDetails(BaseModel):
     )
 
 
+class ArchiveMetadta(BaseModel):
+
+    archive_id: Union[uuid.UUID, None] = Field(
+        description="The id of the stored archive.", default=None
+    )
+
+
 NON_ARCHIVE_DETAILS = ArchiveDetails()
 
 
-class KiaraArchive(abc.ABC, typing.Generic[ARCHIVE_CONFIG_CLS]):
+class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
 
     _config_cls: Type[ARCHIVE_CONFIG_CLS] = None  # type: ignore
 
@@ -89,7 +105,7 @@ class KiaraArchive(abc.ABC, typing.Generic[ARCHIVE_CONFIG_CLS]):
     @classmethod
     def _load_store_config(
         cls, store_uri: str, allow_write_access: bool, **kwargs
-    ) -> Union[typing.Dict[str, typing.Any], None]:
+    ) -> Union[Dict[str, Any], None]:
         """Tries to assemble an archive config from an uri (and optional paramters).
 
         If the archive type supports the archive at the uri, then a valid config will be returned,
@@ -101,7 +117,7 @@ class KiaraArchive(abc.ABC, typing.Generic[ARCHIVE_CONFIG_CLS]):
     @classmethod
     def load_store_config(
         cls, store_uri: str, allow_write_access: bool, **kwargs
-    ) -> Union[typing.Dict[str, typing.Any], None]:
+    ) -> Union[Dict[str, Any], None]:
 
         log_message(
             "attempt_loading_existing_store",
@@ -140,7 +156,17 @@ class KiaraArchive(abc.ABC, typing.Generic[ARCHIVE_CONFIG_CLS]):
         self._archive_alias: str = archive_alias
         self._config: ARCHIVE_CONFIG_CLS = archive_config
         self._force_read_only: bool = force_read_only
-        self._archive_id: Union[uuid.UUID, None] = None
+
+        self._archive_metadata: Union[Mapping[str, Any], None] = None
+
+    @property
+    def archive_metadata(self) -> ArchiveMetadta:
+
+        if self._archive_metadata is None:
+            archive_metadata = self._retrieve_archive_metadata()
+            self._archive_metadata = ArchiveMetadta(**archive_metadata)
+
+        return self._archive_metadata
 
     @classmethod
     @abc.abstractmethod
@@ -155,6 +181,16 @@ class KiaraArchive(abc.ABC, typing.Generic[ARCHIVE_CONFIG_CLS]):
     @abc.abstractmethod
     def register_archive(self, kiara: "Kiara"):
         pass
+
+    @abc.abstractmethod
+    def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
+        """Retrieve metadata for the archive.
+
+        Must contain at least one key 'archive_id', with a uuid-able value that
+        uniquely identifies the archive.
+        """
+
+        raise NotImplementedError()
 
     @property
     def archive_alias(self) -> str:
@@ -175,15 +211,10 @@ class KiaraArchive(abc.ABC, typing.Generic[ARCHIVE_CONFIG_CLS]):
     # def register_archive(self, kiara: "Kiara"):
     #     pass
 
-    @abc.abstractmethod
-    def _retrieve_archive_id(self) -> uuid.UUID:
-        raise NotImplementedError()
-
     @property
     def archive_id(self) -> uuid.UUID:
-        if self._archive_id is None:
-            self._archive_id = self._retrieve_archive_id()
-        return self._archive_id
+
+        return self.archive_metadata.archive_id
 
     @property
     def config(self) -> ARCHIVE_CONFIG_CLS:

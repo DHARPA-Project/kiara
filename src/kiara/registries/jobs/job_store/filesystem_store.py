@@ -8,7 +8,7 @@ import datetime
 import shutil
 import uuid
 from pathlib import Path
-from typing import Any, Dict, Iterable, Union
+from typing import Any, Dict, Iterable, Mapping, Union
 
 import orjson
 import structlog
@@ -30,9 +30,18 @@ class FileSystemJobArchive(JobArchive):
     def supported_item_types(cls) -> Iterable[str]:
         return ["job_record"]
 
-    def __init__(self, archive_id: uuid.UUID, config: FileSystemArchiveConfig):
+    def __init__(
+        self,
+        archive_alias: str,
+        archive_config: FileSystemArchiveConfig,
+        force_read_only: bool = False,
+    ):
 
-        super().__init__(archive_id=archive_id, config=config)
+        super().__init__(
+            archive_alias=archive_alias,
+            archive_config=archive_config,
+            force_read_only=force_read_only,
+        )
         self._base_path: Union[Path, None] = None
 
     def get_archive_details(self) -> ArchiveDetails:
@@ -41,6 +50,33 @@ class FileSystemJobArchive(JobArchive):
             f.stat().st_size for f in self.job_store_path.glob("**/*") if f.is_file()
         )
         return ArchiveDetails(size=size)
+
+    def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
+
+        if self._archive_metadata is not None:
+            return self._archive_metadata
+
+        if not self.archive_metadata_path.is_file():
+            _archive_metadata = {}
+        else:
+            _archive_metadata = orjson.loads(self.archive_metadata_path.read_bytes())
+
+        archive_id = _archive_metadata.get("archive_id", None)
+        if not archive_id:
+            try:
+                _archive_id = uuid.UUID(self.job_store_path.name)
+                _archive_metadata["archive_id"] = _archive_id
+            except Exception:
+                raise Exception(
+                    f"Could not retrieve archive id for alias archive '{self.archive_alias}'."
+                )
+
+        self._archive_metadata = _archive_metadata
+        return self._archive_metadata
+
+    @property
+    def archive_metadata_path(self) -> Path:
+        return self.job_store_path / "store_metadata.json"
 
     @property
     def job_store_path(self) -> Path:

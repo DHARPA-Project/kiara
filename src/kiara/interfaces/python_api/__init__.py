@@ -691,7 +691,9 @@ class KiaraAPI(object):
             if not module_config:
                 raise Exception("Pipeline configuration can't be empty.")
             assert module_config is None or isinstance(module_config, Mapping)
-            operation = create_operation("pipeline", operation_config=module_config)
+            operation = create_operation(
+                "pipeline", operation_config=module_config, kiara=self.context
+            )
             return operation
         else:
             mc = Manifest(module_type=module_type, module_config=module_config)
@@ -1680,7 +1682,7 @@ class KiaraAPI(object):
     def store_values(
         self,
         values: Mapping[str, Union[str, uuid.UUID, Value]],
-        alias_map: Mapping[str, Iterable[str]],
+        alias_map: Union[Mapping[str, Iterable[str]], None] = None,
     ) -> StoreValuesResult:
         """
         Store multiple values into the (default) kiara value store.
@@ -1697,7 +1699,10 @@ class KiaraAPI(object):
         """
         result = {}
         for field_name, value in values.items():
-            aliases = alias_map.get(field_name)
+            if alias_map:
+                aliases = alias_map.get(field_name)
+            else:
+                aliases = None
             value_obj = self.get_value(value)
             store_result = self.store_value(value=value_obj, alias=aliases)
             result[field_name] = store_result

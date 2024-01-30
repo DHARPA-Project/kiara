@@ -3,7 +3,7 @@ import os
 import uuid
 from io import BytesIO
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Set, Union
+from typing import Any, Iterable, Iterator, Mapping, Set, Tuple, Union
 
 from orjson import orjson
 from sqlalchemy import Engine, create_engine, text
@@ -81,15 +81,23 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig]):
         self._value_id_cache: Union[Iterable[uuid.UUID], None] = None
         # self._lock: bool = True
 
-    def _retrieve_archive_id(self) -> uuid.UUID:
-        sql = text("SELECT value FROM archive_metadata WHERE key='archive_id'")
+    def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
+
+        sql = text("SELECT key, value FROM archive_metadata")
 
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(sql)
-            row = result.fetchone()
-            if row is None:
-                raise Exception("No archive ID found in metadata")
-            return uuid.UUID(row[0])
+            return {row[0]: row[1] for row in result}
+
+    # def _retrieve_archive_id(self) -> uuid.UUID:
+    #     sql = text("SELECT value FROM archive_metadata WHERE key='archive_id'")
+    #
+    #     with self.sqlite_engine.connect() as connection:
+    #         result = connection.execute(sql)
+    #         row = result.fetchone()
+    #         if row is None:
+    #             raise Exception("No archive ID found in metadata")
+    #         return uuid.UUID(row[0])
 
     @property
     def sqlite_path(self):
@@ -363,7 +371,14 @@ class SqliteDataStore(SqliteDataArchive, BaseDataStore):
     #
     #     raise NotImplementedError()
 
+    def _persist_chunks(self, chunks: Iterator[Tuple[str, Union[str, BytesIO]]]):
+
+        for chunk_id, chunk in chunks:
+            self._persist_chunk(str(chunk_id), chunk)
+
     def _persist_chunk(self, chunk_id: str, chunk: Union[str, BytesIO]):
+
+        # print(f"sqlite: persisting chunk {chunk_id}")
 
         sql = text(
             "SELECT EXISTS(SELECT 1 FROM values_data WHERE chunk_id = :chunk_id)"

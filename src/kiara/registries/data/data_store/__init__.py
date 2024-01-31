@@ -9,7 +9,7 @@ import abc
 import typing
 import uuid
 from io import BytesIO
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Set, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Set, Union
 
 import structlog
 from rich.console import RenderableType
@@ -28,7 +28,7 @@ from kiara.models.values.value_schema import ValueSchema
 from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
 
 if TYPE_CHECKING:
-    pass
+    from multiformats import CID
 
 logger = structlog.getLogger()
 
@@ -390,7 +390,7 @@ class BaseDataStore(DataStore):
         return persisted_value
 
     @abc.abstractmethod
-    def _persist_chunks(self, chunks: typing.Iterator[Tuple[str, BytesIO]]):
+    def _persist_chunks(self, chunks: Mapping["CID", BytesIO]):
         """Persist the specified chunk, and return the chunk id.
 
         If the chunk is a string, it represents a local file path, otherwise it is a BytesIO instance representing the actual data of the chunk.
@@ -403,13 +403,18 @@ class BaseDataStore(DataStore):
 
         # dbg(serialized_value.model_dump())
 
+        SIZE_LIMIT = 100000000
+
         chunk_id_map = {}
+        chunks_to_persist = {}
+        chunks_persisted = set()
+        current_size = 0
         for key in serialized_value.get_keys():
 
             data_model = serialized_value.get_serialized_data(key)
 
             if data_model.type == "chunk":  # type: ignore
-                chunks: Iterable[Union[str, BytesIO]] = [BytesIO(data_model.chunk)]  # type: ignore
+                chunks: Iterable[BytesIO] = [BytesIO(data_model.chunk)]  # type: ignore
             elif data_model.type == "chunks":  # type: ignore
                 chunks = (BytesIO(c) for c in data_model.chunks)  # type: ignore
             elif data_model.type == "file":  # type: ignore
@@ -432,17 +437,7 @@ class BaseDataStore(DataStore):
 
             cids = serialized_value.get_cids_for_key(key)
             chunk_iterable = zip(cids, chunks)
-            # chunks_to_persist.update(chunk_iterable)
-            # print(key)
-            # print(type(chunks))
-            # self._persist_chunks(chunk_iterable)
-
-            chunk_ids = []
-            for item in chunk_iterable:
-                cid = item[0]
-                _chunk = item[1]
-                self._persist_chunk(str(cid), _chunk)
-                chunk_ids.append(str(cid))
+            chunks_to_persist.update(chunk_iterable)
 
             chunk_ids = [str(cid) for cid in cids]
             scids = SerializedChunkIDs(
@@ -453,8 +448,30 @@ class BaseDataStore(DataStore):
             scids._data_registry = self.kiara_context.data_registry
             chunk_id_map[key] = scids
 
-        # print("chunks_to_persist")
-        # print(chunks_to_persist)
+            key_size = data_model.get_size()
+            current_size += key_size
+            # this is not super-exact, because the actual size of all chunks to be persisted is not known
+            # since some of them might be filtered out, should be good enough to not let the memory blow up too much
+            if current_size > SIZE_LIMIT:
+                self._persist_chunks(
+                    chunks={
+                        k: v
+                        for k, v in chunks_to_persist.items()
+                        if k not in chunks_persisted
+                    }
+                )
+                chunks_persisted.update(chunks_to_persist.keys())
+                chunks_to_persist = {}
+                current_size = 0
+
+        if chunks_to_persist:
+            self._persist_chunks(
+                chunks={
+                    k: v
+                    for k, v in chunks_to_persist.items()
+                    if k not in chunks_persisted
+                }
+            )
 
         pers_value = PersistedData(
             archive_id=self.archive_id,

@@ -3,16 +3,25 @@ import os
 import uuid
 from io import BytesIO
 from pathlib import Path
-from typing import Any, Generic, Iterable, Iterator, Mapping, Set, Tuple, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Generic,
+    Iterable,
+    Mapping,
+    Set,
+    Union,
+)
 
 from orjson import orjson
-from sqlalchemy import Engine, create_engine, text
+from sqlalchemy import Connection, Engine, create_engine, text
 
 from kiara.defaults import kiara_app_dirs
 from kiara.models.values.value import PersistedData, Value
 from kiara.registries import (
     ARCHIVE_CONFIG_CLS,
     CHUNK_COMPRESSION_TYPE,
+    ArchiveDetails,
     SqliteArchiveConfig,
     SqliteDataStoreConfig,
 )
@@ -21,6 +30,9 @@ from kiara.registries.data.data_store import BaseDataStore
 from kiara.utils.hashfs import shard
 from kiara.utils.json import orjson_dumps
 from kiara.utils.windows import fix_windows_longpath
+
+if TYPE_CHECKING:
+    from multiformats import CID
 
 
 class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG_CLS]):
@@ -245,6 +257,14 @@ CREATE TABLE IF NOT EXISTS environments (
             self._value_id_cache = result_set
             return result_set
 
+    def retrieve_all_chunk_ids(self) -> Iterable[str]:
+
+        sql = text("SELECT chunk_id FROM values_data")
+        with self.sqlite_engine.connect() as conn:
+            cursor = conn.execute(sql)
+            result = cursor.fetchall()
+            return {x[0] for x in result}
+
     def _find_values_with_hash(
         self,
         value_hash: str,
@@ -331,6 +351,11 @@ CREATE TABLE IF NOT EXISTS environments (
     def _delete_archive(self):
         os.unlink(self.sqlite_path)
 
+    def get_archive_details(self) -> ArchiveDetails:
+
+        size = self._db_path.stat().st_size
+        return ArchiveDetails(size=size)
+
 
 class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
 
@@ -400,12 +425,23 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
     #
     #     raise NotImplementedError()
 
-    def _persist_chunks(self, chunks: Iterator[Tuple[str, Union[str, BytesIO]]]):
+    def _persist_chunks(self, chunks: Mapping["CID", Union[str, BytesIO]]):
 
-        for chunk_id, chunk in chunks:
-            self._persist_chunk(str(chunk_id), chunk)
+        all_chunk_ids = self.retrieve_all_chunk_ids()
 
-    def _persist_chunk(self, chunk_id: str, chunk: Union[str, BytesIO]):
+        with self.sqlite_engine.connect() as conn:
+
+            for chunk_id, chunk in chunks.items():
+                cid_str = str(chunk_id)
+                if cid_str in all_chunk_ids:
+                    continue
+                self._persist_chunk(conn, cid_str, chunk)
+
+            conn.commit()
+
+    def _persist_chunk(
+        self, conn: Connection, chunk_id: str, chunk: Union[str, BytesIO]
+    ):
 
         import lzma
 
@@ -414,13 +450,13 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
 
         cctx = ZstdCompressor()
 
-        sql = text(
-            "SELECT EXISTS(SELECT 1 FROM values_data WHERE chunk_id = :chunk_id)"
-        )
-        with self.sqlite_engine.connect() as conn:
-            result = conn.execute(sql, {"chunk_id": chunk_id}).scalar()
-            if result:
-                return
+        # sql = text(
+        #     "SELECT EXISTS(SELECT 1 FROM values_data WHERE chunk_id = :chunk_id)"
+        # )
+        # with self.sqlite_engine.connect() as conn:
+        #     result = conn.execute(sql, {"chunk_id": chunk_id}).scalar()
+        #     if result:
+        #         return
 
         if isinstance(chunk, str):
             with open(chunk, "rb") as file:
@@ -430,7 +466,7 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
             bytes_io = chunk
 
         compression_type = CHUNK_COMPRESSION_TYPE[
-            self.config.default_compression_type.upper()
+            self.config.default_chunk_compression.upper()
         ]
 
         if compression_type == CHUNK_COMPRESSION_TYPE.NONE:
@@ -447,7 +483,7 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
             final_bytes = lz4.frame.compress(data)
         else:
             raise ValueError(
-                f"Unsupported compression type: {self.config.default_compression_type}"
+                f"Unsupported compression type: {self.config.default_chunk_compression}"
             )
 
         compression_type_value = (
@@ -458,15 +494,14 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
         sql = text(
             "INSERT INTO values_data (chunk_id, chunk_data, compression_type) VALUES (:chunk_id, :chunk_data, :compression_type)"
         )
-        with self.sqlite_engine.connect() as conn:
-            params = {
-                "chunk_id": chunk_id,
-                "chunk_data": final_bytes,
-                "compression_type": compression_type_value,
-            }
+        params = {
+            "chunk_id": chunk_id,
+            "chunk_data": final_bytes,
+            "compression_type": compression_type_value,
+        }
 
-            conn.execute(sql, params)
-            conn.commit()
+        conn.execute(sql, params)
+        # conn.commit()
 
     def _persist_stored_value_info(self, value: Value, persisted_value: PersistedData):
 

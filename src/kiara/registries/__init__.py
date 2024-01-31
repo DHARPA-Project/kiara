@@ -70,7 +70,7 @@ class ArchiveDetails(BaseModel):
     )
 
 
-class ArchiveMetadta(BaseModel):
+class ArchiveMetadata(BaseModel):
 
     archive_id: Union[uuid.UUID, None] = Field(
         description="The id of the stored archive.", default=None
@@ -165,11 +165,11 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
         self._archive_metadata: Union[Mapping[str, Any], None] = None
 
     @property
-    def archive_metadata(self) -> ArchiveMetadta:
+    def archive_metadata(self) -> ArchiveMetadata:
 
         if self._archive_metadata is None:
             archive_metadata = self._retrieve_archive_metadata()
-            self._archive_metadata = ArchiveMetadta(**archive_metadata)
+            self._archive_metadata = ArchiveMetadata(**archive_metadata)
 
         return self._archive_metadata
 
@@ -388,7 +388,7 @@ class CHUNK_COMPRESSION_TYPE(Enum):
 
 class SqliteDataStoreConfig(SqliteArchiveConfig):
 
-    default_compression_type: Literal["none", "lz4", "zstd"] = Field(
+    default_chunk_compression: Literal["none", "lz4", "zstd"] = Field(
         description="The default compression type to use for data in this store.",
         default="zstd",
     )

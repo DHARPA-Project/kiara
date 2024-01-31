@@ -206,7 +206,11 @@ class ArchiveGroupInfo(InfoItemGroup):
     def combined_size(self) -> int:
 
         combined = 0
+        archive_ids = set()
         for archive_info in self.item_infos.values():
+            if archive_info.archive_id in archive_ids:
+                continue
+            archive_ids.add(archive_info.archive_id)
             size = archive_info.details.size
             if size and size > 0:
                 combined = combined + size

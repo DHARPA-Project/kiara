@@ -374,7 +374,7 @@ class KiaraConfig(BaseSettings):
     )
     default_store_type: Literal["sqlite", "filesystem"] = Field(
         description="The default store type to ues if not specified.",
-        default="filesystem",
+        default="sqlite",
     )
     auto_generate_contexts: bool = Field(
         description="Whether to auto-generate requested contexts if they don't exist yet.",

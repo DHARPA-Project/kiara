@@ -1644,6 +1644,9 @@ class KiaraAPI(object):
         """
         Store the specified value in the (default) value store.
 
+        This method does not raise an error if the storing of the value fails, so you have to investigate the
+        'StoreValueResult' instance that is returned to see if the storing was successful.
+
         Arguments:
             value: the value (or a reference to it)
             alias: (Optional) aliases for the value
@@ -1682,13 +1685,18 @@ class KiaraAPI(object):
     def store_values(
         self,
         values: Mapping[str, Union[str, uuid.UUID, Value]],
-        alias_map: Union[Mapping[str, Iterable[str]], None] = None,
+        alias_map: Union[Mapping[str, Iterable[str]], bool] = False,
+        allow_overwrite: bool = True,
     ) -> StoreValuesResult:
         """
         Store multiple values into the (default) kiara value store.
 
-        Values are identified by unique keys in both input arguments, the alias map references the key that is used in
-        the 'values' argument.
+        If alias_map is 'False', no aliases will be registered. If 'True', the key in the 'values' argument will be used.
+        Alternatively, if a map is provided, the key in the 'values' argument will be used to look up the alias(es) in the
+        'alias_map' argument.
+
+        This method does not raise an error if the storing of the value fails, so you have to investigate the
+        'StoreValuesResult' instance that is returned to see if the storing was successful.
 
         Arguments:
             values: a map of value keys/values
@@ -1699,12 +1707,17 @@ class KiaraAPI(object):
         """
         result = {}
         for field_name, value in values.items():
-            if alias_map:
-                aliases = alias_map.get(field_name)
-            else:
+            if alias_map is False:
                 aliases = None
+            elif alias_map is True:
+                aliases = [field_name]
+            else:
+                aliases = alias_map.get(field_name)
+
             value_obj = self.get_value(value)
-            store_result = self.store_value(value=value_obj, alias=aliases)
+            store_result = self.store_value(
+                value=value_obj, alias=aliases, allow_overwrite=allow_overwrite
+            )
             result[field_name] = store_result
 
         return StoreValuesResult(root=result)

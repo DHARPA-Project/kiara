@@ -149,6 +149,10 @@ class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG
     def _retrieve_all_value_ids(
         self, data_type_name: Union[str, None] = None
     ) -> Union[None, Iterable[uuid.UUID]]:
+        """Retrieve all value ids from the store.
+
+        In the case that _retrieve_all_value_ids returns 'None', the store does not support statically determined value ids and the 'find_values' method(s) needs to be used to retrieve values. Also, 'has_value' can be used to test whether a specific value_id is stored in the archive.
+        """
         pass
 
     def has_value(self, value_id: uuid.UUID) -> bool:

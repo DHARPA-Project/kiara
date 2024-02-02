@@ -149,9 +149,7 @@ class DefaultAliasResolver(AliasResolver):
                         print("---")
                         print(data_archive)
                         dbg(data_archive.archive_metadata.model_dump())
-                        self._kiara.data_registry.register_data_archive(
-                            data_archive
-                        )
+                        self._kiara.data_registry.register_data_archive(data_archive)
                         default_value = data_archive.get_archive_metadata(
                             "default_value"
                         )

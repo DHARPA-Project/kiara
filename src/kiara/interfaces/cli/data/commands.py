@@ -633,7 +633,7 @@ def export_data_store(
         persisted_data = kiara_api.store_values(
             values=values_to_store,
             alias_map=alias_map,
-            data_store_id=store_alias,
+            data_store=store_alias,
             alias_store_id=alias_store_alias,
         )
 

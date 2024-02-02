@@ -14,7 +14,7 @@ from typing import (
     Mapping,
     NamedTuple,
     Set,
-    Union,
+    Union, List,
 )
 
 import structlog
@@ -77,6 +77,18 @@ class AliasItem(NamedTuple):
 
 
 class AliasRegistry(object):
+    """The registry that handles all alias-related operations.
+
+    This registry is responsible for managing all alias archives and stores, and for providing a unified view of all
+    of them.
+
+    Aliase archives/stores can be 'mounted' at specific mountpoints, and aliases refering to them use the format
+
+    <mountpoint>#<actual_alias>
+
+    There is also a 'default' alias store, which is used when the alias provided does not contain a '#' indicating a
+     mountpoint.
+    """
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
@@ -90,6 +102,8 @@ class AliasRegistry(object):
 
         self._default_alias_store: Union[str, None] = None
         """The alias of the store where new aliases are stored by default."""
+
+        self._dynamic_stores: Union[List[str], None] = None
 
         self._cached_aliases: Union[Dict[str, AliasItem], None] = None
         self._cached_aliases_by_id: Union[Dict[uuid.UUID, Set[AliasItem]], None] = None
@@ -106,19 +120,27 @@ class AliasRegistry(object):
         if not alias:
             raise Exception("Invalid alias archive alias: can't be empty.")
 
-        if mount_point and "." in mount_point:
+        if not mount_point:
+            mount_point = archive.archive_alias
+
+        if "#" in mount_point:
             raise Exception(
-                f"Can't register alias archive with mountpoint '{alias}': mountpoint is not allowed to contain a '.' character (yet, anyway)."
+                f"Can't register alias archive with mountpoint '{alias}': mountpoint is not allowed to contain a '#' character."
+            )
+
+        if ":" in mount_point:
+            raise Exception(
+                f"Can't register alias archive with mountpoint '{alias}': mountpoint is not allowed to contain a ':' character."
             )
 
         if alias in self._alias_archives.keys():
             raise Exception(f"Can't add store, alias '{alias}' already registered.")
 
         if mount_point:
-            if mount_point in self.aliases:
-                raise Exception(
-                    f"Can't mount alias archive: mountpoint '{mount_point}' already in use as alias."
-                )
+            # if mount_point in self.aliases:
+            #     raise Exception(
+            #         f"Can't mount alias archive: mountpoint '{mount_point}' already in use as alias."
+            #     )
             if mount_point in self._mountpoints.keys():
                 raise Exception(f"Mountpoint '{mount_point}' already registered.")
             self._mountpoints[mount_point] = alias
@@ -128,7 +150,7 @@ class AliasRegistry(object):
 
         is_store = False
         is_default_store = False
-        if isinstance(archive, AliasStore):
+        if archive.is_writeable():
             is_store = True
             if set_as_default_store and self._default_alias_store is not None:
                 raise Exception(
@@ -138,6 +160,12 @@ class AliasRegistry(object):
             if self._default_alias_store is None:
                 is_default_store = True
                 self._default_alias_store = alias
+
+        # TODO: add to cache if it already exists instead of invalidating, for performance reasons
+        self._cached_aliases = None
+        self._cached_aliases_by_id = None
+        self._dynamic_stores = None
+
 
         event = AliasArchiveAddedEvent(
             kiara_id=self._kiara.id,
@@ -194,15 +222,17 @@ class AliasRegistry(object):
 
         all_aliases: Dict[str, AliasItem] = {}
         all_aliases_by_id: Dict[uuid.UUID, Set[AliasItem]] = {}
+        dynamic_stores = []
         for archive_alias, archive in self._alias_archives.items():
             alias_map = archive.retrieve_all_aliases()
             if alias_map is None:
+                dynamic_stores.append(archive_alias)
                 continue
             for alias, v_id in alias_map.items():
                 if archive_alias == self.default_alias_store:
                     final_alias = alias
                 else:
-                    final_alias = f"{archive_alias}.{alias}"
+                    final_alias = f"{archive_alias}#{alias}"
 
                 if final_alias in all_aliases.keys():
                     raise Exception(
@@ -220,6 +250,8 @@ class AliasRegistry(object):
 
         self._cached_aliases = {k: all_aliases[k] for k in sorted(all_aliases.keys())}
         self._cached_aliases_by_id = all_aliases_by_id
+        self._dynamic_stores = dynamic_stores
+
         return self._cached_aliases
 
     def find_value_id_for_alias(self, alias: str) -> Union[uuid.UUID, None]:
@@ -228,7 +260,13 @@ class AliasRegistry(object):
         if alias_item is not None:
             return alias_item.value_id
 
-        if "#" not in alias:
+        if "#" in alias:
+            mountpoint, rest = alias.split("#", maxsplit=1)
+            archive = self._mountpoints.get(mountpoint, None)
+            if archive is None:
+                return None
+            archive = self.get_archive(archive_id=archive)
+            archive.
             return None
 
         mountpoint, rest = alias.split(".", maxsplit=1)
@@ -292,6 +330,7 @@ class AliasRegistry(object):
         value_id: Union[uuid.UUID, ValueLink, str],
         *aliases: str,
         allow_overwrite: bool = False,
+        alias_store: Union[str, None] = None,
     ):
 
         for alias in aliases:

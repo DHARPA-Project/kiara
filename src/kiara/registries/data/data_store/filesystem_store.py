@@ -9,7 +9,7 @@ import uuid
 from enum import Enum
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Set, Tuple, Union
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Set, Union
 
 import orjson
 import structlog
@@ -28,7 +28,7 @@ from kiara.utils.json import orjson_dumps
 from kiara.utils.windows import fix_windows_longpath, fix_windows_symlink
 
 if TYPE_CHECKING:
-    pass
+    from multiformats import CID
 
 logger = structlog.getLogger()
 
@@ -429,9 +429,10 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
 
             fix_windows_symlink(value_file, destiny_file)
 
-    def _persist_chunks(self, *chunks: Tuple[str, Union[str, BytesIO]]):
+    def _persist_chunks(self, chunks: Mapping["CID", Union[str, BytesIO]]):
 
-        raise NotImplementedError()
+        for cid, chunk in chunks.items():
+            self._persist_chunk(str(cid), chunk)
 
     def _persist_chunk(self, chunk_id: str, chunk: Union[str, BytesIO]):
 

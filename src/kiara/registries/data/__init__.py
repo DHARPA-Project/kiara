@@ -108,7 +108,7 @@ class AliasResolver(abc.ABC):
         pass
 
 
-STORE_REF_TYPE_NAME = "store"
+ARCHIVE_REF_TYPE_NAME = "archive"
 
 
 class DefaultAliasResolver(AliasResolver):
@@ -132,7 +132,7 @@ class DefaultAliasResolver(AliasResolver):
                         alias=rest,
                         msg=f"Can't retrive value for alias '{rest}': no such alias registered.",
                     )
-            elif ref_type == STORE_REF_TYPE_NAME:
+            elif ref_type == ARCHIVE_REF_TYPE_NAME:
 
                 if "#" in rest:
                     raise NotImplementedError()
@@ -140,14 +140,27 @@ class DefaultAliasResolver(AliasResolver):
                 archives = check_external_archive(
                     archive=rest, allow_write_access=False
                 )
-                if archives:
-                    for archive in archives:
-                        print(archive)
-                    #     archive_ref = self._kiara.data_registry.register_data_archive(
-                    #         archive
-                    #     )
-                    #     print(archive_ref)
+                print("XXX")
 
+                if archives:
+                    dbg(archives)
+                    data_archive = archives.get("data", None)
+                    if data_archive:
+                        print("---")
+                        print(data_archive)
+                        dbg(data_archive.archive_metadata.model_dump())
+                        self._kiara.data_registry.register_data_archive(
+                            data_archive
+                        )
+                        default_value = data_archive.get_archive_metadata(
+                            "default_value"
+                        )
+                        print("---")
+                        print(default_value)
+                        return uuid.UUID(default_value)
+
+                print("XXX")
+                print(rest)
                 raise NotImplementedError("x")
             else:
                 raise Exception(

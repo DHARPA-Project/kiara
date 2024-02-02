@@ -1640,6 +1640,7 @@ class KiaraAPI(object):
         value: Union[str, uuid.UUID, Value],
         alias: Union[str, Iterable[str], None],
         allow_overwrite: bool = True,
+        data_store_id: Union[str, None] = None,
     ) -> StoreValueResult:
         """
         Store the specified value in the (default) value store.
@@ -1658,7 +1659,9 @@ class KiaraAPI(object):
         value_obj = self.get_value(value)
         persisted_data: Union[None, PersistedData] = None
         try:
-            persisted_data = self.context.data_registry.store_value(value=value_obj)
+            persisted_data = self.context.data_registry.store_value(
+                value=value_obj, store_id=data_store_id
+            )
             if alias:
                 self.context.alias_registry.register_aliases(
                     value_obj.value_id, *alias, allow_overwrite=allow_overwrite
@@ -1684,14 +1687,21 @@ class KiaraAPI(object):
 
     def store_values(
         self,
-        values: Mapping[str, Union[str, uuid.UUID, Value]],
-        alias_map: Union[Mapping[str, Iterable[str]], bool] = False,
+        values: Union[
+            Mapping[str, Union[str, uuid.UUID, Value]], Union[str, uuid.UUID, Value]
+        ],
+        alias_map: Union[Mapping[str, Iterable[str]], bool, str] = False,
         allow_overwrite: bool = True,
+        data_store_id: Union[str, None] = None,
     ) -> StoreValuesResult:
         """
         Store multiple values into the (default) kiara value store.
 
-        If alias_map is 'False', no aliases will be registered. If 'True', the key in the 'values' argument will be used.
+        If you provide a non-mapping interable as 'values', the 'alias_map' argument must be 'False', and using aliases is not possible.
+
+        If you use a mapping iterable as 'values':
+
+        If alias_map is 'False', no aliases will be registered. If 'True', the key in the 'values' argument will be used. If the value is a string, all keys from the 'values' map will be used as alias, prefixed with the value of 'alias_map' + '.'.
         Alternatively, if a map is provided, the key in the 'values' argument will be used to look up the alias(es) in the
         'alias_map' argument.
 
@@ -1699,26 +1709,49 @@ class KiaraAPI(object):
         'StoreValuesResult' instance that is returned to see if the storing was successful.
 
         Arguments:
-            values: a map of value keys/values
+            values: an iterable/map of value keys/values
             alias_map: a map of value keys aliases
 
         Returns:
-            an object outlining which values (identified by the specified value key) where stored and how
+            an object outlining which values (identified by the specified value key or an enumerated index) where stored and how
         """
-        result = {}
-        for field_name, value in values.items():
-            if alias_map is False:
-                aliases = None
-            elif alias_map is True:
-                aliases = [field_name]
-            else:
-                aliases = alias_map.get(field_name)
 
-            value_obj = self.get_value(value)
-            store_result = self.store_value(
-                value=value_obj, alias=aliases, allow_overwrite=allow_overwrite
-            )
-            result[field_name] = store_result
+        result = {}
+        if not isinstance(values, Mapping):
+            if alias_map is not False:
+                raise KiaraException(
+                    msg="Cannot use aliases with non-mapping iterable."
+                )
+
+            for idx, value in enumerate(values):
+                value_obj = self.get_value(value)
+                store_result = self.store_value(
+                    value=value_obj,
+                    alias=None,
+                    allow_overwrite=allow_overwrite,
+                    store_id=data_store_id,
+                )
+                result[f"value_{idx}"] = store_result
+        else:
+
+            for field_name, value in values.items():
+                if alias_map is False:
+                    aliases = None
+                elif alias_map is True:
+                    aliases = [field_name]
+                elif isinstance(alias_map, str):
+                    aliases = [f"{alias_map}.{field_name}"]
+                else:
+                    aliases = alias_map.get(field_name)
+
+                value_obj = self.get_value(value)
+                store_result = self.store_value(
+                    value=value_obj,
+                    alias=aliases,
+                    allow_overwrite=allow_overwrite,
+                    data_store_id=data_store_id,
+                )
+                result[field_name] = store_result
 
         return StoreValuesResult(root=result)
 

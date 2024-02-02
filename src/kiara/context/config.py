@@ -96,7 +96,7 @@ class KiaraArchiveReference(BaseModel):
         archive_configs: List[KiaraArchiveConfig] = []
         archives: List[KiaraArchive] = []
 
-        archive_alias = archive_uri
+        archive_alias = None
 
         if store_type:
             if isinstance(store_type, str):
@@ -111,9 +111,7 @@ class KiaraArchiveReference(BaseModel):
                     **kwargs,
                 )
                 archive_config = archive_cls._config_cls(**data)
-                archive: KiaraArchive = archive_cls(
-                    archive_alias=archive_alias, archive_config=archive_config
-                )
+                archive: KiaraArchive = archive_cls(archive_config=archive_config)
                 wrapped_archive_config = KiaraArchiveConfig(
                     archive_type=store_type, config=data
                 )
@@ -133,7 +131,7 @@ class KiaraArchiveReference(BaseModel):
                     )
                     archive_config = archive_cls._config_cls(**data)
                     archive: KiaraArchive = archive_cls(
-                        archive_alias=archive_alias, archive_config=archive_config
+                        archive_config=archive_config, archive_alias=archive_alias
                     )
                     wrapped_archive_config = KiaraArchiveConfig(
                         archive_type=st, config=data
@@ -152,7 +150,7 @@ class KiaraArchiveReference(BaseModel):
                     continue
                 archive_config = archive_cls._config_cls(**data)
                 archive: KiaraArchive = archive_cls(
-                    archive_alias=archive_alias, archive_config=archive_config
+                    archive_config=archive_config, archive_alias=archive_alias
                 )
                 wrapped_archive_config = KiaraArchiveConfig(
                     archive_type=archive_type, config=data
@@ -167,17 +165,17 @@ class KiaraArchiveReference(BaseModel):
 
         result = cls(
             archive_uri=archive_uri,
-            archive_alias=archive_alias,
             allow_write_access=allow_write_access,
             archive_configs=archive_configs,
+            # archive_alias=archive_alias,
         )
         result._archives = archives
         return result
 
     archive_uri: str = Field(description="The uri that points to the archive.")
-    archive_alias: str = Field(
-        description="The alias that is used for the archives contained in here."
-    )
+    # archive_alias: str = Field(
+    #     description="The alias that is used for the archives contained in here."
+    # )
     allow_write_access: bool = Field(
         description="Whether to allow write access to the archives contained here.",
         default=False,
@@ -197,6 +195,8 @@ class KiaraArchiveReference(BaseModel):
 
         archive_types = find_all_archive_types()
 
+        archive_alias = None
+
         result = []
         for config in self.archive_configs:
             if config.archive_type not in archive_types.keys():
@@ -211,7 +211,7 @@ class KiaraArchiveReference(BaseModel):
             )
             archive_config = archive_cls._config_cls(**archive_config_data)
             archive = archive_cls(
-                archive_alias=self.archive_alias, archive_config=archive_config
+                archive_config=archive_config, archive_alias=archive_alias
             )
             result.append(archive)
 

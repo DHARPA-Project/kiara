@@ -6,8 +6,11 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Data-related sub-commands for the cli."""
+import os.path
 import sys
-from typing import TYPE_CHECKING, Iterable, Tuple
+import uuid
+from pathlib import Path
+from typing import TYPE_CHECKING, Iterable, Tuple, Union
 
 import rich_click as click
 import structlog
@@ -509,33 +512,166 @@ def filter_value(
 
 
 @data.command(name="export")
-@click.argument("alias", nargs=1, required=True)
+@click.option(
+    "--archive-alias",
+    "-a",
+    help="The alias to use for the exported archive. If not provided, the first alias will be used.",
+    required=False,
+)
+@click.option(
+    "--path",
+    "-p",
+    help="The path of the exported archive. If not provided, '<archive_alias>.karchive' will be used.",
+    required=False,
+)
+@click.option(
+    "--compression",
+    "-c",
+    help="The compression inside the archive. If not provided, 'zstd' will be used.",
+    type=click.Choice(["zstd", "lz4", "lzma", "none"]),
+    default="zstd",
+)
+@click.option(
+    "--force", "-f", help="Force overwriting an existing archive.", is_flag=True
+)
+@click.argument("aliases", nargs=-1, required=True)
 @click.pass_context
-def export_data_store(ctx, alias: str):
+def export_data_store(
+    ctx,
+    aliases: str,
+    archive_alias: Union[None, str],
+    path: Union[str, None],
+    compression: str,
+    force: bool,
+):
+    """Export one or several values into a new data store."""
 
-    from kiara.utils.stores import create_new_store
+    from kiara.utils.stores import create_new_archive
 
     kiara_api: KiaraAPI = ctx.obj.kiara_api
 
-    value = kiara_api.get_value(alias)
-    base_path = "."
+    values = []
+    for idx, alias in enumerate(aliases, start=1):
+        if "=" in alias:
+            old_alias, new_alias = alias.split("=", maxsplit=1)
+        else:
+            try:
+                uuid.UUID(alias)
+                old_alias = alias
+                new_alias = None
+            except Exception:
+                old_alias = alias
+                new_alias = alias
 
-    store = create_new_store(
-        archive_alias=f"export_store_{alias}",
+        value = kiara_api.get_value(old_alias)
+        values.append((value, new_alias))
+
+    if not archive_alias:
+        archive_alias = values[0][1]
+
+    if not archive_alias:
+        archive_alias = str(values[0][0].value_id)
+
+    if not path:
+        base_path = "."
+        file_name = f"{archive_alias}.kiarchive"
+        terminal_print(f"Creating new store '{file_name}'...")
+    else:
+        base_path = os.path.dirname(path)
+        file_name = os.path.basename(path)
+        if "." not in file_name:
+            file_name = f"{file_name}.kiarchive"
+
+        terminal_print(f"Creating new store '{path}'...")
+
+    full_path = Path(base_path) / file_name
+    if full_path.is_file() and force:
+        full_path.unlink()
+
+    if full_path.exists():
+        terminal_print(f"[red]Error[/red]: File '{full_path}' already exists.")
+        sys.exit(1)
+
+    store: DataArchive = create_new_archive(  # type: ignore
+        archive_alias=archive_alias,
         store_base_path=base_path,
         store_type="sqlite_data_store",
-        file_name=f"{alias}.sqlite",
+        file_name=file_name,
+        default_chunk_compression=compression,
+        allow_write_access=True,
     )
 
+    terminal_print("Registering store...")
     store_alias = kiara_api.context.data_registry.register_data_archive(store)
 
+    terminal_print("Exporting value into new store...")
+
+    no_default_value = False
+
+    if not no_default_value:
+        try:
+            store.set_archive_metadata_value(
+                "default_value", str(values[0][0].value_id)
+            )
+        except Exception as e:
+            store.delete_archive(archive_id=store.archive_id)
+            log_exception(e)
+            terminal_print(f"[red]Error setting value[/red]: {e}")
+            sys.exit(1)
+
+    values_to_store = {}
+    alias_map = {}
+    for idx, (value, value_alias) in enumerate(values, start=1):
+        key = f"value_{idx}"
+        values_to_store[key] = value
+        if value_alias:
+            alias_map[key] = value_alias
+
+    alias_store_alias = None
     try:
-        persisted_data = kiara_api.context.data_registry.store_value(
-            value, store_id=store_alias
+
+        persisted_data = kiara_api.store_values(
+            values=values_to_store,
+            alias_map=alias_map,
+            data_store_id=store_alias,
+            alias_store_id=alias_store_alias,
         )
+
         dbg(persisted_data)
+        terminal_print("Done.")
+
     except Exception as e:
         store.delete_archive(archive_id=store.archive_id)
         log_exception(e)
         terminal_print(f"[red]Error saving results[/red]: {e}")
         sys.exit(1)
+
+
+@data.command(name="import")
+@click.argument("archive", nargs=1, required=True)
+@click.pass_context
+def import_data_store(ctx, archive: str):
+
+    from kiara.registries.data import DataArchive
+    from kiara.utils.stores import check_external_archive
+
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
+
+    terminal_print(f"Loading store '{archive}'...")
+
+    archives = check_external_archive(archive)
+
+    data_archive: DataArchive = archives.get("data", None)  # type: ignore
+
+    if not data_archive:
+        terminal_print(f"[red]Error[/red]: No data archives found in '{archive}'")
+        sys.exit(1)
+
+    terminal_print("Registering data archive...")
+    store_alias = kiara_api.context.data_registry.register_data_archive(data_archive)
+
+    print(store_alias)
+    result = kiara_api.store_values(data_archive.value_ids)
+    dbg(result)
+
+    terminal_print("Done.")

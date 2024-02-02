@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from typing import TYPE_CHECKING, Any, List, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, Mapping, Type, Union
 
 if TYPE_CHECKING:
     from kiara.registries import KiaraArchive
 
 
-def create_new_store(
+def create_new_archive(
     archive_alias: str,
     store_base_path: str,
     store_type: str,
@@ -30,14 +30,18 @@ def create_new_store(
     force_read_only = not allow_write_access
 
     archive_instance = archive_cls(archive_alias=archive_alias, archive_config=config, force_read_only=force_read_only)  # type: ignore
+
+    if not force_read_only:
+        archive_instance.set_archive_metadata_value("archive_alias", archive_alias)
+
     return archive_instance
 
 
 def check_external_archive(
     archive: Union[str, "KiaraArchive"], allow_write_access: bool = False
-) -> List["KiaraArchive"]:
+) -> Mapping[str, "KiaraArchive"]:
 
-    from kiara.context import KiaraArchiveReference
+    from kiara.context.config import KiaraArchiveReference
     from kiara.registries import KiaraArchive
 
     if isinstance(archive, (KiaraArchive, str)):
@@ -45,12 +49,16 @@ def check_external_archive(
     else:
         _archives = archive
 
-    archive_instances: List[KiaraArchive] = []
+    archive_instances: Dict[str, KiaraArchive] = {}
     for _archive in _archives:
 
         if isinstance(_archive, KiaraArchive):
-            archive_instances.append(_archive)
-            # TODO: handle write access
+            for archive_type in _archives.supported_item_types():
+                if archive_type in archive_instances.keys():
+                    raise Exception(
+                        "Multiple archives of the same type are not supported."
+                    )
+                archive_instances[archive_type] = _archive
             continue
 
         loaded = KiaraArchiveReference.load_existing_archive(
@@ -58,6 +66,11 @@ def check_external_archive(
         )
 
         for _archive_inst in loaded.archives:
-            archive_instances.append(_archive_inst)
+            for archive_type in _archive_inst.supported_item_types():
+                if archive_type in archive_instances.keys():
+                    raise Exception(
+                        "Multiple archives of the same type are not supported."
+                    )
+                archive_instances[archive_type] = _archive_inst
 
     return archive_instances

@@ -166,6 +166,17 @@ class SqliteAliasStore(SqliteAliasArchive, AliasStore):
         # config = SqliteArchiveConfig(sqlite_db_path=store_uri)
         return {"sqlite_db_path": store_uri}
 
+    def _set_archive_metadata_value(self, key: str, value: Any):
+        """Set custom metadata for the archive."""
+
+        sql = text(
+            "INSERT OR REPLACE INTO archive_metadata (key, value) VALUES (:key, :value)"
+        )
+        with self.sqlite_engine.connect() as conn:
+            params = {"key": key, "value": value}
+            conn.execute(sql, params)
+            conn.commit()
+
     def register_aliases(self, value_id: uuid.UUID, *aliases: str):
 
         sql = text(

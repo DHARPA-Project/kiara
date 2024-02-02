@@ -334,7 +334,7 @@ class Kiara(object):
         )
 
         result = {}
-        for _archive_inst in archive_instances:
+        for archive_type, _archive_inst in archive_instances.items():
             log_message(
                 "register.external.archive",
                 archive=_archive_inst.archive_alias,
@@ -343,13 +343,14 @@ class Kiara(object):
 
             _archive_inst.set_force_read_only(not allow_write_access)
 
-            supported_item_types = _archive_inst.supported_item_types()
-            if "data" in supported_item_types:
+            if archive_type == "data":
                 result["data"] = self.data_registry.register_data_archive(_archive_inst)  # type: ignore
-            if "alias" in supported_item_types:
+            if archive_type == "alias":
                 result["alias"] = self.alias_registry.register_archive(_archive_inst)  # type: ignore
-            if "job_record" in supported_item_types:
+            if archive_type == "job_record":
                 result["job_record"] = self.job_registry.register_job_archive(_archive_inst)  # type: ignore
+            else:
+                raise Exception(f"Can't register archive of type '{archive_type}'.")
 
         return result
 

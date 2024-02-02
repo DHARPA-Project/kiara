@@ -228,10 +228,10 @@ class AliasRegistry(object):
         if alias_item is not None:
             return alias_item.value_id
 
-        if "." not in alias:
+        if "#" not in alias:
             return None
 
-        mountpoint, rest = alias.split(".", maxsplit=2)
+        mountpoint, rest = alias.split(".", maxsplit=1)
         if mountpoint not in self._mountpoints.keys():
             return None
         archive_id = self._mountpoints[mountpoint]

@@ -396,6 +396,17 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
         config = SqliteArchiveConfig(sqlite_db_path=store_uri)
         return config
 
+    def _set_archive_metadata_value(self, key: str, value: Any):
+        """Set custom metadata for the archive."""
+
+        sql = text(
+            "INSERT OR REPLACE INTO archive_metadata (key, value) VALUES (:key, :value)"
+        )
+        with self.sqlite_engine.connect() as conn:
+            params = {"key": key, "value": value}
+            conn.execute(sql, params)
+            conn.commit()
+
     def _persist_environment_details(
         self, env_type: str, env_hash: str, env_data: Mapping[str, Any]
     ):

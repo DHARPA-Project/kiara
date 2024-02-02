@@ -23,7 +23,7 @@ from typing import (
 )
 
 import structlog
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, RootModel
 
 from kiara.utils import log_message
 
@@ -70,11 +70,27 @@ class ArchiveDetails(BaseModel):
     )
 
 
-class ArchiveMetadata(BaseModel):
+class ArchiveMetadata(RootModel):
+    root: Mapping[str, Any]
 
-    archive_id: Union[uuid.UUID, None] = Field(
-        description="The id of the stored archive.", default=None
-    )
+    def __iter__(self):
+        return iter(self.root)
+
+    def __getitem__(self, item):
+        return self.root[item]
+
+    def __setitem__(self, key, value):
+        self.root[key] = value
+
+    def get(self, key, default=None):
+        return self.root.get(key, default)
+
+    # archive_id: Union[uuid.UUID, None] = Field(
+    #     description="The id of the stored archive.", default=None
+    # )
+    # custom_metadata: Dict[str, Any] = Field(
+    #     description="Custom metadata for the archive.", default_factory=dict
+    # )
 
 
 NON_ARCHIVE_DETAILS = ArchiveDetails()
@@ -153,12 +169,12 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
 
     def __init__(
         self,
-        archive_alias: str,
         archive_config: ARCHIVE_CONFIG_CLS,
         force_read_only: bool = False,
+        archive_alias: Union[str, None] = None,
     ):
 
-        self._archive_alias: str = archive_alias
+        self._archive_alias: Union[str, None] = archive_alias
         self._config: ARCHIVE_CONFIG_CLS = archive_config
         self._force_read_only: bool = force_read_only
 
@@ -169,7 +185,7 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
 
         if self._archive_metadata is None:
             archive_metadata = self._retrieve_archive_metadata()
-            self._archive_metadata = ArchiveMetadata(**archive_metadata)
+            self._archive_metadata = ArchiveMetadata(root=archive_metadata)
 
         return self._archive_metadata
 
@@ -197,8 +213,34 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
 
         raise NotImplementedError()
 
+    def get_archive_metadata(self, key: str) -> Any:
+
+        return self.archive_metadata.get(key, None)
+
+    def set_archive_metadata_value(self, key: str, value: Any):
+
+        if not self.is_writeable():
+            raise Exception("Can't set metadata on read-only archive.")
+
+        self._set_archive_metadata_value(key, value)
+        self.archive_metadata[key] = value
+
+    def _set_archive_metadata_value(self, key: str, value: Any):
+        """Set custom metadata for the archive."""
+
+        raise NotImplementedError(
+            f"This archive type '{type(self.__class__)}' does not support setting metadata."
+        )
+
     @property
     def archive_alias(self) -> str:
+        if self._archive_alias:
+            return self._archive_alias
+
+        alias = self.get_archive_metadata("archive_alias")
+        if not alias:
+            alias = str(self.archive_id)
+        self._archive_alias = alias
         return self._archive_alias
 
     def is_force_read_only(self) -> bool:
@@ -219,7 +261,12 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
     @property
     def archive_id(self) -> uuid.UUID:
 
-        return self.archive_metadata.archive_id
+        try:
+            result = self.archive_metadata["archive_id"]
+        except KeyError:
+            raise Exception("Archive does not have an id metadata value set.")
+
+        return uuid.UUID(result)
 
     @property
     def config(self) -> ARCHIVE_CONFIG_CLS:
@@ -386,9 +433,62 @@ class CHUNK_COMPRESSION_TYPE(Enum):
     LZ4 = 3
 
 
-class SqliteDataStoreConfig(SqliteArchiveConfig):
+DEFAULT_CHUNK_COMPRESSION = "zstd"
 
-    default_chunk_compression: Literal["none", "lz4", "zstd"] = Field(
+
+class SqliteDataStoreConfig(SqliteArchiveConfig):
+    @classmethod
+    def create_new_store_config(
+        cls, store_base_path: str, **kwargs
+    ) -> "SqliteDataStoreConfig":
+
+        store_id = str(uuid.uuid4())
+
+        if "file_name" in kwargs:
+            file_name = kwargs["file_name"]
+        else:
+            file_name = f"{store_id}.sqlite"
+
+        default_chunk_compression = kwargs.get(
+            "default_chunk_compression", DEFAULT_CHUNK_COMPRESSION
+        )
+
+        archive_path = os.path.abspath(os.path.join(store_base_path, file_name))
+
+        if os.path.exists(archive_path):
+            raise Exception(f"Archive path '{archive_path}' already exists.")
+
+        Path(archive_path).parent.mkdir(exist_ok=True, parents=True)
+
+        # Connect to the SQLite database (or create it if it doesn't exist)
+        import sqlite3
+
+        conn = sqlite3.connect(archive_path)
+
+        # Create a cursor object
+        c = conn.cursor()
+
+        # Create table
+        c.execute(
+            """CREATE TABLE archive_metadata
+                     (key text PRIMARY KEY , value text NOT NULL)"""
+        )
+
+        # Insert a row of data
+        c.execute(f"INSERT INTO archive_metadata VALUES ('archive_id','{store_id}')")
+
+        # Save (commit) the changes
+        conn.commit()
+
+        # Close the connection
+        conn.close()
+
+        return SqliteDataStoreConfig(
+            sqlite_db_path=archive_path,
+            default_chunk_compression=default_chunk_compression,
+        )
+
+    default_chunk_compression: Literal["none", "lz4", "zstd", "lzma"] = Field(
         description="The default compression type to use for data in this store.",
-        default="zstd",
+        default=DEFAULT_CHUNK_COMPRESSION,
     )

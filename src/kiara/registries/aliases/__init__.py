@@ -11,10 +11,11 @@ from typing import (
     Callable,
     Dict,
     Iterable,
+    List,
     Mapping,
     NamedTuple,
     Set,
-    Union, List,
+    Union,
 )
 
 import structlog
@@ -89,6 +90,7 @@ class AliasRegistry(object):
     There is also a 'default' alias store, which is used when the alias provided does not contain a '#' indicating a
      mountpoint.
     """
+
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
@@ -168,7 +170,6 @@ class AliasRegistry(object):
         self._cached_aliases_by_id = None
         self._dynamic_stores = None
         self._cached_dynamic_aliases = None
-
 
         event = AliasArchiveAddedEvent(
             kiara_id=self._kiara.id,
@@ -380,7 +381,9 @@ class AliasRegistry(object):
                 mountpoint, alias_name = alias.split("#", maxsplit=1)
                 alias_store_alias = self._mountpoints.get(mountpoint, None)
                 if alias_store_alias is None:
-                    raise Exception(f"Invalid mountpoint: '{mountpoint}' not registered.")
+                    raise Exception(
+                        f"Invalid mountpoint: '{mountpoint}' not registered."
+                    )
 
                 if alias_store and alias_store != alias_store_alias:
                     raise Exception(
@@ -391,7 +394,10 @@ class AliasRegistry(object):
                     alias_store_alias = alias_store
 
             else:
-                alias_store_alias = self.default_alias_store
+                if alias_store:
+                    alias_store_alias = alias_store
+                else:
+                    alias_store_alias = self.default_alias_store
                 alias_name = alias
 
             if alias_name in INVALID_ALIAS_NAMES:
@@ -432,7 +438,9 @@ class AliasRegistry(object):
             if store is None:
                 raise Exception(f"Invalid alias store: '{store_alias}' not registered.")
             if not store.is_writeable():
-                raise Exception(f"Can't register aliases in store '{store_alias}': store is read-only.")
+                raise Exception(
+                    f"Can't register aliases in store '{store_alias}': store is read-only."
+                )
 
         for store_alias, aliases_for_store in aliases_to_store.items():
 

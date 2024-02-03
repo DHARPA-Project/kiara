@@ -1641,6 +1641,7 @@ class KiaraAPI(object):
         alias: Union[str, Iterable[str], None],
         allow_overwrite: bool = True,
         data_store: Union[str, None] = None,
+        alias_store: Union[str, None] = None,
     ) -> StoreValueResult:
         """
         Store the specified value in the (default) value store.
@@ -1664,7 +1665,10 @@ class KiaraAPI(object):
             )
             if alias:
                 self.context.alias_registry.register_aliases(
-                    value_obj.value_id, *alias, allow_overwrite=allow_overwrite
+                    value_obj.value_id,
+                    *alias,
+                    allow_overwrite=allow_overwrite,
+                    alias_store=alias_store,
                 )
             result = StoreValueResult(
                 value=value_obj,
@@ -1693,6 +1697,7 @@ class KiaraAPI(object):
         alias_map: Union[Mapping[str, Iterable[str]], bool, str] = False,
         allow_overwrite: bool = True,
         data_store: Union[str, None] = None,
+        alias_store: Union[str, None] = None,
     ) -> StoreValuesResult:
         """
         Store multiple values into the (default) kiara value store.
@@ -1729,11 +1734,11 @@ class KiaraAPI(object):
                     value=value_obj,
                     alias=None,
                     allow_overwrite=allow_overwrite,
-                    store_id=data_store,
+                    data_store=data_store,
+                    alias_store=alias_store,
                 )
                 result[f"value_{idx}"] = store_result
         else:
-
             for field_name, value in values.items():
                 if alias_map is False:
                     aliases = None
@@ -1750,6 +1755,7 @@ class KiaraAPI(object):
                     alias=aliases,
                     allow_overwrite=allow_overwrite,
                     data_store=data_store,
+                    alias_store=alias_store,
                 )
                 result[field_name] = store_result
 

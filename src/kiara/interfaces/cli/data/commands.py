@@ -544,7 +544,7 @@ def export_data_store(
     compression: str,
     force: bool,
 ):
-    """Export one or several values into a new data store."""
+    """Export one or several values into a new data data_store."""
 
     from kiara.utils.stores import create_new_archive
 
@@ -575,14 +575,14 @@ def export_data_store(
     if not path:
         base_path = "."
         file_name = f"{archive_alias}.kiarchive"
-        terminal_print(f"Creating new store '{file_name}'...")
+        terminal_print(f"Creating new data_store '{file_name}'...")
     else:
         base_path = os.path.dirname(path)
         file_name = os.path.basename(path)
         if "." not in file_name:
             file_name = f"{file_name}.kiarchive"
 
-        terminal_print(f"Creating new store '{path}'...")
+        terminal_print(f"Creating new data_store '{path}'...")
 
     full_path = Path(base_path) / file_name
     if full_path.is_file() and force:
@@ -592,7 +592,7 @@ def export_data_store(
         terminal_print(f"[red]Error[/red]: File '{full_path}' already exists.")
         sys.exit(1)
 
-    store: DataArchive = create_new_archive(  # type: ignore
+    data_store: DataStore = create_new_archive(  # type: ignore
         archive_alias=archive_alias,
         store_base_path=base_path,
         store_type="sqlite_data_store",
@@ -600,21 +600,29 @@ def export_data_store(
         default_chunk_compression=compression,
         allow_write_access=True,
     )
+    archive_store = create_new_archive(
+        archive_alias=archive_alias,
+        store_base_path=base_path,
+        store_type="sqlite_alias_store",
+        file_name=file_name,
+        allow_write_access=True,
+    )
 
-    terminal_print("Registering store...")
-    store_alias = kiara_api.context.data_registry.register_data_archive(store)
+    terminal_print("Registering data store...")
+    data_store_alias = kiara_api.context.data_registry.register_data_archive(data_store)
+    alias_store_alias = kiara_api.context.alias_registry.register_archive(archive_store)
 
-    terminal_print("Exporting value into new store...")
+    terminal_print("Exporting value into new data_store...")
 
     no_default_value = False
 
     if not no_default_value:
         try:
-            store.set_archive_metadata_value(
+            data_store.set_archive_metadata_value(
                 "default_value", str(values[0][0].value_id)
             )
         except Exception as e:
-            store.delete_archive(archive_id=store.archive_id)
+            data_store.delete_archive(archive_id=data_store.archive_id)
             log_exception(e)
             terminal_print(f"[red]Error setting value[/red]: {e}")
             sys.exit(1)
@@ -627,21 +635,20 @@ def export_data_store(
         if value_alias:
             alias_map[key] = value_alias
 
-    alias_store_alias = None
     try:
 
         persisted_data = kiara_api.store_values(
             values=values_to_store,
             alias_map=alias_map,
-            data_store=store_alias,
-            alias_store_id=alias_store_alias,
+            data_store=data_store_alias,
+            alias_store=alias_store_alias,
         )
 
         dbg(persisted_data)
         terminal_print("Done.")
 
     except Exception as e:
-        store.delete_archive(archive_id=store.archive_id)
+        data_store.delete_archive(archive_id=data_store.archive_id)
         log_exception(e)
         terminal_print(f"[red]Error saving results[/red]: {e}")
         sys.exit(1)

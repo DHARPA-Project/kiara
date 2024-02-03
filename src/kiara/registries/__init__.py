@@ -391,13 +391,10 @@ class SqliteArchiveConfig(ArchiveConfig):
 
         archive_path = os.path.abspath(os.path.join(store_base_path, file_name))
 
-        if os.path.exists(archive_path):
-            raise Exception(f"Archive path '{archive_path}' already exists.")
-
-        Path(archive_path).parent.mkdir(exist_ok=True, parents=True)
-
-        # Connect to the SQLite database (or create it if it doesn't exist)
         import sqlite3
+
+        if not os.path.exists(archive_path):
+            Path(archive_path).parent.mkdir(exist_ok=True, parents=True)
 
         conn = sqlite3.connect(archive_path)
 
@@ -406,12 +403,14 @@ class SqliteArchiveConfig(ArchiveConfig):
 
         # Create table
         c.execute(
-            """CREATE TABLE archive_metadata
+            """CREATE TABLE IF NOT EXISTS archive_metadata
                      (key text PRIMARY KEY , value text NOT NULL)"""
         )
 
         # Insert a row of data
-        c.execute(f"INSERT INTO archive_metadata VALUES ('archive_id','{store_id}')")
+        c.execute(
+            f"INSERT OR IGNORE INTO archive_metadata VALUES ('archive_id','{store_id}')"
+        )
 
         # Save (commit) the changes
         conn.commit()

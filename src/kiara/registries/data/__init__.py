@@ -335,39 +335,39 @@ class DataRegistry(object):
         return self._data_archives
 
     def get_archive(
-        self, archive_id: Union[None, uuid.UUID, str] = None
+        self, archive_id_or_alias: Union[None, uuid.UUID, str] = None
     ) -> DataArchive:
 
-        if archive_id is None:
-            archive_id = self.default_data_store
-            if archive_id is None:
+        if archive_id_or_alias is None:
+            archive_id_or_alias = self.default_data_store
+            if archive_id_or_alias is None:
                 raise Exception("Can't retrieve default data archive, none set (yet).")
 
-        if isinstance(archive_id, uuid.UUID):
+        if isinstance(archive_id_or_alias, uuid.UUID):
             for archive in self._data_archives.values():
-                if archive.archive_id == archive_id:
+                if archive.archive_id == archive_id_or_alias:
                     return archive
 
             raise Exception(
-                f"Can't retrieve archive with id '{archive_id}': no archive with that id registered."
+                f"Can't retrieve archive with id '{archive_id_or_alias}': no archive with that id registered."
             )
 
-        if archive_id in self._data_archives.keys():
-            return self._data_archives[archive_id]
+        if archive_id_or_alias in self._data_archives.keys():
+            return self._data_archives[archive_id_or_alias]
         else:
             try:
-                _archive_id = uuid.UUID(archive_id)
+                _archive_id = uuid.UUID(archive_id_or_alias)
                 for archive in self._data_archives.values():
                     if archive.archive_id == _archive_id:
                         return archive
                     raise Exception(
-                        f"Can't retrieve archive with id '{archive_id}': no archive with that id registered."
+                        f"Can't retrieve archive with id '{archive_id_or_alias}': no archive with that id registered."
                     )
             except Exception:
                 pass
 
         raise Exception(
-            f"Can't retrieve archive with id '{archive_id}': no archive with that id registered."
+            f"Can't retrieve archive with id '{archive_id_or_alias}': no archive with that id registered."
         )
 
     def find_store_id_for_value(self, value_id: uuid.UUID) -> Union[str, None]:
@@ -427,7 +427,7 @@ class DataRegistry(object):
             return _value
 
         default_store: DataArchive = self.get_archive(
-            archive_id=self.default_data_store
+            archive_id_or_alias=self.default_data_store
         )
         if not default_store.has_value(value_id=_value_id):
 
@@ -464,34 +464,42 @@ class DataRegistry(object):
     def store_value(
         self,
         value: Union[ValueLink, uuid.UUID, str],
-        store_id: Union[str, None] = None,
+        data_store: Union[str, uuid.UUID, None] = None,
     ) -> Union[PersistedData, None]:
+        """Store a value into a data store.
 
-        if store_id is None:
-            store_id = self.default_data_store
+        If 'data_store' is not provided, the default data store is used. If the 'data_store' argument is of
+        type uuid, the archive_id is used, if string, first it will be converted to an uuid, if that works,
+        again, the archive_id is used, if not, the string is used as the archive alias.
+        """
+
+        if data_store is None:
+            data_store = self.default_data_store
 
         _value = self.get_value(value)
 
-        store: DataStore = self.get_archive(archive_id=store_id)  # type: ignore
+        store: DataStore = self.get_archive(archive_id_or_alias=data_store)  # type: ignore
         if not isinstance(store, DataStore):
-            raise Exception(f"Can't store value into store '{store_id}': not writable.")
+            raise Exception(
+                f"Can't store value into store '{data_store}': not writable."
+            )
 
         # make sure all property values are available
         if _value.pedigree != ORPHAN:
             for value_id in _value.pedigree.inputs.values():
-                self.store_value(value=value_id, store_id=store_id)
+                self.store_value(value=value_id, data_store=data_store)
 
         if not store.has_value(_value.value_id):
             event = ValuePreStoreEvent(kiara_id=self._kiara.id, value=_value)
             self._event_callback(event)
             persisted_value = store.store_value(_value)
             _value._is_stored = True
-            self._value_archive_lookup_map[_value.value_id] = store_id
+            self._value_archive_lookup_map[_value.value_id] = data_store
             self._persisted_value_descs[_value.value_id] = persisted_value
             property_values = _value.property_values
 
             for property, property_value in property_values.items():
-                self.store_value(value=property_value, store_id=store_id)
+                self.store_value(value=property_value, data_store=data_store)
         else:
             persisted_value = None
 

@@ -45,10 +45,18 @@ class SqliteAliasArchive(AliasArchive):
         # config = SqliteArchiveConfig(sqlite_db_path=store_uri)
         return {"sqlite_db_path": store_uri}
 
-    def __init__(self, archive_alias: str, archive_config: SqliteArchiveConfig):
+    def __init__(
+        self,
+        archive_alias: str,
+        archive_config: SqliteArchiveConfig,
+        force_read_only: bool = False,
+    ):
 
         AliasArchive.__init__(
-            self, archive_alias=archive_alias, archive_config=archive_config
+            self,
+            archive_alias=archive_alias,
+            archive_config=archive_config,
+            force_read_only=force_read_only,
         )
         self._db_path: Union[Path, None] = None
         self._cached_engine: Union[Engine, None] = None

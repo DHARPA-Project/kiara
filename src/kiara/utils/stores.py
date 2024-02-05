@@ -17,7 +17,7 @@ def create_new_archive(
 
     archive_types = find_all_archive_types()
 
-    archive_cls: Type[KiaraArchive] = archive_types.get(store_type, None)
+    archive_cls: Union[Type[KiaraArchive], None] = archive_types.get(store_type, None)
     if archive_cls is None:
         raise Exception(
             f"Can't create context: no archive type '{store_type}' available. Available types: {', '.join(archive_types.keys())}"
@@ -53,7 +53,7 @@ def check_external_archive(
     for _archive in _archives:
 
         if isinstance(_archive, KiaraArchive):
-            for archive_type in _archives.supported_item_types():
+            for archive_type in _archive.supported_item_types():
                 if archive_type in archive_instances.keys():
                     raise Exception(
                         "Multiple archives of the same type are not supported."

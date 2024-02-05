@@ -124,8 +124,8 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
     #     return False
 
     @classmethod
-    def _load_store_config(
-        cls, store_uri: str, allow_write_access: bool, **kwargs
+    def _load_archive_config(
+        cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Dict[str, Any], None]:
         """Tries to assemble an archive config from an uri (and optional paramters).
 
@@ -136,18 +136,18 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
         return None
 
     @classmethod
-    def load_store_config(
-        cls, store_uri: str, allow_write_access: bool, **kwargs
+    def load_archive_config(
+        cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Dict[str, Any], None]:
 
         log_message(
             "attempt_loading_existing_store",
-            store_uri=store_uri,
-            store_type=cls.__name__,
+            archive_uri=archive_uri,
+            archive_type=cls.__name__,
         )
 
-        return cls._load_store_config(
-            store_uri=store_uri, allow_write_access=allow_write_access, **kwargs
+        return cls._load_archive_config(
+            archive_uri=archive_uri, allow_write_access=allow_write_access, **kwargs
         )
 
     @classmethod
@@ -163,9 +163,10 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
 
         Path(store_base_path).mkdir(parents=True, exist_ok=True)
 
-        return cls._config_cls.create_new_store_config(
+        archive_config: ARCHIVE_CONFIG_CLS = cls._config_cls.create_new_store_config(
             store_base_path=store_base_path, **kwargs
         )
+        return archive_config
 
     def __init__(
         self,
@@ -178,7 +179,7 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
         self._config: ARCHIVE_CONFIG_CLS = archive_config
         self._force_read_only: bool = force_read_only
 
-        self._archive_metadata: Union[Mapping[str, Any], None] = None
+        self._archive_metadata: Union[ArchiveMetadata, None] = None
 
     @property
     def archive_metadata(self) -> ArchiveMetadata:
@@ -241,7 +242,7 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
         if not alias:
             alias = str(self.archive_id)
         self._archive_alias = alias
-        return self._archive_alias
+        return self._archive_alias  # type: ignore
 
     def is_force_read_only(self) -> bool:
         return self._force_read_only
@@ -409,7 +410,8 @@ class SqliteArchiveConfig(ArchiveConfig):
 
         # Insert a row of data
         c.execute(
-            f"INSERT OR IGNORE INTO archive_metadata VALUES ('archive_id','{store_id}')"
+            "INSERT OR IGNORE INTO archive_metadata VALUES ('archive_id', ?)",
+            (store_id,),
         )
 
         # Save (commit) the changes
@@ -474,7 +476,7 @@ class SqliteDataStoreConfig(SqliteArchiveConfig):
         )
 
         # Insert a row of data
-        c.execute(f"INSERT INTO archive_metadata VALUES ('archive_id','{store_id}')")
+        c.execute("INSERT INTO archive_metadata VALUES ('archive_id', ?)", (store_id,))
 
         # Save (commit) the changes
         conn.commit()
@@ -487,7 +489,7 @@ class SqliteDataStoreConfig(SqliteArchiveConfig):
             default_chunk_compression=default_chunk_compression,
         )
 
-    default_chunk_compression: Literal["none", "lz4", "zstd", "lzma"] = Field(
+    default_chunk_compression: Literal["none", "lz4", "zstd", "lzma"] = Field(  # type: ignore
         description="The default compression type to use for data in this store.",
         default=DEFAULT_CHUNK_COMPRESSION,
     )

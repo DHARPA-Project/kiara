@@ -107,7 +107,7 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
         input_field_name = next(iter(module.inputs_schema.keys()))
         input_schema = module.inputs_schema.get(input_field_name)
         assert input_schema is not None
-        if input_field_name != input_schema.type and input_field_name != "value":  # noqa
+        if input_field_name not in (input_schema.type, "value"):
             return None
 
         data_type_name = module.inputs_schema["value"].type

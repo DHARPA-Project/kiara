@@ -71,7 +71,7 @@ def create_console(
     class OptionHighlighter(RegexHighlighter):
         """Highlights our special options."""
 
-        highlights: ClassVar = [
+        highlights: ClassVar = [  # type: ignore
             r"(^|\W)(?P<switch>\-\w+)(?![a-zA-Z0-9])",
             r"(^|\W)(?P<option>\-\-[\w\-]+)(?![a-zA-Z0-9])",
             r"(^|\W)(?P<argument>[A-Z0-9\_]+)(?![_a-zA-Z0-9])",

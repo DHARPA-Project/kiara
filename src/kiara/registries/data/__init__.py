@@ -149,27 +149,29 @@ class DefaultAliasResolver(AliasResolver):
                 )
 
                 if archives:
-                    data_archive = archives.get("data", None)
+                    data_archive: DataArchive = archives.get("data", None)  # type: ignore
                     if data_archive:
                         self._kiara.data_registry.register_data_archive(data_archive)
 
-                    if not path_in_archive:
-                        default_value = data_archive.get_archive_metadata(
-                            "default_value"
-                        )
-                        _value_id = uuid.UUID(default_value)
-                    else:
-                        from kiara.registries.aliases import AliasArchive
-
-                        alias_archive: AliasArchive = archives.get("alias", None)  # type: ignore
-                        if alias_archive:
-                            _value_id = alias_archive.find_value_id_for_alias(
-                                alias=path_in_archive
+                        if not path_in_archive:
+                            default_value = data_archive.get_archive_metadata(
+                                "default_value"
                             )
+                            _value_id = uuid.UUID(default_value)
                         else:
-                            raise NoSuchValueException(
-                                msg=f"No alias archive found for '{archive_ref}'."
-                            )
+                            from kiara.registries.aliases import AliasArchive
+    
+                            alias_archive: AliasArchive = archives.get("alias", None)  # type: ignore
+                            if alias_archive:
+                                _value_id = alias_archive.find_value_id_for_alias(
+                                    alias=path_in_archive
+                                )
+                            else:
+                                raise NoSuchValueException(
+                                    msg=f"No alias archive found for '{archive_ref}'."
+                                )
+                    else:
+                        raise NoSuchValueException("No data archive found in '{archive_ref}'.")
                 else:
                     raise NoSuchValueException(
                         msg=f"No archive found for '{archive_ref}'."
@@ -509,6 +511,7 @@ class DataRegistry(object):
             self._event_callback(event)
             persisted_value = store.store_value(_value)
             _value._is_stored = True
+            
             self._value_archive_lookup_map[_value.value_id] = data_store
             self._persisted_value_descs[_value.value_id] = persisted_value
             property_values = _value.property_values

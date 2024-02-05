@@ -101,13 +101,13 @@ class KiaraArchiveReference(BaseModel):
 
         if store_type:
             if isinstance(store_type, str):
-                archive_cls: Type[KiaraArchive] = archive_types.get(store_type, None)
+                archive_cls: Union[Type[KiaraArchive], None] = archive_types.get(store_type, None)
                 if archive_cls is None:
                     raise Exception(
                         f"Can't create context: no archive type '{store_type}' available. Available types: {', '.join(archive_types.keys())}"
                     )
-                data = archive_cls.load_store_config(
-                    store_uri=archive_uri,
+                data = archive_cls.load_archive_config(
+                    archive_uri=archive_uri,
                     allow_write_access=allow_write_access,
                     **kwargs,
                 )
@@ -125,13 +125,13 @@ class KiaraArchiveReference(BaseModel):
                         raise Exception(
                             f"Can't create context: no archive type '{store_type}' available. Available types: {', '.join(archive_types.keys())}"
                         )
-                    data = archive_cls.load_store_config(
-                        store_uri=archive_uri,
+                    data = archive_cls.load_archive_config(
+                        archive_uri=archive_uri,
                         allow_write_access=allow_write_access,
                         **kwargs,
                     )
                     archive_config = archive_cls._config_cls(**data)
-                    archive: KiaraArchive = archive_cls(
+                    archive = archive_cls(
                         archive_config=archive_config, archive_alias=archive_alias
                     )
                     wrapped_archive_config = KiaraArchiveConfig(
@@ -141,8 +141,8 @@ class KiaraArchiveReference(BaseModel):
                     archives.append(archive)
         else:
             for archive_type, archive_cls in archive_types.items():
-                data = archive_cls.load_store_config(
-                    store_uri=archive_uri,
+                data = archive_cls.load_archive_config(
+                    archive_uri=archive_uri,
                     allow_write_access=allow_write_access,
                     **kwargs,
                 )
@@ -150,7 +150,7 @@ class KiaraArchiveReference(BaseModel):
                 if data is None:
                     continue
                 archive_config = archive_cls._config_cls(**data)
-                archive: KiaraArchive = archive_cls(
+                archive = archive_cls(
                     archive_config=archive_config, archive_alias=archive_alias
                 )
                 wrapped_archive_config = KiaraArchiveConfig(
@@ -206,7 +206,7 @@ class KiaraArchiveReference(BaseModel):
                 )
 
             archive_cls = archive_types[config.archive_type]
-            archive_config_data = archive_cls.load_store_config(
+            archive_config_data = archive_cls.load_archive_config(
                 archive_uri=self.archive_uri,
                 allow_write_access=self.allow_write_access,
             )

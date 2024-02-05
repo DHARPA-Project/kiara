@@ -79,7 +79,7 @@ class SerializedChunks(BaseModel, abc.ABC):
 
     @abc.abstractmethod
     def get_chunks(
-        self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
+        self, as_files: bool = True, symlink_ok: bool = True
     ) -> Generator[Union[str, "BytesLike"], None, None]:
         """
         Retrieve the chunks belonging to this data instance.
@@ -182,10 +182,10 @@ class SerializedBytes(SerializedPreStoreChunks):
 
     def get_chunks(
         self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
-    ) -> Iterable[Union[str, BytesLike]]:
+    ) -> Generator[Union[str, BytesLike], None, None]:
 
         if as_files is False:
-            return [self.chunk]
+            yield self.chunk
         else:
             if as_files is True:
                 file = None
@@ -195,7 +195,7 @@ class SerializedBytes(SerializedPreStoreChunks):
                 assert len(as_files) == 1
                 file = as_files[0]
             path = self._store_bytes_to_file([self.chunk], file=file)
-            return path
+            yield path
 
     def get_number_of_chunks(self) -> int:
         return 1
@@ -214,23 +214,22 @@ class SerializedListOfBytes(SerializedPreStoreChunks):
 
     def get_chunks(
         self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
-    ) -> Iterable[Union[str, BytesLike]]:
+    ) -> Generator[Union[str, BytesLike], None, None]:
         if as_files is False:
-            return self.chunks
+            for chunk in self.chunks:
+                yield chunk
         else:
             if as_files is None or as_files is True or isinstance(as_files, str):
                 # means we write all the chunks into one file
                 file = None if as_files is True else as_files
                 path = self._store_bytes_to_file(self.chunks, file=file)
-                return [path]
+                yield path
             else:
                 assert len(as_files) == self.get_number_of_chunks()
-                result = []
                 for idx, chunk in enumerate(self.chunks):
                     _file = as_files[idx]
                     path = self._store_bytes_to_file([chunk], file=_file)
-                    result.append(path)
-                return result
+                    yield path
 
     def get_number_of_chunks(self) -> int:
         return len(self.chunks)
@@ -255,14 +254,14 @@ class SerializedFile(SerializedPreStoreChunks):
 
     def get_chunks(
         self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
-    ) -> Iterable[Union[str, BytesLike]]:
+    ) -> Generator[Union[str, BytesLike], None, None]:
 
         if as_files is False:
             chunk = self._read_bytes_from_file(self.file)
-            return [chunk]
+            yield chunk
         else:
             if as_files is True:
-                return [self.file]
+                yield self.file
             else:
                 if isinstance(as_files, str):
                     file = as_files
@@ -273,7 +272,7 @@ class SerializedFile(SerializedPreStoreChunks):
                     raise Exception(f"Can't write to file '{file}': file exists.")
                 if symlink_ok:
                     os.symlink(self.file, file)
-                    return [file]
+                    yield file
                 else:
                     raise NotImplementedError()
 
@@ -296,7 +295,7 @@ class SerializedFiles(SerializedPreStoreChunks):
 
     def get_chunks(
         self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
-    ) -> Iterable[Union[str, BytesLike]]:
+    ) -> Generator[Union[str, BytesLike], None, None]:
         raise NotImplementedError()
 
     def get_number_of_chunks(self) -> int:
@@ -336,10 +335,10 @@ class SerializedInlineJson(SerializedPreStoreChunks):
 
     def get_chunks(
         self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
-    ) -> Iterable[Union[str, BytesLike]]:
+    ) -> Generator[Union[str, BytesLike], None, None]:
 
         if as_files is False:
-            return [self.as_json()]
+            yield self.as_json()
         else:
             raise NotImplementedError()
 

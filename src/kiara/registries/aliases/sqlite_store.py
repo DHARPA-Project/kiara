@@ -16,19 +16,19 @@ class SqliteAliasArchive(AliasArchive):
     _config_cls = SqliteArchiveConfig
 
     @classmethod
-    def _load_store_config(
-        cls, store_uri: str, allow_write_access: bool, **kwargs
+    def _load_archive_config(
+        cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Mapping[str, Any], None]:
 
         if allow_write_access:
             return None
 
-        if not Path(store_uri).is_file():
+        if not Path(archive_uri).is_file():
             return None
 
         import sqlite3
 
-        con = sqlite3.connect(store_uri)
+        con = sqlite3.connect(archive_uri)
 
         cursor = con.cursor()
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -43,7 +43,7 @@ class SqliteAliasArchive(AliasArchive):
             return None
 
         # config = SqliteArchiveConfig(sqlite_db_path=store_uri)
-        return {"sqlite_db_path": store_uri}
+        return {"sqlite_db_path": archive_uri}
 
     def __init__(
         self,
@@ -145,19 +145,19 @@ class SqliteAliasStore(SqliteAliasArchive, AliasStore):
     _archive_type_name = "sqlite_alias_store"
 
     @classmethod
-    def _load_store_config(
-        cls, store_uri: str, allow_write_access: bool, **kwargs
+    def _load_archive_config(
+        cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Mapping[str, Any], None]:
 
         if not allow_write_access:
             return None
 
-        if not Path(store_uri).is_file():
+        if not Path(archive_uri).is_file():
             return None
 
         import sqlite3
 
-        con = sqlite3.connect(store_uri)
+        con = sqlite3.connect(archive_uri)
 
         cursor = con.cursor()
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -172,7 +172,7 @@ class SqliteAliasStore(SqliteAliasArchive, AliasStore):
             return None
 
         # config = SqliteArchiveConfig(sqlite_db_path=store_uri)
-        return {"sqlite_db_path": store_uri}
+        return {"sqlite_db_path": archive_uri}
 
     def _set_archive_metadata_value(self, key: str, value: Any):
         """Set custom metadata for the archive."""

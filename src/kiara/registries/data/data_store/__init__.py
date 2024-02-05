@@ -103,7 +103,6 @@ class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG
 
         Raise an exception if the value is not persisted in this archive.
         """
-        pass
 
     def retrieve_value(self, value_id: uuid.UUID) -> Value:
         """Retrieve the value for the specified value_id.
@@ -150,7 +149,6 @@ class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG
         This method basically implements the store-specific logic to retrieve the value details from disk.
 
         """
-        pass
 
     @property
     def value_ids(self) -> Union[None, Iterable[uuid.UUID]]:
@@ -164,7 +162,6 @@ class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG
 
         In the case that _retrieve_all_value_ids returns 'None', the store does not support statically determined value ids and the 'find_values' method(s) needs to be used to retrieve values. Also, 'has_value' can be used to test whether a specific value_id is stored in the archive.
         """
-        pass
 
     def has_value(self, value_id: uuid.UUID) -> bool:
         """
@@ -212,8 +209,6 @@ class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG
 
         Each store needs to implement this so environemnt details related to a value can be retrieved later on. Since in most cases the environment details will not change, a lookup is more efficient than having to store the full information with each value.
         """
-
-        pass
 
     def find_values(self, matcher: ValueMatcher) -> Iterable[Value]:
         raise NotImplementedError()
@@ -264,8 +259,6 @@ class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG
         This needs to be implemented in the implementing store though, and might or might not be used.
         """
 
-        pass
-
     def find_destinies_for_value(
         self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
     ) -> Union[Mapping[str, uuid.UUID], None]:
@@ -291,8 +284,6 @@ class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG
         For now, you can just return 'None' in your implementation.
         """
 
-        pass
-
     @abc.abstractmethod
     def retrieve_chunk(
         self,
@@ -304,7 +295,6 @@ class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG
 
         If 'as_file' is specified, the chunk is written to a file, and the file path is returned. Otherwise, the chunk is returned as 'bytes'.
         """
-        pass
 
     @abc.abstractmethod
     def retrieve_chunks(
@@ -317,7 +307,6 @@ class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG
 
         If 'as_files' is specified, the chunks are written to a file, and the file path is returned. Otherwise, the chunk is returned as 'bytes'.
         """
-        pass
 
 
 class DataStore(DataArchive):
@@ -341,26 +330,24 @@ class DataStore(DataArchive):
 
 
 class BaseDataStore(DataStore):
-    # @abc.abstractmethod
-    # def _persist_bytes(self, bytes_structure: BytesStructure) -> BytesAliasStructure:
-    #     pass
-
     @abc.abstractmethod
     def _persist_stored_value_info(self, value: Value, persisted_value: PersistedData):
         """Store the details about the persisted data.
 
         This is used so an archive of this type can load the value data again later on. Value metadata is stored separately, later, using the '_persist_value_details' method.
         """
-        pass
 
     @abc.abstractmethod
     def _persist_value_details(self, value: Value):
-        pass
+        """Persist the value details.
 
-    # @abc.abstractmethod
-    # def _persist_value_data(self, value: Value) -> PersistedData:
-    #     """Persist the actual value data."""
-    #     pass
+        Important details are:
+         - value_id
+         - value_hash
+         - value_size
+         - data_type_name
+         - value_metadata
+        """
 
     @abc.abstractmethod
     def _persist_value_pedigree(self, value: Value):
@@ -379,11 +366,10 @@ class BaseDataStore(DataStore):
 
         Each store type needs to store this for lookup purposes.
         """
-        pass
 
     @abc.abstractmethod
     def _persist_destiny_backlinks(self, value: Value):
-        pass
+        """Persist the destiny backlinks."""
 
     def store_value(self, value: Value) -> PersistedData:
 
@@ -423,7 +409,6 @@ class BaseDataStore(DataStore):
 
         If the chunk is a string, it represents a local file path, otherwise it is a BytesIO instance representing the actual data of the chunk.
         """
-        pass
 
     def _persist_value_data(self, value: Value) -> PersistedData:
 
@@ -434,8 +419,8 @@ class BaseDataStore(DataStore):
         SIZE_LIMIT = 100000000
 
         chunk_id_map = {}
-        chunks_to_persist = {}
-        chunks_persisted = set()
+        chunks_to_persist: Dict[CID, BytesIO] = {}
+        chunks_persisted: Set[CID] = set()
         current_size = 0
         for key in serialized_value.get_keys():
 
@@ -453,9 +438,9 @@ class BaseDataStore(DataStore):
                 chunks = [BytesIO(data_model.as_json())]  # type: ignore
             elif data_model.type == "chunk-ids":  # type: ignore
                 # means this is already serialized in a different store
-                data_model_instance: SerializedChunkIDs = data_model
+                data_model_instance: SerializedChunkIDs = data_model  # type: ignore
                 chunks = (
-                    BytesIO(x) for x in data_model_instance.get_chunks(as_files=False)
+                    BytesIO(x) for x in data_model_instance.get_chunks(as_files=False)  # type: ignore
                 )
 
             else:

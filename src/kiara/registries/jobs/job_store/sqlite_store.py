@@ -17,19 +17,19 @@ class SqliteJobArchive(JobArchive):
     _config_cls = SqliteArchiveConfig
 
     @classmethod
-    def _load_store_config(
-        cls, store_uri: str, allow_write_access: bool, **kwargs
+    def _load_archive_config(
+        cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Mapping[str, Any], None]:
 
         if allow_write_access:
             return None
 
-        if not Path(store_uri).is_file():
+        if not Path(archive_uri).is_file():
             return None
 
         import sqlite3
 
-        con = sqlite3.connect(store_uri)
+        con = sqlite3.connect(archive_uri)
 
         cursor = con.cursor()
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -44,7 +44,7 @@ class SqliteJobArchive(JobArchive):
             return None
 
         # config = SqliteArchiveConfig(sqlite_db_path=store_uri)
-        return {"sqlite_db_path": store_uri}
+        return {"sqlite_db_path": archive_uri}
 
     def __init__(self, archive_alias: str, archive_config: SqliteArchiveConfig):
 
@@ -173,19 +173,19 @@ class SqliteJobStore(SqliteJobArchive, JobStore):
     _archive_type_name = "sqlite_job_store"
 
     @classmethod
-    def _load_store_config(
-        cls, store_uri: str, allow_write_access: bool, **kwargs
+    def _load_archive_config(
+        cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Mapping[str, Any], None]:
 
         if not allow_write_access:
             return None
 
-        if not Path(store_uri).is_file():
+        if not Path(archive_uri).is_file():
             return None
 
         import sqlite3
 
-        con = sqlite3.connect(store_uri)
+        con = sqlite3.connect(archive_uri)
 
         cursor = con.cursor()
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -200,7 +200,7 @@ class SqliteJobStore(SqliteJobArchive, JobStore):
             return None
 
         # config = SqliteArchiveConfig(sqlite_db_path=store_uri)
-        return {"sqlite_db_path": store_uri}
+        return {"sqlite_db_path": archive_uri}
 
     def store_job_record(self, job_record: JobRecord):
 

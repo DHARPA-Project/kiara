@@ -45,19 +45,19 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
     _config_cls = SqliteArchiveConfig
 
     @classmethod
-    def _load_store_config(
-        cls, store_uri: str, allow_write_access: bool, **kwargs
+    def _load_archive_config(
+        cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Mapping[str, Any], None]:
 
         if allow_write_access:
             return None
 
-        if not Path(store_uri).is_file():
+        if not Path(archive_uri).is_file():
             return None
 
         import sqlite3
 
-        con = sqlite3.connect(store_uri)
+        con = sqlite3.connect(archive_uri)
 
         cursor = con.cursor()
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -78,7 +78,7 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
             return None
 
         # config = SqliteArchiveConfig(sqlite_db_path=store_uri)
-        return {"sqlite_db_path": store_uri}
+        return {"sqlite_db_path": archive_uri}
 
     def __init__(
         self,
@@ -383,7 +383,7 @@ CREATE TABLE IF NOT EXISTS environments (
                       CASE chunk_id
                         {"".join([f"WHEN '{id}' THEN {i} " for i, id in enumerate(missing_ids)])}
                       END
-                    """
+                    """  # noqa
                 )
 
                 result = conn.execute(sql)
@@ -468,19 +468,19 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
     _config_cls = SqliteDataStoreConfig
 
     @classmethod
-    def _load_store_config(
-        cls, store_uri: str, allow_write_access: bool, **kwargs
+    def _load_archive_config(
+        cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[SqliteArchiveConfig, None]:
 
         if not allow_write_access:
             return None
 
-        if not Path(store_uri).is_file():
+        if not Path(archive_uri).is_file():
             return None
 
         import sqlite3
 
-        con = sqlite3.connect(store_uri)
+        con = sqlite3.connect(archive_uri)
 
         cursor = con.cursor()
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -498,7 +498,7 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
         }:
             return None
 
-        config = SqliteArchiveConfig(sqlite_db_path=store_uri)
+        config = SqliteArchiveConfig(sqlite_db_path=archive_uri)
         return config
 
     def _set_archive_metadata_value(self, key: str, value: Any):

@@ -364,8 +364,8 @@ class PipelineStructure(KiaraModel):
 
             for f in to_flatten:
 
-                in_edges = tuple(graph.in_edges(f))[0]
-                out_edges = tuple(graph.out_edges(f))[0]
+                in_edges = tuple(graph.in_edges(f))[0]  # noqa
+                out_edges = tuple(graph.out_edges(f))[0]  # noqa
                 assert in_edges[1] == out_edges[0]
                 graph.remove_edge(in_edges[0], in_edges[1])
                 graph.remove_edge(out_edges[0], out_edges[1])

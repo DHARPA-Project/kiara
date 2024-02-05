@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
+    ClassVar,
     Dict,
     Iterable,
     List,
@@ -118,8 +119,8 @@ class KiaraAPI(object):
     .
     """
 
-    _default_instance: Union["KiaraAPI", None] = None
-    _context_instances: Dict[str, "KiaraAPI"] = {}
+    _default_instance: ClassVar[Union["KiaraAPI", None]] = None
+    _context_instances: ClassVar[Dict[str, "KiaraAPI"]] = {}
 
     @classmethod
     def instance(cls, context_name: Union[str, None] = None) -> "KiaraAPI":
@@ -1589,13 +1590,13 @@ class KiaraAPI(object):
                 if not values_schema:
                     details = "No schema provided."
                     raise KiaraException(
-                        f"Invalid field name: '{k}' (value: {str(v)}).", details=details
+                        f"Invalid field name: '{k}' (value: {v}).", details=details
                     )
 
                 if k not in values_schema.keys():
                     details = "Valid field names: " + ", ".join(values_schema.keys())
                     raise KiaraException(
-                        f"Invalid field name: '{k}' (value: {str(v)}).", details=details
+                        f"Invalid field name: '{k}' (value: {v}).", details=details
                     )
 
                 if isinstance(v, str):

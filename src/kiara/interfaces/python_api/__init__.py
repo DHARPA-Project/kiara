@@ -51,9 +51,7 @@ from kiara.interfaces.python_api.models.info import (
     ValuesInfo,
 )
 from kiara.interfaces.python_api.models.job import JobDesc
-from kiara.interfaces.python_api.models.workflow import WorkflowMatcher
 from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
-from kiara.interfaces.python_api.workflow import Workflow
 from kiara.models.context import ContextInfo, ContextInfos
 from kiara.models.module.jobs import ActiveJob
 from kiara.models.module.manifest import Manifest
@@ -94,6 +92,7 @@ if TYPE_CHECKING:
         PipelinesMap,
         WorkflowsMap,
     )
+    from kiara.interfaces.python_api.workflow import Workflow
     from kiara.models.module.pipeline import PipelineConfig, PipelineStructure
     from kiara.models.module.pipeline.pipeline import PipelineGroupInfo, PipelineInfo
 
@@ -1583,6 +1582,7 @@ class KiaraAPI(object):
         if register_data:
             temp: Dict[str, Union[str, Value, uuid.UUID, None]] = {}
             for k, v in values.items():
+
                 if isinstance(v, (Value, uuid.UUID)):
                     temp[k] = v
                     continue
@@ -1602,6 +1602,9 @@ class KiaraAPI(object):
                 if isinstance(v, str):
 
                     if v.startswith("alias:"):
+                        temp[k] = v
+                        continue
+                    elif v.startswith("archive:"):
                         temp[k] = v
                         continue
 
@@ -2330,7 +2333,7 @@ class KiaraAPI(object):
 
     def get_workflow(
         self, workflow: Union[str, uuid.UUID], create_if_necessary: bool = True
-    ) -> Workflow:
+    ) -> "Workflow":
         """Retrieve the workflow instance with the specified id or alias.
 
         NOTE: this is a provisional endpoint, don't use in anger yet
@@ -2380,12 +2383,14 @@ class KiaraAPI(object):
         return workflow_obj
 
     def retrieve_workflow_info(
-        self, workflow: Union[str, uuid.UUID, Workflow]
+        self, workflow: Union[str, uuid.UUID, "Workflow"]
     ) -> WorkflowInfo:
         """Retrieve information about the specified workflow.
 
         NOTE: this is a provisional endpoint, don't use in anger yet
         """
+
+        from kiara.interfaces.python_api.workflow import Workflow
 
         if isinstance(workflow, Workflow):
             _workflow: Workflow = workflow
@@ -2398,6 +2403,7 @@ class KiaraAPI(object):
         """List all available workflow sessions, indexed by their unique id."""
 
         from kiara.interfaces.python_api.models.doc import WorkflowsMap
+        from kiara.interfaces.python_api.models.workflow import WorkflowMatcher
 
         workflows = {}
 
@@ -2424,6 +2430,7 @@ class KiaraAPI(object):
         """
 
         from kiara.interfaces.python_api.models.doc import WorkflowsMap
+        from kiara.interfaces.python_api.workflow import Workflow
 
         if matcher_params:
             matcher_params["has_alias"] = True
@@ -2487,11 +2494,13 @@ class KiaraAPI(object):
         documentation: Union[Any, None] = None,
         save: bool = False,
         force_alias: bool = False,
-    ) -> Workflow:
+    ) -> "Workflow":
         """Create a workflow instance.
 
         NOTE: this is a provisional endpoint, don't use in anger yet
         """
+
+        from kiara.interfaces.python_api.workflow import Workflow
 
         if workflow_alias is not None:
             try:

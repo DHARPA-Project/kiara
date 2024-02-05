@@ -216,7 +216,10 @@ class FileBundleValueType(AnyType[KiaraFileBundle, FileTypeConfig]):
             file_data[rel_path] = {"type": "file", "codec": "raw", "file": file.path}
             file_metadata[rel_path] = {
                 "file_name": file.file_name,
-                # "import_time": file.import_time,
+                "size": file.size,
+                "mime_type": file.mime_type,
+                "metadata": file.metadata,
+                "metadata_schemas": file.metadata_schemas,
             }
 
         # bundle_metadata = orjson_dumps(data.metadata)

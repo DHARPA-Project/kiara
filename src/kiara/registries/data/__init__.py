@@ -13,10 +13,12 @@ from typing import (
     Any,
     Callable,
     Dict,
+    Generator,
     Iterable,
     List,
     Mapping,
     Protocol,
+    Sequence,
     Set,
     Tuple,
     Union,
@@ -75,9 +77,12 @@ from kiara.utils.hashing import NONE_CID
 from kiara.utils.stores import check_external_archive
 
 if TYPE_CHECKING:
+    from multiformats.varint import BytesLike
+
     from kiara.context import Kiara
     from kiara.models.module.destiny import Destiny
     from kiara.models.module.manifest import Manifest
+
 
 logger = structlog.getLogger()
 
@@ -133,33 +138,43 @@ class DefaultAliasResolver(AliasResolver):
                         msg=f"Can't retrive value for alias '{rest}': no such alias registered.",
                     )
             elif ref_type == ARCHIVE_REF_TYPE_NAME:
-
                 if "#" in rest:
-                    raise NotImplementedError()
+                    archive_ref, path_in_archive = rest.split("#", maxsplit=1)
+                else:
+                    archive_ref = rest
+                    path_in_archive = None
 
                 archives = check_external_archive(
-                    archive=rest, allow_write_access=False
+                    archive=archive_ref, allow_write_access=False
                 )
-                print("XXX")
 
                 if archives:
-                    dbg(archives)
                     data_archive = archives.get("data", None)
                     if data_archive:
-                        print("---")
-                        print(data_archive)
-                        dbg(data_archive.archive_metadata.model_dump())
                         self._kiara.data_registry.register_data_archive(data_archive)
+
+                    if not path_in_archive:
                         default_value = data_archive.get_archive_metadata(
                             "default_value"
                         )
-                        print("---")
-                        print(default_value)
-                        return uuid.UUID(default_value)
+                        _value_id = uuid.UUID(default_value)
+                    else:
+                        from kiara.registries.aliases import AliasArchive
 
-                print("XXX")
-                print(rest)
-                raise NotImplementedError("x")
+                        alias_archive: AliasArchive = archives.get("alias", None)  # type: ignore
+                        if alias_archive:
+                            _value_id = alias_archive.find_value_id_for_alias(
+                                alias=path_in_archive
+                            )
+                        else:
+                            raise NoSuchValueException(
+                                msg=f"No alias archive found for '{archive_ref}'."
+                            )
+                else:
+                    raise NoSuchValueException(
+                        msg=f"No archive found for '{archive_ref}'."
+                    )
+
             else:
                 raise Exception(
                     f"Can't retrieve value for '{alias}': invalid reference type '{ref_type}'."
@@ -1059,9 +1074,9 @@ class DataRegistry(object):
         self,
         chunk_id: str,
         archive_id: Union[uuid.UUID, None] = None,
-        as_file: Union[None, bool, str] = None,
+        as_file: bool = True,
         symlink_ok: bool = True,
-    ) -> Union[str, bytes]:
+    ) -> Union[str, "BytesLike"]:
 
         if archive_id is None:
             raise NotImplementedError()
@@ -1070,6 +1085,33 @@ class DataRegistry(object):
         chunk = archive.retrieve_chunk(chunk_id, as_file=as_file, symlink_ok=symlink_ok)
 
         return chunk
+
+    def retrieve_chunks(
+        self,
+        chunk_ids: Sequence[str],
+        as_files: bool = True,
+        symlink_ok: bool = True,
+        archive_id: Union[uuid.UUID, None] = None,
+    ) -> Generator[Union[str, "BytesLike"], None, None]:
+        """Return the chunk content in the same order as the 'chunk_ids' argument.
+
+        If 'as_files' is 'True', it will return strings representing paths to files containing the chunk data. If symlink_ok is also set to 'True', the returning Path could potentially be a symlink, which means the underlying function might not need to copy the file. In this case, you are responsible to not change the contents of the path, ever.
+
+        If 'as_files' is 'False', BytesLike objects will be returned, containing the chunk data bytes directly.
+        """
+
+        if archive_id is None:
+            raise NotImplementedError(
+                "Can't retrieve chunks without specifying an archive."
+            )
+
+        archive = self.get_archive(archive_id)
+
+        return archive.retrieve_chunks(
+            chunk_ids, as_files=as_files, symlink_ok=symlink_ok
+        )
+        # for chunk_id in chunk_ids:
+        #     yield archive.retrieve_chunk(chunk_id)
 
     def retrieve_value_data(
         self, value: Union[uuid.UUID, Value], target_profile: Union[str, None] = None

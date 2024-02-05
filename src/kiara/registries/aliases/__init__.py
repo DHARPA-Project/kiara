@@ -229,10 +229,10 @@ class AliasRegistry(object):
             return self._cached_aliases
 
         # TODO: multithreading lock
-
         all_aliases: Dict[str, AliasItem] = {}
         all_aliases_by_id: Dict[uuid.UUID, Set[AliasItem]] = {}
         dynamic_stores = []
+
         for archive_alias, archive in self._alias_archives.items():
             alias_map = archive.retrieve_all_aliases()
             if alias_map is None:
@@ -261,6 +261,7 @@ class AliasRegistry(object):
         self._cached_aliases = {k: all_aliases[k] for k in sorted(all_aliases.keys())}
         self._cached_aliases_by_id = all_aliases_by_id
         self._dynamic_stores = dynamic_stores
+        self._cached_dynamic_aliases = {}
 
         return self._cached_aliases
 

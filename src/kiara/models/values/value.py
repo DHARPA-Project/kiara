@@ -17,6 +17,7 @@ from typing import (
     Any,
     ClassVar,
     Dict,
+    Generator,
     Iterable,
     List,
     Literal,
@@ -79,7 +80,7 @@ class SerializedChunks(BaseModel, abc.ABC):
     @abc.abstractmethod
     def get_chunks(
         self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
-    ) -> Iterable[Union[str, BytesLike]]:
+    ) -> Generator[Union[str, "BytesLike"], None, None]:
         """
         Retrieve the chunks belonging to this data instance.
 
@@ -365,31 +366,33 @@ class SerializedChunkIDs(SerializedChunks):
     _data_registry: "DataRegistry" = PrivateAttr(default=None)
 
     def get_chunks(
-        self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
-    ) -> Iterable[Union[str, BytesLike]]:
+        self, as_files: bool = True, symlink_ok: bool = True
+    ) -> Generator[Union[str, BytesLike], None, None]:
+        """Retrieve the chunks of this value data.
 
-        if isinstance(as_files, (bool, str)):
-            return (
-                self._data_registry.retrieve_chunk(
-                    chunk_id=chunk,
-                    archive_id=self.archive_id,
-                    as_file=as_files,
-                    symlink_ok=symlink_ok,
-                )
-                for chunk in self.chunk_id_list
-            )
-        else:
-            result = []
-            for idx, chunk_id in enumerate(self.chunk_id_list):
-                file = as_files[idx]
-                self._data_registry.retrieve_chunk(
-                    chunk_id=chunk_id,
-                    archive_id=self.archive_id,
-                    as_file=file,
-                    symlink_ok=symlink_ok,
-                )
-                result.append(file)
-            return result
+        If 'as_files' is 'True', it will return strings representing paths to files containing the chunk data. If symlink_ok is also set to 'True', the returning Path could potentially be a symlink, which means the underlying function might not need to copy the file. In this case, you are responsible to not change the contents of the path, ever.
+
+        If 'as_files' is 'False', BytesLike objects will be returned, containing the chunk data bytes directly.
+
+        """
+
+        chunk_ids = self.chunk_id_list
+        return self._data_registry.retrieve_chunks(
+            chunk_ids=chunk_ids,
+            as_files=as_files,
+            symlink_ok=symlink_ok,
+            archive_id=self.archive_id,
+        )
+
+        # return (
+        #     self._data_registry.retrieve_chunk(
+        #         chunk_id=chunk,
+        #         archive_id=self.archive_id,
+        #         as_file=as_files,
+        #         symlink_ok=symlink_ok,
+        #     )
+        #     for chunk in self.chunk_id_list
+        # )
 
     def get_number_of_chunks(self) -> int:
         return len(self.chunk_id_list)

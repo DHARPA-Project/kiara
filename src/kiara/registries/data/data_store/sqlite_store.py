@@ -6,9 +6,12 @@ from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
+    Generator,
     Generic,
     Iterable,
+    List,
     Mapping,
+    Sequence,
     Set,
     Union,
 )
@@ -33,6 +36,7 @@ from kiara.utils.windows import fix_windows_longpath
 
 if TYPE_CHECKING:
     from multiformats import CID
+    from multiformats.varint import BytesLike
 
 
 class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG_CLS]):
@@ -347,6 +351,107 @@ CREATE TABLE IF NOT EXISTS environments (
             file.write(chunk_data)
 
         return chunk_path.as_posix()
+
+    def retrieve_chunks(
+        self,
+        chunk_ids: Sequence[str],
+        as_files: Union[bool, None] = None,
+        symlink_ok: bool = True,
+    ) -> Generator[Union["BytesLike", str], None, None]:
+
+        import lzma
+
+        import lz4.frame
+        from zstandard import ZstdDecompressor
+
+        dctx = ZstdDecompressor()
+
+        MAX_CHUNKS_SQL = 50
+
+        with self.sqlite_engine.connect() as conn:
+
+            def retrieve_missing_chunks(
+                missing_ids: List[str],
+            ) -> Generator[Union["BytesLike", str], None, None]:
+
+                id_list_str = ", ".join("'" + item + "'" for item in missing_ids)
+                sql = text(
+                    f"""SELECT chunk_id, chunk_data, compression_type FROM values_data
+                    WHERE
+                        chunk_id in ({id_list_str})
+                    ORDER BY
+                      CASE chunk_id
+                        {"".join([f"WHEN '{id}' THEN {i} " for i, id in enumerate(missing_ids)])}
+                      END
+                    """
+                )
+
+                result = conn.execute(sql)
+                for row in result:
+                    result_chunk_id = row[0]
+                    chunk_data = row[1]
+                    compression_type = row[2]
+                    if compression_type not in (None, 0):
+                        if (
+                            CHUNK_COMPRESSION_TYPE(compression_type)
+                            == CHUNK_COMPRESSION_TYPE.ZSTD
+                        ):
+                            chunk_data = dctx.decompress(chunk_data)
+                        elif (
+                            CHUNK_COMPRESSION_TYPE(compression_type)
+                            == CHUNK_COMPRESSION_TYPE.LZMA
+                        ):
+                            chunk_data = lzma.decompress(chunk_data)
+                        elif (
+                            CHUNK_COMPRESSION_TYPE(compression_type)
+                            == CHUNK_COMPRESSION_TYPE.LZ4
+                        ):
+                            chunk_data = lz4.frame.decompress(chunk_data)
+                        else:
+                            raise ValueError(
+                                f"Unsupported compression type: {compression_type}"
+                            )
+
+                    chunk_id = missing_ids.pop(0)
+                    assert result_chunk_id == chunk_id
+
+                    if not as_files:
+                        yield chunk_data
+                    else:
+                        chunk_path = self.get_chunk_path(chunk_id)
+                        chunk_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+                        with open(chunk_path, "wb") as file:
+                            file.write(chunk_data)
+                        yield chunk_path.as_posix()
+
+            missing_chunk_ids = []
+
+            for idx, chunk_id in enumerate(chunk_ids):
+
+                if as_files:
+                    chunk_path = self.get_chunk_path(chunk_id)
+
+                    if chunk_path.exists():
+                        path = chunk_path.as_posix()
+
+                        if missing_chunk_ids:
+                            for chunk in retrieve_missing_chunks(missing_chunk_ids):
+                                yield chunk
+                            assert not missing_chunk_ids
+
+                        yield path
+                        continue
+
+                missing_chunk_ids.append(chunk_id)
+                if len(missing_chunk_ids) >= MAX_CHUNKS_SQL:
+                    for chunk in retrieve_missing_chunks(missing_chunk_ids):
+                        yield chunk
+                    assert not missing_chunk_ids
+
+            if missing_chunk_ids:
+                for chunk in retrieve_missing_chunks(missing_chunk_ids):
+                    yield chunk
+                assert not missing_chunk_ids
 
     def _delete_archive(self):
         os.unlink(self.sqlite_path)

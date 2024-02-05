@@ -9,7 +9,17 @@ import abc
 import typing
 import uuid
 from io import BytesIO
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Set, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Generator,
+    Iterable,
+    Mapping,
+    Sequence,
+    Set,
+    Union,
+)
 
 import structlog
 from rich.console import RenderableType
@@ -29,6 +39,7 @@ from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
 
 if TYPE_CHECKING:
     from multiformats import CID
+    from multiformats.varint import BytesLike
 
 logger = structlog.getLogger()
 
@@ -286,12 +297,25 @@ class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG
     def retrieve_chunk(
         self,
         chunk_id: str,
-        as_file: Union[bool, str, None] = None,
+        as_file: Union[bool, None] = None,
         symlink_ok: bool = True,
-    ) -> Union[bytes, str]:
+    ) -> Union["BytesLike", str]:
         """Retrieve the chunk with the specified id.
 
         If 'as_file' is specified, the chunk is written to a file, and the file path is returned. Otherwise, the chunk is returned as 'bytes'.
+        """
+        pass
+
+    @abc.abstractmethod
+    def retrieve_chunks(
+        self,
+        chunk_ids: Sequence[str],
+        as_files: Union[bool, None] = None,
+        symlink_ok: bool = True,
+    ) -> Generator[Union["BytesLike", str], None, None]:
+        """Retrieve a generator with all the specified chunks.
+
+        If 'as_files' is specified, the chunks are written to a file, and the file path is returned. Otherwise, the chunk is returned as 'bytes'.
         """
         pass
 

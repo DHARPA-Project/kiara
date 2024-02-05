@@ -196,16 +196,31 @@ class DeserializeFileBundleModule(DeserializeValueModule):
         included_files = {}
         for rel_path in keys:
 
-            chunks = data.get_serialized_data(rel_path)
-            assert chunks.get_number_of_chunks() == 1
+            if "size" not in file_metadata[rel_path].keys():
+                # old style, can be removed at some point
+                # file metadata was added feb 2024
 
-            files = list(chunks.get_chunks(as_files=True, symlink_ok=True))
-            assert len(files) == 1
+                chunks = data.get_serialized_data(rel_path)
+                assert chunks.get_number_of_chunks() == 1
+                files = list(chunks.get_chunks(as_files=True, symlink_ok=True))
+                assert len(files) == 1
 
-            file: str = files[0]  # type: ignore
-            file_name = file_metadata[rel_path]["file_name"]
-            # import_time = file_metadata[rel_path]["import_time"]
-            fm = KiaraFile.load_file(source=file, file_name=file_name)
+                file: str = files[0]  # type: ignore
+                file_name = file_metadata[rel_path]["file_name"]
+                # import_time = file_metadata[rel_path]["import_time"]
+                fm = KiaraFile.load_file(source=file, file_name=file_name)
+            else:
+                fm = KiaraFile(**file_metadata[rel_path])
+
+                def _load_file():
+                    chunks = data.get_serialized_data(rel_path)
+                    assert chunks.get_number_of_chunks() == 1
+                    files = list(chunks.get_chunks(as_files=True, symlink_ok=True))
+                    assert len(files) == 1
+                    return files[0]
+
+                fm._path_resolver = _load_file
+
             included_files[rel_path] = fm
 
         fb_metadata = metadata.pop("metadata")

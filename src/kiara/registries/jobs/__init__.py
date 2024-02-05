@@ -572,7 +572,8 @@ class JobRegistry(object):
             return results
         elif job_id in self._failed_jobs.values():
             j = self._processor.get_job(job_id=job_id)
-            raise FailedJobException(job=j, parent=j._exception)
+            exception = FailedJobException(job=j, parent=j._exception)
+            raise exception
         else:
             raise Exception(f"Could not find job with id: {job_id}")
 

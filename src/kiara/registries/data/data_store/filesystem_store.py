@@ -9,7 +9,16 @@ import uuid
 from enum import Enum
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Set, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Generator,
+    Iterable,
+    Mapping,
+    Sequence,
+    Set,
+    Union,
+)
 
 import orjson
 import structlog
@@ -29,6 +38,7 @@ from kiara.utils.windows import fix_windows_longpath, fix_windows_symlink
 
 if TYPE_CHECKING:
     from multiformats import CID
+    from multiformats.varint import BytesLike
 
 logger = structlog.getLogger()
 
@@ -354,7 +364,7 @@ class FileSystemDataArchive(DataArchive):
     def retrieve_chunk(
         self,
         chunk_id: str,
-        as_file: Union[bool, str, None] = None,
+        as_file: bool = True,
         symlink_ok: bool = True,
     ) -> Union[bytes, str]:
 
@@ -362,13 +372,23 @@ class FileSystemDataArchive(DataArchive):
         if addr is None:
             raise KiaraException(f"Can't find chunk with id '{chunk_id}'")
 
-        if as_file in (None, True):
+        if as_file is True:
             result: str = addr.abspath
             return result
         elif as_file is False:
             return Path(addr.abspath).read_bytes()
         else:
             raise NotImplementedError()
+
+    def retrieve_chunks(
+        self,
+        chunk_ids: Sequence[str],
+        as_files: Union[bool, None] = None,
+        symlink_ok: bool = True,
+    ) -> Generator[Union["BytesLike", str], None, None]:
+
+        for chunk_id in chunk_ids:
+            yield self.retrieve_chunk(chunk_id, as_file=as_files, symlink_ok=symlink_ok)
 
 
 class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):

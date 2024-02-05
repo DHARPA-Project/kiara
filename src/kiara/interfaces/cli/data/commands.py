@@ -18,6 +18,7 @@ import structlog
 from kiara.exceptions import InvalidCommandLineInvocation
 from kiara.utils import log_exception, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
+from kiara.utils.cli.exceptions import handle_exception
 
 # from kiara.interfaces.python_api.models.info import RENDER_FIELDS, ValueInfo, ValuesInfo
 # from kiara.interfaces.tui.pager import PagerApp
@@ -38,6 +39,7 @@ from kiara.utils.cli import output_format_option, terminal_print, terminal_print
 if TYPE_CHECKING:
     from kiara.api import Kiara, KiaraAPI
     from kiara.operations.included_core_operations.filter import FilterOperationType
+    from kiara.registries.data import DataArchive
 
 
 logger = structlog.getLogger()
@@ -236,6 +238,7 @@ def list_values(
 )
 @output_format_option()
 @click.pass_context
+@handle_exception()
 def explain_value(
     ctx,
     value_id: Tuple[str],
@@ -303,6 +306,7 @@ def explain_value(
 #     is_flag=True,
 # )
 @click.pass_context
+@handle_exception()
 def load_value(ctx, value: str):
     """Load a stored value and print it in a format suitable for the terminal."""
     # kiara_obj: Kiara = ctx.obj["kiara"]
@@ -659,7 +663,6 @@ def export_data_store(
 @click.pass_context
 def import_data_store(ctx, archive: str):
 
-    from kiara.registries.data import DataArchive
     from kiara.utils.stores import check_external_archive
 
     kiara_api: KiaraAPI = ctx.obj.kiara_api
@@ -668,7 +671,7 @@ def import_data_store(ctx, archive: str):
 
     archives = check_external_archive(archive)
 
-    data_archive: DataArchive = archives.get("data", None)  # type: ignore
+    data_archive: "DataArchive" = archives.get("data", None)  # type: ignore
 
     if not data_archive:
         terminal_print(f"[red]Error[/red]: No data archives found in '{archive}'")

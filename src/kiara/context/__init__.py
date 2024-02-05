@@ -77,7 +77,6 @@ def explain(item: Any, kiara: Union[None, "Kiara"] = None):
 
 
 class Kiara(object):
-
     """
     The core context of a kiara session.
 
@@ -554,7 +553,7 @@ class KiaraContextInfo(KiaraModel):
 
     def get_info(self, item_type: str, item_id: str) -> ItemInfo:
 
-        if item_type == "data_type" or item_type == "data_types":
+        if item_type in ("data_type", "data_types"):
             group_info: InfoItemGroup = self.data_types
         elif "module" in item_type:
             group_info = self.module_types

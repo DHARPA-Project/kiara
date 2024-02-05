@@ -60,7 +60,6 @@ DEFAULT_HASH_FS_ALGORITHM = "sha256"
 
 
 class FileSystemDataArchive(DataArchive):
-
     """Data store that loads data from the local filesystem."""
 
     _archive_type_name = "filesystem_data_archive"
@@ -392,7 +391,6 @@ class FileSystemDataArchive(DataArchive):
 
 
 class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
-
     """Data store that stores data as files on the local filesystem."""
 
     _archive_type_name = "filesystem_data_store"

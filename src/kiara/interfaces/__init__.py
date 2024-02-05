@@ -10,7 +10,16 @@ import os
 import sys
 import uuid
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Iterator, Literal, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    ClassVar,
+    Dict,
+    Iterable,
+    Iterator,
+    Literal,
+    Union,
+)
 
 from kiara.defaults import KIARA_CONFIG_FILE_NAME, KIARA_MAIN_CONFIG_FILE
 from kiara.exceptions import KiaraException
@@ -60,10 +69,9 @@ def create_console(
     )
 
     class OptionHighlighter(RegexHighlighter):
-
         """Highlights our special options."""
 
-        highlights = [
+        highlights: ClassVar = [
             r"(^|\W)(?P<switch>\-\w+)(?![a-zA-Z0-9])",
             r"(^|\W)(?P<option>\-\-[\w\-]+)(?![a-zA-Z0-9])",
             r"(^|\W)(?P<argument>[A-Z0-9\_]+)(?![_a-zA-Z0-9])",

@@ -66,7 +66,6 @@ class DeSerializeDetails(BaseOperationDetails):
 
 
 class DeSerializeOperationType(OperationType[DeSerializeDetails]):
-
     """
     An operation that takes a value, and serializes it into the format suitable to the [`serialized_value`][kiara.data_types.included_core_types.SeriailzedValue] value type.
 
@@ -120,7 +119,7 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
                 mc = {
                     "value_type": value_type,
                     "target_profile": _profile_name,
-                    "serialization_profile": serialization_profile
+                    "serialization_profile": serialization_profile,
                     # "target_class": PythonClass.from_class(cls),
                 }
                 oc = ManifestOperationConfig(

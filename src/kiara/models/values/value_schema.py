@@ -15,7 +15,6 @@ from kiara.models.documentation import DocumentationMetadataModel
 
 
 class ValueSchema(KiaraModel):
-
     """
     The schema of a value.
 

@@ -102,7 +102,6 @@ yaml = YAML(typ="safe")
 
 
 class KiaraAPI(object):
-
     """
     Public API for clients.
 
@@ -1684,9 +1683,9 @@ class KiaraAPI(object):
             result = StoreValueResult(
                 value=value_obj,
                 aliases=sorted(alias) if alias else [],
-                error=str(e)
-                if str(e)
-                else f"Unknown error (type '{type(e).__name__}').",
+                error=(
+                    str(e) if str(e) else f"Unknown error (type '{type(e).__name__}')."
+                ),
                 persisted_data=persisted_data,
             )
 
@@ -1695,7 +1694,8 @@ class KiaraAPI(object):
     def store_values(
         self,
         values: Union[
-            Mapping[str, Union[str, uuid.UUID, Value]], Union[str, uuid.UUID, Value]
+            Mapping[str, Union[str, uuid.UUID, Value]],
+            Iterable[Union[str, uuid.UUID, Value]],
         ],
         alias_map: Union[Mapping[str, Iterable[str]], bool, str] = False,
         allow_overwrite: bool = True,
@@ -1955,7 +1955,9 @@ class KiaraAPI(object):
             )  # type: ignore
             ops = pretty_print_op_type.get_target_types_for(data_type)
         else:
-            render_op_type: RenderValueOperationType = self.context.operation_registry.get_operation_type(
+            render_op_type: (
+                RenderValueOperationType
+            ) = self.context.operation_registry.get_operation_type(
                 # type: ignore
                 "render_value"
             )  # type: ignore

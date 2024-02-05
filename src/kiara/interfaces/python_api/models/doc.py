@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 
 
 class OperationsMap(RootModel, collections.abc.Mapping):
-
     """A list of available context names."""
 
     root: Dict[str, "Operation"]
@@ -34,7 +33,6 @@ class OperationsMap(RootModel, collections.abc.Mapping):
 
 
 class PipelinesMap(RootModel, collections.abc.Mapping):
-
     """A list of available context names."""
 
     root: Dict[str, "PipelineStructure"]
@@ -50,7 +48,6 @@ class PipelinesMap(RootModel, collections.abc.Mapping):
 
 
 class WorkflowsMap(RootModel, collections.abc.Mapping):
-
     """A list of available context names."""
 
     root: Dict[str, "Workflow"]

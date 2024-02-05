@@ -70,7 +70,6 @@ logger = structlog.getLogger()
 
 
 class DataTypeConfig(BaseModel):
-
     """
     Base class that describes the configuration a [``DataType``][kiara.data.data_types.DataType] class accepts.
 
@@ -137,7 +136,6 @@ TYPE_CONFIG_CLS = TypeVar("TYPE_CONFIG_CLS", bound=DataTypeConfig)
 
 
 class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
-
     """
     Base class that all *kiara* data_types must inherit from.
 

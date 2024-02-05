@@ -50,7 +50,6 @@ if TYPE_CHECKING:
 
 
 class StepStatus(Enum):
-
     """Enum to describe the state of a workflow."""
 
     INPUTS_INVALID = "inputs_invalid"
@@ -59,7 +58,6 @@ class StepStatus(Enum):
 
 
 class PipelineStep(Manifest):
-
     """A step within a pipeline-structure, includes information about it's connection(s) and other metadata."""
 
     _kiara_model_id: ClassVar = "instance.pipeline_step"
@@ -482,7 +480,6 @@ def create_output_alias_map(steps: Iterable[PipelineStep]) -> Dict[str, str]:
 
 
 class PipelineConfig(KiaraModuleConfig):
-
     """
     A class to hold the configuration for a [PipelineModule][kiara.pipeline.module.PipelineModule].
 

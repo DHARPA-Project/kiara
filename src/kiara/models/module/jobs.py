@@ -241,9 +241,9 @@ class JobRecord(JobConfig):
             outputs=active_job.results,
             runtime_details=job_details,
             environment_hashes=kiara.environment_registry.environment_hashes,
-            inputs_data_hash=str(inputs_data_cid)
-            if inputs_data_cid is not None
-            else None,
+            inputs_data_hash=(
+                str(inputs_data_cid) if inputs_data_cid is not None else None
+            ),
         )
         return job_record
 

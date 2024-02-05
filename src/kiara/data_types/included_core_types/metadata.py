@@ -20,7 +20,6 @@ class MetadataTypeConfig(DataTypeConfig):
 
 
 class MetadataValueType(KiaraModelValueBaseType[Metadata, MetadataTypeConfig]):
-
     """A file."""
 
     _data_type_name: ClassVar[str] = "file"

@@ -41,7 +41,6 @@ from kiara.utils.models import (
 
 
 class KiaraModel(ABC, BaseModel, JupyterMixin):
-
     """
     Base class that all models in kiara inherit from.
 

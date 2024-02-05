@@ -37,7 +37,6 @@ SUPPORTED_FILE_TYPES = ["csv", "json", "text", "binary"]
 
 
 class FileValueType(KiaraModelValueBaseType[KiaraFile, FileTypeConfig]):
-
     """A file."""
 
     _data_type_name: ClassVar[str] = "file"
@@ -188,7 +187,6 @@ class FileValueType(KiaraModelValueBaseType[KiaraFile, FileTypeConfig]):
 
 
 class FileBundleValueType(AnyType[KiaraFileBundle, FileTypeConfig]):
-
     """A bundle of files (like a folder, zip archive, etc.)."""
 
     _data_type_name: ClassVar[str] = "file_bundle"

@@ -58,7 +58,6 @@ class PrettyPrintDetails(BaseOperationDetails):
 
 
 class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
-
     """
     An operation that takes a value, and renders into a format that can be printed for output..
 

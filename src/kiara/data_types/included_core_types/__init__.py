@@ -48,7 +48,6 @@ SCALAR_CHARACTERISTICS = DataTypeCharacteristics(
 
 
 class NoneType(DataType[SpecialValue, DataTypeConfig]):
-
     """Type indicating a 'None' value."""
 
     _data_type_name: ClassVar[str] = "none"
@@ -86,7 +85,6 @@ class AnyType(
     DataType[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS],
     Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS],
 ):
-
     """
     'Any' type, the parent type for most other types.
 
@@ -183,7 +181,6 @@ class AnyType(
 
 
 class BytesType(AnyType[bytes, DataTypeConfig]):
-
     """An array of bytes."""
 
     _data_type_name: ClassVar[str] = "bytes"
@@ -237,7 +234,6 @@ class StringTypeConfig(DataTypeConfig):
 
 
 class StringType(AnyType[str, StringTypeConfig]):
-
     """A string.
 
     Can be configured to only allow a list of specific strings by using the `allowed_strings` configuration option.
@@ -353,7 +349,6 @@ class BooleanType(AnyType[bool, DataTypeConfig]):
 
 
 class DictValueType(AnyType[KiaraDict, DataTypeConfig]):
-
     """
     A dictionary.
 
@@ -528,7 +523,6 @@ KIARA_MODEL_CLS = TypeVar("KIARA_MODEL_CLS", bound=KiaraModel)
 class KiaraModelValueBaseType(
     AnyType[KIARA_MODEL_CLS, TYPE_CONFIG_CLS], Generic[KIARA_MODEL_CLS, TYPE_CONFIG_CLS]
 ):
-
     """
     A value type that is used internally.
 

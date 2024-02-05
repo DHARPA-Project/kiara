@@ -669,7 +669,6 @@ class DataTypeInfo(KiaraModel):
 
 
 class ValueDetails(KiaraModel):
-
     """A wrapper class that manages and retieves value data and its details."""
 
     _kiara_model_id: ClassVar = "instance.value_details"
@@ -1300,7 +1299,6 @@ class Value(ValueDetails):
 
 
 class UnloadableData(KiaraModel):
-
     """
     A special 'marker' model, indicating that the data of value can't be loaded.
 

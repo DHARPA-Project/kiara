@@ -65,7 +65,6 @@ log = structlog.getLogger()
 
 
 class InputOutputObject(abc.ABC):
-
     """
     Abstract base class for classes that define inputs and outputs schemas.
 
@@ -297,7 +296,6 @@ DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS = ModuleCharacteristics(
 
 
 class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
-
     """
     The base class that every custom module in *Kiara* needs to inherit from.
 

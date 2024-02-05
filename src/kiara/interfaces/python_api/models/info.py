@@ -162,7 +162,6 @@ class ValueTypeAndDescription(BaseModel):
 
 
 class ItemInfo(KiaraModel):
-
     """Base class that holds/manages information about an item within kiara."""
 
     @classmethod

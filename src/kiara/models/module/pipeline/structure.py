@@ -87,7 +87,6 @@ class StepInfo(KiaraModel):
 
 
 class PipelineStructure(KiaraModel):
-
     """An object that holds one or several steps, and describes the connections between them."""
 
     _kiara_model_id: ClassVar = "instance.pipeline_structure"

@@ -51,7 +51,7 @@ def define_env(env):
             src = inspect.getsource(_obj)
             return src
         except Exception as e:
-            return f"Can't render object source: {str(e)}"
+            return f"Can't render object source: {e}"
 
     @env.macro
     def get_context_info() -> KiaraContextInfo:

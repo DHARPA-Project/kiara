@@ -22,7 +22,6 @@ if TYPE_CHECKING:
 
 
 class KiaraModuleConfig(KiaraModel):
-
     """
     Base class that describes the configuration a [``KiaraModule``][kiara.module.KiaraModule] class accepts.
 

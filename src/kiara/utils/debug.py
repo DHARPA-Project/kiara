@@ -52,7 +52,7 @@ def create_module_preparation_table(
             doc = module.operation.doc
             table.add_row(
                 "module desc",
-                doc.description
+                doc.description,
                 # kiara.context_info.module_types.item_infos[
                 #     job_config.module_type
                 # ].documentation.description,
@@ -62,7 +62,7 @@ def create_module_preparation_table(
             doc = module.operation.doc
             table.add_row(
                 "module doc",
-                doc.full_doc
+                doc.full_doc,
                 # kiara.context_info.module_types.item_infos[
                 #     job_config.module_type
                 # ].documentation.full_doc,

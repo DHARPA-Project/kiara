@@ -43,7 +43,6 @@ FILE_BUNDLE_IMPORT_AVAILABLE_COLUMNS = [
 
 
 class KiaraFile(KiaraModel):
-
     """Describes properties for the 'file' value type."""
 
     _kiara_model_id: ClassVar = "instance.data.file"
@@ -233,7 +232,6 @@ class FolderImportConfig(BaseModel):
 
 
 class KiaraFileBundle(KiaraModel):
-
     """Describes properties for the 'file_bundle' value type."""
 
     _kiara_model_id: ClassVar = "instance.data.file_bundle"

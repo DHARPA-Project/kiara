@@ -47,7 +47,8 @@ from kiara.utils.files import get_data_from_file
 if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.models.context import ContextInfo
-    from kiara.registries import KiaraArchive
+    from kiara.models.runtime_environment.kiara import KiaraTypesRuntimeEnvironment
+    from kiara.registries import BaseArchive, KiaraArchive
 
 logger = structlog.getLogger()
 
@@ -280,7 +281,7 @@ def create_default_store_config(
 ) -> KiaraArchiveConfig:
 
     env_registry = EnvironmentRegistry.instance()
-    kiara_types: KiaraTypesRuntimeEnvironment = env_registry.environments["kiara_types"]  # type: ignore
+    kiara_types: "KiaraTypesRuntimeEnvironment" = env_registry.environments["kiara_types"]  # type: ignore
     available_archives = kiara_types.archive_types
 
     assert store_type in available_archives.item_infos.keys()
@@ -537,7 +538,7 @@ class KiaraConfig(BaseSettings):
                          (key text PRIMARY KEY , value text NOT NULL)"""
             )
             c.execute(
-                f"INSERT INTO archive_metadata VALUES ('archive_id','{store_id}')"
+                "INSERT INTO archive_metadata VALUES ('archive_id', ?)", (store_id,)
             )
             conn.commit()
             conn.close()

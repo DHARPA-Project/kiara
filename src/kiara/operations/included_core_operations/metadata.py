@@ -21,7 +21,6 @@ from kiara.registries.models import ModelRegistry
 
 
 class ExtractMetadataDetails(BaseOperationDetails):
-
     """A model that contains information needed to describe an 'extract_metadata' operation."""
 
     data_type: str = Field(
@@ -52,7 +51,6 @@ class ExtractMetadataDetails(BaseOperationDetails):
 
 
 class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
-
     """
     An operation that extracts metadata of a specific type from value data.
 

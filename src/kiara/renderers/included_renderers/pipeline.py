@@ -59,7 +59,6 @@ class PipelineTransformer(SourceTransformer):
 
 
 class PipelineRendererHtml(BaseJinjaRenderer[Type[Pipeline], RenderInputsSchema]):
-
     """Renders a pipeline structure as static html page."""
 
     _renderer_name = "pipeline_html"
@@ -94,7 +93,6 @@ class PipelineRendererHtml(BaseJinjaRenderer[Type[Pipeline], RenderInputsSchema]
 
 
 class PipelineRendererMarkdown(BaseJinjaRenderer[Type[Pipeline], RenderInputsSchema]):
-
     """Renders a pipeline structure as static html page."""
 
     _renderer_name = "pipeline_markdown"

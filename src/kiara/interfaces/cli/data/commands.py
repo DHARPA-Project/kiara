@@ -63,7 +63,8 @@ def data(ctx):
 @click.option(
     "--include-internal",
     "-I",
-    help="Also list values that are used mostly internally (e.g. metadata for other values, ...). Implies 'all-ids' is 'True'.",
+    help="Also list values that are used mostly internally (e.g. metadata for other values, ...). Implies 'all-ids' "
+    "is 'True'.",
     is_flag=True,
 )
 @click.option(
@@ -451,6 +452,7 @@ def filter_value(
         )
     except InvalidCommandLineInvocation as e:
         ctx.obj.exit(msg=None, exit_code=e.error_code)
+        sys.exit(1)
 
     final_aliases = calculate_aliases(operation=kiara_op, alias_tokens=save)
     try:
@@ -613,8 +615,8 @@ def export_data_store(
     )
 
     terminal_print("Registering data store...")
-    data_store_alias = kiara_api.context.data_registry.register_data_archive(data_store)
-    alias_store_alias = kiara_api.context.alias_registry.register_archive(archive_store)
+    data_store_alias = kiara_api.context.data_registry.register_data_archive(data_store)  # type: ignore
+    alias_store_alias = kiara_api.context.alias_registry.register_archive(archive_store)  # type: ignore
 
     terminal_print("Exporting value into new data_store...")
 
@@ -648,7 +650,7 @@ def export_data_store(
             alias_store=alias_store_alias,
         )
 
-        dbg(persisted_data)
+        terminal_print_model(persisted_data)
         terminal_print("Done.")
 
     except Exception as e:
@@ -680,8 +682,9 @@ def import_data_store(ctx, archive: str):
     terminal_print("Registering data archive...")
     store_alias = kiara_api.context.data_registry.register_data_archive(data_archive)
 
-    print(store_alias)
-    result = kiara_api.store_values(data_archive.value_ids)
-    dbg(result)
+    result = kiara_api.store_values(
+        values=data_archive.value_ids, alias_store=store_alias
+    )
+    terminal_print(result)
 
     terminal_print("Done.")

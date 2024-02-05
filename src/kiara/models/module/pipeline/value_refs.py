@@ -23,7 +23,6 @@ def generate_step_alias(step_id: str, value_name) -> str:
 
 
 class StepValueAddress(BaseModel):
-
     """Small model to describe the address of a value of a step, within a Pipeline/PipelineStructure."""
 
     model_config = ConfigDict(extra="forbid")
@@ -70,7 +69,6 @@ class StepValueAddress(BaseModel):
 
 
 class ValueRef(BaseModel):
-
     """
     An object that holds information about the location of a value within a pipeline (or other structure).
 
@@ -116,7 +114,6 @@ class ValueRef(BaseModel):
 
 
 class StepInputRef(ValueRef):
-
     """
     An input to a step.
 
@@ -160,7 +157,6 @@ class StepInputRef(ValueRef):
 
 
 class StepOutputRef(ValueRef):
-
     """An output to a step."""
 
     model_config = ConfigDict(frozen=False)
@@ -188,7 +184,6 @@ class StepOutputRef(ValueRef):
 
 
 class PipelineInputRef(ValueRef):
-
     """An input to a pipeline."""
 
     connected_inputs: List[StepValueAddress] = Field(
@@ -205,7 +200,6 @@ class PipelineInputRef(ValueRef):
 
 
 class PipelineOutputRef(ValueRef):
-
     """An output to a pipeline."""
 
     connected_output: StepValueAddress = Field(description="Connected step outputs.")

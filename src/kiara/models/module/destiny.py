@@ -23,7 +23,6 @@ if TYPE_CHECKING:
 
 
 class Destiny(Manifest):
-
     """
     A destiny is basically a link to a potential future transformation result involving one or several values as input.
 

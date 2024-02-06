@@ -370,34 +370,7 @@ line-length = 88
 
 src = ["src", "tests"]
 
-select = [
-    "D",
-    "E",
-    "F",
-    "RUF",
-    "I001",
-    "YTT",
-    "S",
-    "C4",
-    "T10",
-    "ISC",
-    "ICN",
-    "T20",
-    "Q",
-    "TID",
-    "PD",
-    "PLC",
-    "PLE",
-    "PLR",
-    "PLW",
-    "PIE",
-]
-#select = ["E", "F", "RUF100", "W", "I001"]
-ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110", "PIE810", "PLR0911", "PLR0915", "PLR0912", "D", "D401", "PLW0603", "PLR5501", "PLW2901", "S603"]
-
 fix = true
-fixable = ["E", "F", "RUF100", "I001", "Q", "D"]
-
 
 #fixable = ["E", "F", "RUF100", "I001"]
 # Enable Pyflakes `E` and `F` codes by default.
@@ -425,22 +398,50 @@ exclude = [
     "venv",
     "examples/"
 ]
-per-file-ignores = { }
-
-# Allow unused variables when underscore-prefixed.
-dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 # Assume Python 3.10.
 target-version = "py310"
 
-[tool.ruff.mccabe]
+[tool.ruff.lint]
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+fixable = ["E", "F", "RUF100", "I001", "Q", "D"]
+select = [
+    "D",
+    "E",
+    "F",
+    "RUF",
+    "I001",
+    "YTT",
+    "S",
+    "C4",
+    "T10",
+    "ISC",
+    "ICN",
+    "T20",
+    "Q",
+    "TID",
+    "PD",
+    "PLC",
+    "PLE",
+    "PLR",
+    "PLW",
+    "PIE",
+]
+#select = ["E", "F", "RUF100", "W", "I001"]
+ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110", "PIE810", "PLR0911", "PLR0915", "PLR0912", "D", "D401", "PLW0603", "PLR5501", "PLW2901", "S603"]
+per-file-ignores = { }
+
+
+[tool.ruff.lint.isort]
+known-first-party = ["kiara", "kiara_plugin"]
+
+[tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
 
-[tool.ruff.isort]
-known-first-party = ["kiara", "kiara_plugin"]
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.pyright]

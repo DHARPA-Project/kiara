@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
+    ClassVar,
     Dict,
     Iterable,
     List,
@@ -51,9 +52,7 @@ from kiara.interfaces.python_api.models.info import (
     ValuesInfo,
 )
 from kiara.interfaces.python_api.models.job import JobDesc
-from kiara.interfaces.python_api.models.workflow import WorkflowMatcher
 from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
-from kiara.interfaces.python_api.workflow import Workflow
 from kiara.models.context import ContextInfo, ContextInfos
 from kiara.models.module.jobs import ActiveJob
 from kiara.models.module.manifest import Manifest
@@ -94,6 +93,7 @@ if TYPE_CHECKING:
         PipelinesMap,
         WorkflowsMap,
     )
+    from kiara.interfaces.python_api.workflow import Workflow
     from kiara.models.module.pipeline import PipelineConfig, PipelineStructure
     from kiara.models.module.pipeline.pipeline import PipelineGroupInfo, PipelineInfo
 
@@ -103,7 +103,6 @@ yaml = YAML(typ="safe")
 
 
 class KiaraAPI(object):
-
     """
     Public API for clients.
 
@@ -120,8 +119,8 @@ class KiaraAPI(object):
     .
     """
 
-    _default_instance: Union["KiaraAPI", None] = None
-    _context_instances: Dict[str, "KiaraAPI"] = {}
+    _default_instance: ClassVar[Union["KiaraAPI", None]] = None
+    _context_instances: ClassVar[Dict[str, "KiaraAPI"]] = {}
 
     @classmethod
     def instance(cls, context_name: Union[str, None] = None) -> "KiaraAPI":
@@ -144,6 +143,8 @@ class KiaraAPI(object):
     def __init__(self, kiara_config: Union["KiaraConfig", None] = None):
 
         if kiara_config is None:
+            from kiara.context import Kiara, KiaraConfig
+
             kiara_config = KiaraConfig()
 
         self._kiara_config: KiaraConfig = kiara_config
@@ -689,7 +690,9 @@ class KiaraAPI(object):
             if not module_config:
                 raise Exception("Pipeline configuration can't be empty.")
             assert module_config is None or isinstance(module_config, Mapping)
-            operation = create_operation("pipeline", operation_config=module_config)
+            operation = create_operation(
+                "pipeline", operation_config=module_config, kiara=self.context
+            )
             return operation
         else:
             mc = Manifest(module_type=module_type, module_config=module_config)
@@ -1319,7 +1322,7 @@ class KiaraAPI(object):
         )
         return result
 
-    def get_value(self, value: Union[str, Value, uuid.UUID]) -> Value:
+    def get_value(self, value: Union[str, Value, uuid.UUID, Path]) -> Value:
         """
         Retrieve a value instance with the specified id or alias.
 
@@ -1423,7 +1426,9 @@ class KiaraAPI(object):
 
         return current_result
 
-    def retrieve_value_info(self, value: Union[str, uuid.UUID, Value]) -> ValueInfo:
+    def retrieve_value_info(
+        self, value: Union[str, uuid.UUID, Value, Path]
+    ) -> ValueInfo:
         """
         Retrieve an info object for a value.
 
@@ -1577,6 +1582,7 @@ class KiaraAPI(object):
         if register_data:
             temp: Dict[str, Union[str, Value, uuid.UUID, None]] = {}
             for k, v in values.items():
+
                 if isinstance(v, (Value, uuid.UUID)):
                     temp[k] = v
                     continue
@@ -1584,18 +1590,21 @@ class KiaraAPI(object):
                 if not values_schema:
                     details = "No schema provided."
                     raise KiaraException(
-                        f"Invalid field name: '{k}' (value: {str(v)}).", details=details
+                        f"Invalid field name: '{k}' (value: {v}).", details=details
                     )
 
                 if k not in values_schema.keys():
                     details = "Valid field names: " + ", ".join(values_schema.keys())
                     raise KiaraException(
-                        f"Invalid field name: '{k}' (value: {str(v)}).", details=details
+                        f"Invalid field name: '{k}' (value: {v}).", details=details
                     )
 
                 if isinstance(v, str):
 
                     if v.startswith("alias:"):
+                        temp[k] = v
+                        continue
+                    elif v.startswith("archive:"):
                         temp[k] = v
                         continue
 
@@ -1634,9 +1643,14 @@ class KiaraAPI(object):
         value: Union[str, uuid.UUID, Value],
         alias: Union[str, Iterable[str], None],
         allow_overwrite: bool = True,
+        data_store: Union[str, None] = None,
+        alias_store: Union[str, None] = None,
     ) -> StoreValueResult:
         """
         Store the specified value in the (default) value store.
+
+        This method does not raise an error if the storing of the value fails, so you have to investigate the
+        'StoreValueResult' instance that is returned to see if the storing was successful.
 
         Arguments:
             value: the value (or a reference to it)
@@ -1649,10 +1663,15 @@ class KiaraAPI(object):
         value_obj = self.get_value(value)
         persisted_data: Union[None, PersistedData] = None
         try:
-            persisted_data = self.context.data_registry.store_value(value=value_obj)
+            persisted_data = self.context.data_registry.store_value(
+                value=value_obj, data_store=data_store
+            )
             if alias:
                 self.context.alias_registry.register_aliases(
-                    value_obj.value_id, *alias, allow_overwrite=allow_overwrite
+                    value_obj.value_id,
+                    *alias,
+                    allow_overwrite=allow_overwrite,
+                    alias_store=alias_store,
                 )
             result = StoreValueResult(
                 value=value_obj,
@@ -1665,7 +1684,9 @@ class KiaraAPI(object):
             result = StoreValueResult(
                 value=value_obj,
                 aliases=sorted(alias) if alias else [],
-                error=str(e),
+                error=(
+                    str(e) if str(e) else f"Unknown error (type '{type(e).__name__}')."
+                ),
                 persisted_data=persisted_data,
             )
 
@@ -1673,28 +1694,75 @@ class KiaraAPI(object):
 
     def store_values(
         self,
-        values: Mapping[str, Union[str, uuid.UUID, Value]],
-        alias_map: Mapping[str, Iterable[str]],
+        values: Union[
+            Mapping[str, Union[str, uuid.UUID, Value]],
+            Iterable[Union[str, uuid.UUID, Value]],
+        ],
+        alias_map: Union[Mapping[str, Iterable[str]], bool, str] = False,
+        allow_overwrite: bool = True,
+        data_store: Union[str, None] = None,
+        alias_store: Union[str, None] = None,
     ) -> StoreValuesResult:
         """
         Store multiple values into the (default) kiara value store.
 
-        Values are identified by unique keys in both input arguments, the alias map references the key that is used in
-        the 'values' argument.
+        If you provide a non-mapping interable as 'values', the 'alias_map' argument must be 'False', and using aliases is not possible.
+
+        If you use a mapping iterable as 'values':
+
+        If alias_map is 'False', no aliases will be registered. If 'True', the key in the 'values' argument will be used. If the value is a string, all keys from the 'values' map will be used as alias, prefixed with the value of 'alias_map' + '.'.
+        Alternatively, if a map is provided, the key in the 'values' argument will be used to look up the alias(es) in the
+        'alias_map' argument.
+
+        This method does not raise an error if the storing of the value fails, so you have to investigate the
+        'StoreValuesResult' instance that is returned to see if the storing was successful.
 
         Arguments:
-            values: a map of value keys/values
+            values: an iterable/map of value keys/values
             alias_map: a map of value keys aliases
 
         Returns:
-            an object outlining which values (identified by the specified value key) where stored and how
+            an object outlining which values (identified by the specified value key or an enumerated index) where stored and how
         """
+
         result = {}
-        for field_name, value in values.items():
-            aliases = alias_map.get(field_name)
-            value_obj = self.get_value(value)
-            store_result = self.store_value(value=value_obj, alias=aliases)
-            result[field_name] = store_result
+        if not isinstance(values, Mapping):
+            if alias_map is not False:
+                raise KiaraException(
+                    msg="Cannot use aliases with non-mapping iterable."
+                )
+
+            for idx, value in enumerate(values):
+                value_obj = self.get_value(value)
+                store_result = self.store_value(
+                    value=value_obj,
+                    alias=None,
+                    allow_overwrite=allow_overwrite,
+                    data_store=data_store,
+                    alias_store=alias_store,
+                )
+                result[f"value_{idx}"] = store_result
+        else:
+            for field_name, value in values.items():
+                if alias_map is False:
+                    aliases: Union[None, Iterable[str]] = None
+                elif alias_map is True:
+                    aliases = [field_name]
+                elif isinstance(alias_map, str):
+                    aliases = [f"{alias_map}.{field_name}"]
+                else:
+                    # means it's a mapping
+                    aliases = alias_map.get(field_name)
+
+                value_obj = self.get_value(value)
+                store_result = self.store_value(
+                    value=value_obj,
+                    alias=aliases,
+                    allow_overwrite=allow_overwrite,
+                    data_store=data_store,
+                    alias_store=alias_store,
+                )
+                result[field_name] = store_result
 
         return StoreValuesResult(root=result)
 
@@ -1889,7 +1957,9 @@ class KiaraAPI(object):
             )  # type: ignore
             ops = pretty_print_op_type.get_target_types_for(data_type)
         else:
-            render_op_type: RenderValueOperationType = self.context.operation_registry.get_operation_type(
+            render_op_type: (
+                RenderValueOperationType
+            ) = self.context.operation_registry.get_operation_type(
                 # type: ignore
                 "render_value"
             )  # type: ignore
@@ -2267,7 +2337,7 @@ class KiaraAPI(object):
 
     def get_workflow(
         self, workflow: Union[str, uuid.UUID], create_if_necessary: bool = True
-    ) -> Workflow:
+    ) -> "Workflow":
         """Retrieve the workflow instance with the specified id or alias.
 
         NOTE: this is a provisional endpoint, don't use in anger yet
@@ -2317,12 +2387,14 @@ class KiaraAPI(object):
         return workflow_obj
 
     def retrieve_workflow_info(
-        self, workflow: Union[str, uuid.UUID, Workflow]
+        self, workflow: Union[str, uuid.UUID, "Workflow"]
     ) -> WorkflowInfo:
         """Retrieve information about the specified workflow.
 
         NOTE: this is a provisional endpoint, don't use in anger yet
         """
+
+        from kiara.interfaces.python_api.workflow import Workflow
 
         if isinstance(workflow, Workflow):
             _workflow: Workflow = workflow
@@ -2335,6 +2407,7 @@ class KiaraAPI(object):
         """List all available workflow sessions, indexed by their unique id."""
 
         from kiara.interfaces.python_api.models.doc import WorkflowsMap
+        from kiara.interfaces.python_api.models.workflow import WorkflowMatcher
 
         workflows = {}
 
@@ -2361,6 +2434,7 @@ class KiaraAPI(object):
         """
 
         from kiara.interfaces.python_api.models.doc import WorkflowsMap
+        from kiara.interfaces.python_api.workflow import Workflow
 
         if matcher_params:
             matcher_params["has_alias"] = True
@@ -2424,11 +2498,13 @@ class KiaraAPI(object):
         documentation: Union[Any, None] = None,
         save: bool = False,
         force_alias: bool = False,
-    ) -> Workflow:
+    ) -> "Workflow":
         """Create a workflow instance.
 
         NOTE: this is a provisional endpoint, don't use in anger yet
         """
+
+        from kiara.interfaces.python_api.workflow import Workflow
 
         if workflow_alias is not None:
             try:

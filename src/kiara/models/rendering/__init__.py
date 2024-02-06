@@ -57,7 +57,6 @@ class RenderScene(KiaraModel):
 
 
 class RenderValueResult(KiaraModel):
-
     """Object containing all the result properties of a 'render_value' operation."""
 
     value_id: uuid.UUID = Field(description="The value that was rendered.")

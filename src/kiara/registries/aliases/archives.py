@@ -9,7 +9,9 @@ import os
 import shutil
 import uuid
 from pathlib import Path
-from typing import Mapping, Set, Union
+from typing import Any, Mapping, Set, Union
+
+import orjson
 
 from kiara.registries import ARCHIVE_CONFIG_CLS, FileSystemArchiveConfig
 from kiara.registries.aliases import AliasArchive, AliasStore
@@ -21,11 +23,39 @@ class FileSystemAliasArchive(AliasArchive):
     _archive_type_name = "filesystem_alias_archive"
     _config_cls = FileSystemArchiveConfig  # type: ignore
 
-    def __init__(self, archive_id: uuid.UUID, config: ARCHIVE_CONFIG_CLS):
+    def __init__(
+        self,
+        archive_alias: str,
+        archive_config: ARCHIVE_CONFIG_CLS,
+        force_read_only: bool = False,
+    ):
 
-        super().__init__(archive_id=archive_id, config=config)
+        super().__init__(
+            archive_alias=archive_alias,
+            archive_config=archive_config,
+            force_read_only=force_read_only,
+        )
 
         self._base_path: Union[Path, None] = None
+
+    def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
+
+        if not self.archive_metadata_path.is_file():
+            _archive_metadata = {}
+        else:
+            _archive_metadata = orjson.loads(self.archive_metadata_path.read_bytes())
+
+        archive_id = _archive_metadata.get("archive_id", None)
+        if not archive_id:
+            try:
+                _archive_id = uuid.UUID(self.alias_store_path.name)
+                _archive_metadata["archive_id"] = _archive_id
+            except Exception:
+                raise Exception(
+                    f"Could not retrieve archive id for alias archive '{self.archive_alias}'."
+                )
+
+        return _archive_metadata
 
     @property
     def alias_store_path(self) -> Path:
@@ -37,6 +67,10 @@ class FileSystemAliasArchive(AliasArchive):
         self._base_path = fix_windows_longpath(self._base_path)
         self._base_path.mkdir(parents=True, exist_ok=True)
         return self._base_path
+
+    @property
+    def archive_metadata_path(self) -> Path:
+        return self.alias_store_path / "store_metadata.json"
 
     @property
     def aliases_path(self) -> Path:
@@ -131,10 +165,6 @@ class FileSystemAliasArchive(AliasArchive):
 class FileSystemAliasStore(FileSystemAliasArchive, AliasStore):
 
     _archive_type_name = "filesystem_alias_store"
-
-    @classmethod
-    def is_writeable(cls) -> bool:
-        return True
 
     def register_aliases(self, value_id: uuid.UUID, *aliases: str):
 

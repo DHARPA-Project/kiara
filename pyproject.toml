@@ -71,6 +71,7 @@ dependencies = [
     "humanfriendly>=10.0",
     "importlib-metadata>=3.0.0.0,<8.0.0",
     "jinja2>=3.0.1",
+    "lz4>=4.3.0",
     "patool>=1.12",
     "mistune>=3.0.0",
     "mmhash3>=3.0.1",
@@ -92,6 +93,7 @@ dependencies = [
     "stevedore>=5.0.0,<6.0.0",
     "structlog>=21.5.0",
     "tzlocal>=2.1,<6.0",
+    "zstandard>=0.22.0"
 ]
 dynamic = ["version"]
 
@@ -106,10 +108,16 @@ filesystem_job_archive = "kiara.registries.jobs.job_store.filesystem_store:FileS
 filesystem_job_store = "kiara.registries.jobs.job_store.filesystem_store:FileSystemJobStore"
 filesystem_alias_archive = "kiara.registries.aliases.archives:FileSystemAliasArchive"
 filesystem_alias_store = "kiara.registries.aliases.archives:FileSystemAliasStore"
-filesystem_destiny_archive = "kiara.registries.destinies.filesystem_store:FileSystemDestinyArchive"
-filesystem_destiny_store = "kiara.registries.destinies.filesystem_store:FileSystemDestinyStore"
 filesystem_workflow_archive = "kiara.registries.workflows.archives:FileSystemWorkflowArchive"
 filesystem_workflow_store = "kiara.registries.workflows.archives:FileSystemWorkflowStore"
+sqlite_data_archive = "kiara.registries.data.data_store.sqlite_store:SqliteDataArchive"
+sqlite_data_store = "kiara.registries.data.data_store.sqlite_store:SqliteDataStore"
+sqlite_alias_archive = "kiara.registries.aliases.sqlite_store:SqliteAliasArchive"
+sqlite_alias_store = "kiara.registries.aliases.sqlite_store:SqliteAliasStore"
+sqlite_job_archive = "kiara.registries.jobs.job_store.sqlite_store:SqliteJobArchive"
+sqlite_job_store = "kiara.registries.jobs.job_store.sqlite_store:SqliteJobStore"
+sqlite_workflow_archive = "kiara.registries.workflows.sqlite_store:SqliteWorkflowArchive"
+sqlite_workflow_store = "kiara.registries.workflows.sqlite_store:SqliteWorkflowStore"
 
 [project.entry-points."kiara.cli_subcommands"]
 
@@ -262,7 +270,7 @@ dev_utils = [
     "pytest>=6.2.2",
     "pytest-xdist>=3.2.1",
     "setup-cfg-fmt>=1.16.0",
-    "ruff>=0.0.272",
+    "ruff>=0.1.8",
     "types-Deprecated",
     "types-PyYAML",
     "types-pkg-resources",
@@ -385,7 +393,7 @@ select = [
     "PIE",
 ]
 #select = ["E", "F", "RUF100", "W", "I001"]
-ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110", "PIE810", "PLR0911", "PLR0915", "PLR0912", "D", "D401", "PLW0603", "PLR5501", "PLW2901"]
+ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110", "PIE810", "PLR0911", "PLR0915", "PLR0912", "D", "D401", "PLW0603", "PLR5501", "PLW2901", "S603"]
 
 fix = true
 fixable = ["E", "F", "RUF100", "I001", "Q", "D"]
@@ -488,6 +496,7 @@ module = [
     "importlib_metadata.*",
     "importlib_resources.*",
     "jupytext",
+    "lz4.*",
     "mmh3",
     "pickle5",
     "pp",
@@ -509,6 +518,7 @@ module = [
     "streamlit.*",
     "textual.*",
     "uvloop",
-    "uvicorn"
+    "uvicorn",
+    "zstandard"
 ]
 ignore_missing_imports = true

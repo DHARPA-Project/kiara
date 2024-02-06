@@ -43,6 +43,7 @@ from kiara.models.documentation import (
     DocumentationMetadataModel,
 )
 from kiara.models.module import KiaraModuleConfig
+from kiara.models.module.jobs import JobRecord
 from kiara.models.module.operation import Operation
 from kiara.models.module.pipeline import PipelineConfig, PipelineStep
 from kiara.models.module.pipeline.structure import (
@@ -161,7 +162,6 @@ class ValueTypeAndDescription(BaseModel):
 
 
 class ItemInfo(KiaraModel):
-
     """Base class that holds/manages information about an item within kiara."""
 
     @classmethod
@@ -464,8 +464,10 @@ class ValueInfo(ItemInfo):
             is_internal = False
 
         if resolve_destinies:
-            destiny_links = kiara.data_registry.find_destinies_for_value(
-                value_id=instance.value_id
+            destiny_links = (
+                kiara.data_registry.retrieve_destinies_for_value_from_archives(
+                    value_id=instance.value_id
+                )
             )
             filtered_destinies = {}
             for alias, value_id in destiny_links.items():
@@ -601,8 +603,10 @@ class ValueInfo(ItemInfo):
 
     def resolve_destinies(self):
         if self.destiny_links is None:
-            destiny_links = self._value._data_registry.find_destinies_for_value(
-                value_id=self.value_id
+            destiny_links = (
+                self._value._data_registry.retrieve_destinies_for_value_from_archives(
+                    value_id=self.value_id
+                )
             )
             filtered_destinies = {}
             for alias, value_id in destiny_links.items():
@@ -1422,6 +1426,7 @@ class OperationInfo(ItemInfo):
     def create_renderable(self, **config: Any) -> RenderableType:
 
         include_doc = config.get("include_doc", False)
+        include_module_details = config.get("include_module_details", True)
         include_op_details = config.get("include_op_details", True)
 
         table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
@@ -1435,6 +1440,20 @@ class OperationInfo(ItemInfo):
             )
         table.add_row("Author(s)", self.authors.create_renderable(**config))
         table.add_row("Context", self.context.create_renderable(**config))
+
+        if include_module_details:
+            table.add_row("Module type", self.operation.module_type)
+            if self.operation.module_config:
+                table.add_row(
+                    "Module config",
+                    Syntax(
+                        orjson_dumps(
+                            self.operation.module_config, option=orjson.OPT_INDENT_2
+                        ),
+                        "json",
+                        background_color="default",
+                    ),
+                )
 
         if include_op_details:
             table.add_row(
@@ -1996,5 +2015,115 @@ class KiaraPluginInfos(InfoItemGroup[KiaraPluginInfo]):
             else:
                 md = Markdown(t_md.documentation.description)
             table.add_row(type_name, version, md)
+
+        return table
+
+
+class JobInfo(ItemInfo):
+
+    job_record: JobRecord = Field(description="The job record instance.")
+    operation: OperationInfo = Field(description="The operation info instance.")
+    inputs: Mapping[str, ValueInfo] = Field(description="The inputs.")
+    outputs: Mapping[str, ValueInfo] = Field(description="The result(s).")
+
+    @classmethod
+    def base_instance_class(cls) -> Type[JobRecord]:
+        return JobRecord
+
+    @classmethod
+    def create_from_instance(cls, kiara: "Kiara", instance: JobRecord, **kwargs):
+
+        type_name = str(instance.job_id)
+
+        module = kiara.module_registry.create_module(instance)
+        op = Operation.create_from_module(module=module)
+        operation_info: OperationInfo = OperationInfo.create_from_operation(
+            kiara=kiara, operation=op
+        )
+        doc = operation_info.documentation
+        authors = operation_info.authors
+        context = operation_info.context
+
+        inputs = {}
+        for k, v in instance.inputs.items():
+            value = kiara.data_registry.get_value(v)
+            inputs[k] = ValueInfo.create_from_instance(kiara=kiara, instance=value)
+
+        outputs = {}
+        for k, v in instance.outputs.items():
+            value = kiara.data_registry.get_value(v)
+            outputs[k] = ValueInfo.create_from_instance(kiara=kiara, instance=value)
+
+        return cls(
+            type_name=type_name,
+            documentation=doc,
+            authors=authors,
+            context=context,
+            job_record=instance,
+            operation=operation_info,
+            inputs=inputs,
+            outputs=outputs,
+        )
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("Key", style="i")
+        table.add_column("Value")
+
+        table.add_row("Job ID", str(self.job_record.job_id))
+        runtime_details = self.job_record.runtime_details
+        assert runtime_details is not None
+        table.add_row("Job details", runtime_details.create_renderable(**config))
+        table.add_row("Operation details", self.operation)
+
+        values_table = Table(show_header=False, box=box.SIMPLE)
+        values_table.add_column("field", style="i")
+        values_table.add_column("value")
+        for k, v in self.inputs.items():
+            rendered_value = str(v.value_id)
+            values_table.add_row(k, rendered_value)
+
+        table.add_row("Inputs", values_table)
+
+        values_table = Table(show_header=False, box=box.SIMPLE)
+        values_table.add_column("field", style="i")
+        values_table.add_column("value")
+        for k, v in self.outputs.items():
+            rendered_value = str(v.value_id)
+            values_table.add_row(k, rendered_value)
+
+        table.add_row("Outputs", values_table)
+
+        return table
+
+
+class JobInfos(InfoItemGroup[JobInfo]):
+    @classmethod
+    def base_info_class(cls) -> Type[JobInfo]:
+        return JobInfo
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        table = Table(
+            show_header=True, box=HORIZONTALS_NO_TO_AND_BOTTOM, show_lines=True
+        )
+        table.add_column("Job ID")
+        table.add_column("Module type")
+        table.add_column("Runtime (in seconds)")
+        table.add_column("Details")
+
+        info: JobInfo
+        for info in self.item_infos.values():  # type: ignore
+
+            runtime_details = info.job_record.runtime_details
+            assert runtime_details is not None
+            row: List[RenderableType] = []
+            row.append(str(info.job_record.job_id))
+            row.append(info.operation.operation.module_type)
+            row.append(str(runtime_details.runtime))
+            row.append(runtime_details.create_renderable(**config))
+
+            table.add_row(*row)
 
         return table

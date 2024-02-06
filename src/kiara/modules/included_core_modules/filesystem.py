@@ -26,7 +26,6 @@ from kiara.modules.included_core_modules.serialization import DeserializeValueMo
 
 
 class ImportLocalFileModule(KiaraModule):
-
     """Import a file from the local filesystem."""
 
     _module_type_name = "import.local.file"
@@ -60,7 +59,6 @@ class ImportLocalFileModule(KiaraModule):
 
 
 class DeserializeFileModule(DeserializeValueModule):
-
     """Deserialize data to a 'file' value instance."""
 
     _module_type_name = "deserialize.file"
@@ -121,7 +119,6 @@ class ImportFileBundleConfig(KiaraModuleConfig):
 
 
 class ImportLocalFileBundleModule(KiaraModule):
-
     """Import a folder (file_bundle) from the local filesystem."""
 
     _module_type_name = "import.local.file_bundle"
@@ -160,7 +157,6 @@ class ImportLocalFileBundleModule(KiaraModule):
 
 
 class DeserializeFileBundleModule(DeserializeValueModule):
-
     """Deserialize data to a 'file' value instance."""
 
     _module_type_name = "deserialize.file_bundle"
@@ -196,16 +192,31 @@ class DeserializeFileBundleModule(DeserializeValueModule):
         included_files = {}
         for rel_path in keys:
 
-            chunks = data.get_serialized_data(rel_path)
-            assert chunks.get_number_of_chunks() == 1
+            if "size" not in file_metadata[rel_path].keys():
+                # old style, can be removed at some point
+                # file metadata was added feb 2024
 
-            files = list(chunks.get_chunks(as_files=True, symlink_ok=True))
-            assert len(files) == 1
+                chunks = data.get_serialized_data(rel_path)
+                assert chunks.get_number_of_chunks() == 1
+                files = list(chunks.get_chunks(as_files=True, symlink_ok=True))
+                assert len(files) == 1
 
-            file: str = files[0]  # type: ignore
-            file_name = file_metadata[rel_path]["file_name"]
-            # import_time = file_metadata[rel_path]["import_time"]
-            fm = KiaraFile.load_file(source=file, file_name=file_name)
+                file: str = files[0]  # type: ignore
+                file_name = file_metadata[rel_path]["file_name"]
+                # import_time = file_metadata[rel_path]["import_time"]
+                fm = KiaraFile.load_file(source=file, file_name=file_name)
+            else:
+                fm = KiaraFile(**file_metadata[rel_path])
+
+                def _load_file():
+                    chunks = data.get_serialized_data(rel_path)
+                    assert chunks.get_number_of_chunks() == 1
+                    files = list(chunks.get_chunks(as_files=True, symlink_ok=True))
+                    assert len(files) == 1
+                    return files[0]
+
+                fm._path_resolver = _load_file
+
             included_files[rel_path] = fm
 
         fb_metadata = metadata.pop("metadata")
@@ -224,7 +235,6 @@ class DeserializeFileBundleModule(DeserializeValueModule):
 
 
 class ExportFileModule(DataExportModule):
-
     """Export files."""
 
     _module_type_name = "export.file"
@@ -239,7 +249,6 @@ class ExportFileModule(DataExportModule):
 
 
 class PickFileFromFileBundleModule(KiaraModule):
-
     """Pick a single file from a file_bundle value."""
 
     _module_type_name = "file_bundle.pick.file"
@@ -275,7 +284,6 @@ class PickFileFromFileBundleModule(KiaraModule):
 
 
 class PickSubBundle(KiaraModule):
-
     """Pick a sub-folder from a file_bundle, resulting in a new file_bundle."""
 
     _module_type_name = "file_bundle.pick.sub_folder"

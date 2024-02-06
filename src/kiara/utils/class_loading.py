@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
+import functools
 
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
 import importlib
 import inspect
 import logging
@@ -187,8 +187,8 @@ def _process_subclass(
 
         log_message(
             "ignore.subclass",
-            sub_class=sub_class,
-            base_class=base_class,
+            sub_class=f"{sub_class.__module__}.{sub_class.__name__}",
+            base_class=f"{base_class.__module__}.{base_class.__name__}",
             reason="subclass is abstract",
         )
         return None
@@ -203,8 +203,8 @@ def _process_subclass(
             if type_id is None and ignore_modules_with_null_module_name:
                 log_message(
                     "ignore.subclass",
-                    sub_class=sub_class,
-                    base_class=base_class,
+                    sub_class=f"{sub_class.__module__}.{sub_class.__name__}",
+                    base_class=f"{base_class.__module__}.{base_class.__name__}",
                     reason=f"'{ type_id_key }' subclass is set to 'None'",
                 )
                 return None
@@ -445,6 +445,7 @@ def find_all_kiara_model_classes() -> Dict[str, Type["KiaraModel"]]:
 #     )
 
 
+@functools.lru_cache(maxsize=1)
 def find_all_archive_types() -> Dict[str, Type["KiaraArchive"]]:
     """Find all [KiaraArchive][kiara.registries.KiaraArchive] subclasses via package entry points."""
     from kiara.registries import KiaraArchive

@@ -187,9 +187,13 @@ class ArchiveGroupInfo(InfoItemGroup):
 
         archives = {}
         for archive, aliases in kiara.get_all_archives().items():
-            archives[str(archive.archive_id)] = ArchiveInfo.create_from_archive(
+            title = str(archive.archive_id) + ", ".join(aliases)
+            archives[title] = ArchiveInfo.create_from_archive(
                 kiara=kiara, archive=archive, archive_aliases=aliases
             )
+            # archives[str(archive.archive_id)] = ArchiveInfo.create_from_archive(
+            #     kiara=kiara, archive=archive, archive_aliases=aliases
+            # )
 
         info = cls(group_title=group_title, item_infos=archives)
         return info
@@ -202,7 +206,11 @@ class ArchiveGroupInfo(InfoItemGroup):
     def combined_size(self) -> int:
 
         combined = 0
+        archive_ids = set()
         for archive_info in self.item_infos.values():
+            if archive_info.archive_id in archive_ids:
+                continue
+            archive_ids.add(archive_info.archive_id)
             size = archive_info.details.size
             if size and size > 0:
                 combined = combined + size

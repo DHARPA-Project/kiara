@@ -41,7 +41,6 @@ logger = structlog.getLogger()
 
 
 class WorkflowPipelineController(SinglePipelineController):
-
     """
     A [PipelineController][kiara.models.modules.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.
 
@@ -148,7 +147,6 @@ class WorkflowStatus(KiaraModel):
 
 
 class Workflow(object):
-
     """
     A wrapper object to make working with workflows easier for frontend code.
 

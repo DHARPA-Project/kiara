@@ -7,14 +7,18 @@
 import abc
 import copy
 import uuid
+from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
     Dict,
+    Generator,
+    Iterable,
     List,
     Mapping,
     Protocol,
+    Sequence,
     Set,
     Tuple,
     Union,
@@ -70,9 +74,15 @@ from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import log_exception, log_message
 from kiara.utils.data import pretty_print_data
 from kiara.utils.hashing import NONE_CID
+from kiara.utils.stores import check_external_archive
 
 if TYPE_CHECKING:
+    from multiformats.varint import BytesLike
+
     from kiara.context import Kiara
+    from kiara.models.module.destiny import Destiny
+    from kiara.models.module.manifest import Manifest
+
 
 logger = structlog.getLogger()
 
@@ -103,6 +113,9 @@ class AliasResolver(abc.ABC):
         pass
 
 
+ARCHIVE_REF_TYPE_NAME = "archive"
+
+
 class DefaultAliasResolver(AliasResolver):
     def __init__(self, kiara: "Kiara"):
 
@@ -124,6 +137,48 @@ class DefaultAliasResolver(AliasResolver):
                         alias=rest,
                         msg=f"Can't retrive value for alias '{rest}': no such alias registered.",
                     )
+            elif ref_type == ARCHIVE_REF_TYPE_NAME:
+                if "#" in rest:
+                    archive_ref, path_in_archive = rest.split("#", maxsplit=1)
+                else:
+                    archive_ref = rest
+                    path_in_archive = None
+
+                archives = check_external_archive(
+                    archive=archive_ref, allow_write_access=False
+                )
+
+                if archives:
+                    data_archive: DataArchive = archives.get("data", None)  # type: ignore
+                    if data_archive:
+                        self._kiara.data_registry.register_data_archive(data_archive)
+
+                        if not path_in_archive:
+                            default_value = data_archive.get_archive_metadata(
+                                "default_value"
+                            )
+                            _value_id = uuid.UUID(default_value)
+                        else:
+                            from kiara.registries.aliases import AliasArchive
+
+                            alias_archive: AliasArchive = archives.get("alias", None)  # type: ignore
+                            if alias_archive:
+                                _value_id = alias_archive.find_value_id_for_alias(
+                                    alias=path_in_archive
+                                )
+                            else:
+                                raise NoSuchValueException(
+                                    msg=f"No alias archive found for '{archive_ref}'."
+                                )
+                    else:
+                        raise NoSuchValueException(
+                            "No data archive found in '{archive_ref}'."
+                        )
+                else:
+                    raise NoSuchValueException(
+                        msg=f"No archive found for '{archive_ref}'."
+                    )
+
             else:
                 raise Exception(
                     f"Can't retrieve value for '{alias}': invalid reference type '{ref_type}'."
@@ -215,6 +270,13 @@ class DataRegistry(object):
         self._registered_values[NONE_VALUE_ID] = self._none_value
         self._persisted_value_descs[NONE_VALUE_ID] = NONE_PERSISTED_DATA
 
+        self._cached_value_aliases: Dict[
+            uuid.UUID, Dict[str, Union[Destiny, None]]
+        ] = {}
+
+        self._destinies: Dict[uuid.UUID, Destiny] = {}
+        self._destinies_by_value: Dict[uuid.UUID, Dict[str, Destiny]] = {}
+
     @property
     def kiara_id(self) -> uuid.UUID:
         return self._kiara.id
@@ -230,7 +292,7 @@ class DataRegistry(object):
     def retrieve_all_available_value_ids(self) -> Set[uuid.UUID]:
 
         result: Set[uuid.UUID] = set()
-        for store in self._data_archives.values():
+        for alias, store in self._data_archives.items():
             ids = store.value_ids
             if ids:
                 result.update(ids)
@@ -240,19 +302,21 @@ class DataRegistry(object):
     def register_data_archive(
         self,
         archive: DataArchive,
-        alias: Union[str, None] = None,
         set_as_default_store: Union[bool, None] = None,
-    ):
+    ) -> str:
 
-        data_store_id = archive.archive_id
-        archive.register_archive(kiara=self._kiara)
-        if alias is None:
-            alias = str(data_store_id)
+        alias = archive.archive_alias
+
+        if not alias:
+            raise Exception("Invalid data archive alias: can't be empty.")
 
         if alias in self._data_archives.keys():
             raise Exception(
                 f"Can't add data archive, alias '{alias}' already registered."
             )
+
+        archive.register_archive(kiara=self._kiara)
+
         self._data_archives[alias] = archive
         is_store = False
         is_default_store = False
@@ -277,6 +341,8 @@ class DataRegistry(object):
         )
         self._event_callback(event)
 
+        return alias
+
     @property
     def default_data_store(self) -> str:
         if self._default_data_store is None:
@@ -288,39 +354,39 @@ class DataRegistry(object):
         return self._data_archives
 
     def get_archive(
-        self, archive_id: Union[None, uuid.UUID, str] = None
+        self, archive_id_or_alias: Union[None, uuid.UUID, str] = None
     ) -> DataArchive:
 
-        if archive_id is None:
-            archive_id = self.default_data_store
-            if archive_id is None:
+        if archive_id_or_alias is None:
+            archive_id_or_alias = self.default_data_store
+            if archive_id_or_alias is None:
                 raise Exception("Can't retrieve default data archive, none set (yet).")
 
-        if isinstance(archive_id, uuid.UUID):
+        if isinstance(archive_id_or_alias, uuid.UUID):
             for archive in self._data_archives.values():
-                if archive.archive_id == archive_id:
+                if archive.archive_id == archive_id_or_alias:
                     return archive
 
             raise Exception(
-                f"Can't retrieve archive with id '{archive_id}': no archive with that id registered."
+                f"Can't retrieve archive with id '{archive_id_or_alias}': no archive with that id registered."
             )
 
-        if archive_id in self._data_archives.keys():
-            return self._data_archives[archive_id]
+        if archive_id_or_alias in self._data_archives.keys():
+            return self._data_archives[archive_id_or_alias]
         else:
             try:
-                _archive_id = uuid.UUID(archive_id)
+                _archive_id = uuid.UUID(archive_id_or_alias)
                 for archive in self._data_archives.values():
                     if archive.archive_id == _archive_id:
                         return archive
                     raise Exception(
-                        f"Can't retrieve archive with id '{archive_id}': no archive with that id registered."
+                        f"Can't retrieve archive with id '{archive_id_or_alias}': no archive with that id registered."
                     )
             except Exception:
                 pass
 
         raise Exception(
-            f"Can't retrieve archive with id '{archive_id}': no archive with that id registered."
+            f"Can't retrieve archive with id '{archive_id_or_alias}': no archive with that id registered."
         )
 
     def find_store_id_for_value(self, value_id: uuid.UUID) -> Union[str, None]:
@@ -344,7 +410,7 @@ class DataRegistry(object):
         self._value_archive_lookup_map[value_id] = matches[0]
         return matches[0]
 
-    def get_value(self, value: Union[uuid.UUID, ValueLink, str]) -> Value:
+    def get_value(self, value: Union[uuid.UUID, ValueLink, str, Path]) -> Value:
         _value_id = None
 
         if not isinstance(value, uuid.UUID):
@@ -363,7 +429,8 @@ class DataRegistry(object):
                     _value_id = None
 
                 if _value_id is None:
-
+                    if isinstance(value, Path):
+                        raise NotImplementedError()
                     if not isinstance(value, str):
                         raise Exception(
                             f"Can't retrieve value for '{value}': invalid type '{type(value)}'."
@@ -378,24 +445,35 @@ class DataRegistry(object):
             _value = self._registered_values[_value_id]
             return _value
 
-        matches = []
-        for store_id, store in self.data_archives.items():
-            match = store.has_value(value_id=_value_id)
-            if match:
-                matches.append(store_id)
+        default_store: DataArchive = self.get_archive(
+            archive_id_or_alias=self.default_data_store
+        )
+        if not default_store.has_value(value_id=_value_id):
 
-        if len(matches) == 0:
-            raise NoSuchValueIdException(
-                value_id=_value_id, msg=f"No value registered with id: {value}"
-            )
-        elif len(matches) > 1:
-            raise NoSuchValueIdException(
-                value_id=_value_id,
-                msg=f"Found value with id '{value}' in multiple archives, this is not supported (yet): {matches}",
-            )
+            matches = []
+            for store_id, store in self.data_archives.items():
+                match = store.has_value(value_id=_value_id)
+                if match:
+                    matches.append(store_id)
 
-        self._value_archive_lookup_map[_value_id] = matches[0]
-        stored_value = self.get_archive(matches[0]).retrieve_value(value_id=_value_id)
+            if len(matches) == 0:
+                raise NoSuchValueIdException(
+                    value_id=_value_id, msg=f"No value registered with id: {value}"
+                )
+            elif len(matches) > 1:
+                raise NoSuchValueIdException(
+                    value_id=_value_id,
+                    msg=f"Found value with id '{value}' in multiple archives, this is not supported (yet): {matches}",
+                )
+            store_that_has_it = matches[0]
+        else:
+            store_that_has_it = self.default_data_store
+
+        self._value_archive_lookup_map[_value_id] = store_that_has_it
+
+        stored_value = self.get_archive(store_that_has_it).retrieve_value(
+            value_id=_value_id
+        )
         stored_value._set_registry(self)
         stored_value._is_stored = True
 
@@ -405,34 +483,44 @@ class DataRegistry(object):
     def store_value(
         self,
         value: Union[ValueLink, uuid.UUID, str],
-        store_id: Union[str, None] = None,
+        data_store: Union[str, uuid.UUID, None] = None,
     ) -> Union[PersistedData, None]:
+        """Store a value into a data store.
 
-        if store_id is None:
-            store_id = self.default_data_store
+        If 'data_store' is not provided, the default data store is used. If the 'data_store' argument is of
+        type uuid, the archive_id is used, if string, first it will be converted to an uuid, if that works,
+        again, the archive_id is used, if not, the string is used as the archive alias.
+        """
 
         _value = self.get_value(value)
 
-        store: DataStore = self.get_archive(archive_id=store_id)  # type: ignore
-        if not isinstance(store, DataStore):
-            raise Exception(f"Can't store value into store '{store_id}': not writable.")
+        store: DataStore = self.get_archive(archive_id_or_alias=data_store)  # type: ignore
+        if not store.is_writeable():
+            if data_store:
+                raise Exception(
+                    f"Can't store value into store '{data_store}': not writable."
+                )
+            else:
+                raise Exception("Can't store value into store: not writable.")
 
+        _data_store = store.archive_alias
         # make sure all property values are available
         if _value.pedigree != ORPHAN:
             for value_id in _value.pedigree.inputs.values():
-                self.store_value(value=value_id, store_id=store_id)
+                self.store_value(value=value_id, data_store=_data_store)
 
         if not store.has_value(_value.value_id):
             event = ValuePreStoreEvent(kiara_id=self._kiara.id, value=_value)
             self._event_callback(event)
             persisted_value = store.store_value(_value)
             _value._is_stored = True
-            self._value_archive_lookup_map[_value.value_id] = store_id
+
+            self._value_archive_lookup_map[_value.value_id] = _data_store
             self._persisted_value_descs[_value.value_id] = persisted_value
             property_values = _value.property_values
 
             for property, property_value in property_values.items():
-                self.store_value(value=property_value, store_id=store_id)
+                self.store_value(value=property_value, data_store=_data_store)
         else:
             persisted_value = None
 
@@ -548,7 +636,10 @@ class DataRegistry(object):
 
         return {self.get_value(value=v_id) for v_id in stored}
 
-    def find_destinies_for_value(
+    # ==============================================================================================
+    # destiny stuff
+
+    def retrieve_destinies_for_value_from_archives(
         self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
     ) -> Mapping[str, uuid.UUID]:
 
@@ -570,6 +661,117 @@ class DataRegistry(object):
                 all_destinies[k] = v
 
         return all_destinies
+
+    def get_destiny_aliases_for_value(
+        self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
+    ) -> Iterable[str]:
+
+        # TODO: cache the result of this
+
+        if alias_filter is not None:
+            raise NotImplementedError()
+
+        aliases: Set[str] = set()
+        aliases.update(
+            self.retrieve_destinies_for_value_from_archives(value_id=value_id).keys()
+        )
+
+        # all_stores = self._all_values_store_map.get(value_id)
+        # if all_stores:
+        #     for prefix in all_stores:
+        #         all_aliases = self._destiny_archives[
+        #             prefix
+        #         ].get_destiny_aliases_for_value(value_id=value_id)
+        #         if all_aliases is not None:
+        #             aliases.update((f"{prefix}.{a}" for a in all_aliases))
+
+        current = self._destinies_by_value.get(value_id, None)
+        if current:
+            aliases.update(current.keys())
+
+        return sorted(aliases)
+
+    def register_destiny(
+        self,
+        destiny_alias: str,
+        values: Dict[str, uuid.UUID],
+        manifest: "Manifest",
+        result_field_name: Union[str, None] = None,
+    ) -> "Destiny":
+        """
+        Add a destiny for one (or in some rare cases several) values.
+
+        A destiny alias must be unique for every one of the involved input values.
+        """
+        if not values:
+            raise Exception("Can't add destiny, no values provided.")
+
+        from kiara.models.module.destiny import Destiny
+
+        destiny = Destiny.create_from_values(
+            kiara=self._kiara,
+            destiny_alias=destiny_alias,
+            manifest=manifest,
+            result_field_name=result_field_name,
+            values=values,
+        )
+
+        for value_id in destiny.fixed_inputs.values():
+
+            self._destinies[destiny.destiny_id] = destiny
+            # TODO: store history?
+            self._destinies_by_value.setdefault(value_id, {})[destiny_alias] = destiny
+            self._cached_value_aliases.setdefault(value_id, {})[destiny_alias] = destiny
+
+        return destiny
+
+    def attach_destiny_as_property(
+        self,
+        destiny: Union[uuid.UUID, "Destiny"],
+        field_names: Union[Iterable[str], None] = None,
+    ):
+
+        if field_names:
+            raise NotImplementedError()
+
+        if isinstance(destiny, uuid.UUID):
+            destiny = self._destinies[destiny]
+
+        values = self.load_values(destiny.fixed_inputs)
+
+        already_stored: List[uuid.UUID] = []
+        for v in values.values():
+            if v.is_stored:
+                already_stored.append(v.value_id)
+
+        if already_stored:
+            stored = (str(v) for v in already_stored)
+            raise Exception(
+                f"Can't attach destiny as property, value(s) already stored: {', '.join(stored)}"
+            )
+
+        if destiny.result_value_id is None:
+            destiny.execute(kiara=self._kiara)
+
+        for v in values.values():
+            assert destiny.result_value_id is not None
+            v.add_property(
+                value_id=destiny.result_value_id,
+                property_path=destiny.destiny_alias,
+                add_origin_to_property_value=True,
+            )
+
+    def get_registered_destiny(
+        self, value_id: uuid.UUID, destiny_alias: str
+    ) -> "Destiny":
+
+        destiny = self._destinies_by_value.get(value_id, {}).get(destiny_alias, None)
+        if destiny is None:
+            raise Exception(
+                f"No destiny '{destiny_alias}' available for value '{value_id}'."
+            )
+
+        return destiny
 
     def register_data(
         self,
@@ -874,21 +1076,48 @@ class DataRegistry(object):
 
         return pv
 
-    def retrieve_chunk(
+    # def retrieve_chunk(
+    #     self,
+    #     chunk_id: str,
+    #     archive_id: Union[uuid.UUID, None] = None,
+    #     as_file: bool = True,
+    #     symlink_ok: bool = True,
+    # ) -> Union[str, "BytesLike"]:
+    #
+    #     if archive_id is None:
+    #         raise NotImplementedError()
+    #
+    #     archive = self.get_archive(archive_id)
+    #     chunk = archive.retrieve_chunk(chunk_id, as_file=as_file, symlink_ok=symlink_ok)
+    #
+    #     return chunk
+
+    def retrieve_chunks(
         self,
-        chunk_id: str,
-        archive_id: Union[uuid.UUID, None] = None,
-        as_file: Union[None, bool, str] = None,
+        chunk_ids: Sequence[str],
+        as_files: bool = True,
         symlink_ok: bool = True,
-    ) -> Union[str, bytes]:
+        archive_id: Union[uuid.UUID, None] = None,
+    ) -> Generator[Union[str, "BytesLike"], None, None]:
+        """Return the chunk content in the same order as the 'chunk_ids' argument.
+
+        If 'as_files' is 'True', it will return strings representing paths to files containing the chunk data. If symlink_ok is also set to 'True', the returning Path could potentially be a symlink, which means the underlying function might not need to copy the file. In this case, you are responsible to not change the contents of the path, ever.
+
+        If 'as_files' is 'False', BytesLike objects will be returned, containing the chunk data bytes directly.
+        """
 
         if archive_id is None:
-            raise NotImplementedError()
+            raise NotImplementedError(
+                "Can't retrieve chunks without specifying an archive."
+            )
 
         archive = self.get_archive(archive_id)
-        chunk = archive.retrieve_chunk(chunk_id, as_file=as_file, symlink_ok=symlink_ok)
 
-        return chunk
+        return archive.retrieve_chunks(
+            chunk_ids, as_files=as_files, symlink_ok=symlink_ok
+        )
+        # for chunk_id in chunk_ids:
+        #     yield archive.retrieve_chunk(chunk_id)
 
     def retrieve_value_data(
         self, value: Union[uuid.UUID, Value], target_profile: Union[str, None] = None

@@ -75,7 +75,6 @@ class PipelineListener(abc.ABC):
 
 
 class Pipeline(object):
-
     """An instance of a [PipelineStructure][kiara.pipeline.structure.PipelineStructure] that holds state for all of the inputs/outputs of the steps within."""
 
     @classmethod

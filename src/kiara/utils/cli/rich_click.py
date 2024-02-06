@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import inspect
 import textwrap
-from typing import List, Union
+from typing import ClassVar, List, Union
 
 import click
 from rich import box
@@ -290,7 +290,7 @@ def rich_format_operation_help(
 
             # Highlighter to make [ | ] and <> dim
             class MetavarHighlighter(RegexHighlighter):
-                highlights = [
+                highlights: ClassVar = [  # type: ignore
                     r"^(?P<metavar_sep>(\[|<))",
                     r"(?P<metavar_sep>\|)",
                     r"(?P<metavar_sep>(\]|>)$)",

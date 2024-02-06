@@ -301,7 +301,7 @@ class WorkflowGroupInfo(InfoItemGroup):
         cls,
         *items: "Workflow",
         group_title: Union[str, None] = None,
-        alias_map: Union[None, Mapping[str, uuid.UUID]] = None
+        alias_map: Union[None, Mapping[str, uuid.UUID]] = None,
     ) -> "WorkflowGroupInfo":
 
         workflow_infos = {

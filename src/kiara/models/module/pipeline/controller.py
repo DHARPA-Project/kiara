@@ -148,7 +148,6 @@ class SinglePipelineController(PipelineController):
 
 
 class SinglePipelineBatchController(SinglePipelineController):
-
     """
     A [PipelineController][kiara.models.modules.pipeline.controller.PipelineController] that executes all pipeline steps non-interactively.
 

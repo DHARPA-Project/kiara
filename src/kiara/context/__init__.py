@@ -33,7 +33,6 @@ from kiara.models.values.value import ValueMap
 from kiara.registries import KiaraArchive
 from kiara.registries.aliases import AliasRegistry
 from kiara.registries.data import DataRegistry
-from kiara.registries.destinies.registry import DestinyRegistry
 from kiara.registries.environment import EnvironmentRegistry
 from kiara.registries.events.metadata import CreateMetadataDestinies
 from kiara.registries.events.registry import EventRegistry
@@ -45,9 +44,10 @@ from kiara.registries.operations import OperationRegistry
 from kiara.registries.rendering import RenderRegistry
 from kiara.registries.types import TypeRegistry
 from kiara.registries.workflows import WorkflowRegistry
-from kiara.utils import log_exception
+from kiara.utils import log_exception, log_message
 from kiara.utils.class_loading import find_all_archive_types
 from kiara.utils.operations import filter_operations
+from kiara.utils.stores import check_external_archive
 
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #  Copyright (c) 2021, Markus Binsteiner
@@ -77,7 +77,6 @@ def explain(item: Any, kiara: Union[None, "Kiara"] = None):
 
 
 class Kiara(object):
-
     """
     The core context of a kiara session.
 
@@ -140,7 +139,7 @@ class Kiara(object):
         self._kiara_model_registry: ModelRegistry = ModelRegistry.instance()
 
         self._alias_registry: AliasRegistry = AliasRegistry(kiara=self)
-        self._destiny_registry: DestinyRegistry = DestinyRegistry(kiara=self)
+        # self._destiny_registry: DestinyRegistry = DestinyRegistry(kiara=self)
 
         self._workflow_registry: WorkflowRegistry = WorkflowRegistry(kiara=self)
 
@@ -160,7 +159,13 @@ class Kiara(object):
         self._archives: Dict[str, KiaraArchive] = {}
 
         for archive_alias, archive in self._config.archives.items():
+
+            # this is just to make old context that still had that not error out
+            if "_destiny_" in archive.archive_type:
+                continue
+
             archive_cls = self._archive_types.get(archive.archive_type, None)
+
             if archive_cls is None:
                 raise Exception(
                     f"Can't create context: no archive type '{archive.archive_type}' available. Available types: {', '.join(self._archive_types.keys())}"
@@ -168,23 +173,23 @@ class Kiara(object):
 
             config_cls = archive_cls._config_cls
             archive_config = config_cls(**archive.config)
-            archive_obj = archive_cls(archive_id=archive.archive_uuid, config=archive_config)  # type: ignore
+            archive_obj = archive_cls(archive_alias=archive_alias, archive_config=archive_config)  # type: ignore
             for supported_type in archive_obj.supported_item_types():
                 if supported_type == "data":
                     self.data_registry.register_data_archive(
-                        archive_obj, alias=archive_alias  # type: ignore
+                        archive_obj,  # type: ignore
                     )
                 if supported_type == "job_record":
-                    self.job_registry.register_job_archive(archive_obj, alias=archive_alias)  # type: ignore
+                    self.job_registry.register_job_archive(archive_obj)  # type: ignore
 
                 if supported_type == "alias":
-                    self.alias_registry.register_archive(archive_obj, alias=archive_alias)  # type: ignore
+                    self.alias_registry.register_archive(archive_obj)  # type: ignore
 
-                if supported_type == "destiny":
-                    self.destiny_registry.register_destiny_archive(archive_obj, alias=archive_alias)  # type: ignore
+                # if supported_type == "destiny":
+                #     self.destiny_registry.register_destiny_archive(archive_obj)  # type: ignore
 
                 if supported_type == "workflow":
-                    self.workflow_registry.register_archive(archive_obj, alias=archive_alias)  # type: ignore
+                    self.workflow_registry.register_archive(archive_obj)  # type: ignore
 
         if self._runtime_config.lock_context:
             self.lock_context()
@@ -258,9 +263,9 @@ class Kiara(object):
     def alias_registry(self) -> AliasRegistry:
         return self._alias_registry
 
-    @property
-    def destiny_registry(self) -> DestinyRegistry:
-        return self._destiny_registry
+    # @property
+    # def destiny_registry(self) -> DestinyRegistry:
+    #     return self._destiny_registry
 
     @property
     def job_registry(self) -> JobRegistry:
@@ -312,6 +317,41 @@ class Kiara(object):
 
     # ===================================================================================================
     # kiara session API methods
+
+    def register_external_archive(
+        self,
+        archive: Union[str, KiaraArchive, Iterable[Union[KiaraArchive, str]]],
+        allow_write_access: bool = False,
+    ) -> Dict[str, str]:
+        """Register one or several external archives with the context.
+
+        In case you provide KiaraArchive instances, they will be modified in case the provided 'allow_write_access' is different from the 'is_force_read_only' attribute of the archive.
+        """
+
+        archive_instances = check_external_archive(
+            archive=archive, allow_write_access=allow_write_access
+        )
+
+        result = {}
+        for archive_type, _archive_inst in archive_instances.items():
+            log_message(
+                "register.external.archive",
+                archive=_archive_inst.archive_alias,
+                allow_write_access=allow_write_access,
+            )
+
+            _archive_inst.set_force_read_only(not allow_write_access)
+
+            if archive_type == "data":
+                result["data"] = self.data_registry.register_data_archive(_archive_inst)  # type: ignore
+            if archive_type == "alias":
+                result["alias"] = self.alias_registry.register_archive(_archive_inst)  # type: ignore
+            if archive_type == "job_record":
+                result["job_record"] = self.job_registry.register_job_archive(_archive_inst)  # type: ignore
+            else:
+                raise Exception(f"Can't register archive of type '{archive_type}'.")
+
+        return result
 
     def create_manifest(
         self, module_or_operation: str, config: Union[Mapping[str, Any], None] = None
@@ -433,8 +473,8 @@ class Kiara(object):
             result.setdefault(archive, set()).add(alias)
         for alias, archive in self.alias_registry.alias_archives.items():
             result.setdefault(archive, set()).add(alias)
-        for alias, archive in self.destiny_registry.destiny_archives.items():
-            result.setdefault(archive, set()).add(alias)
+        # for alias, archive in self.destiny_registry.destiny_archives.items():
+        #     result.setdefault(archive, set()).add(alias)
         for alias, archive in self.job_registry.job_archives.items():
             result.setdefault(archive, set()).add(alias)
         for alias, archive in self.workflow_registry.workflow_archives.items():
@@ -513,7 +553,7 @@ class KiaraContextInfo(KiaraModel):
 
     def get_info(self, item_type: str, item_id: str) -> ItemInfo:
 
-        if item_type == "data_type" or item_type == "data_types":
+        if item_type in ("data_type", "data_types"):
             group_info: InfoItemGroup = self.data_types
         elif "module" in item_type:
             group_info = self.module_types

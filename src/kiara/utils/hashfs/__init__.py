@@ -81,7 +81,6 @@ def shard(digest, depth, width):
 
 
 class HashFS(object):
-
     """
     Content addressable file manager.
 
@@ -454,7 +453,6 @@ class HashFS(object):
 class HashAddress(
     namedtuple("HashAddress", ["id", "relpath", "abspath", "is_duplicate"])
 ):
-
     """
     File address containing file's path on disk and it's content hash ID.
 
@@ -473,7 +471,6 @@ class HashAddress(
 
 
 class Stream(object):
-
     """
     Common interface for file-like objects.
 

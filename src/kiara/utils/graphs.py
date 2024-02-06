@@ -39,7 +39,7 @@ def print_ascii_graph(
         exit_code = pip.main(cmd)
         try:
             from asciinet import graph_to_ascii  # type: ignore
-        except:  # noqa:
+        except:  # noqa
             exit_code = 1
 
         if restart_interpreter_if_asciinet_installed:

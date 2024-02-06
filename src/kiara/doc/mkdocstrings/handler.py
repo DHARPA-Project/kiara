@@ -20,7 +20,6 @@ from kiara.utils import log_exception
 
 
 class KiaraHandler(BaseHandler):
-
     """
     The kiara handler class.
 

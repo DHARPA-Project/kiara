@@ -31,7 +31,6 @@ class InternalType(
     DataType[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS],
     Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS],
 ):
-
     """'A 'marker' base data type for data types that are (mainly) used internally in kiara.."""
 
     _data_type_name: ClassVar[str] = "internal"
@@ -95,7 +94,6 @@ class InternalType(
 
 
 class TerminalRenderable(InternalType[object, DataTypeConfig]):
-
     """
     A list of renderable objects, used in the 'rich' Python library, to print to the terminal or in Jupyter.
 
@@ -132,7 +130,6 @@ class InternalModelTypeConfig(DataTypeConfig):
 
 
 class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
-
     """
     A value type that is used internally.
 
@@ -238,7 +235,6 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
 
 
 class DocumentationModelValueType(InternalModelValueType):
-
     """Documentation for an internal entity."""
 
     _data_type_name: ClassVar[str] = "doc"

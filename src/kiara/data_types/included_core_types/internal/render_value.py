@@ -25,7 +25,6 @@ class RenderSceneTypeConfig(DataTypeConfig):
 
 
 class RenderSceneDataType(InternalType[RenderScene, RenderSceneTypeConfig]):
-
     """A value type to contain information about how to render a value in a specific render scenario."""
 
     _data_type_name: ClassVar[str] = "render_scene"
@@ -93,7 +92,6 @@ class RenderSceneDataType(InternalType[RenderScene, RenderSceneTypeConfig]):
 
 
 class RenderValueResultDataType(InternalType[RenderValueResult, DataTypeConfig]):
-
     """A value type to contain information about how to render a value in a specific render scenario."""
 
     _data_type_name: ClassVar[str] = "render_value_result"

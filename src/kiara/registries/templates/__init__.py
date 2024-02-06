@@ -53,7 +53,6 @@ def render_markdown(markdown: mistune.Markdown, markdown_str: str):
 
 
 class TemplateRegistry(object):
-
     """
     A registry collecting all the (jinja) templates that are available in the current environment.
 

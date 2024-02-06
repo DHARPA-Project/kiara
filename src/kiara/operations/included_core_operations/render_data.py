@@ -22,7 +22,6 @@ logger = structlog.getLogger()
 
 
 class RenderDataDetails(BaseOperationDetails):
-
     """A model that contains information needed to describe an 'extract_metadata' operation."""
 
     source_data_type: str = Field(description="The data type that will be rendered.")
@@ -30,7 +29,6 @@ class RenderDataDetails(BaseOperationDetails):
 
 
 class RenderDataOperationType(OperationType[RenderDataDetails]):
-
     """An operation that renders data (and metadata) associated with a value."""
 
     _operation_type_name: ClassVar[str] = "render_data"

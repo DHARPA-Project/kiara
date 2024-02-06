@@ -186,7 +186,28 @@ class JobRuntimeDetails(BaseModel):
     submitted: datetime = Field(description="When the job was submitted.")
     started: datetime = Field(description="When the job was started.")
     finished: datetime = Field(description="When the job was finished.")
-    runtime: float = Field(description="The duration of the job.")
+    runtime: float = Field(description="The duration of the job (in seconds).")
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("Key", style="i")
+        table.add_column("Value")
+
+        table.add_row("submitted", str(self.submitted))
+        table.add_row("started", str(self.started))
+        table.add_row("finished", str(self.finished))
+        table.add_row("runtime", f"{self.runtime} seconds")
+
+        job_log_table = Table(show_header=False, box=box.SIMPLE)
+        job_log_table.add_column("timestamp", style="i")
+        job_log_table.add_column("message")
+        for log in self.job_log.log:
+            job_log_table.add_row(str(log.timestamp), log.msg)
+
+        table.add_row("job log", job_log_table)
+
+        return table
 
 
 class JobRecord(JobConfig):
@@ -220,9 +241,9 @@ class JobRecord(JobConfig):
             outputs=active_job.results,
             runtime_details=job_details,
             environment_hashes=kiara.environment_registry.environment_hashes,
-            inputs_data_hash=str(inputs_data_cid)
-            if inputs_data_cid is not None
-            else None,
+            inputs_data_hash=(
+                str(inputs_data_cid) if inputs_data_cid is not None else None
+            ),
         )
         return job_record
 

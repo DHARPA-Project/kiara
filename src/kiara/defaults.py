@@ -43,6 +43,7 @@ KIARA_MAIN_CONTEXT_LOCKS_PATH = os.path.join(
     kiara_app_dirs.user_data_dir, "context_locks"
 )
 
+
 KIARA_DEFAULT_STAGES_EXTRACTION_TYPE = "early"
 
 INIT_EXAMPLE_NAME = "init"
@@ -79,6 +80,7 @@ INVALID_VALUE_NAMES = [
     "kiara",
     "callbacks",
 ]
+INVALID_ALIAS_NAMES = ["kiara", "__default__", "alias", "value", "value_id"]
 """List of reserved names, inputs/outputs can't use those."""
 
 DEFAULT_DATA_STORE_MARKER = "default_data_store"
@@ -93,7 +95,7 @@ DEFAULT_ALIAS_STORE_MARKER = "default_alias_store"
 DEFAULT_WORKFLOW_STORE_MARKER = "default_workflow_store"
 """Name for the default context workflow store."""
 
-METADATA_DESTINY_STORE_MARKER = "metadata"
+METADATA_PROPERTY_MARKER = "metadata"
 """Name for the default context destiny store."""
 
 PIPELINE_PARENT_MARKER = "__pipeline__"
@@ -120,6 +122,8 @@ NOT_AVAILBLE_MARKER = "-- n/a --"
 KIARA_MODULE_METADATA_ATTRIBUTE = "KIARA_METADATA"
 
 KIARA_DEFAULT_ROOT_NODE_ID = "__self__"
+
+KIARA_SQLITE_STORE_EXTENSION = "kiara"
 
 VALUE_ATTR_DELIMITER = "::"
 VALID_VALUE_QUERY_CATEGORIES = ["data", "properties"]

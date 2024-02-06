@@ -27,7 +27,6 @@ VALUE_ALIAS_SEPARATOR = "."
 
 
 class AliasValueMap(ValueMap):
-
     """A model class that holds a tree of values and their schemas."""
 
     _kiara_model_id: ClassVar = "instance.value_map.aliases"

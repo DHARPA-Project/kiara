@@ -7,7 +7,16 @@
 import abc
 import datetime
 import uuid
-from typing import TYPE_CHECKING, Callable, Dict, Iterable, List, Mapping, Union
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Dict,
+    Generic,
+    Iterable,
+    List,
+    Mapping,
+    Union,
+)
 
 import pytz
 import structlog
@@ -15,7 +24,7 @@ import structlog
 from kiara.exceptions import NoSuchWorkflowException
 from kiara.models.events.workflow_registry import WorkflowArchiveAddedEvent
 from kiara.models.workflow import WorkflowMetadata, WorkflowState
-from kiara.registries import BaseArchive
+from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
 from kiara.registries.ids import ID_REGISTRY
 
 if TYPE_CHECKING:
@@ -24,14 +33,10 @@ if TYPE_CHECKING:
 logger = structlog.getLogger()
 
 
-class WorkflowArchive(BaseArchive):
+class WorkflowArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CLS]):
     @classmethod
     def supported_item_types(cls) -> Iterable[str]:
         return ["workflow"]
-
-    @classmethod
-    def is_writeable(cls) -> bool:
-        return False
 
     @abc.abstractmethod
     def retrieve_all_workflow_aliases(self) -> Mapping[str, uuid.UUID]:
@@ -78,7 +83,7 @@ class WorkflowArchive(BaseArchive):
 
 class WorkflowStore(WorkflowArchive):
     @classmethod
-    def is_writeable(cls) -> bool:
+    def _is_writeable(cls) -> bool:
         return True
 
     def register_workflow(
@@ -151,15 +156,11 @@ class WorkflowRegistry(object):
     def register_archive(
         self,
         archive: WorkflowArchive,
-        alias: Union[str, None] = None,
         set_as_default_store: Union[bool, None] = None,
     ):
-
-        workflow_archive_id = archive.archive_id
-        archive.register_archive(kiara=self._kiara)
-
-        if alias is None:
-            alias = str(workflow_archive_id)
+        alias = archive.archive_alias
+        if not alias:
+            raise Exception("Invalid workflows archive alias: can't be empty.")
 
         if "." in alias:
             raise Exception(
@@ -170,6 +171,8 @@ class WorkflowRegistry(object):
             raise Exception(
                 f"Can't add store, workflow archive alias '{alias}' already registered."
             )
+
+        archive.register_archive(kiara=self._kiara)
 
         self._workflow_archives[alias] = archive
         is_store = False

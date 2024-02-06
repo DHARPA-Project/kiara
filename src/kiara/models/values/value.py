@@ -17,6 +17,7 @@ from typing import (
     Any,
     ClassVar,
     Dict,
+    Generator,
     Iterable,
     List,
     Literal,
@@ -78,8 +79,8 @@ class SerializedChunks(BaseModel, abc.ABC):
 
     @abc.abstractmethod
     def get_chunks(
-        self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
-    ) -> Iterable[Union[str, BytesLike]]:
+        self, as_files: bool = True, symlink_ok: bool = True
+    ) -> Generator[Union[str, "BytesLike"], None, None]:
         """
         Retrieve the chunks belonging to this data instance.
 
@@ -181,10 +182,10 @@ class SerializedBytes(SerializedPreStoreChunks):
 
     def get_chunks(
         self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
-    ) -> Iterable[Union[str, BytesLike]]:
+    ) -> Generator[Union[str, BytesLike], None, None]:
 
         if as_files is False:
-            return [self.chunk]
+            yield self.chunk
         else:
             if as_files is True:
                 file = None
@@ -194,7 +195,7 @@ class SerializedBytes(SerializedPreStoreChunks):
                 assert len(as_files) == 1
                 file = as_files[0]
             path = self._store_bytes_to_file([self.chunk], file=file)
-            return path
+            yield path
 
     def get_number_of_chunks(self) -> int:
         return 1
@@ -213,23 +214,22 @@ class SerializedListOfBytes(SerializedPreStoreChunks):
 
     def get_chunks(
         self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
-    ) -> Iterable[Union[str, BytesLike]]:
+    ) -> Generator[Union[str, BytesLike], None, None]:
         if as_files is False:
-            return self.chunks
+            for chunk in self.chunks:
+                yield chunk
         else:
             if as_files is None or as_files is True or isinstance(as_files, str):
                 # means we write all the chunks into one file
                 file = None if as_files is True else as_files
                 path = self._store_bytes_to_file(self.chunks, file=file)
-                return [path]
+                yield path
             else:
                 assert len(as_files) == self.get_number_of_chunks()
-                result = []
                 for idx, chunk in enumerate(self.chunks):
                     _file = as_files[idx]
                     path = self._store_bytes_to_file([chunk], file=_file)
-                    result.append(path)
-                return result
+                    yield path
 
     def get_number_of_chunks(self) -> int:
         return len(self.chunks)
@@ -254,14 +254,14 @@ class SerializedFile(SerializedPreStoreChunks):
 
     def get_chunks(
         self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
-    ) -> Iterable[Union[str, BytesLike]]:
+    ) -> Generator[Union[str, BytesLike], None, None]:
 
         if as_files is False:
             chunk = self._read_bytes_from_file(self.file)
-            return [chunk]
+            yield chunk
         else:
             if as_files is True:
-                return [self.file]
+                yield self.file
             else:
                 if isinstance(as_files, str):
                     file = as_files
@@ -272,7 +272,7 @@ class SerializedFile(SerializedPreStoreChunks):
                     raise Exception(f"Can't write to file '{file}': file exists.")
                 if symlink_ok:
                     os.symlink(self.file, file)
-                    return [file]
+                    yield file
                 else:
                     raise NotImplementedError()
 
@@ -295,7 +295,7 @@ class SerializedFiles(SerializedPreStoreChunks):
 
     def get_chunks(
         self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
-    ) -> Iterable[Union[str, BytesLike]]:
+    ) -> Generator[Union[str, BytesLike], None, None]:
         raise NotImplementedError()
 
     def get_number_of_chunks(self) -> int:
@@ -335,10 +335,10 @@ class SerializedInlineJson(SerializedPreStoreChunks):
 
     def get_chunks(
         self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
-    ) -> Iterable[Union[str, BytesLike]]:
+    ) -> Generator[Union[str, BytesLike], None, None]:
 
         if as_files is False:
-            return [self.as_json()]
+            yield self.as_json()
         else:
             raise NotImplementedError()
 
@@ -365,31 +365,33 @@ class SerializedChunkIDs(SerializedChunks):
     _data_registry: "DataRegistry" = PrivateAttr(default=None)
 
     def get_chunks(
-        self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
-    ) -> Iterable[Union[str, BytesLike]]:
+        self, as_files: bool = True, symlink_ok: bool = True
+    ) -> Generator[Union[str, BytesLike], None, None]:
+        """Retrieve the chunks of this value data.
 
-        if isinstance(as_files, (bool, str)):
-            return (
-                self._data_registry.retrieve_chunk(
-                    chunk_id=chunk,
-                    archive_id=self.archive_id,
-                    as_file=as_files,
-                    symlink_ok=symlink_ok,
-                )
-                for chunk in self.chunk_id_list
-            )
-        else:
-            result = []
-            for idx, chunk_id in enumerate(self.chunk_id_list):
-                file = as_files[idx]
-                self._data_registry.retrieve_chunk(
-                    chunk_id=chunk_id,
-                    archive_id=self.archive_id,
-                    as_file=file,
-                    symlink_ok=symlink_ok,
-                )
-                result.append(file)
-            return result
+        If 'as_files' is 'True', it will return strings representing paths to files containing the chunk data. If symlink_ok is also set to 'True', the returning Path could potentially be a symlink, which means the underlying function might not need to copy the file. In this case, you are responsible to not change the contents of the path, ever.
+
+        If 'as_files' is 'False', BytesLike objects will be returned, containing the chunk data bytes directly.
+
+        """
+
+        chunk_ids = self.chunk_id_list
+        return self._data_registry.retrieve_chunks(
+            chunk_ids=chunk_ids,
+            as_files=as_files,
+            symlink_ok=symlink_ok,
+            archive_id=self.archive_id,
+        )
+
+        # return (
+        #     self._data_registry.retrieve_chunk(
+        #         chunk_id=chunk,
+        #         archive_id=self.archive_id,
+        #         as_file=as_files,
+        #         symlink_ok=symlink_ok,
+        #     )
+        #     for chunk in self.chunk_id_list
+        # )
 
     def get_number_of_chunks(self) -> int:
         return len(self.chunk_id_list)
@@ -666,7 +668,6 @@ class DataTypeInfo(KiaraModel):
 
 
 class ValueDetails(KiaraModel):
-
     """A wrapper class that manages and retieves value data and its details."""
 
     _kiara_model_id: ClassVar = "instance.value_details"
@@ -1297,7 +1298,6 @@ class Value(ValueDetails):
 
 
 class UnloadableData(KiaraModel):
-
     """
     A special 'marker' model, indicating that the data of value can't be loaded.
 

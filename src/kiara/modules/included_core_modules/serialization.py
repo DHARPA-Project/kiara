@@ -142,8 +142,8 @@ class UnpickleModule(DeserializeValueModule):
         python_object_data = data.get_serialized_data("python_object")
         assert python_object_data.get_number_of_chunks() == 1
 
-        _bytes = list(python_object_data.get_chunks(as_files=False))[0]
-        data = pickle.loads(_bytes)
+        _bytes = next(python_object_data.get_chunks(as_files=False))
+        data = pickle.loads(_bytes)  # noqa
 
         return data
 

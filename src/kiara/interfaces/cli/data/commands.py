@@ -6,8 +6,11 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Data-related sub-commands for the cli."""
+import os.path
 import sys
-from typing import TYPE_CHECKING, Iterable, Tuple
+import uuid
+from pathlib import Path
+from typing import TYPE_CHECKING, Iterable, Tuple, Union
 
 import rich_click as click
 import structlog
@@ -15,6 +18,7 @@ import structlog
 from kiara.exceptions import InvalidCommandLineInvocation
 from kiara.utils import log_exception, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
+from kiara.utils.cli.exceptions import handle_exception
 
 # from kiara.interfaces.python_api.models.info import RENDER_FIELDS, ValueInfo, ValuesInfo
 # from kiara.interfaces.tui.pager import PagerApp
@@ -35,7 +39,7 @@ from kiara.utils.cli import output_format_option, terminal_print, terminal_print
 if TYPE_CHECKING:
     from kiara.api import Kiara, KiaraAPI
     from kiara.operations.included_core_operations.filter import FilterOperationType
-
+    from kiara.registries.data import DataArchive, DataStore
 
 logger = structlog.getLogger()
 
@@ -58,7 +62,8 @@ def data(ctx):
 @click.option(
     "--include-internal",
     "-I",
-    help="Also list values that are used mostly internally (e.g. metadata for other values, ...). Implies 'all-ids' is 'True'.",
+    help="Also list values that are used mostly internally (e.g. metadata for other values, ...). Implies 'all-ids' "
+    "is 'True'.",
     is_flag=True,
 )
 @click.option(
@@ -233,6 +238,7 @@ def list_values(
 )
 @output_format_option()
 @click.pass_context
+@handle_exception()
 def explain_value(
     ctx,
     value_id: Tuple[str],
@@ -251,9 +257,8 @@ def explain_value(
 
     All of the 'show-additional-information' flags are only applied when the 'terminal' output format is selected. This might change in the future.
     """
-    from kiara.interfaces.python_api import ValueInfo
 
-    kiara_obj: Kiara = ctx.obj.kiara
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
 
     render_config = {
         "show_pedigree": pedigree,
@@ -270,26 +275,26 @@ def explain_value(
     all_values = []
     for v_id in value_id:
         try:
-            value = kiara_obj.data_registry.get_value(v_id)
+            value_info = kiara_api.retrieve_value_info(v_id)
         except Exception as e:
             terminal_print()
             terminal_print(f"[red]Error[/red]: {e}")
             sys.exit(1)
-        if not value:
+        if not value_info:
             terminal_print(f"[red]Error[/red]: No value found for: {v_id}")
             sys.exit(1)
-        all_values.append(value)
+        all_values.append(value_info)
 
     if len(all_values) == 1:
         title = f"Value details for: [b i]{value_id[0]}[/b i]"
     else:
         title = "Value details"
 
-    v_infos = (
-        ValueInfo.create_from_instance(kiara=kiara_obj, instance=v) for v in all_values
-    )
+    # v_infos = (
+    #     ValueInfo.create_from_instance(kiara=kiara_obj, instance=v) for v in all_values
+    # )
 
-    terminal_print_model(*v_infos, format=format, in_panel=title, **render_config)
+    terminal_print_model(*all_values, format=format, in_panel=title, **render_config)
 
 
 @data.command(name="load")
@@ -301,6 +306,7 @@ def explain_value(
 #     is_flag=True,
 # )
 @click.pass_context
+@handle_exception()
 def load_value(ctx, value: str):
     """Load a stored value and print it in a format suitable for the terminal."""
     # kiara_obj: Kiara = ctx.obj["kiara"]
@@ -445,6 +451,7 @@ def filter_value(
         )
     except InvalidCommandLineInvocation as e:
         ctx.obj.exit(msg=None, exit_code=e.error_code)
+        sys.exit(1)
 
     final_aliases = calculate_aliases(operation=kiara_op, alias_tokens=save)
     try:
@@ -508,15 +515,180 @@ def filter_value(
             terminal_print(f"[red]Error saving results[/red]: {e}")
             sys.exit(1)
 
-    # if save_results:
-    #     try:
-    #         saved_results = kiara_op.save_result(job_id=job_id, aliases=final_aliases)
-    #         if len(saved_results) == 1:
-    #             title = "[b]Stored result value[/b]"
-    #         else:
-    #             title = "[b]Stored result values[/b]"
-    #         terminal_print(saved_results, in_panel=title, empty_line_before=True)
-    #     except Exception as e:
-    #         log_exception(e)
-    #         terminal_print(f"[red]Error saving results[/red]: {e}")
-    #         sys.exit(1)
+
+@data.command(name="export")
+@click.option(
+    "--archive-alias",
+    "-a",
+    help="The alias to use for the exported archive. If not provided, the first alias will be used.",
+    required=False,
+)
+@click.option(
+    "--path",
+    "-p",
+    help="The path of the exported archive. If not provided, '<archive_alias>.karchive' will be used.",
+    required=False,
+)
+@click.option(
+    "--compression",
+    "-c",
+    help="The compression inside the archive. If not provided, 'zstd' will be used.",
+    type=click.Choice(["zstd", "lz4", "lzma", "none"]),
+    default="zstd",
+)
+@click.option(
+    "--force", "-f", help="Force overwriting an existing archive.", is_flag=True
+)
+@click.argument("aliases", nargs=-1, required=True)
+@click.pass_context
+def export_data_store(
+    ctx,
+    aliases: str,
+    archive_alias: Union[None, str],
+    path: Union[str, None],
+    compression: str,
+    force: bool,
+):
+    """Export one or several values into a new data data_store."""
+
+    from kiara.utils.stores import create_new_archive
+
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
+
+    values = []
+    for idx, alias in enumerate(aliases, start=1):
+        if "=" in alias:
+            old_alias, new_alias = alias.split("=", maxsplit=1)
+        else:
+            try:
+                uuid.UUID(alias)
+                old_alias = alias
+                new_alias = None
+            except Exception:
+                old_alias = alias
+                new_alias = alias
+
+        value = kiara_api.get_value(old_alias)
+        values.append((value, new_alias))
+
+    if not archive_alias:
+        archive_alias = values[0][1]
+
+    if not archive_alias:
+        archive_alias = str(values[0][0].value_id)
+
+    if not path:
+        base_path = "."
+        file_name = f"{archive_alias}.kiarchive"
+        terminal_print(f"Creating new data_store '{file_name}'...")
+    else:
+        base_path = os.path.dirname(path)
+        file_name = os.path.basename(path)
+        if "." not in file_name:
+            file_name = f"{file_name}.kiarchive"
+
+        terminal_print(f"Creating new data_store '{path}'...")
+
+    full_path = Path(base_path) / file_name
+    if full_path.is_file() and force:
+        full_path.unlink()
+
+    if full_path.exists():
+        terminal_print(f"[red]Error[/red]: File '{full_path}' already exists.")
+        sys.exit(1)
+
+    data_store: DataStore = create_new_archive(  # type: ignore
+        archive_alias=archive_alias,
+        store_base_path=base_path,
+        store_type="sqlite_data_store",
+        file_name=file_name,
+        default_chunk_compression=compression,
+        allow_write_access=True,
+    )
+    archive_store = create_new_archive(
+        archive_alias=archive_alias,
+        store_base_path=base_path,
+        store_type="sqlite_alias_store",
+        file_name=file_name,
+        allow_write_access=True,
+    )
+
+    terminal_print("Registering data store...")
+    data_store_alias = kiara_api.context.data_registry.register_data_archive(data_store)  # type: ignore
+    alias_store_alias = kiara_api.context.alias_registry.register_archive(archive_store)  # type: ignore
+
+    terminal_print("Exporting value into new data_store...")
+
+    no_default_value = False
+
+    if not no_default_value:
+        try:
+            data_store.set_archive_metadata_value(
+                "default_value", str(values[0][0].value_id)
+            )
+        except Exception as e:
+            data_store.delete_archive(archive_id=data_store.archive_id)
+            log_exception(e)
+            terminal_print(f"[red]Error setting value[/red]: {e}")
+            sys.exit(1)
+
+    values_to_store = {}
+    alias_map = {}
+    for idx, (value, value_alias) in enumerate(values, start=1):
+        key = f"value_{idx}"
+        values_to_store[key] = value
+        if value_alias:
+            alias_map[key] = value_alias
+
+    try:
+
+        persisted_data = kiara_api.store_values(
+            values=values_to_store,
+            alias_map=alias_map,
+            data_store=data_store_alias,
+            alias_store=alias_store_alias,
+        )
+
+        terminal_print_model(persisted_data)
+        terminal_print("Done.")
+
+    except Exception as e:
+        data_store.delete_archive(archive_id=data_store.archive_id)
+        log_exception(e)
+        terminal_print(f"[red]Error saving results[/red]: {e}")
+        sys.exit(1)
+
+
+@data.command(name="import")
+@click.argument("archive", nargs=1, required=True)
+@click.pass_context
+def import_data_store(ctx, archive: str):
+
+    from kiara.utils.stores import check_external_archive
+
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
+
+    terminal_print(f"Loading store '{archive}'...")
+
+    archives = check_external_archive(archive)
+
+    data_archive: "DataArchive" = archives.get("data", None)  # type: ignore
+
+    if not data_archive:
+        terminal_print(f"[red]Error[/red]: No data archives found in '{archive}'")
+        sys.exit(1)
+
+    terminal_print("Registering data archive...")
+    store_alias = kiara_api.context.data_registry.register_data_archive(data_archive)
+
+    values = data_archive.value_ids
+    if values is None:
+        terminal_print(
+            f"[red]Error[/red]: No values found in '{archive}', probably because the archive type is incompatible."
+        )
+        sys.exit(1)
+
+    result = kiara_api.store_values(values=values, alias_store=store_alias)
+    terminal_print(result)
+
+    terminal_print("Done.")

@@ -9,7 +9,7 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
-from typing import Any, ClassVar, Dict, List, Mapping, Union
+from typing import Any, Callable, ClassVar, Dict, List, Mapping, Union
 
 import structlog
 from deepdiff import DeepHash
@@ -43,7 +43,6 @@ FILE_BUNDLE_IMPORT_AVAILABLE_COLUMNS = [
 
 
 class KiaraFile(KiaraModel):
-
     """Describes properties for the 'file' value type."""
 
     _kiara_model_id: ClassVar = "instance.data.file"
@@ -116,6 +115,7 @@ class KiaraFile(KiaraModel):
     )
 
     _path: Union[str, None] = PrivateAttr(default=None)
+    _path_resolver: Union[Callable, None] = PrivateAttr(default=None)
     _file_hash: Union[str, None] = PrivateAttr(default=None)
     _file_cid: Union[CID, None] = PrivateAttr(default=None)
 
@@ -126,7 +126,10 @@ class KiaraFile(KiaraModel):
     @property
     def path(self) -> str:
         if self._path is None:
-            raise Exception("File path not set for file model.")
+            if self._path_resolver is not None:
+                self._path = self._path_resolver()
+            else:
+                raise Exception("File path not set for file model.")
         return self._path
 
     def _retrieve_data_to_hash(self) -> Any:
@@ -229,7 +232,6 @@ class FolderImportConfig(BaseModel):
 
 
 class KiaraFileBundle(KiaraModel):
-
     """Describes properties for the 'file_bundle' value type."""
 
     _kiara_model_id: ClassVar = "instance.data.file_bundle"

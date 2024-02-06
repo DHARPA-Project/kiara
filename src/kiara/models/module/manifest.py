@@ -29,7 +29,6 @@ if TYPE_CHECKING:
 
 
 class Manifest(KiaraModel):
-
     """A class to hold the type and configuration for a module instance."""
 
     _kiara_model_id: ClassVar = "instance.manifest"

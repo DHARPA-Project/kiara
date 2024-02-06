@@ -19,7 +19,7 @@ class KiaraRuntimeConfig(BaseSettings):
 
     job_cache: JobCacheStrategy = Field(
         description="Name of the strategy that determines when to re-run jobs or use cached results.",
-        default=JobCacheStrategy.data_hash,
+        default=JobCacheStrategy.no_cache,
     )
     allow_external: bool = Field(
         description="Whether to allow external external pipelines.", default=True

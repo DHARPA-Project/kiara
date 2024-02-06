@@ -9,7 +9,17 @@ import uuid
 from enum import Enum
 from io import BytesIO
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Set, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Generator,
+    Generic,
+    Iterable,
+    Mapping,
+    Sequence,
+    Set,
+    Union,
+)
 
 import orjson
 import structlog
@@ -17,22 +27,19 @@ import structlog
 from kiara.exceptions import KiaraException
 from kiara.models.module.jobs import JobRecord
 from kiara.models.values.value import (
-    SERIALIZE_TYPES,
     PersistedData,
-    SerializedChunkIDs,
-    SerializedData,
     Value,
 )
-from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
+from kiara.registries import ARCHIVE_CONFIG_CLS, ArchiveDetails, FileSystemArchiveConfig
 from kiara.registries.data.data_store import BaseDataStore, DataArchive
-from kiara.registries.jobs import JobArchive
 from kiara.utils import log_message
 from kiara.utils.hashfs import HashAddress, HashFS
 from kiara.utils.json import orjson_dumps
 from kiara.utils.windows import fix_windows_longpath, fix_windows_symlink
 
 if TYPE_CHECKING:
-    pass
+    from multiformats import CID
+    from multiformats.varint import BytesLike
 
 logger = structlog.getLogger()
 
@@ -53,31 +60,53 @@ DEFAULT_HASHFS_WIDTH = 1
 DEFAULT_HASH_FS_ALGORITHM = "sha256"
 
 
-class FileSystemDataArchive(DataArchive, JobArchive):
-
+class FileSystemDataArchive(
+    DataArchive[FileSystemArchiveConfig], Generic[ARCHIVE_CONFIG_CLS]
+):
     """Data store that loads data from the local filesystem."""
 
     _archive_type_name = "filesystem_data_archive"
     _config_cls = FileSystemArchiveConfig  # type: ignore
 
-    # @classmethod
-    # def supported_item_types(cls) -> Iterable[str]:
-    #
-    #     return ["data", "job_record"]
+    def __init__(
+        self,
+        archive_alias: str,
+        archive_config: FileSystemArchiveConfig,
+        force_read_only: bool = False,
+    ):
 
-    @classmethod
-    def is_writeable(cls) -> bool:
-        return False
-
-    def __init__(self, archive_id: uuid.UUID, config: FileSystemArchiveConfig):
-
-        DataArchive.__init__(self, archive_id=archive_id, config=config)
+        super().__init__(
+            archive_alias=archive_alias,
+            archive_config=archive_config,
+            force_read_only=force_read_only,
+        )
         self._base_path: Union[Path, None] = None
         self._hashfs_path: Union[Path, None] = None
         self._hashfs: Union[HashFS, None] = None
+        # self._archive_metadata: Union[Mapping[str, Any], None] = None
 
-    # def get_job_archive_id(self) -> uuid.UUID:
-    #     return self._kiara.id
+    def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
+
+        if not self.archive_metadata_path.is_file():
+            _archive_metadata = {}
+        else:
+            _archive_metadata = orjson.loads(self.archive_metadata_path.read_bytes())
+
+        archive_id = _archive_metadata.get("archive_id", None)
+        if not archive_id:
+            try:
+                _archive_id = uuid.UUID(self.data_store_path.name)
+                _archive_metadata["archive_id"] = _archive_id
+            except Exception:
+                raise Exception(
+                    f"Could not retrieve archive id for alias archive '{self.archive_alias}'."
+                )
+
+        return _archive_metadata
+
+    @property
+    def archive_metadata_path(self) -> Path:
+        return self.data_store_path / "store_metadata.json"
 
     def get_archive_details(self) -> ArchiveDetails:
 
@@ -330,10 +359,10 @@ class FileSystemDataArchive(DataArchive, JobArchive):
 
         return PersistedData(**data)
 
-    def retrieve_chunk(
+    def _retrieve_chunk(
         self,
         chunk_id: str,
-        as_file: Union[bool, str, None] = None,
+        as_file: bool = True,
         symlink_ok: bool = True,
     ) -> Union[bytes, str]:
 
@@ -341,7 +370,7 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         if addr is None:
             raise KiaraException(f"Can't find chunk with id '{chunk_id}'")
 
-        if as_file in (None, True):
+        if as_file is True:
             result: str = addr.abspath
             return result
         elif as_file is False:
@@ -349,9 +378,20 @@ class FileSystemDataArchive(DataArchive, JobArchive):
         else:
             raise NotImplementedError()
 
+    def retrieve_chunks(
+        self,
+        chunk_ids: Sequence[str],
+        as_files: bool = True,
+        symlink_ok: bool = True,
+    ) -> Generator[Union["BytesLike", str], None, None]:
+
+        for chunk_id in chunk_ids:
+            yield self._retrieve_chunk(
+                chunk_id, as_file=as_files, symlink_ok=symlink_ok
+            )
+
 
 class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
-
     """Data store that stores data as files on the local filesystem."""
 
     _archive_type_name = "filesystem_data_store"
@@ -408,57 +448,70 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
 
             fix_windows_symlink(value_file, destiny_file)
 
-    def _persist_value_data(self, value: Value) -> PersistedData:
+    def _persist_chunks(self, chunks: Mapping["CID", Union[str, BytesIO]]):
 
-        serialized_value: SerializedData = value.serialized_data
+        for cid, chunk in chunks.items():
+            self._persist_chunk(str(cid), chunk)
 
-        chunk_id_map = {}
-        for key in serialized_value.get_keys():
+    def _persist_chunk(self, chunk_id: str, chunk: Union[str, BytesIO]):
 
-            data_model = serialized_value.get_serialized_data(key)
+        addr: HashAddress = self.hashfs.put_with_precomputed_hash(chunk, chunk_id)
 
-            if data_model.type == "chunk":  # type: ignore
-                chunks: Iterable[Union[str, BytesIO]] = [BytesIO(data_model.chunk)]  # type: ignore
-            elif data_model.type == "chunks":  # type: ignore
-                chunks = (BytesIO(c) for c in data_model.chunks)  # type: ignore
-            elif data_model.type == "file":  # type: ignore
-                chunks = [data_model.file]  # type: ignore
-            elif data_model.type == "files":  # type: ignore
-                chunks = data_model.files  # type: ignore
-            elif data_model.type == "inline-json":  # type: ignore
-                chunks = [BytesIO(data_model.as_json())]  # type: ignore
-            else:
-                raise Exception(
-                    f"Invalid serialized data type: {type(data_model)}. Available types: {', '.join(SERIALIZE_TYPES)}"
-                )
+        assert addr.id == chunk_id
+        # return addr
+        # chunk_ids.append(addr.id)
 
-            chunk_ids = []
-            for item in zip(serialized_value.get_cids_for_key(key), chunks):
-                cid = item[0]
-                _chunk = item[1]
-                addr: HashAddress = self.hashfs.put_with_precomputed_hash(
-                    _chunk, str(cid)
-                )
-                chunk_ids.append(addr.id)
-
-            scids = SerializedChunkIDs(
-                chunk_id_list=chunk_ids,
-                archive_id=self.archive_id,
-                size=data_model.get_size(),
-            )
-            scids._data_registry = self.kiara_context.data_registry
-            chunk_id_map[key] = scids
-
-        pers_value = PersistedData(
-            archive_id=self.archive_id,
-            chunk_id_map=chunk_id_map,
-            data_type=serialized_value.data_type,
-            data_type_config=serialized_value.data_type_config,
-            serialization_profile=serialized_value.serialization_profile,
-            metadata=serialized_value.metadata,
-        )
-
-        return pers_value
+    # def _persist_value_data(self, value: Value) -> PersistedData:
+    #
+    #     serialized_value: SerializedData = value.serialized_data
+    #
+    #     chunk_id_map = {}
+    #     for key in serialized_value.get_keys():
+    #
+    #         data_model = serialized_value.get_serialized_data(key)
+    #
+    #         if data_model.type == "chunk":  # type: ignore
+    #             chunks: Iterable[Union[str, BytesIO]] = [BytesIO(data_model.chunk)]  # type: ignore
+    #         elif data_model.type == "chunks":  # type: ignore
+    #             chunks = (BytesIO(c) for c in data_model.chunks)  # type: ignore
+    #         elif data_model.type == "file":  # type: ignore
+    #             chunks = [data_model.file]  # type: ignore
+    #         elif data_model.type == "files":  # type: ignore
+    #             chunks = data_model.files  # type: ignore
+    #         elif data_model.type == "inline-json":  # type: ignore
+    #             chunks = [BytesIO(data_model.as_json())]  # type: ignore
+    #         else:
+    #             raise Exception(
+    #                 f"Invalid serialized data type: {type(data_model)}. Available types: {', '.join(SERIALIZE_TYPES)}"
+    #             )
+    #
+    #         chunk_ids = []
+    #         for item in zip(serialized_value.get_cids_for_key(key), chunks):
+    #             cid = item[0]
+    #             _chunk = item[1]
+    #             addr: HashAddress = self.hashfs.put_with_precomputed_hash(
+    #                 _chunk, str(cid)
+    #             )
+    #             chunk_ids.append(addr.id)
+    #
+    #         scids = SerializedChunkIDs(
+    #             chunk_id_list=chunk_ids,
+    #             archive_id=self.archive_id,
+    #             size=data_model.get_size(),
+    #         )
+    #         scids._data_registry = self.kiara_context.data_registry
+    #         chunk_id_map[key] = scids
+    #
+    #     pers_value = PersistedData(
+    #         archive_id=self.archive_id,
+    #         chunk_id_map=chunk_id_map,
+    #         data_type=serialized_value.data_type,
+    #         data_type_config=serialized_value.data_type_config,
+    #         serialization_profile=serialized_value.serialization_profile,
+    #         metadata=serialized_value.metadata,
+    #     )
+    #
+    #     return pers_value
 
     def _persist_value_pedigree(self, value: Value):
 

@@ -265,7 +265,7 @@ class TabularWrap(ABC):
             num_rows = self.num_rows
 
         table_dict = head.to_pydict()
-        for i in range(0, num_rows):
+        for i in range(0, num_rows):  # noqa
             row = []
             for cn in self.column_names:
                 cell = table_dict[cn][i]
@@ -285,8 +285,7 @@ class TabularWrap(ABC):
                     for line in cell_str.split("\n"):
                         if len(line) > max_cell_length:
                             line = line[0:max_cell_length] + " ..."
-                        else:
-                            line = line
+
                         lines.append(line)
                     cell_str = "\n".join(lines)
 
@@ -295,7 +294,7 @@ class TabularWrap(ABC):
             yield row
 
         if num_split_rows:
-            for i in range(0, num_split_rows):
+            for i in range(0, num_split_rows):  # noqa
                 row = []
                 for _ in self.column_names:
                     row.append("...")
@@ -308,7 +307,7 @@ class TabularWrap(ABC):
 
                 tail = self.slice(self.num_rows - rows_tail)
                 table_dict = tail.to_pydict()
-                for i in range(0, num_rows):
+                for i in range(0, num_rows):  # noqa
 
                     row = []
                     for cn in self.column_names:
@@ -332,8 +331,6 @@ class TabularWrap(ABC):
 
                                 if len(line) > max_cell_length:
                                     line = line[0:(max_cell_length)] + " ..."
-                                else:
-                                    line = line
                                 lines.append(line)
                             cell_str = "\n".join(lines)
 

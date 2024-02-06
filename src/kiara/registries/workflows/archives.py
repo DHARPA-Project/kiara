@@ -2,7 +2,7 @@
 import shutil
 import uuid
 from pathlib import Path
-from typing import Dict, Iterable, Mapping, Union
+from typing import Any, Dict, Iterable, Mapping, Union
 
 import orjson
 
@@ -18,12 +18,44 @@ class FileSystemWorkflowArchive(WorkflowArchive):
     _archive_type_name = "filesystem_workflow_archive"
     _config_cls = FileSystemArchiveConfig  # type: ignore
 
-    def __init__(self, archive_id: uuid.UUID, config: ARCHIVE_CONFIG_CLS):
+    def __init__(
+        self,
+        archive_alias: str,
+        archive_config: ARCHIVE_CONFIG_CLS,
+        force_read_only: bool = False,
+    ):
 
-        super().__init__(archive_id=archive_id, config=config)
+        super().__init__(
+            archive_alias=archive_alias,
+            archive_config=archive_config,
+            force_read_only=force_read_only,
+        )
 
         self._base_path: Union[Path, None] = None
         self.alias_store_path.mkdir(parents=True, exist_ok=True)
+
+    def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
+
+        if not self.archive_metadata_path.is_file():
+            _archive_metadata = {}
+        else:
+            _archive_metadata = orjson.loads(self.archive_metadata_path.read_bytes())
+
+        archive_id = _archive_metadata.get("archive_id", None)
+        if not archive_id:
+            try:
+                _archive_id = uuid.UUID(self.workflow_store_path.name)
+                _archive_metadata["archive_id"] = str(_archive_id)
+            except Exception:
+                raise Exception(
+                    f"Could not retrieve archive id for alias archive '{self.archive_alias}'."
+                )
+
+        return _archive_metadata
+
+    @property
+    def archive_metadata_path(self) -> Path:
+        return self.workflow_store_path / "store_metadata.json"
 
     @property
     def workflow_store_path(self) -> Path:

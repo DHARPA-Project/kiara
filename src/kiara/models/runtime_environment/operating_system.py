@@ -14,7 +14,6 @@ from kiara.models.runtime_environment import RuntimeEnvironment
 
 
 class OSRuntimeEnvironment(RuntimeEnvironment):
-
     """
     Manages information about the OS this kiara instance is running in.
 

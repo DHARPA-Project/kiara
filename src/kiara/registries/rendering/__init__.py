@@ -61,7 +61,6 @@ def render_markdown(markdown: mistune.Markdown, markdown_str: str):
 
 
 class RenderRegistry(object):
-
     """A registry collecting all Renderer types/objects that are available to render Value objects or internal kiara models."""
 
     _instance = None

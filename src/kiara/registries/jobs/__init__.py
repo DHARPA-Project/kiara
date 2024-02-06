@@ -43,6 +43,10 @@ class JobArchive(BaseArchive):
     # ) -> Optional[JobRecord]:
     #     pass
 
+    @classmethod
+    def supported_item_types(cls) -> Iterable[str]:
+        return ["job_record"]
+
     @abc.abstractmethod
     def retrieve_all_job_hashes(
         self,
@@ -68,6 +72,10 @@ class JobArchive(BaseArchive):
 
 
 class JobStore(JobArchive):
+    @classmethod
+    def _is_writeable(cls) -> bool:
+        return True
+
     @abc.abstractmethod
     def store_job_record(self, job_record: JobRecord):
         pass
@@ -234,16 +242,19 @@ class JobRegistry(object):
 
         return [JobArchiveAddedEvent, JobRecordPreStoreEvent, JobRecordStoredEvent]
 
-    def register_job_archive(self, archive: JobArchive, alias: Union[str, None] = None):
+    def register_job_archive(self, archive: JobArchive) -> str:
 
-        if alias is None:
-            alias = str(archive.archive_id)
+        alias = archive.archive_alias
+
+        if not alias:
+            raise Exception("Invalid job archive alias: can't be empty.")
 
         if alias in self._job_archives.keys():
             raise Exception(
                 f"Can't register job store, store id already registered: {alias}."
             )
 
+        archive.register_archive(self._kiara)
         self._job_archives[alias] = archive
 
         is_store = False
@@ -261,6 +272,8 @@ class JobRegistry(object):
             is_default_store=is_default_store,
         )
         self._event_callback(event)
+
+        return alias
 
     @property
     def default_job_store(self) -> str:
@@ -361,10 +374,18 @@ class JobRegistry(object):
         except Exception:
             pass
 
-        job = self._processor.get_job(job_id=job_id)
-        if job is not None:
-            if job.status == JobStatus.FAILED:
-                return None
+        try:
+            job = self._processor.get_job(job_id=job_id)
+            if job is not None:
+                if job.status == JobStatus.FAILED:
+                    return None
+        except Exception:
+            pass
+
+        all_job_records = self.retrieve_all_job_records()
+        for r in all_job_records.values():
+            if r.job_id == job_id:
+                return r
 
         raise NotImplementedError()
 
@@ -551,7 +572,8 @@ class JobRegistry(object):
             return results
         elif job_id in self._failed_jobs.values():
             j = self._processor.get_job(job_id=job_id)
-            raise FailedJobException(job=j, parent=j._exception)
+            exception = FailedJobException(job=j, parent=j._exception)
+            raise exception
         else:
             raise Exception(f"Could not find job with id: {job_id}")
 

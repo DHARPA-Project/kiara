@@ -21,7 +21,6 @@ from kiara.registries.models import ModelRegistry
 
 
 class ExtractMetadataDetails(BaseOperationDetails):
-
     """A model that contains information needed to describe an 'extract_metadata' operation."""
 
     data_type: str = Field(
@@ -52,7 +51,6 @@ class ExtractMetadataDetails(BaseOperationDetails):
 
 
 class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
-
     """
     An operation that extracts metadata of a specific type from value data.
 
@@ -109,7 +107,7 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
         input_field_name = next(iter(module.inputs_schema.keys()))
         input_schema = module.inputs_schema.get(input_field_name)
         assert input_schema is not None
-        if input_field_name != input_schema.type and input_field_name != "value":
+        if input_field_name not in (input_schema.type, "value"):
             return None
 
         data_type_name = module.inputs_schema["value"].type

@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 
 
 class PythonClassMetadata(ValueMetadata):
-
     """Python class and module information."""
 
     _metadata_key: ClassVar[str] = "python_class"
@@ -42,7 +41,6 @@ class PythonClassMetadata(ValueMetadata):
 
 
 class FileMetadata(ValueMetadata):
-
     """File stats."""
 
     _metadata_key: ClassVar[str] = "file"
@@ -61,7 +59,6 @@ class FileMetadata(ValueMetadata):
 
 
 class FileBundleMetadata(ValueMetadata):
-
     """File bundle stats."""
 
     _metadata_key: ClassVar[str] = "file_bundle"

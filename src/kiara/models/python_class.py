@@ -22,7 +22,6 @@ if TYPE_CHECKING:
 
 
 class PythonClass(KiaraModel):
-
     """Python class and module information."""
 
     _kiara_model_id: ClassVar = "instance.wrapped_python_class"

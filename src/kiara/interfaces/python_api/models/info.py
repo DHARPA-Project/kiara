@@ -1779,10 +1779,13 @@ class KiaraPluginInfo(ItemInfo):
             pkg_name = pkg.name
             if pkg_name == instance:
                 match = pkg.name
-            elif pkg_name.replace("kiara-plugin", "kiara_plugin") == instance:
-                match = pkg.name
-            elif pkg_name.replace("kiara_plugin", "kiara-plugin") == instance:
-                match = pkg.name
+            elif pkg_name.startswith("kiara-plugin") or pkg_name.startswith(
+                "kiara_plugin"
+            ):
+                underscored = pkg_name.replace("-", "_")
+                if underscored == instance:
+                    match = underscored
+                    break
 
         if not match:
             raise KiaraException(

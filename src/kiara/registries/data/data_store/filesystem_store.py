@@ -13,6 +13,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Generator,
+    Generic,
     Iterable,
     Mapping,
     Sequence,
@@ -29,7 +30,7 @@ from kiara.models.values.value import (
     PersistedData,
     Value,
 )
-from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
+from kiara.registries import ARCHIVE_CONFIG_CLS, ArchiveDetails, FileSystemArchiveConfig
 from kiara.registries.data.data_store import BaseDataStore, DataArchive
 from kiara.utils import log_message
 from kiara.utils.hashfs import HashAddress, HashFS
@@ -59,7 +60,9 @@ DEFAULT_HASHFS_WIDTH = 1
 DEFAULT_HASH_FS_ALGORITHM = "sha256"
 
 
-class FileSystemDataArchive(DataArchive):
+class FileSystemDataArchive(
+    DataArchive[FileSystemArchiveConfig], Generic[ARCHIVE_CONFIG_CLS]
+):
     """Data store that loads data from the local filesystem."""
 
     _archive_type_name = "filesystem_data_archive"
@@ -80,12 +83,9 @@ class FileSystemDataArchive(DataArchive):
         self._base_path: Union[Path, None] = None
         self._hashfs_path: Union[Path, None] = None
         self._hashfs: Union[HashFS, None] = None
-        self._archive_metadata: Union[Mapping[str, Any], None] = None
+        # self._archive_metadata: Union[Mapping[str, Any], None] = None
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
-
-        if self._archive_metadata is not None:
-            return self._archive_metadata
 
         if not self.archive_metadata_path.is_file():
             _archive_metadata = {}
@@ -102,8 +102,7 @@ class FileSystemDataArchive(DataArchive):
                     f"Could not retrieve archive id for alias archive '{self.archive_alias}'."
                 )
 
-        self._archive_metadata = _archive_metadata
-        return self._archive_metadata
+        return _archive_metadata
 
     @property
     def archive_metadata_path(self) -> Path:
@@ -360,7 +359,7 @@ class FileSystemDataArchive(DataArchive):
 
         return PersistedData(**data)
 
-    def retrieve_chunk(
+    def _retrieve_chunk(
         self,
         chunk_id: str,
         as_file: bool = True,
@@ -382,12 +381,14 @@ class FileSystemDataArchive(DataArchive):
     def retrieve_chunks(
         self,
         chunk_ids: Sequence[str],
-        as_files: Union[bool, None] = None,
+        as_files: bool = True,
         symlink_ok: bool = True,
     ) -> Generator[Union["BytesLike", str], None, None]:
 
         for chunk_id in chunk_ids:
-            yield self.retrieve_chunk(chunk_id, as_file=as_files, symlink_ok=symlink_ok)
+            yield self._retrieve_chunk(
+                chunk_id, as_file=as_files, symlink_ok=symlink_ok
+            )
 
 
 class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):

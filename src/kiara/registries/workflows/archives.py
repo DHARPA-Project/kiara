@@ -36,9 +36,6 @@ class FileSystemWorkflowArchive(WorkflowArchive):
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
 
-        if self._archive_metadata is not None:
-            return self._archive_metadata
-
         if not self.archive_metadata_path.is_file():
             _archive_metadata = {}
         else:
@@ -54,8 +51,7 @@ class FileSystemWorkflowArchive(WorkflowArchive):
                     f"Could not retrieve archive id for alias archive '{self.archive_alias}'."
                 )
 
-        self._archive_metadata = _archive_metadata
-        return self._archive_metadata
+        return _archive_metadata
 
     @property
     def archive_metadata_path(self) -> Path:

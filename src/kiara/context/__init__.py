@@ -320,7 +320,7 @@ class Kiara(object):
 
     def register_external_archive(
         self,
-        archive: Union[str, KiaraArchive, List[KiaraArchive], List[str]],
+        archive: Union[str, KiaraArchive, Iterable[Union[KiaraArchive, str]]],
         allow_write_access: bool = False,
     ) -> Dict[str, str]:
         """Register one or several external archives with the context.

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import TYPE_CHECKING, Any, Dict, Mapping, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
 if TYPE_CHECKING:
     from kiara.registries import KiaraArchive
@@ -38,16 +38,17 @@ def create_new_archive(
 
 
 def check_external_archive(
-    archive: Union[str, "KiaraArchive"], allow_write_access: bool = False
+    archive: Union[str, "KiaraArchive", Iterable[Union["KiaraArchive", str]]],
+    allow_write_access: bool = False,
 ) -> Mapping[str, "KiaraArchive"]:
 
     from kiara.context.config import KiaraArchiveReference
     from kiara.registries import KiaraArchive
 
     if isinstance(archive, (KiaraArchive, str)):
-        _archives = [archive]
+        _archives: List[Union[str, KiaraArchive]] = [archive]
     else:
-        _archives = archive
+        _archives = list(archive)
 
     archive_instances: Dict[str, KiaraArchive] = {}
     for _archive in _archives:

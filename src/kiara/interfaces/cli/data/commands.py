@@ -681,9 +681,14 @@ def import_data_store(ctx, archive: str):
     terminal_print("Registering data archive...")
     store_alias = kiara_api.context.data_registry.register_data_archive(data_archive)
 
-    result = kiara_api.store_values(
-        values=data_archive.value_ids, alias_store=store_alias
-    )
+    values = data_archive.value_ids
+    if values is None:
+        terminal_print(
+            f"[red]Error[/red]: No values found in '{archive}', probably because the archive type is incompatible."
+        )
+        sys.exit(1)
+
+    result = kiara_api.store_values(values=values, alias_store=store_alias)
     terminal_print(result)
 
     terminal_print("Done.")

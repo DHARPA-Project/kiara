@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Union
+from typing import Any, Dict, Iterable, Mapping, Union
 
-from orjson import orjson
-from sqlalchemy import Engine, create_engine, text
+import orjson
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import Engine
 
 from kiara.models.module.jobs import JobRecord
 from kiara.registries import SqliteArchiveConfig
@@ -19,7 +20,7 @@ class SqliteJobArchive(JobArchive):
     @classmethod
     def _load_archive_config(
         cls, archive_uri: str, allow_write_access: bool, **kwargs
-    ) -> Union[Mapping[str, Any], None]:
+    ) -> Union[Dict[str, Any], None]:
 
         if allow_write_access:
             return None
@@ -46,10 +47,17 @@ class SqliteJobArchive(JobArchive):
         # config = SqliteArchiveConfig(sqlite_db_path=store_uri)
         return {"sqlite_db_path": archive_uri}
 
-    def __init__(self, archive_alias: str, archive_config: SqliteArchiveConfig):
+    def __init__(
+        self,
+        archive_alias: str,
+        archive_config: SqliteArchiveConfig,
+        force_read_only: bool = False,
+    ):
 
-        JobArchive.__init__(
-            self, archive_alias=archive_alias, archive_config=archive_config
+        super().__init__(
+            archive_alias=archive_alias,
+            archive_config=archive_config,
+            force_read_only=force_read_only,
         )
         self._db_path: Union[Path, None] = None
         self._cached_engine: Union[Engine, None] = None
@@ -175,7 +183,7 @@ class SqliteJobStore(SqliteJobArchive, JobStore):
     @classmethod
     def _load_archive_config(
         cls, archive_uri: str, allow_write_access: bool, **kwargs
-    ) -> Union[Mapping[str, Any], None]:
+    ) -> Union[Dict[str, Any], None]:
 
         if not allow_write_access:
             return None

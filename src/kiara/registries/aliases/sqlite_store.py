@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import uuid
 from pathlib import Path
-from typing import Any, Mapping, Set, Union
+from typing import Any, Dict, Mapping, Set, Union
 
-from sqlalchemy import Engine, create_engine, text
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import Engine
 
 from kiara.registries import SqliteArchiveConfig
 from kiara.registries.aliases import AliasArchive, AliasStore
@@ -18,7 +19,7 @@ class SqliteAliasArchive(AliasArchive):
     @classmethod
     def _load_archive_config(
         cls, archive_uri: str, allow_write_access: bool, **kwargs
-    ) -> Union[Mapping[str, Any], None]:
+    ) -> Union[Dict[str, Any], None]:
 
         if allow_write_access:
             return None
@@ -55,7 +56,7 @@ class SqliteAliasArchive(AliasArchive):
         AliasArchive.__init__(
             self,
             archive_alias=archive_alias,
-            archive_config=archive_config,
+            archive_config=archive_config,  # type: ignore
             force_read_only=force_read_only,
         )
         self._db_path: Union[Path, None] = None
@@ -147,7 +148,7 @@ class SqliteAliasStore(SqliteAliasArchive, AliasStore):
     @classmethod
     def _load_archive_config(
         cls, archive_uri: str, allow_write_access: bool, **kwargs
-    ) -> Union[Mapping[str, Any], None]:
+    ) -> Union[Dict[str, Any], None]:
 
         if not allow_write_access:
             return None

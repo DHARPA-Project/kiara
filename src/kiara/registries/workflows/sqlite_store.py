@@ -3,7 +3,8 @@ import uuid
 from pathlib import Path
 from typing import Iterable, Mapping, Union
 
-from sqlalchemy import Engine, create_engine, text
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import Engine
 
 from kiara.models.workflow import WorkflowMetadata, WorkflowState
 from kiara.registries import SqliteArchiveConfig
@@ -11,15 +12,22 @@ from kiara.registries.workflows import WorkflowArchive, WorkflowStore
 from kiara.utils.windows import fix_windows_longpath
 
 
-class SqliteWorkflowArchive(WorkflowArchive):
+class SqliteWorkflowArchive(WorkflowArchive[SqliteArchiveConfig]):
 
     _archive_type_name = "sqlite_workflow_archive"
     _config_cls = SqliteArchiveConfig
 
-    def __init__(self, archive_alias: str, archive_config: SqliteArchiveConfig):
+    def __init__(
+        self,
+        archive_alias: str,
+        archive_config: SqliteArchiveConfig,
+        force_read_only: bool = False,
+    ):
 
-        WorkflowArchive.__init__(
-            self, archive_alias=archive_alias, archive_config=archive_config
+        super().__init__(
+            archive_alias=archive_alias,
+            archive_config=archive_config,
+            force_read_only=force_read_only,
         )
         self._db_path: Union[Path, None] = None
         self._cached_engine: Union[Engine, None] = None

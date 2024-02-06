@@ -290,7 +290,7 @@ def rich_format_operation_help(
 
             # Highlighter to make [ | ] and <> dim
             class MetavarHighlighter(RegexHighlighter):
-                highlights: ClassVar = [
+                highlights: ClassVar = [  # type: ignore
                     r"^(?P<metavar_sep>(\[|<))",
                     r"(?P<metavar_sep>\|)",
                     r"(?P<metavar_sep>(\]|>)$)",

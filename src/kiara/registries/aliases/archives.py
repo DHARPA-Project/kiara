@@ -11,7 +11,7 @@ import uuid
 from pathlib import Path
 from typing import Any, Mapping, Set, Union
 
-from orjson import orjson
+import orjson
 
 from kiara.registries import ARCHIVE_CONFIG_CLS, FileSystemArchiveConfig
 from kiara.registries.aliases import AliasArchive, AliasStore
@@ -37,12 +37,8 @@ class FileSystemAliasArchive(AliasArchive):
         )
 
         self._base_path: Union[Path, None] = None
-        self._archive_metadata: Union[Mapping[str, Any], None] = None
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
-
-        if self._archive_metadata is not None:
-            return self._archive_metadata
 
         if not self.archive_metadata_path.is_file():
             _archive_metadata = {}
@@ -59,8 +55,7 @@ class FileSystemAliasArchive(AliasArchive):
                     f"Could not retrieve archive id for alias archive '{self.archive_alias}'."
                 )
 
-        self._archive_metadata = _archive_metadata
-        return self._archive_metadata
+        return _archive_metadata
 
     @property
     def alias_store_path(self) -> Path:

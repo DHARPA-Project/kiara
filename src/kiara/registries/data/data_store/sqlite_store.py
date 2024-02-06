@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
+    Dict,
     Generator,
     Generic,
     Iterable,
@@ -16,8 +17,9 @@ from typing import (
     Union,
 )
 
-from orjson import orjson
-from sqlalchemy import Connection, Engine, create_engine, text
+import orjson
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import Connection, Engine
 
 from kiara.defaults import kiara_app_dirs
 from kiara.models.values.value import PersistedData, Value
@@ -47,7 +49,7 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
     @classmethod
     def _load_archive_config(
         cls, archive_uri: str, allow_write_access: bool, **kwargs
-    ) -> Union[Mapping[str, Any], None]:
+    ) -> Union[Dict[str, Any], None]:
 
         if allow_write_access:
             return None
@@ -83,12 +85,11 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
     def __init__(
         self,
         archive_alias: str,
-        archive_config: ARCHIVE_CONFIG_CLS,
+        archive_config: SqliteArchiveConfig,
         force_read_only: bool = False,
     ):
 
-        DataArchive.__init__(
-            self,
+        super().__init__(
             archive_alias=archive_alias,
             archive_config=archive_config,
             force_read_only=force_read_only,
@@ -228,7 +229,7 @@ CREATE TABLE IF NOT EXISTS environments (
         with self.sqlite_engine.connect() as conn:
             cursor = conn.execute(sql, params)
             result = cursor.fetchone()
-            data = orjson.loads(result[0])
+            data: Mapping[str, Any] = orjson.loads(result[0])
             return data
 
     def _retrieve_environment_details(
@@ -241,7 +242,7 @@ CREATE TABLE IF NOT EXISTS environments (
         with self.sqlite_engine.connect() as conn:
             cursor = conn.execute(sql, (env_type, env_hash))
             result = cursor.fetchone()
-            return result[0]
+            return result[0]  # type: ignore
 
     # def find_values(self, matcher: ValueMatcher) -> Iterable[Value]:
     #     raise NotImplementedError()
@@ -301,56 +302,56 @@ CREATE TABLE IF NOT EXISTS environments (
             result_destinies = {x[0]: value_id for x in result}
             return result_destinies
 
-    def retrieve_chunk(
-        self,
-        chunk_id: str,
-        as_file: Union[bool, str, None] = None,
-        symlink_ok: bool = True,
-    ) -> Union[bytes, str]:
-
-        import lzma
-
-        import lz4.frame
-        from zstandard import ZstdDecompressor
-
-        dctx = ZstdDecompressor()
-
-        if as_file:
-            chunk_path = self.get_chunk_path(chunk_id)
-
-            if chunk_path.exists():
-                return chunk_path.as_posix()
-
-        sql = text(
-            "SELECT chunk_data, compression_type FROM values_data WHERE chunk_id = :chunk_id"
-        )
-        params = {"chunk_id": chunk_id}
-        with self.sqlite_engine.connect() as conn:
-            cursor = conn.execute(sql, params)
-            result_bytes = cursor.fetchone()
-
-        chunk_data = result_bytes[0]
-        compression_type = result_bytes[1]
-        if compression_type not in (None, 0):
-            if CHUNK_COMPRESSION_TYPE(compression_type) == CHUNK_COMPRESSION_TYPE.ZSTD:
-                chunk_data = dctx.decompress(chunk_data)
-            elif (
-                CHUNK_COMPRESSION_TYPE(compression_type) == CHUNK_COMPRESSION_TYPE.LZMA
-            ):
-                chunk_data = lzma.decompress(chunk_data)
-            elif CHUNK_COMPRESSION_TYPE(compression_type) == CHUNK_COMPRESSION_TYPE.LZ4:
-                chunk_data = lz4.frame.decompress(chunk_data)
-            else:
-                raise ValueError(f"Unsupported compression type: {compression_type}")
-
-        if not as_file:
-            return chunk_data
-
-        chunk_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
-        with open(chunk_path, "wb") as file:
-            file.write(chunk_data)
-
-        return chunk_path.as_posix()
+    # def retrieve_chunk(
+    #     self,
+    #     chunk_id: str,
+    #     as_file: Union[bool, str, None] = None,
+    #     symlink_ok: bool = True,
+    # ) -> Union[bytes, str]:
+    #
+    #     import lzma
+    #
+    #     import lz4.frame
+    #     from zstandard import ZstdDecompressor
+    #
+    #     dctx = ZstdDecompressor()
+    #
+    #     if as_file:
+    #         chunk_path = self.get_chunk_path(chunk_id)
+    #
+    #         if chunk_path.exists():
+    #             return chunk_path.as_posix()
+    #
+    #     sql = text(
+    #         "SELECT chunk_data, compression_type FROM values_data WHERE chunk_id = :chunk_id"
+    #     )
+    #     params = {"chunk_id": chunk_id}
+    #     with self.sqlite_engine.connect() as conn:
+    #         cursor = conn.execute(sql, params)
+    #         result_bytes = cursor.fetchone()
+    #
+    #     chunk_data: Union[str, bytes] = result_bytes[0]
+    #     compression_type = result_bytes[1]
+    #     if compression_type not in (None, 0):
+    #         if CHUNK_COMPRESSION_TYPE(compression_type) == CHUNK_COMPRESSION_TYPE.ZSTD:
+    #             chunk_data = dctx.decompress(chunk_data)
+    #         elif (
+    #             CHUNK_COMPRESSION_TYPE(compression_type) == CHUNK_COMPRESSION_TYPE.LZMA
+    #         ):
+    #             chunk_data = lzma.decompress(chunk_data)
+    #         elif CHUNK_COMPRESSION_TYPE(compression_type) == CHUNK_COMPRESSION_TYPE.LZ4:
+    #             chunk_data = lz4.frame.decompress(chunk_data)
+    #         else:
+    #             raise ValueError(f"Unsupported compression type: {compression_type}")
+    #
+    #     if not as_file:
+    #         return chunk_data
+    #
+    #     chunk_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    #     with open(chunk_path, "wb") as file:
+    #         file.write(chunk_data)
+    #
+    #     return chunk_path.as_posix()
 
     def retrieve_chunks(
         self,
@@ -424,7 +425,7 @@ CREATE TABLE IF NOT EXISTS environments (
                             file.write(chunk_data)
                         yield chunk_path.as_posix()
 
-            missing_chunk_ids = []
+            missing_chunk_ids: List[str] = []
 
             for idx, chunk_id in enumerate(chunk_ids):
 
@@ -458,7 +459,7 @@ CREATE TABLE IF NOT EXISTS environments (
 
     def get_archive_details(self) -> ArchiveDetails:
 
-        size = self._db_path.stat().st_size
+        size = self.sqlite_path.stat().st_size
         return ArchiveDetails(size=size)
 
 
@@ -470,7 +471,7 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
     @classmethod
     def _load_archive_config(
         cls, archive_uri: str, allow_write_access: bool, **kwargs
-    ) -> Union[SqliteArchiveConfig, None]:
+    ) -> Union[Dict[str, Any], None]:
 
         if not allow_write_access:
             return None
@@ -498,8 +499,8 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
         }:
             return None
 
-        config = SqliteArchiveConfig(sqlite_db_path=archive_uri)
-        return config
+        # config = SqliteArchiveConfig(sqlite_db_path=archive_uri)
+        return {"sqlite_db_path": archive_uri}
 
     def _set_archive_metadata_value(self, key: str, value: Any):
         """Set custom metadata for the archive."""
@@ -582,7 +583,7 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
             bytes_io = chunk
 
         compression_type = CHUNK_COMPRESSION_TYPE[
-            self.config.default_chunk_compression.upper()
+            self.config.default_chunk_compression.upper()  # type: ignore
         ]
 
         if compression_type == CHUNK_COMPRESSION_TYPE.NONE:

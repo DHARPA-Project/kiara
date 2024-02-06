@@ -160,7 +160,7 @@ class DefaultAliasResolver(AliasResolver):
                             _value_id = uuid.UUID(default_value)
                         else:
                             from kiara.registries.aliases import AliasArchive
-    
+
                             alias_archive: AliasArchive = archives.get("alias", None)  # type: ignore
                             if alias_archive:
                                 _value_id = alias_archive.find_value_id_for_alias(
@@ -171,7 +171,9 @@ class DefaultAliasResolver(AliasResolver):
                                     msg=f"No alias archive found for '{archive_ref}'."
                                 )
                     else:
-                        raise NoSuchValueException("No data archive found in '{archive_ref}'.")
+                        raise NoSuchValueException(
+                            "No data archive found in '{archive_ref}'."
+                        )
                 else:
                     raise NoSuchValueException(
                         msg=f"No archive found for '{archive_ref}'."
@@ -490,34 +492,35 @@ class DataRegistry(object):
         again, the archive_id is used, if not, the string is used as the archive alias.
         """
 
-        if data_store is None:
-            data_store = self.default_data_store
-
         _value = self.get_value(value)
 
         store: DataStore = self.get_archive(archive_id_or_alias=data_store)  # type: ignore
-        if not isinstance(store, DataStore):
-            raise Exception(
-                f"Can't store value into store '{data_store}': not writable."
-            )
+        if not store.is_writeable():
+            if data_store:
+                raise Exception(
+                    f"Can't store value into store '{data_store}': not writable."
+                )
+            else:
+                raise Exception("Can't store value into store: not writable.")
 
+        _data_store = store.archive_alias
         # make sure all property values are available
         if _value.pedigree != ORPHAN:
             for value_id in _value.pedigree.inputs.values():
-                self.store_value(value=value_id, data_store=data_store)
+                self.store_value(value=value_id, data_store=_data_store)
 
         if not store.has_value(_value.value_id):
             event = ValuePreStoreEvent(kiara_id=self._kiara.id, value=_value)
             self._event_callback(event)
             persisted_value = store.store_value(_value)
             _value._is_stored = True
-            
-            self._value_archive_lookup_map[_value.value_id] = data_store
+
+            self._value_archive_lookup_map[_value.value_id] = _data_store
             self._persisted_value_descs[_value.value_id] = persisted_value
             property_values = _value.property_values
 
             for property, property_value in property_values.items():
-                self.store_value(value=property_value, data_store=data_store)
+                self.store_value(value=property_value, data_store=_data_store)
         else:
             persisted_value = None
 
@@ -1073,21 +1076,21 @@ class DataRegistry(object):
 
         return pv
 
-    def retrieve_chunk(
-        self,
-        chunk_id: str,
-        archive_id: Union[uuid.UUID, None] = None,
-        as_file: bool = True,
-        symlink_ok: bool = True,
-    ) -> Union[str, "BytesLike"]:
-
-        if archive_id is None:
-            raise NotImplementedError()
-
-        archive = self.get_archive(archive_id)
-        chunk = archive.retrieve_chunk(chunk_id, as_file=as_file, symlink_ok=symlink_ok)
-
-        return chunk
+    # def retrieve_chunk(
+    #     self,
+    #     chunk_id: str,
+    #     archive_id: Union[uuid.UUID, None] = None,
+    #     as_file: bool = True,
+    #     symlink_ok: bool = True,
+    # ) -> Union[str, "BytesLike"]:
+    #
+    #     if archive_id is None:
+    #         raise NotImplementedError()
+    #
+    #     archive = self.get_archive(archive_id)
+    #     chunk = archive.retrieve_chunk(chunk_id, as_file=as_file, symlink_ok=symlink_ok)
+    #
+    #     return chunk
 
     def retrieve_chunks(
         self,

@@ -496,6 +496,7 @@ module = [
     "importlib_metadata.*",
     "importlib_resources.*",
     "jupytext",
+    "lz4.*",
     "mmh3",
     "pickle5",
     "pp",
@@ -517,6 +518,7 @@ module = [
     "streamlit.*",
     "textual.*",
     "uvloop",
-    "uvicorn"
+    "uvicorn",
+    "zstandard"
 ]
 ignore_missing_imports = true

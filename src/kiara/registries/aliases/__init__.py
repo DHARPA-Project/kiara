@@ -220,7 +220,7 @@ class AliasRegistry(object):
     def dynamic_aliases(self) -> Dict[str, AliasItem]:
         if self._cached_dynamic_aliases is None:
             self.aliases
-        return self._cached_dynamic_aliases
+        return self._cached_dynamic_aliases  # type: ignore
 
     @property
     def aliases(self) -> Mapping[str, AliasItem]:
@@ -269,7 +269,7 @@ class AliasRegistry(object):
     def dynamic_stores(self) -> List[str]:
         if self._dynamic_stores is None:
             self.aliases
-        return self._dynamic_stores
+        return self._dynamic_stores  # type: ignore
 
     def find_value_id_for_alias(self, alias: str) -> Union[uuid.UUID, None]:
         """Find the value id for a given alias.
@@ -289,7 +289,7 @@ class AliasRegistry(object):
             return alias_item.value_id
 
         if "#" not in alias:
-            archive_alias = self.default_alias_store
+            archive_alias: Union[str, None] = self.default_alias_store
             rest = alias
         else:
             mountpoint, rest = alias.split("#", maxsplit=1)
@@ -302,6 +302,8 @@ class AliasRegistry(object):
             return None
 
         archive = self.get_archive(archive_alias=archive_alias)
+        if archive is None:
+            raise Exception(f"Invalid alias store: '{archive_alias}' not registered.")
         result_value_id = archive.find_value_id_for_alias(alias=rest)
         if result_value_id:
             alias_item = AliasItem(
@@ -376,7 +378,7 @@ class AliasRegistry(object):
         alias_store: Union[str, None] = None,
     ):
 
-        aliases_to_store = {}
+        aliases_to_store: Dict[str, List[str]] = {}
         for alias in aliases:
             if "#" in alias:
                 mountpoint, alias_name = alias.split("#", maxsplit=1)
@@ -466,8 +468,8 @@ class AliasRegistry(object):
                     logger.info("alias.replace", alias=actual_alias)
                     # raise NotImplementedError()
 
-                self.aliases[actual_alias] = alias_item
-                self._cached_aliases_by_id.setdefault(value_id, set()).add(alias_item)
+                self.aliases[actual_alias] = alias_item  # type: ignore
+                self._cached_aliases_by_id.setdefault(value_id, set()).add(alias_item)  # type: ignore
 
 
 #

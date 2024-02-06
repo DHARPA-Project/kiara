@@ -7,7 +7,16 @@
 import abc
 import datetime
 import uuid
-from typing import TYPE_CHECKING, Callable, Dict, Iterable, List, Mapping, Union
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Dict,
+    Generic,
+    Iterable,
+    List,
+    Mapping,
+    Union,
+)
 
 import pytz
 import structlog
@@ -15,7 +24,7 @@ import structlog
 from kiara.exceptions import NoSuchWorkflowException
 from kiara.models.events.workflow_registry import WorkflowArchiveAddedEvent
 from kiara.models.workflow import WorkflowMetadata, WorkflowState
-from kiara.registries import BaseArchive
+from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
 from kiara.registries.ids import ID_REGISTRY
 
 if TYPE_CHECKING:
@@ -24,7 +33,7 @@ if TYPE_CHECKING:
 logger = structlog.getLogger()
 
 
-class WorkflowArchive(BaseArchive):
+class WorkflowArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CLS]):
     @classmethod
     def supported_item_types(cls) -> Iterable[str]:
         return ["workflow"]

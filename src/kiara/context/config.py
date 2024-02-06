@@ -101,7 +101,9 @@ class KiaraArchiveReference(BaseModel):
 
         if store_type:
             if isinstance(store_type, str):
-                archive_cls: Union[Type[KiaraArchive], None] = archive_types.get(store_type, None)
+                archive_cls: Union[Type[KiaraArchive], None] = archive_types.get(
+                    store_type, None
+                )
                 if archive_cls is None:
                     raise Exception(
                         f"Can't create context: no archive type '{store_type}' available. Available types: {', '.join(archive_types.keys())}"

@@ -2074,9 +2074,7 @@ class JobInfo(ItemInfo):
         table.add_row("Job ID", str(self.job_record.job_id))
         runtime_details = self.job_record.runtime_details
         assert runtime_details is not None
-        table.add_row(
-            "Job details", runtime_details.create_renderable(**config)
-        )
+        table.add_row("Job details", runtime_details.create_renderable(**config))
         table.add_row("Operation details", self.operation)
 
         values_table = Table(show_header=False, box=box.SIMPLE)
@@ -2117,7 +2115,7 @@ class JobInfos(InfoItemGroup[JobInfo]):
 
         info: JobInfo
         for info in self.item_infos.values():  # type: ignore
-            
+
             runtime_details = info.job_record.runtime_details
             assert runtime_details is not None
             row: List[RenderableType] = []

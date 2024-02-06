@@ -284,23 +284,23 @@ class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG
         For now, you can just return 'None' in your implementation.
         """
 
-    @abc.abstractmethod
-    def retrieve_chunk(
-        self,
-        chunk_id: str,
-        as_file: Union[bool, None] = None,
-        symlink_ok: bool = True,
-    ) -> Union["BytesLike", str]:
-        """Retrieve the chunk with the specified id.
-
-        If 'as_file' is specified, the chunk is written to a file, and the file path is returned. Otherwise, the chunk is returned as 'bytes'.
-        """
+    # @abc.abstractmethod
+    # def retrieve_chunk(
+    #     self,
+    #     chunk_id: str,
+    #     as_file: Union[bool, None] = None,
+    #     symlink_ok: bool = True,
+    # ) -> Union["BytesLike", str]:
+    #     """Retrieve the chunk with the specified id.
+    #
+    #     If 'as_file' is specified, the chunk is written to a file, and the file path is returned. Otherwise, the chunk is returned as 'bytes'.
+    #     """
 
     @abc.abstractmethod
     def retrieve_chunks(
         self,
         chunk_ids: Sequence[str],
-        as_files: Union[bool, None] = None,
+        as_files: bool = True,
         symlink_ok: bool = True,
     ) -> Generator[Union["BytesLike", str], None, None]:
         """Retrieve a generator with all the specified chunks.

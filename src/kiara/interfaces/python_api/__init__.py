@@ -1745,12 +1745,13 @@ class KiaraAPI(object):
         else:
             for field_name, value in values.items():
                 if alias_map is False:
-                    aliases = None
+                    aliases: Union[None, Iterable[str]] = None
                 elif alias_map is True:
                     aliases = [field_name]
                 elif isinstance(alias_map, str):
                     aliases = [f"{alias_map}.{field_name}"]
                 else:
+                    # means it's a mapping
                     aliases = alias_map.get(field_name)
 
                 value_obj = self.get_value(value)

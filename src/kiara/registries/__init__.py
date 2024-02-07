@@ -391,13 +391,10 @@ class SqliteArchiveConfig(ArchiveConfig):
 
         archive_path = os.path.abspath(os.path.join(store_base_path, file_name))
 
-        import sqlite3
-
-        print("xxx")
-        print(archive_path)
-
         if not os.path.exists(archive_path):
             Path(archive_path).parent.mkdir(exist_ok=True, parents=True)
+
+        import sqlite3
 
         conn = sqlite3.connect(archive_path)
 

@@ -90,6 +90,7 @@ dependencies = [
     "rich-click>=1.7.0,<1.8.0",
     "ruamel.yaml>=0.18.0,<0.19.0",
     "sortedcontainers>=2.4.0",
+    "SQLAlchemy>=2.0.20",
     "stevedore>=5.0.0,<6.0.0",
     "structlog>=21.5.0",
     "tzlocal>=2.1,<6.0",

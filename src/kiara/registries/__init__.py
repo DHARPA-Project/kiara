@@ -266,7 +266,6 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
             result = self.archive_metadata["archive_id"]
         except KeyError:
             raise Exception("Archive does not have an id metadata value set.")
-
         return uuid.UUID(result)
 
     @property
@@ -393,6 +392,9 @@ class SqliteArchiveConfig(ArchiveConfig):
         archive_path = os.path.abspath(os.path.join(store_base_path, file_name))
 
         import sqlite3
+
+        print("xxx")
+        print(archive_path)
 
         if not os.path.exists(archive_path):
             Path(archive_path).parent.mkdir(exist_ok=True, parents=True)

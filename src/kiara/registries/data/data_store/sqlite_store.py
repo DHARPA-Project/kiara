@@ -128,7 +128,8 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
             return self._db_path
 
         db_path = Path(self.config.sqlite_db_path).resolve()
-        self._db_path = fix_windows_longpath(db_path)
+        # self._db_path = fix_windows_longpath(db_path)
+        self._db_path = db_path
 
         if self._db_path.exists():
             return self._db_path
@@ -161,7 +162,6 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
 
         # def _pragma_on_connect(dbapi_con, con_record):
         #     dbapi_con.execute("PRAGMA query_only = ON")
-
         self._cached_engine = create_engine(self.db_url, future=True)
         create_table_sql = """
 CREATE TABLE IF NOT EXISTS values_metadata (

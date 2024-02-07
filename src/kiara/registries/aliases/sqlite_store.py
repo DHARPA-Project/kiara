@@ -78,7 +78,8 @@ class SqliteAliasArchive(AliasArchive):
             return self._db_path
 
         db_path = Path(self.config.sqlite_db_path).resolve()
-        self._db_path = fix_windows_longpath(db_path)
+        # self._db_path = fix_windows_longpath(db_path)
+        self._db_path = db_path
 
         if self._db_path.exists():
             return self._db_path
@@ -106,7 +107,6 @@ CREATE TABLE IF NOT EXISTS aliases (
     value_id TEXT NOT NULL
 );
 """
-
         with self._cached_engine.begin() as connection:
             for statement in create_table_sql.split(";"):
                 if statement.strip():

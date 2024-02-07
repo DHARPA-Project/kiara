@@ -88,7 +88,8 @@ class SqliteJobArchive(JobArchive):
             return self._db_path
 
         db_path = Path(self.config.sqlite_db_path).resolve()
-        self._db_path = fix_windows_longpath(db_path)
+        # self._db_path = fix_windows_longpath(db_path)
+        self._db_path = db_path
 
         if self._db_path.exists():
             return self._db_path

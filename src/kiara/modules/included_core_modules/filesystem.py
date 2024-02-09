@@ -111,10 +111,12 @@ class DeserializeFileModule(DeserializeValueModule):
 class ImportFileBundleConfig(KiaraModuleConfig):
 
     include_file_types: Union[None, List[str]] = Field(
-        description="File types to include.", default=None
+        description="File types to include. Type is list of strings, which will be matched using 'endswith' test.",
+        default=None,
     )
     exclude_file_types: Union[None, List[str]] = Field(
-        description="File types to include.", default=None
+        description="File types to exclude. Type is list of strings, which will be matched with the 'endswith' test.",
+        default=None,
     )
 
 

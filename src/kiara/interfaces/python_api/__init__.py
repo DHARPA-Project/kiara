@@ -18,6 +18,7 @@ from typing import (
     List,
     Mapping,
     MutableMapping,
+    Set,
     Type,
     Union,
 )
@@ -1706,7 +1707,8 @@ class KiaraAPI(object):
         """
         Store multiple values into the (default) kiara value store.
 
-        If you provide a non-mapping interable as 'values', the 'alias_map' argument must be 'False', and using aliases is not possible.
+        If you provide a non-mapping interable as 'values', the 'alias_map' argument must either be 'False', or a
+        map with a stringified uuid refering to the value in question as key, and a list of aliases as value.
 
         If you use a mapping iterable as 'values':
 
@@ -1727,37 +1729,55 @@ class KiaraAPI(object):
 
         result = {}
         if not isinstance(values, Mapping):
-            if alias_map is not False:
+            if not alias_map:
+                use_aliases = False
+            elif alias_map and (alias_map is True or isinstance(alias_map, str)):
                 raise KiaraException(
-                    msg="Cannot use aliases with non-mapping iterable."
+                    msg="Cannot use auto-aliases with non-mapping iterable."
                 )
+            else:
+                use_aliases = True
 
-            for idx, value in enumerate(values):
+            for value in values:
+
+                aliases: Set[str] = set()
+
                 value_obj = self.get_value(value)
+                if use_aliases:
+                    alias_key = str(value_obj.value_id)
+                    alias: Union[str, None] = alias_map.get(alias_key, None)
+                    if alias:
+                        aliases.update(alias)
+
                 store_result = self.store_value(
                     value=value_obj,
-                    alias=None,
+                    alias=aliases,
                     allow_overwrite=allow_overwrite,
                     data_store=data_store,
                     alias_store=alias_store,
                 )
-                result[f"value_{idx}"] = store_result
+                result[str(value_obj.value_id)] = store_result
         else:
+
             for field_name, value in values.items():
                 if alias_map is False:
-                    aliases: Union[None, Iterable[str]] = None
+                    aliases_map: Union[None, Iterable[str]] = None
                 elif alias_map is True:
-                    aliases = [field_name]
+                    aliases_map = [field_name]
                 elif isinstance(alias_map, str):
-                    aliases = [f"{alias_map}.{field_name}"]
+                    aliases_map = [f"{alias_map}.{field_name}"]
                 else:
                     # means it's a mapping
-                    aliases = alias_map.get(field_name)
+                    _aliases = alias_map.get(field_name)
+                    if _aliases:
+                        aliases_map = list(_aliases)
+                    else:
+                        aliases_map = None
 
                 value_obj = self.get_value(value)
                 store_result = self.store_value(
                     value=value_obj,
-                    alias=aliases,
+                    alias=aliases_map,
                     allow_overwrite=allow_overwrite,
                     data_store=data_store,
                     alias_store=alias_store,

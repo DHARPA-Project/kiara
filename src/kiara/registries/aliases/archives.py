@@ -48,8 +48,10 @@ class FileSystemAliasArchive(AliasArchive):
         archive_id = _archive_metadata.get("archive_id", None)
         if not archive_id:
             try:
-                _archive_id = uuid.UUID(self.alias_store_path.name)
-                _archive_metadata["archive_id"] = _archive_id
+                _archive_id = uuid.UUID(
+                    self.alias_store_path.name
+                )  # just to check if it's a valid UUID
+                _archive_metadata["archive_id"] = str(_archive_id)
             except Exception:
                 raise Exception(
                     f"Could not retrieve archive id for alias archive '{self.archive_alias}'."

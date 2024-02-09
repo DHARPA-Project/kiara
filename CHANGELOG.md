@@ -2,6 +2,10 @@
 
 ## Version 0.5.9 (upcoming)
 
+- archive export & import feature
+- expanded input options for 'store_values' API endpoint
+
+
 ## Version 0.5.8
 
 - add 'mock' module type

@@ -892,6 +892,7 @@ def create_recursive_table_from_model_object(
 
     show_lines = render_config.get("show_lines", True)
     show_header = render_config.get("show_header", True)
+    show_description = render_config.get("show_description", False)
     model_cls = model.__class__
 
     table = RichTable(box=box.SIMPLE, show_lines=show_lines, show_header=show_header)
@@ -918,9 +919,12 @@ def create_recursive_table_from_model_object(
             data_renderable = extract_renderable(data, render_config=render_config)
             sub_model = None
         else:
+            updated_render_config = dict(render_config)
+            updated_render_config["show_header"] = False
             sub_model = create_recursive_table_from_model_object(
-                data, render_config={"show_lines": True, "show_header": False}
+                data, render_config=updated_render_config
             )
+
             data_renderable = None
 
         group = []
@@ -928,7 +932,7 @@ def create_recursive_table_from_model_object(
         if data_renderable:
             group.append(data_renderable)
             group.append("")
-        if desc:
+        if desc and show_description:
             group.append(f"[i]{desc}[/i]")
 
         if sub_model:

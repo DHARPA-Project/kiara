@@ -228,9 +228,13 @@ class JobRecord(JobConfig):
             runtime=active_job.runtime,  # type: ignore
         )
 
-        inputs_data_cid = active_job.job_config.calculate_inputs_data_cid(
+        (
+            inputs_data_cid,
+            contains_invalid,
+        ) = active_job.job_config.calculate_inputs_data_cid(
             data_registry=kiara.data_registry
         )
+        inputs_data_hash = str(inputs_data_cid)
 
         job_record = JobRecord(
             job_id=active_job.job_id,
@@ -241,10 +245,13 @@ class JobRecord(JobConfig):
             outputs=active_job.results,
             runtime_details=job_details,
             environment_hashes=kiara.environment_registry.environment_hashes,
-            inputs_data_hash=(
-                str(inputs_data_cid) if inputs_data_cid is not None else None
-            ),
+            # input_ids_hash=active_job.job_config.input_ids_hash,
+            inputs_data_hash=inputs_data_hash,
         )
+        job_record._manifest_cid = active_job.job_config.manifest_cid
+        job_record._manifest_data = active_job.job_config.manifest_data
+        job_record._jobs_cid = active_job.job_config.job_cid
+        job_record._inputs_cid = active_job.job_config.inputs_cid
         return job_record
 
     job_id: uuid.UUID = Field(description="The globally unique id for this job.")
@@ -255,8 +262,11 @@ class JobRecord(JobConfig):
         description="Information about the environments this value was created in.",
         default=None,
     )
+    # job_hash: str = Field(description="The hash of the job. Calculated from manifest & input_ids hashes.")
+    # manifest_hash: str = Field(description="The hash of the manifest.")
+    # input_ids_hash: str = Field(description="The hash of the field names and input ids (the value_ids/uuids).")
     inputs_data_hash: Union[str, None] = Field(
-        description="A map of the hashes of this jobs inputs."
+        description="A map of the hashes of this jobs inputs (the hashes of field names and the actual bytes)."
     )
 
     outputs: Dict[str, uuid.UUID] = Field(description="References to the job outputs.")
@@ -301,7 +311,7 @@ class JobRecord(JobConfig):
             v = extract_renderable(attr)
             table.add_row(k, v)
         table.add_row("job hash", self.job_hash)
-        table.add_row("inputs hash", self.inputs_hash)
+        table.add_row("inputs hash", self.input_ids_hash)
         return table
 
     # @property

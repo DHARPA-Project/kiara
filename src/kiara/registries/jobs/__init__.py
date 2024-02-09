@@ -51,7 +51,8 @@ class JobArchive(BaseArchive):
     def retrieve_all_job_hashes(
         self,
         manifest_hash: Union[str, None] = None,
-        inputs_hash: Union[str, None] = None,
+        inputs_id_hash: Union[str, None] = None,
+        inputs_data_hash: Union[str, None] = None,
     ) -> Iterable[str]:
         """
         Retrieve a list of all job record hashes (cids) that match the given filter arguments.
@@ -155,11 +156,11 @@ class DataHashJobMatcher(JobMatcher):
 
             return job_record
 
-        inputs_data_cid = inputs_manifest.calculate_inputs_data_cid(
+        inputs_data_cid, contains_invalid = inputs_manifest.calculate_inputs_data_cid(
             data_registry=self._kiara.data_registry
         )
-        if not inputs_data_cid:
-            return None
+        # if not inputs_data_cid:
+        #     return None
 
         inputs_data_hash = str(inputs_data_cid)
 

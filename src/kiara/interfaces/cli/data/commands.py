@@ -39,6 +39,7 @@ from kiara.utils.cli.exceptions import handle_exception
 if TYPE_CHECKING:
     from kiara.api import Kiara, KiaraAPI
     from kiara.operations.included_core_operations.filter import FilterOperationType
+    from kiara.registries.aliases import AliasArchive
     from kiara.registries.data import DataArchive, DataStore
 
 logger = structlog.getLogger()
@@ -678,9 +679,6 @@ def import_data_store(ctx, archive: str):
         terminal_print(f"[red]Error[/red]: No data archives found in '{archive}'")
         sys.exit(1)
 
-    terminal_print("Registering data archive...")
-    store_alias = kiara_api.context.data_registry.register_data_archive(data_archive)
-
     values = data_archive.value_ids
     if values is None:
         terminal_print(
@@ -688,7 +686,20 @@ def import_data_store(ctx, archive: str):
         )
         sys.exit(1)
 
-    result = kiara_api.store_values(values=values, alias_store=store_alias)
+    terminal_print("Registering data archive...")
+    data_store_alias = kiara_api.context.data_registry.register_data_archive(
+        data_archive
+    )
+
+    alias_archive: "AliasArchive" = archives.get("alias", None)  # type: ignore
+    alias_map = {}
+    if alias_archive:
+        # terminal_print("Registering alias archive...")
+        # alias_archive_alias = kiara_api.context.alias_registry.register_archive(alias_archive)
+        for alias, value_id in alias_archive.retrieve_all_aliases().items():
+            alias_map.setdefault(str(value_id), []).append(alias)
+
+    result = kiara_api.store_values(values=values, alias_map=alias_map)
     terminal_print(result)
 
     terminal_print("Done.")

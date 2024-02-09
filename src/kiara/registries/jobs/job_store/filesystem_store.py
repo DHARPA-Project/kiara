@@ -8,7 +8,7 @@ import datetime
 import shutil
 import uuid
 from pathlib import Path
-from typing import Any, Dict, Iterable, Mapping, Union
+from typing import Any, Iterable, Mapping, Union
 
 import orjson
 import structlog
@@ -61,8 +61,10 @@ class FileSystemJobArchive(JobArchive):
         archive_id = _archive_metadata.get("archive_id", None)
         if not archive_id:
             try:
-                _archive_id = uuid.UUID(self.job_store_path.name)
-                _archive_metadata["archive_id"] = _archive_id
+                _archive_id = uuid.UUID(
+                    self.job_store_path.name
+                )  # just to check if it's a valid uuid
+                _archive_metadata["archive_id"] = str(_archive_id)
             except Exception:
                 raise Exception(
                     f"Could not retrieve archive id for alias archive '{self.archive_alias}'."
@@ -92,20 +94,23 @@ class FileSystemJobArchive(JobArchive):
     def retrieve_all_job_hashes(
         self,
         manifest_hash: Union[str, None] = None,
-        inputs_hash: Union[str, None] = None,
+        inputs_id_hash: Union[str, None] = None,
+        inputs_data_hash: Union[str, None] = None,
     ) -> Iterable[str]:
 
         base_path = self.job_store_path / MANIFEST_SUB_PATH
         if not manifest_hash:
-            if not inputs_hash:
+            if not inputs_id_hash:
                 records = base_path.glob("*/*/*.job_record")
             else:
-                records = base_path.glob(f"*/{inputs_hash}/*.job_record")
+                records = base_path.glob(f"*/{inputs_id_hash}/*.job_record")
         else:
-            if not inputs_hash:
+            if not inputs_id_hash:
                 records = base_path.glob(f"{manifest_hash}/*/*.job_record")
             else:
-                records = base_path.glob(f"{manifest_hash}/{inputs_hash}/*.job_record")
+                records = base_path.glob(
+                    f"{manifest_hash}/{inputs_id_hash}/*.job_record"
+                )
 
         result = []
         for record in records:
@@ -175,7 +180,11 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
     def store_job_record(self, job_record: JobRecord):
 
         manifest_cid = job_record.manifest_cid
-        inputs_hash = job_record.inputs_hash
+        # inputs_hash = job_record.inputs_data_hash
+
+        manifest_hash = job_record.manifest_hash
+        input_ids_hash = job_record.input_ids_hash
+        inputs_hash = job_record.inputs_data_hash
 
         base_path = self.job_store_path / MANIFEST_SUB_PATH
         manifest_folder = base_path / str(manifest_cid)

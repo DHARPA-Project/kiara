@@ -223,9 +223,10 @@ class SqliteJobStore(SqliteJobArchive, JobStore):
         job_record_json = job_record.model_dump_json()
 
         sql = text(
-            "INSERT INTO job_records (job_hash, manifest_hash, input_ids_hash, inputs_data_hash, job_metadata) VALUES (:job_hash, :manifest_hash, :input_ids_hash, :inputs_data_hash, :job_metadata)"
+            "INSERT OR IGNORE INTO job_records(job_id, job_hash, manifest_hash, input_ids_hash, inputs_data_hash, job_metadata) VALUES (:job_id, :job_hash, :manifest_hash, :input_ids_hash, :inputs_data_hash, :job_metadata)"
         )
         params = {
+            "job_id": str(job_record.job_id),
             "job_hash": job_hash,
             "manifest_hash": manifest_hash,
             "input_ids_hash": input_ids_hash,

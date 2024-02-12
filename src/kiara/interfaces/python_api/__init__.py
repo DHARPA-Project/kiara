@@ -95,9 +95,9 @@ if TYPE_CHECKING:
         WorkflowsMap,
     )
     from kiara.interfaces.python_api.workflow import Workflow
+    from kiara.models.archives import ArchiveInfo
     from kiara.models.module.pipeline import PipelineConfig, PipelineStructure
     from kiara.models.module.pipeline.pipeline import PipelineGroupInfo, PipelineInfo
-
 
 logger = structlog.getLogger()
 yaml = YAML(typ="safe")
@@ -447,6 +447,24 @@ class KiaraAPI(object):
             context=context_name, extra_pipelines=None
         )
         self._current_context_alias = context_name
+
+    # ==================================================================================================================
+    # methods for archives
+
+    def get_archive_info(self, archive_file: str) -> "ArchiveInfo":
+
+        from kiara.context.config import KiaraArchiveReference
+        from kiara.models.archives import ArchiveInfo
+
+        archive_ref = KiaraArchiveReference.load_existing_archive(archive_file)
+
+        for archive in archive_ref.archives:
+            info = ArchiveInfo.create_from_instance(
+                kiara=self.context, instance=archive
+            )
+            dbg(info.create_renderable())
+
+        return None
 
     # ==================================================================================================================
     # methods for data_types

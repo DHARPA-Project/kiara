@@ -34,7 +34,6 @@ from kiara.registries.data import DataArchive
 from kiara.registries.data.data_store import BaseDataStore
 from kiara.utils.hashfs import shard
 from kiara.utils.json import orjson_dumps
-from kiara.utils.windows import fix_windows_longpath
 
 if TYPE_CHECKING:
     from multiformats import CID
@@ -460,7 +459,16 @@ CREATE TABLE IF NOT EXISTS environments (
     def get_archive_details(self) -> ArchiveDetails:
 
         size = self.sqlite_path.stat().st_size
-        return ArchiveDetails(size=size)
+        all_values = self.value_ids
+        num_values = len(all_values)
+
+        return ArchiveDetails(
+            root={
+                "size": size,
+                "no_values": num_values,
+                "value_ids": sorted((str(x) for x in all_values)),
+            }
+        )
 
 
 class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):

@@ -521,7 +521,7 @@ def filter_value(
 @click.option(
     "--archive-alias",
     "-a",
-    help="The alias to use for the exported archive. If not provided, the first alias will be used.",
+    help="The alias to use for the exported archive. If not provided, the first alias will be used. This is used as default in the stored archive, if not overwritten by a user.",
     required=False,
 )
 @click.option(
@@ -544,7 +544,7 @@ def filter_value(
 @click.pass_context
 def export_data_store(
     ctx,
-    aliases: str,
+    aliases: Tuple[str],
     archive_alias: Union[None, str],
     path: Union[str, None],
     compression: str,
@@ -618,7 +618,7 @@ def export_data_store(
     data_store_alias = kiara_api.context.data_registry.register_data_archive(data_store)  # type: ignore
     alias_store_alias = kiara_api.context.alias_registry.register_archive(archive_store)  # type: ignore
 
-    terminal_print("Exporting value into new data_store...")
+    terminal_print("Exporting value(s) into new data_store...")
 
     no_default_value = False
 
@@ -639,7 +639,7 @@ def export_data_store(
         key = f"value_{idx}"
         values_to_store[key] = value
         if value_alias:
-            alias_map[key] = value_alias
+            alias_map[key] = [value_alias]
 
     try:
 

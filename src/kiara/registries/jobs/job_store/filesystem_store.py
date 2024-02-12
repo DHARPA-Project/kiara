@@ -49,7 +49,7 @@ class FileSystemJobArchive(JobArchive):
         size = sum(
             f.stat().st_size for f in self.job_store_path.glob("**/*") if f.is_file()
         )
-        return ArchiveDetails(size=size)
+        return ArchiveDetails(root={"size": size})
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
 

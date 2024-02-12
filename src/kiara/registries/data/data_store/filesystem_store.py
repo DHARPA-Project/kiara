@@ -115,7 +115,15 @@ class FileSystemDataArchive(
         size = sum(
             f.stat().st_size for f in self.data_store_path.glob("**/*") if f.is_file()
         )
-        return ArchiveDetails(size=size)
+        all_values = self.value_ids
+        num_values = len(all_values)
+        return ArchiveDetails(
+            root={
+                "size": size,
+                "no_values": num_values,
+                "value_ids": sorted((str(x) for x in all_values)),
+            }
+        )
 
     @property
     def data_store_path(self) -> Path:

@@ -23,7 +23,7 @@ import structlog
 from kiara.defaults import INVALID_ALIAS_NAMES
 from kiara.exceptions import KiaraException
 from kiara.models.events.alias_registry import AliasArchiveAddedEvent
-from kiara.registries import BaseArchive
+from kiara.registries import ArchiveDetails, BaseArchive
 from kiara.registries.data import ValueLink
 
 if TYPE_CHECKING:
@@ -57,6 +57,12 @@ class AliasArchive(BaseArchive):
     @abc.abstractmethod
     def find_aliases_for_value_id(self, value_id: uuid.UUID) -> Union[Set[str], None]:
         pass
+
+    def get_archive_details(self) -> ArchiveDetails:
+        all_aliases = self.retrieve_all_aliases()
+        return ArchiveDetails(
+            root={"no_aliases": len(all_aliases), "aliases": sorted(all_aliases.keys())}
+        )
 
 
 class AliasStore(AliasArchive):

@@ -198,6 +198,9 @@ class KiaraAPI(object):
         """
         Get information about a plugin.
 
+        This contains information about included data-types, modules, operations, pipelines, as well as metadata
+        about author(s), etc.
+
         Arguments:
             plugin_name: the name of the plugin
 
@@ -211,6 +214,10 @@ class KiaraAPI(object):
         return info
 
     def retrieve_plugin_infos(self, plugin_name_regex: str = "^kiara[-_]plugin\\..*"):
+        """Get information about multiple plugins.
+
+        This is just a convenience method to get information about multiple plugins at once.
+        """
 
         if not plugin_name_regex:
             plugin_name_regex = "^kiara[-_]plugin\\..*"
@@ -236,11 +243,18 @@ class KiaraAPI(object):
         return self._current_context
 
     def get_runtime_config(self) -> "KiaraRuntimeConfig":
-        """Retrieve the current runtime configuration."""
+        """Retrieve the current runtime configuration.
+
+        Check the 'KiaraRuntimeConfig' class for more information about the available options.
+        """
         return self.context.runtime_config
 
     def get_context_info(self) -> ContextInfo:
-        """Retrieve information about the current kiara context."""
+        """Retrieve information about the current kiara context.
+
+        This contains information about the context, like its name/alias, the values & aliases it contains, and which archives are connected to it.
+
+        """
         context_config = self._kiara_config.get_context_config(
             self.get_current_context_name()
         )
@@ -258,7 +272,8 @@ class KiaraAPI(object):
         """
         Ensure that the specified packages are installed.
 
-        This functionality is provisional, don't rely on it being available long-term. Ideally, we'll have other, external ways to manage the environment.
+
+        NOTE: this is not tested, and it might go away in the future, so don't rely on it being available long-term. Ideally, we'll have other, external ways to manage the environment.
 
         Arguments:
           package_names: The names of the packages to install.
@@ -364,22 +379,34 @@ class KiaraAPI(object):
     # ==================================================================================================================
     # context-management related functions
     def list_context_names(self) -> List[str]:
-        """list the names of all available/registered contexts."""
+        """list the names of all available/registered contexts.
+
+        NOTE: this functionality might be changed in the future, depending on requirements and feedback and
+        whether we want to support single-file contexts in the future.
+        """
         return list(self._kiara_config.available_context_names)
 
     def retrieve_context_infos(self) -> ContextInfos:
-        """Retrieve information about the available/registered contexts."""
+        """Retrieve information about the available/registered contexts.
+
+        NOTE: this functionality might be changed in the future, depending on requirements and feedback and whether we want to support single-file contexts in the future.
+        """
         return ContextInfos.create_context_infos(self._kiara_config.context_configs)
 
     def get_current_context_name(self) -> str:
-        """Retrieve the name fo the current context."""
+        """Retrieve the name of the current context.
+
+        NOTE: this functionality might be changed in the future, depending on requirements and feedback and whether we want to support single-file contexts in the future.
+        """
         if self._current_context_alias is None:
             self.context
         return self._current_context_alias  # type: ignore
 
-    def create_new_context(self, context_name: str, set_active: bool) -> None:
+    def create_new_context(self, context_name: str, set_active: bool = True) -> None:
         """
         Create a new context.
+
+        NOTE: this functionality might be changed in the future, depending on requirements and feedback and whether we want to support single-file contexts in the future.
 
         Arguments:
             context_name: the name of the new context
@@ -396,6 +423,10 @@ class KiaraAPI(object):
             self._current_context_alias = context_name
 
     def set_active_context(self, context_name: str, create: bool = False) -> None:
+        """Set the currently active context for this KiarAPI instance.
+
+        NOTE: this functionality might be changed in the future, depending on requirements and feedback and whether we want to support single-file contexts in the future.
+        """
 
         if not context_name:
             raise Exception("No context name provided.")
@@ -433,6 +464,7 @@ class KiaraAPI(object):
 
     def is_internal_data_type(self, data_type_name: str) -> bool:
         """Checks if the data type is prepdominantly used internally by kiara, or whether it should be exposed to the user."""
+
         return self.context.type_registry.is_internal_type(
             data_type_name=data_type_name
         )

@@ -87,7 +87,6 @@ def explain_context(
     if len(contexts) == 1:
 
         kcc = kiara_config.get_context_config(contexts[0])
-
         cs = ContextInfo.create_from_context_config(
             kcc, context_name=contexts[0], runtime_config=kiara_config.runtime_config
         )

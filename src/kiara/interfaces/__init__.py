@@ -230,6 +230,7 @@ class KiaraAPIWrap(object):
         ensure_plugins: Union[str, Iterable[str], None] = None,
         exit_process: bool = True,
     ):
+
         if not context:
             context = os.environ.get("KIARA_CONTEXT", None)
 

@@ -39,6 +39,7 @@ from kiara.utils.cli.exceptions import handle_exception
 if TYPE_CHECKING:
     from kiara.api import Kiara, KiaraAPI
     from kiara.operations.included_core_operations.filter import FilterOperationType
+    from kiara.registries.aliases import AliasArchive
     from kiara.registries.data import DataArchive, DataStore
 
 logger = structlog.getLogger()
@@ -520,7 +521,7 @@ def filter_value(
 @click.option(
     "--archive-alias",
     "-a",
-    help="The alias to use for the exported archive. If not provided, the first alias will be used.",
+    help="The alias to use for the exported archive. If not provided, the first alias will be used. This is used as default in the stored archive, if not overwritten by a user.",
     required=False,
 )
 @click.option(
@@ -536,18 +537,16 @@ def filter_value(
     type=click.Choice(["zstd", "lz4", "lzma", "none"]),
     default="zstd",
 )
-@click.option(
-    "--force", "-f", help="Force overwriting an existing archive.", is_flag=True
-)
+@click.option("--append", "-A", help="Append data to existing archive.", is_flag=True)
 @click.argument("aliases", nargs=-1, required=True)
 @click.pass_context
-def export_data_store(
+def export_data_archive(
     ctx,
-    aliases: str,
+    aliases: Tuple[str],
     archive_alias: Union[None, str],
     path: Union[str, None],
     compression: str,
-    force: bool,
+    append: bool,
 ):
     """Export one or several values into a new data data_store."""
 
@@ -579,7 +578,10 @@ def export_data_store(
 
     if not path:
         base_path = "."
-        file_name = f"{archive_alias}.kiarchive"
+        if archive_alias.endswith(".kiarchive"):
+            file_name = archive_alias
+        else:
+            file_name = f"{archive_alias}.kiarchive"
         terminal_print(f"Creating new data_store '{file_name}'...")
     else:
         base_path = os.path.dirname(path)
@@ -590,10 +592,8 @@ def export_data_store(
         terminal_print(f"Creating new data_store '{path}'...")
 
     full_path = Path(base_path) / file_name
-    if full_path.is_file() and force:
-        full_path.unlink()
 
-    if full_path.exists():
+    if full_path.exists() and not append:
         terminal_print(f"[red]Error[/red]: File '{full_path}' already exists.")
         sys.exit(1)
 
@@ -617,7 +617,7 @@ def export_data_store(
     data_store_alias = kiara_api.context.data_registry.register_data_archive(data_store)  # type: ignore
     alias_store_alias = kiara_api.context.alias_registry.register_archive(archive_store)  # type: ignore
 
-    terminal_print("Exporting value into new data_store...")
+    terminal_print("Exporting value(s) into new data_store...")
 
     no_default_value = False
 
@@ -638,7 +638,7 @@ def export_data_store(
         key = f"value_{idx}"
         values_to_store[key] = value
         if value_alias:
-            alias_map[key] = value_alias
+            alias_map[key] = [value_alias]
 
     try:
 
@@ -678,9 +678,6 @@ def import_data_store(ctx, archive: str):
         terminal_print(f"[red]Error[/red]: No data archives found in '{archive}'")
         sys.exit(1)
 
-    terminal_print("Registering data archive...")
-    store_alias = kiara_api.context.data_registry.register_data_archive(data_archive)
-
     values = data_archive.value_ids
     if values is None:
         terminal_print(
@@ -688,7 +685,20 @@ def import_data_store(ctx, archive: str):
         )
         sys.exit(1)
 
-    result = kiara_api.store_values(values=values, alias_store=store_alias)
+    terminal_print("Registering data archive...")
+    data_store_alias = kiara_api.context.data_registry.register_data_archive(
+        data_archive
+    )
+
+    alias_archive: "AliasArchive" = archives.get("alias", None)  # type: ignore
+    alias_map = {}
+    if alias_archive:
+        # terminal_print("Registering alias archive...")
+        # alias_archive_alias = kiara_api.context.alias_registry.register_archive(alias_archive)
+        for alias, value_id in alias_archive.retrieve_all_aliases().items():
+            alias_map.setdefault(str(value_id), []).append(alias)
+
+    result = kiara_api.store_values(values=values, alias_map=alias_map)
     terminal_print(result)
 
     terminal_print("Done.")

@@ -95,8 +95,10 @@ class FileSystemDataArchive(
         archive_id = _archive_metadata.get("archive_id", None)
         if not archive_id:
             try:
-                _archive_id = uuid.UUID(self.data_store_path.name)
-                _archive_metadata["archive_id"] = _archive_id
+                _archive_id = uuid.UUID(
+                    self.data_store_path.name
+                )  # just to test it's a valid uuid
+                _archive_metadata["archive_id"] = str(_archive_id)
             except Exception:
                 raise Exception(
                     f"Could not retrieve archive id for alias archive '{self.archive_alias}'."
@@ -113,7 +115,15 @@ class FileSystemDataArchive(
         size = sum(
             f.stat().st_size for f in self.data_store_path.glob("**/*") if f.is_file()
         )
-        return ArchiveDetails(size=size)
+        all_values = self.value_ids
+        num_values = len(all_values)
+        return ArchiveDetails(
+            root={
+                "size": size,
+                "no_values": num_values,
+                "value_ids": sorted((str(x) for x in all_values)),
+            }
+        )
 
     @property
     def data_store_path(self) -> Path:

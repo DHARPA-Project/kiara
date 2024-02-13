@@ -63,11 +63,8 @@ ARCHIVE_CONFIG_CLS = TypeVar("ARCHIVE_CONFIG_CLS", bound=ArchiveConfig)
 logger = structlog.getLogger()
 
 
-class ArchiveDetails(BaseModel):
-
-    size: Union[int, None] = Field(
-        description="The size of the stored archive.", default=None
-    )
+class ArchiveDetails(RootModel):
+    root: Dict[str, Any]
 
 
 class ArchiveMetadata(RootModel):
@@ -93,7 +90,7 @@ class ArchiveMetadata(RootModel):
     # )
 
 
-NON_ARCHIVE_DETAILS = ArchiveDetails()
+NON_ARCHIVE_DETAILS = ArchiveDetails(root={})
 
 
 class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
@@ -283,7 +280,7 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
             )
 
         logger.info(
-            "deleteing.archive",
+            "deleting.archive",
             archive_id=self.archive_id,
             item_types=self.supported_item_types(),
             archive_type=self.__class__.__name__,

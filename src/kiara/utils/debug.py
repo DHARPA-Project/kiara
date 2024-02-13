@@ -47,8 +47,11 @@ def create_module_preparation_table(
 
     module_details = dev_config.log.pre_run.module_info
     if module_details not in [DetailLevel.NONE.value, DetailLevel.NONE]:
+        pipeline_name = job_config.module_config.get("pipeline_name", None)
         if module_details in [DetailLevel.MINIMAL.value, DetailLevel.MINIMAL]:
             table.add_row("module", job_config.module_type)
+            if pipeline_name:
+                table.add_row("pipeline name", pipeline_name)
             doc = module.operation.doc
             table.add_row(
                 "module desc",
@@ -59,6 +62,8 @@ def create_module_preparation_table(
             )
         elif module_details in [DetailLevel.FULL.value, DetailLevel.FULL]:
             table.add_row("module", job_config.module_type)
+            if pipeline_name:
+                table.add_row("pipeline name", pipeline_name)
             doc = module.operation.doc
             table.add_row(
                 "module doc",

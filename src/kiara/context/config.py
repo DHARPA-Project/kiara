@@ -223,6 +223,82 @@ class KiaraArchiveReference(BaseModel):
 
 
 class KiaraContextConfig(BaseModel):
+    @classmethod
+    def create_from_sqlite_db(cls, db_path: Path) -> "KiaraContextConfig":
+
+        import sqlite3
+
+        if not db_path.exists():
+            context_id = str(uuid.uuid4())
+            conn = sqlite3.connect(db_path)
+            c = conn.cursor()
+            c.execute(
+                """CREATE TABLE context_metadata
+                         (key text PRIMARY KEY , value text NOT NULL)"""
+            )
+            c.execute(
+                "INSERT INTO context_metadata VALUES ('context_id', ?)", (context_id,)
+            )
+            c.execute(
+                """CREATE TABLE archive_metadata
+                         (key text PRIMARY KEY , value text NOT NULL)"""
+            )
+            c.execute(
+                "INSERT INTO archive_metadata VALUES ('archive_id', ?)", (context_id,)
+            )
+
+            conn.commit()
+            conn.close()
+        else:
+            try:
+
+                with sqlite3.connect(db_path) as conn:
+                    context_id = conn.execute(
+                        "SELECT value FROM context_metadata WHERE key = 'context_id'"
+                    ).fetchone()[0]
+            except Exception as e:
+                raise KiaraException(
+                    f"Can't read context from sqlite db '{db_path}': {e}"
+                )
+
+        base_path = os.path.abspath(kiara_app_dirs.user_data_dir)
+        stores_base_path = os.path.join(base_path, "stores")
+        workflow_base_path = os.path.join(
+            stores_base_path, "filesystem_stores", "workflows"
+        )
+        workflow_store_path = os.path.join(workflow_base_path, context_id)
+
+        data_store_config = KiaraArchiveConfig(
+            archive_type="sqlite_data_store",
+            config={"sqlite_db_path": db_path.as_posix()},
+        )
+        alias_store_config = KiaraArchiveConfig(
+            archive_type="sqlite_alias_store",
+            config={"sqlite_db_path": db_path.as_posix()},
+        )
+        job_store_config = KiaraArchiveConfig(
+            archive_type="sqlite_job_store",
+            config={"sqlite_db_path": db_path.as_posix()},
+        )
+        workflow_store_config = KiaraArchiveConfig(
+            archive_type="filesystem_workflow_store",
+            config={"archive_path": workflow_store_path},
+        )
+
+        archives = {
+            DEFAULT_DATA_STORE_MARKER: data_store_config,
+            DEFAULT_ALIAS_STORE_MARKER: alias_store_config,
+            DEFAULT_JOB_STORE_MARKER: job_store_config,
+            DEFAULT_WORKFLOW_STORE_MARKER: workflow_store_config,
+        }
+
+        context_config = cls(
+            context_id=context_id,
+            archives=archives,
+        )
+
+        return context_config
+
     model_config = ConfigDict(extra="forbid")
 
     context_id: str = Field(description="A globally unique id for this kiara context.")
@@ -515,7 +591,7 @@ class KiaraConfig(BaseSettings):
         def create_default_sqlite_archive_config() -> Dict[str, Any]:
 
             store_id = str(uuid.uuid4())
-            file_name = f"{store_id}.sqlite"
+            file_name = f"{store_id}.karchive"
             archive_path = Path(
                 os.path.abspath(os.path.join(sqlite_base_path, file_name))
             )
@@ -638,39 +714,51 @@ class KiaraConfig(BaseSettings):
 
         if not context_alias:
             context_alias = DEFAULT_CONTEXT_NAME
+
         if context_alias in self.available_context_names:
             raise Exception(
                 f"Can't create kiara context '{context_alias}': context with that alias already registered."
             )
 
-        if os.path.sep in context_alias:
-            raise Exception(
-                f"Can't create context with alias '{context_alias}': no special characters allowed."
+        if context_alias.endswith(".kontext"):
+            context_db_file = Path(context_alias)
+            context_config: KiaraContextConfig = (
+                KiaraContextConfig.create_from_sqlite_db(db_path=context_db_file)
+            )
+            self._validate_context(context_config=context_config)
+            context_config._context_config_path = context_db_file
+        else:
+
+            if os.path.sep in context_alias:
+                raise Exception(
+                    f"Can't create context with alias '{context_alias}': no special characters allowed."
+                )
+
+            context_file = (
+                Path(os.path.join(self.context_search_paths[0]))
+                / f"{context_alias}.yaml"
             )
 
-        context_file = (
-            Path(os.path.join(self.context_search_paths[0])) / f"{context_alias}.yaml"
-        )
+            archives: Dict[str, KiaraArchiveConfig] = {}
+            # create_default_archives(kiara_config=self)
+            context_id = ID_REGISTRY.generate(
+                obj_type=KiaraContextConfig,
+                comment=f"new kiara context '{context_alias}'",
+            )
 
-        archives: Dict[str, KiaraArchiveConfig] = {}
-        # create_default_archives(kiara_config=self)
-        context_id = ID_REGISTRY.generate(
-            obj_type=KiaraContextConfig, comment=f"new kiara context '{context_alias}'"
-        )
+            context_config = KiaraContextConfig(
+                context_id=str(context_id), archives=archives, extra_pipelines=[]
+            )
 
-        context_config = KiaraContextConfig(
-            context_id=str(context_id), archives=archives, extra_pipelines=[]
-        )
+            self._validate_context(context_config=context_config)
 
-        self._validate_context(context_config=context_config)
+            context_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(context_file, "wt") as f:
+                yaml.dump(context_config.model_dump(), f)
 
-        context_file.parent.mkdir(parents=True, exist_ok=True)
-        with open(context_file, "wt") as f:
-            yaml.dump(context_config.model_dump(), f)
+            context_config._context_config_path = context_file
+            self._available_context_files[context_alias] = context_file
 
-        context_config._context_config_path = context_file
-
-        self._available_context_files[context_alias] = context_file
         self._context_data[context_alias] = context_config
 
         return context_config
@@ -687,13 +775,20 @@ class KiaraConfig(BaseSettings):
             with contextlib.suppress(Exception):
                 context = uuid.UUID(context)  # type: ignore
 
-        if isinstance(context, str) and os.path.exists(context):
+        if isinstance(context, str) and (
+            os.path.exists(context) or context.endswith(".kontext")
+        ):
             context = Path(context)
 
         if isinstance(context, Path):
-            with context.open("rt") as f:
-                data = yaml.load(f)
-            context_config = KiaraContextConfig(**data)
+            if context.name.endswith(".kontext"):
+                context_config = KiaraContextConfig.create_from_sqlite_db(
+                    db_path=context
+                )
+            else:
+                with context.open("rt") as f:
+                    data = yaml.load(f)
+                context_config = KiaraContextConfig(**data)
         elif isinstance(context, str):
             context_config = self.get_context_config(context_name=context)
         elif isinstance(context, uuid.UUID):

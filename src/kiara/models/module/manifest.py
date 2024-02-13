@@ -6,7 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import uuid
-from typing import TYPE_CHECKING, Any, ClassVar, Dict, Mapping, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Mapping, Tuple, Union
 
 import orjson
 from dag_cbor import IPLDKind
@@ -147,8 +147,10 @@ class InputsManifest(Manifest):
         description="A map of all the input fields and value references."
     )
     _inputs_cid: Union[CID, None] = PrivateAttr(default=None)
+    # _inputs_hash: Union[str, None] = PrivateAttr(default=None)
     _jobs_cid: Union[CID, None] = PrivateAttr(default=None)
-    _inputs_data_cid: Union[bool, CID, None] = PrivateAttr(default=None)
+    _inputs_data_cid: Union[CID, None] = PrivateAttr(default=None)
+    _input_data_contains_invalid: Union[bool, None] = PrivateAttr(default=None)
 
     @field_validator("inputs")
     @classmethod
@@ -185,17 +187,23 @@ class InputsManifest(Manifest):
         return self._inputs_cid
 
     @property
-    def inputs_hash(self) -> str:
+    def input_ids_hash(self) -> str:
+
         return str(self.inputs_cid)
 
     def calculate_inputs_data_cid(
         self, data_registry: "DataRegistry"
-    ) -> Union[CID, None]:
+    ) -> Tuple[CID, bool]:
+        """Calculates the cid of the data hashes contained in this inputs manifest.
+
+        This returns two values in a tuple: the first value is the cid where 'invalid hash markes' (used when a value is  not set) is set to 'None', the second one indicates whether such an
+        invalid hash marker was encountered.
+
+        This might be important to know, because if the interface of the module in question changed (which is possible for those types of fields), the computed input might not be valid anymore and would need to be re-computed.
+        """
 
         if self._inputs_data_cid is not None:
-            if self._inputs_data_cid is False:
-                return None
-            return self._inputs_data_cid  # type: ignore
+            return (self._inputs_data_cid, self._inputs_data_contains_invalid)
 
         data_hashes: Dict[str, Any] = {}
         invalid = False
@@ -204,13 +212,11 @@ class InputsManifest(Manifest):
             value = data_registry.get_value(v)
             if value.value_hash == INVALID_HASH_MARKER:
                 invalid = True
-                break
-            data_hashes[k] = CID.decode(value.value_hash)
-
-        if invalid:
-            self._inputs_data_cid = False
-            return None
+                data_hashes[k] = None
+            else:
+                data_hashes[k] = CID.decode(value.value_hash)
 
         _, cid = compute_cid(data=data_hashes)
         self._inputs_data_cid = cid
-        return cid
+        self._inputs_data_contains_invalid = invalid
+        return (cid, invalid)

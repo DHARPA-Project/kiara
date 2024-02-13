@@ -13,6 +13,11 @@ class JobCacheStrategy(Enum):
 
 
 class KiaraRuntimeConfig(BaseSettings):
+    """The runtime configuration for a *kiara* backend.
+
+    The most important option here is the 'job_cache' setting, which determines how the runtime will match a new job against the records of past ones, in order to find a matching one and not have to re-run the possibly expensive job again. By default, no matching is done, other options are matching based on exact input value ids, or (more expensive) matching based on the input data hashes.
+    """
+
     model_config = SettingsConfigDict(
         extra="forbid", validate_assignment=True, env_prefix="kiara_runtime_"
     )

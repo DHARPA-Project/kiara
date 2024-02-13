@@ -27,12 +27,13 @@ from kiara.interfaces.python_api.models.info import (
     TypeInfoItemGroup,
 )
 from kiara.models.documentation import (
+    AuthorModel,
     AuthorsMetadataModel,
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
 from kiara.models.python_class import PythonClass
-from kiara.registries import ArchiveDetails, KiaraArchive
+from kiara.registries import ArchiveDetails, ArchiveMetadata, KiaraArchive
 from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
@@ -96,7 +97,7 @@ class ArchiveTypeInfo(TypeInfo):
 
         table.add_row("Python class", self.python_class.create_renderable())
 
-        table.add_row("is_writeable", "yes" if self.is_writable else "no")
+        # table.add_row("is_writeable", "yes" if self.is_writable else "no")
         table.add_row(
             "supported_item_types", ", ".join(sorted(self.supported_item_types))
         )
@@ -136,6 +137,26 @@ class ArchiveInfo(ItemInfo):
         archive_aliases: Union[Iterable[str], None] = None,
     ):
 
+        doc_str = archive.archive_metadata.get("description", None)
+        doc = DocumentationMetadataModel.create(doc_str)
+
+        authors_raw = archive.archive_metadata.get("authors", [])
+        _authors = []
+        for author in authors_raw:
+            author = AuthorModel(**author)
+            _authors.append(author)
+        authors = AuthorsMetadataModel(authors=_authors)
+
+        tags = archive.archive_metadata.get("tags", [])
+        labels = archive.archive_metadata.get("labels", {})
+
+        references = archive.archive_metadata.get("references", {})
+        # TODO: add references model
+
+        context = ContextMetadataModel(tags=tags, labels=labels, references=references)
+
+        # archive_types = list(archive.supported_item_types())
+
         archive_type_info = ArchiveTypeInfo.create_from_type_class(
             archive.__class__, kiara=kiara
         )
@@ -145,12 +166,15 @@ class ArchiveInfo(ItemInfo):
             archive_aliases = list(archive_aliases)
         return ArchiveInfo(
             archive_type_info=archive_type_info,
-            type_name=str(archive.archive_id),
-            documentation=archive_type_info.documentation,
-            authors=archive_type_info.authors,
-            context=archive_type_info.context,
+            archive_alias=archive.archive_alias,
             archive_id=archive.archive_id,
+            type_name=str(archive.archive_id),
+            documentation=doc,
+            authors=authors,
+            context=context,
+            # archive_types=archive_types,
             details=archive.get_archive_details(),
+            metadata=archive.archive_metadata,
             config=archive.config.model_dump(),
             aliases=archive_aliases,
         )
@@ -160,16 +184,46 @@ class ArchiveInfo(ItemInfo):
         return "info.archive"
 
     archive_id: uuid.UUID = Field(description="The (globally unique) archive id.")
+    archive_alias: str = Field(description="The archive alias.")
+
     archive_type_info: ArchiveTypeInfo = Field(
         description="Information about this archives' type."
     )
+    # archive_types: List[Literal["data", "alias", "job_record", "workflow"]] = Field(description="The archive type.")
+
     config: Mapping[str, Any] = Field(description="The configuration of this archive.")
     details: ArchiveDetails = Field(
         description="Type dependent (runtime) details for this archive."
     )
+    metadata: ArchiveMetadata = Field(description="Metadata for this archive.")
     aliases: List[str] = Field(
         description="Aliases for this archive.", default_factory=list
     )
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+        from kiara.utils.output import extract_renderable
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("property", style="i")
+        table.add_column("value")
+
+        details = extract_renderable(self.details, render_config=config)
+        metadata = extract_renderable(self.metadata, render_config=config)
+        type_info = self.archive_type_info.create_renderable(**config)
+        # table.add_row("archive id", str(self.archive_id))
+        # table.add_row("archive alias", self.archive_alias)
+        # table.add_row("archive type(s)", ", ".join(self.archive_types))
+        table.add_row("details", details)
+        table.add_row("metadata", metadata)
+        table.add_row("archive type info", type_info)
+        if self.documentation.is_set:
+            table.add_row("doc", self.documentation.create_renderable(**config))
+        if self.authors.authors:
+            table.add_row("author(s)", self.authors.create_renderable(**config))
+        if self.context.labels or self.context.tags or self.context.references:
+            table.add_row("context", self.context.create_renderable(**config))
+
+        return table
 
 
 class ArchiveGroupInfo(InfoItemGroup):
@@ -211,7 +265,7 @@ class ArchiveGroupInfo(InfoItemGroup):
             if archive_info.archive_id in archive_ids:
                 continue
             archive_ids.add(archive_info.archive_id)
-            size = archive_info.details.size
+            size = archive_info.details.root.get("size", 0)
             if size and size > 0:
                 combined = combined + size
 

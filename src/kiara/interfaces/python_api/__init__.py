@@ -18,6 +18,7 @@ from typing import (
     List,
     Mapping,
     MutableMapping,
+    Set,
     Type,
     Union,
 )
@@ -94,9 +95,9 @@ if TYPE_CHECKING:
         WorkflowsMap,
     )
     from kiara.interfaces.python_api.workflow import Workflow
+    from kiara.models.archives import ArchiveInfo
     from kiara.models.module.pipeline import PipelineConfig, PipelineStructure
     from kiara.models.module.pipeline.pipeline import PipelineGroupInfo, PipelineInfo
-
 
 logger = structlog.getLogger()
 yaml = YAML(typ="safe")
@@ -197,6 +198,9 @@ class KiaraAPI(object):
         """
         Get information about a plugin.
 
+        This contains information about included data-types, modules, operations, pipelines, as well as metadata
+        about author(s), etc.
+
         Arguments:
             plugin_name: the name of the plugin
 
@@ -210,6 +214,10 @@ class KiaraAPI(object):
         return info
 
     def retrieve_plugin_infos(self, plugin_name_regex: str = "^kiara[-_]plugin\\..*"):
+        """Get information about multiple plugins.
+
+        This is just a convenience method to get information about multiple plugins at once.
+        """
 
         if not plugin_name_regex:
             plugin_name_regex = "^kiara[-_]plugin\\..*"
@@ -235,11 +243,18 @@ class KiaraAPI(object):
         return self._current_context
 
     def get_runtime_config(self) -> "KiaraRuntimeConfig":
-        """Retrieve the current runtime configuration."""
+        """Retrieve the current runtime configuration.
+
+        Check the 'KiaraRuntimeConfig' class for more information about the available options.
+        """
         return self.context.runtime_config
 
     def get_context_info(self) -> ContextInfo:
-        """Retrieve information about the current kiara context."""
+        """Retrieve information about the current kiara context.
+
+        This contains information about the context, like its name/alias, the values & aliases it contains, and which archives are connected to it.
+
+        """
         context_config = self._kiara_config.get_context_config(
             self.get_current_context_name()
         )
@@ -257,7 +272,8 @@ class KiaraAPI(object):
         """
         Ensure that the specified packages are installed.
 
-        This functionality is provisional, don't rely on it being available long-term. Ideally, we'll have other, external ways to manage the environment.
+
+        NOTE: this is not tested, and it might go away in the future, so don't rely on it being available long-term. Ideally, we'll have other, external ways to manage the environment.
 
         Arguments:
           package_names: The names of the packages to install.
@@ -363,22 +379,34 @@ class KiaraAPI(object):
     # ==================================================================================================================
     # context-management related functions
     def list_context_names(self) -> List[str]:
-        """list the names of all available/registered contexts."""
+        """list the names of all available/registered contexts.
+
+        NOTE: this functionality might be changed in the future, depending on requirements and feedback and
+        whether we want to support single-file contexts in the future.
+        """
         return list(self._kiara_config.available_context_names)
 
     def retrieve_context_infos(self) -> ContextInfos:
-        """Retrieve information about the available/registered contexts."""
+        """Retrieve information about the available/registered contexts.
+
+        NOTE: this functionality might be changed in the future, depending on requirements and feedback and whether we want to support single-file contexts in the future.
+        """
         return ContextInfos.create_context_infos(self._kiara_config.context_configs)
 
     def get_current_context_name(self) -> str:
-        """Retrieve the name fo the current context."""
+        """Retrieve the name of the current context.
+
+        NOTE: this functionality might be changed in the future, depending on requirements and feedback and whether we want to support single-file contexts in the future.
+        """
         if self._current_context_alias is None:
             self.context
         return self._current_context_alias  # type: ignore
 
-    def create_new_context(self, context_name: str, set_active: bool) -> None:
+    def create_new_context(self, context_name: str, set_active: bool = True) -> None:
         """
         Create a new context.
+
+        NOTE: this functionality might be changed in the future, depending on requirements and feedback and whether we want to support single-file contexts in the future.
 
         Arguments:
             context_name: the name of the new context
@@ -395,6 +423,10 @@ class KiaraAPI(object):
             self._current_context_alias = context_name
 
     def set_active_context(self, context_name: str, create: bool = False) -> None:
+        """Set the currently active context for this KiarAPI instance.
+
+        NOTE: this functionality might be changed in the future, depending on requirements and feedback and whether we want to support single-file contexts in the future.
+        """
 
         if not context_name:
             raise Exception("No context name provided.")
@@ -417,6 +449,25 @@ class KiaraAPI(object):
         self._current_context_alias = context_name
 
     # ==================================================================================================================
+    # methods for archives
+
+    def get_archive_info(self, archive_file: str) -> List["ArchiveInfo"]:
+
+        from kiara.context.config import KiaraArchiveReference
+        from kiara.models.archives import ArchiveInfo
+
+        archive_ref = KiaraArchiveReference.load_existing_archive(archive_file)
+
+        result = []
+        for archive in archive_ref.archives:
+            info = ArchiveInfo.create_from_instance(
+                kiara=self.context, instance=archive
+            )
+            result.append(info)
+
+        return result
+
+    # ==================================================================================================================
     # methods for data_types
 
     def list_data_type_names(self, include_profiles: bool = False) -> List[str]:
@@ -432,6 +483,7 @@ class KiaraAPI(object):
 
     def is_internal_data_type(self, data_type_name: str) -> bool:
         """Checks if the data type is prepdominantly used internally by kiara, or whether it should be exposed to the user."""
+
         return self.context.type_registry.is_internal_type(
             data_type_name=data_type_name
         )
@@ -664,7 +716,9 @@ class KiaraAPI(object):
         """
         Create an [Operation][kiara.models.module.operation.Operation] instance for the specified module type and (optional) config.
 
-        This can be used to get information about the operation itself, it's inputs & outputs schemas, documentation etc.
+        An operation is defined as a specific module type, and a specific configuration.
+
+        This endpoint can be used to get information about the operation itself, it's inputs & outputs schemas, documentation etc.
 
         Arguments:
             module_type: the registered name of the module
@@ -743,7 +797,9 @@ class KiaraAPI(object):
         """
         Return the operation instance with the specified id.
 
-        This can be used to get information about a specific operation, like inputs/outputs scheman, documentation, etc.
+        The difference to the 'create_operation' endpoint is slight, in most cases you could use either of them, but this one is a bit more convenient in most cases, as it tries to do the right thing with whatever 'operation' argument you use it. The 'create_opearation' endpoint will always create a new 'Operation' instance, while this may or may not return a re-used one.
+
+        This endpoint can be used to get information about a specific operation, like inputs/outputs scheman, documentation, etc.
 
         The order in which the operation argument is resolved:
         - if it's a string, and an existing, registered operation_id, the associated operation is returned
@@ -1221,6 +1277,8 @@ class KiaraAPI(object):
         """
         Register a pipelne as new operation into this context.
 
+        If 'operation_id' is not provided, the id will be auto-determined (in most cases using the pipeline name).
+
         Arguments:
             data: a dict or a path to a json/yaml file containing the definition
             operation_id: the id to use for the operation (if not specified, the id will be auto-determined)
@@ -1326,7 +1384,8 @@ class KiaraAPI(object):
         """
         Retrieve a value instance with the specified id or alias.
 
-        Raises an exception if no value could be found.
+        Basically a convenience method to convert any possible Python type into
+        a 'Value' instance. Raises an exception if no value could be found.
 
         Arguments:
             value: a value id, alias or object that has a 'value_id' attribute.
@@ -1343,6 +1402,9 @@ class KiaraAPI(object):
     ) -> Any:
         """
         Retrieve a value attribute with the specified id or alias.
+
+        NOTE: This is a provisional endpoint, don't use for now, if you have a requirement that would
+        be covered by this, please let me know.
 
         A query path is delimited by "::", and has the following format:
 
@@ -1432,7 +1494,7 @@ class KiaraAPI(object):
         """
         Retrieve an info object for a value.
 
-        'ValueInfo' objects contains augmented information on top of what 'normal' [Value][kiara.models.values.value.Value] objects
+        Companion method to 'get_value', 'ValueInfo' objects contains augmented information on top of what 'normal' [Value][kiara.models.values.value.Value] objects
         hold (like resolved properties for example), but they can take longer to create/resolve. If you don't need any
         of the augmented information, just use the [get_value][kiara.interfaces.python_api.KiaraAPI.get_value] method
         instead.
@@ -1564,7 +1626,11 @@ class KiaraAPI(object):
         reuse_existing_data: bool = False,
     ) -> ValueMapReadOnly:
         """
-        Retrive a [ValueMap][TODO] object from the provided value ids or value links.
+        Retrive a [ValueMap][kiara.models.values.value.ValueMap] object from the provided value ids or value links.
+
+        In most cases, this endpoint won't be used by front-ends, it's a fairly low-level method that is
+        mainly used for internal purposes. If you have a use-case, let me know and I'll improve the docs
+        if insufficient.
 
         By default, this method can only use values/datasets that are already registered in *kiara*. If you want to
         auto-register 'raw' data, you need to set the 'register_data' flag to 'True', and provide a schema for each of the fields that are not yet registered.
@@ -1647,15 +1713,21 @@ class KiaraAPI(object):
         alias_store: Union[str, None] = None,
     ) -> StoreValueResult:
         """
-        Store the specified value in the (default) value store.
+        Store the specified value in a value store.
+
+        If you provide values for the 'data_store' and/or 'alias_store' other than 'default', you need
+        to make sure those stores are registered with the current context. In most cases, the 'export' endpoint (to be done) will probably be an easier way to export values, which I suspect will
+        be the main use-case for this endpoint if any of the 'store' arguments where needed. Otherwise, this endpoint is useful to persist values for use in later seperate sessions.
 
         This method does not raise an error if the storing of the value fails, so you have to investigate the
         'StoreValueResult' instance that is returned to see if the storing was successful.
 
         Arguments:
             value: the value (or a reference to it)
-            alias: (Optional) aliases for the value
+            alias: (Optional) one or several aliases for the value
             allow_overwrite: whether to allow overwriting existing aliases
+            data_store: the alias (or archive id as string) of the store to write the data
+            alias_store: the alias (or archive id as string) of the store to persist the alias(es)/value_id mapping
         """
         if isinstance(alias, str):
             alias = [alias]
@@ -1706,7 +1778,11 @@ class KiaraAPI(object):
         """
         Store multiple values into the (default) kiara value store.
 
-        If you provide a non-mapping interable as 'values', the 'alias_map' argument must be 'False', and using aliases is not possible.
+        Convenience method to store multiple values. In a lot of cases you can be more flexible if you
+        loop over the values on the frontend side, and call the 'store_value' method for each value.
+
+        If you provide a non-mapping interable as 'values', the 'alias_map' argument must either be 'False', or a
+        map with a stringified uuid refering to the value in question as key, and a list of aliases as value.
 
         If you use a mapping iterable as 'values':
 
@@ -1727,37 +1803,55 @@ class KiaraAPI(object):
 
         result = {}
         if not isinstance(values, Mapping):
-            if alias_map is not False:
+            if not alias_map:
+                use_aliases = False
+            elif alias_map and (alias_map is True or isinstance(alias_map, str)):
                 raise KiaraException(
-                    msg="Cannot use aliases with non-mapping iterable."
+                    msg="Cannot use auto-aliases with non-mapping iterable."
                 )
+            else:
+                use_aliases = True
 
-            for idx, value in enumerate(values):
+            for value in values:
+
+                aliases: Set[str] = set()
+
                 value_obj = self.get_value(value)
+                if use_aliases:
+                    alias_key = str(value_obj.value_id)
+                    alias: Union[str, None] = alias_map.get(alias_key, None)
+                    if alias:
+                        aliases.update(alias)
+
                 store_result = self.store_value(
                     value=value_obj,
-                    alias=None,
+                    alias=aliases,
                     allow_overwrite=allow_overwrite,
                     data_store=data_store,
                     alias_store=alias_store,
                 )
-                result[f"value_{idx}"] = store_result
+                result[str(value_obj.value_id)] = store_result
         else:
+
             for field_name, value in values.items():
                 if alias_map is False:
-                    aliases: Union[None, Iterable[str]] = None
+                    aliases_map: Union[None, Iterable[str]] = None
                 elif alias_map is True:
-                    aliases = [field_name]
+                    aliases_map = [field_name]
                 elif isinstance(alias_map, str):
-                    aliases = [f"{alias_map}.{field_name}"]
+                    aliases_map = [f"{alias_map}.{field_name}"]
                 else:
                     # means it's a mapping
-                    aliases = alias_map.get(field_name)
+                    _aliases = alias_map.get(field_name)
+                    if _aliases:
+                        aliases_map = list(_aliases)
+                    else:
+                        aliases_map = None
 
                 value_obj = self.get_value(value)
                 store_result = self.store_value(
                     value=value_obj,
-                    alias=aliases,
+                    alias=aliases_map,
                     allow_overwrite=allow_overwrite,
                     data_store=data_store,
                     alias_store=alias_store,
@@ -1813,6 +1907,9 @@ class KiaraAPI(object):
         """
         Assemble a (pipeline) module config to filter values of a specific data type.
 
+        NOTE: this is a preliminary endpoint, and might go away in the future. If you have a need for this
+        functionality, please let me know your requirements and we can work on fleshing this out.
+
         Optionally, a module that uses the filtered dataset as input can be specified.
 
         # TODO: document filter names
@@ -1854,6 +1951,8 @@ class KiaraAPI(object):
     ) -> RendererInfos:
         """Retrieve information about the available renderers.
 
+        Note: this is preliminary and mainly used in the cli, if another use-case comes up let me know and I'll make this more generic, and an 'official' endpoint.
+
         Arguments:
             source_type: the type of the item to render (optional filter)
             target_type: the type/profile of the rendered result (optional filter)
@@ -1881,6 +1980,10 @@ class KiaraAPI(object):
         return infos  # type: ignore
 
     def retrieve_renderers_for(self, source_type: str) -> List[KiaraRenderer]:
+        """Retrieve available renderer instances for a specific data type.
+
+        Note: this is not preliminary, and, mainly used in the cli, if another use-case comes up let me know and I'll make this more generic, and an 'official' endpoint.
+        """
 
         return self.context.render_registry.retrieve_renderers_for_source_type(
             source_type=source_type
@@ -1894,6 +1997,8 @@ class KiaraAPI(object):
         render_config: Union[Mapping[str, Any], None] = None,
     ) -> Any:
         """Render an internal instance of a supported source type into one of the supported target types.
+
+        Note: this is not preliminary, and, mainly used in the cli, if another use-case comes up let me know and I'll make this more generic, and an 'official' endpoint.
 
         To find out the supported source/target combinations, you can use the kiara cli:
 
@@ -2020,6 +2125,8 @@ class KiaraAPI(object):
         """
         Queue a job using the provided manifest to describe the module and config that should be executed.
 
+        You probably want to use 'queue_job' instead.
+
         Arguments:
             manifest: the manifest
             inputs: the job inputs (can be either references to values, or raw inputs
@@ -2044,6 +2151,8 @@ class KiaraAPI(object):
     ) -> ValueMapReadOnly:
         """
         Run a job using the provided manifest to describe the module and config that should be executed.
+
+        You probably want to use 'run_job' instead.
 
         Arguments:
             manifest: the manifest

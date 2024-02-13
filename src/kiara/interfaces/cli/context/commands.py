@@ -7,6 +7,7 @@ import sys
 from typing import TYPE_CHECKING, Tuple, Union
 
 import rich_click as click
+from rich import box
 from rich.panel import Panel
 
 from kiara.interfaces import KiaraAPIWrap, get_console
@@ -42,10 +43,17 @@ def list_contexts(ctx) -> None:
 @context.command("explain")
 @click.argument("context_name", nargs=-1, required=False)
 @click.option("--value-ids", "-i", help="Show value ids.", is_flag=True, default=False)
+@click.option(
+    "--show-config", "-c", help="Also show kiara config.", is_flag=True, default=False
+)
 @output_format_option()
 @click.pass_context
 def explain_context(
-    ctx, format: str, value_ids: bool, context_name: Union[Tuple[str], None] = None
+    ctx,
+    format: str,
+    value_ids: bool,
+    context_name: Union[Tuple[str], None] = None,
+    show_config: bool = False,
 ):
     """Print details for one or several contexts."""
     kiara_config: KiaraConfig = ctx.obj.kiara_config
@@ -58,15 +66,36 @@ def explain_context(
 
     from kiara.models.context import ContextInfo
 
+    render_config = {
+        "show_lines": False,
+        "show_header": False,
+        "show_description": False,
+    }
+
+    if show_config:
+        from rich.table import Table
+
+        config = kiara_config.create_renderable(**render_config)
+        table = Table(show_header=False, show_lines=False, box=box.SIMPLE)
+        table.add_column("key", style="i")
+        table.add_column("value")
+        if kiara_config._config_path:
+            table.add_row("config file", f"  {kiara_config._config_path}")
+        table.add_row("config", config)
+        terminal_print(table, in_panel="Kiara config")
+
     if len(contexts) == 1:
 
         kcc = kiara_config.get_context_config(contexts[0])
-
         cs = ContextInfo.create_from_context_config(
             kcc, context_name=contexts[0], runtime_config=kiara_config.runtime_config
         )
         terminal_print_model(
-            cs, format=format, full_details=True, show_value_ids=value_ids
+            cs,
+            format=format,
+            full_details=True,
+            show_value_ids=value_ids,
+            in_panel=f"Context '{contexts[0]}'",
         )
 
     else:

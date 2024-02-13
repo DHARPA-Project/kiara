@@ -72,3 +72,5 @@ environment.yaml
 .pixi
 dev.py
 store.sqlite
+**.kiarchive
+**.kontext

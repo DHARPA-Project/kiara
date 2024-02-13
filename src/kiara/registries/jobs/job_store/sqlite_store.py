@@ -9,7 +9,6 @@ from sqlalchemy.engine import Engine
 from kiara.models.module.jobs import JobRecord
 from kiara.registries import SqliteArchiveConfig
 from kiara.registries.jobs import JobArchive, JobStore
-from kiara.utils.windows import fix_windows_longpath
 
 
 class SqliteJobArchive(JobArchive):
@@ -113,9 +112,11 @@ class SqliteJobArchive(JobArchive):
         self._cached_engine = create_engine(self.db_url, future=True)
         create_table_sql = """
 CREATE TABLE IF NOT EXISTS job_records (
-    job_hash TEXT PRIMARY KEY,
+    job_id TEXT PRIMARY KEY,
+    job_hash TEXT TEXT NOT NULL,
     manifest_hash TEXT NOT NULL,
-    inputs_hash TEXT NOT NULL,
+    input_ids_hash TEXT NOT NULL,
+    inputs_data_hash TEXT NOT NULL,
     job_metadata TEXT NOT NULL
 );
 """
@@ -148,20 +149,21 @@ CREATE TABLE IF NOT EXISTS job_records (
     def retrieve_all_job_hashes(
         self,
         manifest_hash: Union[str, None] = None,
-        inputs_hash: Union[str, None] = None,
+        inputs_id_hash: Union[str, None] = None,
+        inputs_data_hash: Union[str, None] = None,
     ) -> Iterable[str]:
 
         if not manifest_hash:
-            if not inputs_hash:
+            if not inputs_id_hash:
                 sql = text("SELECT job_hash FROM job_records")
                 params = {}
             else:
                 sql = text(
                     "SELECT job_hash FROM job_records WHERE inputs_hash = :inputs_hash"
                 )
-                params = {"inputs_hash": inputs_hash}
+                params = {"inputs_hash": inputs_id_hash}
         else:
-            if not inputs_hash:
+            if not inputs_id_hash:
                 sql = text(
                     "SELECT job_hash FROM job_records WHERE manifest_hash = :manifest_hash"
                 )
@@ -170,7 +172,7 @@ CREATE TABLE IF NOT EXISTS job_records (
                 sql = text(
                     "SELECT job_hash FROM job_records WHERE manifest_hash = :manifest_hash AND inputs_hash = :inputs_hash"
                 )
-                params = {"manifest_hash": manifest_hash, "inputs_hash": inputs_hash}
+                params = {"manifest_hash": manifest_hash, "inputs_hash": inputs_id_hash}
 
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(sql, params)
@@ -213,19 +215,22 @@ class SqliteJobStore(SqliteJobArchive, JobStore):
 
     def store_job_record(self, job_record: JobRecord):
 
-        manifest_hash = str(job_record.manifest_cid)
-        inputs_hash = job_record.inputs_hash
-
         job_hash = job_record.job_hash
+        manifest_hash = job_record.manifest_hash
+        input_ids_hash = job_record.input_ids_hash
+        inputs_data_hash = job_record.inputs_data_hash
+
         job_record_json = job_record.model_dump_json()
 
         sql = text(
-            "INSERT INTO job_records (job_hash, manifest_hash, inputs_hash, job_metadata) VALUES (:job_hash, :manifest_hash, :inputs_hash, :job_metadata)"
+            "INSERT OR IGNORE INTO job_records(job_id, job_hash, manifest_hash, input_ids_hash, inputs_data_hash, job_metadata) VALUES (:job_id, :job_hash, :manifest_hash, :input_ids_hash, :inputs_data_hash, :job_metadata)"
         )
         params = {
+            "job_id": str(job_record.job_id),
             "job_hash": job_hash,
             "manifest_hash": manifest_hash,
-            "inputs_hash": inputs_hash,
+            "input_ids_hash": input_ids_hash,
+            "inputs_data_hash": inputs_data_hash,
             "job_metadata": job_record_json,
         }
 

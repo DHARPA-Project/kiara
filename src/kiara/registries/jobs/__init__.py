@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Type, Union
 
 import structlog
 from bidict import bidict
+from rich.console import Group
 
 from kiara.exceptions import FailedJobException
 from kiara.models.events import KiaraEvent
@@ -51,7 +52,8 @@ class JobArchive(BaseArchive):
     def retrieve_all_job_hashes(
         self,
         manifest_hash: Union[str, None] = None,
-        inputs_hash: Union[str, None] = None,
+        inputs_id_hash: Union[str, None] = None,
+        inputs_data_hash: Union[str, None] = None,
     ) -> Iterable[str]:
         """
         Retrieve a list of all job record hashes (cids) that match the given filter arguments.
@@ -135,6 +137,13 @@ class DataHashJobMatcher(JobMatcher):
 
         matches = []
 
+        ignore_internal = True
+        if ignore_internal:
+
+            module = self._kiara.module_registry.create_module(inputs_manifest)
+            if module.characteristics.is_internal:
+                return None
+
         for store_id, archive in self._kiara.job_registry.job_archives.items():
 
             match = archive.retrieve_record_for_job_hash(
@@ -155,11 +164,9 @@ class DataHashJobMatcher(JobMatcher):
 
             return job_record
 
-        inputs_data_cid = inputs_manifest.calculate_inputs_data_cid(
+        inputs_data_cid, contains_invalid = inputs_manifest.calculate_inputs_data_cid(
             data_registry=self._kiara.data_registry
         )
-        if not inputs_data_cid:
-            return None
 
         inputs_data_hash = str(inputs_data_cid)
 
@@ -437,6 +444,7 @@ class JobRegistry(object):
             return None
 
         job_record = self.job_matcher.find_existing_job(inputs_manifest=inputs_manifest)
+
         if job_record is None:
             return None
 
@@ -448,6 +456,7 @@ class JobRegistry(object):
             job_hash=inputs_manifest.job_hash,
             module_type=inputs_manifest.module_type,
         )
+
         return job_record.job_id
 
     def prepare_job_config(
@@ -480,12 +489,21 @@ class JobRegistry(object):
         job_metadata: Union[None, Any] = None,
     ) -> uuid.UUID:
 
-        log = logger.bind(
-            module_type=job_config.module_type,
-            module_config=job_config.module_config,
-            inputs={k: str(v) for k, v in job_config.inputs.items()},
-            job_hash=job_config.job_hash,
-        )
+        if job_config.module_type != "pipeline":
+            log = logger.bind(
+                module_type=job_config.module_type,
+                module_config=job_config.module_config,
+                inputs={k: str(v) for k, v in job_config.inputs.items()},
+                job_hash=job_config.job_hash,
+            )
+        else:
+            pipeline_name = job_config.module_config.get("pipeline_name", "n/a")
+            log = logger.bind(
+                module_type=job_config.module_type,
+                pipeline_name=pipeline_name,
+                inputs={k: str(v) for k, v in job_config.inputs.items()},
+                job_hash=job_config.job_hash,
+            )
 
         stored_job = self.find_matching_job_record(inputs_manifest=job_config)
         if stored_job is not None:
@@ -494,6 +512,31 @@ class JobRegistry(object):
                 job_id=str(stored_job),
                 module_type=job_config.module_type,
             )
+            if is_develop():
+
+                module = self._kiara.module_registry.create_module(manifest=job_config)
+                if job_metadata and job_metadata.get("is_pipeline_step", True):
+                    step_id = job_metadata.get("step_id", None)
+                    title = f"Using cached pipeline step: {step_id}"
+                else:
+                    title = f"Using cached job for: {module.module_type_name}"
+
+                from kiara.utils.debug import create_module_preparation_table
+                from kiara.utils.develop import log_dev_message
+
+                stored_job_record = self.get_job_record(stored_job)
+
+                table = create_module_preparation_table(
+                    kiara=self._kiara,
+                    job_config=job_config,
+                    job_id=stored_job_record.job_id,
+                    module=module,
+                )
+                include = ["job_hash", "inputs_id_hash", "input_ids_hash", "outputs"]
+                table_job_record = stored_job_record.create_renderable(include=include)
+                panel = Group(table, table_job_record)
+                log_dev_message(panel, title=title)
+
             return stored_job
 
         if job_metadata is None:

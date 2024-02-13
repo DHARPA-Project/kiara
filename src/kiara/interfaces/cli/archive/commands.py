@@ -12,21 +12,23 @@ from kiara.utils.cli import (
     output_format_option,
     terminal_print_model,
 )
+from kiara.utils.cli.exceptions import handle_exception
 
 if TYPE_CHECKING:
     pass
 
 
-@click.group("archive")
+@click.group()
 @click.pass_context
-def context(ctx):
+def archive(ctx):
     """Kiara archive related sub-commands."""
 
 
-@context.command("explain")
+@archive.command("explain")
 @click.argument("archive", nargs=1, required=True)
 @output_format_option()
 @click.pass_context
+@handle_exception()
 def explain_archive(
     ctx,
     format: str,
@@ -46,3 +48,16 @@ def explain_archive(
             terminal_print_model(info, in_panel=f"Archive type(s): {types}")
     else:
         terminal_print_model(*infos, format=format)
+
+
+@archive.command("import")
+@click.argument("archive", nargs=1, required=True)
+@click.pass_context
+@handle_exception()
+def import_archive(ctx, archive: str):
+    """Import an archive file."""
+
+    # kiara_api: KiaraAPI = ctx.obj.kiara_api
+
+    raise NotImplementedError()
+    # kiara_api.import_archive(archive)

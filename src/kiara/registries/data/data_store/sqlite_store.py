@@ -460,15 +460,20 @@ CREATE TABLE IF NOT EXISTS environments (
 
         size = self.sqlite_path.stat().st_size
         all_values = self.value_ids
-        num_values = len(all_values)
 
-        return ArchiveDetails(
-            root={
+        if all_values is not None:
+            _all_values = list(all_values)
+            details = {
+                "no_values": len(_all_values),
+                "value_ids": sorted((str(x) for x in _all_values)),
+                "dynamic_archive": False,
                 "size": size,
-                "no_values": num_values,
-                "value_ids": sorted((str(x) for x in all_values)),
             }
-        )
+        else:
+            # will probably never happen
+            details = {"dynamic_archive": True, "size": size}
+
+        return ArchiveDetails(root=details)
 
 
 class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
@@ -493,10 +498,11 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
 
         cursor = con.cursor()
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+
         tables = {x[0] for x in cursor.fetchall()}
         con.close()
 
-        if tables != {
+        required_tables = {
             "values_pedigree",
             "values_destinies",
             "archive_metadata",
@@ -504,7 +510,9 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
             "values_metadata",
             "values_data",
             "environments",
-        }:
+        }
+
+        if not required_tables.issubset(tables):
             return None
 
         # config = SqliteArchiveConfig(sqlite_db_path=archive_uri)

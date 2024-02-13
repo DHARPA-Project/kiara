@@ -151,6 +151,7 @@ class KiaraArchiveReference(BaseModel):
 
                 if data is None:
                     continue
+
                 archive_config = archive_cls._config_cls(**data)
                 archive = archive_cls(
                     archive_config=archive_config, archive_alias=archive_alias
@@ -786,8 +787,13 @@ class KiaraConfig(BaseSettings):
                     db_path=context
                 )
             else:
-                with context.open("rt") as f:
-                    data = yaml.load(f)
+                try:
+                    with context.open("rt") as f:
+                        data = yaml.load(f)
+                except Exception as e:
+                    raise KiaraException(
+                        f"Can't read context from file '{context}': {e}"
+                    )
                 context_config = KiaraContextConfig(**data)
         elif isinstance(context, str):
             context_config = self.get_context_config(context_name=context)

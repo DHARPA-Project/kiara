@@ -525,6 +525,10 @@ class JobRegistry(object):
                 from kiara.utils.develop import log_dev_message
 
                 stored_job_record = self.get_job_record(stored_job)
+                if stored_job_record is None:
+                    raise Exception(
+                        f"Can't retrieve job record for job with id '{stored_job}'."
+                    )
 
                 table = create_module_preparation_table(
                     kiara=self._kiara,

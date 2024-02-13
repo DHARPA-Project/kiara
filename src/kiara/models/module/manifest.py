@@ -203,7 +203,7 @@ class InputsManifest(Manifest):
         """
 
         if self._inputs_data_cid is not None:
-            return (self._inputs_data_cid, self._inputs_data_contains_invalid)
+            return (self._inputs_data_cid, self._input_data_contains_invalid)  # type: ignore
 
         data_hashes: Dict[str, Any] = {}
         invalid = False
@@ -217,6 +217,6 @@ class InputsManifest(Manifest):
                 data_hashes[k] = CID.decode(value.value_hash)
 
         _, cid = compute_cid(data=data_hashes)
+        self._input_data_contains_invalid = invalid
         self._inputs_data_cid = cid
-        self._inputs_data_contains_invalid = invalid
         return (cid, invalid)

@@ -51,6 +51,7 @@ def check_external_archive(
         _archives = list(archive)
 
     archive_instances: Dict[str, KiaraArchive] = {}
+
     for _archive in _archives:
 
         if isinstance(_archive, KiaraArchive):

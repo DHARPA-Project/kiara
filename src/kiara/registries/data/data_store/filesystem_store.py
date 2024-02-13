@@ -116,14 +116,19 @@ class FileSystemDataArchive(
             f.stat().st_size for f in self.data_store_path.glob("**/*") if f.is_file()
         )
         all_values = self.value_ids
-        num_values = len(all_values)
-        return ArchiveDetails(
-            root={
+
+        if all_values is not None:
+            _all_values = list(all_values)
+            details = {
                 "size": size,
-                "no_values": num_values,
-                "value_ids": sorted((str(x) for x in all_values)),
+                "no_values": len(_all_values),
+                "value_ids": sorted((str(x) for x in _all_values)),
+                "dynamic_archive": False,
             }
-        )
+        else:
+            # will probably never happen
+            details = {"size": size, "dynamic_archive": True}
+        return ArchiveDetails(root=details)
 
     @property
     def data_store_path(self) -> Path:

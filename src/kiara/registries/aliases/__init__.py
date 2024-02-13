@@ -60,9 +60,17 @@ class AliasArchive(BaseArchive):
 
     def get_archive_details(self) -> ArchiveDetails:
         all_aliases = self.retrieve_all_aliases()
-        return ArchiveDetails(
-            root={"no_aliases": len(all_aliases), "aliases": sorted(all_aliases.keys())}
-        )
+        if all_aliases is not None:
+            no_aliases = len(all_aliases)
+            aliases = sorted(all_aliases.keys())
+            details = {
+                "no_aliases": no_aliases,
+                "aliases": aliases,
+                "dynamic_archive": False,
+            }
+        else:
+            details = {"dynamic_archive": True}
+        return ArchiveDetails(root=details)
 
 
 class AliasStore(AliasArchive):

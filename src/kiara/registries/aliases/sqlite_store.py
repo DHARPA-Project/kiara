@@ -8,7 +8,6 @@ from sqlalchemy.engine import Engine
 
 from kiara.registries import SqliteArchiveConfig
 from kiara.registries.aliases import AliasArchive, AliasStore
-from kiara.utils.windows import fix_windows_longpath
 
 
 class SqliteAliasArchive(AliasArchive):
@@ -30,7 +29,6 @@ class SqliteAliasArchive(AliasArchive):
         import sqlite3
 
         con = sqlite3.connect(archive_uri)
-
         cursor = con.cursor()
         cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
         tables = {x[0] for x in cursor.fetchall()}

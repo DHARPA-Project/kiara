@@ -10,7 +10,7 @@ import os.path
 import sys
 import uuid
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterable, Tuple, Union
+from typing import TYPE_CHECKING, Dict, Iterable, List, Tuple, Union
 
 import rich_click as click
 import structlog
@@ -39,7 +39,7 @@ from kiara.utils.cli.exceptions import handle_exception
 if TYPE_CHECKING:
     from kiara.api import Kiara, KiaraAPI
     from kiara.operations.included_core_operations.filter import FilterOperationType
-    from kiara.registries.aliases import AliasArchive
+    from kiara.registries.aliases import AliasArchive, AliasStore
     from kiara.registries.data import DataArchive, DataStore
 
 logger = structlog.getLogger()
@@ -121,6 +121,7 @@ def data(ctx):
 )
 @output_format_option()
 @click.pass_context
+@handle_exception()
 def list_values(
     ctx,
     filter,
@@ -540,6 +541,7 @@ def filter_value(
 @click.option("--append", "-A", help="Append data to existing archive.", is_flag=True)
 @click.argument("aliases", nargs=-1, required=True)
 @click.pass_context
+@handle_exception()
 def export_data_archive(
     ctx,
     aliases: Tuple[str],
@@ -589,33 +591,48 @@ def export_data_archive(
         if "." not in file_name:
             file_name = f"{file_name}.kiarchive"
 
-        terminal_print(f"Creating new data_store '{path}'...")
-
     full_path = Path(base_path) / file_name
 
     if full_path.exists() and not append:
         terminal_print(f"[red]Error[/red]: File '{full_path}' already exists.")
         sys.exit(1)
 
-    data_store: DataStore = create_new_archive(  # type: ignore
-        archive_alias=archive_alias,
-        store_base_path=base_path,
-        store_type="sqlite_data_store",
-        file_name=file_name,
-        default_chunk_compression=compression,
-        allow_write_access=True,
-    )
-    archive_store = create_new_archive(
-        archive_alias=archive_alias,
-        store_base_path=base_path,
-        store_type="sqlite_alias_store",
-        file_name=file_name,
-        allow_write_access=True,
-    )
+    if not full_path.exists():
+
+        terminal_print(f"Creating new archive '{path}'...")
+
+        data_store: DataStore = create_new_archive(  # type: ignore
+            archive_alias=archive_alias,
+            store_base_path=base_path,
+            store_type="sqlite_data_store",
+            file_name=file_name,
+            default_chunk_compression=compression,
+            allow_write_access=True,
+        )
+        alias_store: AliasStore = create_new_archive(  # type: ignore
+            archive_alias=archive_alias,
+            store_base_path=base_path,
+            store_type="sqlite_alias_store",
+            file_name=file_name,
+            allow_write_access=True,
+        )
+    else:
+        from kiara.utils.stores import check_external_archive
+
+        archives = check_external_archive(full_path.as_posix(), allow_write_access=True)
+        data_store = archives.get("data", None)  # type: ignore
+        alias_store = archives.get("alias", None)  # type: ignore
+
+        if data_store is None:
+            terminal_print(f"[red]Error[/red]: No data archive found in '{full_path}'")
+            sys.exit(1)
+        if alias_store is None:
+            terminal_print(f"[red]Error[/red]: No alias archive found in '{full_path}'")
+            sys.exit(1)
 
     terminal_print("Registering data store...")
     data_store_alias = kiara_api.context.data_registry.register_data_archive(data_store)  # type: ignore
-    alias_store_alias = kiara_api.context.alias_registry.register_archive(archive_store)  # type: ignore
+    alias_store_alias = kiara_api.context.alias_registry.register_archive(alias_store)  # type: ignore
 
     terminal_print("Exporting value(s) into new data_store...")
 
@@ -662,6 +679,7 @@ def export_data_archive(
 @data.command(name="import")
 @click.argument("archive", nargs=1, required=True)
 @click.pass_context
+@handle_exception()
 def import_data_store(ctx, archive: str):
 
     from kiara.utils.stores import check_external_archive
@@ -686,16 +704,22 @@ def import_data_store(ctx, archive: str):
         sys.exit(1)
 
     terminal_print("Registering data archive...")
-    data_store_alias = kiara_api.context.data_registry.register_data_archive(
-        data_archive
-    )
+    # data_store_alias = kiara_api.context.data_registry.register_data_archive(
+    #     data_archive
+    # )
 
     alias_archive: "AliasArchive" = archives.get("alias", None)  # type: ignore
-    alias_map = {}
+    alias_map: Dict[str, List[str]] = {}
     if alias_archive:
         # terminal_print("Registering alias archive...")
         # alias_archive_alias = kiara_api.context.alias_registry.register_archive(alias_archive)
-        for alias, value_id in alias_archive.retrieve_all_aliases().items():
+        all_aliases = alias_archive.retrieve_all_aliases()
+        if all_aliases is None:
+            terminal_print(
+                f"[red]Error[/red]: Archive '{archive}' seems to be dynamic, can't retrieve aliases."
+            )
+            sys.exit(1)
+        for alias, value_id in all_aliases.items():
             alias_map.setdefault(str(value_id), []).append(alias)
 
     result = kiara_api.store_values(values=values, alias_map=alias_map)

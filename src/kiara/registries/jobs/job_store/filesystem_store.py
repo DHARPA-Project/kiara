@@ -8,7 +8,7 @@ import datetime
 import shutil
 import uuid
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Union
+from typing import Any, Dict, Iterable, Mapping, Union
 
 import orjson
 import structlog
@@ -182,9 +182,9 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
         manifest_cid = job_record.manifest_cid
         # inputs_hash = job_record.inputs_data_hash
 
-        manifest_hash = job_record.manifest_hash
+        # manifest_hash = job_record.manifest_hash
         input_ids_hash = job_record.input_ids_hash
-        inputs_hash = job_record.inputs_data_hash
+        # inputs_hash = job_record.inputs_data_hash
 
         base_path = self.job_store_path / MANIFEST_SUB_PATH
         manifest_folder = base_path / str(manifest_cid)
@@ -195,7 +195,7 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
         if not manifest_info_file.exists():
             manifest_info_file.write_text(job_record.manifest_data_as_json())
 
-        job_folder = manifest_folder / inputs_hash
+        job_folder = manifest_folder / input_ids_hash
         job_folder = fix_windows_longpath(job_folder)
         job_folder.mkdir(parents=True, exist_ok=True)
 

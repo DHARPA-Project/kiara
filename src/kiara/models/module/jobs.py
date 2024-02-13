@@ -265,7 +265,7 @@ class JobRecord(JobConfig):
     # job_hash: str = Field(description="The hash of the job. Calculated from manifest & input_ids hashes.")
     # manifest_hash: str = Field(description="The hash of the manifest.")
     # input_ids_hash: str = Field(description="The hash of the field names and input ids (the value_ids/uuids).")
-    inputs_data_hash: Union[str, None] = Field(
+    inputs_data_hash: str = Field(
         description="A map of the hashes of this jobs inputs (the hashes of field names and the actual bytes)."
     )
 

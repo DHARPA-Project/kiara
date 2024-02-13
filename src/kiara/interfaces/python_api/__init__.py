@@ -1819,7 +1819,7 @@ class KiaraAPI(object):
                 value_obj = self.get_value(value)
                 if use_aliases:
                     alias_key = str(value_obj.value_id)
-                    alias: Union[str, None] = alias_map.get(alias_key, None)
+                    alias: Union[str, None] = alias_map.get(alias_key, None)  # type: ignore
                     if alias:
                         aliases.update(alias)
 

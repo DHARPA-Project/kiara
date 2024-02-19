@@ -133,13 +133,13 @@ class AliasRegistry(object):
         mount_point: Union[str, None] = None,
     ) -> str:
 
-        alias = archive.archive_alias
+        alias = archive.archive_name
 
         if not alias:
             raise Exception("Invalid alias archive alias: can't be empty.")
 
         if not mount_point:
-            mount_point = archive.archive_alias
+            mount_point = archive.archive_name
 
         if "#" in mount_point:
             raise Exception(

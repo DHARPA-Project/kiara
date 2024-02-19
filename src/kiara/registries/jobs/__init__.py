@@ -251,7 +251,7 @@ class JobRegistry(object):
 
     def register_job_archive(self, archive: JobArchive) -> str:
 
-        alias = archive.archive_alias
+        alias = archive.archive_name
 
         if not alias:
             raise Exception("Invalid job archive alias: can't be empty.")

@@ -24,7 +24,11 @@ from typing import (
 import structlog
 from pydantic import BaseModel, ConfigDict, Field, RootModel, field_validator
 
-from kiara.defaults import CHUNK_COMPRESSION_TYPE, DEFAULT_CHUNK_COMPRESSION
+from kiara.defaults import (
+    ARCHIVE_NAME_MARKER,
+    CHUNK_COMPRESSION_TYPE,
+    DEFAULT_CHUNK_COMPRESSION,
+)
 from kiara.utils import log_message
 
 try:
@@ -231,11 +235,11 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
         )
 
     @property
-    def archive_alias(self) -> str:
+    def archive_name(self) -> str:
         if self._archive_instance_name:
             return self._archive_instance_name
 
-        alias = self.get_archive_metadata("archive_alias")
+        alias = self.get_archive_metadata(ARCHIVE_NAME_MARKER)
         if not alias:
             alias = str(self.archive_id)
         self._archive_instance_name = alias

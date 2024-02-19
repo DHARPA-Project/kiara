@@ -158,7 +158,7 @@ class WorkflowRegistry(object):
         archive: WorkflowArchive,
         set_as_default_store: Union[bool, None] = None,
     ):
-        alias = archive.archive_alias
+        alias = archive.archive_name
         if not alias:
             raise Exception("Invalid workflows archive alias: can't be empty.")
 

@@ -35,6 +35,10 @@ class ValueMatcher(KiaraModel):
         description="Values must have an alias that matches one of the provided matchers. Assumes 'has_alias' is set to 'True'.",
         default=None,
     )
+    in_data_archives: Union[None, List[str]] = Field(
+        description="A list of registered names of archives the value must be in. If 'None', all archives will be used.",
+        default=None,
+    )
 
     @field_validator("alias_matchers")
     @classmethod

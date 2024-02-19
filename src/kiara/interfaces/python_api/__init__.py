@@ -16,6 +16,7 @@ from typing import (
     Dict,
     Iterable,
     List,
+    Literal,
     Mapping,
     MutableMapping,
     Set,
@@ -29,6 +30,7 @@ from ruamel.yaml import YAML
 
 from kiara.defaults import (
     CHUNK_COMPRESSION_TYPE,
+    DATA_ARCHIVE_DEFAULT_VALUE_MARKER,
     OFFICIAL_KIARA_PLUGINS,
     VALID_VALUE_QUERY_CATEGORIES,
     VALUE_ATTR_DELIMITER,
@@ -90,14 +92,14 @@ from kiara.utils.string_vars import replace_var_names_in_obj
 
 if TYPE_CHECKING:
     from kiara.context import Kiara, KiaraConfig, KiaraRuntimeConfig
-    from kiara.interfaces.python_api.models.archive import Kiarchive
+    from kiara.interfaces.python_api.models.archive import KiArchive
     from kiara.interfaces.python_api.models.doc import (
         OperationsMap,
         PipelinesMap,
         WorkflowsMap,
     )
     from kiara.interfaces.python_api.workflow import Workflow
-    from kiara.models.archives import KiarchiveInfo
+    from kiara.models.archives import KiArchiveInfo
     from kiara.models.module.pipeline import PipelineConfig, PipelineStructure
     from kiara.models.module.pipeline.pipeline import PipelineGroupInfo, PipelineInfo
 
@@ -1697,6 +1699,7 @@ class KiaraAPI(object):
         store: Union[str, None] = None,
         data_store: Union[str, None] = None,
         alias_store: Union[str, None] = None,
+        set_as_store_default: bool = False,
     ) -> StoreValueResult:
         """
         Store the specified value in a value store.
@@ -1715,6 +1718,7 @@ class KiaraAPI(object):
             store: in case data and alias store names are the same, you can use this, if you specify one or both of the others, this will be overwritten
             data_store: the registered name (or archive id as string) of the store to write the data
             alias_store: the registered name (or archive id as string) of the store to persist the alias(es)/value_id mapping
+            set_as_store_default: whether to set the specified store as the default store for the value
         """
         if isinstance(alias, str):
             alias = [alias]
@@ -1737,6 +1741,12 @@ class KiaraAPI(object):
                     *alias,
                     allow_overwrite=allow_overwrite,
                     alias_store=alias_store,
+                )
+
+            if set_as_store_default:
+                store_instance = self.context.data_registry.get_archive(data_store)
+                store_instance.set_archive_metadata_value(
+                    DATA_ARCHIVE_DEFAULT_VALUE_MARKER, str(value_obj.value_id)
                 )
             result = StoreValueResult(
                 value=value_obj,
@@ -1776,13 +1786,14 @@ class KiaraAPI(object):
         loop over the values on the frontend side, and call the 'store_value' method for each value.
 
         If you provide a non-mapping interable as 'values', the 'alias_map' argument must either be 'False', or a
-        map with a stringified uuid refering to the value in question as key, and a list of aliases as value.
+        map with a stringified uuid referring to the value in question as key, and a list of aliases as value.
 
-        If you use a mapping iterable as 'values':
+        If you use a mapping type as 'values':
 
         If alias_map is 'False', no aliases will be registered. If 'True', the key in the 'values' argument will be used. If the value is a string, all keys from the 'values' map will be used as alias, prefixed with the value of 'alias_map' + '.'.
-        Alternatively, if a map is provided, the key in the 'values' argument will be used to look up the alias(es) in the
-        'alias_map' argument.
+        Alternatively, if another mapping is provided for 'alias_map', the key in the 'values' argument will be used to look up the alias(es) in the 'alias_map' argument, by looking up that key.
+
+        Sorry, this is a bit convoluted, but it's the only way I could think of to make this work for all the requirements I had. In most keases, you'll only have to use 'True' or 'False' here, hopefully.
 
         This method does not raise an error if the storing of the value fails, so you have to investigate the
         'StoreValuesResult' instance that is returned to see if the storing was successful.
@@ -1867,52 +1878,12 @@ class KiaraAPI(object):
     # ------------------------------------------------------------------------------------------------------------------
     # archive-related methods
 
-    # def create_kiarchive(
-    #     self,
-    #     kiarchive_uri: Union[str, Path],
-    #     archive_alias: Union[str, None] = None,
-    #     compression: CHUNK_COMPRESSION_TYPE = CHUNK_COMPRESSION_TYPE.ZSTD,
-    #     allow_existing: bool = False,
-    #     allow_write_access: bool = True,
-    # ) -> str:
-    #     """Create a new kiarchive in a file at the specified path, containing a data & alias store.
-    #
-    #     # NOTE: this is a preliminary endpoint, and might be changed in the future. If you have a use-case for this, please let me know.
-    #
-    #     Arguments:
-    #         kiarchive_uri: the uri of the archive (file path)
-    #         archive_alias: the alias to use for the archive
-    #         compression: the compression to use for the archive
-    #         allow_existing: whether to allow a kiarchive to already exist at the location, and load that instead of creating a new one
-    #         register_archive: whether to register the archive with the context
-    #         register_alias: the alias to use for the archive in the context
-    #         allow_write_access: whether to allow write access to the archive
-    #
-    #     Returns:
-    #         the name/alias that the archive was registered with
-    #
-    #     """
-    #     from kiara.interfaces.python_api.models.archive import Kiarchive
-    #
-    #     kiarchive = Kiarchive.create_kiarchive(
-    #         kiara=self.context,
-    #         kiarchive_uri=kiarchive_uri,
-    #         allow_existing=allow_existing,
-    #         archive_alias=archive_alias,
-    #         compression=compression,
-    #         allow_write_access=allow_write_access,
-    #     )
-    #
-    #     result = self.register_kiarchive(
-    #         kiarchive=kiarchive, allow_write_access=allow_write_access
-    #     )
-    #     return result
-
-    def register_kiarchive(
+    def register_archive(
         self,
-        kiarchive: Union[str, Path, "Kiarchive"],
+        archive: Union[str, Path, "KiArchive"],
         allow_write_access: bool = False,
         registered_name: Union[str, None] = None,
+        create_if_not_exists: bool = True,
     ) -> str:
         """Register a kiarchive with the current context.
 
@@ -1924,31 +1895,40 @@ class KiaraAPI(object):
         # NOTE: this is a preliminary endpoint, and might be changed in the future. If you have a use-case for this, please let me know.
 
         Arguments:
-            kiarchive: the uri of the archive (file path), or a [Kiarchive][kiara.interfaces.python_api.models.archive.Kiarchive] instance
+            archive: the uri of the archive (file path), or a [Kiarchive][kiara.interfaces.python_api.models.archive.Kiarchive] instance
             allow_write_access: whether to allow write access to the archive
+            registered_name: the name/alias that the archive is registered in the context, and which can be used in the 'store_value(s)' endpoint, if not provided, it will be auto-determined from the file name
+            create_if_not_exists: if the file does not exist, create it. If this is 'False', an exception will be raised if the file does not exist.
 
         Returns:
-            the name/alias that the archive was registered with
+            the name/alias that the archive is registered in the context, and which can be used in the 'store_value(s)' endpoint
         """
-        from kiara.interfaces.python_api.models.archive import Kiarchive
+        from kiara.interfaces.python_api.models.archive import KiArchive
 
-        if isinstance(kiarchive, str):
-            kiarchive = Path(kiarchive)
+        if isinstance(archive, str):
+            archive = Path(archive)
 
-        if isinstance(kiarchive, Path):
+        if not archive.name.endswith(".kiarchive"):
+            archive = archive.parent / f"{archive.name}.kiarchive"
 
-            if kiarchive.exists():
-                kiarchive = Kiarchive.load_kiarchive(
-                    kiara=self.context, path=kiarchive, archive_name=registered_name
+        if isinstance(archive, Path):
+
+            if archive.exists():
+                archive = KiArchive.load_kiarchive(
+                    kiara=self.context, path=archive, archive_name=registered_name
                 )
             else:
-                kiarchive_alias = kiarchive.name
+                if not create_if_not_exists:
+                    raise KiaraException(
+                        f"Archive file '{archive.as_posix()}' does not exist."
+                    )
+                kiarchive_alias = archive.name
                 if kiarchive_alias.endswith(".kiarchive"):
                     kiarchive_alias = kiarchive_alias[:-10]
 
-                kiarchive = Kiarchive.create_kiarchive(
+                archive = KiArchive.create_kiarchive(
                     kiara=self.context,
-                    kiarchive_uri=kiarchive.as_posix(),
+                    kiarchive_uri=archive.as_posix(),
                     allow_existing=False,
                     archive_name=kiarchive_alias,
                     compression=CHUNK_COMPRESSION_TYPE.ZSTD,
@@ -1956,43 +1936,122 @@ class KiaraAPI(object):
                 )
 
         data_alias = self.context.register_external_archive(
-            kiarchive.data_archive,
+            archive.data_archive,
             allow_write_access=allow_write_access,
         )
         alias_alias = self.context.register_external_archive(
-            kiarchive.alias_archive, allow_write_access=allow_write_access
+            archive.alias_archive, allow_write_access=allow_write_access
         )
         assert data_alias["data"] == alias_alias["alias"]
-        assert kiarchive.archive_name == data_alias["data"]
+        assert archive.archive_name == data_alias["data"]
 
-        return kiarchive.archive_name
+        return archive.archive_name
 
-    def retrieve_kiarchive_info(
-        self, kiarchive: Union[str, "Kiarchive"]
-    ) -> "KiarchiveInfo":
-        """Retrieve information about a kiarchive at the specified location.
+    def set_archive_metadata_value(
+        self,
+        archive: Union[str, uuid.UUID],
+        key: str,
+        value: Any,
+        archive_type: Literal["data", "alias"] = "data",
+    ) -> None:
 
-        The kiarchive can't be registered into the context, this might change in the future.
+        if archive_type == "data":
+            self.context.data_registry.get_archive(archive).set_archive_metadata_value(
+                key, value
+            )
+        elif archive_type == "alias":
+            self.context.alias_registry.get_archive(archive).set_archive_metadata_value(
+                key, value
+            )
+        else:
+            raise KiaraException(
+                f"Invalid archive type: {archive_type}. Valid types are: 'data', 'alias'."
+            )
+
+    def retrieve_archive_info(
+        self, archive: Union[str, "KiArchive"]
+    ) -> "KiArchiveInfo":
+        """Retrieve information about an archive at the specified local path
+
+        Currently, this only works with an external archive file, not with an archive that is registered into the context.
+        This will probably be added later on, let me know if there is demand, then I'll prioritize.
 
         # NOTE: this is a preliminary endpoint, and might be changed in the future. If you have a use-case for this, please let me know.
 
         Arguments:
-            kiarchive: the uri of the archive (file path)
+            archive: the uri of the archive (file path)
 
         Returns:
-            a [KiarchiveInfo][kiara.interfaces.python_api.models.archive.KiarchiveInfo] instance, containing details about the kiarchive
+            a [KiarchiveInfo][kiara.interfaces.python_api.models.archive.KiarchiveInfo] instance, containing details about the archive
         """
 
-        from kiara.interfaces.python_api.models.archive import Kiarchive
-        from kiara.models.archives import KiarchiveInfo
+        from kiara.interfaces.python_api.models.archive import KiArchive
+        from kiara.models.archives import KiArchiveInfo
 
-        if not isinstance(kiarchive, Kiarchive):
-            kiarchive = Kiarchive.load_kiarchive(kiara=self.context, path=kiarchive)
+        if not isinstance(archive, KiArchive):
+            archive = KiArchive.load_kiarchive(kiara=self.context, path=archive)
 
-        kiarchive_info = KiarchiveInfo.create_from_instance(
-            kiara=self.context, instance=kiarchive
+        kiarchive_info = KiArchiveInfo.create_from_instance(
+            kiara=self.context, instance=archive
         )
         return kiarchive_info
+
+    def import_archive(
+        self,
+        archive: Union[str, Path],
+        # only_aliases: bool = True,
+        registered_name: Union[str, None] = None,
+    ) -> StoreValuesResult:
+        """Import all data from the specified archive into the current context.
+
+        The archive will be registered into the context, either ussing the provided registered_name, otherwise the name
+        will be auto-determined from the archive metadata.
+
+        Currently, this only works with an external archive file, not with an archive that is registered into the context.
+        This will be added later on.
+
+        This method does not raise an error if the storing of the value fails, so you have to investigate the
+        'StoreValuesResult' instance that is returned to see if the storing was successful
+
+        Arguments:
+            archive: the uri of the archive (file path)
+            only_aliases: whether to only import the aliases, or all values, even if they don't have an alias
+            registered_name: the name/alias that the archive is registered in the context
+
+        """
+
+        archive_ref = self.register_archive(
+            archive, registered_name=registered_name, allow_write_access=False
+        )
+
+        only_aliases = False
+        if not only_aliases:
+            values = self.list_values(
+                in_data_archives=[archive_ref], allow_internal=True, has_alias=False
+            ).values()
+            aliases = self.list_aliases(in_data_archives=[archive_ref])
+            alias_map: Union[bool, Dict[str, List[str]]] = {}
+            for alias, value in aliases.items():
+                # TODO: maybe add a matcher arg to the list_aliases endpoint
+                if not alias.startswith(f"{archive_ref}#"):
+                    continue
+                alias_map.setdefault(str(value.value_id), []).append(
+                    alias[len(archive_ref) + 1 :]
+                )
+        else:
+            _values = self.list_aliases(
+                in_data_archives=[archive_ref], allow_internal=True
+            )
+            values = {}
+            for alias, value in _values.items():
+                # TODO: maybe add a matcher arg to the list_aliases endpoint
+                if not alias.startswith(f"{archive_ref}#"):
+                    continue
+                values[alias[len(archive_ref) + 1 :]] = value
+            alias_map = True
+
+        result = self.store_values(values, alias_map=alias_map)
+        return result
 
     # ------------------------------------------------------------------------------------------------------------------
     # operation-related methods

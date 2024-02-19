@@ -336,7 +336,7 @@ class Kiara(object):
         for archive_type, _archive_inst in archive_instances.items():
             log_message(
                 "register.external.archive",
-                archive=_archive_inst.archive_alias,
+                archive=_archive_inst.archive_name,
                 allow_write_access=allow_write_access,
             )
 

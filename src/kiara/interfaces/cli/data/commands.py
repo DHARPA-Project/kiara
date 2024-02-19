@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING, Dict, Iterable, List, Tuple, Union
 import rich_click as click
 import structlog
 
+from kiara.defaults import DATA_ARCHIVE_DEFAULT_VALUE_MARKER
 from kiara.exceptions import InvalidCommandLineInvocation
 from kiara.utils import log_exception, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
@@ -647,7 +648,7 @@ def export_data_archive(
     if not no_default_value:
         try:
             data_store.set_archive_metadata_value(
-                "default_value", str(values[0][0].value_id)
+                DATA_ARCHIVE_DEFAULT_VALUE_MARKER, str(values[0][0].value_id)
             )
         except Exception as e:
             data_store.delete_archive(archive_id=data_store.archive_id)

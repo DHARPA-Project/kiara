@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from kiara.registries.data import DataArchive
 
 
-class Kiarchive(KiaraModel):
+class KiArchive(KiaraModel):
     @classmethod
     def load_kiarchive(
         cls,
@@ -21,7 +21,7 @@ class Kiarchive(KiaraModel):
         path: Union[str, Path],
         allow_write_access: bool = False,
         archive_name: Union[str, None] = None,
-    ) -> "Kiarchive":
+    ) -> "KiArchive":
 
         if isinstance(path, Path):
             path = path.as_posix()
@@ -61,23 +61,23 @@ class Kiarchive(KiaraModel):
                     raise Exception(
                         f"Data and alias archives in file '{path}' have different IDs."
                     )
-                if data_archive.archive_alias != alias_archive.archive_alias:
+                if data_archive.archive_name != alias_archive.archive_name:
                     raise Exception(
                         f"Data and alias archives in file '{path}' have different aliases."
                     )
 
             archive_id = data_archive.archive_id
-            archive_alias = data_archive.archive_alias
+            archive_alias = data_archive.archive_name
         elif alias_archive:
             # we can assume data archive is None here
             archive_id = alias_archive.archive_id
-            archive_alias = alias_archive.archive_alias
+            archive_alias = alias_archive.archive_name
         else:
             raise Exception(
                 "This should never happen, but we need to handle it anyway. Bug in code."
             )
 
-        kiarchive = Kiarchive(
+        kiarchive = KiArchive(
             archive_id=archive_id,
             archive_name=archive_alias,
             data_archive_config=data_archive_config,
@@ -102,7 +102,7 @@ class Kiarchive(KiaraModel):
         compression: CHUNK_COMPRESSION_TYPE = CHUNK_COMPRESSION_TYPE.ZSTD,
         allow_write_access: bool = True,
         allow_existing: bool = False,
-    ) -> "Kiarchive":
+    ) -> "KiArchive":
 
         if isinstance(kiarchive_uri, str):
             kiarchive_uri = Path(kiarchive_uri)
@@ -145,7 +145,7 @@ class Kiarchive(KiaraModel):
             kiarchive_id = data_store.archive_id
             assert alias_store.archive_id == kiarchive_id
 
-            kiarchive = Kiarchive(
+            kiarchive = KiArchive(
                 archive_id=kiarchive_id,
                 archive_name=archive_name,
                 archive_base_path=archive_base_path,

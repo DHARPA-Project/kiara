@@ -70,22 +70,42 @@ class StoreValuesResult(RootModel):
 
     def create_renderable(self, **config: Any) -> RenderableType:
 
+        add_field_column = config.get("add_field_column", True)
+
+        errors = {}
+        for field_name, value_result in self.root.items():
+            if value_result.error:
+                errors[field_name] = value_result.error
+
         table = Table(show_header=True, show_lines=False, box=box.SIMPLE)
-        table.add_column("field", style="b")
-        table.add_column("data type", style="i")
+        if add_field_column:
+            table.add_column("field", style="b")
         table.add_column("stored id", style="i")
+        table.add_column("data type", style="i")
         table.add_column("alias(es)")
+        if errors:
+            table.add_column("error", style="red")
 
         for field_name, value_result in self.root.items():
-            row = [
-                field_name,
-                str(value_result.value.value_schema.type),
-                str(value_result.value.value_id),
-            ]
+            if add_field_column:
+                row = [
+                    field_name,
+                    str(value_result.value.value_id),
+                    str(value_result.value.value_schema.type),
+                ]
+            else:
+                row = [
+                    str(value_result.value.value_id),
+                    str(value_result.value.value_schema.type),
+                ]
+
             if value_result.aliases:
                 row.append(", ".join(value_result.aliases))
             else:
                 row.append("")
+
+            if errors.get(field_name) is not None:
+                row.append(errors[field_name])
             table.add_row(*row)
 
         return table

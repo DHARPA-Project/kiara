@@ -37,7 +37,7 @@ from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
-    from kiara.interfaces.python_api import Kiarchive
+    from kiara.interfaces.python_api import KiArchive
 
 
 class ArchiveTypeInfo(TypeInfo):
@@ -169,7 +169,7 @@ class ArchiveInfo(ItemInfo):
         #     archive_aliases = list(archive_aliases)
         return ArchiveInfo(
             archive_type_info=archive_type_info,
-            archive_alias=archive.archive_alias,
+            archive_alias=archive.archive_name,
             archive_id=archive.archive_id,
             type_name=str(archive.archive_id),
             documentation=doc,
@@ -322,20 +322,20 @@ class ArchiveGroupInfo(InfoItemGroup):
         return table
 
 
-class KiarchiveInfo(ItemInfo):
+class KiArchiveInfo(ItemInfo):
     @classmethod
-    def base_instance_class(cls) -> Type["Kiarchive"]:
-        from kiara.interfaces.python_api import Kiarchive
+    def base_instance_class(cls) -> Type["KiArchive"]:
+        from kiara.interfaces.python_api import KiArchive
 
-        return Kiarchive
+        return KiArchive
 
     @classmethod
-    def create_from_instance(cls, kiara: "Kiara", instance: "Kiarchive", **kwargs):
+    def create_from_instance(cls, kiara: "Kiara", instance: "KiArchive", **kwargs):
 
         return cls.create_from_kiarchive(kiarchive=instance, **kwargs)
 
     @classmethod
-    def create_from_kiarchive(cls, kiarchive: "Kiarchive"):
+    def create_from_kiarchive(cls, kiarchive: "KiArchive"):
 
         data_archive = kiarchive.data_archive
         alias_archive = kiarchive.alias_archive
@@ -366,7 +366,7 @@ class KiarchiveInfo(ItemInfo):
         if documentation is None or authors is None or context is None:
             raise ValueError("No documentation, authors or context found.")
 
-        return KiarchiveInfo(
+        return KiArchiveInfo(
             type_name=kiarchive.archive_file_name,
             data_archive_info=data_archive_info,
             alias_archive_info=alias_archive_info,

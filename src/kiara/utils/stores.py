@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
+from kiara.defaults import ARCHIVE_NAME_MARKER
+
 if TYPE_CHECKING:
     from kiara.registries import KiaraArchive
 
@@ -32,7 +34,7 @@ def create_new_archive(
     archive_instance = archive_cls(archive_name=archive_name, archive_config=config, force_read_only=force_read_only)  # type: ignore
 
     if not force_read_only:
-        archive_instance.set_archive_metadata_value("archive_alias", archive_name)
+        archive_instance.set_archive_metadata_value(ARCHIVE_NAME_MARKER, archive_name)
 
     return archive_instance
 
@@ -61,9 +63,9 @@ def check_external_archive(
                     raise Exception(
                         "Multiple archives of the same type are not supported."
                     )
-                if archive_name and _archive.archive_alias != archive_name:
+                if archive_name and _archive.archive_name != archive_name:
                     raise Exception(
-                        f"Archive alias '{_archive.archive_alias}' does not match expected alias '{archive_name}'"
+                        f"Archive alias '{_archive.archive_name}' does not match expected alias '{archive_name}'"
                     )
                 archive_instances[archive_type] = _archive
             continue

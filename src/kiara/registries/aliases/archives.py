@@ -54,7 +54,7 @@ class FileSystemAliasArchive(AliasArchive):
                 _archive_metadata["archive_id"] = str(_archive_id)
             except Exception:
                 raise Exception(
-                    f"Could not retrieve archive id for alias archive '{self.archive_alias}'."
+                    f"Could not retrieve archive id for alias archive '{self.archive_name}'."
                 )
 
         return _archive_metadata

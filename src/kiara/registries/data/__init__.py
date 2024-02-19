@@ -30,6 +30,7 @@ from rich.console import RenderableType
 from kiara.data_types import DataType
 from kiara.data_types.included_core_types import NoneType
 from kiara.defaults import (
+    DATA_ARCHIVE_DEFAULT_VALUE_MARKER,
     INVALID_HASH_MARKER,
     NO_SERIALIZATION_MARKER,
     NONE_STORE_ID,
@@ -159,7 +160,7 @@ class DefaultAliasResolver(AliasResolver):
 
                         if not path_in_archive:
                             default_value = data_archive.get_archive_metadata(
-                                "default_value"
+                                DATA_ARCHIVE_DEFAULT_VALUE_MARKER
                             )
                             _value_id = uuid.UUID(default_value)
                         else:
@@ -309,7 +310,7 @@ class DataRegistry(object):
         set_as_default_store: Union[bool, None] = None,
     ) -> str:
 
-        alias = archive.archive_alias
+        alias = archive.archive_name
 
         if not alias:
             raise Exception("Invalid data archive alias: can't be empty.")
@@ -502,12 +503,12 @@ class DataRegistry(object):
         if not store.is_writeable():
             if data_store:
                 raise Exception(
-                    f"Can't store value into store '{data_store}': not writable."
+                    f"Can't write value into store '{data_store}': not writable."
                 )
             else:
-                raise Exception("Can't store value into store: not writable.")
+                raise Exception("Can't write value into store: not writable.")
 
-        _data_store = store.archive_alias
+        _data_store = store.archive_name
         # make sure all property values are available
         if _value.pedigree != ORPHAN:
             for value_id in _value.pedigree.inputs.values():
@@ -552,6 +553,10 @@ class DataRegistry(object):
 
         matches: Dict[uuid.UUID, Value] = {}
         for store_id, store in self.data_archives.items():
+
+            if matcher.in_data_archives and store_id not in matcher.in_data_archives:
+                continue
+
             try:
                 _matches = store.find_values(matcher=matcher)
                 for value in _matches:
@@ -571,7 +576,7 @@ class DataRegistry(object):
                 log_message(
                     "store.feature.missing",
                     feature="find_value",
-                    reasong="find_values not implemented for store: {store_id}",
+                    reasong=f"find_values not implemented for store: {store_id}",
                     solution="return all values",
                 )
                 all_value_ids = store.value_ids

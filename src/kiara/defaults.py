@@ -80,7 +80,14 @@ INVALID_VALUE_NAMES = [
     "kiara",
     "callbacks",
 ]
-INVALID_ALIAS_NAMES = ["kiara", "__default__", "alias", "value", "value_id"]
+INVALID_ALIAS_NAMES = [
+    "kiara",
+    "__default__",
+    "alias",
+    "value",
+    "value_id",
+    "kiarchive",
+]
 """List of reserved names, inputs/outputs can't use those."""
 
 DEFAULT_DATA_STORE_MARKER = "default_data_store"
@@ -278,3 +285,13 @@ OFFICIAL_KIARA_PLUGINS = [
     "network_analysis",
     "language_processing",
 ]
+
+
+class CHUNK_COMPRESSION_TYPE(Enum):
+    NONE = 0
+    ZSTD = 1
+    LZMA = 2
+    LZ4 = 3
+
+
+DEFAULT_CHUNK_COMPRESSION = CHUNK_COMPRESSION_TYPE.ZSTD

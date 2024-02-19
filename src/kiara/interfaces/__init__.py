@@ -234,6 +234,9 @@ class KiaraAPIWrap(object):
         if not context:
             context = os.environ.get("KIARA_CONTEXT", None)
 
+        if context and context.endswith(".kontext") and os.path.exists(context):
+            context = os.path.abspath(context)
+
         self._config: Union[str, None] = config
         self._context: Union[str, None] = context
 

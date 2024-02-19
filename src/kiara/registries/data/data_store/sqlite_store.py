@@ -21,11 +21,10 @@ import orjson
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Connection, Engine
 
-from kiara.defaults import kiara_app_dirs
+from kiara.defaults import CHUNK_COMPRESSION_TYPE, kiara_app_dirs
 from kiara.models.values.value import PersistedData, Value
 from kiara.registries import (
     ARCHIVE_CONFIG_CLS,
-    CHUNK_COMPRESSION_TYPE,
     ArchiveDetails,
     SqliteArchiveConfig,
     SqliteDataStoreConfig,
@@ -83,13 +82,13 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
 
     def __init__(
         self,
-        archive_alias: str,
+        archive_name: str,
         archive_config: SqliteArchiveConfig,
         force_read_only: bool = False,
     ):
 
         super().__init__(
-            archive_alias=archive_alias,
+            archive_name=archive_name,
             archive_config=archive_config,
             force_read_only=force_read_only,
         )

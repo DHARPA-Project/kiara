@@ -4,7 +4,6 @@ from typing import (
     TYPE_CHECKING,
     Any,
     ClassVar,
-    Iterable,
     List,
     Literal,
     Mapping,
@@ -38,6 +37,7 @@ from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+    from kiara.interfaces.python_api import Kiarchive
 
 
 class ArchiveTypeInfo(TypeInfo):
@@ -127,14 +127,17 @@ class ArchiveInfo(ItemInfo):
     @classmethod
     def create_from_instance(cls, kiara: "Kiara", instance: KiaraArchive, **kwargs):
 
-        return cls.create_from_archive(kiara=kiara, archive=instance, **kwargs)
+        if kwargs:
+            raise ValueError("kwargs not supported.")
+
+        return cls.create_from_archive(kiara=kiara, archive=instance)
 
     @classmethod
     def create_from_archive(
         cls,
         kiara: "Kiara",
         archive: KiaraArchive,
-        archive_aliases: Union[Iterable[str], None] = None,
+        # archive_aliases: Union[Iterable[str], None] = None,
     ):
 
         doc_str = archive.archive_metadata.get("description", None)
@@ -160,10 +163,10 @@ class ArchiveInfo(ItemInfo):
         archive_type_info = ArchiveTypeInfo.create_from_type_class(
             archive.__class__, kiara=kiara
         )
-        if archive_aliases is None:
-            archive_aliases = []
-        else:
-            archive_aliases = list(archive_aliases)
+        # if archive_aliases is None:
+        #     archive_aliases = []
+        # else:
+        #     archive_aliases = list(archive_aliases)
         return ArchiveInfo(
             archive_type_info=archive_type_info,
             archive_alias=archive.archive_alias,
@@ -176,7 +179,7 @@ class ArchiveInfo(ItemInfo):
             details=archive.get_archive_details(),
             metadata=archive.archive_metadata,
             config=archive.config.model_dump(),
-            aliases=archive_aliases,
+            # aliases=archive_aliases,
         )
 
     @classmethod
@@ -196,9 +199,9 @@ class ArchiveInfo(ItemInfo):
         description="Type dependent (runtime) details for this archive."
     )
     metadata: ArchiveMetadata = Field(description="Metadata for this archive.")
-    aliases: List[str] = Field(
-        description="Aliases for this archive.", default_factory=list
-    )
+    # aliases: List[str] = Field(
+    #     description="Aliases for this archive.", default_factory=list
+    # )
 
     def create_renderable(self, **config: Any) -> RenderableType:
         from kiara.utils.output import extract_renderable
@@ -243,7 +246,7 @@ class ArchiveGroupInfo(InfoItemGroup):
         for archive, aliases in kiara.get_all_archives().items():
             title = str(archive.archive_id) + ", ".join(aliases)
             archives[title] = ArchiveInfo.create_from_archive(
-                kiara=kiara, archive=archive, archive_aliases=aliases
+                kiara=kiara, archive=archive
             )
             # archives[str(archive.archive_id)] = ArchiveInfo.create_from_archive(
             #     kiara=kiara, archive=archive, archive_aliases=aliases
@@ -285,7 +288,7 @@ class ArchiveGroupInfo(InfoItemGroup):
         table = Table(show_header=True, box=box.SIMPLE)
         if show_archive_id:
             table.add_column("archive id")
-        table.add_column("alias(es)", style="i")
+        table.add_column("alias", style="i")
         table.add_column("item type(s)", style="i")
         if show_config:
             table.add_column("config")
@@ -296,7 +299,7 @@ class ArchiveGroupInfo(InfoItemGroup):
             row: List[RenderableType] = []
             if show_archive_id:
                 row.append(str(archive.archive_id))
-            row.append("\n".join(archive.aliases))
+            row.append(archive.archive_alias)
             row.append("\n".join(archive.archive_type_info.supported_item_types))
 
             if show_config:
@@ -315,5 +318,79 @@ class ArchiveGroupInfo(InfoItemGroup):
                 row.append(details_json)
 
             table.add_row(*row)
+
+        return table
+
+
+class KiarchiveInfo(ItemInfo):
+    @classmethod
+    def base_instance_class(cls) -> Type["Kiarchive"]:
+        from kiara.interfaces.python_api import Kiarchive
+
+        return Kiarchive
+
+    @classmethod
+    def create_from_instance(cls, kiara: "Kiara", instance: "Kiarchive", **kwargs):
+
+        return cls.create_from_kiarchive(kiarchive=instance, **kwargs)
+
+    @classmethod
+    def create_from_kiarchive(cls, kiarchive: "Kiarchive"):
+
+        data_archive = kiarchive.data_archive
+        alias_archive = kiarchive.alias_archive
+
+        data_archive_info = None
+        alias_archive_info = None
+
+        documentation: Union[DocumentationMetadataModel, None] = None
+        authors: Union[AuthorsMetadataModel, None] = None
+        context: Union[ContextMetadataModel, None] = None
+
+        if data_archive:
+            data_archive_info = ArchiveInfo.create_from_archive(
+                kiara=kiarchive._kiara, archive=data_archive
+            )
+            documentation = data_archive_info.documentation
+            authors = data_archive_info.authors
+            context = data_archive_info.context
+
+        if alias_archive:
+            alias_archive_info = ArchiveInfo.create_from_archive(
+                kiara=kiarchive._kiara, archive=alias_archive
+            )
+            documentation = data_archive_info.documentation
+            authors = data_archive_info.authors
+            context = data_archive_info.context
+
+        if documentation is None or authors is None or context is None:
+            raise ValueError("No documentation, authors or context found.")
+
+        return KiarchiveInfo(
+            type_name=kiarchive.archive_file_name,
+            data_archive_info=data_archive_info,
+            alias_archive_info=alias_archive_info,
+            documentation=documentation,
+            authors=authors,
+            context=context,
+        )
+
+    data_archive_info: ArchiveInfo = Field(description="The info for the data archive.")
+    alias_archive_info: ArchiveInfo = Field(
+        description="The info for the alias archive."
+    )
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("property", style="i")
+        table.add_column("value")
+
+        table.add_row(
+            "data archive", self.data_archive_info.create_renderable(**config)
+        )
+        table.add_row(
+            "alias archive", self.alias_archive_info.create_renderable(**config)
+        )
 
         return table

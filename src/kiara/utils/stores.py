@@ -6,7 +6,7 @@ if TYPE_CHECKING:
 
 
 def create_new_archive(
-    archive_alias: str,
+    archive_name: str,
     store_base_path: str,
     store_type: str,
     allow_write_access: bool = False,
@@ -29,10 +29,10 @@ def create_new_archive(
 
     force_read_only = not allow_write_access
 
-    archive_instance = archive_cls(archive_alias=archive_alias, archive_config=config, force_read_only=force_read_only)  # type: ignore
+    archive_instance = archive_cls(archive_name=archive_name, archive_config=config, force_read_only=force_read_only)  # type: ignore
 
     if not force_read_only:
-        archive_instance.set_archive_metadata_value("archive_alias", archive_alias)
+        archive_instance.set_archive_metadata_value("archive_alias", archive_name)
 
     return archive_instance
 
@@ -40,6 +40,7 @@ def create_new_archive(
 def check_external_archive(
     archive: Union[str, "KiaraArchive", Iterable[Union["KiaraArchive", str]]],
     allow_write_access: bool = False,
+    archive_name: Union[str, None] = None,
 ) -> Mapping[str, "KiaraArchive"]:
 
     from kiara.context.config import KiaraArchiveReference
@@ -60,11 +61,17 @@ def check_external_archive(
                     raise Exception(
                         "Multiple archives of the same type are not supported."
                     )
+                if archive_name and _archive.archive_alias != archive_name:
+                    raise Exception(
+                        f"Archive alias '{_archive.archive_alias}' does not match expected alias '{archive_name}'"
+                    )
                 archive_instances[archive_type] = _archive
             continue
 
         loaded = KiaraArchiveReference.load_existing_archive(
-            archive_uri=_archive, allow_write_access=allow_write_access
+            archive_uri=_archive,
+            allow_write_access=allow_write_access,
+            archive_name=archive_name,
         )
 
         for _archive_inst in loaded.archives:

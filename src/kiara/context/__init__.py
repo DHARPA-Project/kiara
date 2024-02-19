@@ -173,7 +173,7 @@ class Kiara(object):
 
             config_cls = archive_cls._config_cls
             archive_config = config_cls(**archive.config)
-            archive_obj = archive_cls(archive_alias=archive_alias, archive_config=archive_config)  # type: ignore
+            archive_obj = archive_cls(archive_name=archive_alias, archive_config=archive_config)  # type: ignore
             for supported_type in archive_obj.supported_item_types():
                 if supported_type == "data":
                     self.data_registry.register_data_archive(
@@ -344,9 +344,9 @@ class Kiara(object):
 
             if archive_type == "data":
                 result["data"] = self.data_registry.register_data_archive(_archive_inst)  # type: ignore
-            if archive_type == "alias":
+            elif archive_type == "alias":
                 result["alias"] = self.alias_registry.register_archive(_archive_inst)  # type: ignore
-            if archive_type == "job_record":
+            elif archive_type == "job_record":
                 result["job_record"] = self.job_registry.register_job_archive(_archive_inst)  # type: ignore
             else:
                 raise Exception(f"Can't register archive of type '{archive_type}'.")

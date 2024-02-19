@@ -48,13 +48,13 @@ class SqliteJobArchive(JobArchive):
 
     def __init__(
         self,
-        archive_alias: str,
+        archive_name: str,
         archive_config: SqliteArchiveConfig,
         force_read_only: bool = False,
     ):
 
         super().__init__(
-            archive_alias=archive_alias,
+            archive_name=archive_name,
             archive_config=archive_config,
             force_read_only=force_read_only,
         )

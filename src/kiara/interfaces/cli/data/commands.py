@@ -539,6 +539,10 @@ def filter_value(
     default="zstd",
 )
 @click.option("--append", "-A", help="Append data to existing archive.", is_flag=True)
+@click.option(
+    "--no-default-value", "-nd", help="Do not set a default value.", is_flag=True
+)
+@click.option("--no-aliases", "-na", help="Do not store aliases.", is_flag=True)
 @click.argument("aliases", nargs=-1, required=True)
 @click.pass_context
 @handle_exception()
@@ -549,6 +553,8 @@ def export_data_archive(
     path: Union[str, None],
     compression: str,
     append: bool,
+    no_default_value: bool,
+    no_aliases: bool,
 ):
     """Export one or several values into a new data data_store."""
 
@@ -602,7 +608,7 @@ def export_data_archive(
         terminal_print(f"Creating new archive '{path}'...")
 
         data_store: DataStore = create_new_archive(  # type: ignore
-            archive_alias=archive_alias,
+            archive_name=archive_alias,
             store_base_path=base_path,
             store_type="sqlite_data_store",
             file_name=file_name,
@@ -610,7 +616,7 @@ def export_data_archive(
             allow_write_access=True,
         )
         alias_store: AliasStore = create_new_archive(  # type: ignore
-            archive_alias=archive_alias,
+            archive_name=archive_alias,
             store_base_path=base_path,
             store_type="sqlite_alias_store",
             file_name=file_name,

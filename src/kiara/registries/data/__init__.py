@@ -123,6 +123,10 @@ class DefaultAliasResolver(AliasResolver):
 
     def resolve_alias(self, alias: str) -> uuid.UUID:
 
+        # preprocessing alias
+        if alias.endswith(".kiarchive"):
+            alias = f"archive:{alias}"
+
         if ":" in alias:
             ref_type, rest = alias.split(":", maxsplit=1)
 

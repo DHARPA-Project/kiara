@@ -87,6 +87,7 @@ class KiaraArchiveReference(BaseModel):
         archive_uri: str,
         store_type: Union[str, None, Iterable[str]] = None,
         allow_write_access: bool = False,
+        archive_name: Union[str, None] = None,
         **kwargs: Any,
     ) -> "KiaraArchiveReference":
 
@@ -96,8 +97,6 @@ class KiaraArchiveReference(BaseModel):
 
         archive_configs: List[KiaraArchiveConfig] = []
         archives: List[KiaraArchive] = []
-
-        archive_alias = None
 
         if store_type:
             if isinstance(store_type, str):
@@ -114,7 +113,9 @@ class KiaraArchiveReference(BaseModel):
                     **kwargs,
                 )
                 archive_config = archive_cls._config_cls(**data)
-                archive: KiaraArchive = archive_cls(archive_config=archive_config)
+                archive: KiaraArchive = archive_cls(
+                    archive_config=archive_config, archive_name=archive_name
+                )
                 wrapped_archive_config = KiaraArchiveConfig(
                     archive_type=store_type, config=data
                 )
@@ -134,7 +135,7 @@ class KiaraArchiveReference(BaseModel):
                     )
                     archive_config = archive_cls._config_cls(**data)
                     archive = archive_cls(
-                        archive_config=archive_config, archive_alias=archive_alias
+                        archive_config=archive_config, archive_name=archive_name
                     )
                     wrapped_archive_config = KiaraArchiveConfig(
                         archive_type=st, config=data
@@ -154,7 +155,7 @@ class KiaraArchiveReference(BaseModel):
 
                 archive_config = archive_cls._config_cls(**data)
                 archive = archive_cls(
-                    archive_config=archive_config, archive_alias=archive_alias
+                    archive_config=archive_config, archive_name=archive_name
                 )
                 wrapped_archive_config = KiaraArchiveConfig(
                     archive_type=archive_type, config=data
@@ -779,7 +780,7 @@ class KiaraConfig(BaseSettings):
         if isinstance(context, str) and (
             os.path.exists(context) or context.endswith(".kontext")
         ):
-            context = Path(context)
+            context = Path(os.path.abspath(context))
 
         if isinstance(context, Path):
             if context.name.endswith(".kontext"):

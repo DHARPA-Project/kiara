@@ -8,7 +8,6 @@
 import abc
 import os
 import uuid
-from enum import Enum
 from pathlib import Path
 from typing import (
     TYPE_CHECKING,
@@ -23,8 +22,9 @@ from typing import (
 )
 
 import structlog
-from pydantic import BaseModel, ConfigDict, Field, RootModel
+from pydantic import BaseModel, ConfigDict, Field, RootModel, field_validator
 
+from kiara.defaults import CHUNK_COMPRESSION_TYPE, DEFAULT_CHUNK_COMPRESSION
 from kiara.utils import log_message
 
 try:
@@ -169,10 +169,10 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
         self,
         archive_config: ARCHIVE_CONFIG_CLS,
         force_read_only: bool = False,
-        archive_alias: Union[str, None] = None,
+        archive_name: Union[str, None] = None,
     ):
 
-        self._archive_alias: Union[str, None] = archive_alias
+        self._archive_instance_name: Union[str, None] = archive_name
         self._config: ARCHIVE_CONFIG_CLS = archive_config
         self._force_read_only: bool = force_read_only
 
@@ -232,14 +232,14 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
 
     @property
     def archive_alias(self) -> str:
-        if self._archive_alias:
-            return self._archive_alias
+        if self._archive_instance_name:
+            return self._archive_instance_name
 
         alias = self.get_archive_metadata("archive_alias")
         if not alias:
             alias = str(self.archive_id)
-        self._archive_alias = alias
-        return self._archive_alias  # type: ignore
+        self._archive_instance_name = alias
+        return self._archive_instance_name  # type: ignore
 
     def is_force_read_only(self) -> bool:
         return self._force_read_only
@@ -308,13 +308,13 @@ class BaseArchive(KiaraArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CLS])
 
     def __init__(
         self,
-        archive_alias: str,
+        archive_name: str,
         archive_config: ARCHIVE_CONFIG_CLS,
         force_read_only: bool = False,
     ):
 
         super().__init__(
-            archive_alias=archive_alias,
+            archive_name=archive_name,
             archive_config=archive_config,
             force_read_only=force_read_only,
         )
@@ -423,16 +423,6 @@ class SqliteArchiveConfig(ArchiveConfig):
     )
 
 
-class CHUNK_COMPRESSION_TYPE(Enum):
-    NONE = 0
-    ZSTD = 1
-    LZMA = 2
-    LZ4 = 3
-
-
-DEFAULT_CHUNK_COMPRESSION = "zstd"
-
-
 class SqliteDataStoreConfig(SqliteArchiveConfig):
     @classmethod
     def create_new_store_config(
@@ -487,5 +477,15 @@ class SqliteDataStoreConfig(SqliteArchiveConfig):
 
     default_chunk_compression: Literal["none", "lz4", "zstd", "lzma"] = Field(  # type: ignore
         description="The default compression type to use for data in this store.",
-        default=DEFAULT_CHUNK_COMPRESSION,
+        default=DEFAULT_CHUNK_COMPRESSION.ZSTD.name.lower(),
     )
+
+    @field_validator("default_chunk_compression", mode="before")
+    def validate_compression(cls, v):
+
+        if v is None:
+            v = "none"
+        elif isinstance(v, CHUNK_COMPRESSION_TYPE):
+            v = v.name
+
+        return v.lower()

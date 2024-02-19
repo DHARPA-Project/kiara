@@ -3,19 +3,14 @@
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-from typing import TYPE_CHECKING
 
 import rich_click as click
 
 from kiara.utils.cli import (
-    OutputFormat,
     output_format_option,
     terminal_print_model,
 )
 from kiara.utils.cli.exceptions import handle_exception
-
-if TYPE_CHECKING:
-    pass
 
 
 @click.group()
@@ -40,14 +35,9 @@ def explain_archive(
 
     kiara_api: KiaraAPI = ctx.obj.kiara_api
 
-    infos = kiara_api.get_archive_info(archive)
+    info = kiara_api.retrieve_kiarchive_info(archive)
 
-    if not format or format == OutputFormat.TERMINAL:
-        for info in infos:
-            types = ", ".join(info.archive_type_info.supported_item_types)
-            terminal_print_model(info, in_panel=f"Archive type(s): {types}")
-    else:
-        terminal_print_model(*infos, format=format)
+    terminal_print_model(info, format=format, in_panel=f"Archive info: {archive}")
 
 
 @archive.command("import")

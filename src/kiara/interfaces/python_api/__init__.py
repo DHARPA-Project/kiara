@@ -28,6 +28,7 @@ import structlog
 from ruamel.yaml import YAML
 
 from kiara.defaults import (
+    CHUNK_COMPRESSION_TYPE,
     OFFICIAL_KIARA_PLUGINS,
     VALID_VALUE_QUERY_CATEGORIES,
     VALUE_ATTR_DELIMITER,
@@ -89,13 +90,14 @@ from kiara.utils.string_vars import replace_var_names_in_obj
 
 if TYPE_CHECKING:
     from kiara.context import Kiara, KiaraConfig, KiaraRuntimeConfig
+    from kiara.interfaces.python_api.models.archive import Kiarchive
     from kiara.interfaces.python_api.models.doc import (
         OperationsMap,
         PipelinesMap,
         WorkflowsMap,
     )
     from kiara.interfaces.python_api.workflow import Workflow
-    from kiara.models.archives import ArchiveInfo
+    from kiara.models.archives import KiarchiveInfo
     from kiara.models.module.pipeline import PipelineConfig, PipelineStructure
     from kiara.models.module.pipeline.pipeline import PipelineGroupInfo, PipelineInfo
 
@@ -406,7 +408,7 @@ class KiaraAPI(object):
         """
         Create a new context.
 
-        NOTE: this functionality might be changed in the future, depending on requirements and feedback and whether we want to support single-file contexts in the future.
+        NOTE: this functionality might be changed in the future, depending on requirements and feedback and whether we want to support single-file contexts in the future. So if you need something like this, please let me know.
 
         Arguments:
             context_name: the name of the new context
@@ -421,6 +423,8 @@ class KiaraAPI(object):
         if set_active:
             self._current_context = ctx
             self._current_context_alias = context_name
+
+        return ctx
 
     def set_active_context(self, context_name: str, create: bool = False) -> None:
         """Set the currently active context for this KiarAPI instance.
@@ -447,25 +451,6 @@ class KiaraAPI(object):
             context=context_name, extra_pipelines=None
         )
         self._current_context_alias = context_name
-
-    # ==================================================================================================================
-    # methods for archives
-
-    def get_archive_info(self, archive_file: str) -> List["ArchiveInfo"]:
-
-        from kiara.context.config import KiaraArchiveReference
-        from kiara.models.archives import ArchiveInfo
-
-        archive_ref = KiaraArchiveReference.load_existing_archive(archive_file)
-
-        result = []
-        for archive in archive_ref.archives:
-            info = ArchiveInfo.create_from_instance(
-                kiara=self.context, instance=archive
-            )
-            result.append(info)
-
-        return result
 
     # ==================================================================================================================
     # methods for data_types
@@ -1709,6 +1694,7 @@ class KiaraAPI(object):
         value: Union[str, uuid.UUID, Value],
         alias: Union[str, Iterable[str], None],
         allow_overwrite: bool = True,
+        store: Union[str, None] = None,
         data_store: Union[str, None] = None,
         alias_store: Union[str, None] = None,
     ) -> StoreValueResult:
@@ -1726,14 +1712,21 @@ class KiaraAPI(object):
             value: the value (or a reference to it)
             alias: (Optional) one or several aliases for the value
             allow_overwrite: whether to allow overwriting existing aliases
-            data_store: the alias (or archive id as string) of the store to write the data
-            alias_store: the alias (or archive id as string) of the store to persist the alias(es)/value_id mapping
+            store: in case data and alias store names are the same, you can use this, if you specify one or both of the others, this will be overwritten
+            data_store: the registered name (or archive id as string) of the store to write the data
+            alias_store: the registered name (or archive id as string) of the store to persist the alias(es)/value_id mapping
         """
         if isinstance(alias, str):
             alias = [alias]
 
         value_obj = self.get_value(value)
         persisted_data: Union[None, PersistedData] = None
+
+        if not data_store:
+            data_store = store
+        if not alias_store:
+            alias_store = store
+
         try:
             persisted_data = self.context.data_registry.store_value(
                 value=value_obj, data_store=data_store
@@ -1772,6 +1765,7 @@ class KiaraAPI(object):
         ],
         alias_map: Union[Mapping[str, Iterable[str]], bool, str] = False,
         allow_overwrite: bool = True,
+        store: Union[str, None] = None,
         data_store: Union[str, None] = None,
         alias_store: Union[str, None] = None,
     ) -> StoreValuesResult:
@@ -1796,10 +1790,20 @@ class KiaraAPI(object):
         Arguments:
             values: an iterable/map of value keys/values
             alias_map: a map of value keys aliases
+            allow_overwrite: whether to allow overwriting existing aliases
+            store: in case data and alias store names are the same, you can use this, if you specify one or both of the others, this will be overwritten
+            data_store: the registered name (or archive id as string) of the store to write the data
+            alias_store: the registered name (or archive id as string) of the store to persist the alias(es)/value_id mapping
 
         Returns:
             an object outlining which values (identified by the specified value key or an enumerated index) where stored and how
         """
+
+        if not data_store:
+            data_store = store
+
+        if not alias_store:
+            alias_store = store
 
         result = {}
         if not isinstance(values, Mapping):
@@ -1859,6 +1863,136 @@ class KiaraAPI(object):
                 result[field_name] = store_result
 
         return StoreValuesResult(root=result)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # archive-related methods
+
+    # def create_kiarchive(
+    #     self,
+    #     kiarchive_uri: Union[str, Path],
+    #     archive_alias: Union[str, None] = None,
+    #     compression: CHUNK_COMPRESSION_TYPE = CHUNK_COMPRESSION_TYPE.ZSTD,
+    #     allow_existing: bool = False,
+    #     allow_write_access: bool = True,
+    # ) -> str:
+    #     """Create a new kiarchive in a file at the specified path, containing a data & alias store.
+    #
+    #     # NOTE: this is a preliminary endpoint, and might be changed in the future. If you have a use-case for this, please let me know.
+    #
+    #     Arguments:
+    #         kiarchive_uri: the uri of the archive (file path)
+    #         archive_alias: the alias to use for the archive
+    #         compression: the compression to use for the archive
+    #         allow_existing: whether to allow a kiarchive to already exist at the location, and load that instead of creating a new one
+    #         register_archive: whether to register the archive with the context
+    #         register_alias: the alias to use for the archive in the context
+    #         allow_write_access: whether to allow write access to the archive
+    #
+    #     Returns:
+    #         the name/alias that the archive was registered with
+    #
+    #     """
+    #     from kiara.interfaces.python_api.models.archive import Kiarchive
+    #
+    #     kiarchive = Kiarchive.create_kiarchive(
+    #         kiara=self.context,
+    #         kiarchive_uri=kiarchive_uri,
+    #         allow_existing=allow_existing,
+    #         archive_alias=archive_alias,
+    #         compression=compression,
+    #         allow_write_access=allow_write_access,
+    #     )
+    #
+    #     result = self.register_kiarchive(
+    #         kiarchive=kiarchive, allow_write_access=allow_write_access
+    #     )
+    #     return result
+
+    def register_kiarchive(
+        self,
+        kiarchive: Union[str, Path, "Kiarchive"],
+        allow_write_access: bool = False,
+        registered_name: Union[str, None] = None,
+    ) -> str:
+        """Register a kiarchive with the current context.
+
+        In most cases, this will be used to 'load' an existing kiarchive file and attach it to the current context.
+        If the file does not exist, one will be created, with the filename (without '.kiarchive' suffix) as the archive name if not specified.
+
+        In the future this might also take a URL, but for now only local files are supported.
+
+        # NOTE: this is a preliminary endpoint, and might be changed in the future. If you have a use-case for this, please let me know.
+
+        Arguments:
+            kiarchive: the uri of the archive (file path), or a [Kiarchive][kiara.interfaces.python_api.models.archive.Kiarchive] instance
+            allow_write_access: whether to allow write access to the archive
+
+        Returns:
+            the name/alias that the archive was registered with
+        """
+        from kiara.interfaces.python_api.models.archive import Kiarchive
+
+        if isinstance(kiarchive, str):
+            kiarchive = Path(kiarchive)
+
+        if isinstance(kiarchive, Path):
+
+            if kiarchive.exists():
+                kiarchive = Kiarchive.load_kiarchive(
+                    kiara=self.context, path=kiarchive, archive_name=registered_name
+                )
+            else:
+                kiarchive_alias = kiarchive.name
+                if kiarchive_alias.endswith(".kiarchive"):
+                    kiarchive_alias = kiarchive_alias[:-10]
+
+                kiarchive = Kiarchive.create_kiarchive(
+                    kiara=self.context,
+                    kiarchive_uri=kiarchive.as_posix(),
+                    allow_existing=False,
+                    archive_name=kiarchive_alias,
+                    compression=CHUNK_COMPRESSION_TYPE.ZSTD,
+                    allow_write_access=allow_write_access,
+                )
+
+        data_alias = self.context.register_external_archive(
+            kiarchive.data_archive,
+            allow_write_access=allow_write_access,
+        )
+        alias_alias = self.context.register_external_archive(
+            kiarchive.alias_archive, allow_write_access=allow_write_access
+        )
+        assert data_alias["data"] == alias_alias["alias"]
+        assert kiarchive.archive_name == data_alias["data"]
+
+        return kiarchive.archive_name
+
+    def retrieve_kiarchive_info(
+        self, kiarchive: Union[str, "Kiarchive"]
+    ) -> "KiarchiveInfo":
+        """Retrieve information about a kiarchive at the specified location.
+
+        The kiarchive can't be registered into the context, this might change in the future.
+
+        # NOTE: this is a preliminary endpoint, and might be changed in the future. If you have a use-case for this, please let me know.
+
+        Arguments:
+            kiarchive: the uri of the archive (file path)
+
+        Returns:
+            a [KiarchiveInfo][kiara.interfaces.python_api.models.archive.KiarchiveInfo] instance, containing details about the kiarchive
+        """
+
+        from kiara.interfaces.python_api.models.archive import Kiarchive
+        from kiara.models.archives import KiarchiveInfo
+
+        if not isinstance(kiarchive, Kiarchive):
+            kiarchive = Kiarchive.load_kiarchive(kiara=self.context, path=kiarchive)
+
+        kiarchive_info = KiarchiveInfo.create_from_instance(
+            kiara=self.context, instance=kiarchive
+        )
+        return kiarchive_info
 
     # ------------------------------------------------------------------------------------------------------------------
     # operation-related methods

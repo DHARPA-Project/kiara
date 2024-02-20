@@ -446,17 +446,6 @@ max-complexity = 10
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.pyright]
-include = ["src"]
-exclude = ["**/__pycache__"]
-ignore = []
-
-reportMissingImports = true
-reportMissingTypeStubs = false
-
-executionEnvironments = [
-]
-
 [tool.mypy]
 python_version = "3.9"
 warn_return_any = true
@@ -525,3 +514,17 @@ module = [
     "zstandard"
 ]
 ignore_missing_imports = true
+
+[tool.pyright]
+pythonVersion = "3.9"
+pythonPlatform = "Linux"
+
+include = ["src"]
+exclude = ["**/__pycache__"]
+ignore = []
+
+reportMissingImports = false
+reportMissingTypeStubs = false
+
+executionEnvironments = [
+]

@@ -481,7 +481,7 @@ class SqliteDataStoreConfig(SqliteArchiveConfig):
 
     default_chunk_compression: Literal["none", "lz4", "zstd", "lzma"] = Field(  # type: ignore
         description="The default compression type to use for data in this store.",
-        default=DEFAULT_CHUNK_COMPRESSION.ZSTD.name.lower(),
+        default=DEFAULT_CHUNK_COMPRESSION.ZSTD.name.lower(),  # type: ignore
     )
 
     @field_validator("default_chunk_compression", mode="before")

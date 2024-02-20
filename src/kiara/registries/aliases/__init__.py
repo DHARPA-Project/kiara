@@ -213,14 +213,23 @@ class AliasRegistry(object):
         return self._alias_archives
 
     def get_archive(
-        self, archive_alias: Union[str, None] = None
+        self, archive_alias: Union[str, None, uuid.UUID] = None
     ) -> Union[AliasArchive, None]:
         if archive_alias in (None, DEFAULT_STORE_MARKER, DEFAULT_ALIAS_STORE_MARKER):
             archive_alias = self.default_alias_store
             if archive_alias is None:
                 raise Exception("Can't retrieve default alias archive, none set (yet).")
 
-        archive = self._alias_archives.get(archive_alias, None)
+        archive = self._alias_archives.get(archive_alias, None)  # type: ignore
+        if archive is None:
+            if isinstance(archive_alias, str):
+                try:
+                    archive_alias = uuid.UUID(archive_alias)
+                except Exception:
+                    pass
+            for a in self._alias_archives.values():
+                if a.archive_id == archive_alias:
+                    return a
         return archive
 
     @property

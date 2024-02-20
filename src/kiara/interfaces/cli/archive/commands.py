@@ -50,7 +50,7 @@ def explain_archive(
     "-c",
     help="The compression inside the archive. If not provided, 'zstd' will be used. Ignored if archive already exists and 'append' is used.",
     type=click.Choice(["zstd", "lz4", "lzma", "none"]),
-    default=DEFAULT_CHUNK_COMPRESSION.ZSTD.name.lower(),
+    default=DEFAULT_CHUNK_COMPRESSION.ZSTD.name.lower(),  # type: ignore
 )
 @click.option("--append", "-a", help="Append data to existing archive.", is_flag=True)
 @click.option("--no-aliases", "-na", help="Do not store aliases.", is_flag=True)
@@ -71,7 +71,13 @@ def export_archive(ctx, path: str, compression: str, append: bool, no_aliases: b
     )
 
     render_config = {"add_field_column": False}
-    terminal_print_model(result, **render_config)
+    terminal_print_model(
+        result,
+        format="terminal",
+        empty_line_before=None,
+        in_panel="Exported values",
+        **render_config,
+    )
 
 
 @archive.command("import")
@@ -89,4 +95,10 @@ def import_archive(ctx, path: str, no_aliases: bool):
     result = kiara_api.import_archive(source_archive=path, no_aliases=no_aliases)
 
     render_config = {"add_field_column": False}
-    terminal_print_model(result, **render_config)
+    terminal_print_model(
+        result,
+        format="terminal",
+        empty_line_before=None,
+        in_panel="Imported values",
+        **render_config,
+    )

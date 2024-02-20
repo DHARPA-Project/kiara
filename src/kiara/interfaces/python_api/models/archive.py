@@ -10,8 +10,8 @@ from kiara.models import KiaraModel
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
-    from kiara.registries.aliases import AliasArchive
-    from kiara.registries.data import DataArchive
+    from kiara.registries.aliases import AliasArchive, AliasStore
+    from kiara.registries.data import DataArchive, DataStore
 
 
 class KiArchive(KiaraModel):
@@ -41,15 +41,15 @@ class KiArchive(KiaraModel):
         )
 
         if "data" in archives.keys():
-            data_archive: Union[DataArchive, None] = archives["data"]
-            data_archive_config = data_archive.config.model_dump()
+            data_archive: Union[DataArchive, None] = archives["data"]  # type: ignore
+            data_archive_config: Union[Mapping[str, Any], None] = data_archive.config.model_dump()  # type: ignore
         else:
             data_archive_config = None
             data_archive = None
 
         if "alias" in archives.keys():
-            alias_archive: Union[AliasArchive, None] = archives["alias"]
-            alias_archive_config = alias_archive.config.model_dump()
+            alias_archive: Union[AliasArchive, None] = archives["alias"]  # type: ignore
+            alias_archive_config: Union[Mapping[str, Any], None] = alias_archive.config.model_dump()  # type: ignore
         else:
             alias_archive_config = None
             alias_archive = None
@@ -121,7 +121,7 @@ class KiArchive(KiaraModel):
         kiara: "Kiara",
         kiarchive_uri: Union[str, Path],
         archive_name: Union[str, None] = None,
-        compression: CHUNK_COMPRESSION_TYPE = CHUNK_COMPRESSION_TYPE.ZSTD,
+        compression: Union[CHUNK_COMPRESSION_TYPE, str] = CHUNK_COMPRESSION_TYPE.ZSTD,
         allow_write_access: bool = True,
         allow_existing: bool = False,
     ) -> "KiArchive":
@@ -138,13 +138,16 @@ class KiArchive(KiaraModel):
             if not allow_existing:
                 raise FileExistsError(f"Archive file '{kiarchive_uri}' already exists.")
             kiarchive = cls.load_kiarchive(
-                path=kiarchive_uri, allow_write_access=allow_write_access
+                kiara=kiara, path=kiarchive_uri, allow_write_access=allow_write_access
             )
         else:
             from kiara.utils.stores import create_new_archive
 
             archive_base_path = kiarchive_uri.parent.as_posix()
             archive_file_name = kiarchive_uri.name
+
+            if isinstance(compression, str):
+                compression = CHUNK_COMPRESSION_TYPE[compression.upper()]
 
             data_store: DataStore = create_new_archive(  # type: ignore
                 archive_name=archive_name,
@@ -224,8 +227,10 @@ class KiArchive(KiaraModel):
     @property
     def alias_archive(self) -> "AliasArchive":
 
-        if self._alias_archive:
+        if self._alias_archive is not None:
             return self._alias_archive
+
+        from kiara.utils.stores import create_new_archive
 
         alias_archive: AliasStore = create_new_archive(  # type: ignore
             archive_alias=self.archive_name,

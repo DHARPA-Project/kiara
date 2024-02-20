@@ -216,7 +216,7 @@ class KiaraArchiveReference(BaseModel):
             )
             archive_config = archive_cls._config_cls(**archive_config_data)
             archive = archive_cls(
-                archive_config=archive_config, archive_alias=archive_alias
+                archive_config=archive_config, archive_name=archive_alias
             )
             result.append(archive)
 

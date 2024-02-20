@@ -103,6 +103,7 @@ if TYPE_CHECKING:
     from kiara.models.archives import KiArchiveInfo
     from kiara.models.module.pipeline import PipelineConfig, PipelineStructure
     from kiara.models.module.pipeline.pipeline import PipelineGroupInfo, PipelineInfo
+    from kiara.registries import KiaraArchive
 
 logger = structlog.getLogger()
 yaml = YAML(typ="safe")
@@ -427,7 +428,7 @@ class KiaraAPI(object):
             self._current_context = ctx
             self._current_context_alias = context_name
 
-        return ctx
+        # return ctx
 
     def set_active_context(self, context_name: str, create: bool = False) -> None:
         """Set the currently active context for this KiarAPI instance.
@@ -1919,10 +1920,10 @@ class KiaraAPI(object):
         if isinstance(archive, str):
             archive = Path(archive)
 
-        if not archive.name.endswith(".kiarchive"):
-            archive = archive.parent / f"{archive.name}.kiarchive"
-
         if isinstance(archive, Path):
+
+            if not archive.name.endswith(".kiarchive"):
+                archive = archive.parent / f"{archive.name}.kiarchive"
 
             if archive.exists():
                 if not existing_ok:
@@ -1980,13 +1981,17 @@ class KiaraAPI(object):
     ) -> None:
 
         if archive_type == "data":
-            self.context.data_registry.get_archive(archive).set_archive_metadata_value(
-                key, value
-            )
+            _archive: Union[
+                None, KiaraArchive
+            ] = self.context.data_registry.get_archive(archive)
+            if _archive is None:
+                raise KiaraException(f"Archive '{archive}' does not exist.")
+            _archive.set_archive_metadata_value(key, value)
         elif archive_type == "alias":
-            self.context.alias_registry.get_archive(archive).set_archive_metadata_value(
-                key, value
-            )
+            _archive = self.context.alias_registry.get_archive(archive)
+            if _archive is None:
+                raise KiaraException(f"Archive '{archive}' does not exist.")
+            _archive.set_archive_metadata_value(key, value)
         else:
             raise KiaraException(
                 f"Invalid archive type: {archive_type}. Valid types are: 'data', 'alias'."
@@ -2028,13 +2033,23 @@ class KiaraAPI(object):
         no_aliases: bool = False,
         target_store_params: Union[None, Mapping[str, Any]] = None,
     ) -> StoreValuesResult:
-        """Export all data from the default context store into the specfied archive path.
+        """Export all data from the default store in your context into the specfied archive path.
 
         The target archives will be registered into the context, either using the provided registered_name, or the name
         will be auto-determined from the archive metadata.
 
         Currently, this only works with an external archive file, not with an archive that is already registered into the context.
         This will be added later on.
+
+        Also, currently you can only export all data from the default store, there is no way to select only a sub-set. This will
+        also be supported later on.
+
+        The one supported value for the 'target_store_params' argument currently is 'compression', which can be one of:
+
+        - zstd: zstd compression (default) -- fairly fast, and good compression
+        - none: no compression
+        - LZMA: LZMA compression -- very slow, but very good compression
+        - LZ4: LZ4 compression -- very fast, but not as good compression as zstd
 
         This method does not raise an error if the storing of the value fails, so you have to investigate the
         'StoreValuesResult' instance that is returned to see if the storing was successful
@@ -2053,6 +2068,7 @@ class KiaraAPI(object):
         result = self.copy_archive(
             source_archive=DEFAULT_STORE_MARKER,
             target_archive=target_archive,
+            target_registered_name=target_registered_name,
             append=append,
             target_store_params=target_store_params,
             no_aliases=no_aliases,
@@ -2073,6 +2089,9 @@ class KiaraAPI(object):
         Currently, this only works with an external archive file, not with an archive that is registered into the context.
         This will be added later on.
 
+        Also, currently you can only import all data into the default store, there is no way to select only a sub-set. This will
+        also be supported later on.
+
         This method does not raise an error if the storing of the value fails, so you have to investigate the
         'StoreValuesResult' instance that is returned to see if the storing was successful
 
@@ -2089,6 +2108,7 @@ class KiaraAPI(object):
         result = self.copy_archive(
             source_archive=source_archive,
             target_archive=DEFAULT_STORE_MARKER,
+            source_registered_name=source_registered_name,
             no_aliases=no_aliases,
         )
         return result
@@ -2111,6 +2131,13 @@ class KiaraAPI(object):
         Currently, this only works with an external archive file, not with an archive that is registered into the context.
         This will be added later on.
 
+        The one supported value for the 'target_store_params' argument currently is 'compression', which can be one of:
+
+        - zstd: zstd compression (default) -- fairly fast, and good compression
+        - none: no compression
+        - LZMA: LZMA compression -- very slow, but very good compression
+        - LZ4: LZ4 compression -- very fast, but not as good compression as zstd
+
         This method does not raise an error if the storing of the value fails, so you have to investigate the
         'StoreValuesResult' instance that is returned to see if the storing was successful
 
@@ -2132,7 +2159,7 @@ class KiaraAPI(object):
             source_archive_ref = DEFAULT_STORE_MARKER
         else:
             source_archive_ref = self.register_archive(
-                archive=source_archive,
+                archive=source_archive,  # type: ignore
                 registered_name=source_registered_name,
                 create_if_not_exists=False,
                 existing_ok=True,
@@ -2144,7 +2171,7 @@ class KiaraAPI(object):
             if target_store_params is None:
                 target_store_params = {}
             target_archive_ref = self.register_archive(
-                archive=target_archive,
+                archive=target_archive,  # type: ignore
                 registered_name=target_registered_name,
                 create_if_not_exists=True,
                 allow_write_access=True,
@@ -2170,13 +2197,13 @@ class KiaraAPI(object):
                     # TODO: maybe add a matcher arg to the list_aliases endpoint
                     if not alias.startswith(f"{source_archive_ref}#"):
                         continue
-                    alias_map.setdefault(str(value.value_id), []).append(
+                    alias_map.setdefault(str(value.value_id), []).append(  # type: ignore
                         alias[len(source_archive_ref) + 1 :]
                     )
                 else:
                     if "#" in alias:
                         continue
-                    alias_map.setdefault(str(value.value_id), []).append(alias)
+                    alias_map.setdefault(str(value.value_id), []).append(alias)  # type: ignore
         else:
             alias_map = False
 

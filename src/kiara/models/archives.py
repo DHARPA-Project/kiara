@@ -330,12 +330,14 @@ class KiArchiveInfo(ItemInfo):
         return KiArchive
 
     @classmethod
-    def create_from_instance(cls, kiara: "Kiara", instance: "KiArchive", **kwargs):
+    def create_from_instance(
+        cls, kiara: "Kiara", instance: "KiArchive", **kwargs
+    ) -> "KiArchiveInfo":
 
         return cls.create_from_kiarchive(kiarchive=instance, **kwargs)
 
     @classmethod
-    def create_from_kiarchive(cls, kiarchive: "KiArchive"):
+    def create_from_kiarchive(cls, kiarchive: "KiArchive") -> "KiArchiveInfo":
 
         data_archive = kiarchive.data_archive
         alias_archive = kiarchive.alias_archive
@@ -347,9 +349,13 @@ class KiArchiveInfo(ItemInfo):
         authors: Union[AuthorsMetadataModel, None] = None
         context: Union[ContextMetadataModel, None] = None
 
+        _kiara = kiarchive._kiara
+        if _kiara is None:
+            raise ValueError("No kiara instance attached to kiarchive instance.")
+
         if data_archive:
             data_archive_info = ArchiveInfo.create_from_archive(
-                kiara=kiarchive._kiara, archive=data_archive
+                kiara=_kiara, archive=data_archive
             )
             documentation = data_archive_info.documentation
             authors = data_archive_info.authors
@@ -357,11 +363,12 @@ class KiArchiveInfo(ItemInfo):
 
         if alias_archive:
             alias_archive_info = ArchiveInfo.create_from_archive(
-                kiara=kiarchive._kiara, archive=alias_archive
+                kiara=_kiara, archive=alias_archive
             )
-            documentation = data_archive_info.documentation
-            authors = data_archive_info.authors
-            context = data_archive_info.context
+            # TODO: should we separate those per archive?
+            documentation = alias_archive_info.documentation
+            authors = alias_archive_info.authors
+            context = alias_archive_info.context
 
         if documentation is None or authors is None or context is None:
             raise ValueError("No documentation, authors or context found.")

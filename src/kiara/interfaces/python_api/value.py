@@ -110,5 +110,15 @@ class StoreValuesResult(RootModel):
 
         return table
 
+    @property
+    def errors(self) -> Dict[str, str]:
+
+        result = {}
+        for field_name, value_result in self.root.items():
+            if value_result.error:
+                result[field_name] = value_result.error
+
+        return result
+
     def __len__(self):
         return len(self.root)

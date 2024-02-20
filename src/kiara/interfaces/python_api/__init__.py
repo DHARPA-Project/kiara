@@ -1786,17 +1786,37 @@ class KiaraAPI(object):
         Store multiple values into the (default) kiara value store.
 
         Convenience method to store multiple values. In a lot of cases you can be more flexible if you
-        loop over the values on the frontend side, and call the 'store_value' method for each value.
+        loop over the values on the frontend side, and call the 'store_value' method for each value. But this might be meaningfully slower. This method has the potential to be optimized in the future.
 
-        If you provide a non-mapping interable as 'values', the 'alias_map' argument must either be 'False', or a
-        map with a stringified uuid referring to the value in question as key, and a list of aliases as value.
+        You have several options to provide the values and aliases you want to store:
 
-        If you use a mapping type as 'values':
+        - as a (non-mapping) iterable of value items, those can either be:
 
-        If alias_map is 'False', no aliases will be registered. If 'True', the key in the 'values' argument will be used. If the value is a string, all keys from the 'values' map will be used as alias, prefixed with the value of 'alias_map' + '.'.
-        Alternatively, if another mapping is provided for 'alias_map', the key in the 'values' argument will be used to look up the alias(es) in the 'alias_map' argument, by looking up that key.
+          - a value id (as string or uuid)
+          - a value alias (as string)
+          - a value instance
 
-        Sorry, this is a bit convoluted, but it's the only way I could think of to make this work for all the requirements I had. In most keases, you'll only have to use 'True' or 'False' here, hopefully.
+        If you do that, then the 'alias_map' argument can either be:
+
+          - 'False', in which case no aliases will be registered
+          - 'True', in which case all items in the 'values' iterable must be a valid alias, and the alias will be copied without change to the new store
+          - a 'string', in which case all items in the 'values' iterable also must be a valid alias, and the alias that will be registered in the new store will use the string value as prefix (e.g. 'alias_map' = 'experiment1' and 'values' = ['a', 'b'] will result in the aliases 'experiment1.a' and 'experiment1.b')
+          - a map that uses the stringi-fied uuid of the value that should get one or several aliases as key, and a list of aliases as values
+
+        You can also use a mapping type (like a dict) for the 'values' argument. In this case, the key is a string, and the value can be:
+
+          - a value id (as string or uuid)
+          - a value alias (as string)
+          - a value instance
+
+        In this case, the meaning of the 'alias_map' is as follows:
+
+          - 'False': no aliases will be registered
+          - 'True': the key in the 'values' argument will be used as alias
+          - a string: all keys from the 'values' map will be used as alias, prefixed with the value of 'alias_map'
+          - another map, with a string referring to the key in the 'values' argument as key, and a list of aliases (strings) as value
+
+        Sorry, this is all a bit convoluted, but it's the only way I could think of to make this work for all the requirements I had. In most keases, you'll only have to use 'True' or 'False' here, hopefully.
 
         This method does not raise an error if the storing of the value fails, so you have to investigate the
         'StoreValuesResult' instance that is returned to see if the storing was successful.
@@ -1811,6 +1831,7 @@ class KiaraAPI(object):
 
         Returns:
             an object outlining which values (identified by the specified value key or an enumerated index) where stored and how
+
         """
 
         if not data_store:
@@ -1824,9 +1845,40 @@ class KiaraAPI(object):
             if not alias_map:
                 use_aliases = False
             elif alias_map and (alias_map is True or isinstance(alias_map, str)):
-                raise KiaraException(
-                    msg="Cannot use auto-aliases with non-mapping iterable."
-                )
+
+                invalid: List[Union[str, uuid.UUID, Value]] = []
+                valid: Dict[str, List[str]] = {}
+                for value in values:
+                    if not isinstance(value, str):
+                        invalid.append(value)
+                        continue
+                    value_id = self.context.alias_registry.find_value_id_for_alias(
+                        alias=value
+                    )
+                    if value_id is None:
+                        invalid.append(value)
+                    else:
+                        if alias_map is True:
+                            if "#" in value:
+                                new_alias = value.split("#")[1]
+                            else:
+                                new_alias = value
+                            valid.setdefault(str(value_id), []).append(new_alias)
+                        else:
+                            if "#" in value:
+                                new_alias = value.split("#")[1]
+                            else:
+                                new_alias = value
+                            new_alias = f"{alias_map}{new_alias}"
+                            valid.setdefault(str(value_id), []).append(new_alias)
+                if invalid:
+                    invalid_str = ", ".join((str(x) for x in invalid))
+                    raise KiaraException(
+                        msg=f"Cannot use auto-aliases with non-mapping iterable, some items are not valid aliases: {invalid_str}"
+                    )
+                else:
+                    alias_map = valid
+                    use_aliases = True
             else:
                 use_aliases = True
 
@@ -1931,7 +1983,10 @@ class KiaraAPI(object):
                         f"Archive file '{archive.as_posix()}' already exists."
                     )
                 archive = KiArchive.load_kiarchive(
-                    kiara=self.context, path=archive, archive_name=registered_name
+                    kiara=self.context,
+                    path=archive,
+                    archive_name=registered_name,
+                    allow_write_access=allow_write_access,
                 )
                 log_message("archive.loaded", archive_name=archive.archive_name)
             else:

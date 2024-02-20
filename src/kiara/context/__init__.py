@@ -344,10 +344,25 @@ class Kiara(object):
 
             if archive_type == "data":
                 result["data"] = self.data_registry.register_data_archive(_archive_inst)  # type: ignore
+                log_message(
+                    "archive.registered",
+                    archive=_archive_inst.archive_name,
+                    archive_type="data",
+                )
             elif archive_type == "alias":
                 result["alias"] = self.alias_registry.register_archive(_archive_inst)  # type: ignore
+                log_message(
+                    "archive.registered",
+                    archive=_archive_inst.archive_name,
+                    archive_type="alias",
+                )
             elif archive_type == "job_record":
                 result["job_record"] = self.job_registry.register_job_archive(_archive_inst)  # type: ignore
+                log_message(
+                    "archive.registered",
+                    archive=_archive_inst.archive_name,
+                    archive_type="job_record",
+                )
             else:
                 raise Exception(f"Can't register archive of type '{archive_type}'.")
 

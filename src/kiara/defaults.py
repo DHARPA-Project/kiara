@@ -89,6 +89,7 @@ INVALID_ALIAS_NAMES = [
     "kiarchive",
 ]
 """List of reserved names, inputs/outputs can't use those."""
+DEFAULT_STORE_MARKER = "default_store"
 
 DEFAULT_DATA_STORE_MARKER = "default_data_store"
 """Name for the default context data store."""

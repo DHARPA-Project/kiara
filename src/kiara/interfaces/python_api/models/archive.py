@@ -9,6 +9,7 @@ from kiara.defaults import CHUNK_COMPRESSION_TYPE
 from kiara.models import KiaraModel
 
 if TYPE_CHECKING:
+    from kiara.context import Kiara
     from kiara.registries.aliases import AliasArchive
     from kiara.registries.data import DataArchive
 
@@ -92,6 +93,27 @@ class KiArchive(KiaraModel):
         kiarchive._kiara = kiara
 
         return kiarchive
+
+    # @classmethod
+    # def load_default_kiarchive(cls, kiara: "Kiara") -> "KiArchive":
+    #
+    #     default_data_store = kiara.data_registry.get_archive()
+    #     default_alias_store = kiara.alias_registry.get_archive()
+    #
+    #     kiarchive = KiArchive(
+    #         archive_id=kiara.id,
+    #         archive_name=DEFAULT_STORE_MARKER,
+    #         data_archive_config=default_data_store.config.model_dump(),
+    #         alias_archive_config=default_alias_store.config.model_dump(),
+    #         archive_base_path="__invalid_path__",
+    #         archive_file_name="__invalid_file_name__",
+    #         allow_write_access=True,
+    #     )
+    #     kiarchive._data_archive = default_data_store
+    #     kiarchive._alias_archive = default_alias_store
+    #     kiarchive._kiara = kiara
+    #
+    #     return kiarchive
 
     @classmethod
     def create_kiarchive(

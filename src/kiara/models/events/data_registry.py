@@ -52,3 +52,6 @@ class ValueStoredEvent(RegistryEvent):
 
     event_type: Literal["value_stored"] = "value_stored"
     value: Value = Field(description="The value metadata.")
+    storing_required: bool = Field(
+        description="Whether the value was stored or existed already."
+    )

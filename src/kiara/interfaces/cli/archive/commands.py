@@ -5,6 +5,10 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import rich_click as click
 
+from kiara.defaults import (
+    CHUNK_COMPRESSION_TYPE,
+    DEFAULT_CHUNK_COMPRESSION,
+)
 from kiara.utils.cli import (
     output_format_option,
     terminal_print_model,
@@ -39,25 +43,50 @@ def explain_archive(
     terminal_print_model(info, format=format, in_panel=f"Archive info: {archive}")
 
 
-@archive.command("import")
-@click.argument("archive", nargs=1, required=True)
-# @click.option(
-#     "--all-values",
-#     "-a",
-#     is_flag=True,
-#     default=False,
-#     help="Import all values from the archive, even if they don't have an alias associated with them.",
-# )
+@archive.command("export")
+@click.argument("path", nargs=1, required=True)
+@click.option(
+    "--compression",
+    "-c",
+    help="The compression inside the archive. If not provided, 'zstd' will be used. Ignored if archive already exists and 'append' is used.",
+    type=click.Choice(["zstd", "lz4", "lzma", "none"]),
+    default=DEFAULT_CHUNK_COMPRESSION.ZSTD.name.lower(),
+)
+@click.option("--append", "-a", help="Append data to existing archive.", is_flag=True)
+@click.option("--no-aliases", "-na", help="Do not store aliases.", is_flag=True)
 @click.pass_context
 @handle_exception()
-def import_archive(ctx, archive: str, all_values: bool = False):
+def export_archive(ctx, path: str, compression: str, append: bool, no_aliases: bool):
+
+    from kiara.api import KiaraAPI
+
+    api: KiaraAPI = ctx.obj.kiara_api
+
+    target_store_params = {"compression": CHUNK_COMPRESSION_TYPE[compression.upper()]}
+    result = api.export_archive(
+        target_archive=path,
+        append=append,
+        target_store_params=target_store_params,
+        no_aliases=no_aliases,
+    )
+
+    render_config = {"add_field_column": False}
+    terminal_print_model(result, **render_config)
+
+
+@archive.command("import")
+@click.argument("path", nargs=1, required=True)
+@click.option("--no-aliases", "-na", help="Do not store aliases.", is_flag=True)
+@click.pass_context
+@handle_exception()
+def import_archive(ctx, path: str, no_aliases: bool):
     """Import an archive file."""
 
     from kiara.interfaces.python_api import KiaraAPI
 
     kiara_api: KiaraAPI = ctx.obj.kiara_api
 
-    result = kiara_api.import_archive(archive)
+    result = kiara_api.import_archive(source_archive=path, no_aliases=no_aliases)
 
     render_config = {"add_field_column": False}
     terminal_print_model(result, **render_config)

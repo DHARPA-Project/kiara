@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Any, List, Union
 
 from pydantic import Field, field_validator
 
+from kiara.defaults import DEFAULT_DATA_STORE_MARKER, DEFAULT_STORE_MARKER
 from kiara.models import KiaraModel
 from kiara.models.values.value import Value
 
@@ -39,6 +40,23 @@ class ValueMatcher(KiaraModel):
         description="A list of registered names of archives the value must be in. If 'None', all archives will be used.",
         default=None,
     )
+
+    @field_validator("in_data_archives", mode="before")
+    @classmethod
+    def validate_in_archives(cls, v):
+
+        if v is None:
+            return v
+        elif isinstance(v, str):
+            v = set(v)
+        else:
+            v = set(v)
+
+        if DEFAULT_STORE_MARKER in v or DEFAULT_DATA_STORE_MARKER in v:
+            v.add(DEFAULT_DATA_STORE_MARKER)
+            v.add(DEFAULT_STORE_MARKER)
+
+        return list(v)
 
     @field_validator("alias_matchers")
     @classmethod
@@ -88,6 +106,7 @@ class ValueMatcher(KiaraModel):
                 return False
 
         if has_alias:
+
             aliases = kiara.alias_registry.find_aliases_for_value_id(
                 value_id=value.value_id
             )

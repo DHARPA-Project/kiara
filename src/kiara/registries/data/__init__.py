@@ -31,6 +31,8 @@ from kiara.data_types import DataType
 from kiara.data_types.included_core_types import NoneType
 from kiara.defaults import (
     DATA_ARCHIVE_DEFAULT_VALUE_MARKER,
+    DEFAULT_DATA_STORE_MARKER,
+    DEFAULT_STORE_MARKER,
     INVALID_HASH_MARKER,
     NO_SERIALIZATION_MARKER,
     NONE_STORE_ID,
@@ -362,7 +364,11 @@ class DataRegistry(object):
         self, archive_id_or_alias: Union[None, uuid.UUID, str] = None
     ) -> DataArchive:
 
-        if archive_id_or_alias is None:
+        if archive_id_or_alias in (
+            None,
+            DEFAULT_STORE_MARKER,
+            DEFAULT_DATA_STORE_MARKER,
+        ):
             archive_id_or_alias = self.default_data_store
             if archive_id_or_alias is None:
                 raise Exception("Can't retrieve default data archive, none set (yet).")
@@ -526,10 +532,15 @@ class DataRegistry(object):
 
             for property, property_value in property_values.items():
                 self.store_value(value=property_value, data_store=_data_store)
+
+            store_required = True
         else:
             persisted_value = None
+            store_required = False
 
-        store_event = ValueStoredEvent(kiara_id=self._kiara.id, value=_value)
+        store_event = ValueStoredEvent(
+            kiara_id=self._kiara.id, value=_value, storing_required=store_required
+        )
         self._event_callback(store_event)
 
         return persisted_value
@@ -601,7 +612,7 @@ class DataRegistry(object):
 
     def find_values_with_aliases(self, matcher: ValueMatcher) -> Dict[str, Value]:
 
-        matcher = matcher.copy(update={"has_aliases": True})
+        matcher = matcher.model_copy(update={"has_aliases": True})
         all_values = self.find_values(matcher)
         result = {}
         for value in all_values.values():

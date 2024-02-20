@@ -245,6 +245,30 @@ CREATE TABLE IF NOT EXISTS environments (
     # def find_values(self, matcher: ValueMatcher) -> Iterable[Value]:
     #     raise NotImplementedError()
 
+    def has_value(self, value_id: uuid.UUID) -> bool:
+        """
+        Check whether the specific value_id is persisted in this data store.
+
+        Implementing classes are encouraged to override this method, and choose a suitable, implementation specific
+        way to quickly determine whether a value id is valid for this data store.
+
+        Arguments:
+        ---------
+            value_id: the id of the value to check.
+
+
+        Returns:
+        -------
+            whether this data store contains the value with the specified id
+        """
+
+        sql_text = text(
+            "SELECT EXISTS(SELECT 1 FROM values_metadata WHERE value_id = :value_id)"
+        )
+        with self.sqlite_engine.connect() as conn:
+            result = conn.execute(sql_text, {"value_id": str(value_id)}).scalar()
+            return bool(result)
+
     def _retrieve_all_value_ids(
         self, data_type_name: Union[str, None] = None
     ) -> Union[None, Iterable[uuid.UUID]]:

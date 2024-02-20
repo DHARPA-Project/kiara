@@ -20,7 +20,11 @@ from typing import (
 
 import structlog
 
-from kiara.defaults import INVALID_ALIAS_NAMES
+from kiara.defaults import (
+    DEFAULT_ALIAS_STORE_MARKER,
+    DEFAULT_STORE_MARKER,
+    INVALID_ALIAS_NAMES,
+)
 from kiara.exceptions import KiaraException
 from kiara.models.events.alias_registry import AliasArchiveAddedEvent
 from kiara.registries import ArchiveDetails, BaseArchive
@@ -211,7 +215,7 @@ class AliasRegistry(object):
     def get_archive(
         self, archive_alias: Union[str, None] = None
     ) -> Union[AliasArchive, None]:
-        if archive_alias is None:
+        if archive_alias in (None, DEFAULT_STORE_MARKER, DEFAULT_ALIAS_STORE_MARKER):
             archive_alias = self.default_alias_store
             if archive_alias is None:
                 raise Exception("Can't retrieve default alias archive, none set (yet).")

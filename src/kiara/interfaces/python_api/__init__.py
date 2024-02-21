@@ -1777,7 +1777,7 @@ class KiaraAPI(object):
             Iterable[Union[str, uuid.UUID, Value]],
         ],
         alias_map: Union[Mapping[str, Iterable[str]], bool, str] = False,
-        allow_overwrite: bool = True,
+        allow_alias_overwrite: bool = True,
         store: Union[str, None] = None,
         data_store: Union[str, None] = None,
         alias_store: Union[str, None] = None,
@@ -1824,7 +1824,7 @@ class KiaraAPI(object):
         Arguments:
             values: an iterable/map of value keys/values
             alias_map: a map of value keys aliases
-            allow_overwrite: whether to allow overwriting existing aliases
+            allow_alias_overwrite: whether to allow overwriting existing aliases
             store: in case data and alias store names are the same, you can use this, if you specify one or both of the others, this will be overwritten
             data_store: the registered name (or archive id as string) of the store to write the data
             alias_store: the registered name (or archive id as string) of the store to persist the alias(es)/value_id mapping
@@ -1896,7 +1896,7 @@ class KiaraAPI(object):
                 store_result = self.store_value(
                     value=value_obj,
                     alias=aliases,
-                    allow_overwrite=allow_overwrite,
+                    allow_overwrite=allow_alias_overwrite,
                     data_store=data_store,
                     alias_store=alias_store,
                 )
@@ -1922,7 +1922,7 @@ class KiaraAPI(object):
                 store_result = self.store_value(
                     value=value_obj,
                     alias=aliases_map,
-                    allow_overwrite=allow_overwrite,
+                    allow_overwrite=allow_alias_overwrite,
                     data_store=data_store,
                     alias_store=alias_store,
                 )
@@ -1932,6 +1932,75 @@ class KiaraAPI(object):
 
     # ------------------------------------------------------------------------------------------------------------------
     # archive-related methods
+
+    def export_values(
+        self,
+        target_archive: Union[str, Path],
+        values: Union[
+            Mapping[str, Union[str, uuid.UUID, Value]],
+            Iterable[Union[str, uuid.UUID, Value]],
+        ],
+        alias_map: Union[Mapping[str, Iterable[str]], bool, str] = False,
+        allow_alias_overwrite: bool = True,
+        target_registered_name: Union[str, None] = None,
+        append: bool = False,
+        target_store_params: Union[None, Mapping[str, Any]] = None,
+    ) -> StoreValuesResult:
+        """Store one or several values along with (optional) aliases into a kiara archive.
+
+        For the 'values' & 'alias_map' arguments, see the 'store_values' endpoint, as they will be forwarded to that endpoint as is,
+        and there are several ways to use them which is information I don't want to duplicate.
+
+        Currently, this only works with an external archive file, not with an archive that is registered into the context.
+        This will probably be added later on, let me know if there is demand, then I'll prioritize.
+
+        'target_store_params' is used if the archive does not exist yet. The one supported value for the 'target_store_params' argument currently is 'compression', which can be one of:
+
+        - zstd: zstd compression (default) -- fairly fast, and good compression
+        - none: no compression
+        - LZMA: LZMA compression -- very slow, but very good compression
+        - LZ4: LZ4 compression -- very fast, but not as good compression as zstd
+
+        This method does not raise an error if the storing of the value fails, so you have to investigate the
+        'StoreValuesResult' instance that is returned to see if the storing was successful
+
+        # NOTE: this is a preliminary endpoint, and might be changed in the future. If you have a use-case for this, please let me know.
+
+        Arguments:
+            target_store: the name of the archive to store the values into
+            value: an iterable/map of value keys/values
+            alias_map: a map of value keys aliases
+            allow_alias_overwrite: whether to allow overwriting existing aliases
+            target_registered_name: the name to register the archive under in the context
+            append: whether to append to an existing archive
+            target_store_params: additional parameters to pass to the 'create_kiarchive' method if the file does not exist yet
+
+        """
+
+        if target_archive in [None, DEFAULT_STORE_MARKER]:
+            raise KiaraException(
+                "You cannot use the default store as target for this operation."
+            )
+
+        if target_store_params is None:
+            target_store_params = {}
+
+        target_archive_ref = self.register_archive(
+            archive=target_archive,  # type: ignore
+            registered_name=target_registered_name,
+            create_if_not_exists=True,
+            allow_write_access=True,
+            existing_ok=True if append else False,
+            **target_store_params,
+        )
+
+        result = self.store_values(
+            values=values,
+            alias_map=alias_map,
+            allow_alias_overwrite=allow_alias_overwrite,
+            store=target_archive_ref,
+        )
+        return result
 
     def register_archive(
         self,
@@ -2082,7 +2151,7 @@ class KiaraAPI(object):
 
     def export_archive(
         self,
-        target_archive: Union[None, str, Path],
+        target_archive: Union[str, Path],
         target_registered_name: Union[str, None] = None,
         append: bool = False,
         no_aliases: bool = False,
@@ -2110,7 +2179,7 @@ class KiaraAPI(object):
         'StoreValuesResult' instance that is returned to see if the storing was successful
 
         Arguments:
-            target_archive: the registered_name or uri of the target archive, defaults to the context default data/alias store
+            target_archive: the registered_name or uri of the target archive
             target_registered_name: the name/alias that the archive should be registered in the context (if necessary)
             append: whether to append to an existing archive or error out if the target already exists
             no_aliases: whether to skip importing aliases
@@ -2132,7 +2201,7 @@ class KiaraAPI(object):
 
     def import_archive(
         self,
-        source_archive: Union[None, str, Path],
+        source_archive: Union[str, Path],
         source_registered_name: Union[str, None] = None,
         no_aliases: bool = False,
     ) -> StoreValuesResult:
@@ -2151,7 +2220,7 @@ class KiaraAPI(object):
         'StoreValuesResult' instance that is returned to see if the storing was successful
 
         Arguments:
-            source_archive: the registered_name or uri of the source archive, if None, the context default data/alias store will be used
+            source_archive: the registered_name or uri of the source archive
             source_registered_name: the name/alias that the archive should be registered in the context (if necessary)
             no_aliases: whether to skip importing aliases
 

@@ -10,12 +10,11 @@ import os.path
 import sys
 import uuid
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Iterable, List, Tuple, Union
+from typing import TYPE_CHECKING, Iterable, Tuple, Union
 
 import rich_click as click
 import structlog
 
-from kiara.defaults import DATA_ARCHIVE_DEFAULT_VALUE_MARKER
 from kiara.exceptions import InvalidCommandLineInvocation
 from kiara.utils import log_exception, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
@@ -40,8 +39,6 @@ from kiara.utils.cli.exceptions import handle_exception
 if TYPE_CHECKING:
     from kiara.api import Kiara, KiaraAPI
     from kiara.operations.included_core_operations.filter import FilterOperationType
-    from kiara.registries.aliases import AliasArchive, AliasStore
-    from kiara.registries.data import DataArchive, DataStore
 
 logger = structlog.getLogger()
 
@@ -521,9 +518,9 @@ def filter_value(
 
 @data.command(name="export")
 @click.option(
-    "--archive-alias",
-    "-a",
-    help="The alias to use for the exported archive. If not provided, the first alias will be used. This is used as default in the stored archive, if not overwritten by a user.",
+    "--archive-name",
+    "-A",
+    help="The name to use for the exported archive. If not provided, the first alias will be used.",
     required=False,
 )
 @click.option(
@@ -539,27 +536,28 @@ def filter_value(
     type=click.Choice(["zstd", "lz4", "lzma", "none"]),
     default="zstd",
 )
-@click.option("--append", "-A", help="Append data to existing archive.", is_flag=True)
-@click.option(
-    "--no-default-value", "-nd", help="Do not set a default value.", is_flag=True
-)
-@click.option("--no-aliases", "-na", help="Do not store aliases.", is_flag=True)
+@click.option("--append", "-a", help="Append data to existing archive.", is_flag=True)
+# @click.option(
+#     "--no-default-value", "-nd", help="Do not set a default value.", is_flag=True
+# )
+# @click.option("--no-aliases", "-na", help="Do not store aliases.", is_flag=True)
 @click.argument("aliases", nargs=-1, required=True)
 @click.pass_context
 @handle_exception()
 def export_data_archive(
     ctx,
     aliases: Tuple[str],
-    archive_alias: Union[None, str],
+    archive_name: Union[None, str],
     path: Union[str, None],
     compression: str,
     append: bool,
-    no_default_value: bool,
-    no_aliases: bool,
+    no_default_value: bool = False,
+    no_aliases: bool = False,
 ):
-    """Export one or several values into a new data data_store."""
+    """Export one or several values into a new (or existing) kiara archive.
 
-    from kiara.utils.stores import create_new_archive
+    Aliases that already exist in the target archve will be overwritten.
+    """
 
     kiara_api: KiaraAPI = ctx.obj.kiara_api
 
@@ -579,19 +577,18 @@ def export_data_archive(
         value = kiara_api.get_value(old_alias)
         values.append((value, new_alias))
 
-    if not archive_alias:
-        archive_alias = values[0][1]
+    if not archive_name:
+        archive_name = values[0][1]
 
-    if not archive_alias:
-        archive_alias = str(values[0][0].value_id)
+    if not archive_name:
+        archive_name = str(values[0][0].value_id)
 
     if not path:
         base_path = "."
-        if archive_alias.endswith(".kiarchive"):
-            file_name = archive_alias
+        if archive_name.endswith(".kiarchive"):
+            file_name = archive_name
         else:
-            file_name = f"{archive_alias}.kiarchive"
-        terminal_print(f"Creating new data_store '{file_name}'...")
+            file_name = f"{archive_name}.kiarchive"
     else:
         base_path = os.path.dirname(path)
         file_name = os.path.basename(path)
@@ -601,60 +598,29 @@ def export_data_archive(
     full_path = Path(base_path) / file_name
 
     if full_path.exists() and not append:
-        terminal_print(f"[red]Error[/red]: File '{full_path}' already exists.")
+        terminal_print(
+            f"[red]Error[/red]: File '{full_path}' already exists and '--append' not specified."
+        )
         sys.exit(1)
-
-    if not full_path.exists():
-
-        terminal_print(f"Creating new archive '{path}'...")
-
-        data_store: DataStore = create_new_archive(  # type: ignore
-            archive_name=archive_alias,
-            store_base_path=base_path,
-            store_type="sqlite_data_store",
-            file_name=file_name,
-            default_chunk_compression=compression,
-            allow_write_access=True,
-        )
-        alias_store: AliasStore = create_new_archive(  # type: ignore
-            archive_name=archive_alias,
-            store_base_path=base_path,
-            store_type="sqlite_alias_store",
-            file_name=file_name,
-            allow_write_access=True,
-        )
+    elif full_path.exists():
+        terminal_print(f"Appending to existing data_store '{file_name}'...")
     else:
-        from kiara.utils.stores import check_external_archive
-
-        archives = check_external_archive(full_path.as_posix(), allow_write_access=True)
-        data_store = archives.get("data", None)  # type: ignore
-        alias_store = archives.get("alias", None)  # type: ignore
-
-        if data_store is None:
-            terminal_print(f"[red]Error[/red]: No data archive found in '{full_path}'")
-            sys.exit(1)
-        if alias_store is None:
-            terminal_print(f"[red]Error[/red]: No alias archive found in '{full_path}'")
-            sys.exit(1)
-
-    terminal_print("Registering data store...")
-    data_store_alias = kiara_api.context.data_registry.register_data_archive(data_store)  # type: ignore
-    alias_store_alias = kiara_api.context.alias_registry.register_archive(alias_store)  # type: ignore
+        terminal_print(f"Creating new data_store '{file_name}'...")
 
     terminal_print("Exporting value(s) into new data_store...")
 
-    no_default_value = False
-
-    if not no_default_value:
-        try:
-            data_store.set_archive_metadata_value(
-                DATA_ARCHIVE_DEFAULT_VALUE_MARKER, str(values[0][0].value_id)
-            )
-        except Exception as e:
-            data_store.delete_archive(archive_id=data_store.archive_id)
-            log_exception(e)
-            terminal_print(f"[red]Error setting value[/red]: {e}")
-            sys.exit(1)
+    # no_default_value = False
+    #
+    # if not no_default_value:
+    #     try:
+    #         data_store.set_archive_metadata_value(
+    #             DATA_ARCHIVE_DEFAULT_VALUE_MARKER, str(values[0][0].value_id)
+    #         )
+    #     except Exception as e:
+    #         data_store.delete_archive(archive_id=data_store.archive_id)
+    #         log_exception(e)
+    #         terminal_print(f"[red]Error setting value[/red]: {e}")
+    #         sys.exit(1)
 
     values_to_store = {}
     alias_map = {}
@@ -664,72 +630,55 @@ def export_data_archive(
         if value_alias:
             alias_map[key] = [value_alias]
 
+    target_store_params = {
+        "compression": compression,
+    }
     try:
-
-        persisted_data = kiara_api.store_values(
+        store_result = kiara_api.export_values(
+            target_archive=full_path,
             values=values_to_store,
             alias_map=alias_map,
-            data_store=data_store_alias,
-            alias_store=alias_store_alias,
+            allow_alias_overwrite=True,
+            target_registered_name=archive_name,
+            append=append,
+            target_store_params=target_store_params,
+        )
+        render_config = {"add_field_column": False}
+        terminal_print_model(
+            store_result,
+            format="terminal",
+            empty_line_before=None,
+            in_panel="Exported values",
+            **render_config,
         )
 
-        terminal_print_model(persisted_data)
-        terminal_print("Done.")
-
     except Exception as e:
-        data_store.delete_archive(archive_id=data_store.archive_id)
+        # TODO: remove archive if it didn't exist before?
         log_exception(e)
         terminal_print(f"[red]Error saving results[/red]: {e}")
         sys.exit(1)
 
 
-@data.command(name="import")
-@click.argument("archive", nargs=1, required=True)
-@click.pass_context
-@handle_exception()
-def import_data_store(ctx, archive: str):
-
-    from kiara.utils.stores import check_external_archive
-
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
-
-    terminal_print(f"Loading store '{archive}'...")
-
-    archives = check_external_archive(archive)
-
-    data_archive: "DataArchive" = archives.get("data", None)  # type: ignore
-
-    if not data_archive:
-        terminal_print(f"[red]Error[/red]: No data archives found in '{archive}'")
-        sys.exit(1)
-
-    values = data_archive.value_ids
-    if values is None:
-        terminal_print(
-            f"[red]Error[/red]: No values found in '{archive}', probably because the archive type is incompatible."
-        )
-        sys.exit(1)
-
-    terminal_print("Registering data archive...")
-    # data_store_alias = kiara_api.context.data_registry.register_data_archive(
-    #     data_archive
-    # )
-
-    alias_archive: "AliasArchive" = archives.get("alias", None)  # type: ignore
-    alias_map: Dict[str, List[str]] = {}
-    if alias_archive:
-        # terminal_print("Registering alias archive...")
-        # alias_archive_alias = kiara_api.context.alias_registry.register_archive(alias_archive)
-        all_aliases = alias_archive.retrieve_all_aliases()
-        if all_aliases is None:
-            terminal_print(
-                f"[red]Error[/red]: Archive '{archive}' seems to be dynamic, can't retrieve aliases."
-            )
-            sys.exit(1)
-        for alias, value_id in all_aliases.items():
-            alias_map.setdefault(str(value_id), []).append(alias)
-
-    result = kiara_api.store_values(values=values, alias_map=alias_map)
-    terminal_print(result)
-
-    terminal_print("Done.")
+# @data.command(name="import")
+# @click.argument("archive", nargs=1, required=True)
+# @click.argument("values", nargs=-1, required=True)
+# @click.pass_context
+# @handle_exception()
+# def import_data_store(ctx, archive: str, values: Tuple[str]):
+#
+#     kiara_api: KiaraAPI = ctx.obj.kiara_api
+#
+#     archive_path = Path(archive)
+#     if not archive_path.exists():
+#         terminal_print()
+#         terminal_print(f"[red]Error[/red]: Archive '{archive}' does not exist.")
+#         sys.exit(1)
+#
+#     terminal_print(f"Loading store '{archive}'...")
+#
+#     archive_ref = kiara_api.register_archive(archive_path, allow_write_access=False)
+#
+#     result = kiara_api.store_values(values=values, alias_map=alias_map)
+#     terminal_print(result)
+#
+#     terminal_print("Done.")

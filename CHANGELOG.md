@@ -1,10 +1,27 @@
 # Changelog
 
-## Version 0.5.9 (upcoming)
+## Version 0.5.10 (upcoming)
 
-- archive export & import feature
-- expanded input options for 'store_values' API endpoint
+- archive export & import feature:
+  - cli subcommands:
+    - `kiara archive import`
+    - `kiara archive export`
+    - `kiara archive explain`
+- api endpoints:
+    - `register_archive`
+    - `set_archive_metadata_value`
+    - `retrieve_archive_info`
+    - `export_archive`
+    - `import_archive`
+    - `copy_archive`
+    - `export_values`
+- improved input options for 'store_values' API endpoint
+- fix: plugin info for plugins with '-'
 
+## Version 0.5.9
+
+- mostly test coverage improvements
+- fix: support alias prefixed strings as job inputs
 
 ## Version 0.5.8
 

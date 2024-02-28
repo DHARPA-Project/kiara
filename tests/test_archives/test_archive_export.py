@@ -7,7 +7,8 @@ from pathlib import Path
 from typing import List
 
 from kiara.api import KiaraAPI
-from kiara.models.values.value import ValueMapReadOnly
+from kiara.models.values.value import ValueMapReadOnly, Value
+
 
 # flake8: noqa
 
@@ -175,5 +176,70 @@ def test_archive_export_values_alias(api: KiaraAPI):
     assert len(result[0]) == 2
     assert result[0][0] == "y"
     assert uuid.UUID(result[0][1])
+
+    os.unlink(temp_file_path)
+
+
+def test_archive_export_values_alias_multipe_values(api: KiaraAPI):
+
+    result_1: Value = api.run_job(operation="logic.and", inputs={"a": True, "b": True})[
+        "y"
+    ]
+    result_2: Value = api.run_job(
+        operation="logic.nand", inputs={"a": True, "b": True}
+    )["y"]
+
+    results = {
+        "result_1": result_1,
+        "result_2": result_2,
+    }
+
+    temp_file_path = tempfile.mktemp(suffix=".kiarchive")
+    store_result = api.export_values(temp_file_path, results, alias_map=True)
+
+    path = Path(temp_file_path)
+
+    if not path.is_file():
+        raise Exception(f"Export file {path.name} was not created")
+
+    assert path.stat().st_size > 0
+
+    assert len(store_result) == 2
+    assert "result_1" in store_result.keys()
+    assert "result_2" in store_result.keys()
+
+    required_tables = [
+        "values_pedigree",
+        "environments",
+        "values_metadata",
+        "archive_metadata",
+        "aliases",
+        "values_data",
+        "values_destinies",
+        "persisted_values",
+    ]
+    check_archive_contains_table_names(temp_file_path, required_tables)
+
+    check_tables_are_not_empty(
+        temp_file_path,
+        "values_pedigree",
+        "environments",
+        "values_metadata",
+        "archive_metadata",
+        "values_data",
+        "values_destinies",
+        "persisted_values",
+        "aliases",
+    )
+
+    result = run_sql_query('SELECT * FROM "aliases";', temp_file_path)
+
+    assert len(result[0]) == 2
+    assert result[0][0] in ["result_1", "result_2"]
+    assert uuid.UUID(result[0][1])
+
+    assert len(result[1]) == 2
+    assert result[1][0] in ["result_1", "result_2"]
+    assert uuid.UUID(result[1][1])
 
     os.unlink(temp_file_path)

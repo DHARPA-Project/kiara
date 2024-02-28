@@ -88,7 +88,9 @@ def test_archive_export_values_no_alias(api: KiaraAPI):
     )
 
     with tempfile.TemporaryDirectory() as temp_dir:
-        temp_file_path = os.path.join(temp_dir, "export_test_no_alias.kiarchive")
+        temp_file_path = os.path.normpath(
+            os.path.join(temp_dir, "export_test_no_alias.kiarchive")
+        )
 
         store_result = api.export_values(temp_file_path, result, alias_map=False)
 
@@ -137,7 +139,9 @@ def test_archive_export_values_alias(api: KiaraAPI):
     )
 
     with tempfile.TemporaryDirectory() as temp_dir:
-        temp_file_path = os.path.join(temp_dir, "export_test_alias.kiarchive")
+        temp_file_path = os.path.normpath(
+            os.path.join(temp_dir, "export_test_alias.kiarchive")
+        )
 
         store_result = api.export_values(temp_file_path, result, alias_map=True)
 
@@ -198,8 +202,8 @@ def test_archive_export_values_alias_multipe_values(api: KiaraAPI):
 
     with tempfile.TemporaryDirectory() as temp_dir:
 
-        temp_file_path = os.path.join(
-            temp_dir, "export_test_alias_multiple_values.kiarchive"
+        temp_file_path = os.path.normpath(
+            os.path.join(temp_dir, "export_test_alias_multiple_values.kiarchive")
         )
 
         store_result = api.export_values(temp_file_path, results, alias_map=True)

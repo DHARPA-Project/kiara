@@ -7,6 +7,8 @@
     - `kiara archive import`
     - `kiara archive export`
     - `kiara archive explain`
+    - `kiara data import`
+    - `kiara data export`
   - api endpoints:
     - `register_archive`
     - `set_archive_metadata_value`
@@ -15,6 +17,7 @@
     - `import_archive`
     - `copy_archive`
     - `export_values`
+    - `import_values`
 - improved input options for 'store_values' API endpoint
 - fix: plugin info for plugins with '-'
 

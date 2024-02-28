@@ -4,7 +4,7 @@ import sqlite3
 import tempfile
 import uuid
 from pathlib import Path
-from typing import List
+from typing import List, Union
 
 from kiara.api import KiaraAPI
 from kiara.models.values.value import ValueMapReadOnly, Value
@@ -22,7 +22,9 @@ def run_sql_query(sql: str, archive_file: str):
     return result
 
 
-def check_archive_contains_table_names(archive_file: str, required_tables: List[str]):
+def check_archive_contains_table_names(
+    archive_file: Union[str, Path], required_tables: List[str]
+):
 
     con = sqlite3.connect(archive_file)
 
@@ -39,7 +41,7 @@ def check_archive_contains_table_names(archive_file: str, required_tables: List[
         )
 
 
-def check_table_is_empty(archive_file: str, table_name: str):
+def check_table_is_empty(archive_file: Union[str, Path], table_name: str):
 
     con = sqlite3.connect(archive_file)
 
@@ -54,13 +56,13 @@ def check_table_is_empty(archive_file: str, table_name: str):
         raise Exception(f"Table {table_name} is not empty")
 
 
-def check_tables_are_empty(archive_file: str, *table_names: str):
+def check_tables_are_empty(archive_file: Union[str, Path], *table_names: str):
 
     for table_name in table_names:
         check_table_is_empty(archive_file, table_name)
 
 
-def check_table_is_not_empty(archive_file: str, table_name: str):
+def check_table_is_not_empty(archive_file: Union[str, Path], table_name: str):
 
     con = sqlite3.connect(archive_file)
 
@@ -75,7 +77,7 @@ def check_table_is_not_empty(archive_file: str, table_name: str):
         raise Exception(f"Table {table_name} is empty")
 
 
-def check_tables_are_not_empty(archive_file: str, *table_names: str):
+def check_tables_are_not_empty(archive_file: Union[str, Path], *table_names: str):
 
     for table_name in table_names:
         check_table_is_not_empty(archive_file, table_name)
@@ -88,18 +90,16 @@ def test_archive_export_values_no_alias(api: KiaraAPI):
     )
 
     with tempfile.TemporaryDirectory() as temp_dir:
-        temp_file_path = os.path.normpath(
-            os.path.join(temp_dir, "export_test_no_alias.kiarchive")
-        )
+
+        temp_file_path = Path(temp_dir) / "export_test_no_alias.kiarchive"
+        print("temp_file_path", temp_file_path.as_posix())
 
         store_result = api.export_values(temp_file_path, result, alias_map=False)
 
-        path = Path(temp_file_path)
+        if not temp_file_path.is_file():
+            raise Exception(f"Export file {temp_file_path.as_posix()} was not created")
 
-        if not path.is_file():
-            raise Exception(f"Export file {path.name} was not created")
-
-        assert path.stat().st_size > 0
+        assert temp_file_path.stat().st_size > 0
 
         assert len(store_result) == 1
         assert "y" in store_result.keys()
@@ -129,8 +129,6 @@ def test_archive_export_values_no_alias(api: KiaraAPI):
             "persisted_values",
         )
 
-        os.unlink(temp_file_path)
-
 
 def test_archive_export_values_alias(api: KiaraAPI):
 
@@ -139,18 +137,16 @@ def test_archive_export_values_alias(api: KiaraAPI):
     )
 
     with tempfile.TemporaryDirectory() as temp_dir:
-        temp_file_path = os.path.normpath(
-            os.path.join(temp_dir, "export_test_alias.kiarchive")
-        )
+
+        temp_file_path = Path(temp_dir) / "export_test_alias.kiarchive"
+        print("temp_file_path", temp_file_path.as_posix())
 
         store_result = api.export_values(temp_file_path, result, alias_map=True)
 
-        path = Path(temp_file_path)
+        if not temp_file_path.is_file():
+            raise Exception(f"Export file {temp_file_path.name} was not created")
 
-        if not path.is_file():
-            raise Exception(f"Export file {path.name} was not created")
-
-        assert path.stat().st_size > 0
+        assert temp_file_path.stat().st_size > 0
 
         assert len(store_result) == 1
         assert "y" in store_result.keys()
@@ -202,18 +198,15 @@ def test_archive_export_values_alias_multipe_values(api: KiaraAPI):
 
     with tempfile.TemporaryDirectory() as temp_dir:
 
-        temp_file_path = os.path.normpath(
-            os.path.join(temp_dir, "export_test_alias_multiple_values.kiarchive")
-        )
+        temp_file_path = Path(temp_dir) / "export_test_alias_multiple_values.kiarchive"
+        print("temp_file_path", temp_file_path.as_posix())
 
         store_result = api.export_values(temp_file_path, results, alias_map=True)
 
-        path = Path(temp_file_path)
+        if not temp_file_path.is_file():
+            raise Exception(f"Export file {temp_file_path.name} was not created")
 
-        if not path.is_file():
-            raise Exception(f"Export file {path.name} was not created")
-
-        assert path.stat().st_size > 0
+        assert temp_file_path.stat().st_size > 0
 
         assert len(store_result) == 2
         assert "result_1" in store_result.keys()

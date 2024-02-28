@@ -89,7 +89,7 @@ def test_archive_export_values_no_alias(api: KiaraAPI):
         operation="logic.and", inputs={"a": True, "b": True}
     )
 
-    with tempfile.TemporaryDirectory() as temp_dir:
+    with tempfile.TemporaryDirectory(suffix="no_alias") as temp_dir:
 
         temp_file_path = Path(temp_dir) / "export_test_no_alias.kiarchive"
         print("temp_file_path", temp_file_path.as_posix())
@@ -136,7 +136,7 @@ def test_archive_export_values_alias(api: KiaraAPI):
         operation="logic.and", inputs={"a": True, "b": True}
     )
 
-    with tempfile.TemporaryDirectory() as temp_dir:
+    with tempfile.TemporaryDirectory(suffix="alias") as temp_dir:
 
         temp_file_path = Path(temp_dir) / "export_test_alias.kiarchive"
         print("temp_file_path", temp_file_path.as_posix())
@@ -196,7 +196,7 @@ def test_archive_export_values_alias_multipe_values(api: KiaraAPI):
         "result_2": result_2,
     }
 
-    with tempfile.TemporaryDirectory() as temp_dir:
+    with tempfile.TemporaryDirectory(suffix="multiple") as temp_dir:
 
         temp_file_path = Path(temp_dir) / "export_test_alias_multiple_values.kiarchive"
         print("temp_file_path", temp_file_path.as_posix())

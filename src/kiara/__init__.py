@@ -58,6 +58,8 @@ try:
     ):
 
         for obj in objects:
+            if hasattr(obj, "create_renderable"):
+                obj = obj.create_renderable()
             try:
                 rich_print(obj, sep=sep, end=end, file=file, flush=flush)
             except Exception:

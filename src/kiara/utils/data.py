@@ -66,7 +66,9 @@ def pretty_print_data(
             f"Can't find operation to render '{value.value_schema.type}' as '{target_type}."
         )
 
-    result = op.run(kiara=kiara, inputs={"value": value})
+    result = op.run(
+        kiara=kiara, inputs={"value": value, "render_config": render_config}
+    )
     rendered = result.get_value_data("rendered_value")
     return rendered
 

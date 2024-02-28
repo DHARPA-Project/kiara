@@ -1773,6 +1773,7 @@ class KiaraAPI(object):
     def store_values(
         self,
         values: Union[
+            str,
             Mapping[str, Union[str, uuid.UUID, Value]],
             Iterable[Union[str, uuid.UUID, Value]],
         ],
@@ -1789,6 +1790,8 @@ class KiaraAPI(object):
         loop over the values on the frontend side, and call the 'store_value' method for each value. But this might be meaningfully slower. This method has the potential to be optimized in the future.
 
         You have several options to provide the values and aliases you want to store:
+
+        - as a string, in which case the item will be wrapped in a list (see non-mapping iterable below)
 
         - as a (non-mapping) iterable of value items, those can either be:
 
@@ -1839,6 +1842,9 @@ class KiaraAPI(object):
 
         if not alias_store:
             alias_store = store
+
+        if isinstance(values, str):
+            values = [values]
 
         result = {}
         if not isinstance(values, Mapping):
@@ -1933,10 +1939,123 @@ class KiaraAPI(object):
     # ------------------------------------------------------------------------------------------------------------------
     # archive-related methods
 
+    def import_values(
+        self,
+        source_archive: Union[str, Path],
+        values: Union[
+            str,
+            Mapping[str, Union[str, uuid.UUID, Value]],
+            Iterable[Union[str, uuid.UUID, Value]],
+        ],
+        alias_map: Union[Mapping[str, Iterable[str]], bool, str] = False,
+        allow_alias_overwrite: bool = True,
+        source_registered_name: Union[str, None] = None,
+    ) -> StoreValuesResult:
+        """Import one or several values from an external kiara archive, along with their aliases (optional).
+
+        For the 'values' & 'alias_map' arguments, see the 'store_values' endpoint, as they will be forwarded to that endpoint as is,
+        and there are several ways to use them which is information I don't want to duplicate.
+
+        If you provide aliases in the 'values' parameter, the aliases must be available in the external archive.
+
+        Currently, this only works with an external archive file, not with an archive that is registered into the context.
+        This will probably be added later on, let me know if there is demand, then I'll prioritize.
+
+        This method does not raise an error if the storing of the value fails, so you have to investigate the
+        'StoreValuesResult' instance that is returned to see if the storing was successful.
+
+        # NOTE: this is a preliminary endpoint, and might be changed in the future. If you have a use-case for this, please let me know.
+
+        Arguments:
+            source_archive: the name of the archive to store the values into
+            values: an iterable/map of value keys/values
+            alias_map: a map of value keys aliases
+            allow_alias_overwrite: whether to allow overwriting existing aliases
+            source_registered_name: the name to register the archive under in the context
+        """
+
+        if source_archive in [None, DEFAULT_STORE_MARKER]:
+            raise KiaraException(
+                "You cannot use the default store as source for this operation."
+            )
+
+        if alias_map is True:
+            pass
+        elif alias_map is False:
+            pass
+        elif isinstance(alias_map, str):
+            pass
+        elif isinstance(alias_map, Mapping):
+            pass
+        else:
+            raise KiaraException(
+                f"Invalid type for 'alias_map' argument: {type(alias_map)}."
+            )
+
+        source_archive_ref = self.register_archive(
+            archive=source_archive,  # type: ignore
+            registered_name=source_registered_name,
+            create_if_not_exists=False,
+            allow_write_access=False,
+            existing_ok=True,
+        )
+
+        value_ids: Set[uuid.UUID] = set()
+        aliases: Set[str] = set()
+
+        if isinstance(values, str):
+            values = [values]
+
+        if not isinstance(values, Mapping):
+            # means we have a list of value ids/aliases
+            for value in values:
+                if isinstance(value, uuid.UUID):
+                    value_ids.add(value)
+                elif isinstance(value, str):
+                    try:
+                        _value = uuid.UUID(value)
+                        value_ids.add(_value)
+                    except Exception:
+                        aliases.add(value)
+        else:
+            raise NotImplementedError("Not implemented yet.")
+
+        new_values: Dict[str, Union[uuid.UUID, str]] = {}
+        idx = 0
+        for value_id in value_ids:
+            field = f"field_{idx}"
+            idx += 1
+            new_values[field] = value_id
+
+        new_alias_map = {}
+        for alias in aliases:
+            field = f"field_{idx}"
+            idx += 1
+            new_values[field] = f"{source_archive_ref}#{alias}"
+            if alias_map is False:
+                pass
+            elif alias_map is True:
+                new_alias_map[field] = [f"{alias}"]
+            elif isinstance(alias_map, str):
+                new_alias_map[field] = [f"{alias_map}{alias}"]
+            else:
+                # means its a dict
+                raise NotImplementedError(
+                    "'alias_map' of type 'Mapping' not implemented yet."
+                )
+
+        result = self.store_values(
+            values=new_values,
+            alias_map=new_alias_map,
+            allow_alias_overwrite=allow_alias_overwrite,
+        )
+        return result
+
     def export_values(
         self,
         target_archive: Union[str, Path],
         values: Union[
+            str,
             Mapping[str, Union[str, uuid.UUID, Value]],
             Iterable[Union[str, uuid.UUID, Value]],
         ],
@@ -1962,13 +2081,13 @@ class KiaraAPI(object):
         - LZ4: LZ4 compression -- very fast, but not as good compression as zstd
 
         This method does not raise an error if the storing of the value fails, so you have to investigate the
-        'StoreValuesResult' instance that is returned to see if the storing was successful
+        'StoreValuesResult' instance that is returned to see if the storing was successful.
 
         # NOTE: this is a preliminary endpoint, and might be changed in the future. If you have a use-case for this, please let me know.
 
         Arguments:
             target_store: the name of the archive to store the values into
-            value: an iterable/map of value keys/values
+            values: an iterable/map of value keys/values
             alias_map: a map of value keys aliases
             allow_alias_overwrite: whether to allow overwriting existing aliases
             target_registered_name: the name to register the archive under in the context

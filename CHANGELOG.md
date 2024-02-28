@@ -7,7 +7,7 @@
     - `kiara archive import`
     - `kiara archive export`
     - `kiara archive explain`
-- api endpoints:
+  - api endpoints:
     - `register_archive`
     - `set_archive_metadata_value`
     - `retrieve_archive_info`

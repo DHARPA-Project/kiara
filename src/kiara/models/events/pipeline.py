@@ -18,15 +18,23 @@ from typing import (
     Union,
 )
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, PrivateAttr, field_validator
+from rich import box
+from rich.console import RenderableType
+from rich.panel import Panel
+from rich.table import Table
 from sortedcontainers import SortedDict
 
 from kiara.defaults import NONE_VALUE_ID, NOT_SET_VALUE_ID
 from kiara.models import KiaraModel
 from kiara.models.events import KiaraEvent
 from kiara.models.module.pipeline import PipelineStep, StepStatus
+from kiara.utils.output import create_renderable_from_value_id_map
 
 if TYPE_CHECKING:
+    from dag_cbor import IPLDKind
+
+    from kiara.context import Kiara
     from kiara.models.module.pipeline.pipeline import Pipeline
 
 
@@ -54,6 +62,7 @@ class StepDetails(BaseModel):
     outputs: Dict[str, uuid.UUID] = Field(
         description="The current outputs of this step."
     )
+    _kiara: "Kiara" = PrivateAttr()
 
     @field_validator("inputs")
     @classmethod
@@ -83,6 +92,46 @@ class StepDetails(BaseModel):
     def _retrieve_id(self) -> str:
         return f"{self.kiara_id}.{self.pipeline_id}.{self.step_id}"
 
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        display_pipeline_id = config.get("display_pipeline_id", False)
+        display_extended_step_details = config.get(
+            "display_extended_step_details", False
+        )
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("key", style="i")
+        table.add_column("value")
+        table.add_row("step id", self.step_id)
+        table.add_row("status", self.status.value)
+        if self.invalid_details:
+            invalid_table = Table(show_header=False, box=box.SIMPLE)
+            invalid_table.add_column("key", style="i")
+            invalid_table.add_column("value")
+            for k, v in self.invalid_details.items():
+                invalid_table.add_row(k, v)
+            table.add_row("invalid details", invalid_table)
+        if display_pipeline_id:
+            table.add_row("pipeline id", str(self.pipeline_id))
+        table.add_row("processing stage", str(self.processing_stage))
+
+        if display_extended_step_details:
+            step_detail_config = dict(config)
+            step_detail_config["display_step_id"] = False
+            step_details = self.step.create_renderable(**step_detail_config)
+            table.add_row("step details", step_details)
+
+        inputs_rend = create_renderable_from_value_id_map(
+            kiara=self._kiara, values=self.inputs, config=config
+        )
+        table.add_row("inputs", inputs_rend)
+        outputs_rend = create_renderable_from_value_id_map(
+            kiara=self._kiara, values=self.outputs, config=config
+        )
+        table.add_row("outputs", outputs_rend)
+
+        return table
+
 
 class PipelineState(KiaraModel):
 
@@ -102,13 +151,30 @@ class PipelineState(KiaraModel):
     pipeline_inputs: Dict[str, uuid.UUID] = Field(
         description="The current pipeline inputs."
     )
+    # pipeline_inputs_schema: Mapping[str, ValueSchema] = Field(description="The schema of the pipeline inputs.")
     pipeline_outputs: Dict[str, uuid.UUID] = Field(
         description="The current pipeline outputs."
     )
+    # pipeline_outputs_schema: Mapping[str, ValueSchema] = Field(description="The schema of the pipeline outputs.")
 
     step_states: Dict[str, StepDetails] = Field(
         description="The state of each step within this pipeline."
     )
+    _kiara: "Kiara" = PrivateAttr()
+
+    def _retrieve_data_to_hash(self) -> "IPLDKind":
+        """
+        Return data important for hashing this model instance. Implemented by sub-classes.
+
+        This returns the relevant data that makes this model unique, excluding any secondary metadata that is not
+        necessary for this model to be used functionally. Like for example documentation.
+        """
+
+        # TODO: is this enough?
+        return {
+            "kiara_id": str(self.kiara_id),
+            "pipeline_id": str(self.pipeline_id),
+        }
 
     def get_steps_by_processing_stage(self) -> MutableMapping[int, List[StepDetails]]:
 
@@ -116,6 +182,106 @@ class PipelineState(KiaraModel):
         for step_details in self.step_states.values():
             result.setdefault(step_details.processing_stage, []).append(step_details)
         return result
+
+    def get_processing_stage_status(self, stage: int) -> StepStatus:
+
+        step_states = self.get_steps_by_processing_stage()
+
+        status: StepStatus = StepStatus.RESULTS_READY
+
+        for _stage, step_details in step_states.items():
+            if _stage > stage:
+                break
+
+            for step in step_details:
+                if step.status == StepStatus.INPUTS_INVALID:
+                    status = StepStatus.INPUTS_INVALID
+                    break
+
+                elif step.status == StepStatus.INPUTS_READY:
+                    if status != StepStatus.INPUTS_INVALID:
+                        status = StepStatus.INPUTS_READY
+
+            # no point in further checking
+            if status == StepStatus.INPUTS_INVALID:
+                return status
+
+        return status
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        display_step_states = config.get("display_step_details", False)
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("key", style="i")
+        table.add_column("value")
+        table.add_row("pipeline id", str(self.pipeline_id))
+        table.add_row("pipeline status", self.pipeline_status.value)
+        if self.invalid_details:
+            invalid_table = Table(show_header=False, box=box.SIMPLE)
+            invalid_table.add_column("key", style="i")
+            invalid_table.add_column("value")
+            for k, v in self.invalid_details.items():
+                invalid_table.add_row(k, v)
+            table.add_row("invalid details", invalid_table)
+
+        render_conf = dict(config)
+        render_conf["value_title"] = "field"
+        render_conf["show_hash"] = False
+        render_conf["show_size"] = False
+        render_conf["show_data"] = True
+        render_conf["max_lines"] = 5
+        render_conf["display_extended_step_details"] = False
+        render_conf["show_description"] = False
+
+        inputs_rend = create_renderable_from_value_id_map(
+            kiara=self._kiara, values=self.pipeline_inputs, config=render_conf
+        )
+        table.add_row("pipeline inputs", inputs_rend)
+
+        step_details_table = Table(show_header=False, box=box.SIMPLE)
+        step_details_table.add_column("step id")
+        step_details_table.add_column("details")
+
+        for (
+            processing_stage,
+            state_step_details,
+        ) in self.get_steps_by_processing_stage().items():
+
+            proc_status = self.get_processing_stage_status(processing_stage)
+            proc_status_str = StepStatus.to_console_renderable(proc_status)
+            step_details_table.add_row(
+                f"processing stage: [b]{processing_stage}[/b]",
+                f"[b i]{proc_status_str}[/b i]",
+            )
+            step_details_table.add_row("", "")
+
+            if display_step_states:
+                for step_details in state_step_details:
+                    step_id = step_details.step_id
+                    step_rend = step_details.create_renderable(**render_conf)
+                    panel = Panel(step_rend)
+                    step_details_table.add_row(f"step: [b i]{step_id}[/b i]", panel)
+            else:
+                for step_details in state_step_details:
+                    step_id = step_details.step_id
+                    step_status_str = StepStatus.to_console_renderable(
+                        step_details.status
+                    )
+                    step_details_table.add_row(
+                        f"step: [b i]{step_id}[/b i]", step_status_str
+                    )
+
+            step_details_table.add_row("", "")
+
+        table.add_row("internal state", step_details_table)
+
+        outputs_rend = create_renderable_from_value_id_map(
+            kiara=self._kiara, values=self.pipeline_outputs, config=render_conf
+        )
+        table.add_row("pipeline outputs", outputs_rend)
+
+        return table
 
 
 class PipelineEvent(KiaraEvent):

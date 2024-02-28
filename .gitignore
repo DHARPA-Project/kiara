@@ -74,3 +74,4 @@ dev.py
 store.sqlite
 **.kiarchive
 **.kontext
+dev/

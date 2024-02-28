@@ -64,6 +64,7 @@ from kiara.utils.yaml import StringYAML
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+    from kiara.interfaces.python_api import KiaraAPI
 
 yaml = StringYAML()
 
@@ -80,9 +81,14 @@ class Pipeline(object):
     @classmethod
     def create_pipeline(
         cls,
-        kiara: "Kiara",
+        kiara: Union["Kiara", "KiaraAPI"],
         pipeline: Union[PipelineConfig, PipelineStructure, Mapping, str],
     ) -> "Pipeline":
+
+        from kiara.api import KiaraAPI
+
+        if isinstance(kiara, KiaraAPI):
+            kiara = kiara.context
 
         if isinstance(pipeline, Mapping):
             pipeline_structure: PipelineStructure = PipelineConfig.from_config(
@@ -321,6 +327,7 @@ class Pipeline(object):
             invalid_details=invalid,
             step_states=step_states,
         )
+        details._kiara = self._kiara
 
         return details
 
@@ -357,6 +364,7 @@ class Pipeline(object):
             invalid_details=invalid,
             processing_stage=processing_stage,
         )
+        details._kiara = self._kiara
         return details
 
     def set_pipeline_inputs(
@@ -365,6 +373,16 @@ class Pipeline(object):
         sync_to_step_inputs: bool = True,
         notify_listeners: bool = True,
     ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
+        """Set one or several pipeline inputs.
+
+        The 'sync_to_step_inputs' parameter determines whether the inputs should be synced to the respective step inputs, which is what you usually want. Only in cases where you don't want to reset/clear any intermediate or end-result values you would set this to False.
+
+        Arguments:
+            inputs: the inputs to set
+            sync_to_step_inputs: whether to sync the inputs to the respective step inputs
+            notify_listeners: whether to notify listeners about the change, in most cases, this would be a PipelineController instance.
+
+        """
 
         values_to_set: Dict[str, uuid.UUID] = {}
 
@@ -408,6 +426,7 @@ class Pipeline(object):
     def sync_pipeline_inputs(
         self, notify_listeners: bool = True
     ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
+        """Sync all pipeline input."""
 
         pipeline_inputs = self.get_current_pipeline_inputs()
 

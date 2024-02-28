@@ -56,6 +56,14 @@ class StepStatus(Enum):
     INPUTS_READY = "inputs_ready"
     RESULTS_READY = "results_ready"
 
+    def to_console_renderable(self) -> RenderableType:
+        if self == StepStatus.INPUTS_INVALID:
+            return "[red]inputs invalid[/red]"
+        elif self == StepStatus.INPUTS_READY:
+            return "[yellow]inputs ready[/yellow]"
+        elif self == StepStatus.RESULTS_READY:
+            return "[green]results ready[/green]"
+
 
 class PipelineStep(Manifest):
     """A step within a pipeline-structure, includes information about it's connection(s) and other metadata."""
@@ -384,6 +392,7 @@ class PipelineStep(Manifest):
     def create_renderable(self, **config: Any) -> RenderableType:
 
         in_panel = config.get("in_panel", None)
+        display_step_id = config.get("display_step_id", True)
         if in_panel is None:
             if is_jupyter():
                 in_panel = True
@@ -396,7 +405,8 @@ class PipelineStep(Manifest):
 
         if self.doc.is_set:
             table.add_row("", Markdown(self.doc.full_doc))
-        table.add_row("step_id", self.step_id)
+        if display_step_id:
+            table.add_row("step_id", self.step_id)
         table.add_row("module type", self.module_type)
         if not module_config_is_empty(self.module_config):
             mc = dict(self.module_config)

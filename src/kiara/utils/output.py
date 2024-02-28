@@ -6,6 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import json
+import uuid
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import (
@@ -40,6 +41,7 @@ from kiara.utils.json import orjson_dumps
 if TYPE_CHECKING:
     from pyarrow import Table as ArrowTable
 
+    from kiara.context import Kiara
     from kiara.models.events.pipeline import PipelineState
     from kiara.models.module.pipeline import PipelineStructure
     from kiara.models.values.value_schema import ValueSchema
@@ -603,6 +605,10 @@ def create_value_map_status_renderable(
     show_required: bool = render_config.get("show_required", True)
     show_default: bool = render_config.get("show_default", True)
     show_value_ids: bool = render_config.get("show_value_ids", False)
+    show_data: bool = render_config.get("show_data", False)
+    data_max_no_rows: Union[int, None] = render_config.get("max_no_rows", None)
+    if data_max_no_rows is None:
+        data_max_no_rows = render_config.get("max_lines", 0)
 
     table = RichTable(box=box.SIMPLE, show_header=True)
     table.add_column("field name", style="i")
@@ -620,6 +626,9 @@ def create_value_map_status_renderable(
 
     if show_value_ids:
         table.add_column("value id", overflow="fold")
+
+    if show_data:
+        table.add_column("data")
 
     invalid = inputs.check_invalid()
 
@@ -683,6 +692,16 @@ def create_value_map_status_renderable(
 
         if show_value_ids:
             row.append(str(inputs.get_value_obj(field_name=field_name).value_id))
+
+        if show_data:
+            render_config = dict(render_config)
+            render_config["max_no_rows"] = data_max_no_rows
+            data = value._data_registry.pretty_print_data(
+                value_id=value.value_id,
+                target_type="terminal_renderable",
+                **render_config,
+            )
+            row.append(data)
 
         table.add_row(*row)
 
@@ -815,12 +834,15 @@ def create_renderable_from_values(
     show_pedigree = config.get("show_pedigree", False)
     show_data = config.get("show_data", False)
     show_hash = config.get("show_hash", True)
+    show_size = config.get("show_size", True)
     # show_load_config = config.get("show_load_config", False)
+    value_title = config.get("value_title", "value")
 
     table = RichTable(show_lines=True, box=box.MINIMAL_DOUBLE_HEAD)
-    table.add_column("value_id", "i")
+    table.add_column(value_title, "i")
     table.add_column("data_type")
-    table.add_column("size")
+    if show_size:
+        table.add_column("size")
     if show_hash:
         table.add_column("hash")
     if show_pedigree:
@@ -829,7 +851,9 @@ def create_renderable_from_values(
         table.add_column("data")
 
     for id, value in sorted(values.items(), key=lambda item: item[1].value_schema.type):
-        row: List[RenderableType] = [id, value.value_schema.type, str(value.value_size)]
+        row: List[RenderableType] = [id, value.value_schema.type]
+        if show_size:
+            row.append(str(value.value_size))
         if show_hash:
             row.append(str(value.value_hash))
         if show_pedigree:
@@ -960,3 +984,16 @@ def create_table_from_data_and_schema(
         table.add_row(key, value_renderable)
 
     return table
+
+
+def create_renderable_from_value_id_map(
+    kiara: "Kiara",
+    values: Mapping[str, uuid.UUID],
+    config: Union[Mapping[str, Any], None] = None,
+) -> RenderableType:
+    """Create a renderable for a map of value ids."""
+
+    return create_value_map_status_renderable(
+        kiara.data_registry.load_values(values), render_config=config
+    )
+    # return create_renderable_from_values(kiara.data_registry.load_values(values), config=config)

@@ -2040,9 +2040,9 @@ class KiaraAPI(object):
                 new_alias_map[field] = [f"{alias_map}{alias}"]
             else:
                 # means its a dict
-                raise NotImplementedError(
-                    "'alias_map' of type 'Mapping' not implemented yet."
-                )
+                if alias in alias_map.keys():
+                    for a in alias_map[alias]:
+                        new_alias_map.setdefault(field, []).append(a)
 
         result = self.store_values(
             values=new_values,

@@ -110,6 +110,12 @@ class StoreValuesResult(RootModel):
 
         return table
 
+    def keys(self):
+        return self.root.keys()
+
+    def values(self):
+        return self.root.values()
+
     @property
     def errors(self) -> Dict[str, str]:
 
@@ -119,6 +125,9 @@ class StoreValuesResult(RootModel):
                 result[field_name] = value_result.error
 
         return result
+
+    def __iter__(self):
+        return iter(self.root)
 
     def __len__(self):
         return len(self.root)

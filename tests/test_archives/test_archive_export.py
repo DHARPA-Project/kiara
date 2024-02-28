@@ -87,45 +87,47 @@ def test_archive_export_values_no_alias(api: KiaraAPI):
         operation="logic.and", inputs={"a": True, "b": True}
     )
 
-    temp_file_path = tempfile.mktemp(suffix=".kiarchive")
-    store_result = api.export_values(temp_file_path, result, alias_map=False)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_file_path = os.path.join(temp_dir, "export_test_no_alias.kiarchive")
 
-    path = Path(temp_file_path)
+        store_result = api.export_values(temp_file_path, result, alias_map=False)
 
-    if not path.is_file():
-        raise Exception(f"Export file {path.name} was not created")
+        path = Path(temp_file_path)
 
-    assert path.stat().st_size > 0
+        if not path.is_file():
+            raise Exception(f"Export file {path.name} was not created")
 
-    assert len(store_result) == 1
-    assert "y" in store_result.keys()
+        assert path.stat().st_size > 0
 
-    required_tables = [
-        "values_pedigree",
-        "environments",
-        "values_metadata",
-        "archive_metadata",
-        "aliases",
-        "values_data",
-        "values_destinies",
-        "persisted_values",
-    ]
-    check_archive_contains_table_names(temp_file_path, required_tables)
+        assert len(store_result) == 1
+        assert "y" in store_result.keys()
 
-    check_table_is_empty(temp_file_path, "aliases")
+        required_tables = [
+            "values_pedigree",
+            "environments",
+            "values_metadata",
+            "archive_metadata",
+            "aliases",
+            "values_data",
+            "values_destinies",
+            "persisted_values",
+        ]
+        check_archive_contains_table_names(temp_file_path, required_tables)
 
-    check_tables_are_not_empty(
-        temp_file_path,
-        "values_pedigree",
-        "environments",
-        "values_metadata",
-        "archive_metadata",
-        "values_data",
-        "values_destinies",
-        "persisted_values",
-    )
+        check_table_is_empty(temp_file_path, "aliases")
 
-    os.unlink(temp_file_path)
+        check_tables_are_not_empty(
+            temp_file_path,
+            "values_pedigree",
+            "environments",
+            "values_metadata",
+            "archive_metadata",
+            "values_data",
+            "values_destinies",
+            "persisted_values",
+        )
+
+        os.unlink(temp_file_path)
 
 
 def test_archive_export_values_alias(api: KiaraAPI):
@@ -134,50 +136,50 @@ def test_archive_export_values_alias(api: KiaraAPI):
         operation="logic.and", inputs={"a": True, "b": True}
     )
 
-    temp_file_path = tempfile.mktemp(suffix=".kiarchive")
-    store_result = api.export_values(temp_file_path, result, alias_map=True)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_file_path = os.path.join(temp_dir, "export_test_alias.kiarchive")
 
-    path = Path(temp_file_path)
+        store_result = api.export_values(temp_file_path, result, alias_map=True)
 
-    if not path.is_file():
-        raise Exception(f"Export file {path.name} was not created")
+        path = Path(temp_file_path)
 
-    assert path.stat().st_size > 0
+        if not path.is_file():
+            raise Exception(f"Export file {path.name} was not created")
 
-    assert len(store_result) == 1
-    assert "y" in store_result.keys()
+        assert path.stat().st_size > 0
 
-    required_tables = [
-        "values_pedigree",
-        "environments",
-        "values_metadata",
-        "archive_metadata",
-        "aliases",
-        "values_data",
-        "values_destinies",
-        "persisted_values",
-    ]
-    check_archive_contains_table_names(temp_file_path, required_tables)
+        assert len(store_result) == 1
+        assert "y" in store_result.keys()
 
-    check_tables_are_not_empty(
-        temp_file_path,
-        "values_pedigree",
-        "environments",
-        "values_metadata",
-        "archive_metadata",
-        "values_data",
-        "values_destinies",
-        "persisted_values",
-        "aliases",
-    )
+        required_tables = [
+            "values_pedigree",
+            "environments",
+            "values_metadata",
+            "archive_metadata",
+            "aliases",
+            "values_data",
+            "values_destinies",
+            "persisted_values",
+        ]
+        check_archive_contains_table_names(temp_file_path, required_tables)
 
-    result = run_sql_query('SELECT * FROM "aliases";', temp_file_path)
-    assert len(result) == 1
-    assert len(result[0]) == 2
-    assert result[0][0] == "y"
-    assert uuid.UUID(result[0][1])
+        check_tables_are_not_empty(
+            temp_file_path,
+            "values_pedigree",
+            "environments",
+            "values_metadata",
+            "archive_metadata",
+            "values_data",
+            "values_destinies",
+            "persisted_values",
+            "aliases",
+        )
 
-    os.unlink(temp_file_path)
+        result = run_sql_query('SELECT * FROM "aliases";', temp_file_path)
+        assert len(result) == 1
+        assert len(result[0]) == 2
+        assert result[0][0] == "y"
+        assert uuid.UUID(result[0][1])
 
 
 def test_archive_export_values_alias_multipe_values(api: KiaraAPI):
@@ -194,52 +196,55 @@ def test_archive_export_values_alias_multipe_values(api: KiaraAPI):
         "result_2": result_2,
     }
 
-    temp_file_path = tempfile.mktemp(suffix=".kiarchive")
-    store_result = api.export_values(temp_file_path, results, alias_map=True)
+    with tempfile.TemporaryDirectory() as temp_dir:
 
-    path = Path(temp_file_path)
+        temp_file_path = os.path.join(
+            temp_dir, "export_test_alias_multiple_values.kiarchive"
+        )
 
-    if not path.is_file():
-        raise Exception(f"Export file {path.name} was not created")
+        store_result = api.export_values(temp_file_path, results, alias_map=True)
 
-    assert path.stat().st_size > 0
+        path = Path(temp_file_path)
 
-    assert len(store_result) == 2
-    assert "result_1" in store_result.keys()
-    assert "result_2" in store_result.keys()
+        if not path.is_file():
+            raise Exception(f"Export file {path.name} was not created")
 
-    required_tables = [
-        "values_pedigree",
-        "environments",
-        "values_metadata",
-        "archive_metadata",
-        "aliases",
-        "values_data",
-        "values_destinies",
-        "persisted_values",
-    ]
-    check_archive_contains_table_names(temp_file_path, required_tables)
+        assert path.stat().st_size > 0
 
-    check_tables_are_not_empty(
-        temp_file_path,
-        "values_pedigree",
-        "environments",
-        "values_metadata",
-        "archive_metadata",
-        "values_data",
-        "values_destinies",
-        "persisted_values",
-        "aliases",
-    )
+        assert len(store_result) == 2
+        assert "result_1" in store_result.keys()
+        assert "result_2" in store_result.keys()
 
-    result = run_sql_query('SELECT * FROM "aliases";', temp_file_path)
+        required_tables = [
+            "values_pedigree",
+            "environments",
+            "values_metadata",
+            "archive_metadata",
+            "aliases",
+            "values_data",
+            "values_destinies",
+            "persisted_values",
+        ]
+        check_archive_contains_table_names(temp_file_path, required_tables)
 
-    assert len(result[0]) == 2
-    assert result[0][0] in ["result_1", "result_2"]
-    assert uuid.UUID(result[0][1])
+        check_tables_are_not_empty(
+            temp_file_path,
+            "values_pedigree",
+            "environments",
+            "values_metadata",
+            "archive_metadata",
+            "values_data",
+            "values_destinies",
+            "persisted_values",
+            "aliases",
+        )
 
-    assert len(result[1]) == 2
-    assert result[1][0] in ["result_1", "result_2"]
-    assert uuid.UUID(result[1][1])
+        result = run_sql_query('SELECT * FROM "aliases";', temp_file_path)
 
-    os.unlink(temp_file_path)
+        assert len(result[0]) == 2
+        assert result[0][0] in ["result_1", "result_2"]
+        assert uuid.UUID(result[0][1])
+
+        assert len(result[1]) == 2
+        assert result[1][0] in ["result_1", "result_2"]
+        assert uuid.UUID(result[1][1])

@@ -261,6 +261,7 @@ class AliasRegistry(object):
         dynamic_stores = []
 
         for archive_alias, archive in self._alias_archives.items():
+
             alias_map = archive.retrieve_all_aliases()
             if alias_map is None:
                 dynamic_stores.append(archive_alias)
@@ -404,6 +405,9 @@ class AliasRegistry(object):
         allow_overwrite: bool = False,
         alias_store: Union[str, None] = None,
     ):
+
+        if alias_store in [DEFAULT_STORE_MARKER, DEFAULT_ALIAS_STORE_MARKER, None]:
+            alias_store = self.default_alias_store
 
         aliases_to_store: Dict[str, List[str]] = {}
         for alias in aliases:

@@ -30,6 +30,7 @@ from .utils import INVALID_PIPELINES_FOLDER, MODULE_CONFIGS_FOLDER, PIPELINES_FO
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 DATA_FOLDER = os.path.join(ROOT_DIR, "examples", "data")
+TEST_RESOURCES_FOLDER = os.path.join(ROOT_DIR, "tests", "resources")
 
 
 def create_temp_dir():

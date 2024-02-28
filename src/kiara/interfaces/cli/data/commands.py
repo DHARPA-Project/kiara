@@ -659,26 +659,25 @@ def export_data_archive(
         sys.exit(1)
 
 
-# @data.command(name="import")
-# @click.argument("archive", nargs=1, required=True)
-# @click.argument("values", nargs=-1, required=True)
-# @click.pass_context
-# @handle_exception()
-# def import_data_store(ctx, archive: str, values: Tuple[str]):
-#
-#     kiara_api: KiaraAPI = ctx.obj.kiara_api
-#
-#     archive_path = Path(archive)
-#     if not archive_path.exists():
-#         terminal_print()
-#         terminal_print(f"[red]Error[/red]: Archive '{archive}' does not exist.")
-#         sys.exit(1)
-#
-#     terminal_print(f"Loading store '{archive}'...")
-#
-#     archive_ref = kiara_api.register_archive(archive_path, allow_write_access=False)
-#
-#     result = kiara_api.store_values(values=values, alias_map=alias_map)
-#     terminal_print(result)
-#
-#     terminal_print("Done.")
+@data.command(name="import")
+@click.argument("archive", nargs=1, required=True)
+@click.argument("values", nargs=-1, required=True)
+@click.option("--no-aliases", "-na", help="Do not store aliases.", is_flag=True)
+@click.pass_context
+@handle_exception()
+def import_data_store(ctx, archive: str, values: Tuple[str], no_aliases: bool = False):
+
+    kiara_api: KiaraAPI = ctx.obj.kiara_api
+
+    archive_path = Path(archive)
+    if not archive_path.exists():
+        terminal_print()
+        terminal_print(f"[red]Error[/red]: Archive '{archive}' does not exist.")
+        sys.exit(1)
+
+    result = kiara_api.import_values(
+        source_archive=archive, values=values, alias_map=not no_aliases
+    )
+    terminal_print(result)
+
+    terminal_print("Done.")

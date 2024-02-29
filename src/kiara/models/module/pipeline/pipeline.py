@@ -104,7 +104,31 @@ class Pipeline(object):
             if isinstance(module.config, PipelineConfig):
                 config: PipelineConfig = module.config
             else:
-                raise NotImplementedError()
+                step_id = module.module_type_name.replace(".", "_")
+                input_aliases = {}
+                output_aliases = {}
+                for input_name in module.input_names:
+                    input_aliases[f"{step_id}.{input_name}"] = input_name
+                for output_name in module.output_names:
+                    output_aliases[f"{step_id}.{output_name}"] = output_name
+                pipeline_config_data = {
+                    "doc": module.doc,
+                    "steps": [
+                        {
+                            "module_type": module.module_type_name,
+                            "module_config": module.config.model_dump(),
+                            "step_id": step_id,
+                        },
+                    ],
+                    "input_aliases": input_aliases,
+                    "output_aliases": output_aliases,
+                }
+                config = PipelineConfig.from_config(
+                    pipeline_name=module.module_type_name,
+                    data=pipeline_config_data,
+                    kiara=kiara,
+                )
+
             pipeline_structure = config.structure
         else:
             raise Exception(f"Invalid type for argument 'pipeline': {type(pipeline)}")

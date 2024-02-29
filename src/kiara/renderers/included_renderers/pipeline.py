@@ -287,7 +287,7 @@ class PipelinePythonScriptRenderer(
 
     """
 
-    _renderer_name = "python_script"
+    _renderer_name = "pipeline_to_python_script"
     _inputs_schema = PythonScriptRenderInputSchema
 
     def retrieve_supported_render_sources(self) -> str:

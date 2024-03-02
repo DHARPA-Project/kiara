@@ -46,7 +46,6 @@ def list_contexts(ctx) -> None:
 @click.option(
     "--show-config", "-c", help="Also show kiara config.", is_flag=True, default=False
 )
-@click.option("--show-runtime-info", "-r", help="Also show runtime info.", is_flag=True)
 @output_format_option()
 @click.pass_context
 def explain_context(

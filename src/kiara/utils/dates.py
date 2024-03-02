@@ -5,11 +5,21 @@ from datetime import datetime
 import humanfriendly
 import pytz
 
+from kiara.utils import log_message
+
 
 def get_current_time_incl_timezone() -> datetime:
 
     current_tz_name = time.tzname[0]
-    current_tz = pytz.timezone(current_tz_name)
+    try:
+        current_tz = pytz.timezone(current_tz_name)
+    except pytz.exceptions.UnknownTimeZoneError:
+        log_message(
+            "error.unknown.timezone",
+            tz_name=current_tz_name,
+            solution="using utc instead",
+        )
+        current_tz = pytz.utc
 
     return datetime.now(tz=current_tz)
 

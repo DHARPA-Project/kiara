@@ -75,3 +75,4 @@ store.sqlite
 **.kiarchive
 **.kontext
 dev/
+temp/

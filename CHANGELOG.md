@@ -22,6 +22,7 @@
 - improved input options for 'store_values' API endpoint
 - 'beta' implementation of 'value_create' property on 'Value' instances
 - fix: plugin info for plugins with '-'
+- add '--runtime-info' cli flag
 
 ## Version 0.5.9
 

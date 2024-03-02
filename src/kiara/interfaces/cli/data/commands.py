@@ -16,7 +16,7 @@ import rich_click as click
 import structlog
 
 from kiara.exceptions import InvalidCommandLineInvocation
-from kiara.utils import log_exception, log_message
+from kiara.utils import is_develop, log_exception, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
 from kiara.utils.cli.exceptions import handle_exception
 
@@ -677,6 +677,7 @@ def export_data_archive(
 @click.pass_context
 @handle_exception()
 def import_data_store(ctx, archive: str, values: Tuple[str], no_aliases: bool = False):
+    """Import one or several values from a kiara archive."""
 
     kiara_api: KiaraAPI = ctx.obj.kiara_api
 
@@ -692,3 +693,51 @@ def import_data_store(ctx, archive: str, values: Tuple[str], no_aliases: bool = 
     terminal_print(result)
 
     terminal_print("Done.")
+
+
+if is_develop():
+
+    @data.command(name="write_value")
+    @click.argument("value_id_or_alias", nargs=1, required=True)
+    @click.option(
+        "--directory",
+        "-d",
+        help="The directory to write the serialized value to.",
+        required=False,
+    )
+    @click.option(
+        "--force", "-f", help="Overwrite existing files.", is_flag=True, default=False
+    )
+    @click.pass_context
+    @handle_exception()
+    def write_serialized(ctx, value_id_or_alias: str, directory: str, force: bool):
+        """Write the serialized form of a value to a directory"""
+
+        kiara_api: KiaraAPI = ctx.obj.kiara_api
+
+        value = kiara_api.get_value(value_id_or_alias)
+        serialized = value.serialized_data
+
+        keys = serialized.get_keys()
+
+        if not directory:
+            directory = "."
+
+        path = Path(directory)
+
+        for key in keys:
+            data = serialized.get_serialized_data(key)
+
+            key_path = path / key
+            if key_path.exists() and not force:
+                terminal_print(f"Error writing file for '{key}': file already exists.")
+                sys.exit(1)
+
+            key_path.parent.mkdir(parents=True, exist_ok=True)
+
+            chunks = data.get_chunks(as_files=False)
+
+            terminal_print(f"- writing file for: {key}")
+            with open(key_path, "wb") as f:
+                for chunk in chunks:
+                    f.write(chunk)  # type: ignore

@@ -53,7 +53,7 @@ class KiArchiveTransformer(SourceTransformer):
         return archive
 
 
-class PipelineRendererHtml(BaseJinjaRenderer[Type[Pipeline], RenderInputsSchema]):
+class ArchiveRendererHtml(BaseJinjaRenderer[Type[Pipeline], RenderInputsSchema]):
     """Renders archive information as a static html page.
 
     This is a placeholder for now.

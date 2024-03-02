@@ -391,6 +391,21 @@ class Pipeline(object):
         details._kiara = self._kiara
         return details
 
+    def set_pipeline_input(
+        self,
+        pipeline_input_field: str,
+        input_value: Any,
+        sync_to_step_inputs: bool = True,
+        notify_listeners: bool = True,
+    ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
+        """Just a utility method, check 'set_pipeline_inputs` for more details."""
+
+        return self.set_pipeline_inputs(
+            {pipeline_input_field: input_value},
+            sync_to_step_inputs=sync_to_step_inputs,
+            notify_listeners=notify_listeners,
+        )
+
     def set_pipeline_inputs(
         self,
         inputs: Mapping[str, Any],

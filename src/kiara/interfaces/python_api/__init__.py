@@ -1133,7 +1133,7 @@ class KiaraAPI(object):
 
         return PipelinesMap.model_construct(root=result)
 
-    def get_pipeline(
+    def get_pipeline_structure(
         self,
         pipeline: Union[Mapping[str, Any], str, Path],
         allow_external: Union[bool, None] = None,
@@ -1383,6 +1383,10 @@ class KiaraAPI(object):
             the Value instance
         """
         return self.context.data_registry.get_value(value=value)
+
+    def get_values(self, **values: Union[str, Value, uuid.UUID]) -> ValueMapReadOnly:
+
+        return self.context.data_registry.load_values(values=values)
 
     def query_value(
         self,

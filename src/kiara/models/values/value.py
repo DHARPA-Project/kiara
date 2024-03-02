@@ -12,6 +12,7 @@ import logging
 import os
 import tempfile
 import uuid
+from datetime import datetime
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -55,6 +56,7 @@ from kiara.models.python_class import PythonClass
 from kiara.models.values import DataTypeCharacteristics, ValueStatus
 from kiara.models.values.value_schema import ValueSchema
 from kiara.utils import is_jupyter, log_exception
+from kiara.utils.dates import get_current_time_incl_timezone
 from kiara.utils.hashing import create_cid_digest
 from kiara.utils.json import orjson_dumps
 from kiara.utils.yaml import StringYAML
@@ -682,6 +684,10 @@ class ValueDetails(KiaraModel):
         description="The schema that was used for this Value."
     )
 
+    value_created: datetime = Field(
+        description="The time when this value was created.",
+        default_factory=get_current_time_incl_timezone,
+    )
     value_status: ValueStatus = Field(description="The set/unset status of this value.")
     value_size: int = Field(description="The size of this value, in bytes.")
     value_hash: str = Field(description="The hash of this value.")

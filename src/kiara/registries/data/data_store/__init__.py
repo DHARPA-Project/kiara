@@ -36,6 +36,7 @@ from kiara.models.values.value import (
 )
 from kiara.models.values.value_schema import ValueSchema
 from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
+from kiara.utils.dates import get_earliest_time_incl_timezone
 
 if TYPE_CHECKING:
     from multiformats import CID
@@ -123,11 +124,16 @@ class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG
         #         data_type=value_schema.type, data_type_config=value_schema.type_config
         #     )
 
+        value_created = value_data.get("value_created", None)
+        if value_created is None:
+            value_created = get_earliest_time_incl_timezone()
+
         pedigree = ValuePedigree(**value_data["pedigree"])
         value = Value(
             value_id=value_data["value_id"],
             kiara_id=self.kiara_context.id,
             value_schema=value_schema,
+            value_created=value_created,
             value_status=value_data["value_status"],
             value_size=value_data["value_size"],
             value_hash=value_data["value_hash"],

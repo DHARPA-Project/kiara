@@ -18,7 +18,6 @@ from typing import (
     Union,
 )
 
-import pytz
 import structlog
 
 from kiara.exceptions import NoSuchWorkflowException
@@ -26,6 +25,7 @@ from kiara.models.events.workflow_registry import WorkflowArchiveAddedEvent
 from kiara.models.workflow import WorkflowMetadata, WorkflowState
 from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
 from kiara.registries.ids import ID_REGISTRY
+from kiara.utils.dates import get_current_time_incl_timezone
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -464,7 +464,7 @@ class WorkflowRegistry(object):
         workflow_details = self.get_workflow_metadata(workflow=workflow)
 
         if timestamp is None:
-            timestamp = datetime.datetime.now(pytz.utc)
+            timestamp = get_current_time_incl_timezone()
 
         if timestamp in workflow_details.workflow_history.keys():
             if (

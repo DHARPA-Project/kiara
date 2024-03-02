@@ -3,7 +3,6 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING, Any, Dict, Hashable, List, Mapping, Set, Tuple, Union
 
-import pytz
 import structlog
 from boltons.strutils import slugify
 
@@ -33,6 +32,7 @@ from kiara.models.values.value_schema import ValueSchema
 from kiara.models.workflow import WorkflowInfo, WorkflowMetadata, WorkflowState
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import find_free_id, log_exception
+from kiara.utils.dates import get_current_time_incl_timezone
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -1305,7 +1305,7 @@ class Workflow(object):
         if state.instance_id not in self._state_cache.keys():
             self._state_cache[state.instance_id] = state
 
-        now = datetime.now(pytz.utc)
+        now = get_current_time_incl_timezone()
 
         for field_name, value in self.current_pipeline_outputs.items():
             if value in [NOT_SET_VALUE_ID, NONE_VALUE_ID]:

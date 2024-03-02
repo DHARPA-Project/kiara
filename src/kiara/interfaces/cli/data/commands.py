@@ -73,6 +73,13 @@ def data(ctx):
     is_flag=True,
 )
 @click.option(
+    "--date-created",
+    "-D",
+    help="Display the date when the value was created.",
+    default=False,
+    is_flag=True,
+)
+@click.option(
     "--type-config",
     "-c",
     help="Display type details for each value.",
@@ -128,6 +135,7 @@ def list_values(
     hash,
     include_internal,
     value_id,
+    date_created,
     pedigree,
     data,
     type_config,
@@ -164,6 +172,9 @@ def list_values(
 
     if not value_id and not all_values:
         render_fields.remove("value_id")
+
+    if date_created:
+        render_fields.append("value_created")
     if type_config:
         render_fields.append("data_type_config")
     if hash:

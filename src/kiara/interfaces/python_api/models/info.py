@@ -6,6 +6,7 @@ import inspect
 import re
 import textwrap
 import uuid
+from datetime import datetime
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -68,6 +69,7 @@ from kiara.renderers import KiaraRenderer
 from kiara.utils import log_exception, log_message
 from kiara.utils.class_loading import find_all_kiara_model_classes
 from kiara.utils.cli import HORIZONTALS_NO_TO_AND_BOTTOM
+from kiara.utils.dates import to_human_readable_date_string
 from kiara.utils.json import orjson_dumps
 from kiara.utils.output import extract_renderable
 
@@ -111,6 +113,12 @@ RENDER_FIELDS: Dict[str, Dict[str, Any]] = {
         "render": {"terminal": lambda x: x.value_schema.type},
     },
     "value_schema": {"show_default": False},
+    "value_created": {
+        "show_default": False,
+        "render": {
+            "terminal": lambda v: f"{to_human_readable_date_string(v.value_created)} ago"
+        },
+    },
     "is_persisted": {
         "show_default": False,
         "render": {"terminal": lambda v: "yes" if v.is_persisted else "no"},
@@ -497,6 +505,7 @@ class ValueInfo(ItemInfo):
             value_id=instance.value_id,
             kiara_id=instance.kiara_id,
             value_schema=instance.value_schema,
+            value_created=instance.value_created,
             value_status=instance.value_status,
             environment_hashes=instance.environment_hashes,
             value_size=instance.value_size,
@@ -529,7 +538,7 @@ class ValueInfo(ItemInfo):
     value_schema: ValueSchema = Field(
         description="The schema that was used for this Value."
     )
-
+    value_created: datetime = Field(description="The time this value was created.")
     value_status: ValueStatus = Field(description="The set/unset status of this value.")
     value_size: int = Field(description="The size of this value, in bytes.")
     value_hash: str = Field(description="The hash of this value.")
@@ -1939,17 +1948,20 @@ class KiaraPluginInfo(ItemInfo):
 class KiaraPluginInfos(InfoItemGroup[KiaraPluginInfo]):
     @classmethod
     def get_available_plugin_names(
-        cls, kiara: "Kiara", regex: str = "^kiara[-_]plugin\\..*"
+        cls, kiara: "Kiara", regex: Union[str, None] = None
     ) -> List[str]:
         """
         Get a list of all available plugins.
 
         Arguments:
-            regex: an optional regex to indicate the plugin naming scheme (default: /$kiara[_-]plugin\..*/)
+            regex: an optional regex to indicate the plugin naming scheme (default: /$kiara[_-]plugin\\..*/)
 
         Returns:
             a list of plugin names
         """
+
+        if regex is None:
+            regex = r"^kiara[-_]plugin\..*"
 
         registry = kiara.environment_registry
         python_env: PythonRuntimeEnvironment = registry.environments["python"]  # type: ignore

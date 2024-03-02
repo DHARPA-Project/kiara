@@ -7,7 +7,6 @@
 
 import abc
 import uuid
-from datetime import datetime
 from typing import TYPE_CHECKING, Any, Dict, List, Literal, Mapping, Protocol, Union
 
 import structlog
@@ -24,6 +23,7 @@ from kiara.models.values.value import (
 from kiara.modules import KiaraModule
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import get_dev_config, is_develop, log_exception
+from kiara.utils.dates import get_current_time_incl_timezone
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
@@ -256,7 +256,7 @@ class ModuleProcessor(abc.ABC):
             self._active_jobs.pop(job_id)
             job.job_log.add_log("job finished successfully")
             job.status = JobStatus.SUCCESS
-            job.finished = datetime.now()
+            job.finished = get_current_time_incl_timezone()
             values = self._output_refs[job_id]
             try:
                 values.sync_values()
@@ -272,7 +272,7 @@ class ModuleProcessor(abc.ABC):
                 status = e
                 job.job_log.add_log("job failed")
                 job.status = JobStatus.FAILED
-                job.finished = datetime.now()
+                job.finished = get_current_time_incl_timezone()
                 msg = str(status)
                 job.error = msg
                 job._exception = status
@@ -290,7 +290,7 @@ class ModuleProcessor(abc.ABC):
             self._active_jobs.pop(job_id)
             job.job_log.add_log("job failed")
             job.status = JobStatus.FAILED
-            job.finished = datetime.now()
+            job.finished = get_current_time_incl_timezone()
             if isinstance(status, str):
                 job.error = status
             elif isinstance(status, Exception):
@@ -308,7 +308,7 @@ class ModuleProcessor(abc.ABC):
         elif status == JobStatus.STARTED:
             job.job_log.add_log("job started")
             job.status = JobStatus.STARTED
-            job.started = datetime.now()
+            job.started = get_current_time_incl_timezone()
         else:
             raise ValueError(f"Invalid value for status: {status}")
 

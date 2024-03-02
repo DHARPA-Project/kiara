@@ -46,6 +46,7 @@ def list_contexts(ctx) -> None:
 @click.option(
     "--show-config", "-c", help="Also show kiara config.", is_flag=True, default=False
 )
+@click.option("--show-runtime-info", "-r", help="Also show runtime info.", is_flag=True)
 @output_format_option()
 @click.pass_context
 def explain_context(
@@ -153,7 +154,7 @@ def delete_context(
             )
             terminal_print_model(summaries, in_panel="All contexts:")
             user_input = get_console().input(
-                f"Deleting all contexts, are you sure? \[yes/no]: "  # noqa
+                r"Deleting all contexts, are you sure? \[yes/no]: "
             )
 
             if user_input.lower() == "yes":
@@ -191,8 +192,11 @@ def delete_context(
                     in_panel=f"Context details: {_context_name}",
                 )
             terminal_print()
+            txt_pre = r"Deleting context '[b i]"
+            txt_post = r"[/b i]', are you sure? \[yes/no]: "
+            txt_all = f"{txt_pre}{_context_name}{txt_post}"
             user_input = get_console().input(
-                f"Deleting context '[b i]{_context_name}[/b i]', are you sure? \[yes/no]: "
+                txt_all,
             )
 
             if user_input.lower() == "yes":
@@ -248,17 +252,17 @@ def config_help(ctx):
     terminal_print(Panel(table))
 
 
-@info.group(name="runtime")
+@info.group(name="environment")
 @click.pass_context
-def runtime(ctx):
-    """Information about the current runtime (Python environment, available metadata models, etc)."""
+def env_group(ctx):
+    """Information about whats in the current environment details (Python virtual environment, available metadata models, etc)."""
 
 
-@runtime.command("print")
+@env_group.command("print")
 @output_format_option()
 @click.pass_context
 def print_context(ctx, format: str):
-    """Print all relevant models within the current runtime environment."""
+    """Print all relevant models within the current (Python virtual) environment."""
     kiara_obj: Kiara = ctx.obj.kiara
 
     terminal_print_model(
@@ -268,10 +272,23 @@ def print_context(ctx, format: str):
     )
 
 
-@runtime.group(name="environment")
-@click.pass_context
-def env_group(ctx):
-    """Environment-related sub-commands."""
+# @info.group(name="runtime")
+# @click.pass_context
+# def runtime_group(ctx):
+#     """Runtime-related sub-commands."""
+#
+# @runtime_group.command("print")
+# @output_format_option()
+# @click.pass_context
+# def print_runtime(ctx, format: str):
+#     """Print runtime information."""
+#     kiara_obj: Kiara = ctx.obj.kiara
+#
+#     terminal_print_model(
+#         kiara_obj.runtime_config,
+#         format=format,
+#         in_panel=f"Runtime info for kiara id: {kiara_obj.id}",
+#     )
 
 
 @env_group.command("list")
@@ -311,7 +328,7 @@ def explain_env(ctx, env_type: str, format: str) -> None:
     )
 
 
-@runtime.group()
+@env_group.group()
 @click.pass_context
 def metadata(ctx):
     """Metadata-related sub-commands."""
@@ -363,33 +380,33 @@ def explain_metadata(ctx, metadata_key, format) -> None:
     )
 
 
-@runtime.group()
-@click.pass_context
-def api(ctx):
-    """API-related sub-commands."""
-
-
-@api.command()
-@click.argument("filter", nargs=-1, required=False)
-@click.option(
-    "--full-doc",
-    "-d",
-    is_flag=True,
-    help="Display the full doc for all operations (when using 'terminal' as format).",
-)
-@click.pass_context
-def list_endpoints(ctx, filter, full_doc):
-    """List all available API endpoints."""
-    from kiara.interfaces.python_api import KiaraAPI
-    from kiara.interfaces.python_api.proxy import ApiEndpoints
-
-    exclude = ["get_runtime_config", "retrieve_workflow_info"]
-    endpoints = ApiEndpoints(api_cls=KiaraAPI, filters=filter, exclude=exclude)
-
-    terminal_print()
-    terminal_print(endpoints, in_panel="API endpoints", full_doc=full_doc)
-
-
+# @env_group.group()
+# @click.pass_context
+# def api(ctx):
+#     """API-related sub-commands."""
+#
+#
+# @api.command()
+# @click.argument("filter", nargs=-1, required=False)
+# @click.option(
+#     "--full-doc",
+#     "-d",
+#     is_flag=True,
+#     help="Display the full doc for all operations (when using 'terminal' as format).",
+# )
+# @click.pass_context
+# def list_endpoints(ctx, filter, full_doc):
+#     """List all available API endpoints."""
+#     from kiara.interfaces.python_api import KiaraAPI
+#     from kiara.interfaces.python_api.proxy import ApiEndpoints
+#
+#     exclude = ["get_runtime_config", "retrieve_workflow_info"]
+#     endpoints = ApiEndpoints(api_cls=KiaraAPI, filters=filter, exclude=exclude)
+#
+#     terminal_print()
+#     terminal_print(endpoints, in_panel="API endpoints", full_doc=full_doc)
+#
+#
 @context.group("service")
 @click.pass_context
 def service(ctx):

@@ -13,6 +13,8 @@ from rich.panel import Panel
 from rich.rule import Rule
 from rich.syntax import Syntax
 
+from kiara.defaults import KIARA_MAIN_CONFIG_FILE, kiara_app_dirs
+
 # ======================================================================================================================
 # click helper methods
 from kiara.utils import logger
@@ -391,7 +393,8 @@ def kiara_version_option(
 
         table.add_row("", "")
         table.add_row("python", python_env.python_version)
-        terminal_print(table)
+        terminal_print()
+        terminal_print(table, in_panel="Version information")
 
         ctx.exit()
 
@@ -403,6 +406,47 @@ def kiara_version_option(
     kwargs.setdefault(
         "help", ("Show the version of kiara and installed plugins, then exit.")
     )
+    kwargs["callback"] = callback
+    result: Callable[[FC], FC] = option(*param_decls, **kwargs)
+    return result
+
+
+def kiara_runtime_info_option(
+    **kwargs: Any,
+) -> Callable[[FC], FC]:
+    """Add a ``--runtime-info`` option which immediately prints information about the current application environment."""
+
+    def callback(ctx: Context, param: Parameter, value: bool) -> None:
+
+        from rich.table import Table
+
+        if not value or ctx.resilient_parsing:
+            return
+
+        table = Table(show_header=False, box=box.SIMPLE)
+        table.add_column("key")
+        table.add_column("value", style="i")
+        config_file = KIARA_MAIN_CONFIG_FILE
+        table.add_row("config file", config_file)
+        table.add_row("", "")
+        data_path = kiara_app_dirs.user_data_dir
+        table.add_row("data path", data_path)
+        table.add_row("", "")
+        cache_path = kiara_app_dirs.user_cache_dir
+        table.add_row("cache path", cache_path)
+        table.add_row("", "")
+
+        terminal_print()
+        terminal_print(table, in_panel="Application runtime information")
+
+        ctx.exit()
+
+    param_decls = ("--runtime-info", "-ri")
+
+    kwargs.setdefault("is_flag", True)
+    kwargs.setdefault("expose_value", False)
+    kwargs.setdefault("is_eager", True)
+    kwargs.setdefault("help", ("Show current environment information, then exit."))
     kwargs["callback"] = callback
     result: Callable[[FC], FC] = option(*param_decls, **kwargs)
     return result

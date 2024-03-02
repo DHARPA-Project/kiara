@@ -20,7 +20,11 @@ from kiara.defaults import (
 from kiara.interfaces import KiaraAPIWrap
 from kiara.utils import is_debug, log_message
 from kiara.utils.class_loading import find_all_cli_subcommands
-from kiara.utils.cli import kiara_version_option, terminal_print
+from kiara.utils.cli import (
+    kiara_runtime_info_option,
+    kiara_version_option,
+    terminal_print,
+)
 
 click.rich_click.USE_RICH_MARKUP = True
 # TODO: rich_click backport this
@@ -75,6 +79,7 @@ CLICK_CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
     default=False,
 )
 @kiara_version_option()
+@kiara_runtime_info_option()
 @click.pass_context
 def cli(
     ctx,

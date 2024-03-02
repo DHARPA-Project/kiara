@@ -388,6 +388,11 @@ def create_default_store_config(
     return data_store
 
 
+# if windows, we want sqlite as default, because although it's slower, it does not
+# need the user to enable developer mode
+DEFAULT_STORE_TYPE = "sqlite" if os.name == "nt" else "filesystem"
+
+
 class KiaraConfig(BaseSettings):
     model_config = SettingsConfigDict(
         env_prefix="kiara_", extra="forbid", use_enum_values=True

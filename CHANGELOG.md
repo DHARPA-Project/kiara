@@ -20,6 +20,7 @@
     - `import_values`
 - add convenience api endpoint `get_values`
 - improved input options for 'store_values' API endpoint
+- 'beta' implementation of 'value_create' property on 'Value' instances
 - fix: plugin info for plugins with '-'
 
 ## Version 0.5.9

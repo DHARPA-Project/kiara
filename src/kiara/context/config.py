@@ -390,7 +390,9 @@ def create_default_store_config(
 
 # if windows, we want sqlite as default, because although it's slower, it does not
 # need the user to enable developer mode
-DEFAULT_STORE_TYPE = "sqlite" if os.name == "nt" else "filesystem"
+DEFAULT_STORE_TYPE: Literal["sqlite", "filesystem"] = (
+    "sqlite" if os.name == "nt" else "filesystem"
+)
 
 
 class KiaraConfig(BaseSettings):
@@ -460,7 +462,7 @@ class KiaraConfig(BaseSettings):
     )
     default_store_type: Literal["sqlite", "filesystem"] = Field(
         description="The default store type to ues if not specified.",
-        default="filesystem",
+        default=DEFAULT_STORE_TYPE,
     )
     auto_generate_contexts: bool = Field(
         description="Whether to auto-generate requested contexts if they don't exist yet.",

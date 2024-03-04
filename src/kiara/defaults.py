@@ -94,6 +94,9 @@ DEFAULT_STORE_MARKER = "default_store"
 DEFAULT_DATA_STORE_MARKER = "default_data_store"
 """Name for the default context data store."""
 
+DEFAULT_METADATA_STORE_MARKER = "default_metadata_store"
+"""Name for the default context metadata store."""
+
 DEFAULT_JOB_STORE_MARKER = "default_job_store"
 """Name for the default context job store."""
 

@@ -290,6 +290,7 @@ class ArchiveGroupInfo(InfoItemGroup):
             table.add_column("archive id")
         table.add_column("alias", style="i")
         table.add_column("item type(s)", style="i")
+        table.add_column("archive type", style="i")
         if show_config:
             table.add_column("config")
         if show_details:
@@ -301,6 +302,7 @@ class ArchiveGroupInfo(InfoItemGroup):
                 row.append(str(archive.archive_id))
             row.append(archive.archive_alias)
             row.append("\n".join(archive.archive_type_info.supported_item_types))
+            row.append(archive.archive_type_info.type_name)
 
             if show_config:
                 config_json = Syntax(

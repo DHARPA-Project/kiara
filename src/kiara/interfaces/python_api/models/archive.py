@@ -138,15 +138,6 @@ class KiArchive(KiaraModel):
             if isinstance(compression, str):
                 compression = CHUNK_COMPRESSION_TYPE[compression.upper()]
 
-            metadata_store: MetadataStore = create_new_archive(  # type: ignore
-                archive_name=archive_name,
-                store_base_path=archive_base_path,
-                store_type="sqlite_metadata_store",
-                file_name=archive_file_name,
-                allow_write_access=True,
-            )
-            metadata_store_config = metadata_store.config
-
             data_store: DataStore = create_new_archive(  # type: ignore
                 archive_name=archive_name,
                 store_base_path=archive_base_path,
@@ -156,6 +147,15 @@ class KiArchive(KiaraModel):
                 allow_write_access=allow_write_access,
             )
             data_store_config = data_store.config
+
+            metadata_store: MetadataStore = create_new_archive(  # type: ignore
+                archive_name=archive_name,
+                store_base_path=archive_base_path,
+                store_type="sqlite_metadata_store",
+                file_name=archive_file_name,
+                allow_write_access=True,
+            )
+            metadata_store_config = metadata_store.config
 
             alias_store: AliasStore = create_new_archive(  # type: ignore
                 archive_name=archive_name,

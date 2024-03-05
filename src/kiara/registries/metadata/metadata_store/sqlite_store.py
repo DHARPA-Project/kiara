@@ -165,6 +165,17 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
         # config = SqliteArchiveConfig(sqlite_db_path=store_uri)
         return {"sqlite_db_path": archive_uri}
 
+    def _set_archive_metadata_value(self, key: str, value: Any):
+        """Set custom metadata for the archive."""
+
+        sql = text(
+            "INSERT OR REPLACE INTO archive_metadata (key, value) VALUES (:key, :value)"
+        )
+        with self.sqlite_engine.connect() as conn:
+            params = {"key": key, "value": value}
+            conn.execute(sql, params)
+            conn.commit()
+
     def _store_metadata_schema(
         self, model_schema_hash: str, model_type_id: str, model_schema: str
     ):

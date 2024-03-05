@@ -389,7 +389,7 @@ def create_default_store_config(
     return data_store
 
 
-DEFAULT_STORE_TYPE = "auto"
+DEFAULT_STORE_TYPE: Literal["auto"] = "auto"
 
 
 class KiaraConfig(BaseSettings):

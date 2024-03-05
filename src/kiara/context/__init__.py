@@ -130,6 +130,8 @@ class Kiara(object):
         self._config: KiaraContextConfig = config
         self._runtime_config: KiaraRuntimeConfig = runtime_config
 
+        self._env_mgmt: EnvironmentRegistry = EnvironmentRegistry.instance()
+
         self._event_registry: EventRegistry = EventRegistry(kiara=self)
         self._type_registry: TypeRegistry = TypeRegistry(self)
         self._data_registry: DataRegistry = DataRegistry(kiara=self)
@@ -146,8 +148,6 @@ class Kiara(object):
         self._workflow_registry: WorkflowRegistry = WorkflowRegistry(kiara=self)
 
         self._render_registry = RenderRegistry(kiara=self)
-
-        self._env_mgmt: Union[EnvironmentRegistry, None] = None
 
         metadata_augmenter = CreateMetadataDestinies(kiara=self)
         self._event_registry.add_listener(
@@ -245,10 +245,6 @@ class Kiara(object):
 
     @property
     def environment_registry(self) -> EnvironmentRegistry:
-        if self._env_mgmt is not None:
-            return self._env_mgmt
-
-        self._env_mgmt = EnvironmentRegistry.instance()
         return self._env_mgmt
 
     @property

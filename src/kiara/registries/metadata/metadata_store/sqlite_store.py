@@ -109,11 +109,18 @@ class SqliteMetadataArchive(MetadataArchive):
 
         self._cached_engine = create_engine(self.db_url, future=True)
         create_table_sql = """
+CREATE TABLE IF NOT EXISTS metadata_schemas (
+    model_schema_hash TEXT PRIMARY KEY,
+    model_type_id TEXT NOT NULL,
+    model_schema TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS metadata (
     metadata_item_id TEXT PRIMARY KEY,
     metadata_key TEXT NOT NULL,
-    reference_item_type TEXT NOT NULL,
-    reference_item_id TEXT NOT NULL,
+    model_type_id TEXT NOT NULL,
+    model_schema_hash TEXT NOT NULL,
+    reference_item_type TEXT,
+    reference_item_id TEXT,
     metadata_value TEXT NOT NULL
 );
 """
@@ -158,6 +165,19 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
         # config = SqliteArchiveConfig(sqlite_db_path=store_uri)
         return {"sqlite_db_path": archive_uri}
 
-    def store_metadata(self, key: str, value: Any):
+    def _store_metadata_schema(
+        self, model_schema_hash: str, model_type_id: str, model_schema: str
+    ):
+
+        raise NotImplementedError()
+
+    def _store_metadata_item(
+        self,
+        key: str,
+        value: Mapping[str, Any],
+        value_hash: str,
+        model_type_id: str,
+        model_schema_hash: str,
+    ):
 
         raise NotImplementedError()

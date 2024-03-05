@@ -220,7 +220,7 @@ class KiArchive(KiaraModel):
         from kiara.utils.stores import create_new_archive
 
         metadata_archive: MetadataArchive = create_new_archive(  # type: ignore
-            archive_name=self._archive_name,
+            archive_name=self.archive_name,
             store_base_path=self.archive_base_path,
             store_type="sqlite_metadata_store",
             file_name=self.archive_file_name,

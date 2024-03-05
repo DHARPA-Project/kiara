@@ -32,6 +32,7 @@ from kiara.defaults import (
     DEFAULT_CONTEXT_NAME,
     DEFAULT_DATA_STORE_MARKER,
     DEFAULT_JOB_STORE_MARKER,
+    DEFAULT_METADATA_STORE_MARKER,
     DEFAULT_WORKFLOW_STORE_MARKER,
     KIARA_CONFIG_FILE_NAME,
     KIARA_MAIN_CONFIG_FILE,
@@ -388,11 +389,7 @@ def create_default_store_config(
     return data_store
 
 
-# if windows, we want sqlite as default, because although it's slower, it does not
-# need the user to enable developer mode
-DEFAULT_STORE_TYPE: Literal["sqlite", "filesystem"] = (
-    "sqlite" if os.name == "nt" else "filesystem"
-)
+DEFAULT_STORE_TYPE: Literal["auto"] = "auto"
 
 
 class KiaraConfig(BaseSettings):
@@ -460,8 +457,8 @@ class KiaraConfig(BaseSettings):
         description="The name of the default context to use if none is provided.",
         default=DEFAULT_CONTEXT_NAME,
     )
-    default_store_type: Literal["sqlite", "filesystem"] = Field(
-        description="The default store type to ues if not specified.",
+    default_store_type: Literal["auto", "sqlite", "filesystem"] = Field(
+        description="The default store type to use when creating new stores.",
         default=DEFAULT_STORE_TYPE,
     )
     auto_generate_contexts: bool = Field(
@@ -634,14 +631,64 @@ class KiaraConfig(BaseSettings):
 
         default_sqlite_config: Union[Dict[str, Any], None] = None
 
+        if self.default_store_type == "auto":
+
+            # if windows, we want sqlite as default, because although it's slower, it does not
+            # need the user to enable developer mode
+            if os.name == "nt":
+                data_store_type = "sqlite"
+            else:
+                data_store_type = "filesystem"
+
+            metadata_store_type = "sqlite"
+            alias_store_type = "sqlite"
+            job_store_type = "sqlite"
+            workflow_store_type = "sqlite"
+        elif self.default_store_type == "filesystem":
+            metadata_store_type = "filesystem"
+            data_store_type = "filesystem"
+            alias_store_type = "filesystem"
+            job_store_type = "filesystem"
+            workflow_store_type = "filesystem"
+        elif self.default_store_type == "sqlite":
+            metadata_store_type = "sqlite"
+            data_store_type = "sqlite"
+            alias_store_type = "sqlite"
+            job_store_type = "sqlite"
+            workflow_store_type = "sqlite"
+        else:
+            raise Exception(f"Unknown store type: {self.default_store_type}")
+
+        if DEFAULT_METADATA_STORE_MARKER not in context_config.archives.keys():
+
+            if metadata_store_type == "sqlite":
+                default_sqlite_config = create_default_sqlite_archive_config()
+                metaddata_store = KiaraArchiveConfig(
+                    archive_type="sqlite_metadata_store", config=default_sqlite_config
+                )
+            elif metadata_store_type == "filesystem":
+                default_sqlite_config = create_default_sqlite_archive_config()
+                metaddata_store = KiaraArchiveConfig(
+                    archive_type="sqlite_metadata_store", config=default_sqlite_config
+                )
+            else:
+                raise Exception(
+                    f"Can't create default metadata store: invalid default store type '{metadata_store_type}'"
+                )
+
+            context_config.archives[DEFAULT_METADATA_STORE_MARKER] = metaddata_store
+            changed = True
+
         if DEFAULT_DATA_STORE_MARKER not in context_config.archives.keys():
 
-            if self.default_store_type == "sqlite":
-                default_sqlite_config = create_default_sqlite_archive_config()
+            if data_store_type == "sqlite":
+                if default_sqlite_config is None:
+                    default_sqlite_config = create_default_sqlite_archive_config()
+
                 data_store = KiaraArchiveConfig(
                     archive_type="sqlite_data_store", config=default_sqlite_config
                 )
-            elif self.default_store_type == "filesystem":
+            elif data_store_type == "filesystem":
                 data_store_type = "filesystem_data_store"
                 data_store = create_default_store_config(
                     store_type=data_store_type,
@@ -649,7 +696,7 @@ class KiaraConfig(BaseSettings):
                 )
             else:
                 raise Exception(
-                    f"Can't create default data store: invalid default store type '{self.default_store_type}'."
+                    f"Can't create default data store: invalid default store type '{data_store_type}'."
                 )
 
             context_config.archives[DEFAULT_DATA_STORE_MARKER] = data_store
@@ -657,7 +704,7 @@ class KiaraConfig(BaseSettings):
 
         if DEFAULT_JOB_STORE_MARKER not in context_config.archives.keys():
 
-            if self.default_store_type == "sqlite":
+            if job_store_type == "sqlite":
 
                 if default_sqlite_config is None:
                     default_sqlite_config = create_default_sqlite_archive_config()
@@ -665,7 +712,7 @@ class KiaraConfig(BaseSettings):
                 job_store = KiaraArchiveConfig(
                     archive_type="sqlite_job_store", config=default_sqlite_config
                 )
-            elif self.default_store_type == "filesystem":
+            elif job_store_type == "filesystem":
                 job_store_type = "filesystem_job_store"
                 job_store = create_default_store_config(
                     store_type=job_store_type,
@@ -673,7 +720,7 @@ class KiaraConfig(BaseSettings):
                 )
             else:
                 raise Exception(
-                    f"Can't create default job store: invalid default store type '{self.default_store_type}'."
+                    f"Can't create default job store: invalid default store type '{job_store_type}'."
                 )
 
             context_config.archives[DEFAULT_JOB_STORE_MARKER] = job_store
@@ -681,7 +728,7 @@ class KiaraConfig(BaseSettings):
 
         if DEFAULT_ALIAS_STORE_MARKER not in context_config.archives.keys():
 
-            if self.default_store_type == "sqlite":
+            if alias_store_type == "sqlite":
 
                 if default_sqlite_config is None:
                     default_sqlite_config = create_default_sqlite_archive_config()
@@ -689,7 +736,7 @@ class KiaraConfig(BaseSettings):
                 alias_store = KiaraArchiveConfig(
                     archive_type="sqlite_alias_store", config=default_sqlite_config
                 )
-            elif self.default_store_type == "filesystem":
+            elif alias_store_type == "filesystem":
                 alias_store_type = "filesystem_alias_store"
                 alias_store = create_default_store_config(
                     store_type=alias_store_type,
@@ -697,13 +744,15 @@ class KiaraConfig(BaseSettings):
                 )
             else:
                 raise Exception(
-                    f"Can't create default alias store: invalid default store type '{self.default_store_type}'."
+                    f"Can't create default alias store: invalid default store type '{alias_store_type}'."
                 )
 
             context_config.archives[DEFAULT_ALIAS_STORE_MARKER] = alias_store
             changed = True
 
         if DEFAULT_WORKFLOW_STORE_MARKER not in context_config.archives.keys():
+
+            # TODO: impolement sqlite type, or remove workflows entirely
 
             workflow_store_type = "filesystem_workflow_store"
             # workflow_store_type = "sqlite_workflow_store"

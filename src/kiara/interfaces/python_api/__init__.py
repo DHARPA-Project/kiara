@@ -187,7 +187,7 @@ class KiaraAPI(object):
         Get a list of all available plugins.
 
         Arguments:
-            regex: an optional regex to indicate the plugin naming scheme (default: /$kiara[_-]plugin\..*/)
+            regex: an optional regex to indicate the plugin naming scheme (default: /$kiara[_-]plugin\\..*/)
 
         Returns:
             a list of plugin names
@@ -2541,6 +2541,46 @@ class KiaraAPI(object):
         )
 
         return pipeline_config
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # metadata-related methods
+
+    def register_metadata(
+        self, key: str, value: str, force: bool = False, store: Union[str, None] = None
+    ) -> uuid.UUID:
+        """Register a comment into the specified metadata store.
+
+        Currently, this allows you to store comments within the default kiara context. You can use any string,
+        as key, for example a stringified `job_id`, or `value_id`, or any other string that makes sense in
+        the context you are using this in.
+
+        If you use the store argument, the store needs to be mounted into the current *kiara* context. For now,
+        you can ignore this and not provide any value here, since this area is still in flux. If you need
+        to store a metadata item into an external context, and you can't figure out how to do it,
+        let me know.
+
+        Note: this is preliminary and subject to change based on your input, so please provide your thoughts
+
+        Arguments:
+            key: the key under which to store the metadata (can be anything you can think of)
+            value: the comment you want to store
+            force: overwrite the existing value if its key already exists in the store
+            store: the store to use, by default the context default is used
+
+        Returns:
+            a globally unique identifier for the metadata item
+        """
+
+        if not value:
+            raise KiaraException("Cannot store empty metadata item.")
+
+        from kiara.models.metadata import CommentMetadata
+
+        item = CommentMetadata(comment=value)
+
+        return self.context.metadata_registry.register_metadata_item(
+            key=key, item=item, force=force, store=store
+        )
 
     # ------------------------------------------------------------------------------------------------------------------
     # render-related methods

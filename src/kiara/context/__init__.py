@@ -38,6 +38,7 @@ from kiara.registries.events.metadata import CreateMetadataDestinies
 from kiara.registries.events.registry import EventRegistry
 from kiara.registries.ids import ID_REGISTRY
 from kiara.registries.jobs import JobRegistry
+from kiara.registries.metadata import MetadataRegistry
 from kiara.registries.models import ModelRegistry
 from kiara.registries.modules import ModuleRegistry
 from kiara.registries.operations import OperationRegistry
@@ -129,9 +130,12 @@ class Kiara(object):
         self._config: KiaraContextConfig = config
         self._runtime_config: KiaraRuntimeConfig = runtime_config
 
+        self._env_mgmt: EnvironmentRegistry = EnvironmentRegistry.instance()
+
         self._event_registry: EventRegistry = EventRegistry(kiara=self)
         self._type_registry: TypeRegistry = TypeRegistry(self)
         self._data_registry: DataRegistry = DataRegistry(kiara=self)
+        self._metadata_registry: MetadataRegistry = MetadataRegistry(kiara=self)
         self._job_registry: JobRegistry = JobRegistry(kiara=self)
         self._module_registry: ModuleRegistry = ModuleRegistry(kiara=self)
         self._operation_registry: OperationRegistry = OperationRegistry(kiara=self)
@@ -144,8 +148,6 @@ class Kiara(object):
         self._workflow_registry: WorkflowRegistry = WorkflowRegistry(kiara=self)
 
         self._render_registry = RenderRegistry(kiara=self)
-
-        self._env_mgmt: Union[EnvironmentRegistry, None] = None
 
         metadata_augmenter = CreateMetadataDestinies(kiara=self)
         self._event_registry.add_listener(
@@ -175,6 +177,8 @@ class Kiara(object):
             archive_config = config_cls(**archive.config)
             archive_obj = archive_cls(archive_name=archive_alias, archive_config=archive_config)  # type: ignore
             for supported_type in archive_obj.supported_item_types():
+                if supported_type == "metadata":
+                    self.metadata_registry.register_metadata_archive(archive_obj)  # type: ignore
                 if supported_type == "data":
                     self.data_registry.register_data_archive(
                         archive_obj,  # type: ignore
@@ -241,10 +245,6 @@ class Kiara(object):
 
     @property
     def environment_registry(self) -> EnvironmentRegistry:
-        if self._env_mgmt is not None:
-            return self._env_mgmt
-
-        self._env_mgmt = EnvironmentRegistry.instance()
         return self._env_mgmt
 
     @property
@@ -279,6 +279,10 @@ class Kiara(object):
     @property
     def data_registry(self) -> DataRegistry:
         return self._data_registry
+
+    @property
+    def metadata_registry(self) -> MetadataRegistry:
+        return self._metadata_registry
 
     @property
     def workflow_registry(self) -> WorkflowRegistry:
@@ -348,6 +352,13 @@ class Kiara(object):
                     "archive.registered",
                     archive=_archive_inst.archive_name,
                     archive_type="data",
+                )
+            elif archive_type == "metadata":
+                result["metadata"] = self.metadata_registry.register_metadata_archive(_archive_inst)  # type: ignore
+                log_message(
+                    "archive.registered",
+                    archive=_archive_inst.archive_name,
+                    archive_type="metadata",
                 )
             elif archive_type == "alias":
                 result["alias"] = self.alias_registry.register_archive(_archive_inst)  # type: ignore
@@ -484,6 +495,8 @@ class Kiara(object):
         result: Dict[KiaraArchive, Set[str]] = {}
 
         archive: KiaraArchive
+        for alias, archive in self.metadata_registry.metadata_archives.items():
+            result.setdefault(archive, set()).add(alias)
         for alias, archive in self.data_registry.data_archives.items():
             result.setdefault(archive, set()).add(alias)
         for alias, archive in self.alias_registry.alias_archives.items():

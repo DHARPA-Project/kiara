@@ -10,7 +10,6 @@ from typing import Any, ClassVar, Dict, Iterable, List, Mapping, Union
 
 import networkx as nx
 from dag_cbor import IPLDKind
-from deepdiff import DeepHash
 from multiformats import CID
 from pydantic import ConfigDict
 from pydantic.fields import PrivateAttr
@@ -30,7 +29,7 @@ from kiara.defaults import (
 from kiara.registries.templates import TemplateRegistry
 from kiara.utils.class_loading import _default_id_func
 from kiara.utils.develop import log_dev_message
-from kiara.utils.hashing import KIARA_HASH_FUNCTION, compute_cid
+from kiara.utils.hashing import compute_cid
 from kiara.utils.json import orjson_dumps
 from kiara.utils.models import (
     assemble_subcomponent_graph,
@@ -58,13 +57,23 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     #     return to_camel_case(cls._kiara_model_name)
 
     @classmethod
-    def get_schema_hash(cls) -> int:
+    def get_schema_cid(cls) -> CID:
         if cls._schema_hash_cache is not None:
             return cls._schema_hash_cache
 
-        obj = cls.model_json_schema()
-        h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
-        cls._schema_hash_cache = h[obj]
+        model_schema = cls.model_json_schema()
+        try:
+            _, cid = compute_cid(data=model_schema)
+        except Exception as e:
+            from kiara.utils.output import extract_renderable
+
+            msg = "Failed to compute cid for model schema instance."
+            item = extract_renderable(model_schema)
+            renderable = Group(msg, item, extract_renderable(e))
+            log_dev_message(renderable, title="cid computation error")
+            raise e
+
+        cls._schema_hash_cache = cid
         return cls._schema_hash_cache
 
     _graph_cache: Union[nx.DiGraph, None] = PrivateAttr(default=None)
@@ -72,7 +81,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     _dynamic_subcomponents: Dict[str, "KiaraModel"] = PrivateAttr(default_factory=dict)
     _id_cache: Union[str, None] = PrivateAttr(default=None)
     _category_id_cache: Union[str, None] = PrivateAttr(default=None)
-    _schema_hash_cache: ClassVar[Union[None, int]] = None
+    _schema_hash_cache: ClassVar[Union[None, CID]] = None
     _cid_cache: Union[CID, None] = PrivateAttr(default=None)
     _dag_cache: Union[bytes, None] = PrivateAttr(default=None)
     _size_cache: Union[int, None] = PrivateAttr(default=None)

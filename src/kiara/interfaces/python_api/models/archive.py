@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.registries.aliases import AliasArchive, AliasStore
     from kiara.registries.data import DataArchive, DataStore
+    from kiara.registries.metadata import MetadataArchive, MetadataStore
 
 
 class KiArchive(KiaraModel):
@@ -39,6 +40,13 @@ class KiArchive(KiaraModel):
             allow_write_access=allow_write_access,
             archive_name=archive_name,
         )
+
+        if "metadata" in archives.keys():
+            metadata_archive: Union[MetadataArchive, None] = archives["metadata"]  # type: ignore
+            metadata_archive_config: Union[Mapping[str, Any], None] = metadata_archive.config.model_dump()  # type: ignore
+        else:
+            metadata_archive_config = None
+            metadata_archive = None
 
         if "data" in archives.keys():
             data_archive: Union[DataArchive, None] = archives["data"]  # type: ignore
@@ -81,6 +89,7 @@ class KiArchive(KiaraModel):
         kiarchive = KiArchive(
             archive_id=archive_id,
             archive_name=archive_alias,
+            metadata_archive_config=metadata_archive_config,
             data_archive_config=data_archive_config,
             alias_archive_config=alias_archive_config,
             archive_base_path=archive_path.parent.as_posix(),
@@ -88,6 +97,7 @@ class KiArchive(KiaraModel):
             allow_write_access=allow_write_access,
         )
 
+        kiarchive._metadata_archive = metadata_archive
         kiarchive._data_archive = data_archive
         kiarchive._alias_archive = alias_archive
         kiarchive._kiara = kiara
@@ -137,6 +147,16 @@ class KiArchive(KiaraModel):
                 allow_write_access=allow_write_access,
             )
             data_store_config = data_store.config
+
+            metadata_store: MetadataStore = create_new_archive(  # type: ignore
+                archive_name=archive_name,
+                store_base_path=archive_base_path,
+                store_type="sqlite_metadata_store",
+                file_name=archive_file_name,
+                allow_write_access=True,
+            )
+            metadata_store_config = metadata_store.config
+
             alias_store: AliasStore = create_new_archive(  # type: ignore
                 archive_name=archive_name,
                 store_base_path=archive_base_path,
@@ -148,16 +168,19 @@ class KiArchive(KiaraModel):
 
             kiarchive_id = data_store.archive_id
             assert alias_store.archive_id == kiarchive_id
+            assert metadata_store.archive_id == kiarchive_id
 
             kiarchive = KiArchive(
                 archive_id=kiarchive_id,
                 archive_name=archive_name,
                 archive_base_path=archive_base_path,
                 archive_file_name=archive_file_name,
+                metadata_archive_config=metadata_store_config.model_dump(),
                 data_archive_config=data_store_config.model_dump(),
                 alias_archive_config=alias_store_config.model_dump(),
                 allow_write_access=allow_write_access,
             )
+            kiarchive._metadata_archive = metadata_store
             kiarchive._data_archive = data_store
             kiarchive._alias_archive = alias_store
             kiarchive._kiara = kiara
@@ -173,6 +196,9 @@ class KiArchive(KiaraModel):
     allow_write_access: bool = Field(
         description="Whether the store allows write access.", default=False
     )
+    metadata_archive_config: Union[Mapping[str, Any], None] = Field(
+        description="The archive to store metadata in.", default=None
+    )
     data_archive_config: Union[Mapping[str, Any], None] = Field(
         description="The archive to store the data in.", default=None
     )
@@ -180,9 +206,29 @@ class KiArchive(KiaraModel):
         description="The archive to store aliases in.", default=None
     )
 
+    _metadata_archive: Union["MetadataArchive", None] = PrivateAttr(default=None)
     _data_archive: Union["DataArchive", None] = PrivateAttr(default=None)
     _alias_archive: Union["AliasArchive", None] = PrivateAttr(default=None)
     _kiara: Union["Kiara", None] = PrivateAttr(default=None)
+
+    @property
+    def metadata_archive(self) -> "MetadataArchive":
+
+        if self._metadata_archive:
+            return self._metadata_archive
+
+        from kiara.utils.stores import create_new_archive
+
+        metadata_archive: MetadataArchive = create_new_archive(  # type: ignore
+            archive_name=self.archive_name,
+            store_base_path=self.archive_base_path,
+            store_type="sqlite_metadata_store",
+            file_name=self.archive_file_name,
+            allow_write_access=True,
+            **self.metadata_archive_config,
+        )
+        self._metadata_archive = metadata_archive
+        return self._metadata_archive
 
     @property
     def data_archive(self) -> "DataArchive":

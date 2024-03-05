@@ -2,7 +2,7 @@
 import abc
 import json
 import uuid
-from typing import Any, Dict, Generic, Iterable, Mapping, Union
+from typing import Any, Dict, Generic, Iterable, Union
 
 from kiara.models.metadata import KiaraMetadata
 from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
@@ -70,13 +70,20 @@ class MetadataStore(MetadataArchive):
         key: str,
         item: KiaraMetadata,
         reference_item: Any = None,
+        force: bool = False,
         store: Union[str, uuid.UUID, None] = None,
-    ):
+    ) -> uuid.UUID:
 
         if reference_item:
             raise NotImplementedError(
                 "Cannot store metadata item with reference item, not implemented yet."
             )
+
+        GLOBAL_REFERENCE_TYPE = "global"
+        DEFAULT_GLOBAL_REFERENCE_ID = "default"
+
+        reference_item_type = GLOBAL_REFERENCE_TYPE
+        reference_item_id = DEFAULT_GLOBAL_REFERENCE_ID
 
         if store:
             raise NotImplementedError(
@@ -95,24 +102,33 @@ class MetadataStore(MetadataArchive):
             model_schema=model_item_schema_str,
         )
 
-        data = item.model_dump()
+        # data = item.model_dump()
+        data_json = item.model_dump_json()
         data_hash = str(item.instance_cid)
 
-        self._store_metadata_item(
+        metadata_item_id = self._store_metadata_item(
             key=key,
-            value=data,
+            value_json=data_json,
             value_hash=data_hash,
             model_type_id=model_type,
             model_schema_hash=model_schema_hash,
+            reference_item_type=reference_item_type,
+            reference_item_id=reference_item_id,
+            force=force,
         )
+
+        return metadata_item_id
 
     @abc.abstractmethod
     def _store_metadata_item(
         self,
         key: str,
-        value: Mapping[str, Any],
+        value_json: str,
         value_hash: str,
         model_type_id: str,
         model_schema_hash: str,
-    ):
+        reference_item_type: str,
+        reference_item_id: str,
+        force: bool = False,
+    ) -> uuid.UUID:
         pass

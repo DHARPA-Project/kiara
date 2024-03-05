@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import uuid
 from pathlib import Path
 from typing import Any, Dict, Mapping, Union
 
@@ -116,12 +117,15 @@ CREATE TABLE IF NOT EXISTS metadata_schemas (
 );
 CREATE TABLE IF NOT EXISTS metadata (
     metadata_item_id TEXT PRIMARY KEY,
-    metadata_key TEXT NOT NULL,
+    metadata_item_key TEXT NOT NULL,
+    metadata_item_hash TEXT NOT NULL,
     model_type_id TEXT NOT NULL,
     model_schema_hash TEXT NOT NULL,
-    reference_item_type TEXT,
-    reference_item_id TEXT,
-    metadata_value TEXT NOT NULL
+    reference_item_type TEXT NOT NULL,
+    reference_item_id TEXT NOT NULL,
+    metadata_value TEXT NOT NULL,
+    FOREIGN KEY (model_schema_hash) REFERENCES metadata_schemas (model_schema_hash),
+    UNIQUE (metadata_item_key, reference_item_type, reference_item_id)
 );
 """
 
@@ -180,15 +184,55 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
         self, model_schema_hash: str, model_type_id: str, model_schema: str
     ):
 
-        raise NotImplementedError()
+        sql = text(
+            "INSERT OR IGNORE INTO metadata_schemas (model_schema_hash, model_type_id, model_schema) VALUES (:model_schema_hash, :model_type_id, :model_schema)"
+        )
+        params = {
+            "model_schema_hash": model_schema_hash,
+            "model_type_id": model_type_id,
+            "model_schema": model_schema,
+        }
+        with self.sqlite_engine.connect() as conn:
+            conn.execute(sql, params)
+            conn.commit()
 
     def _store_metadata_item(
         self,
         key: str,
-        value: Mapping[str, Any],
+        value_json: str,
         value_hash: str,
         model_type_id: str,
         model_schema_hash: str,
-    ):
+        reference_item_type: str,
+        reference_item_id: str,
+        force: bool = False,
+    ) -> uuid.UUID:
 
-        raise NotImplementedError()
+        from kiara.registries.ids import ID_REGISTRY
+
+        if force:
+            sql = text(
+                "INSERT OR REPLACE INTO metadata (metadata_item_id, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, reference_item_type, reference_item_id, metadata_value) VALUES (:metadata_item_id, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :reference_item_type, :reference_item_id, :metadata_value)"
+            )
+        else:
+            sql = text(
+                "INSERT INTO metadata (metadata_item_id, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, reference_item_type, reference_item_id, metadata_value) VALUES (:metadata_item_id, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :reference_item_type, :reference_item_id, :metadata_value)"
+            )
+
+        metadata_item_id = ID_REGISTRY.generate(comment="new metadata item id")
+
+        params = {
+            "metadata_item_id": str(metadata_item_id),
+            "metadata_item_key": key,
+            "metadata_item_hash": value_hash,
+            "model_type_id": model_type_id,
+            "model_schema_hash": model_schema_hash,
+            "reference_item_type": reference_item_type,
+            "reference_item_id": reference_item_id,
+            "metadata_value": value_json,
+        }
+        with self.sqlite_engine.connect() as conn:
+            conn.execute(sql, params)
+            conn.commit()
+
+        return metadata_item_id

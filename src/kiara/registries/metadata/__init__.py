@@ -146,10 +146,10 @@ class MetadataRegistry(object):
         self,
         key: str,
         item: KiaraMetadata,
-        metadata_store: Union[str, uuid.UUID, None] = None,
-    ):
+        force: bool = False,
+        store: Union[str, uuid.UUID, None] = None,
+    ) -> uuid.UUID:
 
-        store: MetadataStore = self.get_archive(archive_id_or_alias=metadata_store)  # type: ignore
+        mounted_store: MetadataStore = self.get_archive(archive_id_or_alias=store)  # type: ignore
 
-        store.store_metadata_item(key=key, item=item)
-        # print(f"Result: {result}")
+        return mounted_store.store_metadata_item(key=key, item=item, force=force)

@@ -336,11 +336,6 @@ class KiaraFileBundle(KiaraModel):
 
         valid_extensions = _import_config.include_files
 
-        # if import_time:
-        #     bundle_import_time = import_time
-        # else:
-        #     bundle_import_time = datetime.datetime.now()  # TODO: timezone
-
         sum_size = 0
 
         def include_file(filename: str) -> bool:

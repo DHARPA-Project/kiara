@@ -170,20 +170,21 @@ def _process_subclass(
                 if not hasattr(sub_class, "process"):
                     missing.append("process")
 
-                name = f"{sub_class.__module__}.{sub_class.__name__}"
-                title = "Invalid kiara module"
-                if hasattr(sub_class, "_module_type_name"):
-                    name = f"**{name}** ( *{sub_class._module_type_name}* )"  # type: ignore
-                    title = f"{title} '[i]{sub_class._module_type_name}[/i]'"  # type: ignore
-                msg = f"Invalid kiara module: {name}\n\nMissing method(s):"
-                for m in missing:
-                    msg = f"{msg}\n- *{m}*"
+                if missing:
+                    name = f"{sub_class.__module__}.{sub_class.__name__}"
+                    title = "Invalid kiara module"
+                    if hasattr(sub_class, "_module_type_name"):
+                        name = f"**{name}** ( *{sub_class._module_type_name}* )"  # type: ignore
+                        title = f"{title} '[i]{sub_class._module_type_name}[/i]'"  # type: ignore
+                    msg = f"Invalid kiara module: {name}\n\nMissing method(s):"
+                    for m in missing:
+                        msg = f"{msg}\n- *{m}*"
 
-                from rich.markdown import Markdown
+                    from rich.markdown import Markdown
 
-                from kiara.utils.develop import log_dev_message
+                    from kiara.utils.develop import log_dev_message
 
-                log_dev_message(msg=Markdown(msg), title=title)
+                    log_dev_message(msg=Markdown(msg), title=title)
 
         log_message(
             "ignore.subclass",

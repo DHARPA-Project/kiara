@@ -121,11 +121,14 @@ CREATE TABLE IF NOT EXISTS metadata (
     metadata_item_hash TEXT NOT NULL,
     model_type_id TEXT NOT NULL,
     model_schema_hash TEXT NOT NULL,
+    metadata_value TEXT NOT NULL,
+    FOREIGN KEY (model_schema_hash) REFERENCES metadata_schemas (model_schema_hash)
+);
+CREATE TABLE IF NOT EXISTS metadata_references (
     reference_item_type TEXT NOT NULL,
     reference_item_id TEXT NOT NULL,
-    metadata_value TEXT NOT NULL,
-    FOREIGN KEY (model_schema_hash) REFERENCES metadata_schemas (model_schema_hash),
-    UNIQUE (metadata_item_key, reference_item_type, reference_item_id)
+    metadata_item_id TEXT NOT NULL,
+    FOREIGN KEY (metadata_item_id) REFERENCES metadata (metadata_item_id)
 );
 """
 

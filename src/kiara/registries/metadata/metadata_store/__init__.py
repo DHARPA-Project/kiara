@@ -69,21 +69,11 @@ class MetadataStore(MetadataArchive):
         self,
         key: str,
         item: KiaraMetadata,
-        reference_item: Any = None,
+        reference_item_type: Union[str, None] = None,
+        reference_item_id: Union[str, None] = None,
         force: bool = False,
         store: Union[str, uuid.UUID, None] = None,
     ) -> uuid.UUID:
-
-        if reference_item:
-            raise NotImplementedError(
-                "Cannot store metadata item with reference item, not implemented yet."
-            )
-
-        GLOBAL_REFERENCE_TYPE = "global"
-        DEFAULT_GLOBAL_REFERENCE_ID = "default"
-
-        reference_item_type = GLOBAL_REFERENCE_TYPE
-        reference_item_id = DEFAULT_GLOBAL_REFERENCE_ID
 
         if store:
             raise NotImplementedError(
@@ -112,12 +102,28 @@ class MetadataStore(MetadataArchive):
             value_hash=data_hash,
             model_type_id=model_type,
             model_schema_hash=model_schema_hash,
-            reference_item_type=reference_item_type,
-            reference_item_id=reference_item_id,
             force=force,
         )
 
+        if (reference_item_id and not reference_item_type) or (
+            reference_item_type and not reference_item_id
+        ):
+            raise ValueError(
+                "If reference_item_id is set, reference_item_type must be set as well."
+            )
+
+        if reference_item_type:
+            self._store_metadata_reference(
+                reference_item_type, reference_item_id, str(metadata_item_id)
+            )
+
         return metadata_item_id
+
+    @abc.abstractmethod
+    def _store_metadata_reference(
+        self, reference_item_type: str, reference_item_id: str, metadata_item_id: str
+    ) -> None:
+        pass
 
     @abc.abstractmethod
     def _store_metadata_item(

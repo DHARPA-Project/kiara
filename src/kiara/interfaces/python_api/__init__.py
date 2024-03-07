@@ -2808,6 +2808,7 @@ class KiaraAPI(object):
         operation: Union[str, Path, Manifest, OperationInfo, JobDesc],
         inputs: Union[Mapping[str, Any], None],
         operation_config: Union[None, Mapping[str, Any]] = None,
+        **job_metadata,
     ) -> uuid.UUID:
         """
         Queue a job from a operation id, module_name (and config), or pipeline file, wait for the job to finish and retrieve the result.
@@ -2821,10 +2822,18 @@ class KiaraAPI(object):
             operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..
             inputs: the operation inputs
             operation_config: the (optional) module config in case 'operation' is a module name
+            **job_metadata: additional metadata to store with the job
 
         Returns:
             the queued job id
         """
+
+        if "comment" not in job_metadata.keys():
+            raise KiaraException("You need to provide a 'comment' for the job.")
+
+        comment = job_metadata.get("comment")
+        if not isinstance(comment, str):
+            raise KiaraException("The 'comment' must be a string.")
 
         if inputs is None:
             inputs = {}
@@ -2895,6 +2904,13 @@ class KiaraAPI(object):
             manifest = _operation
 
         job_id = self.queue_manifest(manifest=manifest, inputs=inputs)
+
+        from kiara.models.metadata import CommentMetadata
+
+        comment_metadata = CommentMetadata(comment=comment)
+        self.context.metadata_registry.register_metadata_item(
+            key="comment", item=comment_metadata, force=False, store=None
+        )
         return job_id
 
     def run_job(
@@ -2902,6 +2918,7 @@ class KiaraAPI(object):
         operation: Union[str, Path, Manifest, OperationInfo, JobDesc],
         inputs: Union[None, Mapping[str, Any]] = None,
         operation_config: Union[None, Mapping[str, Any]] = None,
+        **job_metadata,
     ) -> ValueMapReadOnly:
         """
         Run a job from a operation id, module_name (and config), or pipeline file, wait for the job to finish and retrieve the result.
@@ -2918,6 +2935,7 @@ class KiaraAPI(object):
             operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..
             inputs: the operation inputs
             operation_config: the (optional) module config in case 'operation' is a module name
+            **job_metadata: additional metadata to store with the job
 
         Returns:
             the job result value map
@@ -2927,7 +2945,10 @@ class KiaraAPI(object):
             inputs = {}
 
         job_id = self.queue_job(
-            operation=operation, inputs=inputs, operation_config=operation_config
+            operation=operation,
+            inputs=inputs,
+            operation_config=operation_config,
+            **job_metadata,
         )
         return self.context.job_registry.retrieve_result(job_id=job_id)
 

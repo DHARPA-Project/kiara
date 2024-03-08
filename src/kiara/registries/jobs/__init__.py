@@ -430,18 +430,30 @@ class JobRegistry(object):
         manifest: Manifest,
         inputs: Mapping[str, Any],
         wait: bool = False,
-        job_metadata: Union[None, Any] = None,
     ) -> uuid.UUID:
 
         job_config = self.prepare_job_config(manifest=manifest, inputs=inputs)
-        return self.execute_job(job_config, wait=wait, job_metadata=job_metadata)
+        return self.execute_job(job_config, wait=wait)
 
     def execute_job(
         self,
         job_config: JobConfig,
         wait: bool = False,
-        job_metadata: Union[None, Any] = None,
+        pipeline_metadata: Union[None, Any] = None,
     ) -> uuid.UUID:
+
+        # from kiara.models.metadata import CommentMetadata
+        # if "comment" not in job_metadata.keys():
+        #     raise KiaraException("You need to provide a 'comment' for the job.")
+        #
+        # comment = job_metadata.get("comment")
+        # if not isinstance(comment, str):
+        #     raise KiaraException("The 'comment' must be a string.")
+        #
+        # comment_metadata = CommentMetadata(comment=comment)
+        # self.context.metadata_registry.register_metadata_item(
+        #     key="comment", item=comment_metadata, force=False, store=None
+        # )
 
         if job_config.module_type != "pipeline":
             log = logger.bind(
@@ -469,8 +481,10 @@ class JobRegistry(object):
             if is_develop():
 
                 module = self._kiara.module_registry.create_module(manifest=job_config)
-                if job_metadata and job_metadata.get("is_pipeline_step", True):
-                    step_id = job_metadata.get("step_id", None)
+                if pipeline_metadata and pipeline_metadata.get(
+                    "is_pipeline_step", True
+                ):
+                    step_id = pipeline_metadata.get("step_id", None)
                     title = f"Using cached pipeline step: {step_id}"
                 else:
                     title = f"Using cached job for: {module.module_type_name}"
@@ -497,20 +511,20 @@ class JobRegistry(object):
 
             return stored_job
 
-        if job_metadata is None:
-            job_metadata = {}
+        if pipeline_metadata is None:
+            pipeline_metadata = {}
 
-        is_pipeline_step = job_metadata.get("is_pipeline_step", False)
+        is_pipeline_step = pipeline_metadata.get("is_pipeline_step", False)
         dbg_data = {
             "module_type": job_config.module_type,
             "is_pipeline_step": is_pipeline_step,
         }
         if is_pipeline_step:
-            dbg_data["step_id"] = job_metadata["step_id"]
+            dbg_data["step_id"] = pipeline_metadata["step_id"]
         log.debug("job.execute", **dbg_data)
 
         job_id = self._processor.create_job(
-            job_config=job_config, job_metadata=job_metadata
+            job_config=job_config, pipeline_metadata=pipeline_metadata
         )
         self._active_jobs[job_config.job_hash] = job_id
 

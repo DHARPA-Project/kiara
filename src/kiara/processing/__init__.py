@@ -100,7 +100,7 @@ class ModuleProcessor(abc.ABC):
             raise Exception(f"No job record for job with id '{job_id}' registered.")
 
     def create_job(
-        self, job_config: JobConfig, job_metadata: Union[None, Mapping[str, Any]]
+        self, job_config: JobConfig, pipeline_metadata: Union[None, Mapping[str, Any]]
     ) -> uuid.UUID:
 
         environments = {
@@ -108,8 +108,8 @@ class ModuleProcessor(abc.ABC):
             for env_name, env in self._kiara.current_environments.items()
         }
 
-        if job_metadata is None:
-            job_metadata = {}
+        if pipeline_metadata is None:
+            pipeline_metadata = {}
 
         result_pedigree = ValuePedigree(
             kiara_id=self._kiara.id,
@@ -142,7 +142,7 @@ class ModuleProcessor(abc.ABC):
             "job": job,
             "module": module,
             "outputs": outputs,
-            "job_metadata": job_metadata,
+            "job_metadata": pipeline_metadata,
         }
         self._created_jobs[job_id] = job_details
 
@@ -159,10 +159,10 @@ class ModuleProcessor(abc.ABC):
                 or dev_settings.log.pre_run.internal_modules
             ):
 
-                is_pipeline_step = job_metadata.get("is_pipeline_step", False)
+                is_pipeline_step = pipeline_metadata.get("is_pipeline_step", False)
                 if is_pipeline_step:
                     if dev_settings.log.pre_run.pipeline_steps:
-                        step_id = job_metadata.get("step_id", None)
+                        step_id = pipeline_metadata.get("step_id", None)
                         assert step_id is not None
                         title = (
                             f"Pre-run information for pipeline step: [i]{step_id}[/i]"

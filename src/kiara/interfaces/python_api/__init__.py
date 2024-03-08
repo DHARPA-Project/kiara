@@ -2759,7 +2759,10 @@ class KiaraAPI(object):
     # ------------------------------------------------------------------------------------------------------------------
     # job-related methods
     def queue_manifest(
-        self, manifest: Manifest, inputs: Union[None, Mapping[str, Any]] = None
+        self,
+        manifest: Manifest,
+        inputs: Union[None, Mapping[str, Any]] = None,
+        **job_metadata: Any,
     ) -> uuid.UUID:
         """
         Queue a job using the provided manifest to describe the module and config that should be executed.
@@ -2786,7 +2789,10 @@ class KiaraAPI(object):
         return job_id
 
     def run_manifest(
-        self, manifest: Manifest, inputs: Union[None, Mapping[str, Any]] = None
+        self,
+        manifest: Manifest,
+        inputs: Union[None, Mapping[str, Any]] = None,
+        **job_metadata: Any,
     ) -> ValueMapReadOnly:
         """
         Run a job using the provided manifest to describe the module and config that should be executed.
@@ -2796,11 +2802,12 @@ class KiaraAPI(object):
         Arguments:
             manifest: the manifest
             inputs: the job inputs (can be either references to values, or raw inputs
+            job_metadata: additional metadata to store with the job
 
         Returns:
             a result value map instance
         """
-        job_id = self.queue_manifest(manifest=manifest, inputs=inputs)
+        job_id = self.queue_manifest(manifest=manifest, inputs=inputs, **job_metadata)
         return self.context.job_registry.retrieve_result(job_id=job_id)
 
     def queue_job(
@@ -2822,18 +2829,11 @@ class KiaraAPI(object):
             operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..
             inputs: the operation inputs
             operation_config: the (optional) module config in case 'operation' is a module name
-            **job_metadata: additional metadata to store with the job
+            job_metadata: additional metadata to store with the job
 
         Returns:
             the queued job id
         """
-
-        if "comment" not in job_metadata.keys():
-            raise KiaraException("You need to provide a 'comment' for the job.")
-
-        comment = job_metadata.get("comment")
-        if not isinstance(comment, str):
-            raise KiaraException("The 'comment' must be a string.")
 
         if inputs is None:
             inputs = {}
@@ -2903,14 +2903,8 @@ class KiaraAPI(object):
         else:
             manifest = _operation
 
-        job_id = self.queue_manifest(manifest=manifest, inputs=inputs)
+        job_id = self.queue_manifest(manifest=manifest, inputs=inputs, **job_metadata)
 
-        from kiara.models.metadata import CommentMetadata
-
-        comment_metadata = CommentMetadata(comment=comment)
-        self.context.metadata_registry.register_metadata_item(
-            key="comment", item=comment_metadata, force=False, store=None
-        )
         return job_id
 
     def run_job(

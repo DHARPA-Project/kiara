@@ -239,3 +239,8 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
             conn.commit()
 
         return metadata_item_id
+
+    def _store_metadata_reference(
+        self, reference_item_type: str, reference_item_id: str, metadata_item_id: str
+    ) -> None:
+        raise NotImplementedError()

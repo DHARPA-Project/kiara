@@ -12,7 +12,6 @@ from datetime import datetime
 from enum import Enum
 from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Mapping, Union
 
-from pydantic import field_validator
 from pydantic.fields import Field, PrivateAttr
 from pydantic.main import BaseModel
 from rich import box
@@ -74,6 +73,12 @@ class JobLog(BaseModel):
         self.log.append(_msg)
 
 
+class PipelineMetadata(BaseModel):
+
+    pipeline_id: uuid.UUID = Field(description="The id of the pipeline.")
+    step_id: str = Field(description="The id of the step in the pipeline.")
+
+
 class JobConfig(InputsManifest):
 
     _kiara_model_id: ClassVar = "instance.job_config"
@@ -112,6 +117,13 @@ class JobConfig(InputsManifest):
 
     def _retrieve_data_to_hash(self) -> Any:
         return {"manifest": self.manifest_cid, "inputs": self.inputs_cid}
+
+    pipeline_metadata: Union[PipelineMetadata, None] = Field(
+        description="Metadata for the pipeline this job is part of.", default=None
+    )
+    # job_metadata: Mapping[str, Any] = Field(
+    #     description="Optional metadata for this job.", default_factory=dict
+    # )
 
 
 class ActiveJob(KiaraModel):
@@ -273,20 +285,20 @@ class JobRecord(JobConfig):
     runtime_details: Union[JobRuntimeDetails, None] = Field(
         description="Runtime details for the job."
     )
-    job_metadata: Mapping[str, Any] = Field(
-        description="Optional metadata for this job.", default_factory=dict
-    )
+    # job_metadata: Mapping[str, Any] = Field(
+    #     description="Optional metadata for this job.", default_factory=dict
+    # )
 
     _is_stored: bool = PrivateAttr(default=None)
     _outputs_hash: Union[int, None] = PrivateAttr(default=None)
 
-    @field_validator("job_metadata", mode="before")
-    @classmethod
-    def validate_metadata(cls, value):
-
-        if value is None:
-            value = {}
-        return value
+    # @field_validator("job_metadata", mode="before")
+    # @classmethod
+    # def validate_metadata(cls, value):
+    #
+    #     if value is None:
+    #         value = {}
+    #     return value
 
     def _retrieve_data_to_hash(self) -> Any:
         return {

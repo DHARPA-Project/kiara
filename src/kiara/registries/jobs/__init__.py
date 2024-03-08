@@ -416,6 +416,10 @@ class JobRegistry(object):
     def prepare_job_config(
         self, manifest: Manifest, inputs: Mapping[str, Any]
     ) -> JobConfig:
+        """Prepare a JobConfig instance from the manifest and inputs.
+
+        This involves creating (and therefor validating) a module instance, as well as making sure the inputs are valid.
+        """
 
         module = self._kiara.module_registry.create_module(manifest=manifest)
 
@@ -431,6 +435,7 @@ class JobRegistry(object):
         inputs: Mapping[str, Any],
         wait: bool = False,
     ) -> uuid.UUID:
+        """Prepare a job config, then execute it."""
 
         job_config = self.prepare_job_config(manifest=manifest, inputs=inputs)
         return self.execute_job(job_config, wait=wait)
@@ -439,8 +444,13 @@ class JobRegistry(object):
         self,
         job_config: JobConfig,
         wait: bool = False,
-        pipeline_metadata: Union[None, Any] = None,
     ) -> uuid.UUID:
+        """Execute the job specified by the job config.
+
+        Arguments:
+            job_config: the job config
+            wait: whether to wait for the job to finish
+        """
 
         # from kiara.models.metadata import CommentMetadata
         # if "comment" not in job_metadata.keys():
@@ -472,6 +482,14 @@ class JobRegistry(object):
             )
 
         stored_job = self.find_matching_job_record(inputs_manifest=job_config)
+
+        is_pipeline_step = False if job_config.pipeline_metadata is None else True
+        if is_pipeline_step:
+            pipeline_step_id: Union[None, str] = job_config.pipeline_metadata.step_id  # type: ignore
+            pipeline_id: Union[None, uuid.UUID] = job_config.pipeline_metadata.pipeline_id  # type: ignore
+        else:
+            pipeline_step_id = None
+            pipeline_id = None
         if stored_job is not None:
             log.debug(
                 "job.use_cached",
@@ -481,11 +499,8 @@ class JobRegistry(object):
             if is_develop():
 
                 module = self._kiara.module_registry.create_module(manifest=job_config)
-                if pipeline_metadata and pipeline_metadata.get(
-                    "is_pipeline_step", True
-                ):
-                    step_id = pipeline_metadata.get("step_id", None)
-                    title = f"Using cached pipeline step: {step_id}"
+                if is_pipeline_step:
+                    title = f"Using cached pipeline step: {pipeline_step_id}"
                 else:
                     title = f"Using cached job for: {module.module_type_name}"
 
@@ -511,21 +526,17 @@ class JobRegistry(object):
 
             return stored_job
 
-        if pipeline_metadata is None:
-            pipeline_metadata = {}
-
-        is_pipeline_step = pipeline_metadata.get("is_pipeline_step", False)
         dbg_data = {
             "module_type": job_config.module_type,
             "is_pipeline_step": is_pipeline_step,
         }
         if is_pipeline_step:
-            dbg_data["step_id"] = pipeline_metadata["step_id"]
+            dbg_data["step_id"] = pipeline_step_id
+            dbg_data["pipeline_id"] = str(pipeline_id)
+
         log.debug("job.execute", **dbg_data)
 
-        job_id = self._processor.create_job(
-            job_config=job_config, pipeline_metadata=pipeline_metadata
-        )
+        job_id = self._processor.create_job(job_config=job_config)
         self._active_jobs[job_config.job_hash] = job_id
 
         try:

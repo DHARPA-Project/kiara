@@ -7,13 +7,19 @@
 
 import abc
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, List, Literal, Mapping, Protocol, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Protocol, Union
 
 import structlog
 from pydantic import BaseModel
 
 from kiara.exceptions import KiaraProcessingException
-from kiara.models.module.jobs import ActiveJob, JobConfig, JobLog, JobRecord, JobStatus
+from kiara.models.module.jobs import (
+    ActiveJob,
+    JobConfig,
+    JobLog,
+    JobRecord,
+    JobStatus,
+)
 from kiara.models.values.value import (
     ValueMap,
     ValueMapReadOnly,
@@ -99,17 +105,12 @@ class ModuleProcessor(abc.ABC):
         else:
             raise Exception(f"No job record for job with id '{job_id}' registered.")
 
-    def create_job(
-        self, job_config: JobConfig, pipeline_metadata: Union[None, Mapping[str, Any]]
-    ) -> uuid.UUID:
+    def create_job(self, job_config: JobConfig) -> uuid.UUID:
 
         environments = {
             env_name: env.instance_id
             for env_name, env in self._kiara.current_environments.items()
         }
-
-        if pipeline_metadata is None:
-            pipeline_metadata = {}
 
         result_pedigree = ValuePedigree(
             kiara_id=self._kiara.id,
@@ -142,8 +143,9 @@ class ModuleProcessor(abc.ABC):
             "job": job,
             "module": module,
             "outputs": outputs,
-            "job_metadata": pipeline_metadata,
         }
+        job_details["pipeline_metadata"] = job_config.pipeline_metadata
+
         self._created_jobs[job_id] = job_details
 
         self._send_job_event(
@@ -159,10 +161,10 @@ class ModuleProcessor(abc.ABC):
                 or dev_settings.log.pre_run.internal_modules
             ):
 
-                is_pipeline_step = pipeline_metadata.get("is_pipeline_step", False)
+                is_pipeline_step = job_config.pipeline_metadata is not None
                 if is_pipeline_step:
                     if dev_settings.log.pre_run.pipeline_steps:
-                        step_id = pipeline_metadata.get("step_id", None)
+                        step_id = job_config.pipeline_metadata.step_id  # type: ignore
                         assert step_id is not None
                         title = (
                             f"Pre-run information for pipeline step: [i]{step_id}[/i]"
@@ -332,15 +334,16 @@ class ModuleProcessor(abc.ABC):
                         and not dev_config.log.post_run.internal_modules
                     ):
                         skip = True
-                    is_pipeline_step = details["job_metadata"].get(
-                        "is_pipeline_step", False
-                    )
+
+                    pipeline_metadata = details.get("pipeline_metadata", None)
+                    is_pipeline_step = pipeline_metadata is not None
+
                     if is_pipeline_step and not dev_config.log.post_run.pipeline_steps:
                         skip = True
 
                     if not skip:
                         if is_pipeline_step:
-                            step_id = details["job_metadata"]["step_id"]
+                            step_id = pipeline_metadata.step_id  # type: ignore
                             title = f"Post-run information for pipeline step: {step_id}"
                         else:
                             title = f"Post-run information for module: {module.module_type_name}"

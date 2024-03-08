@@ -131,6 +131,8 @@ class FileSystemJobArchive(JobArchive):
         details_content = details_file.read_text()
         details: Dict[str, Any] = orjson.loads(details_content)
 
+        dbg(details)
+
         job_record = JobRecord(**details)
         job_record._is_stored = True
         return job_record
@@ -180,11 +182,8 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
     def store_job_record(self, job_record: JobRecord):
 
         manifest_cid = job_record.manifest_cid
-        # inputs_hash = job_record.inputs_data_hash
 
-        # manifest_hash = job_record.manifest_hash
         input_ids_hash = job_record.input_ids_hash
-        # inputs_hash = job_record.inputs_data_hash
 
         base_path = self.job_store_path / MANIFEST_SUB_PATH
         manifest_folder = base_path / str(manifest_cid)

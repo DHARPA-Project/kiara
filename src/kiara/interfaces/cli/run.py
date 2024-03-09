@@ -45,6 +45,9 @@ if typing.TYPE_CHECKING:
     "--output", "-o", help="The output format and configuration.", multiple=True
 )
 @click.option(
+    "--comment", "-c", help="Add comment metadata to the job you run.", required=False
+)
+@click.option(
     "--save",
     "-s",
     help="Save one or several of the outputs of this run. If the argument contains a '=', the format is [output_name]=[alias], if not, the values will be saved as '[alias]-[output_name]'.",
@@ -67,6 +70,7 @@ def run(
     module_config: Iterable[str],
     inputs: Iterable[str],
     output: Iterable[str],
+    comment: Union[str, None],
     explain: bool,
     save: Iterable[str],
     print_properties: bool,
@@ -249,6 +253,7 @@ def run(
             api=api,
             operation=kiara_op,
             inputs=inputs_value_map,
+            comment=comment,
             silent=silent,
             save_results=bool(final_aliases),
             aliases=final_aliases,

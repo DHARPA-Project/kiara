@@ -206,8 +206,6 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
         value_hash: str,
         model_type_id: str,
         model_schema_hash: str,
-        reference_item_type: str,
-        reference_item_id: str,
         force: bool = False,
     ) -> uuid.UUID:
 
@@ -215,11 +213,11 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
 
         if force:
             sql = text(
-                "INSERT OR REPLACE INTO metadata (metadata_item_id, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, reference_item_type, reference_item_id, metadata_value) VALUES (:metadata_item_id, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :reference_item_type, :reference_item_id, :metadata_value)"
+                "INSERT OR REPLACE INTO metadata (metadata_item_id, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)"
             )
         else:
             sql = text(
-                "INSERT INTO metadata (metadata_item_id, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, reference_item_type, reference_item_id, metadata_value) VALUES (:metadata_item_id, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :reference_item_type, :reference_item_id, :metadata_value)"
+                "INSERT INTO metadata (metadata_item_id, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)"
             )
 
         metadata_item_id = ID_REGISTRY.generate(comment="new metadata item id")
@@ -230,8 +228,6 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
             "metadata_item_hash": value_hash,
             "model_type_id": model_type_id,
             "model_schema_hash": model_schema_hash,
-            "reference_item_type": reference_item_type,
-            "reference_item_id": reference_item_id,
             "metadata_value": value_json,
         }
         with self.sqlite_engine.connect() as conn:
@@ -243,4 +239,5 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
     def _store_metadata_reference(
         self, reference_item_type: str, reference_item_id: str, metadata_item_id: str
     ) -> None:
-        raise NotImplementedError()
+        pass
+        # raise NotImplementedError()

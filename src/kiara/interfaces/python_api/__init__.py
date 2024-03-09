@@ -2776,6 +2776,16 @@ class KiaraAPI(object):
         Returns:
             a result value map instance
         """
+
+        if self.context.runtime_config.runtime_profile == "dharpa":
+            if not job_metadata:
+                raise Exception(
+                    "No job metadata provided. You need to provide a 'comment' argument when running your job."
+                )
+
+            if "comment" not in job_metadata.keys():
+                raise KiaraException(msg="You need to provide a 'comment' for the job.")
+
         if inputs is None:
             inputs = {}
 
@@ -2786,6 +2796,12 @@ class KiaraAPI(object):
         job_id = self.context.job_registry.execute_job(
             job_config=job_config, wait=False
         )
+
+        if job_metadata:
+            self.context.metadata_registry.register_job_metadata_items(
+                job_id=job_id, items=job_metadata
+            )
+
         return job_id
 
     def run_manifest(

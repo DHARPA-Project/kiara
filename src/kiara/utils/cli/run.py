@@ -333,9 +333,15 @@ def execute_job(
     save_results: bool,
     aliases: Union[None, Mapping[str, List[str]]],
     properties: bool = False,
+    comment: Union[str, None] = None,
 ) -> uuid.UUID:
     """Execute the job."""
-    job_id = api.queue_job(operation=operation, inputs=inputs)
+
+    job_metadata = {}
+    if comment is not None:
+        job_metadata["comment"] = comment
+
+    job_id = api.queue_job(operation=operation, inputs=inputs, **job_metadata)
 
     try:
         outputs = api.get_job_result(job_id=job_id)

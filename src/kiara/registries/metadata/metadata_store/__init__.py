@@ -133,8 +133,6 @@ class MetadataStore(MetadataArchive):
         value_hash: str,
         model_type_id: str,
         model_schema_hash: str,
-        reference_item_type: str,
-        reference_item_id: str,
         force: bool = False,
     ) -> uuid.UUID:
         pass

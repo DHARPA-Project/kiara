@@ -334,6 +334,8 @@ class KiaraAPIWrap(object):
         else:
             kiara_config = KiaraConfig.load_from_file(config_file_path)
 
+        # kiara_config.runtime_config.runtime_profile = "default"
+
         self._kiara_config = kiara_config
         return self._kiara_config
 

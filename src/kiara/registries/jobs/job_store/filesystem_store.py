@@ -131,8 +131,6 @@ class FileSystemJobArchive(JobArchive):
         details_content = details_file.read_text()
         details: Dict[str, Any] = orjson.loads(details_content)
 
-        dbg(details)
-
         job_record = JobRecord(**details)
         job_record._is_stored = True
         return job_record

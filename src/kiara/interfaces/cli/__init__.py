@@ -14,9 +14,6 @@ from typing import Tuple, Union
 import rich_click as click
 import structlog
 
-from kiara.defaults import (
-    SYMLINK_ISSUE_MSG,
-)
 from kiara.interfaces import KiaraAPIWrap
 from kiara.utils import is_debug, log_message
 from kiara.utils.class_loading import find_all_cli_subcommands
@@ -95,15 +92,14 @@ def cli(
     For more information, visit the [i][b]kiara[/b] homepage[/i]: https://dharpa.org/kiara.documentation .
     """
     # check if windows symlink work
-    from kiara.utils.windows import check_symlink_works
 
-    if not check_symlink_works():
-
-        terminal_print()
-        from rich.markdown import Markdown
-
-        terminal_print(Markdown(SYMLINK_ISSUE_MSG))
-        sys.exit(1)
+    # if not check_symlink_works():
+    #
+    #     terminal_print()
+    #     from rich.markdown import Markdown
+    #
+    #     terminal_print(Markdown(SYMLINK_ISSUE_MSG))
+    #     sys.exit(1)
 
     context_subcommand = ctx.invoked_subcommand == "context"
     if context_subcommand and use_background_service:

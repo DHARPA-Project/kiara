@@ -21,6 +21,7 @@ from rich.table import Table
 from kiara.exceptions import InvalidValuesException, KiaraException
 from kiara.models import KiaraModel
 from kiara.models.module.manifest import InputsManifest
+from kiara.utils.dates import get_current_time_incl_timezone
 
 if TYPE_CHECKING:
     from kiara.context import DataRegistry, Kiara
@@ -138,7 +139,8 @@ class ActiveJob(KiaraModel):
     )
     job_log: JobLog = Field(description="The lob jog.")
     submitted: datetime = Field(
-        description="When the job was submitted.", default_factory=datetime.now
+        description="When the job was submitted.",
+        default_factory=get_current_time_incl_timezone,
     )
     started: Union[datetime, None] = Field(
         description="When the job was started.", default=None
@@ -250,6 +252,7 @@ class JobRecord(JobConfig):
 
         job_record = JobRecord(
             job_id=active_job.job_id,
+            job_submitted=active_job.submitted,
             module_type=active_job.job_config.module_type,
             module_config=active_job.job_config.module_config,
             is_resolved=active_job.job_config.is_resolved,
@@ -267,6 +270,7 @@ class JobRecord(JobConfig):
         return job_record
 
     job_id: uuid.UUID = Field(description="The globally unique id for this job.")
+    job_submitted: datetime = Field(description="When the job was submitted.")
     environment_hashes: Mapping[str, Mapping[str, str]] = Field(
         description="Hashes for the environments this value was created in."
     )
@@ -336,3 +340,30 @@ class JobRecord(JobConfig):
     #     h = DeepHash(obj, hasher=KIARA_HASH_FUNCTION)
     #     self._outputs_hash = h[obj]
     #     return self._outputs_hash
+
+
+class JobMatcher(KiaraModel):
+    @classmethod
+    def create_matcher(self, **match_options: Any):
+
+        m = JobMatcher(**match_options)
+        return m
+
+    job_ids: List[uuid.UUID] = Field(
+        description="A list of job ids, if specified, only jobs with one of these ids will be included.",
+        default_factory=list,
+    )
+    earliest: Union[None, datetime] = Field(
+        description="The earliest time when the job was created.", default=None
+    )
+    latest: Union[None, datetime] = Field(
+        description="The latest time when the job was created.", default=None
+    )
+    operation_inputs: List[uuid.UUID] = Field(
+        description="A list of value ids, if specified, only jobs that use one of them will be included.",
+        default_factory=list,
+    )
+    produced_outputs: List[uuid.UUID] = Field(
+        description="A list of value ids, if specified, only jobs that produced one of them will be included.",
+        default_factory=list,
+    )

@@ -7,7 +7,8 @@
 
 import abc
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Type, Union
+from datetime import datetime
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
 import structlog
 from bidict import bidict
@@ -350,22 +351,55 @@ class JobRegistry(object):
 
         raise NotImplementedError()
 
-    def retrieve_all_job_records(self) -> Mapping[str, JobRecord]:
+    def find_job_records(self, matcher: JobMatcher) -> Mapping[uuid.UUID, JobRecord]:
 
-        all_records: Dict[str, JobRecord] = {}
+        pass
+
+    def retrieve_all_job_record_ids(self) -> List[uuid.UUID]:
+        """Retrieve a list of all available job record ids, sorted from latest to earliest."""
+
+        all_records: Dict[uuid.UUID, datetime] = {}
         for archive in self.job_archives.values():
-            all_record_ids = archive.retrieve_all_job_hashes()
-            if all_record_ids is None:
-                return {}
+            all_record_ids = archive.retrieve_all_job_ids()
+            # TODO: check for duplicates and mismatching datetimes
+            all_records.update(all_record_ids)
+
+        all_ids_sorted = [
+            uuid
+            for uuid, _ in sorted(
+                all_records.items(), key=lambda item: item[1], reverse=True
+            )
+        ]
+
+        return all_ids_sorted
+
+    def retrieve_all_job_records(self) -> Mapping[uuid.UUID, JobRecord]:
+        """Retrieves all job records from all job archives.
+
+        Returns:
+            a map of job-id/job-record pairs, sorted by job submission time, from latest to earliest
+        """
+
+        all_records: Dict[uuid.UUID, JobRecord] = {}
+        for archive in self.job_archives.values():
+            all_record_ids = archive.retrieve_all_job_ids().keys()
             for r in all_record_ids:
                 assert r not in all_records.keys()
-                job_record = archive.retrieve_record_for_job_hash(r)
+                job_record = archive.retrieve_record_for_job_id(r)
                 assert job_record is not None
                 all_records[r] = job_record
 
-        return all_records
+        all_records_sorted = {
+            job_id: job
+            for job_id, job in sorted(
+                all_records.items(),
+                key=lambda item: item[1].job_submitted,
+                reverse=True,
+            )
+        }
+        return all_records_sorted
 
-    def find_matching_job_record(
+    def find_job_record_for_manifest(
         self, inputs_manifest: InputsManifest
     ) -> Union[uuid.UUID, None]:
         """
@@ -481,7 +515,7 @@ class JobRegistry(object):
                 job_hash=job_config.job_hash,
             )
 
-        stored_job = self.find_matching_job_record(inputs_manifest=job_config)
+        stored_job = self.find_job_record_for_manifest(inputs_manifest=job_config)
 
         is_pipeline_step = False if job_config.pipeline_metadata is None else True
         if is_pipeline_step:

@@ -659,7 +659,7 @@ class Workflow(object):
                         is_resolved=step_details.step.module.manifest.is_resolved,
                         inputs=step_details.inputs,
                     )
-                    match = self._kiara.job_registry.find_matching_job_record(
+                    match = self._kiara.job_registry.find_job_record_for_manifest(
                         inputs_manifest=job_config
                     )
                     if match:

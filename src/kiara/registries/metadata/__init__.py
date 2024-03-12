@@ -142,6 +142,18 @@ class MetadataRegistry(object):
             f"Can't retrieve archive with id '{archive_id_or_alias}': no archive with that id registered."
         )
 
+    def retrieve_metadata_item(
+        self,
+        key: str,
+        reference_item_type: Union[str, None] = None,
+        reference_item_id: Union[str, None] = None,
+        store: Union[str, uuid.UUID, None] = None,
+    ) -> Union[KiaraMetadata, None]:
+
+        mounted_store: MetadataStore = self.get_archive(archive_id_or_alias=store)
+
+        pass
+
     def register_metadata_item(
         self,
         key: str,
@@ -181,3 +193,7 @@ class MetadataRegistry(object):
                 reference_item_id=str(job_id),
                 store=store,
             )
+
+    def retrieve_job_metadata_items(self, job_id: uuid.UUID):
+
+        pass

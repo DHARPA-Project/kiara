@@ -59,7 +59,6 @@ from kiara.interfaces.python_api.models.info import (
 from kiara.interfaces.python_api.models.job import JobDesc
 from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
 from kiara.models.context import ContextInfo, ContextInfos
-from kiara.models.module.jobs import ActiveJob
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
 from kiara.models.rendering import RenderValueResult
@@ -101,6 +100,7 @@ if TYPE_CHECKING:
     )
     from kiara.interfaces.python_api.workflow import Workflow
     from kiara.models.archives import KiArchiveInfo
+    from kiara.models.module.jobs import ActiveJob, JobRecord
     from kiara.models.module.pipeline import PipelineConfig, PipelineStructure
     from kiara.models.module.pipeline.pipeline import PipelineGroupInfo, PipelineInfo
     from kiara.registries import KiaraArchive
@@ -1322,7 +1322,7 @@ class KiaraAPI(object):
         """
         List all available value ids for this kiara context.
 
-        This method exists mainly so frontend can retrieve a list of all value_ids that exists on the backend without
+        This method exists mainly so frontends can retrieve a list of all value_ids that exists on the backend without
         having to look up the details of each value (like [list_values][kiara.interfaces.python_api.KiaraAPI.list_values]
         does). This method can also be used with a matcher, but in this case the [list_values][kiara.interfaces.python_api.KiaraAPI.list_values]
         would be preferable in most cases, because it is called under the hood, and the performance advantage of not
@@ -1385,6 +1385,16 @@ class KiaraAPI(object):
         return self.context.data_registry.get_value(value=value)
 
     def get_values(self, **values: Union[str, Value, uuid.UUID]) -> ValueMapReadOnly:
+        """Retrieve Value instances for the specified value ids or aliases.
+
+        This is a convenience method to get fully 'hydrated' `Value` objects from references to them.
+
+        Arguments:
+            values: a dictionary with value ids or aliases as keys, and value instances as values
+
+        Returns:
+            a mapping with value_id as key, and [kiara.models.values.value.Value] as value
+        """
 
         return self.context.data_registry.load_values(values=values)
 
@@ -2962,7 +2972,7 @@ class KiaraAPI(object):
         )
         return self.context.job_registry.retrieve_result(job_id=job_id)
 
-    def get_job(self, job_id: Union[str, uuid.UUID]) -> ActiveJob:
+    def get_job(self, job_id: Union[str, uuid.UUID]) -> "ActiveJob":
         """Retrieve the status of the job with the provided id."""
         if isinstance(job_id, str):
             job_id = uuid.UUID(job_id)
@@ -2977,6 +2987,76 @@ class KiaraAPI(object):
 
         result = self.context.job_registry.retrieve_result(job_id=job_id)
         return result
+
+    def list_job_record_ids(self, **matcher_params):
+        """List all available job ids in this kiara context, ordered from newest to oldest.
+
+        This method exists mainly so frontends can retrieve a list of all job ids in order, without having
+        to retrieve all job details as well (in the case where no matcher_params exist. Otherwise, you could
+        also just use `list_jobs` and take the keys from the result.
+
+        You can look up the supported matcher parameter arguments via the [JobMatcher][kiara.models.module.jobs.JobMatcher] class.
+
+        Arguments:
+            matcher_params: additional parameters to pass to the job matcher
+
+        Returns:
+            a list of job ids, ordered from latest to earliest
+        """
+
+        if matcher_params:
+            records = list(self.list_job_records(**matcher_params).keys())
+        else:
+            job_ids = self.context.job_registry.retrieve_all_job_record_ids()
+
+        return job_ids
+
+    def list_job_records(self, **matcher_params) -> Mapping[uuid.UUID, "JobRecord"]:
+        """List all available job ids in this kiara context, ordered from newest to oldest.
+
+        This method exists mainly so frontends can retrieve a list of all job ids in order, without having
+        to retrieve all job details as well (in the case where no matcher_params exist. Otherwise, you could
+        also just use `list_jobs` and take the keys from the result.
+
+        You can look up the supported matcher parameter arguments via the [JobMatcher][kiara.models.module.jobs.JobMatcher] class.
+
+        Arguments:
+            matcher_params: additional parameters to pass to the job matcher
+
+        Returns:
+            a list of job details, ordered from latest to earliest
+
+        """
+
+        if matcher_params:
+            raise NotImplementedError("Job matching is not implemented yet")
+            from kiara.models.module.jobs import JobMatcher
+
+            matcher = JobMatcher(**matcher_params)
+            job_records = self.context.job_registry.find_job_records(matcher=matcher)
+        else:
+            job_records = self.context.job_registry.retrieve_all_job_records()
+
+        return job_records
+
+    def get_job_record(self, job_id: Union[str, uuid.UUID]) -> "JobRecord":
+
+        if isinstance(job_id, str):
+            job_id = uuid.UUID(job_id)
+
+        job_record = self.context.job_registry.get_job_record(job_id=job_id)
+        return job_record
+
+    def get_job_metadata(self, job_id: Union[str, uuid.UUID]) -> Mapping[str, Any]:
+        """Retrieve the metadata for the specified job."""
+
+        if isinstance(job_id, str):
+            job_id = uuid.UUID(job_id)
+
+        metadata = self.context.metadata_registry.retrieve_job_metadata_items(
+            job_id=job_id
+        )
+        return metadata
 
     def render_value(
         self,

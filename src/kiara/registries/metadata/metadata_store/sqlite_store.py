@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import uuid
 from pathlib import Path
-from typing import Any, Dict, Mapping, Union
+from typing import Any, Dict, Mapping, Tuple, Union
 
+from orjson import orjson
 from sqlalchemy import text
 from sqlalchemy.engine import Engine, create_engine
 
@@ -141,6 +142,35 @@ CREATE TABLE IF NOT EXISTS metadata_references (
         #     event.listen(self._cached_engine, "connect", _pragma_on_connect)
         return self._cached_engine
 
+    def _retrieve_referenced_metadata_item_data(
+        self, key: str, reference_type: str, reference_id: str
+    ) -> Union[Tuple[str, Mapping[str, Any]], None]:
+
+        sql = text(
+            """
+            SELECT m.model_type_id, m.metadata_value
+            FROM metadata m
+            JOIN metadata_references r ON m.metadata_item_id = r.metadata_item_id
+            WHERE r.reference_item_type = :reference_type AND r.reference_item_id = :reference_id and m.metadata_item_key = :key
+        """
+        )
+
+        with self.sqlite_engine.connect() as connection:
+            parmas = {
+                "reference_type": reference_type,
+                "reference_id": reference_id,
+                "key": key,
+            }
+            result = connection.execute(sql, parmas)
+            row = result.fetchone()
+            if row is None:
+                return None
+
+            data_str = row[1]
+            data = orjson.loads(data_str)
+
+            return (row[0], data)
+
 
 class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
 
@@ -230,6 +260,7 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
             "model_schema_hash": model_schema_hash,
             "metadata_value": value_json,
         }
+
         with self.sqlite_engine.connect() as conn:
             conn.execute(sql, params)
             conn.commit()
@@ -239,5 +270,15 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
     def _store_metadata_reference(
         self, reference_item_type: str, reference_item_id: str, metadata_item_id: str
     ) -> None:
-        pass
-        # raise NotImplementedError()
+
+        sql = text(
+            "INSERT INTO metadata_references (reference_item_type, reference_item_id, metadata_item_id) VALUES (:reference_item_type, :reference_item_id, :metadata_item_id)"
+        )
+        params = {
+            "reference_item_type": reference_item_type,
+            "reference_item_id": reference_item_id,
+            "metadata_item_id": metadata_item_id,
+        }
+        with self.sqlite_engine.connect() as conn:
+            conn.execute(sql, params)
+            conn.commit()

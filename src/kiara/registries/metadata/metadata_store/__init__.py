@@ -2,7 +2,7 @@
 import abc
 import json
 import uuid
-from typing import Any, Dict, Generic, Iterable, Union
+from typing import Any, Dict, Generic, Iterable, Mapping, Tuple, Union
 
 from kiara.models.metadata import KiaraMetadata
 from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
@@ -30,13 +30,31 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
             force_read_only=force_read_only,
         )
 
-    def retrieve_metadata_value(
+    def retrieve_metadata_item(
         self,
         key: str,
-        metadata_model: Union[str, None] = None,
+        reference_type: Union[str, None] = None,
         reference_id: Union[str, None] = None,
-    ) -> Any:
+    ) -> Union[Tuple[str, Mapping[str, Any]], None]:
 
+        if reference_type:
+            result = self._retrieve_referenced_metadata_item_data(
+                key=key, reference_type=reference_type, reference_id=reference_id
+            )
+            if result is None:
+                return None
+            else:
+                return result
+        else:
+            raise NotImplementedError(
+                "Retrieving metadata item without reference not implemented yet."
+            )
+
+    @abc.abstractmethod
+    def _retrieve_referenced_metadata_item_data(
+        self, key: str, reference_type: str, reference_id: str
+    ) -> Union[Tuple[str, Mapping[str, Any]], None]:
+        """Return the model type id and model data for the specified referenced metadata item."""
         pass
 
 

@@ -792,6 +792,10 @@ class Value(ValueDetails):
         description="Backlinks to values that this value acts as destiny/or property for.",
         default_factory=dict,
     )
+    job_id: Union[uuid.UUID, None] = Field(
+        description="The id of the job that created this value (if applicable).",
+        default=None,
+    )
 
     def add_property(
         self,

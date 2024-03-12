@@ -100,6 +100,7 @@ if TYPE_CHECKING:
     )
     from kiara.interfaces.python_api.workflow import Workflow
     from kiara.models.archives import KiArchiveInfo
+    from kiara.models.metadata import CommentMetadata
     from kiara.models.module.jobs import ActiveJob, JobRecord
     from kiara.models.module.pipeline import PipelineConfig, PipelineStructure
     from kiara.models.module.pipeline.pipeline import PipelineGroupInfo, PipelineInfo
@@ -2236,6 +2237,11 @@ class KiaraAPI(object):
         value: Any,
         archive_type: Literal["data", "alias"] = "data",
     ) -> None:
+        """Add metadata to an archive.
+
+        Note that this is different to adding metadata to a context, since it is attached directly
+        to a special section of the archive itself.
+        """
 
         if archive_type == "data":
             _archive: Union[
@@ -3047,16 +3053,36 @@ class KiaraAPI(object):
         job_record = self.context.job_registry.get_job_record(job_id=job_id)
         return job_record
 
-    def get_job_metadata(self, job_id: Union[str, uuid.UUID]) -> Mapping[str, Any]:
-        """Retrieve the metadata for the specified job."""
+    def get_job_comment(self, job_id: Union[str, uuid.UUID]) -> Union[str, None]:
+        """Retrieve the comment for the specified job.
+
+        Returns 'None' if the job_id does not exist, or the job does not have a comment attached to it.
+
+        Arguments:
+            job_id: the job id
+
+        Returns:
+            the comment as string, or None
+        """
 
         if isinstance(job_id, str):
             job_id = uuid.UUID(job_id)
 
-        metadata = self.context.metadata_registry.retrieve_job_metadata_items(
-            job_id=job_id
+        metadata: Union[
+            None, "CommentMetadata"
+        ] = self.context.metadata_registry.retrieve_job_metadata_item(
+            job_id=job_id, key="comment"
         )
-        return metadata
+
+        if not isinstance(metadata, CommentMetadata):
+            raise KiaraException(
+                msg=f"Metadata item 'comment' for job '{job_id}' is not a comment."
+            )
+
+        if metadata is None:
+            return None
+        else:
+            return metadata.comment
 
     def render_value(
         self,

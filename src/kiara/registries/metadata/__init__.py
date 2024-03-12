@@ -149,10 +149,24 @@ class MetadataRegistry(object):
         reference_item_id: Union[str, None] = None,
         store: Union[str, uuid.UUID, None] = None,
     ) -> Union[KiaraMetadata, None]:
+        """Retrieves a metadata item."""
 
-        mounted_store: MetadataStore = self.get_archive(archive_id_or_alias=store)
+        mounted_store: MetadataStore = self.get_archive(archive_id_or_alias=store)  # type: ignore
 
-        pass
+        result = mounted_store.retrieve_metadata_item(
+            key=key, reference_type=reference_item_type, reference_id=reference_item_id
+        )
+
+        if result is None:
+            return None
+
+        model_type_id, data = result
+        model_cls = self._kiara.kiara_model_registry.get_model_cls(
+            kiara_model_id=model_type_id, required_subclass=KiaraMetadata
+        )
+
+        model_instance = model_cls(**data)
+        return model_instance
 
     def register_metadata_item(
         self,
@@ -197,3 +211,14 @@ class MetadataRegistry(object):
     def retrieve_job_metadata_items(self, job_id: uuid.UUID):
 
         pass
+
+    def retrieve_job_metadata_item(
+        self, job_id: uuid.UUID, key: str, store: Union[str, uuid.UUID, None] = None
+    ) -> Union[KiaraMetadata, None]:
+
+        return self.retrieve_metadata_item(
+            key=key,
+            reference_item_type="job",
+            reference_item_id=str(job_id),
+            store=store,
+        )

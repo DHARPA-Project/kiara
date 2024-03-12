@@ -262,6 +262,9 @@ class ModuleProcessor(abc.ABC):
             values = self._output_refs[job_id]
             try:
                 values.sync_values()
+                for field, val in values.items():
+                    val.job_id = job_id
+
                 value_ids = values.get_all_value_ids()
                 job.results = value_ids
                 job.job_log.percent_finished = 100

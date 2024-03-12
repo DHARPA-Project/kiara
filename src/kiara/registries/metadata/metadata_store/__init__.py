@@ -4,6 +4,7 @@ import json
 import uuid
 from typing import Any, Dict, Generic, Iterable, Mapping, Tuple, Union
 
+from kiara.exceptions import KiaraException
 from kiara.models.metadata import KiaraMetadata
 from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
 
@@ -37,7 +38,15 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
         reference_id: Union[str, None] = None,
     ) -> Union[Tuple[str, Mapping[str, Any]], None]:
 
+        if reference_id and not reference_type:
+            raise ValueError(
+                "If reference_id is set, reference_type must be set as well."
+            )
         if reference_type:
+            if reference_id is None:
+                raise KiaraException(
+                    msg="reference_id must set also if reference_type is set."
+                )
             result = self._retrieve_referenced_metadata_item_data(
                 key=key, reference_type=reference_type, reference_id=reference_id
             )
@@ -55,7 +64,6 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
         self, key: str, reference_type: str, reference_id: str
     ) -> Union[Tuple[str, Mapping[str, Any]], None]:
         """Return the model type id and model data for the specified referenced metadata item."""
-        pass
 
 
 class MetadataStore(MetadataArchive):
@@ -131,6 +139,7 @@ class MetadataStore(MetadataArchive):
             )
 
         if reference_item_type:
+            assert reference_item_id is not None
             self._store_metadata_reference(
                 reference_item_type, reference_item_id, str(metadata_item_id)
             )

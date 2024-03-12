@@ -353,7 +353,7 @@ class JobRegistry(object):
 
     def find_job_records(self, matcher: JobMatcher) -> Mapping[uuid.UUID, JobRecord]:
 
-        pass
+        raise NotImplementedError("Job matching is Not implemented yet.")
 
     def retrieve_all_job_record_ids(self) -> List[uuid.UUID]:
         """Retrieve a list of all available job record ids, sorted from latest to earliest."""
@@ -389,14 +389,14 @@ class JobRegistry(object):
                 assert job_record is not None
                 all_records[r] = job_record
 
-        all_records_sorted = {
-            job_id: job
-            for job_id, job in sorted(
+        all_records_sorted = dict(
+            sorted(
                 all_records.items(),
                 key=lambda item: item[1].job_submitted,
                 reverse=True,
             )
-        }
+        )
+
         return all_records_sorted
 
     def find_job_record_for_manifest(
@@ -475,15 +475,14 @@ class JobRegistry(object):
         return self.execute_job(job_config, wait=wait)
 
     def execute_job(
-        self,
-        job_config: JobConfig,
-        wait: bool = False,
+        self, job_config: JobConfig, wait: bool = False, auto_save_result=False
     ) -> uuid.UUID:
         """Execute the job specified by the job config.
 
         Arguments:
             job_config: the job config
             wait: whether to wait for the job to finish
+            auto_save_result: whether to automatically save the job's outputs to the data registry once the job finished successfully
         """
 
         # from kiara.models.metadata import CommentMetadata
@@ -524,6 +523,7 @@ class JobRegistry(object):
         else:
             pipeline_step_id = None
             pipeline_id = None
+
         if stored_job is not None:
             log.debug(
                 "job.use_cached",
@@ -558,6 +558,8 @@ class JobRegistry(object):
                 panel = Group(table, table_job_record)
                 log_dev_message(panel, title=title)
 
+            # TODO: in this case, and if 'auto_save_result' is True, we should also verify the outputs are saved?
+
             return stored_job
 
         dbg_data = {
@@ -570,7 +572,9 @@ class JobRegistry(object):
 
         log.debug("job.execute", **dbg_data)
 
-        job_id = self._processor.create_job(job_config=job_config)
+        job_id = self._processor.create_job(
+            job_config=job_config, auto_save_result=auto_save_result
+        )
         self._active_jobs[job_config.job_hash] = job_id
 
         try:

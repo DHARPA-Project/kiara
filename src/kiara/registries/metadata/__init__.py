@@ -166,7 +166,7 @@ class MetadataRegistry(object):
         )
 
         model_instance = model_cls(**data)
-        return model_instance
+        return model_instance  # type: ignore
 
     def register_metadata_item(
         self,

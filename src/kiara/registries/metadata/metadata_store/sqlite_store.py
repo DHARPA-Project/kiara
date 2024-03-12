@@ -3,7 +3,7 @@ import uuid
 from pathlib import Path
 from typing import Any, Dict, Mapping, Tuple, Union
 
-from orjson import orjson
+import orjson
 from sqlalchemy import text
 from sqlalchemy.engine import Engine, create_engine
 

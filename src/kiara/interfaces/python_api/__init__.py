@@ -100,7 +100,6 @@ if TYPE_CHECKING:
     )
     from kiara.interfaces.python_api.workflow import Workflow
     from kiara.models.archives import KiArchiveInfo
-    from kiara.models.metadata import CommentMetadata
     from kiara.models.module.jobs import ActiveJob, JobRecord
     from kiara.models.module.pipeline import PipelineConfig, PipelineStructure
     from kiara.models.module.pipeline.pipeline import PipelineGroupInfo, PipelineInfo
@@ -2802,6 +2801,10 @@ class KiaraAPI(object):
             if "comment" not in job_metadata.keys():
                 raise KiaraException(msg="You need to provide a 'comment' for the job.")
 
+            save_values = True
+        else:
+            save_values = False
+
         if inputs is None:
             inputs = {}
 
@@ -2810,7 +2813,7 @@ class KiaraAPI(object):
         )
 
         job_id = self.context.job_registry.execute_job(
-            job_config=job_config, wait=False
+            job_config=job_config, wait=False, auto_save_result=save_values
         )
 
         if job_metadata:
@@ -2847,7 +2850,7 @@ class KiaraAPI(object):
         operation: Union[str, Path, Manifest, OperationInfo, JobDesc],
         inputs: Union[Mapping[str, Any], None],
         operation_config: Union[None, Mapping[str, Any]] = None,
-        **job_metadata,
+        **job_metadata: Any,
     ) -> uuid.UUID:
         """
         Queue a job from a operation id, module_name (and config), or pipeline file, wait for the job to finish and retrieve the result.
@@ -2994,7 +2997,7 @@ class KiaraAPI(object):
         result = self.context.job_registry.retrieve_result(job_id=job_id)
         return result
 
-    def list_job_record_ids(self, **matcher_params):
+    def list_job_record_ids(self, **matcher_params) -> List[uuid.UUID]:
         """List all available job ids in this kiara context, ordered from newest to oldest.
 
         This method exists mainly so frontends can retrieve a list of all job ids in order, without having
@@ -3011,7 +3014,7 @@ class KiaraAPI(object):
         """
 
         if matcher_params:
-            records = list(self.list_job_records(**matcher_params).keys())
+            job_ids = list(self.list_job_records(**matcher_params).keys())
         else:
             job_ids = self.context.job_registry.retrieve_all_job_record_ids()
 
@@ -3045,7 +3048,7 @@ class KiaraAPI(object):
 
         return job_records
 
-    def get_job_record(self, job_id: Union[str, uuid.UUID]) -> "JobRecord":
+    def get_job_record(self, job_id: Union[str, uuid.UUID]) -> Union["JobRecord", None]:
 
         if isinstance(job_id, str):
             job_id = uuid.UUID(job_id)
@@ -3072,7 +3075,7 @@ class KiaraAPI(object):
 
         metadata: Union[
             None, CommentMetadata
-        ] = self.context.metadata_registry.retrieve_job_metadata_item(
+        ] = self.context.metadata_registry.retrieve_job_metadata_item(  # type: ignore
             job_id=job_id, key="comment"
         )
 

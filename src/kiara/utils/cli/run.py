@@ -341,7 +341,9 @@ def execute_job(
     if comment is not None:
         job_metadata["comment"] = comment
 
-    job_id = api.queue_job(operation=operation, inputs=inputs, **job_metadata)
+    job_id = api.queue_job(
+        operation=operation, inputs=inputs, operation_config=None, **job_metadata
+    )
 
     try:
         outputs = api.get_job_result(job_id=job_id)

@@ -3065,24 +3065,25 @@ class KiaraAPI(object):
             the comment as string, or None
         """
 
+        from kiara.models.metadata import CommentMetadata
+
         if isinstance(job_id, str):
             job_id = uuid.UUID(job_id)
 
         metadata: Union[
-            None, "CommentMetadata"
+            None, CommentMetadata
         ] = self.context.metadata_registry.retrieve_job_metadata_item(
             job_id=job_id, key="comment"
         )
+
+        if not metadata:
+            return None
 
         if not isinstance(metadata, CommentMetadata):
             raise KiaraException(
                 msg=f"Metadata item 'comment' for job '{job_id}' is not a comment."
             )
-
-        if metadata is None:
-            return None
-        else:
-            return metadata.comment
+        return metadata.comment
 
     def render_value(
         self,

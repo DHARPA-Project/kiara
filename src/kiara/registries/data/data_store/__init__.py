@@ -133,7 +133,9 @@ class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG
         job_id_str = value_data.get("job_id", None)
         # TODO: check for this to be not-Null at some stage, once we can be sure it's always set (after release)
         if job_id_str is not None:
-            job_id = uuid.UUID(job_id_str)
+            job_id: Union[None, uuid.UUID] = uuid.UUID(job_id_str)
+        else:
+            job_id = None
 
         value = Value(
             value_id=value_data["value_id"],

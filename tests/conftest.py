@@ -90,6 +90,8 @@ def kiara() -> Kiara:
 
     instance_path = create_temp_dir()
     kc = KiaraConfig.create_in_folder(instance_path)
+    kc.runtime_config.runtime_profile = "default"
+
     kiara = kc.create_context()
     return kiara
 
@@ -99,6 +101,7 @@ def api() -> KiaraAPI:
 
     instance_path = create_temp_dir()
     kc = KiaraConfig.create_in_folder(instance_path)
+    kc.runtime_config.runtime_profile = "default"
     api = KiaraAPI(kc)
     return api
 
@@ -111,6 +114,7 @@ def presseeded_data_store_minimal() -> Kiara:
     pipeline_file = os.path.join(PIPELINES_FOLDER, "table_import.json")
 
     kc = KiaraConfig.create_in_folder(instance_path)
+    kc.runtime_config.runtime_profile = "default"
 
     kiara = kc.create_context()
 
@@ -133,6 +137,8 @@ def preseeded_data_store() -> Kiara:
 
     instance_path = create_temp_dir()
     kc = KiaraConfig.create_in_folder(instance_path)
+    kc.runtime_config.runtime_profile = "default"
+
     kiara = kc.create_context()
 
     pipeline = os.path.join(PIPELINES_FOLDER, "test_preseed_1.yaml")

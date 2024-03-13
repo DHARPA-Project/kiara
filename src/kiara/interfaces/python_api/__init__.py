@@ -3082,6 +3082,10 @@ class KiaraAPI(object):
         return job_records
 
     def get_job_record(self, job_id: Union[str, uuid.UUID]) -> Union["JobRecord", None]:
+        """Retrieve the detailed job record for the specified job id.
+
+        If no job can be found, 'None' is returned.
+        """
 
         if isinstance(job_id, str):
             job_id = uuid.UUID(job_id)

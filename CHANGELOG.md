@@ -3,13 +3,13 @@
 ## Version 0.5.10 (upcoming)
 
 - archive export & import feature:
-  - cli subcommands:
+  - new cli subcommands:
     - `kiara archive import`
     - `kiara archive export`
     - `kiara archive explain`
     - `kiara data import`
     - `kiara data export`
-  - api endpoints:
+  - new api endpoints:
     - `register_archive`
     - `set_archive_metadata_value`
     - `retrieve_archive_info`
@@ -18,11 +18,18 @@
     - `copy_archive`
     - `export_values`
     - `import_values`
+    - `list_all_job_record_ids`
+    - `list_job_record_ids`
+    - `list_all_job_records`
+    - `list_job_records`
+    - `get_job_record`
+    - `get_job_comment`
 - add convenience api endpoint `get_values`
 - improved input options for 'store_values' API endpoint
 - 'beta' implementation of 'value_create' property on 'Value' instances
 - fix: plugin info for plugins with '-'
 - add '--runtime-info' cli flag
+- require a 'comment' for every `run_job`/`queue_job` call
 
 ## Version 0.5.9
 

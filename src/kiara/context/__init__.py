@@ -2,6 +2,7 @@
 import atexit
 import os
 import uuid
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Set, Type, Union
 
 import structlog
@@ -9,7 +10,7 @@ import structlog
 # from alembic import command  # type: ignore
 from pydantic import Field
 
-from kiara.context.config import KiaraConfig, KiaraContextConfig
+from kiara.context.config import KiaraArchiveConfig, KiaraConfig, KiaraContextConfig
 from kiara.context.runtime_config import KiaraRuntimeConfig
 from kiara.data_types import DataType
 from kiara.exceptions import KiaraContextException
@@ -30,7 +31,7 @@ from kiara.models.context import ContextInfo
 from kiara.models.module.manifest import Manifest
 from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.value import ValueMap
-from kiara.registries import KiaraArchive
+from kiara.registries import KiaraArchive, SqliteArchiveConfig
 from kiara.registries.aliases import AliasRegistry
 from kiara.registries.data import DataRegistry
 from kiara.registries.environment import EnvironmentRegistry
@@ -162,9 +163,27 @@ class Kiara(object):
 
         for archive_alias, archive in self._config.archives.items():
 
-            # this is just to make old context that still had that not error out
+            # TODO: this is just to make old context that still had that not error out
             if "_destiny_" in archive.archive_type:
                 continue
+
+            if (
+                archive_alias == "default_job_store"
+                and archive.archive_type == "filesystem_job_store"
+            ):
+
+                # this is a temporary solution for contexts that still have the old filesystem job store
+                # TODO: remove this at some stage
+
+                archive_path = Path(archive.config["archive_path"])
+                file_name = f"{archive_path.name}.kiarchive"
+
+                js_config = SqliteArchiveConfig.create_new_store_config(
+                    store_base_path=archive.config["archive_path"], file_name=file_name
+                )
+                archive = KiaraArchiveConfig(
+                    archive_type="sqlite_job_store", config=js_config.model_dump()
+                )
 
             archive_cls = self._archive_types.get(archive.archive_type, None)
 

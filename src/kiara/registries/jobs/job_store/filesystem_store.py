@@ -8,12 +8,12 @@ import datetime
 import shutil
 import uuid
 from pathlib import Path
-from typing import Any, Dict, Iterable, Mapping, Union
+from typing import Any, Dict, Generator, Iterable, Mapping, Union
 
 import orjson
 import structlog
 
-from kiara.models.module.jobs import JobRecord
+from kiara.models.module.jobs import JobMatcher, JobRecord
 from kiara.registries import ArchiveDetails, FileSystemArchiveConfig
 from kiara.registries.jobs import MANIFEST_SUB_PATH, JobArchive, JobStore
 from kiara.utils.windows import fix_windows_longpath
@@ -134,6 +134,20 @@ class FileSystemJobArchive(JobArchive):
         job_record = JobRecord(**details)
         job_record._is_stored = True
         return job_record
+
+    def _retrieve_all_job_ids(self) -> Mapping[uuid.UUID, datetime.datetime]:
+
+        raise NotImplementedError()
+
+    def _retrieve_matching_job_records(
+        self, matcher: JobMatcher
+    ) -> Generator[JobRecord, None, None]:
+
+        raise NotImplementedError()
+
+    def _retrieve_record_for_job_id(self, job_id: uuid.UUID) -> Union[JobRecord, None]:
+
+        raise NotImplementedError()
 
     # def find_matching_job_record(
     #     self, inputs_manifest: InputsManifest

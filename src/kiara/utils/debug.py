@@ -151,6 +151,16 @@ def create_post_run_table(
             else:
                 table.add_row("module_config", module.config)
 
+    if job_config.pipeline_metadata is not None:
+        pm_table = Table(show_header=False, box=box.SIMPLE)
+        pm_table.add_column("key")
+        pm_table.add_column("value")
+        pm_table.add_row("pipeline_id", str(job_config.pipeline_metadata.pipeline_id))
+        pm_table.add_row("step_id", job_config.pipeline_metadata.step_id)
+        table.add_row("pipeline_step_metadata", pm_table)
+    else:
+        table.add_row("pipeline_step_metadata", "-- not a pipeline step --")
+
     inputs_details = dev_config.log.post_run.inputs_info
     if inputs_details not in [DetailLevel.NONE.value, DetailLevel.NONE]:
         if inputs_details in [DetailLevel.MINIMAL, DetailLevel.MINIMAL.value]:

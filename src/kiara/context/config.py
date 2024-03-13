@@ -393,6 +393,7 @@ DEFAULT_STORE_TYPE: Literal["auto"] = "auto"
 
 
 class KiaraConfig(BaseSettings):
+
     model_config = SettingsConfigDict(
         env_prefix="kiara_", extra="forbid", use_enum_values=True
     )
@@ -890,18 +891,23 @@ class KiaraConfig(BaseSettings):
 
         path.parent.mkdir(parents=True, exist_ok=True)
 
+        data = self.model_dump(
+            exclude={
+                "context",
+                "auto_generate_contexts",
+                "stores_base_path",
+                "context_search_paths",
+                "default_context",
+                "runtime_config",
+            }
+        )
+
+        if data["default_store_type"] == DEFAULT_STORE_TYPE:
+            data.pop("default_store_type")
+
         with path.open("wt") as f:
             yaml.dump(
-                self.model_dump(
-                    exclude={
-                        "context",
-                        "auto_generate_contexts",
-                        "stores_base_path",
-                        "context_search_paths",
-                        "default_context",
-                        "runtime_config",
-                    }
-                ),
+                data,
                 f,
             )
 

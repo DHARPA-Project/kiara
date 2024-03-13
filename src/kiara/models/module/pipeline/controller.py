@@ -132,12 +132,23 @@ class SinglePipelineController(PipelineController):
         ---------
             step_id: the id of the step that should be started
         """
+
+        from kiara.models.module.jobs import PipelineMetadata
+
         job_config = self.pipeline.create_job_config_for_step(step_id)
 
-        job_metadata = {"is_pipeline_step": True, "step_id": step_id}
-        job_id = self._job_registry.execute_job(
-            job_config=job_config, job_metadata=job_metadata
+        # pipeline_metadata = {
+        #     "is_pipeline_step": True,
+        #     "step_id": step_id,
+        #     "pipeline_id": self.pipeline.pipeline_id,
+        # }
+
+        pipeline_metadata = PipelineMetadata(
+            pipeline_id=self.pipeline.pipeline_id, step_id=step_id
         )
+        job_config.pipeline_metadata = pipeline_metadata
+
+        job_id = self._job_registry.execute_job(job_config=job_config)
         # job_id = self._processor.create_job(job_config=job_config)
         # self._processor.queue_job(job_id=job_id)
 

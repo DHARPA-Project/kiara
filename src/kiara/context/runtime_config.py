@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
+from typing import Literal
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -32,6 +33,11 @@ class KiaraRuntimeConfig(BaseSettings):
     lock_context: bool = Field(
         description="Whether to lock context(s) on creation.", default=False
     )
+    runtime_profile: Literal["default", "dharpa"] = Field(
+        description="The runtime profile to use, this determines for example whether comments need to be provided when running a job.",
+        default="dharpa",
+    )
+
     # ignore_errors: bool = Field(
     #     description="If set, kiara will try to ignore most errors (that can be ignored).",
     #     default=False,

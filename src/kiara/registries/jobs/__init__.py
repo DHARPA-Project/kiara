@@ -7,7 +7,8 @@
 
 import abc
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Type, Union
+from datetime import datetime
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Mapping, Type, Union
 
 import structlog
 from bidict import bidict
@@ -350,22 +351,55 @@ class JobRegistry(object):
 
         raise NotImplementedError()
 
-    def retrieve_all_job_records(self) -> Mapping[str, JobRecord]:
+    def find_job_records(self, matcher: JobMatcher) -> Mapping[uuid.UUID, JobRecord]:
 
-        all_records: Dict[str, JobRecord] = {}
+        raise NotImplementedError("Job matching is Not implemented yet.")
+
+    def retrieve_all_job_record_ids(self) -> List[uuid.UUID]:
+        """Retrieve a list of all available job record ids, sorted from latest to earliest."""
+
+        all_records: Dict[uuid.UUID, datetime] = {}
         for archive in self.job_archives.values():
-            all_record_ids = archive.retrieve_all_job_hashes()
-            if all_record_ids is None:
-                return {}
+            all_record_ids = archive.retrieve_all_job_ids()
+            # TODO: check for duplicates and mismatching datetimes
+            all_records.update(all_record_ids)
+
+        all_ids_sorted = [
+            uuid
+            for uuid, _ in sorted(
+                all_records.items(), key=lambda item: item[1], reverse=True
+            )
+        ]
+
+        return all_ids_sorted
+
+    def retrieve_all_job_records(self) -> Mapping[uuid.UUID, JobRecord]:
+        """Retrieves all job records from all job archives.
+
+        Returns:
+            a map of job-id/job-record pairs, sorted by job submission time, from latest to earliest
+        """
+
+        all_records: Dict[uuid.UUID, JobRecord] = {}
+        for archive in self.job_archives.values():
+            all_record_ids = archive.retrieve_all_job_ids().keys()
             for r in all_record_ids:
                 assert r not in all_records.keys()
-                job_record = archive.retrieve_record_for_job_hash(r)
+                job_record = archive.retrieve_record_for_job_id(r)
                 assert job_record is not None
                 all_records[r] = job_record
 
-        return all_records
+        all_records_sorted = dict(
+            sorted(
+                all_records.items(),
+                key=lambda item: item[1].job_submitted,
+                reverse=True,
+            )
+        )
 
-    def find_matching_job_record(
+        return all_records_sorted
+
+    def find_job_record_for_manifest(
         self, inputs_manifest: InputsManifest
     ) -> Union[uuid.UUID, None]:
         """
@@ -416,6 +450,10 @@ class JobRegistry(object):
     def prepare_job_config(
         self, manifest: Manifest, inputs: Mapping[str, Any]
     ) -> JobConfig:
+        """Prepare a JobConfig instance from the manifest and inputs.
+
+        This involves creating (and therefor validating) a module instance, as well as making sure the inputs are valid.
+        """
 
         module = self._kiara.module_registry.create_module(manifest=manifest)
 
@@ -430,18 +468,35 @@ class JobRegistry(object):
         manifest: Manifest,
         inputs: Mapping[str, Any],
         wait: bool = False,
-        job_metadata: Union[None, Any] = None,
     ) -> uuid.UUID:
+        """Prepare a job config, then execute it."""
 
         job_config = self.prepare_job_config(manifest=manifest, inputs=inputs)
-        return self.execute_job(job_config, wait=wait, job_metadata=job_metadata)
+        return self.execute_job(job_config, wait=wait)
 
     def execute_job(
-        self,
-        job_config: JobConfig,
-        wait: bool = False,
-        job_metadata: Union[None, Any] = None,
+        self, job_config: JobConfig, wait: bool = False, auto_save_result=False
     ) -> uuid.UUID:
+        """Execute the job specified by the job config.
+
+        Arguments:
+            job_config: the job config
+            wait: whether to wait for the job to finish
+            auto_save_result: whether to automatically save the job's outputs to the data registry once the job finished successfully
+        """
+
+        # from kiara.models.metadata import CommentMetadata
+        # if "comment" not in job_metadata.keys():
+        #     raise KiaraException("You need to provide a 'comment' for the job.")
+        #
+        # comment = job_metadata.get("comment")
+        # if not isinstance(comment, str):
+        #     raise KiaraException("The 'comment' must be a string.")
+        #
+        # comment_metadata = CommentMetadata(comment=comment)
+        # self.context.metadata_registry.register_metadata_item(
+        #     key="comment", item=comment_metadata, force=False, store=None
+        # )
 
         if job_config.module_type != "pipeline":
             log = logger.bind(
@@ -459,7 +514,16 @@ class JobRegistry(object):
                 job_hash=job_config.job_hash,
             )
 
-        stored_job = self.find_matching_job_record(inputs_manifest=job_config)
+        stored_job = self.find_job_record_for_manifest(inputs_manifest=job_config)
+
+        is_pipeline_step = False if job_config.pipeline_metadata is None else True
+        if is_pipeline_step:
+            pipeline_step_id: Union[None, str] = job_config.pipeline_metadata.step_id  # type: ignore
+            pipeline_id: Union[None, uuid.UUID] = job_config.pipeline_metadata.pipeline_id  # type: ignore
+        else:
+            pipeline_step_id = None
+            pipeline_id = None
+
         if stored_job is not None:
             log.debug(
                 "job.use_cached",
@@ -469,9 +533,8 @@ class JobRegistry(object):
             if is_develop():
 
                 module = self._kiara.module_registry.create_module(manifest=job_config)
-                if job_metadata and job_metadata.get("is_pipeline_step", True):
-                    step_id = job_metadata.get("step_id", None)
-                    title = f"Using cached pipeline step: {step_id}"
+                if is_pipeline_step:
+                    title = f"Using cached pipeline step: {pipeline_step_id}"
                 else:
                     title = f"Using cached job for: {module.module_type_name}"
 
@@ -495,22 +558,22 @@ class JobRegistry(object):
                 panel = Group(table, table_job_record)
                 log_dev_message(panel, title=title)
 
+            # TODO: in this case, and if 'auto_save_result' is True, we should also verify the outputs are saved?
+
             return stored_job
 
-        if job_metadata is None:
-            job_metadata = {}
-
-        is_pipeline_step = job_metadata.get("is_pipeline_step", False)
         dbg_data = {
             "module_type": job_config.module_type,
             "is_pipeline_step": is_pipeline_step,
         }
         if is_pipeline_step:
-            dbg_data["step_id"] = job_metadata["step_id"]
+            dbg_data["step_id"] = pipeline_step_id
+            dbg_data["pipeline_id"] = str(pipeline_id)
+
         log.debug("job.execute", **dbg_data)
 
         job_id = self._processor.create_job(
-            job_config=job_config, job_metadata=job_metadata
+            job_config=job_config, auto_save_result=auto_save_result
         )
         self._active_jobs[job_config.job_hash] = job_id
 

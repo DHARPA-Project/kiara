@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import abc
-from typing import Iterable, Union
+import uuid
+from datetime import datetime
+from typing import Iterable, Mapping, Union
 
 from kiara.models.module.jobs import JobRecord
 from kiara.registries import BaseArchive
@@ -31,6 +33,24 @@ class JobArchive(BaseArchive):
 
         If the job archive retrieves its jobs in a dynamic way, this will return 'None'.
         """
+
+    @abc.abstractmethod
+    def _retrieve_all_job_ids(self) -> Mapping[uuid.UUID, datetime]:
+        """
+        Retrieve a list of all job record ids in the archive, along with when they where submitted.
+        """
+
+    def retrieve_all_job_ids(self) -> Mapping[uuid.UUID, datetime]:
+        """Retrieve a list of all job ids in the archive, along with when they where submitted."""
+        return self._retrieve_all_job_ids()
+
+    @abc.abstractmethod
+    def _retrieve_record_for_job_id(self, job_id: uuid.UUID) -> Union[JobRecord, None]:
+        pass
+
+    def retrieve_record_for_job_id(self, job_id: uuid.UUID) -> Union[JobRecord, None]:
+        job_record = self._retrieve_record_for_job_id(job_id=job_id)
+        return job_record
 
     @abc.abstractmethod
     def _retrieve_record_for_job_hash(self, job_hash: str) -> Union[JobRecord, None]:

@@ -7,13 +7,19 @@
 
 import abc
 import uuid
-from typing import TYPE_CHECKING, Any, Dict, List, Literal, Mapping, Protocol, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Protocol, Set, Union
 
 import structlog
 from pydantic import BaseModel
 
-from kiara.exceptions import KiaraProcessingException
-from kiara.models.module.jobs import ActiveJob, JobConfig, JobLog, JobRecord, JobStatus
+from kiara.exceptions import KiaraException, KiaraProcessingException
+from kiara.models.module.jobs import (
+    ActiveJob,
+    JobConfig,
+    JobLog,
+    JobRecord,
+    JobStatus,
+)
 from kiara.models.values.value import (
     ValueMap,
     ValueMapReadOnly,
@@ -57,6 +63,7 @@ class ModuleProcessor(abc.ABC):
         self._finished_jobs: Dict[uuid.UUID, ActiveJob] = {}
         self._output_refs: Dict[uuid.UUID, ValueMapWritable] = {}
         self._job_records: Dict[uuid.UUID, JobRecord] = {}
+        self._auto_save_jobs: Set[uuid.UUID] = set()
 
         self._listeners: List[JobStatusListener] = []
 
@@ -100,16 +107,13 @@ class ModuleProcessor(abc.ABC):
             raise Exception(f"No job record for job with id '{job_id}' registered.")
 
     def create_job(
-        self, job_config: JobConfig, job_metadata: Union[None, Mapping[str, Any]]
+        self, job_config: JobConfig, auto_save_result: bool = False
     ) -> uuid.UUID:
 
         environments = {
             env_name: env.instance_id
             for env_name, env in self._kiara.current_environments.items()
         }
-
-        if job_metadata is None:
-            job_metadata = {}
 
         result_pedigree = ValuePedigree(
             kiara_id=self._kiara.id,
@@ -137,13 +141,14 @@ class ModuleProcessor(abc.ABC):
         ID_REGISTRY.update_metadata(job_id, obj=job)
         job.job_log.add_log("job created")
 
-        job_details = {
+        job_details: Dict[str, Any] = {
             "job_config": job_config,
             "job": job,
             "module": module,
             "outputs": outputs,
-            "job_metadata": job_metadata,
         }
+        job_details["pipeline_metadata"] = job_config.pipeline_metadata
+
         self._created_jobs[job_id] = job_details
 
         self._send_job_event(
@@ -159,10 +164,10 @@ class ModuleProcessor(abc.ABC):
                 or dev_settings.log.pre_run.internal_modules
             ):
 
-                is_pipeline_step = job_metadata.get("is_pipeline_step", False)
+                is_pipeline_step = job_config.pipeline_metadata is not None
                 if is_pipeline_step:
                     if dev_settings.log.pre_run.pipeline_steps:
-                        step_id = job_metadata.get("step_id", None)
+                        step_id = job_config.pipeline_metadata.step_id  # type: ignore
                         assert step_id is not None
                         title = (
                             f"Pre-run information for pipeline step: [i]{step_id}[/i]"
@@ -183,6 +188,9 @@ class ModuleProcessor(abc.ABC):
                         module=module,
                     )
                     log_dev_message(table, title=title)
+
+        if auto_save_result:
+            self._auto_save_jobs.add(job_id)
 
         return job_id
 
@@ -252,15 +260,20 @@ class ModuleProcessor(abc.ABC):
 
         old_status = job.status
 
+        result_values = None
+
         if status == JobStatus.SUCCESS:
             self._active_jobs.pop(job_id)
             job.job_log.add_log("job finished successfully")
             job.status = JobStatus.SUCCESS
             job.finished = get_current_time_incl_timezone()
-            values = self._output_refs[job_id]
+            result_values = self._output_refs[job_id]
             try:
-                values.sync_values()
-                value_ids = values.get_all_value_ids()
+                result_values.sync_values()
+                for field, val in result_values.items():
+                    val.job_id = job_id
+
+                value_ids = result_values.get_all_value_ids()
                 job.results = value_ids
                 job.job_log.percent_finished = 100
                 job_record = JobRecord.from_active_job(
@@ -332,15 +345,16 @@ class ModuleProcessor(abc.ABC):
                         and not dev_config.log.post_run.internal_modules
                     ):
                         skip = True
-                    is_pipeline_step = details["job_metadata"].get(
-                        "is_pipeline_step", False
-                    )
+
+                    pipeline_metadata = details.get("pipeline_metadata", None)
+                    is_pipeline_step = pipeline_metadata is not None
+
                     if is_pipeline_step and not dev_config.log.post_run.pipeline_steps:
                         skip = True
 
                     if not skip:
                         if is_pipeline_step:
-                            step_id = details["job_metadata"]["step_id"]
+                            step_id = pipeline_metadata.step_id  # type: ignore
                             title = f"Post-run information for pipeline step: {step_id}"
                         else:
                             title = f"Post-run information for module: {module.module_type_name}"
@@ -361,6 +375,19 @@ class ModuleProcessor(abc.ABC):
         self._send_job_event(
             job_id=job_id, old_status=old_status, new_status=job.status
         )
+
+        if status is JobStatus.SUCCESS:
+            if job_id in self._auto_save_jobs:
+                assert result_values is not None
+                try:
+                    for val in result_values.values():
+                        self._kiara.data_registry.store_value(val)
+                except Exception as e:
+                    log_exception(e)
+                    raise KiaraException(
+                        msg=f"Failed to auto-save job results for job: {job_id}",
+                        parent=e,
+                    )
 
     def wait_for(self, *job_ids: uuid.UUID):
         """Wait for the jobs with the specified ids, also optionally sync their outputs with the pipeline value state."""

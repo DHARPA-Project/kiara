@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import uuid
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Iterable, Mapping, Union
 
@@ -114,6 +116,7 @@ class SqliteJobArchive(JobArchive):
 CREATE TABLE IF NOT EXISTS job_records (
     job_id TEXT PRIMARY KEY,
     job_hash TEXT TEXT NOT NULL,
+    job_submitted TEXT NOT NULL,
     manifest_hash TEXT NOT NULL,
     input_ids_hash TEXT NOT NULL,
     inputs_data_hash TEXT NOT NULL,
@@ -134,6 +137,36 @@ CREATE TABLE IF NOT EXISTS job_records (
 
         sql = text("SELECT job_metadata FROM job_records WHERE job_hash = :job_hash")
         params = {"job_hash": job_hash}
+
+        with self.sqlite_engine.connect() as connection:
+            result = connection.execute(sql, params)
+            row = result.fetchone()
+            if not row:
+                return None
+
+            job_record_json = row[0]
+            job_record_data = orjson.loads(job_record_json)
+            job_record = JobRecord(**job_record_data)
+            return job_record
+
+    def _retrieve_all_job_ids(self) -> Mapping[uuid.UUID, datetime]:
+        """
+        Retrieve a list of all job record ids in the archive.
+        """
+
+        sql = text(
+            "SELECT job_id, job_submitted FROM job_records ORDER BY job_submitted DESC;"
+        )
+
+        with self.sqlite_engine.connect() as connection:
+            result = connection.execute(sql)
+            return {uuid.UUID(row[0]): datetime.fromisoformat(row[1]) for row in result}
+
+    def _retrieve_record_for_job_id(self, job_id: uuid.UUID) -> Union[JobRecord, None]:
+
+        sql = text("SELECT job_metadata FROM job_records WHERE job_id = :job_id")
+
+        params = {"job_id": str(job_id)}
 
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(sql, params)
@@ -222,11 +255,14 @@ class SqliteJobStore(SqliteJobArchive, JobStore):
 
         job_record_json = job_record.model_dump_json()
 
+        job_submitted = job_record.job_submitted.isoformat()
+
         sql = text(
-            "INSERT OR IGNORE INTO job_records(job_id, job_hash, manifest_hash, input_ids_hash, inputs_data_hash, job_metadata) VALUES (:job_id, :job_hash, :manifest_hash, :input_ids_hash, :inputs_data_hash, :job_metadata)"
+            "INSERT OR IGNORE INTO job_records(job_id, job_submitted, job_hash, manifest_hash, input_ids_hash, inputs_data_hash, job_metadata) VALUES (:job_id, :job_submitted, :job_hash, :manifest_hash, :input_ids_hash, :inputs_data_hash, :job_metadata)"
         )
         params = {
             "job_id": str(job_record.job_id),
+            "job_submitted": job_submitted,
             "job_hash": job_hash,
             "manifest_hash": manifest_hash,
             "input_ids_hash": input_ids_hash,

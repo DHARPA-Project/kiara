@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import uuid
-from typing import TYPE_CHECKING, Callable, Dict, Literal, Mapping, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, Literal, Mapping, Union
 
 from pydantic import Field
 
 from kiara.defaults import DEFAULT_METADATA_STORE_MARKER, DEFAULT_STORE_MARKER
 from kiara.models.events import RegistryEvent
-from kiara.models.metadata import KiaraMetadata
+from kiara.models.metadata import CommentMetadata, KiaraMetadata
 from kiara.registries.metadata.metadata_store import MetadataArchive, MetadataStore
 
 if TYPE_CHECKING:
@@ -142,14 +142,83 @@ class MetadataRegistry(object):
             f"Can't retrieve archive with id '{archive_id_or_alias}': no archive with that id registered."
         )
 
+    def retrieve_metadata_item(
+        self,
+        key: str,
+        reference_item_type: Union[str, None] = None,
+        reference_item_id: Union[str, None] = None,
+        store: Union[str, uuid.UUID, None] = None,
+    ) -> Union[KiaraMetadata, None]:
+        """Retrieves a metadata item."""
+
+        mounted_store: MetadataStore = self.get_archive(archive_id_or_alias=store)  # type: ignore
+
+        result = mounted_store.retrieve_metadata_item(
+            key=key, reference_type=reference_item_type, reference_id=reference_item_id
+        )
+
+        if result is None:
+            return None
+
+        model_type_id, data = result
+        model_cls = self._kiara.kiara_model_registry.get_model_cls(
+            kiara_model_id=model_type_id, required_subclass=KiaraMetadata
+        )
+
+        model_instance = model_cls(**data)
+        return model_instance  # type: ignore
+
     def register_metadata_item(
         self,
         key: str,
         item: KiaraMetadata,
+        reference_item_type: Union[str, None] = None,
+        reference_item_id: Union[str, None] = None,
         force: bool = False,
         store: Union[str, uuid.UUID, None] = None,
     ) -> uuid.UUID:
 
         mounted_store: MetadataStore = self.get_archive(archive_id_or_alias=store)  # type: ignore
 
-        return mounted_store.store_metadata_item(key=key, item=item, force=force)
+        return mounted_store.store_metadata_item(
+            key=key,
+            item=item,
+            reference_item_type=reference_item_type,
+            reference_item_id=reference_item_id,
+            force=force,
+        )
+
+    def register_job_metadata_items(
+        self,
+        job_id: uuid.UUID,
+        items: Mapping[str, Any],
+        store: Union[str, uuid.UUID, None] = None,
+    ) -> None:
+
+        for key, value in items.items():
+            if isinstance(value, str):
+                value = CommentMetadata(comment=value)
+            elif not isinstance(value, KiaraMetadata):
+                raise Exception(f"Invalid metadata value for key '{key}': {value}")
+            self.register_metadata_item(
+                key=key,
+                item=value,
+                reference_item_type="job",
+                reference_item_id=str(job_id),
+                store=store,
+            )
+
+    def retrieve_job_metadata_items(self, job_id: uuid.UUID):
+
+        pass
+
+    def retrieve_job_metadata_item(
+        self, job_id: uuid.UUID, key: str, store: Union[str, uuid.UUID, None] = None
+    ) -> Union[KiaraMetadata, None]:
+
+        return self.retrieve_metadata_item(
+            key=key,
+            reference_item_type="job",
+            reference_item_id=str(job_id),
+            store=store,
+        )

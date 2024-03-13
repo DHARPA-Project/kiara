@@ -59,7 +59,6 @@ from kiara.interfaces.python_api.models.info import (
 from kiara.interfaces.python_api.models.job import JobDesc
 from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
 from kiara.models.context import ContextInfo, ContextInfos
-from kiara.models.module.jobs import ActiveJob
 from kiara.models.module.manifest import Manifest
 from kiara.models.module.operation import Operation
 from kiara.models.rendering import RenderValueResult
@@ -101,6 +100,7 @@ if TYPE_CHECKING:
     )
     from kiara.interfaces.python_api.workflow import Workflow
     from kiara.models.archives import KiArchiveInfo
+    from kiara.models.module.jobs import ActiveJob, JobRecord
     from kiara.models.module.pipeline import PipelineConfig, PipelineStructure
     from kiara.models.module.pipeline.pipeline import PipelineGroupInfo, PipelineInfo
     from kiara.registries import KiaraArchive
@@ -1322,7 +1322,7 @@ class KiaraAPI(object):
         """
         List all available value ids for this kiara context.
 
-        This method exists mainly so frontend can retrieve a list of all value_ids that exists on the backend without
+        This method exists mainly so frontends can retrieve a list of all value_ids that exists on the backend without
         having to look up the details of each value (like [list_values][kiara.interfaces.python_api.KiaraAPI.list_values]
         does). This method can also be used with a matcher, but in this case the [list_values][kiara.interfaces.python_api.KiaraAPI.list_values]
         would be preferable in most cases, because it is called under the hood, and the performance advantage of not
@@ -1385,6 +1385,16 @@ class KiaraAPI(object):
         return self.context.data_registry.get_value(value=value)
 
     def get_values(self, **values: Union[str, Value, uuid.UUID]) -> ValueMapReadOnly:
+        """Retrieve Value instances for the specified value ids or aliases.
+
+        This is a convenience method to get fully 'hydrated' `Value` objects from references to them.
+
+        Arguments:
+            values: a dictionary with value ids or aliases as keys, and value instances as values
+
+        Returns:
+            a mapping with value_id as key, and [kiara.models.values.value.Value] as value
+        """
 
         return self.context.data_registry.load_values(values=values)
 
@@ -2226,6 +2236,11 @@ class KiaraAPI(object):
         value: Any,
         archive_type: Literal["data", "alias"] = "data",
     ) -> None:
+        """Add metadata to an archive.
+
+        Note that this is different to adding metadata to a context, since it is attached directly
+        to a special section of the archive itself.
+        """
 
         if archive_type == "data":
             _archive: Union[
@@ -2759,7 +2774,10 @@ class KiaraAPI(object):
     # ------------------------------------------------------------------------------------------------------------------
     # job-related methods
     def queue_manifest(
-        self, manifest: Manifest, inputs: Union[None, Mapping[str, Any]] = None
+        self,
+        manifest: Manifest,
+        inputs: Union[None, Mapping[str, Any]] = None,
+        **job_metadata: Any,
     ) -> uuid.UUID:
         """
         Queue a job using the provided manifest to describe the module and config that should be executed.
@@ -2773,6 +2791,20 @@ class KiaraAPI(object):
         Returns:
             a result value map instance
         """
+
+        if self.context.runtime_config.runtime_profile == "dharpa":
+            if not job_metadata:
+                raise Exception(
+                    "No job metadata provided. You need to provide a 'comment' argument when running your job."
+                )
+
+            if "comment" not in job_metadata.keys():
+                raise KiaraException(msg="You need to provide a 'comment' for the job.")
+
+            save_values = True
+        else:
+            save_values = False
+
         if inputs is None:
             inputs = {}
 
@@ -2781,12 +2813,21 @@ class KiaraAPI(object):
         )
 
         job_id = self.context.job_registry.execute_job(
-            job_config=job_config, wait=False
+            job_config=job_config, wait=False, auto_save_result=save_values
         )
+
+        if job_metadata:
+            self.context.metadata_registry.register_job_metadata_items(
+                job_id=job_id, items=job_metadata
+            )
+
         return job_id
 
     def run_manifest(
-        self, manifest: Manifest, inputs: Union[None, Mapping[str, Any]] = None
+        self,
+        manifest: Manifest,
+        inputs: Union[None, Mapping[str, Any]] = None,
+        **job_metadata: Any,
     ) -> ValueMapReadOnly:
         """
         Run a job using the provided manifest to describe the module and config that should be executed.
@@ -2796,11 +2837,12 @@ class KiaraAPI(object):
         Arguments:
             manifest: the manifest
             inputs: the job inputs (can be either references to values, or raw inputs
+            job_metadata: additional metadata to store with the job
 
         Returns:
             a result value map instance
         """
-        job_id = self.queue_manifest(manifest=manifest, inputs=inputs)
+        job_id = self.queue_manifest(manifest=manifest, inputs=inputs, **job_metadata)
         return self.context.job_registry.retrieve_result(job_id=job_id)
 
     def queue_job(
@@ -2808,6 +2850,7 @@ class KiaraAPI(object):
         operation: Union[str, Path, Manifest, OperationInfo, JobDesc],
         inputs: Union[Mapping[str, Any], None],
         operation_config: Union[None, Mapping[str, Any]] = None,
+        **job_metadata: Any,
     ) -> uuid.UUID:
         """
         Queue a job from a operation id, module_name (and config), or pipeline file, wait for the job to finish and retrieve the result.
@@ -2821,6 +2864,7 @@ class KiaraAPI(object):
             operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..
             inputs: the operation inputs
             operation_config: the (optional) module config in case 'operation' is a module name
+            job_metadata: additional metadata to store with the job
 
         Returns:
             the queued job id
@@ -2894,7 +2938,8 @@ class KiaraAPI(object):
         else:
             manifest = _operation
 
-        job_id = self.queue_manifest(manifest=manifest, inputs=inputs)
+        job_id = self.queue_manifest(manifest=manifest, inputs=inputs, **job_metadata)
+
         return job_id
 
     def run_job(
@@ -2902,6 +2947,7 @@ class KiaraAPI(object):
         operation: Union[str, Path, Manifest, OperationInfo, JobDesc],
         inputs: Union[None, Mapping[str, Any]] = None,
         operation_config: Union[None, Mapping[str, Any]] = None,
+        **job_metadata,
     ) -> ValueMapReadOnly:
         """
         Run a job from a operation id, module_name (and config), or pipeline file, wait for the job to finish and retrieve the result.
@@ -2918,6 +2964,7 @@ class KiaraAPI(object):
             operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..
             inputs: the operation inputs
             operation_config: the (optional) module config in case 'operation' is a module name
+            **job_metadata: additional metadata to store with the job
 
         Returns:
             the job result value map
@@ -2927,11 +2974,14 @@ class KiaraAPI(object):
             inputs = {}
 
         job_id = self.queue_job(
-            operation=operation, inputs=inputs, operation_config=operation_config
+            operation=operation,
+            inputs=inputs,
+            operation_config=operation_config,
+            **job_metadata,
         )
         return self.context.job_registry.retrieve_result(job_id=job_id)
 
-    def get_job(self, job_id: Union[str, uuid.UUID]) -> ActiveJob:
+    def get_job(self, job_id: Union[str, uuid.UUID]) -> "ActiveJob":
         """Retrieve the status of the job with the provided id."""
         if isinstance(job_id, str):
             job_id = uuid.UUID(job_id)
@@ -2946,6 +2996,97 @@ class KiaraAPI(object):
 
         result = self.context.job_registry.retrieve_result(job_id=job_id)
         return result
+
+    def list_job_record_ids(self, **matcher_params) -> List[uuid.UUID]:
+        """List all available job ids in this kiara context, ordered from newest to oldest.
+
+        This method exists mainly so frontends can retrieve a list of all job ids in order, without having
+        to retrieve all job details as well (in the case where no matcher_params exist. Otherwise, you could
+        also just use `list_jobs` and take the keys from the result.
+
+        You can look up the supported matcher parameter arguments via the [JobMatcher][kiara.models.module.jobs.JobMatcher] class.
+
+        Arguments:
+            matcher_params: additional parameters to pass to the job matcher
+
+        Returns:
+            a list of job ids, ordered from latest to earliest
+        """
+
+        if matcher_params:
+            job_ids = list(self.list_job_records(**matcher_params).keys())
+        else:
+            job_ids = self.context.job_registry.retrieve_all_job_record_ids()
+
+        return job_ids
+
+    def list_job_records(self, **matcher_params) -> Mapping[uuid.UUID, "JobRecord"]:
+        """List all available job ids in this kiara context, ordered from newest to oldest.
+
+        This method exists mainly so frontends can retrieve a list of all job ids in order, without having
+        to retrieve all job details as well (in the case where no matcher_params exist. Otherwise, you could
+        also just use `list_jobs` and take the keys from the result.
+
+        You can look up the supported matcher parameter arguments via the [JobMatcher][kiara.models.module.jobs.JobMatcher] class.
+
+        Arguments:
+            matcher_params: additional parameters to pass to the job matcher
+
+        Returns:
+            a list of job details, ordered from latest to earliest
+
+        """
+
+        if matcher_params:
+            raise NotImplementedError("Job matching is not implemented yet")
+            from kiara.models.module.jobs import JobMatcher
+
+            matcher = JobMatcher(**matcher_params)
+            job_records = self.context.job_registry.find_job_records(matcher=matcher)
+        else:
+            job_records = self.context.job_registry.retrieve_all_job_records()
+
+        return job_records
+
+    def get_job_record(self, job_id: Union[str, uuid.UUID]) -> Union["JobRecord", None]:
+
+        if isinstance(job_id, str):
+            job_id = uuid.UUID(job_id)
+
+        job_record = self.context.job_registry.get_job_record(job_id=job_id)
+        return job_record
+
+    def get_job_comment(self, job_id: Union[str, uuid.UUID]) -> Union[str, None]:
+        """Retrieve the comment for the specified job.
+
+        Returns 'None' if the job_id does not exist, or the job does not have a comment attached to it.
+
+        Arguments:
+            job_id: the job id
+
+        Returns:
+            the comment as string, or None
+        """
+
+        from kiara.models.metadata import CommentMetadata
+
+        if isinstance(job_id, str):
+            job_id = uuid.UUID(job_id)
+
+        metadata: Union[
+            None, CommentMetadata
+        ] = self.context.metadata_registry.retrieve_job_metadata_item(  # type: ignore
+            job_id=job_id, key="comment"
+        )
+
+        if not metadata:
+            return None
+
+        if not isinstance(metadata, CommentMetadata):
+            raise KiaraException(
+                msg=f"Metadata item 'comment' for job '{job_id}' is not a comment."
+            )
+        return metadata.comment
 
     def render_value(
         self,

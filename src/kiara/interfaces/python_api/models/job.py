@@ -278,7 +278,10 @@ class JobTest(object):
         print(f"Running checks for job '{self._job_desc.job_alias}'...")  # noqa
 
         try:
-            result = self._kiara_api.run_job(operation=self._job_desc)
+            result = self._kiara_api.run_job(
+                operation=self._job_desc,
+                comment=f"Test run '{self._job_desc.job_alias}'",
+            )
         except Exception as e:
             exc = KiaraException(f"Failed to run job '{self._job_desc.job_alias}': {e}")
             terminal_print(exc)

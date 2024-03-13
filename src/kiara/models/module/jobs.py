@@ -12,6 +12,7 @@ from datetime import datetime
 from enum import Enum
 from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Mapping, Union
 
+from pydantic import field_validator
 from pydantic.fields import Field, PrivateAttr
 from pydantic.main import BaseModel
 from rich import box
@@ -250,9 +251,13 @@ class JobRecord(JobConfig):
         )
         inputs_data_hash = str(inputs_data_cid)
 
+        module = kiara.module_registry.create_module(active_job.job_config)
+        is_internal = module.characteristics.is_internal
+
         job_record = JobRecord(
             job_id=active_job.job_id,
             job_submitted=active_job.submitted,
+            is_internal=is_internal,
             module_type=active_job.job_config.module_type,
             module_config=active_job.job_config.module_config,
             is_resolved=active_job.job_config.is_resolved,
@@ -278,6 +283,7 @@ class JobRecord(JobConfig):
         description="Information about the environments this value was created in.",
         default=None,
     )
+    is_internal: bool = Field(description="Whether this job was created by the system.")
     # job_hash: str = Field(description="The hash of the job. Calculated from manifest & input_ids hashes.")
     # manifest_hash: str = Field(description="The hash of the manifest.")
     # input_ids_hash: str = Field(description="The hash of the field names and input ids (the value_ids/uuids).")
@@ -353,6 +359,7 @@ class JobMatcher(KiaraModel):
         description="A list of job ids, if specified, only jobs with one of these ids will be included.",
         default_factory=list,
     )
+    allow_internal: bool = Field(description="Allow internal jobs.", default=False)
     earliest: Union[None, datetime] = Field(
         description="The earliest time when the job was created.", default=None
     )
@@ -367,3 +374,16 @@ class JobMatcher(KiaraModel):
         description="A list of value ids, if specified, only jobs that produced one of them will be included.",
         default_factory=list,
     )
+
+    @field_validator("job_ids", mode="before")
+    @classmethod
+    def validate_job_ids(cls, v):
+
+        if v is None:
+            return []
+        elif isinstance(v, uuid.UUID):
+            return [v]
+        elif isinstance(v, str):
+            return [uuid.UUID(v)]
+        else:
+            return [x if isinstance(x, uuid.UUID) else uuid.UUID(x) for x in v]

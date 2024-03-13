@@ -426,7 +426,7 @@ def execute_job(
             if error:
                 sys.exit(1)
 
-            api.context.job_registry.store_job_record(job_id=job_id)
+            # api.context.job_registry.store_job_record(job_id=job_id)
 
             if len(saved_results) == 1:
                 title = "[b]Stored result value[/b]"

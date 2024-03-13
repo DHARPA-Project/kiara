@@ -2,9 +2,9 @@
 import abc
 import uuid
 from datetime import datetime
-from typing import Iterable, Mapping, Union
+from typing import Generator, Iterable, Mapping, Union
 
-from kiara.models.module.jobs import JobRecord
+from kiara.models.module.jobs import JobMatcher, JobRecord
 from kiara.registries import BaseArchive
 
 
@@ -60,6 +60,17 @@ class JobArchive(BaseArchive):
 
         job_record = self._retrieve_record_for_job_hash(job_hash=job_hash)
         return job_record
+
+    def retrieve_matching_job_records(
+        self, matcher: JobMatcher
+    ) -> Generator[JobRecord, None, None]:
+        return self._retrieve_matching_job_records(matcher=matcher)
+
+    @abc.abstractmethod
+    def _retrieve_matching_job_records(
+        self, matcher: JobMatcher
+    ) -> Generator[JobRecord, None, None]:
+        pass
 
 
 class JobStore(JobArchive):

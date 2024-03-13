@@ -543,6 +543,9 @@ class DataRegistry(object):
         )
         self._event_callback(store_event)
 
+        if _value.job_id:
+            self._kiara.job_registry.store_job_record(job_id=_value.job_id)
+
         return persisted_value
 
     def lookup_aliases(self, value: Union[Value, uuid.UUID]) -> Set[str]:

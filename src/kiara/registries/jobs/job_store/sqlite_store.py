@@ -2,13 +2,13 @@
 import uuid
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, Iterable, Mapping, Union
+from typing import Any, Dict, Generator, Iterable, Mapping, Union
 
 import orjson
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 
-from kiara.models.module.jobs import JobRecord
+from kiara.models.module.jobs import JobMatcher, JobRecord
 from kiara.registries import SqliteArchiveConfig
 from kiara.registries.jobs import JobArchive, JobStore
 
@@ -178,6 +178,61 @@ CREATE TABLE IF NOT EXISTS job_records (
             job_record_data = orjson.loads(job_record_json)
             job_record = JobRecord(**job_record_data)
             return job_record
+
+    def _retrieve_matching_job_records(
+        self, matcher: JobMatcher
+    ) -> Generator[JobRecord, None, None]:
+
+        query_conditions = []
+        params: Dict[str, Any] = {}
+        if matcher.job_ids:
+            query_conditions.append("job_id IN :job_ids")
+            params["job_ids"] = (str(x) for x in matcher.job_ids)
+
+        if not matcher.allow_internal:
+            cond = "json_extract(job_metadata, '$.is_internal') = 0"
+            query_conditions.append(cond)
+
+        if matcher.earliest:
+            cond = "job_submitted >= :earliest"
+            query_conditions.append(cond)
+            params["earliest"] = matcher.earliest.isoformat()
+
+        if matcher.latest:
+            cond = "job_submitted <= :latest"
+            query_conditions.append(cond)
+            params["latest"] = matcher.latest.isoformat()
+
+        if matcher.operation_inputs:
+            raise NotImplementedError(
+                "Job matcher 'operation_inputs' not implemented yet"
+            )
+
+        if matcher.produced_outputs:
+            raise NotImplementedError(
+                "Job matcher 'produced_outputs' not implemented yet"
+            )
+
+        sql_query = "SELECT job_id, job_metadata FROM job_records"
+        if query_conditions:
+            sql_query += " WHERE "
+
+            for query_cond in query_conditions:
+                sql_query += "( " + query_cond + " ) AND "
+
+            sql_query = sql_query[:-5] + ";"
+
+        sql = text(sql_query)
+
+        with self.sqlite_engine.connect() as connection:
+            result = connection.execute(sql, params)
+            for row in result:
+                # job_id = uuid.UUID(row[0])
+                job_metadata = orjson.loads(row[1])
+                job_record = JobRecord(**job_metadata)
+                yield job_record
+
+        return
 
     def retrieve_all_job_hashes(
         self,

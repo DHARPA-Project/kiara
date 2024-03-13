@@ -1318,9 +1318,24 @@ class KiaraAPI(object):
         )
         return value
 
+    def list_all_value_ids(self) -> List[uuid.UUID]:
+        """List all value ids in the current context.
+
+        This returns everything, even internal values. It should be faster than using
+        `list_value_ids` with equivalent parameters, because no filtering has to happen.
+
+        Returns:
+            all value_ids in the current context, using every registered store
+        """
+
+        _values = self.context.data_registry.retrieve_all_available_value_ids()
+        return sorted(_values)
+
     def list_value_ids(self, **matcher_params) -> List[uuid.UUID]:
         """
         List all available value ids for this kiara context.
+
+        By default, this also includes internal values.
 
         This method exists mainly so frontends can retrieve a list of all value_ids that exists on the backend without
         having to look up the details of each value (like [list_values][kiara.interfaces.python_api.KiaraAPI.list_values]
@@ -1329,24 +1344,40 @@ class KiaraAPI(object):
         having to look up value details is gone.
 
         Arguments:
-            matcher_params: the (optional) filter parameters, check the [ValueMatcher][kiara.models.values.matchers.ValueMatcher] class for available parameters
+            matcher_params: the (optional) filter parameters, check the [ValueMatcher][kiara.models.values.matchers.ValueMatcher] class for available parameters and defaults
 
         Returns:
             a list of value ids
         """
-        if matcher_params:
-            values = self.list_values(**matcher_params)
-            return sorted((v.value_id for v in values.values()))
-        else:
-            _values = self.context.data_registry.retrieve_all_available_value_ids()
-            return sorted(_values)
+
+        values = self.list_values(**matcher_params)
+        return sorted((v.value_id for v in values.values()))
+
+    def list_all_values(self) -> ValueMapReadOnly:
+        """List all values in the current context, incl. internal ones.
+
+        This should be faster than `list_values` with equivalent matcher params, because no
+        filtering has to happen.
+        """
+
+        # TODO: make that parallel?
+        values = {
+            k: self.context.data_registry.get_value(k)
+            for k in self.context.data_registry.retrieve_all_available_value_ids()
+        }
+        result = ValueMapReadOnly.create_from_values(
+            **{str(k): v for k, v in values.items()}
+        )
+        return result
 
     def list_values(self, **matcher_params: Any) -> ValueMapReadOnly:
         """
-        List all available values, optionally filter.
+        List all available (relevant) values, optionally filter.
 
-        Retrieve information about all values that are available in the current kiara context session (both stored
-        and non-stored).
+        Retrieve information about all values that are available in the current kiara context session (both stored and non-stored).
+
+        Check the `ValueMatcher` class for available parameters and defaults, for example this excludes
+        internal values by default.
 
         Arguments:
             matcher_params: the (optional) filter parameters, check the [ValueMatcher][kiara.models.values.matchers.ValueMatcher] class for available parameters
@@ -1354,15 +1385,9 @@ class KiaraAPI(object):
         Returns:
             a dictionary with value_id as key, and [kiara.models.values.value.Value] as value
         """
-        if matcher_params:
-            matcher = ValueMatcher.create_matcher(**matcher_params)
-            values = self.context.data_registry.find_values(matcher=matcher)
-        else:
-            # TODO: make that parallel?
-            values = {
-                k: self.context.data_registry.get_value(k)
-                for k in self.context.data_registry.retrieve_all_available_value_ids()
-            }
+
+        matcher = ValueMatcher.create_matcher(**matcher_params)
+        values = self.context.data_registry.find_values(matcher=matcher)
 
         result = ValueMapReadOnly.create_from_values(
             **{str(k): v for k, v in values.items()}
@@ -2997,14 +3022,21 @@ class KiaraAPI(object):
         result = self.context.job_registry.retrieve_result(job_id=job_id)
         return result
 
+    def list_all_job_record_ids(self) -> List[uuid.UUID]:
+        """List all available job ids in this kiara context, ordered from newest to oldest, including internal jobs.
+
+        This should be faster than `list_job_record_ids` with equivalent parameters, because no filtering
+        needs to be done.
+        """
+
+        job_ids = self.context.job_registry.retrieve_all_job_record_ids()
+        return job_ids
+
     def list_job_record_ids(self, **matcher_params) -> List[uuid.UUID]:
         """List all available job ids in this kiara context, ordered from newest to oldest.
 
-        This method exists mainly so frontends can retrieve a list of all job ids in order, without having
-        to retrieve all job details as well (in the case where no matcher_params exist. Otherwise, you could
-        also just use `list_jobs` and take the keys from the result.
-
-        You can look up the supported matcher parameter arguments via the [JobMatcher][kiara.models.module.jobs.JobMatcher] class.
+        You can look up the supported matcher parameter arguments via the [JobMatcher][kiara.models.module.jobs.JobMatcher] class. By default, this method for example
+        does not return jobs marked as 'internal'.
 
         Arguments:
             matcher_params: additional parameters to pass to the job matcher
@@ -3013,19 +3045,24 @@ class KiaraAPI(object):
             a list of job ids, ordered from latest to earliest
         """
 
-        if matcher_params:
-            job_ids = list(self.list_job_records(**matcher_params).keys())
-        else:
-            job_ids = self.context.job_registry.retrieve_all_job_record_ids()
-
+        job_ids = list(self.list_job_records(**matcher_params).keys())
         return job_ids
+
+    def list_all_job_records(self) -> Mapping[uuid.UUID, "JobRecord"]:
+        """List all available job records in this kiara context, ordered from newest to oldest, including internal jobs.
+
+        This should be faster than `list_job_records` with equivalent parameters, because no filtering
+        needs to be done.
+        """
+
+        job_records = self.context.job_registry.retrieve_all_job_records()
+        return job_records
 
     def list_job_records(self, **matcher_params) -> Mapping[uuid.UUID, "JobRecord"]:
         """List all available job ids in this kiara context, ordered from newest to oldest.
 
-        This method exists mainly so frontends can retrieve a list of all job ids in order, without having
-        to retrieve all job details as well (in the case where no matcher_params exist. Otherwise, you could
-        also just use `list_jobs` and take the keys from the result.
+        You can look up the supported matcher parameter arguments via the [JobMatcher][kiara.models.module.jobs.JobMatcher] class. By default, this method for example
+        does not return jobs marked as 'internal'.
 
         You can look up the supported matcher parameter arguments via the [JobMatcher][kiara.models.module.jobs.JobMatcher] class.
 
@@ -3037,14 +3074,10 @@ class KiaraAPI(object):
 
         """
 
-        if matcher_params:
-            raise NotImplementedError("Job matching is not implemented yet")
-            from kiara.models.module.jobs import JobMatcher
+        from kiara.models.module.jobs import JobMatcher
 
-            matcher = JobMatcher(**matcher_params)
-            job_records = self.context.job_registry.find_job_records(matcher=matcher)
-        else:
-            job_records = self.context.job_registry.retrieve_all_job_records()
+        matcher = JobMatcher(**matcher_params)
+        job_records = self.context.job_registry.find_job_records(matcher=matcher)
 
         return job_records
 

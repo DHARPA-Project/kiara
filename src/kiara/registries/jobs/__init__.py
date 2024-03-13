@@ -21,7 +21,13 @@ from kiara.models.events.job_registry import (
     JobRecordPreStoreEvent,
     JobRecordStoredEvent,
 )
-from kiara.models.module.jobs import ActiveJob, JobConfig, JobRecord, JobStatus
+from kiara.models.module.jobs import (
+    ActiveJob,
+    JobConfig,
+    JobMatcher,
+    JobRecord,
+    JobStatus,
+)
 from kiara.models.module.manifest import InputsManifest, Manifest
 from kiara.models.values.value import ValueMap, ValueMapReadOnly
 from kiara.processing import ModuleProcessor
@@ -38,7 +44,7 @@ logger = structlog.getLogger()
 MANIFEST_SUB_PATH = "manifests"
 
 
-class JobMatcher(abc.ABC):
+class ExistingJobMatcher(abc.ABC):
     def __init__(self, kiara: "Kiara"):
 
         self._kiara: Kiara = kiara
@@ -50,14 +56,14 @@ class JobMatcher(abc.ABC):
         pass
 
 
-class NoneJobMatcher(JobMatcher):
+class NoneExistingJobMatcher(ExistingJobMatcher):
     def find_existing_job(
         self, inputs_manifest: InputsManifest
     ) -> Union[JobRecord, None]:
         return None
 
 
-class ValueIdJobMatcher(JobMatcher):
+class ValueIdExistingJobMatcher(ExistingJobMatcher):
     def find_existing_job(
         self, inputs_manifest: InputsManifest
     ) -> Union[JobRecord, None]:
@@ -85,7 +91,7 @@ class ValueIdJobMatcher(JobMatcher):
         return job_record
 
 
-class DataHashJobMatcher(JobMatcher):
+class DataHashExistingJobMatcher(ExistingJobMatcher):
     def find_existing_job(
         self, inputs_manifest: InputsManifest
     ) -> Union[JobRecord, None]:
@@ -151,7 +157,7 @@ class JobRegistry(object):
 
         self._kiara: Kiara = kiara
 
-        self._job_matcher_cache: Dict[JobCacheStrategy, JobMatcher] = {}
+        self._job_matcher_cache: Dict[JobCacheStrategy, ExistingJobMatcher] = {}
 
         self._active_jobs: bidict[str, uuid.UUID] = bidict()
         self._failed_jobs: Dict[str, uuid.UUID] = {}
@@ -172,7 +178,7 @@ class JobRegistry(object):
         # self.register_job_archive(default_file_store, store_alias="default_data_store")  # type: ignore
 
     @property
-    def job_matcher(self) -> JobMatcher:
+    def job_matcher(self) -> ExistingJobMatcher:
 
         from kiara.context.runtime_config import JobCacheStrategy
 
@@ -189,11 +195,11 @@ class JobRegistry(object):
         job_matcher = self._job_matcher_cache.get(strategy, None)
         if job_matcher is None:
             if strategy == JobCacheStrategy.no_cache:
-                job_matcher = NoneJobMatcher(kiara=self._kiara)
+                job_matcher = NoneExistingJobMatcher(kiara=self._kiara)
             elif strategy == JobCacheStrategy.value_id:
-                job_matcher = ValueIdJobMatcher(kiara=self._kiara)
+                job_matcher = ValueIdExistingJobMatcher(kiara=self._kiara)
             elif strategy == JobCacheStrategy.data_hash:
-                job_matcher = DataHashJobMatcher(kiara=self._kiara)
+                job_matcher = DataHashExistingJobMatcher(kiara=self._kiara)
             else:
                 raise Exception(f"Job cache strategy not implemented: {strategy}")
             self._job_matcher_cache[strategy] = job_matcher
@@ -353,7 +359,23 @@ class JobRegistry(object):
 
     def find_job_records(self, matcher: JobMatcher) -> Mapping[uuid.UUID, JobRecord]:
 
-        raise NotImplementedError("Job matching is Not implemented yet.")
+        all_records: List[JobRecord] = []
+        for archive in self.job_archives.values():
+
+            _job_records = archive.retrieve_matching_job_records(matcher=matcher)
+            all_records.extend(_job_records)
+
+        # TODO: check for duplicates and mismatching datetimes
+        all_jobs_sorted = {
+            job.job_id: job
+            for job in sorted(
+                all_records,
+                key=lambda item: item.job_submitted,
+                reverse=True,
+            )
+        }
+
+        return all_jobs_sorted
 
     def retrieve_all_job_record_ids(self) -> List[uuid.UUID]:
         """Retrieve a list of all available job record ids, sorted from latest to earliest."""

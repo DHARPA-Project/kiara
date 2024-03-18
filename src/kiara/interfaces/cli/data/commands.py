@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING, Iterable, Tuple, Union
 import rich_click as click
 import structlog
 
+from kiara.defaults import DATA_ARCHIVE_DEFAULT_VALUE_MARKER
 from kiara.exceptions import InvalidCommandLineInvocation
 from kiara.utils import is_develop, log_exception, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
@@ -645,6 +646,13 @@ def export_data_archive(
         "compression": compression,
     }
     try:
+        no_default_value = False
+        if not no_default_value:
+            metadata_to_add = {
+                DATA_ARCHIVE_DEFAULT_VALUE_MARKER: str(values[0][0].value_id)
+            }
+        else:
+            metadata_to_add = None
         store_result = kiara_api.export_values(
             target_archive=full_path,
             values=values_to_store,
@@ -653,6 +661,7 @@ def export_data_archive(
             target_registered_name=archive_name,
             append=append,
             target_store_params=target_store_params,
+            additional_archive_metadata=metadata_to_add,
         )
         render_config = {"add_field_column": False}
         terminal_print_model(

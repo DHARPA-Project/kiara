@@ -2103,6 +2103,8 @@ class KiaraAPI(object):
         target_registered_name: Union[str, None] = None,
         append: bool = False,
         target_store_params: Union[None, Mapping[str, Any]] = None,
+        export_related_metadata: bool = True,
+        additional_archive_metadata: Union[None, Mapping[str, Any]] = None,
     ) -> StoreValuesResult:
         """Store one or several values along with (optional) aliases into a kiara archive.
 
@@ -2132,6 +2134,8 @@ class KiaraAPI(object):
             target_registered_name: the name to register the archive under in the context
             append: whether to append to an existing archive
             target_store_params: additional parameters to pass to the 'create_kiarchive' method if the file does not exist yet
+            export_related_metadata: whether to export related metadata (e.g. job info, comments, ..) to the new archive or not
+            additional_archive_metadata: (optional) additional metadata to add to the archive
 
         """
 
@@ -2158,6 +2162,14 @@ class KiaraAPI(object):
             allow_alias_overwrite=allow_alias_overwrite,
             store=target_archive_ref,
         )
+
+        if export_related_metadata:
+            raise NotImplementedError("xx")
+
+        if additional_archive_metadata:
+            for k, v in additional_archive_metadata.items():
+                self.set_archive_metadata_value(target_archive_ref, k, v)
+
         return result
 
     def register_archive(
@@ -2259,7 +2271,7 @@ class KiaraAPI(object):
         archive: Union[str, uuid.UUID],
         key: str,
         value: Any,
-        archive_type: Literal["data", "alias"] = "data",
+        archive_type: Literal["data", "alias", "job_record", "metadata"] = "data",
     ) -> None:
         """Add metadata to an archive.
 
@@ -2276,6 +2288,16 @@ class KiaraAPI(object):
             _archive.set_archive_metadata_value(key, value)
         elif archive_type == "alias":
             _archive = self.context.alias_registry.get_archive(archive)
+            if _archive is None:
+                raise KiaraException(f"Archive '{archive}' does not exist.")
+            _archive.set_archive_metadata_value(key, value)
+        elif archive_type == "metadata":
+            _archive = self.context.metadata_registry.get_archive(archive)
+            if _archive is None:
+                raise KiaraException(f"Archive '{archive}' does not exist.")
+            _archive.set_archive_metadata_value(key, value)
+        elif archive_type == "job_record":
+            _archive = self.context.job_registry.get_archive(archive)
             if _archive is None:
                 raise KiaraException(f"Archive '{archive}' does not exist.")
             _archive.set_archive_metadata_value(key, value)

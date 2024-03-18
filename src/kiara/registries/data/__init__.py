@@ -145,6 +145,7 @@ class DefaultAliasResolver(AliasResolver):
                         msg=f"Can't retrive value for alias '{rest}': no such alias registered.",
                     )
             elif ref_type == ARCHIVE_REF_TYPE_NAME:
+
                 if "#" in rest:
                     archive_ref, path_in_archive = rest.split("#", maxsplit=1)
                 else:
@@ -164,6 +165,10 @@ class DefaultAliasResolver(AliasResolver):
                             default_value = data_archive.get_archive_metadata(
                                 DATA_ARCHIVE_DEFAULT_VALUE_MARKER
                             )
+                            if default_value is None:
+                                raise NoSuchValueException(
+                                    f"No default value found for uri: {alias}"
+                                )
                             _value_id = uuid.UUID(default_value)
                         else:
                             from kiara.registries.aliases import AliasArchive
@@ -446,7 +451,11 @@ class DataRegistry(object):
                         raise Exception(
                             f"Can't retrieve value for '{value}': invalid type '{type(value)}'."
                         )
-                    _value_id = self._alias_resolver.resolve_alias(value)
+                    try:
+                        _value_id = self._alias_resolver.resolve_alias(value)
+                    except Exception as e:
+                        log_exception(e)
+                        raise e
         else:
             _value_id = value
 
@@ -1301,8 +1310,8 @@ class DataRegistry(object):
                     else:
                         try:
                             _d = self._alias_resolver.resolve_alias(_d)
-                        except Exception:
-                            pass
+                        except Exception as e:
+                            log_exception(e)
 
             if isinstance(_d, Value):
                 _resolved[input_name] = _d

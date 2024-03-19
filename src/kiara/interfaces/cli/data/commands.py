@@ -549,6 +549,7 @@ def filter_value(
     default="zstd",
 )
 @click.option("--append", "-a", help="Append data to existing archive.", is_flag=True)
+@click.option("--replace", help="Replace existing archive.", is_flag=True)
 # @click.option(
 #     "--no-default-value", "-nd", help="Do not set a default value.", is_flag=True
 # )
@@ -563,6 +564,7 @@ def export_data_archive(
     path: Union[str, None],
     compression: str,
     append: bool,
+    replace: bool,
     no_default_value: bool = False,
     no_aliases: bool = False,
 ):
@@ -609,13 +611,24 @@ def export_data_archive(
 
     full_path = Path(base_path) / file_name
 
-    if full_path.exists() and not append:
+    delete = False
+
+    if full_path.exists() and (not append and not replace):
         terminal_print(
-            f"[red]Error[/red]: File '{full_path}' already exists and '--append' not specified."
+            f"[red]Error[/red]: File '{full_path}' already exists and '--append' or '--replace' not specified."
         )
         sys.exit(1)
     elif full_path.exists():
-        terminal_print(f"Appending to existing data_store '{file_name}'...")
+        if append and replace:
+            terminal_print(
+                f"[red]Error[/red]: Can't specify both '--append' and '--replace'."
+            )
+            sys.exit(1)
+        if append:
+            terminal_print(f"Appending to existing data_store '{file_name}'...")
+        else:
+            terminal_print(f"Replacing existing data_store '{file_name}'...")
+            delete = True
     else:
         terminal_print(f"Creating new data_store '{file_name}'...")
 
@@ -653,6 +666,10 @@ def export_data_archive(
             }
         else:
             metadata_to_add = None
+
+        if delete:
+            os.unlink(full_path)
+
         store_result = kiara_api.export_values(
             target_archive=full_path,
             values=values_to_store,

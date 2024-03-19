@@ -361,9 +361,12 @@ def create_default_store_config(
     store_type: str, stores_base_path: str
 ) -> KiaraArchiveConfig:
 
-    env_registry = EnvironmentRegistry.instance()
-    kiara_types: "KiaraTypesRuntimeEnvironment" = env_registry.environments["kiara_types"]  # type: ignore
-    available_archives = kiara_types.archive_types
+    from kiara.utils.archives import find_archive_types
+
+    # env_registry = EnvironmentRegistry.instance()
+    # find_archive_types = find_archive_types()
+    # kiara_types: "KiaraTypesRuntimeEnvironment" = env_registry.environments["kiara_types"]  # type: ignore
+    available_archives = find_archive_types()
 
     assert store_type in available_archives.item_infos.keys()
 

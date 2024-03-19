@@ -249,7 +249,17 @@ class ApiEndpoints(object):
             return self._api_endpoint_names
 
         temp = []
-        for func_name in dir(self._api_cls):
+
+        avail_methods = [
+            member
+            for member in inspect.getmembers(
+                self._api_cls, predicate=inspect.isfunction
+            )
+        ]
+        avail_methods.sort(key=lambda x: inspect.getsourcelines(x[1])[1])
+
+        method_names = [x[0] for x in avail_methods]
+        for func_name in method_names:
             if func_name.startswith("_"):
                 continue
 
@@ -271,7 +281,7 @@ class ApiEndpoints(object):
             else:
                 temp.append(func_name)
 
-        self._api_endpoint_names = sorted(temp)
+        self._api_endpoint_names = temp
         return self._api_endpoint_names
 
     def get_api_endpoint(self, endpoint_name: str) -> ApiEndpoint:

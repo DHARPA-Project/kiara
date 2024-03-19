@@ -26,13 +26,13 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.table import Table
 
-from kiara.interfaces.python_api.models.info import TypeInfo, TypeInfoItemGroup
 from kiara.models import KiaraModel
 from kiara.models.documentation import (
     AuthorsMetadataModel,
     ContextMetadataModel,
     DocumentationMetadataModel,
 )
+from kiara.interfaces.python_api.models.info import TypeInfo, TypeInfoItemGroup
 
 # from kiara.models.info import TypeInfo
 from kiara.models.python_class import PythonClass
@@ -147,3 +147,5 @@ class MetadataTypeClassesInfo(TypeInfoItemGroup):
     item_infos: Mapping[str, MetadataTypeInfo] = Field(  # type: ignore
         description="The value metadata info instances for each type."
     )
+
+

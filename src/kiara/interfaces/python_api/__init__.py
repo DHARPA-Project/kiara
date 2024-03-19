@@ -2164,7 +2164,8 @@ class KiaraAPI(object):
         )
 
         if export_related_metadata:
-            raise NotImplementedError("xx")
+            print("TODO: Export related metadata.")
+            # raise NotImplementedError("xx")
 
         if additional_archive_metadata:
             for k, v in additional_archive_metadata.items():

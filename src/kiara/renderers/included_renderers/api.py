@@ -119,7 +119,7 @@ class ApiDocTextRenderer(ApiRenderer):
         for ep in self.api_endpoints.api_endpint_names:
             doc = self.api_endpoints.get_api_endpoint(ep).doc
             rendered = template.render(endpoint_name=ep, doc=doc)
-            result += rendered
+            result += f"{rendered}\n"
 
         # details = self.api_endpoints.get_api_endpoint("get_value")
         # dbg(details.validated_func.__dict__)

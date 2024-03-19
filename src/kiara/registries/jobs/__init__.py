@@ -284,12 +284,9 @@ class JobRegistry(object):
 
     def store_job_record(self, job_id: uuid.UUID):
 
-        if job_id not in self._archived_records.keys():
-            raise Exception(
-                f"Can't store job with id '{job_id}': no job record with that id exists."
-            )
+        # TODO: allow to store job record to external store
 
-        job_record = self._archived_records[job_id]
+        job_record = self.get_job_record(job_id=job_id)
 
         if job_record._is_stored:
             logger.debug(

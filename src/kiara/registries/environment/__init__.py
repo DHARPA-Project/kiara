@@ -67,7 +67,7 @@ class EnvironmentRegistry(object):
             return self._environments
 
         import kiara.models.runtime_environment.kiara
-        import kiara.models.runtime_environment.operating_system
+        import kiara.models.runtime_environment.operating_system  # nowa
         import kiara.models.runtime_environment.python  # noqa
 
         subclasses: Iterable[Type[RuntimeEnvironment]] = _get_all_subclasses(

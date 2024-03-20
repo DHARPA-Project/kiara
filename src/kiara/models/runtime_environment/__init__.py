@@ -15,7 +15,7 @@ from rich.syntax import Syntax
 from rich.table import Table
 
 from kiara.defaults import DEFAULT_ENV_HASH_KEY, ENVIRONMENT_TYPE_CATEGORY_ID
-from kiara.models import KiaraModel
+from kiara.models.metadata import KiaraMetadata
 from kiara.utils.hashing import compute_cid
 from kiara.utils.json import orjson_dumps
 from kiara.utils.output import extract_renderable
@@ -23,7 +23,7 @@ from kiara.utils.output import extract_renderable
 logger = structlog.get_logger()
 
 
-class RuntimeEnvironment(KiaraModel):
+class RuntimeEnvironment(KiaraMetadata):
     model_config = ConfigDict(frozen=True)
 
     @classmethod

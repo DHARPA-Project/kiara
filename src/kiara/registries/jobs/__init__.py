@@ -14,6 +14,7 @@ import structlog
 from bidict import bidict
 from rich.console import Group
 
+from kiara.defaults import ENVIRONMENT_MARKER_KEY
 from kiara.exceptions import FailedJobException
 from kiara.models.events import KiaraEvent
 from kiara.models.events.job_registry import (
@@ -38,6 +39,7 @@ from kiara.utils import get_dev_config, is_develop
 if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.context.runtime_config import JobCacheStrategy
+    from kiara.models.runtime_environment import RuntimeEnvironment
 
 logger = structlog.getLogger()
 
@@ -171,6 +173,9 @@ class JobRegistry(object):
 
         self._event_callback = self._kiara.event_registry.add_producer(self)
 
+        self._env_cache: Dict[str, Dict[str, RuntimeEnvironment]] = {}
+
+
         # default_archive = FileSystemJobStore.create_from_kiara_context(self._kiara)
         # self.register_job_archive(default_archive, store_alias=DEFAULT_STORE_MARKER)
 
@@ -282,11 +287,26 @@ class JobRegistry(object):
             self._finished_jobs[job_hash] = job_id
             self._archived_records[job_id] = job_record
 
+    def _persist_environment(self, env_type: str, env_hash: str):
+
+        cached = self._env_cache.get(env_type, {}).get(env_hash, None)
+        if cached is not None:
+            return
+
+        environment = self._kiara.environment_registry.get_environment_for_cid(env_hash)
+        self._kiara.metadata_registry.register_metadata_item(
+            key=ENVIRONMENT_MARKER_KEY, item=environment
+        )
+        self._env_cache.setdefault(env_type, {})[env_hash] = environment
+
     def store_job_record(self, job_id: uuid.UUID):
 
         # TODO: allow to store job record to external store
 
         job_record = self.get_job_record(job_id=job_id)
+
+        for env_type, env_hash in job_record.environment_hashes.items():
+            self._persist_environment(env_type, env_hash)
 
         if job_record._is_stored:
             logger.debug(

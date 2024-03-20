@@ -32,7 +32,6 @@ from kiara.registries import (
 from kiara.registries.data import DataArchive
 from kiara.registries.data.data_store import BaseDataStore
 from kiara.utils.hashfs import shard
-from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from multiformats import CID

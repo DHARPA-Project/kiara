@@ -33,7 +33,6 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
         self._schema_stored_cache: Dict[str, Any] = {}
         self._schema_stored_item: Dict[str, Any] = {}
 
-
     def retrieve_metadata_item(
         self,
         key: str,
@@ -133,7 +132,8 @@ class MetadataStore(MetadataArchive):
         data_json = item.model_dump_json()
         data_hash = str(item.instance_cid)
 
-        if data_hash not in self._schema_stored_item.keys():
+        metadata_item_id = self._schema_stored_item.get(data_hash, None)
+        if not metadata_item_id:
 
             metadata_item_id = self._store_metadata_item(
                 key=key,
@@ -144,6 +144,7 @@ class MetadataStore(MetadataArchive):
                 force=force,
             )
             self._schema_stored_item[data_hash] = metadata_item_id
+
 
         if (reference_item_id and not reference_item_type) or (
             reference_item_type and not reference_item_id

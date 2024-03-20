@@ -24,7 +24,6 @@ from typing import (
 import structlog
 from rich.console import RenderableType
 
-from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.models.values.matchers import ValueMatcher
 from kiara.models.values.value import (
     SERIALIZE_TYPES,

@@ -266,6 +266,9 @@ KIARA_MODEL_ID_KEY = "kiara_model_id"
 KIARA_MODEL_DATA_KEY = "data"
 KIARA_MODEL_SCHEMA_KEY = "schema"
 
+ENVIRONMENT_MARKER_KEY = "environment"
+"""Constant string to indicate this is a metadata entry of type 'environment'."""
+
 SYMLINK_ISSUE_MSG = """Your operating system does not support symlinks, which is a requirement for kiara to work.
 
 You can enable developer mode to fix this issue:

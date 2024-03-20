@@ -254,6 +254,11 @@ class JobRecord(JobConfig):
         module = kiara.module_registry.create_module(active_job.job_config)
         is_internal = module.characteristics.is_internal
 
+        env_hashes = {
+            env.model_type_id: str(env.instance_cid)
+            for env in kiara.current_environments.values()
+        }
+
         job_record = JobRecord(
             job_id=active_job.job_id,
             job_submitted=active_job.submitted,
@@ -264,7 +269,7 @@ class JobRecord(JobConfig):
             inputs=active_job.job_config.inputs,
             outputs=active_job.results,
             runtime_details=job_details,
-            environment_hashes=kiara.environment_registry.environment_hashes,
+            environment_hashes=env_hashes,
             # input_ids_hash=active_job.job_config.input_ids_hash,
             inputs_data_hash=inputs_data_hash,
         )
@@ -276,13 +281,13 @@ class JobRecord(JobConfig):
 
     job_id: uuid.UUID = Field(description="The globally unique id for this job.")
     job_submitted: datetime = Field(description="When the job was submitted.")
-    environment_hashes: Mapping[str, Mapping[str, str]] = Field(
+    environment_hashes: Mapping[str, str]  = Field(
         description="Hashes for the environments this value was created in."
     )
-    enviroments: Union[Mapping[str, Mapping[str, Any]], None] = Field(
-        description="Information about the environments this value was created in.",
-        default=None,
-    )
+    # enviroments: Union[Mapping[str, Mapping[str, Any]], None] = Field(
+    #     description="Information about the environments this value was created in.",
+    #     default=None,
+    # )
     is_internal: bool = Field(description="Whether this job was created by the system.")
     # job_hash: str = Field(description="The hash of the job. Calculated from manifest & input_ids hashes.")
     # manifest_hash: str = Field(description="The hash of the manifest.")

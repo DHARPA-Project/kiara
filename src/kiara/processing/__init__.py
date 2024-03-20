@@ -111,8 +111,8 @@ class ModuleProcessor(abc.ABC):
     ) -> uuid.UUID:
 
         environments = {
-            env_name: env.instance_id
-            for env_name, env in self._kiara.current_environments.items()
+            env.model_type_id: str(env.instance_cid)
+            for env in self._kiara.current_environments.values()
         }
 
         result_pedigree = ValuePedigree(

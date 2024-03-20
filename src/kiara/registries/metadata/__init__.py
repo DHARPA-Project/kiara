@@ -40,7 +40,7 @@ class MetadataRegistry(object):
         self._metadata_archives: Dict[str, MetadataArchive] = {}
         self._default_data_store: Union[str, None] = None
 
-        self._env_registry: EnvironmentRegistry = self._kiara.environment_registry
+        # self._env_registry: EnvironmentRegistry = self._kiara.environment_registry
 
     @property
     def kiara_id(self) -> uuid.UUID:

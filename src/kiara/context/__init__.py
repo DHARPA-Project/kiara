@@ -179,7 +179,7 @@ class Kiara(object):
                 file_name = f"{archive_path.name}.kiarchive"
 
                 js_config = SqliteArchiveConfig.create_new_store_config(
-                    store_base_path=archive.config["archive_path"], file_name=file_name
+                    store_base_path=archive.config["archive_path"], file_name=file_name, use_wal_mode=True
                 )
                 archive = KiaraArchiveConfig(
                     archive_type="sqlite_job_store", config=js_config.model_dump()

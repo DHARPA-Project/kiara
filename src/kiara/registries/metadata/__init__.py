@@ -11,7 +11,6 @@ from kiara.registries.metadata.metadata_store import MetadataArchive, MetadataSt
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
-    from kiara.registries.environment import EnvironmentRegistry
 
 
 class MetadataArchiveAddedEvent(RegistryEvent):

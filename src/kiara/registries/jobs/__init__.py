@@ -175,7 +175,6 @@ class JobRegistry(object):
 
         self._env_cache: Dict[str, Dict[str, RuntimeEnvironment]] = {}
 
-
         # default_archive = FileSystemJobStore.create_from_kiara_context(self._kiara)
         # self.register_job_archive(default_archive, store_alias=DEFAULT_STORE_MARKER)
 

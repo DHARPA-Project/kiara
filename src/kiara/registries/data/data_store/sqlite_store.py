@@ -21,6 +21,7 @@ import orjson
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Connection, Engine
 
+from kiara import is_debug
 from kiara.defaults import CHUNK_COMPRESSION_TYPE, kiara_app_dirs
 from kiara.models.values.value import PersistedData, Value
 from kiara.registries import (
@@ -31,6 +32,7 @@ from kiara.registries import (
 )
 from kiara.registries.data import DataArchive
 from kiara.registries.data.data_store import BaseDataStore
+from kiara.utils import log_message
 from kiara.utils.hashfs import shard
 
 if TYPE_CHECKING:
@@ -98,6 +100,7 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
         self._cache_dir_depth = 2
         self._cache_dir_width = 1
         self._value_id_cache: Union[Iterable[uuid.UUID], None] = None
+        self._use_wal_mode: bool = archive_config.use_wal_mode
         # self._lock: bool = True
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
@@ -157,9 +160,36 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
         if self._cached_engine is not None:
             return self._cached_engine
 
+        if self._use_wal_mode:
+            # TODO: not sure this does anything
+            connect_args={
+                "check_same_thread": False,
+                "isolation_level": "IMMEDIATE"
+            }
+            execution_options ={"sqlite_wal_mode": True}
+        else:
+            connect_args = {}
+            execution_options = {}
+
+        # TODO: enable this for read-only mode?
         # def _pragma_on_connect(dbapi_con, con_record):
         #     dbapi_con.execute("PRAGMA query_only = ON")
-        self._cached_engine = create_engine(self.db_url, future=True)
+
+        self._cached_engine = create_engine(
+            self.db_url, future=True,
+            connect_args=connect_args,
+            execution_options=execution_options
+        )
+
+        if self._use_wal_mode:
+            with self._cached_engine.connect() as conn:
+                conn.execute(text("PRAGMA journal_mode=wal;"))
+
+        if is_debug():
+            with self._cached_engine.connect() as conn:
+                wal_mode = conn.execute(text("PRAGMA journal_mode;")).fetchone()
+                log_message(f"detect.sqlite.journal_mode", result={wal_mode[0]})
+
         create_table_sql = """
 CREATE TABLE IF NOT EXISTS values_metadata (
     value_id TEXT PRIMARY KEY,

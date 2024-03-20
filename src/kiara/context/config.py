@@ -358,7 +358,7 @@ KIARA_SETTINGS = KiaraSettings()
 
 
 def create_default_store_config(
-    store_type: str, stores_base_path: str
+    store_type: str, stores_base_path: str, use_wal_mode: bool = False
 ) -> KiaraArchiveConfig:
 
     from kiara.utils.archives import find_archive_types
@@ -381,7 +381,7 @@ def create_default_store_config(
         store_type=cls.__name__,
     )
 
-    config = cls._config_cls.create_new_store_config(store_base_path=stores_base_path)
+    config = cls._config_cls.create_new_store_config(store_base_path=stores_base_path, use_wal_mode=use_wal_mode)
 
     # store_id: uuid.UUID = config.get_archive_id()
 
@@ -598,7 +598,7 @@ class KiaraConfig(BaseSettings):
         sqlite_base_path = os.path.join(self.stores_base_path, "sqlite_stores")
         filesystem_base_path = os.path.join(self.stores_base_path, "filesystem_stores")
 
-        def create_default_sqlite_archive_config() -> Dict[str, Any]:
+        def create_default_sqlite_archive_config(use_wal_mode: bool) -> Dict[str, Any]:
 
             store_id = str(uuid.uuid4())
             file_name = f"{store_id}.karchive"
@@ -631,9 +631,11 @@ class KiaraConfig(BaseSettings):
             conn.commit()
             conn.close()
 
-            return {"sqlite_db_path": archive_path.as_posix()}
+            return {"sqlite_db_path": archive_path.as_posix(), "use_wal_mode": use_wal_mode}
 
         default_sqlite_config: Union[Dict[str, Any], None] = None
+
+        use_wal_mode: bool = True
 
         if self.default_store_type == "auto":
 
@@ -666,12 +668,12 @@ class KiaraConfig(BaseSettings):
         if DEFAULT_METADATA_STORE_MARKER not in context_config.archives.keys():
 
             if metadata_store_type == "sqlite":
-                default_sqlite_config = create_default_sqlite_archive_config()
+                default_sqlite_config = create_default_sqlite_archive_config(use_wal_mode=use_wal_mode)
                 metaddata_store = KiaraArchiveConfig(
                     archive_type="sqlite_metadata_store", config=default_sqlite_config
                 )
             elif metadata_store_type == "filesystem":
-                default_sqlite_config = create_default_sqlite_archive_config()
+                default_sqlite_config = create_default_sqlite_archive_config(use_wal_mode=use_wal_mode)
                 metaddata_store = KiaraArchiveConfig(
                     archive_type="sqlite_metadata_store", config=default_sqlite_config
                 )
@@ -687,7 +689,7 @@ class KiaraConfig(BaseSettings):
 
             if data_store_type == "sqlite":
                 if default_sqlite_config is None:
-                    default_sqlite_config = create_default_sqlite_archive_config()
+                    default_sqlite_config = create_default_sqlite_archive_config(use_wal_mode=use_wal_mode)
 
                 data_store = KiaraArchiveConfig(
                     archive_type="sqlite_data_store", config=default_sqlite_config
@@ -711,7 +713,7 @@ class KiaraConfig(BaseSettings):
             if job_store_type == "sqlite":
 
                 if default_sqlite_config is None:
-                    default_sqlite_config = create_default_sqlite_archive_config()
+                    default_sqlite_config = create_default_sqlite_archive_config(use_wal_mode=use_wal_mode)
 
                 job_store = KiaraArchiveConfig(
                     archive_type="sqlite_job_store", config=default_sqlite_config
@@ -735,7 +737,7 @@ class KiaraConfig(BaseSettings):
             if alias_store_type == "sqlite":
 
                 if default_sqlite_config is None:
-                    default_sqlite_config = create_default_sqlite_archive_config()
+                    default_sqlite_config = create_default_sqlite_archive_config(use_wal_mode=use_wal_mode)
 
                 alias_store = KiaraArchiveConfig(
                     archive_type="sqlite_alias_store", config=default_sqlite_config

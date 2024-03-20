@@ -60,6 +60,9 @@ class SqliteMetadataArchive(MetadataArchive):
         )
         self._db_path: Union[Path, None] = None
         self._cached_engine: Union[Engine, None] = None
+        self._use_wal_mode: bool = archive_config.use_wal_mode
+
+
         # self._lock: bool = True
 
     # def _retrieve_archive_id(self) -> uuid.UUID:
@@ -106,10 +109,27 @@ class SqliteMetadataArchive(MetadataArchive):
         if self._cached_engine is not None:
             return self._cached_engine
 
+        if self._use_wal_mode:
+            # TODO: not sure this does anything
+            connect_args={
+                "check_same_thread": False,
+                "isolation_level": "IMMEDIATE"
+            }
+            execution_options ={"sqlite_wal_mode": True}
+        else:
+            connect_args = {}
+            execution_options = {}
+
+        # TODO: enable this for read-only mode?
         # def _pragma_on_connect(dbapi_con, con_record):
         #     dbapi_con.execute("PRAGMA query_only = ON")
 
-        self._cached_engine = create_engine(self.db_url, future=True)
+        self._cached_engine = create_engine(self.db_url, future=True, connect_args=connect_args, execution_options=execution_options)
+
+        if self._use_wal_mode:
+            with self._cached_engine.connect() as conn:
+                conn.execute(text("PRAGMA journal_mode=wal;"))
+
         create_table_sql = """
 CREATE TABLE IF NOT EXISTS metadata_schemas (
     model_schema_hash TEXT PRIMARY KEY,

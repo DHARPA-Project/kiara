@@ -145,7 +145,6 @@ class MetadataStore(MetadataArchive):
             )
             self._schema_stored_item[data_hash] = metadata_item_id
 
-
         if (reference_item_id and not reference_item_type) or (
             reference_item_type and not reference_item_id
         ):

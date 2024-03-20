@@ -33,6 +33,7 @@ from kiara.defaults import (
     DATA_ARCHIVE_DEFAULT_VALUE_MARKER,
     DEFAULT_DATA_STORE_MARKER,
     DEFAULT_STORE_MARKER,
+    ENVIRONMENT_MARKER_KEY,
     INVALID_HASH_MARKER,
     NO_SERIALIZATION_MARKER,
     NONE_STORE_ID,
@@ -40,7 +41,7 @@ from kiara.defaults import (
     NOT_SET_VALUE_ID,
     ORPHAN_PEDIGREE_OUTPUT_NAME,
     STRICT_CHECKS,
-    SpecialValue, ENVIRONMENT_MARKER_KEY,
+    SpecialValue,
 )
 from kiara.exceptions import (
     InvalidValuesException,
@@ -534,7 +535,6 @@ class DataRegistry(object):
         for env_type, env_hash in _value.pedigree.environments.items():
 
             self._persist_environment(env_type, env_hash)
-
 
         store: DataStore = self.get_archive(archive_id_or_alias=data_store)  # type: ignore
         if not store.is_writeable():

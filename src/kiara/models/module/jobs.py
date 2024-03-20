@@ -281,7 +281,7 @@ class JobRecord(JobConfig):
 
     job_id: uuid.UUID = Field(description="The globally unique id for this job.")
     job_submitted: datetime = Field(description="When the job was submitted.")
-    environment_hashes: Mapping[str, str]  = Field(
+    environment_hashes: Mapping[str, str] = Field(
         description="Hashes for the environments this value was created in."
     )
     # enviroments: Union[Mapping[str, Mapping[str, Any]], None] = Field(

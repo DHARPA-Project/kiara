@@ -39,7 +39,11 @@ class EnvironmentRegistry(object):
 
     def get_environment_for_cid(self, env_cid: str) -> RuntimeEnvironment:
 
-        envs = [env for env in self.environments.values() if str(env.instance_cid) == env_cid]
+        envs = [
+            env
+            for env in self.environments.values()
+            if str(env.instance_cid) == env_cid
+        ]
         if len(envs) == 0:
             raise Exception(f"No environment with id '{env_cid}' available.")
         elif len(envs) > 1:

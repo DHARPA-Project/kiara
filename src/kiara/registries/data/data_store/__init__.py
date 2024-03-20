@@ -373,14 +373,14 @@ class BaseDataStore(DataStore):
         to the job that produced it is preserved.
         """
 
-    @abc.abstractmethod
-    def _persist_environment_details(
-        self, env_type: str, env_hash: str, env_data: Mapping[str, Any]
-    ):
-        """Persist the environment details.
-
-        Each store type needs to store this for lookup purposes.
-        """
+    # @abc.abstractmethod
+    # def _persist_environment_details(
+    #     self, env_type: str, env_hash: str, env_data: Mapping[str, Any]
+    # ):
+    #     """Persist the environment details.
+    #
+    #     Each store type needs to store this for lookup purposes.
+    #     """
 
     @abc.abstractmethod
     def _persist_destiny_backlinks(self, value: Value):
@@ -395,16 +395,16 @@ class BaseDataStore(DataStore):
             value_hash=value.value_hash,
         )
 
-        # first, persist environment information
-        for env_type, env_hash in value.pedigree.environments.items():
-            cached = self._env_cache.get(env_type, {}).get(env_hash, None)
-            if cached is not None:
-                continue
-
-            env = self.kiara_context.environment_registry.get_environment_for_cid(
-                env_hash
-            )
-            self.persist_environment(env)
+        # # first, persist environment information
+        # for env_type, env_hash in value.pedigree.environments.items():
+        #     cached = self._env_cache.get(env_type, {}).get(env_hash, None)
+        #     if cached is not None:
+        #         continue
+        #
+        #     env = self.kiara_context.environment_registry.get_environment_for_cid(
+        #         env_hash
+        #     )
+        #     self.persist_environment(env)
 
         # save the value data and metadata
         persisted_value = self._persist_value(value)
@@ -544,25 +544,25 @@ class BaseDataStore(DataStore):
 
         return persisted_value_info
 
-    def persist_environment(self, environment: RuntimeEnvironment):
-        """
-        Persist the specified environment.
-
-        The environment is stored as a dictionary, including it's schema, not as the actual Python model.
-        This is to make sure it can still be loaded later on, in case the Python model has changed in later versions.
-        """
-        env_type = environment.get_environment_type_name()
-        env_hash = str(environment.instance_cid)
-
-        env = self._env_cache.get(env_type, {}).get(env_hash, None)
-        if env is not None:
-            return
-
-        env_data = environment.as_dict_with_schema()
-        self._persist_environment_details(
-            env_type=env_type, env_hash=env_hash, env_data=env_data
-        )
-        self._env_cache.setdefault(env_type, {})[env_hash] = env_data
+    # def persist_environment(self, environment: RuntimeEnvironment):
+    #     """
+    #     Persist the specified environment.
+    #
+    #     The environment is stored as a dictionary, including it's schema, not as the actual Python model.
+    #     This is to make sure it can still be loaded later on, in case the Python model has changed in later versions.
+    #     """
+    #     env_type = environment.get_environment_type_name()
+    #     env_hash = str(environment.instance_cid)
+    #
+    #     env = self._env_cache.get(env_type, {}).get(env_hash, None)
+    #     if env is not None:
+    #         return
+    #
+    #     env_data = environment.as_dict_with_schema()
+    #     self._persist_environment_details(
+    #         env_type=env_type, env_hash=env_hash, env_data=env_data
+    #     )
+    #     self._env_cache.setdefault(env_type, {})[env_hash] = env_data
 
     def create_renderable(self, **config: Any) -> RenderableType:
         """Create a renderable for this module configuration."""

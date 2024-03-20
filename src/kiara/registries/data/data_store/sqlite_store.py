@@ -552,26 +552,26 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
             conn.execute(sql, params)
             conn.commit()
 
-    def _persist_environment_details(
-        self, env_type: str, env_hash: str, env_data: Mapping[str, Any]
-    ):
-
-        sql = text(
-            "INSERT OR IGNORE INTO environments (environment_type, environment_hash, environment_data) VALUES (:environment_type, :environment_hash, :environment_data)"
-        )
-        env_data_json = orjson_dumps(env_data)
-        with self.sqlite_engine.connect() as conn:
-            params = {
-                "environment_type": env_type,
-                "environment_hash": env_hash,
-                "environment_data": env_data_json,
-            }
-            conn.execute(sql, params)
-            conn.commit()
-        # print(env_type)
-        # print(env_hash)
-        # print(env_data_json)
-        # raise NotImplementedError()
+    # def _persist_environment_details(
+    #     self, env_type: str, env_hash: str, env_data: Mapping[str, Any]
+    # ):
+    #
+    #     sql = text(
+    #         "INSERT OR IGNORE INTO environments (environment_type, environment_hash, environment_data) VALUES (:environment_type, :environment_hash, :environment_data)"
+    #     )
+    #     env_data_json = orjson_dumps(env_data)
+    #     with self.sqlite_engine.connect() as conn:
+    #         params = {
+    #             "environment_type": env_type,
+    #             "environment_hash": env_hash,
+    #             "environment_data": env_data_json,
+    #         }
+    #         conn.execute(sql, params)
+    #         conn.commit()
+    #     # print(env_type)
+    #     # print(env_hash)
+    #     # print(env_data_json)
+    #     # raise NotImplementedError()
 
     # def _persist_value_data(self, value: Value) -> PersistedData:
     #

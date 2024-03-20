@@ -31,6 +31,7 @@ class EnvironmentRegistry(object):
     def __init__(
         self,
     ) -> None:
+
         self._environments: Union[Dict[str, RuntimeEnvironment], None] = None
         self._environment_hashes: Union[Dict[str, Mapping[str, str]], None] = None
 

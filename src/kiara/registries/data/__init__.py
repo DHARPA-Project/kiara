@@ -259,6 +259,7 @@ class DataRegistry(object):
         self._cached_data[NOT_SET_VALUE_ID] = SpecialValue.NOT_SET
         self._registered_values[NOT_SET_VALUE_ID] = self._not_set_value
         self._persisted_value_descs[NOT_SET_VALUE_ID] = NONE_PERSISTED_DATA
+        self._env_cache: Dict[str, Dict[str, Mapping[str, Any]]] = {}
 
         self._none_value: Value = Value(
             value_id=NONE_VALUE_ID,
@@ -500,6 +501,33 @@ class DataRegistry(object):
         self._registered_values[_value_id] = stored_value
         return self._registered_values[_value_id]
 
+    def _persist_environment(self, env_type: str, env_hash: str):
+
+            cached = self._env_cache.get(env_type, {}).get(env_hash, None)
+            if cached is not None:
+                return
+
+            environment = self._kiara.environment_registry.get_environment_for_cid(
+                env_hash
+            )
+            # env_type = environment.get_environment_type_name()
+            # env_hash = str(environment.instance_cid)
+            #
+            # env = self._env_cache.get(env_type, {}).get(env_hash, None)
+            # if env is not None:
+            #     return
+
+            env_data = environment.as_dict_with_schema()
+            ENVIRONMENT_MARKER_KEY = "environment"
+            self._kiara.metadata_registry.register_metadata_item(key = ENVIRONMENT_MARKER_KEY, item=environment)
+            # self._persist_environment_details(
+            #     env_type=env_type, env_hash=env_hash, env_data=env_data
+            # )
+            self._env_cache.setdefault(env_type, {})[env_hash] = env_data
+
+
+
+
     def store_value(
         self,
         value: Union[ValueLink, uuid.UUID, str],
@@ -510,9 +538,38 @@ class DataRegistry(object):
         If 'data_store' is not provided, the default data store is used. If the 'data_store' argument is of
         type uuid, the archive_id is used, if string, first it will be converted to an uuid, if that works,
         again, the archive_id is used, if not, the string is used as the archive alias.
-        """
 
+        """
+        
         _value = self.get_value(value)
+
+        # first, persist environment information
+        for env_type, env_hash in _value.pedigree.environments.items():
+
+            self._persist_environment(env_type, env_hash, _value)
+            # cached = self._env_cache.get(env_type, {}).get(env_hash, None)
+            # if cached is not None:
+            #     continue
+            #
+            # environment = self.kiara_context.environment_registry.get_environment_for_cid(
+            #     env_hash
+            # )
+            # env_type = environment.get_environment_type_name()
+            # env_hash = str(environment.instance_cid)
+            #
+            # env = self._env_cache.get(env_type, {}).get(env_hash, None)
+            # if env is not None:
+            #     return
+            #
+            # env_data = environment.as_dict_with_schema()
+            # self._persist_environment_details(
+            #     env_type=env_type, env_hash=env_hash, env_data=env_data
+            # )
+            # self._env_cache.setdefault(env_type, {})[env_hash] = env_data
+            #
+            # self.persist_environment(env)
+
+
 
         store: DataStore = self.get_archive(archive_id_or_alias=data_store)  # type: ignore
         if not store.is_writeable():

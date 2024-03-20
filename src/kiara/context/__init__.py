@@ -264,6 +264,7 @@ class Kiara(object):
 
     @property
     def environment_registry(self) -> EnvironmentRegistry:
+
         return self._env_mgmt
 
     @property

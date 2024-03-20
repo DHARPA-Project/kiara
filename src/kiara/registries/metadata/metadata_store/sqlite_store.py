@@ -123,7 +123,8 @@ CREATE TABLE IF NOT EXISTS metadata (
     model_type_id TEXT NOT NULL,
     model_schema_hash TEXT NOT NULL,
     metadata_value TEXT NOT NULL,
-    FOREIGN KEY (model_schema_hash) REFERENCES metadata_schemas (model_schema_hash)
+    FOREIGN KEY (model_schema_hash) REFERENCES metadata_schemas (model_schema_hash),
+    UNIQUE (metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash)
 );
 CREATE TABLE IF NOT EXISTS metadata_references (
     reference_item_type TEXT NOT NULL,
@@ -247,7 +248,7 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
             )
         else:
             sql = text(
-                "INSERT INTO metadata (metadata_item_id, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)"
+                "INSERT OR IGNORE INTO metadata (metadata_item_id, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)"
             )
 
         metadata_item_id = ID_REGISTRY.generate(comment="new metadata item id")

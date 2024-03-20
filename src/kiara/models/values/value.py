@@ -780,10 +780,10 @@ class Value(ValueDetails):
     environment_hashes: Mapping[str, Mapping[str, str]] = Field(
         description="Hashes for the environments this value was created in."
     )
-    enviroments: Union[Mapping[str, Mapping[str, Any]], None] = Field(
-        description="Information about the environments this value was created in.",
-        default=None,
-    )
+    # enviroments: Union[Mapping[str, Mapping[str, Any]], None] = Field(
+    #     description="Information about the environments this value was created in.",
+    #     default=None,
+    # )
     property_links: Mapping[str, uuid.UUID] = Field(
         description="Links to values that are properties of this value.",
         default_factory=dict,

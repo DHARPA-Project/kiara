@@ -30,6 +30,9 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
             archive_config=archive_config,
             force_read_only=force_read_only,
         )
+        self._schema_stored_cache: Dict[str, Any] = {}
+        self._schema_stored_item: Dict[str, Any] = {}
+
 
     def retrieve_metadata_item(
         self,
@@ -79,7 +82,6 @@ class MetadataStore(MetadataArchive):
             archive_config=archive_config,
             force_read_only=force_read_only,
         )
-        self._schema_stored_cache: Dict[str, Any] = {}
 
     @classmethod
     def _is_writeable(cls) -> bool:
@@ -100,6 +102,11 @@ class MetadataStore(MetadataArchive):
         force: bool = False,
         store: Union[str, uuid.UUID, None] = None,
     ) -> uuid.UUID:
+        """Store a metadata item into the store.
+
+        If `reference_item_type` and `reference_item_id` are set, the stored metadata item will
+        be linked to the stored metadata item, to enable lokoups later on.
+        """
 
         if store:
             raise NotImplementedError(
@@ -109,27 +116,34 @@ class MetadataStore(MetadataArchive):
         # TODO: check if already stored
         model_type = item.model_type_id
         model_schema_hash = str(item.get_schema_cid())
-        model_item_schema = item.model_json_schema()
-        model_item_schema_str = json.dumps(model_item_schema)
 
-        self._store_metadata_schema(
-            model_schema_hash=model_schema_hash,
-            model_type_id=model_type,
-            model_schema=model_item_schema_str,
-        )
+        if model_schema_hash not in self._schema_stored_cache.keys():
+
+            model_item_schema = item.model_json_schema()
+            model_item_schema_str = json.dumps(model_item_schema)
+
+            self._store_metadata_schema(
+                model_schema_hash=model_schema_hash,
+                model_type_id=model_type,
+                model_schema=model_item_schema_str,
+            )
+            self._schema_stored_cache[model_schema_hash] = model_item_schema
 
         # data = item.model_dump()
         data_json = item.model_dump_json()
         data_hash = str(item.instance_cid)
 
-        metadata_item_id = self._store_metadata_item(
-            key=key,
-            value_json=data_json,
-            value_hash=data_hash,
-            model_type_id=model_type,
-            model_schema_hash=model_schema_hash,
-            force=force,
-        )
+        if data_hash not in self._schema_stored_item.keys():
+
+            metadata_item_id = self._store_metadata_item(
+                key=key,
+                value_json=data_json,
+                value_hash=data_hash,
+                model_type_id=model_type,
+                model_schema_hash=model_schema_hash,
+                force=force,
+            )
+            self._schema_stored_item[data_hash] = metadata_item_id
 
         if (reference_item_id and not reference_item_type) or (
             reference_item_type and not reference_item_id

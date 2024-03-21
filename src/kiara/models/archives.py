@@ -343,9 +343,13 @@ class KiArchiveInfo(ItemInfo):
 
         data_archive = kiarchive.data_archive
         alias_archive = kiarchive.alias_archive
+        job_archive = kiarchive.job_archive
+        metadata_archive = kiarchive.metadata_archive
 
         data_archive_info = None
         alias_archive_info = None
+        job_archive_info = None
+        metadata_archive_info = None
 
         documentation: Union[DocumentationMetadataModel, None] = None
         authors: Union[AuthorsMetadataModel, None] = None
@@ -372,6 +376,22 @@ class KiArchiveInfo(ItemInfo):
             authors = alias_archive_info.authors
             context = alias_archive_info.context
 
+        if metadata_archive:
+            metadata_archive_info = ArchiveInfo.create_from_archive(
+                kiara=_kiara, archive=metadata_archive
+            )
+            documentation = metadata_archive_info.documentation
+            authors = metadata_archive_info.authors
+            context = metadata_archive_info.context
+
+        if job_archive:
+            job_archive_info = ArchiveInfo.create_from_archive(
+                kiara=_kiara, archive=job_archive
+            )
+            documentation = job_archive_info.documentation
+            authors = job_archive_info.authors
+            context = job_archive_info.context
+
         if documentation is None or authors is None or context is None:
             raise ValueError("No documentation, authors or context found.")
 
@@ -379,14 +399,24 @@ class KiArchiveInfo(ItemInfo):
             type_name=kiarchive.archive_file_name,
             data_archive_info=data_archive_info,
             alias_archive_info=alias_archive_info,
+            metadata_archive_info=metadata_archive_info,
+            job_archive_info=job_archive_info,
             documentation=documentation,
             authors=authors,
             context=context,
         )
 
-    data_archive_info: ArchiveInfo = Field(description="The info for the data archive.")
-    alias_archive_info: ArchiveInfo = Field(
-        description="The info for the alias archive."
+    data_archive_info: Union[ArchiveInfo, None] = Field(
+        description="The info for the included data archive."
+    )
+    alias_archive_info: Union[ArchiveInfo, None] = Field(
+        description="The info for the included alias archive."
+    )
+    metadata_archive_info: Union[ArchiveInfo, None] = Field(
+        description="The info for the included metadata archive."
+    )
+    job_archive_info: Union[ArchiveInfo, None] = Field(
+        description="The info for the included job archive."
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:
@@ -395,11 +425,28 @@ class KiArchiveInfo(ItemInfo):
         table.add_column("property", style="i")
         table.add_column("value")
 
-        table.add_row(
-            "data archive", self.data_archive_info.create_renderable(**config)
-        )
-        table.add_row(
-            "alias archive", self.alias_archive_info.create_renderable(**config)
-        )
+        if self.data_archive_info:
+            content = self.data_archive_info.create_renderable(**config)
+        else:
+            content = "-- no data archive --"
+        table.add_row("data archive", content)
+
+        if self.alias_archive_info:
+            content = self.alias_archive_info.create_renderable(**config)
+        else:
+            content = "-- no alias archive --"
+        table.add_row("alias archive", content)
+
+        if self.metadata_archive_info:
+            content = self.metadata_archive_info.create_renderable(**config)
+        else:
+            content = "-- no metadata archive --"
+        table.add_row("metadata archive", content)
+
+        if self.job_archive_info:
+            content = self.job_archive_info.create_renderable(**config)
+        else:
+            content = "-- no job archive --"
+        table.add_row("job archive", content)
 
         return table

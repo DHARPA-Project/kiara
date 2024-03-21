@@ -498,8 +498,10 @@ class KiaraAPI(object):
             an object containing all information about all data types
         """
 
+        kiara = self.context
+
         if python_package:
-            data_type_info = self.context.type_registry.get_context_metadata(
+            data_type_info = kiara.type_registry.get_context_metadata(
                 only_for_package=python_package
             )
 
@@ -524,7 +526,7 @@ class KiaraAPI(object):
                 data_types_info = DataTypeClassesInfo(
                     group_title=title, item_infos=filtered_types
                 )
-                data_types_info._kiara = self.context
+                # data_types_info._kiara = kiara
 
             else:
                 title = f"All data types in package '{python_package}'"
@@ -538,7 +540,7 @@ class KiaraAPI(object):
                 title = f"Filtered data_types: {filter}"
                 data_type_names: Iterable[str] = []
 
-                for m in self.context.type_registry.get_data_type_names(
+                for m in kiara.type_registry.get_data_type_names(
                     include_profiles=include_data_type_profiles
                 ):
                     match = True
@@ -553,16 +555,15 @@ class KiaraAPI(object):
                         data_type_names.append(m)  # type: ignore
             else:
                 title = "All data types"
-                data_type_names = self.context.type_registry.get_data_type_names(
+                data_type_names = kiara.type_registry.get_data_type_names(
                     include_profiles=include_data_type_profiles
                 )
 
             data_types = {
-                d: self.context.type_registry.get_data_type_cls(d)
-                for d in data_type_names
+                d: kiara.type_registry.get_data_type_cls(d) for d in data_type_names
             }
             data_types_info = DataTypeClassesInfo.create_from_type_items(  # type: ignore
-                kiara=self.context, group_title=title, **data_types
+                kiara=kiara, group_title=title, **data_types
             )
 
         return data_types_info  # type: ignore

@@ -1167,9 +1167,11 @@ class DataRegistry(object):
 
         archive = self.get_archive(archive_id)
 
-        return archive.retrieve_chunks(
+        chunks = archive.retrieve_chunks(
             chunk_ids, as_files=as_files, symlink_ok=symlink_ok
         )
+
+        return chunks
         # for chunk_id in chunk_ids:
         #     yield archive.retrieve_chunk(chunk_id)
 

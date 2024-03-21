@@ -131,7 +131,7 @@ class Kiara(object):
         self._config: KiaraContextConfig = config
         self._runtime_config: KiaraRuntimeConfig = runtime_config
 
-        self._env_mgmt: EnvironmentRegistry = EnvironmentRegistry.instance()
+        self._env_mgmt: EnvironmentRegistry = EnvironmentRegistry(kiara=self)
 
         self._event_registry: EventRegistry = EventRegistry(kiara=self)
         self._type_registry: TypeRegistry = TypeRegistry(self)
@@ -179,7 +179,9 @@ class Kiara(object):
                 file_name = f"{archive_path.name}.kiarchive"
 
                 js_config = SqliteArchiveConfig.create_new_store_config(
-                    store_base_path=archive.config["archive_path"], file_name=file_name, use_wal_mode=True
+                    store_base_path=archive.config["archive_path"],
+                    file_name=file_name,
+                    use_wal_mode=True,
                 )
                 archive = KiaraArchiveConfig(
                     archive_type="sqlite_job_store", config=js_config.model_dump()

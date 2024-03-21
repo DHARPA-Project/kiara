@@ -64,7 +64,7 @@ class KiArchive(KiaraModel):
             alias_archive_config = None
             alias_archive = None
 
-        if "jobs_record" in archives.keys():
+        if "job_record" in archives.keys():
             jobs_archive: Union[JobArchive, None] = archives["job_record"]  # type: ignore
             jobs_archive_config: Union[Mapping[str, Any], None] = jobs_archive.config.model_dump()  # type: ignore
         else:
@@ -80,13 +80,13 @@ class KiArchive(KiaraModel):
             raise Exception(f"No archive found in file: {path}")
         else:
             archive_id = archives[0].archive_id
-            archive_alias = archives[0].archive_alias
+            archive_alias = archives[0].archive_name
             for archive in archives:
                 if archive.archive_id != archive_id:
                     raise Exception(
                         f"Multiple different archive ids found in file: {path}"
                     )
-                if archive.archive_alias != archive_alias:
+                if archive.archive_name != archive_alias:
                     raise Exception(
                         f"Multiple different archive aliases found in file: {path}"
                     )
@@ -97,7 +97,7 @@ class KiArchive(KiaraModel):
             metadata_archive_config=metadata_archive_config,
             data_archive_config=data_archive_config,
             alias_archive_config=alias_archive_config,
-            jobs_archive_config=jobs_archive_config,
+            job_archive_config=jobs_archive_config,
             archive_base_path=archive_path.parent.as_posix(),
             archive_file_name=archive_path.name,
             allow_write_access=allow_write_access,
@@ -106,6 +106,7 @@ class KiArchive(KiaraModel):
         kiarchive._metadata_archive = metadata_archive
         kiarchive._data_archive = data_archive
         kiarchive._alias_archive = alias_archive
+        kiarchive._jobs_archive = jobs_archive
         kiarchive._kiara = kiara
 
         return kiarchive
@@ -284,7 +285,7 @@ class KiArchive(KiaraModel):
         from kiara.utils.stores import create_new_archive
 
         alias_archive: AliasStore = create_new_archive(  # type: ignore
-            archive_alias=self.archive_name,
+            archive_name=self.archive_name,
             store_base_path=self.archive_base_path,
             store_type="sqlite_alias_store",
             file_name=self.archive_file_name,
@@ -292,3 +293,21 @@ class KiArchive(KiaraModel):
         )
         self._alias_archive = alias_archive
         return self._alias_archive
+
+    @property
+    def job_archive(self) -> "JobArchive":
+
+        if self._jobs_archive is not None:
+            return self._jobs_archive
+
+        from kiara.utils.stores import create_new_archive
+
+        jobs_archive: JobStore = create_new_archive(  # type: ignore
+            archive_name=self.archive_name,
+            store_base_path=self.archive_base_path,
+            store_type="sqlite_job_store",
+            file_name=self.archive_file_name,
+            allow_write_access=True,
+        )
+        self._jobs_archive = jobs_archive
+        return self._jobs_archive

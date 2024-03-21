@@ -6,9 +6,13 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 import os
+from pathlib import Path
 from typing import Any
 
 import orjson
+
+from kiara import is_debug
+from kiara.utils import log_message
 
 
 def get_kiara_db_url(base_path: str):
@@ -33,6 +37,59 @@ def get_kiara_db_url(base_path: str):
 
 def orm_json_deserialize(obj: str) -> Any:
     return orjson.loads(obj)
+
+
+def create_archive_engine(
+    db_path: Path, force_read_only: bool, use_wal_mode: bool
+) -> "Engine":
+
+    from sqlalchemy import create_engine, text
+
+    # if use_wal_mode:
+    #     # TODO: not sure this does anything
+    #     connect_args = {"check_same_thread": False, "isolation_level": "IMMEDIATE"}
+    #     execution_options = {"sqlite_wal_mode": True}
+    # else:
+
+    connect_args = {}
+    execution_options = {}
+
+    # TODO: enable this for read-only mode?
+    # def _pragma_on_connect(dbapi_con, con_record):
+    #     dbapi_con.execute("PRAGMA query_only = ON")
+
+    db_url = f"sqlite+pysqlite:///{db_path.as_posix()}"
+    if force_read_only:
+        db_url = db_url + "?mode=ro&uri=true"
+
+    db_engine = create_engine(
+        db_url,
+        future=True,
+        connect_args=connect_args,
+        execution_options=execution_options,
+    )
+
+    if use_wal_mode:
+        with db_engine.connect() as conn:
+            conn.execute(text("PRAGMA journal_mode=wal;"))
+
+    if is_debug():
+        with db_engine.connect() as conn:
+            wal_mode = conn.execute(text("PRAGMA journal_mode;")).fetchone()
+            log_message(
+                "detect.sqlite.journal_mode", result={wal_mode[0]}, db_url=db_url
+            )
+
+    return db_engine
+
+
+def delete_archive_db(db_path: Path):
+
+    db_path.unlink(missing_ok=True)
+    shm_file = db_path.parent / f"{db_path.name}-shm"
+    shm_file.unlink(missing_ok=True)
+    wal_file = db_path.parent / f"{db_path.name}-wal"
+    wal_file.unlink(missing_ok=True)
 
 
 # def ensure_current_environments_persisted(

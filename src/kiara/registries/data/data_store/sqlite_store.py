@@ -21,7 +21,7 @@ import orjson
 from sqlalchemy import text
 from sqlalchemy.engine import Connection, Engine
 
-from kiara.defaults import CHUNK_COMPRESSION_TYPE, kiara_app_dirs
+from kiara.defaults import CHUNK_COMPRESSION_TYPE, kiara_app_dirs, CHUNK_CACHE_BASE_DIR, CHUNK_CACHE_DIR_DEPTH, CHUNK_CACHE_DIR_WIDTH
 from kiara.models.values.value import PersistedData, Value
 from kiara.registries import (
     ARCHIVE_CONFIG_CLS,
@@ -94,10 +94,11 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
         )
         self._db_path: Union[Path, None] = None
         self._cached_engine: Union[Engine, None] = None
-        self._data_cache_dir = Path(kiara_app_dirs.user_cache_dir) / "data" / "chunks"
+        self._data_cache_dir = CHUNK_CACHE_BASE_DIR
         self._data_cache_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
-        self._cache_dir_depth = 2
-        self._cache_dir_width = 1
+
+        self._cache_dir_depth = CHUNK_CACHE_DIR_DEPTH
+        self._cache_dir_width = CHUNK_CACHE_DIR_WIDTH
         self._value_id_cache: Union[Iterable[uuid.UUID], None] = None
         self._use_wal_mode: bool = archive_config.use_wal_mode
         # self._lock: bool = True

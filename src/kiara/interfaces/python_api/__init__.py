@@ -3117,6 +3117,29 @@ class KiaraAPI(object):
         job_record = self.context.job_registry.get_job_record(job_id=job_id)
         return job_record
 
+    def set_job_comment(self, job_id: Union[str, uuid.UUID], comment: str, force: bool = True):
+        """Set a comment for the specified job.
+
+        Arguments:
+            job_id: the job id
+            comment: the comment to set
+            force: whether to overwrite an existing comment
+        """
+
+        from kiara.models.metadata import CommentMetadata
+
+        if isinstance(job_id, str):
+            job_id = uuid.UUID(job_id)
+
+        metadata = CommentMetadata(comment=comment)
+        items = {
+            "comment": comment
+        }
+
+        self.context.metadata_registry.register_job_metadata_items(
+            job_id=job_id, items=items, force=force
+        )
+
     def get_job_comment(self, job_id: Union[str, uuid.UUID]) -> Union[str, None]:
         """Retrieve the comment for the specified job.
 

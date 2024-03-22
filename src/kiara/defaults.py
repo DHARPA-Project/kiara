@@ -9,6 +9,7 @@ import os
 import typing
 import uuid
 from enum import Enum
+from pathlib import Path
 
 from appdirs import AppDirs
 
@@ -139,6 +140,9 @@ KIARA_SQLITE_STORE_EXTENSION = "kiara"
 VALUE_ATTR_DELIMITER = "::"
 VALID_VALUE_QUERY_CATEGORIES = ["data", "properties"]
 
+CHUNK_CACHE_BASE_DIR = Path(kiara_app_dirs.user_cache_dir) / "data" / "chunks"
+CHUNK_CACHE_DIR_DEPTH = 2
+CHUNK_CACHE_DIR_WIDTH = 1
 
 class SpecialValue(Enum):
 

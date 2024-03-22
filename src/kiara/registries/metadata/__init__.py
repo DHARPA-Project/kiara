@@ -192,6 +192,7 @@ class MetadataRegistry(object):
         job_id: uuid.UUID,
         items: Mapping[str, Any],
         store: Union[str, uuid.UUID, None] = None,
+        force: bool = False,
     ) -> None:
 
         for key, value in items.items():
@@ -205,6 +206,7 @@ class MetadataRegistry(object):
                 reference_item_type="job",
                 reference_item_id=str(job_id),
                 store=store,
+                force=force,
             )
 
     def retrieve_job_metadata_items(self, job_id: uuid.UUID):

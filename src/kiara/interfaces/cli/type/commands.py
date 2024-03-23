@@ -44,7 +44,7 @@ def list_types(
 ):
     """List available data_types."""
     from kiara.data_types import DataType
-    from kiara.interfaces.python_api import DataTypeClassesInfo
+    from kiara.interfaces.python_api.models.info import DataTypeClassesInfo
 
     kiara_obj: Kiara = ctx.obj.kiara
 

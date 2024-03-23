@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from kiara.api import KiaraAPI
+from kiara.api import BaseAPI
 
 #  Copyright (c) 2023, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 
-def test_operation_list(api: KiaraAPI):
+def test_operation_list(api: BaseAPI):
 
     op_list = api.list_operation_ids()
 
@@ -22,7 +22,7 @@ def test_operation_list(api: KiaraAPI):
     assert "query.database" in op_list
 
 
-def test_get_operation(api: KiaraAPI):
+def test_get_operation(api: BaseAPI):
 
     op = api.get_operation("query.database")
     assert "Execute a sql query against a (sqlite) database." in op.doc.full_doc

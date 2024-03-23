@@ -9,7 +9,7 @@ from typing import List, Union
 
 import pytest
 
-from kiara.api import KiaraAPI
+from kiara.api import BaseAPI
 from kiara.models.values.value import ValueMapReadOnly, Value
 
 
@@ -91,7 +91,7 @@ def check_tables_are_not_empty(archive_file: Union[str, Path], *table_names: str
     sys.platform == "win32",
     reason="Does not run on Windows for some reason, need to investigate",
 )
-def test_archive_export_values_no_alias(api: KiaraAPI):
+def test_archive_export_values_no_alias(api: BaseAPI):
 
     result: ValueMapReadOnly = api.run_job(
         operation="logic.and", inputs={"a": True, "b": True}
@@ -144,7 +144,7 @@ def test_archive_export_values_no_alias(api: KiaraAPI):
     sys.platform == "win32",
     reason="Does not run on Windows for some reason, need to investigate",
 )
-def test_archive_export_values_alias(api: KiaraAPI):
+def test_archive_export_values_alias(api: BaseAPI):
 
     result: ValueMapReadOnly = api.run_job(
         operation="logic.and", inputs={"a": True, "b": True}
@@ -202,7 +202,7 @@ def test_archive_export_values_alias(api: KiaraAPI):
     sys.platform == "win32",
     reason="Does not run on Windows for some reason, need to investigate",
 )
-def test_archive_export_values_alias_multipe_values(api: KiaraAPI):
+def test_archive_export_values_alias_multipe_values(api: BaseAPI):
 
     result_1: Value = api.run_job(operation="logic.and", inputs={"a": True, "b": True})[
         "y"

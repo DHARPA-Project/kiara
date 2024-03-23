@@ -68,16 +68,16 @@ class ApiRenderer(
 
     def retrieve_doc(self) -> Union[str, None]:
 
-        return f"Render the kiara (of a supported type) to: '{self.get_target_type()}'."
+        return f"Render the kiara API endpoints to: '{self.get_target_type()}'."
 
     @abc.abstractmethod
     def get_target_type(self) -> str:
         pass
 
 
-class ApiDocRenderer(ApiRenderer):
+class KiaraApiDocRenderer(ApiRenderer):
 
-    _renderer_name = "api_doc_renderer"
+    _renderer_name = "kiara_api_doc_renderer"
 
     def get_target_type(self) -> str:
         return "html"
@@ -99,9 +99,9 @@ class ApiDocRenderer(ApiRenderer):
         return "xxx"
 
 
-class ApiDocTextRenderer(ApiRenderer):
+class KiaraApiDocTextRenderer(ApiRenderer):
 
-    _renderer_name = "api_doc_markdown_renderer"
+    _renderer_name = "kiara_api_doc_markdown_renderer"
 
     def get_target_type(self) -> str:
         return "markdown"

@@ -419,7 +419,7 @@ class Operation(Manifest):
             )
             table.add_row("Outputs", outputs_table)
 
-        from kiara.interfaces.python_api import ModuleTypeInfo
+        from kiara.interfaces.python_api.models.info import ModuleTypeInfo
 
         module_type_md: Union[ModuleTypeInfo, None] = None
 

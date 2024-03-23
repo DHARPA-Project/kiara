@@ -68,7 +68,7 @@ def list_pipelines(ctx, full_doc: bool, filter: typing.Iterable[str], format: st
             op_id: kiara_obj.operation_registry.get_operation(op_id) for op_id in op_ids
         }
 
-    from kiara.interfaces.python_api import OperationGroupInfo
+    from kiara.interfaces.python_api.models.info import OperationGroupInfo
 
     ops_info = OperationGroupInfo.create_from_operations(
         kiara=kiara_obj, group_title=title, **operations

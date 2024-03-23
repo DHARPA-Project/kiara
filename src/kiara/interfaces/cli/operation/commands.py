@@ -15,7 +15,7 @@ from kiara.utils.cli import output_format_option, terminal_print, terminal_print
 from kiara.utils.cli.exceptions import handle_exception
 
 if TYPE_CHECKING:
-    from kiara.api import Kiara, KiaraAPI
+    from kiara.api import BaseAPI, Kiara
 
 
 @click.group()
@@ -72,7 +72,7 @@ def list_types(ctx, full_doc: bool, format: str, filter: Iterable[str]):
 @handle_exception()
 def explain_type(ctx, operation_type: str, format: str):
 
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     op_type = kiara_api.retrieve_operation_type_info(operation_type)
 
@@ -120,7 +120,7 @@ def list_operations(
 ):
 
     kiara_obj: Kiara = ctx.obj.kiara
-    api: KiaraAPI = ctx.obj.kiara_api
+    api: BaseAPI = ctx.obj.kiara_api
 
     operations = api.list_operations(
         filter=filter, include_internal=include_internal, python_packages=python_package
@@ -149,7 +149,7 @@ def list_operations(
     #
     #     operations = temp
 
-    from kiara.interfaces.python_api import OperationGroupInfo
+    from kiara.interfaces.python_api.models.info import OperationGroupInfo
 
     ops_info = OperationGroupInfo.create_from_operations(
         kiara=kiara_obj, group_title=title, **operations.root
@@ -182,7 +182,7 @@ def list_operations(
 def explain(ctx, operation_id: str, source: bool, format: str, module_info: bool):
 
     kiara_obj: Kiara = ctx.obj.kiara
-    api: KiaraAPI = ctx.obj.kiara_api
+    api: BaseAPI = ctx.obj.kiara_api
 
     if os.path.isfile(os.path.realpath(operation_id)):
         operation = api.get_operation(operation_id)

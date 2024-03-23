@@ -38,7 +38,7 @@ from kiara.utils.cli.exceptions import handle_exception
 
 
 if TYPE_CHECKING:
-    from kiara.api import Kiara, KiaraAPI
+    from kiara.api import BaseAPI, Kiara
     from kiara.operations.included_core_operations.filter import FilterOperationType
 
 logger = structlog.getLogger()
@@ -147,10 +147,9 @@ def list_values(
 ) -> None:
     """List all data items that are stored in kiara."""
 
-    from kiara.interfaces.python_api import ValuesInfo
-    from kiara.interfaces.python_api.models.info import RENDER_FIELDS
+    from kiara.interfaces.python_api.models.info import RENDER_FIELDS, ValuesInfo
 
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     if include_internal:
         all_values = True
@@ -270,7 +269,7 @@ def explain_value(
     All of the 'show-additional-information' flags are only applied when the 'terminal' output format is selected. This might change in the future.
     """
 
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     render_config = {
         "show_pedigree": pedigree,
@@ -322,7 +321,7 @@ def explain_value(
 def load_value(ctx, value: str):
     """Load a stored value and print it in a format suitable for the terminal."""
     # kiara_obj: Kiara = ctx.obj["kiara"]
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     try:
         _value = kiara_api.get_value(value=value)
@@ -413,7 +412,7 @@ def filter_value(
         silent = True
 
     kiara_obj: Kiara = ctx.obj.kiara
-    api: KiaraAPI = ctx.obj.kiara_api
+    api: BaseAPI = ctx.obj.kiara_api
 
     cmd_help = "[yellow bold]Usage: [/yellow bold][bold]kiara data filter VALUE FILTER_1:FILTER_2 [FILTER ARGS...][/bold]"
 
@@ -573,7 +572,7 @@ def export_data_archive(
     Aliases that already exist in the target archve will be overwritten.
     """
 
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     values = []
     for idx, alias in enumerate(aliases, start=1):
@@ -621,7 +620,7 @@ def export_data_archive(
     elif full_path.exists():
         if append and replace:
             terminal_print(
-                f"[red]Error[/red]: Can't specify both '--append' and '--replace'."
+                "[red]Error[/red]: Can't specify both '--append' and '--replace'."
             )
             sys.exit(1)
         if append:
@@ -705,7 +704,7 @@ def export_data_archive(
 def import_data_store(ctx, archive: str, values: Tuple[str], no_aliases: bool = False):
     """Import one or several values from a kiara archive."""
 
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     archive_path = Path(archive)
     if not archive_path.exists():
@@ -739,7 +738,7 @@ if is_develop():
     def write_serialized(ctx, value_id_or_alias: str, directory: str, force: bool):
         """Write the serialized form of a value to a directory"""
 
-        kiara_api: KiaraAPI = ctx.obj.kiara_api
+        kiara_api: BaseAPI = ctx.obj.kiara_api
 
         value = kiara_api.get_value(value_id_or_alias)
         serialized = value.serialized_data

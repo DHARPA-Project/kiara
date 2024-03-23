@@ -6,7 +6,7 @@ from pydantic import RootModel
 
 if TYPE_CHECKING:
     # we don't want those imports (yet), since they take a while to load
-    from kiara.interfaces.python_api import Workflow
+    from kiara.interfaces.python_api.workflow import Workflow
     from kiara.models.module.operation import Operation
     from kiara.models.module.pipeline import PipelineStructure
 

@@ -20,7 +20,7 @@ from pathlib import Path
 
 import pytest
 
-from kiara.api import KiaraAPI
+from kiara.api import BaseAPI
 from kiara.context import Kiara
 from kiara.context.config import KiaraConfig
 from kiara.interfaces.python_api.batch import BatchOperation
@@ -97,12 +97,12 @@ def kiara() -> Kiara:
 
 
 @pytest.fixture
-def api() -> KiaraAPI:
+def api() -> BaseAPI:
 
     instance_path = create_temp_dir()
     kc = KiaraConfig.create_in_folder(instance_path)
     kc.runtime_config.runtime_profile = "default"
-    api = KiaraAPI(kc)
+    api = BaseAPI(kc)
     return api
 
 

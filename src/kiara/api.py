@@ -13,11 +13,13 @@ __all__ = [
     "ValueMap",
     "ValueMapSchema",
     "ValueSchema",
+    "KiArchive",
 ]
 
 from .context import Kiara
 from .context.config import KiaraConfig
-from .interfaces.python_api import KiaraAPI
+from .interfaces.python_api.kiara_api import KiaraAPI
+from .interfaces.python_api.models.archive import KiArchive
 from .interfaces.python_api.models.job import JobDesc, RunSpec
 from .models.module.pipeline.pipeline import Pipeline, PipelineStructure
 from .models.values.value import Value, ValueMap

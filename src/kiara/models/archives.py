@@ -36,8 +36,8 @@ from kiara.registries import ArchiveDetails, ArchiveMetadata, KiaraArchive
 from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
+    from kiara.api import KiArchive
     from kiara.context import Kiara
-    from kiara.interfaces.python_api import KiArchive
 
 
 class ArchiveTypeInfo(TypeInfo):
@@ -327,7 +327,7 @@ class ArchiveGroupInfo(InfoItemGroup):
 class KiArchiveInfo(ItemInfo):
     @classmethod
     def base_instance_class(cls) -> Type["KiArchive"]:
-        from kiara.interfaces.python_api import KiArchive
+        from kiara.api import KiArchive
 
         return KiArchive
 

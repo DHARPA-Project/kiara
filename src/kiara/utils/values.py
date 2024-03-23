@@ -20,13 +20,13 @@ from kiara.utils import check_valid_field_names
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
-    from kiara.interfaces.python_api import KiaraAPI
+    from kiara.interfaces.python_api.base_api import BaseAPI
     from kiara.models.values.value import ValueMapReadOnly
     from kiara.registries.data import ValueLink
 
 
 def construct_valuemap(
-    kiara_api: "KiaraAPI",
+    kiara_api: "BaseAPI",
     values: Mapping[str, Union[uuid.UUID, None, str, "ValueLink"]],
 ) -> "ValueMapReadOnly":
 

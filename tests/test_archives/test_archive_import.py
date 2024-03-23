@@ -3,13 +3,13 @@ import os
 import uuid
 from pathlib import Path
 
-from kiara.api import KiaraAPI
+from kiara.api import BaseAPI
 
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 TEST_RESOURCES_FOLDER = os.path.join(ROOT_DIR, "tests", "resources")
 
 
-def test_archive_import_values_no_alias(api: KiaraAPI):
+def test_archive_import_values_no_alias(api: BaseAPI):
 
     resources_folder = Path(TEST_RESOURCES_FOLDER)
 
@@ -27,7 +27,7 @@ def test_archive_import_values_no_alias(api: KiaraAPI):
     assert ["export_test#y"] == api.list_alias_names()
 
 
-def test_archive_import_values_with_alias(api: KiaraAPI):
+def test_archive_import_values_with_alias(api: BaseAPI):
 
     resources_folder = Path(TEST_RESOURCES_FOLDER)
 

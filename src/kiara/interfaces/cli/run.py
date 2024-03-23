@@ -22,7 +22,7 @@ from kiara.utils.cli.exceptions import handle_exception
 from kiara.utils.files import get_data_from_file
 
 if typing.TYPE_CHECKING:
-    from kiara.api import KiaraAPI
+    from kiara.api import BaseAPI
 
 
 @click.command()
@@ -121,7 +121,7 @@ def run(
 
             sys.exit(1)
 
-    api: KiaraAPI = ctx.obj.kiara_api  # type: ignore
+    api: BaseAPI = ctx.obj.kiara_api  # type: ignore
 
     cmd_arg = ctx.params["module_or_operation"]
     cmd_help = f"[yellow bold]Usage: [/yellow bold][bold]kiara run [OPTIONS] [i]{cmd_arg}[/i] [INPUTS][/bold]"

@@ -34,9 +34,9 @@ def explain_archive(
 ):
     """Print details of an archive file."""
 
-    from kiara.api import KiaraAPI
+    from kiara.api import BaseAPI
 
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     info = kiara_api.retrieve_archive_info(archive)
 
@@ -58,9 +58,9 @@ def explain_archive(
 @handle_exception()
 def export_archive(ctx, path: str, compression: str, append: bool, no_aliases: bool):
 
-    from kiara.api import KiaraAPI
+    from kiara.api import BaseAPI
 
-    api: KiaraAPI = ctx.obj.kiara_api
+    api: BaseAPI = ctx.obj.kiara_api
 
     target_store_params = {"compression": CHUNK_COMPRESSION_TYPE[compression.upper()]}
     result = api.export_archive(
@@ -88,9 +88,9 @@ def export_archive(ctx, path: str, compression: str, append: bool, no_aliases: b
 def import_archive(ctx, path: str, no_aliases: bool):
     """Import an archive file."""
 
-    from kiara.interfaces.python_api import KiaraAPI
+    from kiara.interfaces.python_api.base_api import BaseAPI
 
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     result = kiara_api.import_archive(source_archive=path, no_aliases=no_aliases)
 

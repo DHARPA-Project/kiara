@@ -30,8 +30,7 @@ if TYPE_CHECKING:
 
     from kiara.context import Kiara
     from kiara.context.config import KiaraConfig
-    from kiara.interfaces.python_api import KiaraAPI
-
+    from kiara.interfaces.python_api.base_api import BaseAPI
 
 # log = structlog.getLogger()
 
@@ -244,7 +243,7 @@ class KiaraAPIWrap(object):
         self._ensure_plugins: Union[str, Iterable[str], None] = ensure_plugins
 
         self._kiara_config: Union["KiaraConfig", None] = None
-        self._api: Union[KiaraAPI, None] = None
+        self._api: Union[BaseAPI, None] = None
 
         self._reload_process_if_plugins_installed = True
 
@@ -344,7 +343,7 @@ class KiaraAPIWrap(object):
         return "asdf"
 
     @property
-    def kiara_api(self) -> "KiaraAPI":
+    def kiara_api(self) -> "BaseAPI":
 
         if self._api is not None:
             return self._api
@@ -355,9 +354,9 @@ class KiaraAPIWrap(object):
         if not context:
             context = self.kiara_config.default_context
 
-        from kiara.interfaces.python_api import KiaraAPI
+        from kiara.interfaces.python_api.base_api import BaseAPI
 
-        api = KiaraAPI(kiara_config=self.kiara_config)
+        api = BaseAPI(kiara_config=self.kiara_config)
         if self._ensure_plugins:
             installed = api.ensure_plugin_packages(self._ensure_plugins, update=False)
             if installed and self._reload_process_if_plugins_installed:

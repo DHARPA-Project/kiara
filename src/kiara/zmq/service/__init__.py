@@ -7,10 +7,9 @@ from typing import Any, Mapping, Union
 import orjson
 import zmq
 
-from kiara.api import KiaraAPI
 from kiara.defaults import KIARA_MAIN_CONTEXT_LOCKS_PATH
 from kiara.exceptions import KiaraException
-from kiara.interfaces import KiaraAPIWrap, get_console, get_proxy_console
+from kiara.interfaces import BaseAPI, KiaraAPIWrap, get_console, get_proxy_console
 from kiara.interfaces.cli.proxy_cli import proxy_cli
 from kiara.interfaces.python_api.proxy import ApiEndpoints
 from kiara.zmq import (
@@ -56,7 +55,7 @@ class KiaraZmqAPI(object):
         self._port: int = int(port)
         self._service_thread = None
         self._msg_builder = KiaraApiMsgBuilder()
-        self._api_endpoints: ApiEndpoints = ApiEndpoints(api_cls=KiaraAPI)
+        self._api_endpoints: ApiEndpoints = ApiEndpoints(api_cls=BaseAPI)
 
         self._initial_timeout = listen_timout_in_ms
         self._allow_timeout_change = False
@@ -178,7 +177,7 @@ class KiaraZmqAPI(object):
             print(f"ERROR IN ZMQ SERVICE: {e}", file=self._stderr)
             print("Stopping...", file=self._stderr)
 
-    def call_cli(self, api: KiaraAPI, **kwargs) -> Mapping[str, str]:
+    def call_cli(self, api: BaseAPI, **kwargs) -> Mapping[str, str]:
 
         console = get_console()
         old_width = console.width
@@ -216,7 +215,7 @@ class KiaraZmqAPI(object):
 
         return {"stdout": stdout, "stderr": stderr}
 
-    def call_endpoint(self, api: KiaraAPI, endpoint: str, **kwargs) -> Any:
+    def call_endpoint(self, api: BaseAPI, endpoint: str, **kwargs) -> Any:
 
         try:
             endpoint_proxy = self._api_endpoints.get_api_endpoint(

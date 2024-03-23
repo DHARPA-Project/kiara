@@ -11,7 +11,7 @@ from kiara.utils.cli import output_format_option, terminal_print_model
 from kiara.utils.cli.exceptions import handle_exception
 
 if TYPE_CHECKING:
-    from kiara.interfaces import KiaraAPI, KiaraAPIWrap
+    from kiara.interfaces import BaseAPI, KiaraAPIWrap
 
 
 @click.group("info")
@@ -55,9 +55,9 @@ def plugin(ctx):
 def list_plugins(ctx, filter_regex: str, format):
     """List installed kiara plugins."""
 
-    from kiara.interfaces.python_api import KiaraPluginInfos
+    from kiara.interfaces.python_api.models.info import KiaraPluginInfos
 
-    api: KiaraAPI = ctx.obj.kiara_api
+    api: BaseAPI = ctx.obj.kiara_api
 
     title = "All available plugins"
     if filter_regex:
@@ -75,7 +75,7 @@ def list_plugins(ctx, filter_regex: str, format):
 @click.pass_context
 def explain_plugin_info(ctx, plugin_name: str, format: str):
 
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     plugin_info = kiara_api.retrieve_plugin_info(plugin_name)
     title = f"Info for plugin: [i]{plugin_name}[/i]"

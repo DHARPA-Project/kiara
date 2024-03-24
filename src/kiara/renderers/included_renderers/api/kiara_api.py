@@ -53,8 +53,17 @@ class ApiRenderer(
         renderer_config: Union[None, Mapping[str, Any], KiaraRendererConfig] = None,
     ):
 
-        self._api_endpoints: ApiEndpoints = ApiEndpoints(api_cls=KiaraAPI)
         super().__init__(kiara=kiara, renderer_config=renderer_config)
+
+        filters = self.renderer_config.filter
+        if not filters:
+            filters = None
+        elif isinstance(filters, str):
+            filters = [filters]
+
+        self._api_endpoints: ApiEndpoints = ApiEndpoints(
+            api_cls=KiaraAPI, filters=filters
+        )
 
     @property
     def api_endpoints(self) -> ApiEndpoints:

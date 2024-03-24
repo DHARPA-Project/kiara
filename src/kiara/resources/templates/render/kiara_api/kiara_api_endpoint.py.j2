@@ -1,5 +1,5 @@
     {{ signature_str }}
-        """{{ doc }}
+        {{ regex_str }}"""{{ doc }}
         """
 {%  if result_type == None %}
         self._api.{{ endpoint_name }}({{ arg_names_str }})

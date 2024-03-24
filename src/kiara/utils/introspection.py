@@ -28,9 +28,17 @@ def extract_cls(arg: Any, imports: Dict[str, typing.Set[str]]) -> str:
 
         imports.setdefault("typing", set()).add("Union")
         return f"Union[{', '.join(all_args)}]"
+    elif isinstance(arg, typing._LiteralSpecialForm):
+        return "Literal"
+
     elif isinstance(arg, typing._GenericAlias):
 
         origin_cls = extract_cls(arg.__origin__, imports=imports)
+        if origin_cls == "Literal":
+            all_args_str = ", ".join((f'"{x}"' for x in arg.__args__))
+            imports.setdefault("typing", set()).add("Literal")
+            return f"Literal[{all_args_str}]"
+
         all_args = []
         for a in arg.__args__:
             cls = extract_cls(a, imports=imports)
@@ -46,12 +54,20 @@ def extract_cls(arg: Any, imports: Dict[str, typing.Set[str]]) -> str:
         elif origin_cls in ('"List"', "list"):
             imports.setdefault("typing", set()).add("List")
             return f"List[{', '.join(all_args)}]"
+        elif origin_cls == "dict":
+            assert len(all_args) == 2
+            imports.setdefault("typing", set()).add("Dict")
+            return f"Dict[{all_args[0]}, {all_args[1]}]"
+        elif origin_cls == "type":
+            imports.setdefault("typing", set()).add("Type")
+            result = f"Type[{', '.join(all_args)}]"
+            return result
         else:
             raise Exception(f"Unexpected generic alias: {origin_cls}")
     elif isinstance(arg, typing.ForwardRef):
         return f'"{arg.__forward_arg__}"'
     else:
-        raise Exception(f"Unexpected type: {type(arg)}")
+        raise Exception(f"Unexpected type '{type(arg)}' for arg: {arg}")
 
 
 def create_default_string(default: Any) -> str:
@@ -61,7 +77,11 @@ def create_default_string(default: Any) -> str:
     elif isinstance(default, bool):
         return str(default)
     elif isinstance(default, str):
-        return f'"{default}"'
+        if "\\" in default:
+            default = f'r"{default}"'
+            return default
+        else:
+            return f'"{default}"'
     else:
         raise Exception(f"Unexpected default value: {default}")
 

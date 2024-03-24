@@ -12,7 +12,7 @@ from typing import (
 
 from pydantic.fields import Field
 
-from kiara.interfaces.python_api.base_api import BaseAPI, find_base_api_endpoints
+from kiara.interfaces.python_api.base_api import BaseAPI
 from kiara.interfaces.python_api.proxy import ApiEndpoints
 from kiara.models.rendering import RenderValueResult
 from kiara.renderers import (
@@ -34,25 +34,30 @@ if TYPE_CHECKING:
     from kiara.context import Kiara
 
 
-class ApiRenderInputsSchema(RenderInputsSchema):
+class BaseApiRenderInputsSchema(RenderInputsSchema):
 
-    filter: Union[str, Iterable[str]] = Field(
+    pass
+
+
+class BaseApiRendererConfig(KiaraRendererConfig):
+
+    tags: Union[None, str, Iterable[str]] = Field(
+        description="The tag to filter the api endpoints by (if any tag matches, the endpoint will be included.",
+        default="kiara_api",
+    )
+    filter: Union[str, Iterable[str], None] = Field(
         description="One or a list of filter tokens -- if provided -- all of which must match for the api endpoing to be in the render result.",
-        default_factory=list,
+        default=None,
     )
 
 
-class ApiRendererConfig(KiaraRendererConfig):
-
-    pass
-    # target_type: str = Field(description="The target type to render the api as.")
-
-
-class ApiRenderer(
-    KiaraRenderer[BaseAPI, ApiRenderInputsSchema, RenderValueResult, ApiRendererConfig]
+class BaseApiRenderer(
+    KiaraRenderer[
+        BaseAPI, BaseApiRenderInputsSchema, RenderValueResult, BaseApiRendererConfig
+    ]
 ):
-    _inputs_schema = ApiRenderInputsSchema
-    _renderer_config_cls = ApiRendererConfig
+    _inputs_schema = BaseApiRenderInputsSchema
+    _renderer_config_cls = BaseApiRendererConfig
 
     def __init__(
         self,
@@ -60,8 +65,14 @@ class ApiRenderer(
         renderer_config: Union[None, Mapping[str, Any], KiaraRendererConfig] = None,
     ):
 
-        self._api_endpoints: ApiEndpoints = ApiEndpoints(api_cls=BaseAPI)
         super().__init__(kiara=kiara, renderer_config=renderer_config)
+
+        filters = self.renderer_config.filter
+        tags = self.renderer_config.tags
+
+        self._api_endpoints: ApiEndpoints = ApiEndpoints(
+            api_cls=BaseAPI, filters=filters, include_tags=tags
+        )
 
     @property
     def api_endpoints(self) -> ApiEndpoints:
@@ -82,7 +93,7 @@ class ApiRenderer(
         pass
 
 
-class BaseApiDocRenderer(ApiRenderer):
+class BaseApiDocRenderer(BaseApiRenderer):
 
     _renderer_name = "base_api_doc_renderer"
 
@@ -92,7 +103,9 @@ class BaseApiDocRenderer(ApiRenderer):
     def retrieve_supported_render_targets(self) -> Union[Iterable[str], str]:
         return "html"
 
-    def _render(self, instance: BaseAPI, render_config: ApiRenderInputsSchema) -> Any:
+    def _render(
+        self, instance: BaseAPI, render_config: BaseApiRenderInputsSchema
+    ) -> Any:
 
         # details = self.api_endpoints.get_api_endpoint("get_value")
         details = self.api_endpoints.get_api_endpoint("retrieve_aliases_info")
@@ -106,7 +119,7 @@ class BaseApiDocRenderer(ApiRenderer):
         return "xxx"
 
 
-class BaseApiDocTextRenderer(ApiRenderer):
+class BaseApiDocTextRenderer(BaseApiRenderer):
 
     _renderer_name = "base_api_doc_markdown_renderer"
 
@@ -116,7 +129,9 @@ class BaseApiDocTextRenderer(ApiRenderer):
     def retrieve_supported_render_targets(self) -> Union[Iterable[str], str]:
         return "markdown"
 
-    def _render(self, instance: BaseAPI, render_config: ApiRenderInputsSchema) -> Any:
+    def _render(
+        self, instance: BaseAPI, render_config: BaseApiRenderInputsSchema
+    ) -> Any:
 
         template = self._kiara.render_registry.get_template(
             "kiara_api/api_doc.md.j2", "kiara"
@@ -144,11 +159,8 @@ class BaseApiDocTextRenderer(ApiRenderer):
         return result
 
 
-class BaseApiRenderInputsSchema(ApiRenderInputsSchema):
+class BaseApiRenderKiaraApiInputsSchema(BaseApiRenderInputsSchema):
 
-    tag: str = Field(
-        description="The tag to filter the api endpoints by.", default="kiara_api"
-    )
     template_file: str = Field(
         description="The file that should contain the rendered code."
     )
@@ -157,11 +169,11 @@ class BaseApiRenderInputsSchema(ApiRenderInputsSchema):
     )
 
 
-class BaseApiRenderer(ApiRenderer):
+class BaseToKiaraApiRenderer(BaseApiRenderer):
 
     _renderer_name = "base_api_kiara_api_renderer"
-    _inputs_schema = BaseApiRenderInputsSchema
-    _renderer_config_cls = ApiRendererConfig
+    _inputs_schema = BaseApiRenderKiaraApiInputsSchema
+    _renderer_config_cls = BaseApiRendererConfig
 
     def __init__(
         self,
@@ -214,20 +226,30 @@ class BaseApiRenderer(ApiRenderer):
             "kiara_api/kiara_api_endpoint.py.j2", "kiara"
         )
 
-        tag = render_config.tag
-        endpoints = find_base_api_endpoints(BaseAPI, label=tag)
+        # tag = render_config.tag
+        # endpoints = find_base_api_endpoints(BaseAPI, label=tag)
 
         endpoint_data = []
         imports = {}
-        for endpoint in endpoints:
-            endpoint_name = endpoint.__name__
-            doc = endpoint.__doc__
-            sig_args = extract_arg_names(endpoint)
+        imports.setdefault("typing", set()).add("Dict")
+        imports.setdefault("typing", set()).add("ClassVar")
+
+        for endpoint_name in self.api_endpoints.api_endpint_names:
+            endpoint_instance = self.api_endpoints.get_api_endpoint(endpoint_name)
+
+            doc = endpoint_instance.raw_doc
+
+            sig_args = extract_arg_names(endpoint_instance.func)
             sig_args.remove("self")
 
-            arg_names_str = extract_proxy_arg_str(endpoint)
+            arg_names_str = extract_proxy_arg_str(endpoint_instance.func)
 
-            sig_string, return_type = create_signature_string(endpoint, imports=imports)
+            sig_string, return_type = create_signature_string(
+                endpoint_instance.func, imports=imports
+            )
+            regex_str = ""
+            if "\\" in doc:
+                regex_str = "r"
             endpoint_data.append(
                 {
                     "endpoint_name": endpoint_name,
@@ -235,6 +257,7 @@ class BaseApiRenderer(ApiRenderer):
                     "signature_str": sig_string,
                     "arg_names_str": arg_names_str,
                     "result_type": return_type,
+                    "regex_str": regex_str,
                 }
             )
 

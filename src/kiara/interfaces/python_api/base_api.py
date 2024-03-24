@@ -81,7 +81,6 @@ from kiara.operations.included_core_operations.render_value import (
 )
 from kiara.registries.environment import EnvironmentRegistry
 from kiara.registries.ids import ID_REGISTRY
-from kiara.registries.operations import OP_TYPE
 from kiara.renderers import KiaraRenderer
 from kiara.utils import log_exception, log_message
 from kiara.utils.downloads import get_data_from_url
@@ -183,11 +182,11 @@ class BaseAPI(object):
     def list_available_plugin_names(
         self, regex: str = "^kiara[-_]plugin\\..*"
     ) -> List[str]:
-        """
+        r"""
         Get a list of all available plugins.
 
         Arguments:
-            regex: an optional regex to indicate the plugin naming scheme (default: /$kiara[_-]plugin\\..*/)
+            regex: an optional regex to indicate the plugin naming scheme (default: /$kiara[_-]plugin\..*/)
 
         Returns:
             a list of plugin names
@@ -2564,12 +2563,14 @@ class BaseAPI(object):
     # ------------------------------------------------------------------------------------------------------------------
     # operation-related methods
 
-    def get_operation_type(self, op_type: Union[str, Type[OP_TYPE]]) -> OperationType:
+    def get_operation_type(
+        self, op_type: Union[str, Type[OperationType]]
+    ) -> OperationType:
         """Get the management object for the specified operation type."""
         return self.context.operation_registry.get_operation_type(op_type=op_type)
 
     def retrieve_operation_type_info(
-        self, op_type: Union[str, Type[OP_TYPE]]
+        self, op_type: Union[str, Type[OperationType]]
     ) -> OperationTypeInfo:
         """Get an info object for the specified operation type."""
         _op_type = self.get_operation_type(op_type=op_type)
@@ -3034,7 +3035,7 @@ class BaseAPI(object):
         operation: Union[str, Path, Manifest, OperationInfo, JobDesc],
         inputs: Union[None, Mapping[str, Any]] = None,
         operation_config: Union[None, Mapping[str, Any]] = None,
-        **job_metadata,
+        **job_metadata: Any,
     ) -> ValueMapReadOnly:
         """
         Run a job from a operation id, module_name (and config), or pipeline file, wait for the job to finish and retrieve the result.

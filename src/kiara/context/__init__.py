@@ -131,7 +131,7 @@ class Kiara(object):
         self._config: KiaraContextConfig = config
         self._runtime_config: KiaraRuntimeConfig = runtime_config
 
-        self._env_mgmt: EnvironmentRegistry = EnvironmentRegistry(kiara=self)
+        self._env_mgmt: EnvironmentRegistry = EnvironmentRegistry()
 
         self._event_registry: EventRegistry = EventRegistry(kiara=self)
         self._type_registry: TypeRegistry = TypeRegistry(self)

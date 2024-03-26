@@ -38,7 +38,7 @@ from kiara.utils.cli.exceptions import handle_exception
 
 
 if TYPE_CHECKING:
-    from kiara.api import BaseAPI, Kiara
+    from kiara.interfaces.python_api.base_api import BaseAPI, Kiara
     from kiara.operations.included_core_operations.filter import FilterOperationType
 
 logger = structlog.getLogger()

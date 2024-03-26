@@ -3,7 +3,7 @@ import os
 import uuid
 from pathlib import Path
 
-from kiara.api import BaseAPI
+from kiara.interfaces.python_api.base_api import BaseAPI
 
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 TEST_RESOURCES_FOLDER = os.path.join(ROOT_DIR, "tests", "resources")

@@ -85,7 +85,7 @@ class Pipeline(object):
         pipeline: Union[PipelineConfig, PipelineStructure, Mapping, str],
     ) -> "Pipeline":
 
-        from kiara.api import BaseAPI
+        from kiara.interfaces.python_api.base_api import BaseAPI
 
         if isinstance(kiara, BaseAPI):
             kiara = kiara.context

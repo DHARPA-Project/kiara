@@ -34,7 +34,7 @@ def explain_archive(
 ):
     """Print details of an archive file."""
 
-    from kiara.api import BaseAPI
+    from kiara.interfaces.python_api.base_api import BaseAPI
 
     kiara_api: BaseAPI = ctx.obj.kiara_api
 
@@ -58,7 +58,7 @@ def explain_archive(
 @handle_exception()
 def export_archive(ctx, path: str, compression: str, append: bool, no_aliases: bool):
 
-    from kiara.api import BaseAPI
+    from kiara.interfaces.python_api.base_api import BaseAPI
 
     api: BaseAPI = ctx.obj.kiara_api
 

@@ -15,7 +15,7 @@ from kiara.utils.cli import output_format_option, terminal_print, terminal_print
 from kiara.utils.cli.exceptions import handle_exception
 
 if TYPE_CHECKING:
-    from kiara.api import BaseAPI, Kiara
+    from kiara.interfaces.python_api.base_api import BaseAPI, Kiara
 
 
 @click.group()

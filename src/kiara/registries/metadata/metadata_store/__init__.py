@@ -31,7 +31,7 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
             force_read_only=force_read_only,
         )
         self._schema_stored_cache: Dict[str, Any] = {}
-        self._schema_stored_item: Dict[str, Any] = {}
+        self._schema_stored_item: Dict[str, uuid.UUID] = {}
 
     def retrieve_metadata_item(
         self,
@@ -51,11 +51,11 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
             reference_id: The id of the referenced item.
         """
 
-        if reference_id and not reference_type:
+        if reference_id and (not reference_type or not reference_key):
             raise ValueError(
-                "If reference_id is set, reference_type must be set as well."
+                "If reference_id is set, reference_key & reference_type must be set as well."
             )
-        if reference_type:
+        if reference_type and reference_key:
             if reference_id is None:
                 raise KiaraException(
                     msg="reference_id must set also if reference_type is set."

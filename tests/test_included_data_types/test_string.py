@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 
-from kiara.api import BaseAPI
+from kiara.interfaces.python_api.base_api import BaseAPI
 
 
 def test_pure_string(api: BaseAPI):

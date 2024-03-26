@@ -20,7 +20,7 @@ from kiara.utils.cli import (
 )
 
 if TYPE_CHECKING:
-    from kiara.api import BaseAPI, Kiara, KiaraConfig
+    from kiara.interfaces.python_api.base_api import BaseAPI, Kiara, KiaraConfig
 
 
 @click.group("context")

@@ -10,13 +10,13 @@ from rich.console import Group, RenderableType
 from rich.markdown import Markdown
 from rich.rule import Rule
 
-from kiara.api import BaseAPI, ValueMap
 from kiara.exceptions import (
     FailedJobException,
     InvalidCommandLineInvocation,
     KiaraException,
     NoSuchExecutionTargetException,
 )
+from kiara.interfaces.python_api.base_api import BaseAPI, ValueMap
 from kiara.interfaces.python_api.utils import create_save_config
 from kiara.models.module.operation import Operation
 

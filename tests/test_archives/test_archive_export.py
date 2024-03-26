@@ -9,7 +9,7 @@ from typing import List, Union
 
 import pytest
 
-from kiara.api import BaseAPI
+from kiara.interfaces.python_api.base_api import BaseAPI
 from kiara.models.values.value import ValueMapReadOnly, Value
 
 

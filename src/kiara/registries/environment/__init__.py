@@ -17,7 +17,7 @@ from kiara.models.runtime_environment import RuntimeEnvironment, logger
 from kiara.utils import _get_all_subclasses, is_debug, to_camel_case
 
 if TYPE_CHECKING:
-    from kiara.context import Kiara
+    pass
 
 
 class EnvironmentRegistry(object):
@@ -31,14 +31,14 @@ class EnvironmentRegistry(object):
             cls._instance = EnvironmentRegistry()
         return cls._instance
 
-    def __init__(self, kiara: "Kiara") -> None:
+    def __init__(self) -> None:
 
         self._environments: Union[Dict[str, RuntimeEnvironment], None] = None
         self._environment_hashes: Union[Dict[str, Mapping[str, str]], None] = None
 
         self._full_env_model: Union[BaseModel, None] = None
 
-        self._kiara: Kiara = kiara
+        # self._kiara: Kiara = kiara
 
     def get_environment_for_cid(self, env_cid: str) -> RuntimeEnvironment:
 

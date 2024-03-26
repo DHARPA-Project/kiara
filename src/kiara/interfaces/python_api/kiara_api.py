@@ -20,8 +20,10 @@ if TYPE_CHECKING:
         ValueInfo,
         ValuesInfo,
     )
+    from kiara.interfaces.python_api.models.job import JobDesc
     from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
     from kiara.models.context import ContextInfo, ContextInfos
+    from kiara.models.metadata import KiaraMetadata
     from kiara.models.module.operation import Operation
     from kiara.models.values.value import Value, ValueMapReadOnly
 
@@ -211,7 +213,7 @@ class KiaraAPI(object):
             job_id = uuid.UUID(job_id)
 
         metadata: Union[
-            None, CommentMetadata
+            None, KiaraMetadata
         ] = self._api.context.metadata_registry.retrieve_job_metadata_item(
             job_id=job_id, key="comment"
         )

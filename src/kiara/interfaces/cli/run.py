@@ -22,7 +22,7 @@ from kiara.utils.cli.exceptions import handle_exception
 from kiara.utils.files import get_data_from_file
 
 if typing.TYPE_CHECKING:
-    from kiara.api import BaseAPI
+    from kiara.interfaces.python_api.base_api import BaseAPI
 
 
 @click.command()

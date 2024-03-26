@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from kiara.api import BaseAPI
+from kiara.interfaces.python_api.base_api import BaseAPI
 
 
 def test_pipeline_default_config_simple(api: BaseAPI):

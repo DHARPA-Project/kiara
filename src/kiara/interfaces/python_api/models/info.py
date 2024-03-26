@@ -77,10 +77,10 @@ if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.data_types import DataType
     from kiara.models.runtime_environment.python import PythonRuntimeEnvironment
+    from kiara.models.values.value_metadata import ValueMetadata
     from kiara.operations import OperationType
     from kiara.registries.aliases import AliasRegistry
     from kiara.registries.data import DataRegistry
-    from kiara.models.values.value_metadata import ValueMetadata
 
 INFO_BASE_INSTANCE_TYPE = TypeVar("INFO_BASE_INSTANCE_TYPE")
 INFO_BASE_CLASS = TypeVar("INFO_BASE_CLASS", bound=type)
@@ -819,6 +819,7 @@ class MetadataTypeInfo(TypeInfo):
     @classmethod
     def base_class(self) -> Type["ValueMetadata"]:
         from kiara.models.values.value_metadata import ValueMetadata
+
         return ValueMetadata
 
     @classmethod
@@ -873,6 +874,7 @@ class MetadataTypeClassesInfo(TypeInfoItemGroup):
         description="The value metadata info instances for each type."
     )
 
+
 class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
 
     _kiara_model_id: ClassVar = "info.data_type"
@@ -882,14 +884,25 @@ class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
         self, type_cls: Type["DataType"], kiara: Union["Kiara", None] = None
     ) -> "DataTypeClassInfo":
 
-
         from kiara.utils.metadata import get_metadata_model_for_data_type
 
         authors = AuthorsMetadataModel.from_class(type_cls)
         doc = DocumentationMetadataModel.from_class_doc(type_cls)
         properties_md = ContextMetadataModel.from_class(type_cls)
 
-        metadata_models = get_metadata_model_for_data_type(kiara=kiara, data_type=type_cls._data_type_name)
+        if kiara is None:
+            raise NotImplementedError(
+                "Kiara instance is required to create DataTypeClassInfo."
+            )
+        else:
+            data_type_name = getattr(type_cls, "_data_type_name", None)
+            if not data_type_name:
+                raise KiaraException(
+                    f"Data type class '{type_cls.__name__}' does not have a '_data_type_name' attribute."
+                )
+            metadata_models = get_metadata_model_for_data_type(
+                kiara=kiara, data_type=data_type_name
+            )
 
         if kiara is not None:
             qual_profiles = kiara.type_registry.get_associated_profiles(type_cls._data_type_name)  # type: ignore
@@ -911,7 +924,7 @@ class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
                 documentation=doc,
                 authors=authors,
                 context=properties_md,
-                supported_properties=metadata_models
+                supported_properties=metadata_models,
             )
         except Exception as e:
             if isinstance(
@@ -943,7 +956,9 @@ class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
     qualifier_profiles: Union[Mapping[str, Mapping[str, Any]], None] = Field(
         description="A map of qualifier profiles for this data types."
     )
-    supported_properties: MetadataTypeClassesInfo = Field(description="The supported property types for this data type.")
+    supported_properties: MetadataTypeClassesInfo = Field(
+        description="The supported property types for this data type."
+    )
     _kiara: Union["Kiara", None] = PrivateAttr(default=None)
 
     def _retrieve_id(self) -> str:
@@ -2228,6 +2243,3 @@ class JobInfos(InfoItemGroup[JobInfo]):
             table.add_row(*row)
 
         return table
-
-
-

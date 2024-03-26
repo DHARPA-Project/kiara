@@ -15,7 +15,7 @@ import structlog
 from kiara.utils.cli import dict_from_cli_args, terminal_print, terminal_print_model
 
 if typing.TYPE_CHECKING:
-    from kiara.api import BaseAPI, Kiara
+    from kiara.interfaces.python_api.base_api import BaseAPI, Kiara
 
 logger = structlog.getLogger()
 

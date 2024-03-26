@@ -152,7 +152,9 @@ class JobDesc(KiaraModel):
     def get_operation(self, kiara_api: "BaseAPI") -> "Operation":
 
         if not self.module_config:
-            operation = kiara_api.get_operation(self.operation, allow_external=True)
+            operation: Operation = kiara_api.get_operation(
+                self.operation, allow_external=True
+            )
         else:
             data = {
                 "module_type": self.operation,

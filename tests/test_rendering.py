@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from kiara.api import BaseAPI
+from kiara.interfaces.python_api.base_api import BaseAPI
 
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #  Copyright (c) 2021, Markus Binsteiner

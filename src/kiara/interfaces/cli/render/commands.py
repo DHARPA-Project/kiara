@@ -23,8 +23,8 @@ from kiara.utils.cli import (
 from kiara.utils.cli.exceptions import handle_exception
 
 if typing.TYPE_CHECKING:
-    from kiara.api import BaseAPI
     from kiara.interfaces import KiaraAPIWrap
+    from kiara.interfaces.python_api.base_api import BaseAPI
 
 
 # def list_renderers(ctx, param, value) -> None:

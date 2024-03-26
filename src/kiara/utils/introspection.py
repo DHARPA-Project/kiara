@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 import inspect
 import typing
-from types import NoneType
 from typing import Any, Callable, Dict
 
 
 def extract_cls(arg: Any, imports: Dict[str, typing.Set[str]]) -> str:
 
-    if arg in (NoneType, None):
+    if arg in (type(None), None):
         return "None"
     elif isinstance(arg, type):
         name = arg.__name__
@@ -20,7 +19,7 @@ def extract_cls(arg: Any, imports: Dict[str, typing.Set[str]]) -> str:
             return f'"{name}"'
         else:
             return name
-    elif isinstance(arg, typing._UnionGenericAlias):
+    elif isinstance(arg, typing._UnionGenericAlias):  # type: ignore
         all_args = []
         for a in arg.__args__:
             cls = extract_cls(a, imports=imports)
@@ -28,10 +27,10 @@ def extract_cls(arg: Any, imports: Dict[str, typing.Set[str]]) -> str:
 
         imports.setdefault("typing", set()).add("Union")
         return f"Union[{', '.join(all_args)}]"
-    elif isinstance(arg, typing._LiteralSpecialForm):
+    elif isinstance(arg, typing._LiteralSpecialForm):  # type: ignore
         return "Literal"
 
-    elif isinstance(arg, typing._GenericAlias):
+    elif isinstance(arg, typing._GenericAlias):  # type: ignore
 
         origin_cls = extract_cls(arg.__origin__, imports=imports)
         if origin_cls == "Literal":
@@ -134,11 +133,12 @@ def create_signature_string(
     return_type = parse_signature_return(func=func, imports=imports)
     if return_type == "None":
         sig_str = f"def {func.__name__}({params}):"
-        return_type = None
+        _return_type = None
     else:
         sig_str = f"def {func.__name__}({params}) -> {return_type}:"
+        _return_type = return_type
 
-    return sig_str, return_type
+    return sig_str, _return_type
 
 
 def extract_arg_names(func: Callable) -> typing.List[str]:

@@ -18,7 +18,7 @@ from kiara.utils.cli import (
 )
 
 if TYPE_CHECKING:
-    from kiara.api import BaseAPI
+    from kiara.interfaces.python_api.base_api import BaseAPI
 
 
 @click.group()

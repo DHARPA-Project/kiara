@@ -106,7 +106,8 @@ class Kiara(object):
     def instance(cls) -> "Kiara":
         """The default *kiara* context. In most cases, it's recommended you create and manage your own, though."""
 
-        return BaseAPI.instance().context
+        raise NotImplementedError("Kiara.instance() is not implemented yet.")
+        # return BaseAPI.instance().context
 
     def __init__(
         self,

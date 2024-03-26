@@ -29,15 +29,15 @@ if TYPE_CHECKING:
 
 class ApiRenderInputsSchema(RenderInputsSchema):
 
-    filter: Union[str, Iterable[str]] = Field(
-        description="One or a list of filter tokens -- if provided -- all of which must match for the api endpoing to be in the render result.",
-        default_factory=list,
-    )
+    pass
 
 
 class ApiRendererConfig(KiaraRendererConfig):
 
-    pass
+    filter: Union[str, Iterable[str]] = Field(
+        description="One or a list of filter tokens -- if provided -- all of which must match for the api endpoing to be in the render result.",
+        default_factory=list,
+    )
     # target_type: str = Field(description="The target type to render the api as.")
 
 
@@ -55,7 +55,7 @@ class ApiRenderer(
 
         super().__init__(kiara=kiara, renderer_config=renderer_config)
 
-        filters = self.renderer_config.filter
+        filters: Union[None, str, Iterable[str]] = self.renderer_config.filter
         if not filters:
             filters = None
         elif isinstance(filters, str):

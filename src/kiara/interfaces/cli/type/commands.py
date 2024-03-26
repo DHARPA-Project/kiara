@@ -110,8 +110,9 @@ def hierarchy(ctx, include_internal) -> None:
 @click.pass_context
 def explain_data_type(ctx, type_name: str, format: str):
     """Print details of a data type."""
-    from kiara.interfaces.python_api import DataTypeClassInfo
 
+    from kiara.interfaces.python_api.models.info import DataTypeClassInfo
+    
     kiara_obj: Kiara = ctx.obj.kiara
 
     data_type = kiara_obj.type_registry.retrieve_data_type(

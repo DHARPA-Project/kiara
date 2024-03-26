@@ -7,7 +7,7 @@ from typing import (
     Any,
     Iterable,
     Mapping,
-    Union,
+    Union, Dict, Set,
 )
 
 from pydantic.fields import Field
@@ -164,7 +164,7 @@ class BaseApiRenderKiaraApiInputsSchema(BaseApiRenderInputsSchema):
     template_file: str = Field(
         description="The file that should contain the rendered code."
     )
-    target_file: Union[str] = Field(
+    target_file: Union[str, None] = Field(
         description="The file to write the rendered code to.", default=None
     )
 
@@ -172,7 +172,7 @@ class BaseApiRenderKiaraApiInputsSchema(BaseApiRenderInputsSchema):
 class BaseToKiaraApiRenderer(BaseApiRenderer):
 
     _renderer_name = "base_api_kiara_api_renderer"
-    _inputs_schema = BaseApiRenderKiaraApiInputsSchema
+    _inputs_schema = BaseApiRenderKiaraApiInputsSchema  # type: ignore
     _renderer_config_cls = BaseApiRendererConfig
 
     def __init__(
@@ -193,6 +193,8 @@ class BaseToKiaraApiRenderer(BaseApiRenderer):
     def _render(
         self, instance: BaseAPI, render_config: BaseApiRenderInputsSchema
     ) -> Any:
+
+        assert isinstance(render_config, BaseApiRenderKiaraApiInputsSchema)
 
         template_file = Path(render_config.template_file)
 
@@ -230,7 +232,7 @@ class BaseToKiaraApiRenderer(BaseApiRenderer):
         # endpoints = find_base_api_endpoints(BaseAPI, label=tag)
 
         endpoint_data = []
-        imports = {}
+        imports: Dict[str, Set[str]] = {}
         imports.setdefault("typing", set()).add("Dict")
         imports.setdefault("typing", set()).add("ClassVar")
 

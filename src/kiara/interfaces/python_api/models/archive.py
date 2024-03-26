@@ -71,17 +71,17 @@ class KiArchive(KiaraModel):
             jobs_archive_config = None
             jobs_archive = None
 
-        archives = [
+        _archives = [
             x
             for x in (data_archive, alias_archive, metadata_archive, jobs_archive)
             if x is not None
         ]
-        if not archives:
+        if not _archives:
             raise Exception(f"No archive found in file: {path}")
         else:
-            archive_id = archives[0].archive_id
-            archive_alias = archives[0].archive_name
-            for archive in archives:
+            archive_id = _archives[0].archive_id
+            archive_alias = _archives[0].archive_name
+            for archive in _archives:
                 if archive.archive_id != archive_id:
                     raise Exception(
                         f"Multiple different archive ids found in file: {path}"
@@ -175,7 +175,7 @@ class KiArchive(KiaraModel):
             )
             alias_store_config = alias_store.config
 
-            job_store: JobStore = create_new_archive(
+            job_store: JobStore = create_new_archive(  # type: ignore
                 archive_name=archive_name,
                 store_base_path=archive_base_path,
                 store_type="sqlite_job_store",

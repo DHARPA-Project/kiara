@@ -2117,7 +2117,7 @@ class BaseAPI(object):
                     for a in alias_map[alias]:
                         new_alias_map.setdefault(field, []).append(a)
 
-        result = self.store_values(
+        result: StoreValuesResult = self.store_values(
             values=new_values,
             alias_map=new_alias_map,
             allow_alias_overwrite=allow_alias_overwrite,
@@ -2191,7 +2191,7 @@ class BaseAPI(object):
             **target_store_params,
         )
 
-        result = self.store_values(
+        result: StoreValuesResult = self.store_values(
             values=values,
             alias_map=alias_map,
             allow_alias_overwrite=allow_alias_overwrite,
@@ -2555,7 +2555,7 @@ class BaseAPI(object):
         else:
             alias_map = False
 
-        result = self.store_values(
+        result: StoreValuesResult = self.store_values(
             source_values, alias_map=alias_map, store=target_archive_ref
         )
         return result

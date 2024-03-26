@@ -76,6 +76,6 @@ def get_metadata_model_for_data_type(kiara: "Kiara", data_type: str) -> "Metadat
         if data_type in supported:
             matching_types[name] = metadata_cls
 
-    result = MetadataTypeClassesInfo.create_from_type_items(kiara=kiara, group_title=f"Metadata models for type '{data_type}'", **matching_types)
+    result: MetadataTypeClassesInfo = MetadataTypeClassesInfo.create_from_type_items(kiara=kiara, group_title=f"Metadata models for type '{data_type}'", **matching_types)
 
     return result

@@ -254,13 +254,15 @@ class JobRegistry(object):
             raise Exception("No default job store set (yet).")
         return self._default_job_store  # type: ignore
 
-    def get_archive(self, store_id: Union[str, None] = None) -> JobArchive:
+    def get_archive(self, store_id: Union[str, None, uuid.UUID] = None) -> JobArchive:
 
         if store_id is None:
             store_id = self.default_job_store
             if store_id is None:
                 raise Exception("Can't retrieve deafult job archive, none set (yet).")
 
+        if isinstance(store_id, uuid.UUID):
+            raise NotImplementedError("Can't retrieve job archive by (uu)id (yet).")
         return self._job_archives[store_id]
 
     @property

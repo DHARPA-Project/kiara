@@ -16,9 +16,10 @@ from kiara.exceptions import (
     KiaraException,
     NoSuchExecutionTargetException,
 )
-from kiara.interfaces.python_api.base_api import BaseAPI, ValueMap
+from kiara.interfaces.python_api.base_api import BaseAPI
 from kiara.interfaces.python_api.utils import create_save_config
 from kiara.models.module.operation import Operation
+from kiara.models.values.value import ValueMap
 
 # from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.utils import log_exception
@@ -57,7 +58,7 @@ def validate_operation_in_terminal(
     #     operation_config=module_config,
     # )
     try:
-        operation = api.get_operation(operation=module_or_operation)
+        operation: Operation = api.get_operation(operation=module_or_operation)
         # validate that operation config is valid, ignoring inputs for now
         # kiara_op.operation
     except NoSuchExecutionTargetException as nset:

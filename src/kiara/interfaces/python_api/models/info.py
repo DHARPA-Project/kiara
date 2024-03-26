@@ -73,6 +73,12 @@ from kiara.utils.dates import to_human_readable_date_string
 from kiara.utils.json import orjson_dumps
 from kiara.utils.output import extract_renderable
 
+try:
+    from typing import Self  # type: ignore
+except ImportError:
+    from typing_extensions import Self  # type: ignore
+
+
 if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.data_types import DataType
@@ -327,7 +333,7 @@ class TypeInfoItemGroup(InfoItemGroup[TypeInfo]):
     @classmethod
     def create_from_type_items(
         cls, kiara: "Kiara", group_title: Union[str, None] = None, **items: Type
-    ) -> "TypeInfoItemGroup":
+    ) -> Self:
 
         type_infos: Mapping[str, TypeInfo[Any]] = {
             k: cls.base_info_class().create_from_type_class(type_cls=v, kiara=kiara)

@@ -7,12 +7,15 @@
 
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, TYPE_CHECKING, Dict
 
 import orjson
 
 from kiara import is_debug
 from kiara.utils import log_message
+
+if TYPE_CHECKING:
+    from sqlalchemy.engine import Engine
 
 
 def get_kiara_db_url(base_path: str):
@@ -39,6 +42,7 @@ def orm_json_deserialize(obj: str) -> Any:
     return orjson.loads(obj)
 
 
+
 def create_archive_engine(
     db_path: Path, force_read_only: bool, use_wal_mode: bool
 ) -> "Engine":
@@ -51,8 +55,8 @@ def create_archive_engine(
     #     execution_options = {"sqlite_wal_mode": True}
     # else:
 
-    connect_args = {}
-    execution_options = {}
+    connect_args: Dict[str, Any] = {}
+    execution_options: Dict[str, Any] = {}
 
     # TODO: enable this for read-only mode?
     # def _pragma_on_connect(dbapi_con, con_record):

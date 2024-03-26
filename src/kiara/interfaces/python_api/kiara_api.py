@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import uuid
-from collections.abc import Iterable, Mapping
 from pathlib import Path
 
 # BEGIN AUTO-GENERATED-IMPORTS

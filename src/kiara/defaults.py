@@ -144,6 +144,7 @@ CHUNK_CACHE_BASE_DIR = Path(kiara_app_dirs.user_cache_dir) / "data" / "chunks"
 CHUNK_CACHE_DIR_DEPTH = 2
 CHUNK_CACHE_DIR_WIDTH = 1
 
+
 class SpecialValue(Enum):
 
     NOT_SET = "__not_set__"

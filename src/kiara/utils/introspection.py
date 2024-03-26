@@ -143,7 +143,7 @@ def create_signature_string(
 
 def extract_arg_names(func: Callable) -> typing.List[str]:
     sig = inspect.signature(func)
-    return [name for name in sig.parameters.keys()]
+    return list(sig.parameters.keys())
 
 
 def extract_proxy_arg_str(func: Callable) -> str:

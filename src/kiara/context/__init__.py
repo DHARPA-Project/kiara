@@ -15,7 +15,6 @@ from kiara.context.runtime_config import KiaraRuntimeConfig
 from kiara.data_types import DataType
 from kiara.exceptions import KiaraContextException
 from kiara.interfaces import get_console
-from kiara.interfaces.python_api.base_api import BaseAPI
 from kiara.interfaces.python_api.models.info import (
     DataTypeClassesInfo,
     InfoItemGroup,

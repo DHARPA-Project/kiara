@@ -5,9 +5,11 @@ from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
+    Dict,
     Iterable,
     Mapping,
-    Union, Dict, Set,
+    Set,
+    Union,
 )
 
 from pydantic.fields import Field
@@ -323,6 +325,7 @@ class BaseToKiaraApiRenderer(BaseApiRenderer):
             target_file = Path(render_config.target_file)
             target_file.parent.mkdir(parents=True, exist_ok=True)
             target_file.write_text(new_content)
-            print(f"Rendered api to file '{target_file}'.")
+            terminal_print()
+            terminal_print(f"Rendered api to file '{target_file}'.")
         else:
             return new_content

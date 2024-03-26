@@ -2199,8 +2199,7 @@ class BaseAPI(object):
         )
 
         if export_related_metadata:
-            print("TODO: Export related metadata.")
-            # raise NotImplementedError("xx")
+            raise NotImplementedError("Exporting related metadata not implemented yet.")
 
         if additional_archive_metadata:
             for k, v in additional_archive_metadata.items():

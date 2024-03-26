@@ -7,7 +7,6 @@ from pydantic import Field, PrivateAttr
 
 from kiara.defaults import CHUNK_COMPRESSION_TYPE
 from kiara.models import KiaraModel
-from kiara.registries.jobs import JobArchive
 
 if TYPE_CHECKING:
     from kiara.context import Kiara

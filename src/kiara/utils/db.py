@@ -7,7 +7,7 @@
 
 import os
 from pathlib import Path
-from typing import Any, TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING, Any, Dict
 
 import orjson
 
@@ -40,7 +40,6 @@ def get_kiara_db_url(base_path: str):
 
 def orm_json_deserialize(obj: str) -> Any:
     return orjson.loads(obj)
-
 
 
 def create_archive_engine(

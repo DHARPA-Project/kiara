@@ -44,5 +44,3 @@ class ValueMetadata(KiaraModel):
 
     def _retrieve_data_to_hash(self) -> Any:
         return {"metadata": self.model_dump(), "schema": self.schema_json()}
-
-

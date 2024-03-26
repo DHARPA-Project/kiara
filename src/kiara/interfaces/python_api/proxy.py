@@ -272,12 +272,10 @@ class ApiEndpoints(object):
 
         temp = []
 
-        avail_methods = [
-            member
-            for member in inspect.getmembers(
-                self._api_cls, predicate=inspect.isfunction
-            )
-        ]
+        avail_methods = list(
+            inspect.getmembers(self._api_cls, predicate=inspect.isfunction)
+        )
+
         avail_methods.sort(key=lambda x: inspect.getsourcelines(x[1])[1])
 
         method_names = [x[0] for x in avail_methods]

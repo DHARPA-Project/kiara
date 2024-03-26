@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 from functools import lru_cache
+
 #  Copyright (c) 2021, University of Luxembourg / DHARPA project
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
-from typing import Dict, Type, Union, Mapping, TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Type, Union
 
 from kiara.models.values.value_metadata import ValueMetadata
 from kiara.registries.models import ModelRegistry
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
-    from kiara.interfaces.python_api.models.info import MetadataTypeClassesInfo, MetadataTypeInfo
+    from kiara.interfaces.python_api.models.info import (
+        MetadataTypeClassesInfo,
+    )
 
 
 @lru_cache()
@@ -45,7 +47,9 @@ def find_metadata_models(
     return group
 
 
-def get_metadata_model_for_data_type(kiara: "Kiara", data_type: str) -> "MetadataTypeClassesInfo":
+def get_metadata_model_for_data_type(
+    kiara: "Kiara", data_type: str
+) -> "MetadataTypeClassesInfo":
     """
     Return all available metadata extract operations for the provided type (and it's parent types).
 
@@ -60,9 +64,8 @@ def get_metadata_model_for_data_type(kiara: "Kiara", data_type: str) -> "Metadat
 
     from kiara.interfaces.python_api.models.info import MetadataTypeClassesInfo
 
-    lineage = set(
-        kiara.type_registry.get_type_lineage(data_type_name=data_type)
-    )
+    # TODO: add models for parent types?
+    # lineage = set(kiara.type_registry.get_type_lineage(data_type_name=data_type))
 
     model_registry = ModelRegistry.instance()
     all_metadata_models = model_registry.get_models_of_type(ValueMetadata)
@@ -76,6 +79,10 @@ def get_metadata_model_for_data_type(kiara: "Kiara", data_type: str) -> "Metadat
         if data_type in supported:
             matching_types[name] = metadata_cls
 
-    result: MetadataTypeClassesInfo = MetadataTypeClassesInfo.create_from_type_items(kiara=kiara, group_title=f"Metadata models for type '{data_type}'", **matching_types)
+    result: MetadataTypeClassesInfo = MetadataTypeClassesInfo.create_from_type_items(
+        kiara=kiara,
+        group_title=f"Metadata models for type '{data_type}'",
+        **matching_types,
+    )
 
     return result

@@ -21,7 +21,12 @@ import orjson
 from sqlalchemy import text
 from sqlalchemy.engine import Connection, Engine
 
-from kiara.defaults import CHUNK_COMPRESSION_TYPE, kiara_app_dirs, CHUNK_CACHE_BASE_DIR, CHUNK_CACHE_DIR_DEPTH, CHUNK_CACHE_DIR_WIDTH
+from kiara.defaults import (
+    CHUNK_CACHE_BASE_DIR,
+    CHUNK_CACHE_DIR_DEPTH,
+    CHUNK_CACHE_DIR_WIDTH,
+    CHUNK_COMPRESSION_TYPE,
+)
 from kiara.models.values.value import PersistedData, Value
 from kiara.registries import (
     ARCHIVE_CONFIG_CLS,
@@ -171,6 +176,7 @@ CREATE TABLE IF NOT EXISTS values_metadata (
     value_id TEXT PRIMARY KEY,
     value_hash TEXT NOT NULL,
     value_size INTEGER NOT NULL,
+    value_created TEXT NOT NULL,
     data_type_name TEXT NOT NULL,
     value_metadata TEXT NOT NULL
 );
@@ -698,16 +704,19 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
         value_size = value.value_size
         data_type_name = value.data_type_name
 
+        value_created = value.value_created.isoformat()
+
         metadata = value.model_dump_json()
 
         sql = text(
-            "INSERT INTO values_metadata (value_id, value_hash, value_size, data_type_name, value_metadata) VALUES (:value_id, :value_hash, :value_size, :data_type_name, :metadata)"
+            "INSERT INTO values_metadata (value_id, value_hash, value_size, value_created, data_type_name, value_metadata) VALUES (:value_id, :value_hash, :value_size, :value_created, :data_type_name, :metadata)"
         )
         with self.sqlite_engine.connect() as conn:
             params = {
                 "value_id": value_id,
                 "value_hash": value_hash,
                 "value_size": value_size,
+                "value_created": value_created,
                 "data_type_name": data_type_name,
                 "metadata": metadata,
             }

@@ -20,10 +20,8 @@ if TYPE_CHECKING:
         ValueInfo,
         ValuesInfo,
     )
-    from kiara.interfaces.python_api.models.job import JobDesc
     from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
     from kiara.models.context import ContextInfo, ContextInfos
-    from kiara.models.module.manifest import Manifest
     from kiara.models.module.operation import Operation
     from kiara.models.values.value import Value, ValueMapReadOnly
 
@@ -40,6 +38,7 @@ if TYPE_CHECKING:
     )
     from kiara.models.archives import KiArchiveInfo
     from kiara.models.module.jobs import ActiveJob, JobRecord
+    from kiara.models.module.manifest import Manifest
 
 
 class KiaraAPI(object):
@@ -100,11 +99,11 @@ class KiaraAPI(object):
 
     def run_job(
         self,
-        operation: Union[str, Path, Manifest, OperationInfo, JobDesc],
+        operation: Union[str, Path, "Manifest", "OperationInfo", "JobDesc"],
         inputs: Mapping[str, Any],
         comment: str,
         operation_config: Union[None, Mapping[str, Any]] = None,
-    ) -> ValueMapReadOnly:
+    ) -> "ValueMapReadOnly":
         """
         Run a job from a operation id, module_name (and config), or pipeline file, wait for the job to finish and retrieve the result.
 
@@ -127,6 +126,11 @@ class KiaraAPI(object):
 
         """
 
+        if not comment:
+            from kiara.exceptions import KiaraException
+
+            raise KiaraException(msg="Can't submit job: no comment provided.")
+
         return self._api.run_job(
             operation=operation,
             inputs=inputs,
@@ -136,7 +140,7 @@ class KiaraAPI(object):
 
     def queue_job(
         self,
-        operation: Union[str, Path, Manifest, OperationInfo, JobDesc],
+        operation: Union[str, Path, "Manifest", "OperationInfo", "JobDesc"],
         inputs: Mapping[str, Any],
         comment: str,
         operation_config: Union[None, Mapping[str, Any]] = None,
@@ -182,11 +186,11 @@ class KiaraAPI(object):
         if isinstance(job_id, str):
             job_id = uuid.UUID(job_id)
 
-        metadata = CommentMetadata(comment=comment)
-        items = {"comment": comment}
+        comment_metadata = CommentMetadata(comment=comment)
+        items = {"comment": comment_metadata}
 
         self._api.context.metadata_registry.register_job_metadata_items(
-            job_id=job_id, items=items, force=force
+            job_id=job_id, items=items
         )
 
     def get_job_comment(self, job_id: Union[str, uuid.UUID]) -> Union[str, None]:
@@ -208,7 +212,7 @@ class KiaraAPI(object):
 
         metadata: Union[
             None, CommentMetadata
-        ] = self.context.metadata_registry.retrieve_job_metadata_item(  # type: ignore
+        ] = self._api.context.metadata_registry.retrieve_job_metadata_item(
             job_id=job_id, key="comment"
         )
 
@@ -1077,73 +1081,6 @@ class KiaraAPI(object):
             source_archive=source_archive,
             source_registered_name=source_registered_name,
             no_aliases=no_aliases,
-        )
-        return result
-
-    def queue_job(
-        self,
-        operation: Union[str, "Path", "Manifest", "OperationInfo", "JobDesc"],
-        inputs: Union[Mapping[str, Any], None],
-        operation_config: Union[None, Mapping[str, Any]] = None,
-        **job_metadata: Any,
-    ) -> "UUID":
-        """Queue a job from a operation id, module_name (and config), or pipeline file, wait for the job to finish and retrieve the result.
-
-        This is a convenience method that auto-detects what is meant by the 'operation' string input argument.
-
-        If the 'operation' is a JobDesc instance, and that JobDesc instance has the 'save' attribute
-        set, it will be ignored, so you'll have to store any results manually.
-
-        Arguments:
-            operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..
-            inputs: the operation inputs
-            operation_config: the (optional) module config in case 'operation' is a module name
-            job_metadata: additional metadata to store with the job
-
-        Returns:
-            the queued job id
-        """
-
-        result: "UUID" = self._api.queue_job(
-            operation=operation,
-            inputs=inputs,
-            operation_config=operation_config,
-            **job_metadata,
-        )
-        return result
-
-    def run_job(
-        self,
-        operation: Union[str, "Path", "Manifest", "OperationInfo", "JobDesc"],
-        inputs: Union[None, Mapping[str, Any]] = None,
-        operation_config: Union[None, Mapping[str, Any]] = None,
-        **job_metadata: Any,
-    ) -> "ValueMapReadOnly":
-        """Run a job from a operation id, module_name (and config), or pipeline file, wait for the job to finish and retrieve the result.
-
-        This is a convenience method that auto-detects what is meant by the 'operation' string input argument.
-
-        In general, try to avoid this method and use 'queue_job', 'get_job' and 'retrieve_job_result' manually instead,
-        since this is a blocking operation.
-
-        If the 'operation' is a JobDesc instance, and that JobDesc instance has the 'save' attribute
-        set, it will be ignored, so you'll have to store any results manually.
-
-        Arguments:
-            operation: a module name, operation id, or a path to a pipeline file (resolved in this order, until a match is found)..
-            inputs: the operation inputs
-            operation_config: the (optional) module config in case 'operation' is a module name
-            **job_metadata: additional metadata to store with the job
-
-        Returns:
-            the job result value map
-        """
-
-        result: "ValueMapReadOnly" = self._api.run_job(
-            operation=operation,
-            inputs=inputs,
-            operation_config=operation_config,
-            **job_metadata,
         )
         return result
 

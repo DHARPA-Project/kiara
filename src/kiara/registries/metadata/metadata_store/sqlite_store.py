@@ -7,8 +7,10 @@ import orjson
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
+from kiara.exceptions import KiaraException
 from kiara.registries import SqliteArchiveConfig
 from kiara.registries.metadata import MetadataArchive, MetadataStore
+from kiara.utils.dates import get_current_time_incl_timezone
 from kiara.utils.db import create_archive_engine, delete_archive_db
 
 REQUIRED_METADATA_TABLES = {
@@ -123,6 +125,7 @@ CREATE TABLE IF NOT EXISTS metadata_schemas (
 );
 CREATE TABLE IF NOT EXISTS metadata (
     metadata_item_id TEXT PRIMARY KEY,
+    metadata_item_created TEXT NOT NULL,
     metadata_item_key TEXT NOT NULL,
     metadata_item_hash TEXT NOT NULL,
     model_type_id TEXT NOT NULL,
@@ -133,7 +136,9 @@ CREATE TABLE IF NOT EXISTS metadata (
 );
 CREATE TABLE IF NOT EXISTS metadata_references (
     reference_item_type TEXT NOT NULL,
+    reference_item_key TEXT NOT NULL,
     reference_item_id TEXT NOT NULL,
+    reference_created TEXT NOT NULL,
     metadata_item_id TEXT NOT NULL,
     FOREIGN KEY (metadata_item_id) REFERENCES metadata (metadata_item_id)
 );
@@ -149,7 +154,7 @@ CREATE TABLE IF NOT EXISTS metadata_references (
         return self._cached_engine
 
     def _retrieve_referenced_metadata_item_data(
-        self, key: str, reference_type: str, reference_id: str
+        self, key: str, reference_type: str, reference_key: str, reference_id: str
     ) -> Union[Tuple[str, Mapping[str, Any]], None]:
 
         sql = text(
@@ -157,25 +162,35 @@ CREATE TABLE IF NOT EXISTS metadata_references (
             SELECT m.model_type_id, m.metadata_value
             FROM metadata m
             JOIN metadata_references r ON m.metadata_item_id = r.metadata_item_id
-            WHERE r.reference_item_type = :reference_type AND r.reference_item_id = :reference_id and m.metadata_item_key = :key
+            WHERE r.reference_item_type = :reference_type AND r.reference_item_key = :reference_key AND r.reference_item_id = :reference_id and m.metadata_item_key = :key
         """
         )
 
         with self.sqlite_engine.connect() as connection:
             parmas = {
                 "reference_type": reference_type,
+                "reference_key": reference_key,
                 "reference_id": reference_id,
                 "key": key,
             }
             result = connection.execute(sql, parmas)
-            row = result.fetchone()
-            if row is None:
+            row = result.fetchall()
+            if not row:
                 return None
 
-            data_str = row[1]
+            if len(row) > 1:
+                msg = f"Multiple ({len(row)}) metadata items found for key '{key}'"
+                if reference_type:
+                    msg += f" and reference type '{reference_type}'"
+                if reference_id:
+                    msg += f" and reference id '{reference_id}'"
+                msg += "."
+                raise KiaraException(msg)
+
+            data_str = row[0][1]
             data = orjson.loads(data_str)
 
-            return (row[0], data)
+            return (row[0][0], data)
 
     def _delete_archive(self):
 
@@ -246,24 +261,23 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
         value_hash: str,
         model_type_id: str,
         model_schema_hash: str,
-        force: bool = False,
     ) -> uuid.UUID:
 
         from kiara.registries.ids import ID_REGISTRY
 
-        if force:
-            sql = text(
-                "INSERT OR REPLACE INTO metadata (metadata_item_id, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)"
-            )
-        else:
-            sql = text(
-                "INSERT OR IGNORE INTO metadata (metadata_item_id, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)"
-            )
+        metadata_item_created = get_current_time_incl_timezone().isoformat()
 
-        metadata_item_id = ID_REGISTRY.generate(comment="new metadata item id")
+        sql = text(
+            "INSERT OR IGNORE INTO metadata (metadata_item_id, metadata_item_created, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_created, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)"
+        )
+
+        metadata_item_id = ID_REGISTRY.generate(
+            comment="new provisional metadata item id"
+        )
 
         params = {
             "metadata_item_id": str(metadata_item_id),
+            "metadata_item_created": metadata_item_created,
             "metadata_item_key": key,
             "metadata_item_hash": value_hash,
             "model_type_id": model_type_id,
@@ -271,24 +285,60 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
             "metadata_value": value_json,
         }
 
+        query_metadata_id = text(
+            "SELECT metadata_item_id FROM metadata WHERE metadata_item_key = :metadata_item_key AND metadata_item_hash = :metadata_item_hash"
+        )
+        query_metadata_params = {
+            "metadata_item_key": key,
+            "metadata_item_hash": value_hash,
+        }
+
         with self.sqlite_engine.connect() as conn:
             conn.execute(sql, params)
+            result = conn.execute(query_metadata_id, query_metadata_params)
+            metadata_item_id = uuid.UUID(result.fetchone()[0])
             conn.commit()
 
         return metadata_item_id
 
     def _store_metadata_reference(
-        self, reference_item_type: str, reference_item_id: str, metadata_item_id: str
+        self,
+        reference_item_type: str,
+        reference_item_key: str,
+        reference_item_id: str,
+        metadata_item_id: str,
+        replace_existing_references: bool = False,
+        allow_multiple_references: bool = False,
     ) -> None:
 
-        sql = text(
-            "INSERT INTO metadata_references (reference_item_type, reference_item_id, metadata_item_id) VALUES (:reference_item_type, :reference_item_id, :metadata_item_id)"
-        )
-        params = {
-            "reference_item_type": reference_item_type,
-            "reference_item_id": reference_item_id,
-            "metadata_item_id": metadata_item_id,
-        }
-        with self.sqlite_engine.connect() as conn:
-            conn.execute(sql, params)
-            conn.commit()
+        if not replace_existing_references:
+            raise NotImplementedError(
+                "not replacing existing metadata references is not yet supported"
+            )
+
+        else:
+
+            sql_replace = text(
+                "DELETE FROM metadata_references WHERE reference_item_type = :reference_item_type AND reference_item_key = :reference_item_key AND reference_item_id = :reference_item_id"
+            )
+            sql_replace_params = {
+                "reference_item_type": reference_item_type,
+                "reference_item_key": reference_item_key,
+                "reference_item_id": reference_item_id,
+            }
+
+            metadata_reference_created = get_current_time_incl_timezone().isoformat()
+            sql_insert = text(
+                "INSERT INTO metadata_references (reference_item_type, reference_item_key, reference_item_id, reference_created, metadata_item_id) VALUES (:reference_item_type, :reference_item_key, :reference_item_id, :reference_created, :metadata_item_id)"
+            )
+            sql_insert_params = {
+                "reference_item_type": reference_item_type,
+                "reference_item_key": reference_item_key,
+                "reference_item_id": reference_item_id,
+                "reference_created": metadata_reference_created,
+                "metadata_item_id": metadata_item_id,
+            }
+            with self.sqlite_engine.connect() as conn:
+                conn.execute(sql_replace, sql_replace_params)
+                conn.execute(sql_insert, sql_insert_params)
+                conn.commit()

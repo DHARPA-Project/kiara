@@ -35,10 +35,21 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
 
     def retrieve_metadata_item(
         self,
-        key: str,
+        metadata_item_key: str,
         reference_type: Union[str, None] = None,
+        reference_key: Union[str, None] = None,
         reference_id: Union[str, None] = None,
     ) -> Union[Tuple[str, Mapping[str, Any]], None]:
+        """Return the model type and model data for the specified metadata item.
+
+        If more than one item matches, an exception is raised.
+
+        Arguments:
+            metadata_item_key: The key of the metadata item to retrieve.
+            reference_type: The type of the referenced item.
+            reference_key: The key of the referenced item.
+            reference_id: The id of the referenced item.
+        """
 
         if reference_id and not reference_type:
             raise ValueError(
@@ -50,7 +61,10 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
                     msg="reference_id must set also if reference_type is set."
                 )
             result = self._retrieve_referenced_metadata_item_data(
-                key=key, reference_type=reference_type, reference_id=reference_id
+                key=metadata_item_key,
+                reference_type=reference_type,
+                reference_key=reference_key,
+                reference_id=reference_id,
             )
             if result is None:
                 return None
@@ -63,7 +77,7 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
 
     @abc.abstractmethod
     def _retrieve_referenced_metadata_item_data(
-        self, key: str, reference_type: str, reference_id: str
+        self, key: str, reference_type: str, reference_key: str, reference_id: str
     ) -> Union[Tuple[str, Mapping[str, Any]], None]:
         """Return the model type id and model data for the specified referenced metadata item."""
 
@@ -97,8 +111,10 @@ class MetadataStore(MetadataArchive):
         key: str,
         item: KiaraMetadata,
         reference_item_type: Union[str, None] = None,
+        reference_item_key: Union[str, None] = None,
         reference_item_id: Union[str, None] = None,
-        force: bool = False,
+        replace_existing_references: bool = False,
+        allow_multiple_references: bool = False,
         store: Union[str, uuid.UUID, None] = None,
     ) -> uuid.UUID:
         """Store a metadata item into the store.
@@ -141,7 +157,6 @@ class MetadataStore(MetadataArchive):
                 value_hash=data_hash,
                 model_type_id=model_type,
                 model_schema_hash=model_schema_hash,
-                force=force,
             )
             self._schema_stored_item[data_hash] = metadata_item_id
 
@@ -154,15 +169,27 @@ class MetadataStore(MetadataArchive):
 
         if reference_item_type:
             assert reference_item_id is not None
+            assert reference_item_key is not None
             self._store_metadata_reference(
-                reference_item_type, reference_item_id, str(metadata_item_id)
+                reference_item_type=reference_item_type,
+                reference_item_key=reference_item_key,
+                reference_item_id=reference_item_id,
+                metadata_item_id=str(metadata_item_id),
+                replace_existing_references=replace_existing_references,
+                allow_multiple_references=allow_multiple_references,
             )
 
         return metadata_item_id
 
     @abc.abstractmethod
     def _store_metadata_reference(
-        self, reference_item_type: str, reference_item_id: str, metadata_item_id: str
+        self,
+        reference_item_type: str,
+        reference_item_key: str,
+        reference_item_id: str,
+        metadata_item_id: str,
+        replace_existing_references: bool = False,
+        allow_multiple_references: bool = False,
     ) -> None:
         pass
 
@@ -174,6 +201,5 @@ class MetadataStore(MetadataArchive):
         value_hash: str,
         model_type_id: str,
         model_schema_hash: str,
-        force: bool = False,
     ) -> uuid.UUID:
         pass

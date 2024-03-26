@@ -2649,7 +2649,7 @@ class BaseAPI(object):
     # metadata-related methods
 
     def register_metadata(
-        self, key: str, value: str, force: bool = False, store: Union[str, None] = None
+        self, key: str, value: str, store: Union[str, None] = None
     ) -> uuid.UUID:
         """Register a comment into the specified metadata store.
 
@@ -2667,7 +2667,6 @@ class BaseAPI(object):
         Arguments:
             key: the key under which to store the metadata (can be anything you can think of)
             value: the comment you want to store
-            force: overwrite the existing value if its key already exists in the store
             store: the store to use, by default the context default is used
 
         Returns:
@@ -2682,7 +2681,7 @@ class BaseAPI(object):
         item = CommentMetadata(comment=value)
 
         return self.context.metadata_registry.register_metadata_item(
-            key=key, item=item, force=force, store=store
+            key=key, item=item, store=store
         )
 
     # ------------------------------------------------------------------------------------------------------------------

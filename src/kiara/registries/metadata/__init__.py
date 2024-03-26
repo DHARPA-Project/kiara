@@ -145,6 +145,7 @@ class MetadataRegistry(object):
         self,
         key: str,
         reference_item_type: Union[str, None] = None,
+        reference_item_key: Union[str, None] = None,
         reference_item_id: Union[str, None] = None,
         store: Union[str, uuid.UUID, None] = None,
     ) -> Union[KiaraMetadata, None]:
@@ -153,7 +154,10 @@ class MetadataRegistry(object):
         mounted_store: MetadataStore = self.get_archive(archive_id_or_alias=store)  # type: ignore
 
         result = mounted_store.retrieve_metadata_item(
-            key=key, reference_type=reference_item_type, reference_id=reference_item_id
+            metadata_item_key=key,
+            reference_type=reference_item_type,
+            reference_key=reference_item_key,
+            reference_id=reference_item_id,
         )
 
         if result is None:
@@ -172,8 +176,10 @@ class MetadataRegistry(object):
         key: str,
         item: KiaraMetadata,
         reference_item_type: Union[str, None] = None,
+        reference_item_key: Union[str, None] = None,
         reference_item_id: Union[str, None] = None,
-        force: bool = False,
+        replace_existing_references: bool = False,
+        allow_multiple_references: bool = False,
         store: Union[str, uuid.UUID, None] = None,
     ) -> uuid.UUID:
 
@@ -183,8 +189,10 @@ class MetadataRegistry(object):
             key=key,
             item=item,
             reference_item_type=reference_item_type,
+            reference_item_key=reference_item_key,
             reference_item_id=reference_item_id,
-            force=force,
+            replace_existing_references=replace_existing_references,
+            allow_multiple_references=allow_multiple_references,
         )
 
     def register_job_metadata_items(
@@ -192,21 +200,37 @@ class MetadataRegistry(object):
         job_id: uuid.UUID,
         items: Mapping[str, Any],
         store: Union[str, uuid.UUID, None] = None,
-        force: bool = False,
+        reference_item_key: Union[str, None] = None,
+        replace_existing_references: bool = True,
+        allow_multiple_references: bool = False,
     ) -> None:
 
         for key, value in items.items():
+
+            _reference_item_key = None
             if isinstance(value, str):
                 value = CommentMetadata(comment=value)
+                if not reference_item_key:
+                    _reference_item_key = "comment"
+                else:
+                    _reference_item_key = reference_item_key
+            elif isinstance(value, CommentMetadata):
+                _reference_item_key = "comment"
             elif not isinstance(value, KiaraMetadata):
                 raise Exception(f"Invalid metadata value for key '{key}': {value}")
+
+            if not _reference_item_key:
+                _reference_item_key = value._kiara_model_id
+
             self.register_metadata_item(
                 key=key,
                 item=value,
                 reference_item_type="job",
+                reference_item_key=_reference_item_key,
                 reference_item_id=str(job_id),
                 store=store,
-                force=force,
+                replace_existing_references=replace_existing_references,
+                allow_multiple_references=allow_multiple_references,
             )
 
     def retrieve_job_metadata_items(self, job_id: uuid.UUID):
@@ -220,6 +244,7 @@ class MetadataRegistry(object):
         return self.retrieve_metadata_item(
             key=key,
             reference_item_type="job",
+            reference_item_key="comment",
             reference_item_id=str(job_id),
             store=store,
         )

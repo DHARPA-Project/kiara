@@ -489,7 +489,9 @@ class Kiara(object):
             value = _values[field_name]
             try:
                 if field_aliases:
-                    self.alias_registry.register_aliases(value.value_id, *field_aliases)
+                    self.alias_registry.register_aliases(
+                        value_id=value.value_id, aliases=field_aliases
+                    )
 
                 stored[field_name] = StoreValueResult(
                     value=value,

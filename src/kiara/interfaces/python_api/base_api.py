@@ -1679,6 +1679,21 @@ class BaseAPI(object):
         )
         return infos  # type: ignore
 
+    def register_value_alias(
+        self,
+        value: Union[str, Value, uuid.UUID],
+        alias: Union[str, Iterable[str]],
+        allow_overwrite: bool = False,
+        alias_store: Union[str, None] = None,
+    ) -> None:
+
+        self.context.alias_registry.register_aliases(
+            value_id=value,
+            aliases=alias,
+            allow_overwrite=allow_overwrite,
+            alias_store=alias_store,
+        )
+
     def assemble_value_map(
         self,
         values: Mapping[str, Union[uuid.UUID, None, str, Value, Any]],
@@ -1795,8 +1810,8 @@ class BaseAPI(object):
             alias_store: the registered name (or archive id as string) of the store to persist the alias(es)/value_id mapping
             set_as_store_default: whether to set the specified store as the default store for the value
         """
-        if isinstance(alias, str):
-            alias = [alias]
+        # if isinstance(alias, str):
+        #     alias = [alias]
 
         value_obj = self.get_value(value)
         persisted_data: Union[None, PersistedData] = None
@@ -1812,8 +1827,8 @@ class BaseAPI(object):
             )
             if alias:
                 self.context.alias_registry.register_aliases(
-                    value_obj.value_id,
-                    *alias,
+                    value_obj,
+                    alias,
                     allow_overwrite=allow_overwrite,
                     alias_store=alias_store,
                 )

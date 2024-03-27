@@ -8,6 +8,7 @@ from sqlalchemy.engine import Engine
 
 from kiara.registries import SqliteArchiveConfig
 from kiara.registries.aliases import AliasArchive, AliasStore
+from kiara.utils.dates import get_current_time_incl_timezone
 from kiara.utils.db import create_archive_engine, delete_archive_db
 
 
@@ -106,7 +107,8 @@ class SqliteAliasArchive(AliasArchive):
         create_table_sql = """
 CREATE TABLE IF NOT EXISTS aliases (
     alias TEXT PRIMARY KEY,
-    value_id TEXT NOT NULL
+    value_id TEXT NOT NULL,
+    alias_created TEXT NOT NULL
 );
 """
         with self._cached_engine.begin() as connection:
@@ -194,12 +196,21 @@ class SqliteAliasStore(SqliteAliasArchive, AliasStore):
 
     def register_aliases(self, value_id: uuid.UUID, *aliases: str):
 
+        alias_created = get_current_time_incl_timezone().isoformat()
+
         sql = text(
-            "INSERT OR REPLACE INTO aliases (alias, value_id) VALUES (:alias, :value_id)"
+            "INSERT OR REPLACE INTO aliases (alias, value_id, alias_created) VALUES (:alias, :value_id, :alias_created)"
         )
 
         with self.sqlite_engine.connect() as connection:
-            params = [{"alias": alias, "value_id": str(value_id)} for alias in aliases]
+            params = [
+                {
+                    "alias": alias,
+                    "value_id": str(value_id),
+                    "alias_created": alias_created,
+                }
+                for alias in aliases
+            ]
 
             for param in params:
                 connection.execute(sql, param)

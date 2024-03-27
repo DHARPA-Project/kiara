@@ -27,10 +27,11 @@
 - add convenience api endpoint `get_values`
 - improved input options for 'store_values' API endpoint
 - added 'value_created' property on 'Value' instances
-- fix: plugin info for plugins with '-'
-- add '--runtime-info' cli flag
 - require a 'comment' for every `run_job`/`queue_job` call
+- add '--runtime-info' cli flag
+- fix: plugin info for plugins with '-' in name
 - moved `KiaraAPI` class to `kiara.interfaces.python_api.kiara_api` module (the 'offical' import path `kiara.api.KiaraAPI` is still available, and should be used)
+- have `KiaraAPI` proxy a `BaseAPI` class, to make it easier to extend the API and keep it stable
 
 ## Version 0.5.9
 

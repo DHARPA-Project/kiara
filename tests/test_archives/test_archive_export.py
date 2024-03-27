@@ -103,7 +103,9 @@ def test_archive_export_values_no_alias(api: BaseAPI):
         temp_file_path = temp_file_path.resolve()
         print("temp_file_path", temp_file_path.as_posix())
 
-        store_result = api.export_values(temp_file_path, result, alias_map=False)
+        store_result = api.export_values(
+            temp_file_path, result, alias_map=False, export_related_metadata=False
+        )
 
         if not temp_file_path.is_file():
             raise Exception(f"Export file {temp_file_path.as_posix()} was not created")
@@ -115,7 +117,6 @@ def test_archive_export_values_no_alias(api: BaseAPI):
 
         required_tables = [
             "values_pedigree",
-            "environments",
             "values_metadata",
             "archive_metadata",
             "aliases",
@@ -130,7 +131,6 @@ def test_archive_export_values_no_alias(api: BaseAPI):
         check_tables_are_not_empty(
             temp_file_path,
             "values_pedigree",
-            "environments",
             "values_metadata",
             "archive_metadata",
             "values_data",
@@ -156,7 +156,9 @@ def test_archive_export_values_alias(api: BaseAPI):
         temp_file_path = temp_file_path.resolve()
         print("temp_file_path", temp_file_path.as_posix())
 
-        store_result = api.export_values(temp_file_path, result, alias_map=True)
+        store_result = api.export_values(
+            temp_file_path, result, alias_map=True, export_related_metadata=False
+        )
 
         if not temp_file_path.is_file():
             raise Exception(f"Export file {temp_file_path.name} was not created")
@@ -168,7 +170,6 @@ def test_archive_export_values_alias(api: BaseAPI):
 
         required_tables = [
             "values_pedigree",
-            "environments",
             "values_metadata",
             "archive_metadata",
             "aliases",
@@ -181,7 +182,6 @@ def test_archive_export_values_alias(api: BaseAPI):
         check_tables_are_not_empty(
             temp_file_path,
             "values_pedigree",
-            "environments",
             "values_metadata",
             "archive_metadata",
             "values_data",
@@ -222,7 +222,9 @@ def test_archive_export_values_alias_multipe_values(api: BaseAPI):
         temp_file_path = temp_file_path.resolve()
         print("temp_file_path", temp_file_path.as_posix())
 
-        store_result = api.export_values(temp_file_path, results, alias_map=True)
+        store_result = api.export_values(
+            temp_file_path, results, alias_map=True, export_related_metadata=False
+        )
 
         if not temp_file_path.is_file():
             raise Exception(f"Export file {temp_file_path.name} was not created")
@@ -235,7 +237,6 @@ def test_archive_export_values_alias_multipe_values(api: BaseAPI):
 
         required_tables = [
             "values_pedigree",
-            "environments",
             "values_metadata",
             "archive_metadata",
             "aliases",
@@ -248,7 +249,6 @@ def test_archive_export_values_alias_multipe_values(api: BaseAPI):
         check_tables_are_not_empty(
             temp_file_path,
             "values_pedigree",
-            "environments",
             "values_metadata",
             "archive_metadata",
             "values_data",

@@ -9,7 +9,6 @@ import contextlib
 import os
 import sys
 import uuid
-from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -21,7 +20,6 @@ from typing import (
     Union,
 )
 
-from kiara.defaults import KIARA_CONFIG_FILE_NAME, KIARA_MAIN_CONFIG_FILE
 from kiara.exceptions import KiaraException
 from kiara.utils.cli import terminal_print
 
@@ -221,6 +219,12 @@ def set_console_width(width: Union[int, None] = None, prefer_env: bool = True):
 
 
 class KiaraAPIWrap(object):
+    """A wrapper class to help with lazy loading.
+
+    This is mostly relevant in terms of Python imports and the cli, because that allows
+    to avoid importing lots of Python modules if only `--help` is called.
+    """
+
     def __init__(
         self,
         config: Union[str, None],
@@ -291,47 +295,15 @@ class KiaraAPIWrap(object):
 
         if self._kiara_config is not None:
             return self._kiara_config
-        from kiara.context.config import KiaraConfig
 
-        # kiara_config: Optional[KiaraConfig] = None
-        exists = False
-        create = False
-        if self._config:
-            config_path = Path(self._config)
-            if config_path.exists():
-                if config_path.is_file():
-                    config_file_path = config_path
-                    exists = True
-                else:
-                    config_file_path = config_path / KIARA_CONFIG_FILE_NAME
-                    if config_file_path.exists():
-                        exists = True
-            else:
-                config_path.parent.mkdir(parents=True, exist_ok=True)
-                config_file_path = config_path
+        try:
+            from kiara.utils.config import assemble_kiara_config
 
-        else:
-            config_file_path = Path(KIARA_MAIN_CONFIG_FILE)
-            if not config_file_path.exists():
-                create = True
-                exists = False
-            else:
-                exists = True
-
-        if not exists:
-            if not create:
-                from kiara.utils.cli import terminal_print
-
-                terminal_print()
-                terminal_print(
-                    f"Can't create kiara context, specified config file does not exist: {self._config}."
-                )
-                sys.exit(1)
-
-            kiara_config = KiaraConfig()
-            kiara_config.save(config_file_path)
-        else:
-            kiara_config = KiaraConfig.load_from_file(config_file_path)
+            kiara_config = assemble_kiara_config(config_file=self._config)
+        except Exception as e:
+            terminal_print()
+            terminal_print(f"Error loading kiara config: {e}")
+            sys.exit(1)
 
         kiara_config.runtime_config.runtime_profile = "default"
 

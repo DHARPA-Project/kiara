@@ -3,7 +3,7 @@ import uuid
 from pathlib import Path
 
 # BEGIN AUTO-GENERATED-IMPORTS
-from typing import TYPE_CHECKING, Any, ClassVar, Dict, Iterable, List, Mapping, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Iterable, List, Mapping, Union
 from uuid import UUID
 
 if TYPE_CHECKING:
@@ -30,7 +30,6 @@ if TYPE_CHECKING:
 
 if TYPE_CHECKING:
     from kiara.context import KiaraConfig
-    from kiara.interfaces import BaseAPI
     from kiara.interfaces.python_api.models.archive import KiArchive
     from kiara.interfaces.python_api.models.doc import OperationsMap
     from kiara.interfaces.python_api.models.info import (
@@ -72,25 +71,27 @@ class KiaraAPI(object):
     """
 
     _default_instance: ClassVar[Union["KiaraAPI", None]] = None
-    _context_instances: ClassVar[Dict[str, "BaseAPI"]] = {}
 
     @classmethod
-    def instance(cls, context_name: Union[str, None] = None) -> "KiaraAPI":
+    def instance(cls) -> "KiaraAPI":
+        """Retrieve the default KiaraAPI instance.
 
-        if context_name is None:
+        This is a convenience method to get a singleton KiaraAPI instance. If this is the first time this method is called, it loads the default *kiara* context. If this is called subsequently, it will return
+        the same instance, so if you or some-one (or -thing) switched that context, this might not be the case.
 
-            if cls._default_instance is not None:
-                return cls._default_instance
+        So make sure you understand the implications, and if in doubt, it might be safer to create your own `KiaraAPI` instance manually.
+        """
 
-            from kiara.context import KiaraConfig
+        if cls._default_instance is not None:
+            return cls._default_instance
 
-            config = KiaraConfig()
+        from kiara.utils.config import assemble_kiara_config
 
-            api = KiaraAPI(kiara_config=config)
-            cls._default_instance = api
-            return api
-        else:
-            raise NotImplementedError()
+        config = assemble_kiara_config()
+
+        api = KiaraAPI(kiara_config=config)
+        cls._default_instance = api
+        return api
 
     def __init__(self, kiara_config: Union["KiaraConfig", None] = None):
 
@@ -127,7 +128,7 @@ class KiaraAPI(object):
 
         """
 
-        if not comment:
+        if not comment and comment != "":
             from kiara.exceptions import KiaraException
 
             raise KiaraException(msg="Can't submit job: no comment provided.")
@@ -163,6 +164,11 @@ class KiaraAPI(object):
         Returns:
             the queued job id
         """
+
+        if not comment and comment != "":
+            from kiara.exceptions import KiaraException
+
+            raise KiaraException(msg="Can't submit job: no comment provided.")
 
         return self._api.queue_job(
             operation=operation,

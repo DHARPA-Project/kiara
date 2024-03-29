@@ -87,6 +87,7 @@ if TYPE_CHECKING:
     from kiara.models.module.destiny import Destiny
     from kiara.models.module.manifest import Manifest
     from kiara.models.runtime_environment import RuntimeEnvironment
+    from kiara.registries.metadata import MetadataStore
 
 
 logger = structlog.getLogger()
@@ -261,7 +262,7 @@ class DataRegistry(object):
         self._cached_data[NOT_SET_VALUE_ID] = SpecialValue.NOT_SET
         self._registered_values[NOT_SET_VALUE_ID] = self._not_set_value
         self._persisted_value_descs[NOT_SET_VALUE_ID] = NONE_PERSISTED_DATA
-        self._env_cache: Dict[str, Dict[str, RuntimeEnvironment]] = {}
+        # self._env_cache: Dict[str, Dict[str, RuntimeEnvironment]] = {}
 
         self._none_value: Value = Value(
             value_id=NONE_VALUE_ID,
@@ -503,18 +504,18 @@ class DataRegistry(object):
         self._registered_values[_value_id] = stored_value
         return self._registered_values[_value_id]
 
-    def _persist_environment(self, env_type: str, env_hash: str):
+    def _persist_environment(self, env_type: str, env_hash: str, store: str):
 
-        cached = self._env_cache.get(env_type, {}).get(env_hash, None)
-        if cached is not None:
-            return
+        # cached = self._env_cache.get(env_type, {}).get(env_hash, None)
+        # if cached is not None:
+        #     return
 
         environment = self._kiara.environment_registry.get_environment_for_cid(env_hash)
 
         self._kiara.metadata_registry.register_metadata_item(
-            key=ENVIRONMENT_MARKER_KEY, item=environment
+            key=ENVIRONMENT_MARKER_KEY, item=environment, store=store
         )
-        self._env_cache.setdefault(env_type, {})[env_hash] = environment
+        # self._env_cache.setdefault(env_type, {})[env_hash] = environment
 
     def store_value(
         self,
@@ -534,7 +535,7 @@ class DataRegistry(object):
         # first, persist environment information
         for env_type, env_hash in _value.pedigree.environments.items():
 
-            self._persist_environment(env_type, env_hash)
+            self._persist_environment(env_type, env_hash, store=data_store)
 
         store: DataStore = self.get_archive(archive_id_or_alias=data_store)  # type: ignore
         if not store.is_writeable():

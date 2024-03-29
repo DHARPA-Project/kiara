@@ -1433,6 +1433,7 @@ class BaseAPI(object):
         Returns:
             the Value instance
         """
+
         return self.context.data_registry.get_value(value=value)
 
     @tag("kiara_api")
@@ -1787,8 +1788,7 @@ class BaseAPI(object):
         alias: Union[str, Iterable[str], None],
         allow_overwrite: bool = True,
         store: Union[str, None] = None,
-        data_store: Union[str, None] = None,
-        alias_store: Union[str, None] = None,
+        store_related_metadata: bool = True,
         set_as_store_default: bool = False,
     ) -> StoreValueResult:
         """
@@ -1806,8 +1806,7 @@ class BaseAPI(object):
             alias: (Optional) one or several aliases for the value
             allow_overwrite: whether to allow overwriting existing aliases
             store: in case data and alias store names are the same, you can use this, if you specify one or both of the others, this will be overwritten
-            data_store: the registered name (or archive id as string) of the store to write the data
-            alias_store: the registered name (or archive id as string) of the store to persist the alias(es)/value_id mapping
+            store_related_metadata: whether to store related metadata (comments, etc.) in the same store as the data
             set_as_store_default: whether to set the specified store as the default store for the value
         """
         # if isinstance(alias, str):
@@ -1816,25 +1815,32 @@ class BaseAPI(object):
         value_obj = self.get_value(value)
         persisted_data: Union[None, PersistedData] = None
 
-        if not data_store:
-            data_store = store
-        if not alias_store:
-            alias_store = store
-
         try:
             persisted_data = self.context.data_registry.store_value(
-                value=value_obj, data_store=data_store
+                value=value_obj, data_store=store
             )
             if alias:
                 self.context.alias_registry.register_aliases(
                     value_obj,
                     alias,
                     allow_overwrite=allow_overwrite,
-                    alias_store=alias_store,
+                    alias_store=store,
                 )
 
+            if store_related_metadata:
+                print("STORING_METADATA")
+
+                from kiara.registries.metadata import MetadataMatcher
+                matcher = MetadataMatcher.create_matcher(reference_item_ids=[value_obj.job_id, value_obj.value_id])
+
+                target_store = self.context.metadata_registry.get_archive(store)
+                matching_metadata = self.context.metadata_registry.find_metadata_items(matcher=matcher)
+                target_store.store_metadata_and_ref_items(matching_metadata)
+
+
+
             if set_as_store_default:
-                store_instance = self.context.data_registry.get_archive(data_store)
+                store_instance = self.context.data_registry.get_archive(store)
                 store_instance.set_archive_metadata_value(
                     DATA_ARCHIVE_DEFAULT_VALUE_MARKER, str(value_obj.value_id)
                 )
@@ -1862,14 +1868,16 @@ class BaseAPI(object):
         self,
         values: Union[
             str,
+            Value,
+            uuid.UUID,
             Mapping[str, Union[str, uuid.UUID, Value]],
             Iterable[Union[str, uuid.UUID, Value]],
+
         ],
         alias_map: Union[Mapping[str, Iterable[str]], bool, str] = False,
         allow_alias_overwrite: bool = True,
         store: Union[str, None] = None,
-        data_store: Union[str, None] = None,
-        alias_store: Union[str, None] = None,
+        store_related_metadata: bool = True,
     ) -> StoreValuesResult:
         """
         Store multiple values into the (default) kiara value store.
@@ -1925,13 +1933,8 @@ class BaseAPI(object):
 
         """
 
-        if not data_store:
-            data_store = store
 
-        if not alias_store:
-            alias_store = store
-
-        if isinstance(values, str):
+        if isinstance(values, (str, uuid.UUID, Value)):
             values = [values]
 
         result = {}
@@ -1991,8 +1994,8 @@ class BaseAPI(object):
                     value=value_obj,
                     alias=aliases,
                     allow_overwrite=allow_alias_overwrite,
-                    data_store=data_store,
-                    alias_store=alias_store,
+                    store=store,
+                    store_related_metadata=store_related_metadata
                 )
                 result[str(value_obj.value_id)] = store_result
         else:
@@ -2017,8 +2020,9 @@ class BaseAPI(object):
                     value=value_obj,
                     alias=aliases_map,
                     allow_overwrite=allow_alias_overwrite,
-                    data_store=data_store,
-                    alias_store=alias_store,
+                    store=store,
+                    store_related_metadata=store_related_metadata
+
                 )
                 result[field_name] = store_result
 
@@ -2211,13 +2215,9 @@ class BaseAPI(object):
             alias_map=alias_map,
             allow_alias_overwrite=allow_alias_overwrite,
             store=target_archive_ref,
+            store_related_metadata=export_related_metadata,
         )
 
-        if export_related_metadata:
-
-            print(values)
-
-            raise NotImplementedError("Exporting related metadata not implemented yet.")
 
         if additional_archive_metadata:
             for k, v in additional_archive_metadata.items():
@@ -2314,7 +2314,17 @@ class BaseAPI(object):
         alias_alias = self.context.register_external_archive(
             archive.alias_archive, allow_write_access=allow_write_access
         )
+
+        job_alias = self.context.register_external_archive(
+            archive.job_archive, allow_write_access=allow_write_access
+        )
+
+        metadata_alias = self.context.register_external_archive(
+            archive.metadata_archive, allow_write_access=allow_write_access
+        )
         assert data_alias["data"] == alias_alias["alias"]
+        assert data_alias["data"] == job_alias["job_record"]
+        assert data_alias["data"] == metadata_alias["metadata"]
         assert archive.archive_name == data_alias["data"]
 
         return archive.archive_name
@@ -2705,11 +2715,7 @@ class BaseAPI(object):
 
         from kiara.registries.metadata import MetadataMatcher
 
-        # ref_item_type = "job"
-        ref_item_id = "b295ce99-4024-4468-b167-a61604d2a0d9"
-
         matcher = MetadataMatcher.create_matcher(**matcher_params)
-
 
         return self.context.metadata_registry.find_metadata_items(matcher=matcher)
 

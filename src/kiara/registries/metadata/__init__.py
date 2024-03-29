@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import uuid
-from typing import TYPE_CHECKING, Any, Callable, Dict, Literal, Mapping, Union, List
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Literal, Mapping, Union, Generator, Tuple
 
 from pydantic import Field, field_validator
 
@@ -15,37 +15,47 @@ if TYPE_CHECKING:
 
 
 class MetadataMatcher(KiaraModel):
-    """An object describing requirements metadata items should satisfy in order to be included in a query result.
-
-    """
+    """An object describing requirements metadata items should satisfy in order to be included in a query result."""
 
     @classmethod
     def create_matcher(cls, **match_options: Any):
         m = MetadataMatcher(**match_options)
         return m
 
-    metadata_item_keys: Union[None, List[str]] = Field(description="The metadata item key to match (if provided).", default=None)
-    reference_item_types: Union[None, List[str]] = Field(description="A 'reference_item_type' a metadata item is referenced from.", default=None)
-    reference_item_keys: Union[None, List[str]] = Field(description="A 'reference_item_key' a metadata item is referenced from.", default=None)
-    reference_item_ids: Union[None, List[str]] = Field(description="An list of ids that a metadata item is referenced from.", default=None)
+    # metadata_item_keys: Union[None, List[str]] = Field(
+    #     description="The metadata item key to match (if provided).", default=None
+    # )
+    reference_item_types: Union[None, List[str]] = Field(
+        description="A 'reference_item_type' a metadata item is referenced from.",
+        default=None,
+    )
+    reference_item_keys: Union[None, List[str]] = Field(
+        description="A 'reference_item_key' a metadata item is referenced from.",
+        default=None,
+    )
+    reference_item_ids: Union[None, List[str]] = Field(
+        description="An list of ids that a metadata item is referenced from.",
+        default=None,
+    )
 
-
-    @field_validator("reference_item_types", "reference_item_keys", "reference_item_ids", "metadata_item_keys", mode="before")
+    @field_validator(
+        "reference_item_types",
+        "reference_item_keys",
+        "reference_item_ids",
+        mode="before",
+    )
     @classmethod
     def validate_reference_item_ids(cls, v):
-
-        print(v)
-        print(type(v))
 
         if v is None:
             return None
         elif isinstance(v, str):
             return [v]
+        elif isinstance(v, uuid.UUID):
+            return [str(v)]
         else:
             v = set(v)
-            return list(v)
-
-
+            return list((str(x) for x in v))
 
 
 class MetadataArchiveAddedEvent(RegistryEvent):
@@ -176,12 +186,11 @@ class MetadataRegistry(object):
             f"Can't retrieve archive with id '{archive_id_or_alias}': no archive with that id registered."
         )
 
-    def find_metadata_items(self, matcher: MetadataMatcher) -> List[Dict[str, Any]]:
+    def find_metadata_items(self, matcher: MetadataMatcher) -> Generator[Tuple[Any, ...], None, None]:
 
         mounted_store: MetadataArchive = self.get_archive()
 
         return mounted_store.find_matching_metadata_items(matcher=matcher)
-
 
     def retrieve_metadata_item(
         self,

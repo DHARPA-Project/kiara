@@ -2,7 +2,17 @@
 import abc
 import json
 import uuid
-from typing import Any, Dict, Generic, Iterable, Mapping, Tuple, Union, TYPE_CHECKING, Generator
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Generator,
+    Generic,
+    Iterable,
+    Mapping,
+    Tuple,
+    Union,
+)
 
 from kiara.exceptions import KiaraException
 from kiara.models.metadata import KiaraMetadata
@@ -36,14 +46,38 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
         self._schema_stored_cache: Dict[str, Any] = {}
         self._schema_stored_item: Dict[str, uuid.UUID] = {}
 
-    def find_matching_metadata_items(self, matcher: "MetadataMatcher", metadata_item_result_fields: Union[Iterable[str], None]=None, reference_item_result_fields: Union[Iterable[str], None]=None) -> Generator[Tuple[Any, ...], None, None]:
+    def find_matching_metadata_items(
+        self,
+        matcher: "MetadataMatcher",
+        metadata_item_result_fields: Union[Iterable[str], None] = None,
+        reference_item_result_fields: Union[Iterable[str], None] = None,
+    ) -> Generator[Tuple[Any, ...], None, None]:
 
-        return self._find_matching_metadata_items(matcher=matcher, metadata_item_result_fields=metadata_item_result_fields, reference_item_result_fields=reference_item_result_fields)
+        return self._find_matching_metadata_and_ref_items(
+            matcher=matcher,
+            metadata_item_result_fields=metadata_item_result_fields,
+            reference_item_result_fields=reference_item_result_fields,
+        )
+
+    def store_metadata_and_ref_items(self, items: Generator[Tuple[Any, ...], None, None]):
+
+            return self._store_metadata_and_ref_items(items)
+
 
     @abc.abstractmethod
-    def _find_matching_metadata_items(self, matcher: "MetadataMatcher", metadata_item_result_fields: Union[Iterable[str], None]=None, reference_item_result_fields: Union[Iterable[str], None]=None) -> Generator[Tuple[Any, ...], None, None]:
+    def _store_metadata_and_ref_items(self, items: Generator[Tuple[Any, ...], None, None]):
+
         pass
 
+
+    @abc.abstractmethod
+    def _find_matching_metadata_and_ref_items(
+        self,
+        matcher: "MetadataMatcher",
+        metadata_item_result_fields: Union[Iterable[str], None] = None,
+        reference_item_result_fields: Union[Iterable[str], None] = None,
+    ) -> Generator[Tuple[Any, ...], None, None]:
+        pass
 
     def retrieve_metadata_item(
         self,

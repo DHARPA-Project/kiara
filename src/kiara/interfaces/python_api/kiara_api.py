@@ -772,8 +772,6 @@ class KiaraAPI(object):
         alias: Union[str, Iterable[str], None],
         allow_overwrite: bool = True,
         store: Union[str, None] = None,
-        data_store: Union[str, None] = None,
-        alias_store: Union[str, None] = None,
         set_as_store_default: bool = False,
     ) -> "StoreValueResult":
         """Store the specified value in a value store.
@@ -800,8 +798,6 @@ class KiaraAPI(object):
             alias=alias,
             allow_overwrite=allow_overwrite,
             store=store,
-            data_store=data_store,
-            alias_store=alias_store,
             set_as_store_default=set_as_store_default,
         )
         return result
@@ -816,8 +812,6 @@ class KiaraAPI(object):
         alias_map: Union[Mapping[str, Iterable[str]], bool, str] = False,
         allow_alias_overwrite: bool = True,
         store: Union[str, None] = None,
-        data_store: Union[str, None] = None,
-        alias_store: Union[str, None] = None,
     ) -> "StoreValuesResult":
         """Store multiple values into the (default) kiara value store.
 

@@ -2214,6 +2214,9 @@ class BaseAPI(object):
         )
 
         if export_related_metadata:
+
+            print(values)
+
             raise NotImplementedError("Exporting related metadata not implemented yet.")
 
         if additional_archive_metadata:
@@ -2662,10 +2665,10 @@ class BaseAPI(object):
     # ------------------------------------------------------------------------------------------------------------------
     # metadata-related methods
 
-    def register_metadata(
+    def register_metadata_item(
         self, key: str, value: str, store: Union[str, None] = None
     ) -> uuid.UUID:
-        """Register a comment into the specified metadata store.
+        """Register a metadata item into the specified metadata store.
 
         Currently, this allows you to store comments within the default kiara context. You can use any string,
         as key, for example a stringified `job_id`, or `value_id`, or any other string that makes sense in
@@ -2697,6 +2700,18 @@ class BaseAPI(object):
         return self.context.metadata_registry.register_metadata_item(
             key=key, item=item, store=store
         )
+
+    def find_metadata_items(self, **matcher_params: Any):
+
+        from kiara.registries.metadata import MetadataMatcher
+
+        # ref_item_type = "job"
+        ref_item_id = "b295ce99-4024-4468-b167-a61604d2a0d9"
+
+        matcher = MetadataMatcher.create_matcher(**matcher_params)
+
+
+        return self.context.metadata_registry.find_metadata_items(matcher=matcher)
 
     # ------------------------------------------------------------------------------------------------------------------
     # render-related methods

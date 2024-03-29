@@ -238,10 +238,13 @@ class KiArchive(KiaraModel):
     _kiara: Union["Kiara", None] = PrivateAttr(default=None)
 
     @property
-    def metadata_archive(self) -> "MetadataArchive":
+    def metadata_archive(self) -> Union["MetadataArchive", None]:
 
         if self._metadata_archive:
             return self._metadata_archive
+
+        if self.metadata_archive_config is None:
+            return None
 
         from kiara.utils.stores import create_new_archive
 
@@ -257,10 +260,13 @@ class KiArchive(KiaraModel):
         return self._metadata_archive
 
     @property
-    def data_archive(self) -> "DataArchive":
+    def data_archive(self) -> Union["DataArchive", None]:
 
         if self._data_archive:
             return self._data_archive
+
+        if self.data_archive_config is None:
+            return None
 
         from kiara.utils.stores import create_new_archive
 
@@ -276,10 +282,13 @@ class KiArchive(KiaraModel):
         return self._data_archive
 
     @property
-    def alias_archive(self) -> "AliasArchive":
+    def alias_archive(self) -> Union["AliasArchive", None]:
 
         if self._alias_archive is not None:
             return self._alias_archive
+
+        if self.alias_archive_config is None:
+            return None
 
         from kiara.utils.stores import create_new_archive
 
@@ -294,10 +303,13 @@ class KiArchive(KiaraModel):
         return self._alias_archive
 
     @property
-    def job_archive(self) -> "JobArchive":
+    def job_archive(self) -> Union["JobArchive", None]:
 
         if self._jobs_archive is not None:
             return self._jobs_archive
+
+        if self.job_archive_config is None:
+            return None
 
         from kiara.utils.stores import create_new_archive
 

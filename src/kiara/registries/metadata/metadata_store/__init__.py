@@ -2,11 +2,14 @@
 import abc
 import json
 import uuid
-from typing import Any, Dict, Generic, Iterable, Mapping, Tuple, Union
+from typing import Any, Dict, Generic, Iterable, Mapping, Tuple, Union, TYPE_CHECKING, Generator
 
 from kiara.exceptions import KiaraException
 from kiara.models.metadata import KiaraMetadata
 from kiara.registries import ARCHIVE_CONFIG_CLS, BaseArchive
+
+if TYPE_CHECKING:
+    from kiara.registries.metadata import MetadataMatcher
 
 
 class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CLS]):
@@ -32,6 +35,15 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
         )
         self._schema_stored_cache: Dict[str, Any] = {}
         self._schema_stored_item: Dict[str, uuid.UUID] = {}
+
+    def find_matching_metadata_items(self, matcher: "MetadataMatcher", metadata_item_result_fields: Union[Iterable[str], None]=None, reference_item_result_fields: Union[Iterable[str], None]=None) -> Generator[Tuple[Any, ...], None, None]:
+
+        return self._find_matching_metadata_items(matcher=matcher, metadata_item_result_fields=metadata_item_result_fields, reference_item_result_fields=reference_item_result_fields)
+
+    @abc.abstractmethod
+    def _find_matching_metadata_items(self, matcher: "MetadataMatcher", metadata_item_result_fields: Union[Iterable[str], None]=None, reference_item_result_fields: Union[Iterable[str], None]=None) -> Generator[Tuple[Any, ...], None, None]:
+        pass
+
 
     def retrieve_metadata_item(
         self,

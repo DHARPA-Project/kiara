@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import uuid
 from pathlib import Path
-from typing import Any, Dict, Mapping, Tuple, Union
+from typing import Any, Dict, Mapping, Tuple, Union, Iterable, Generator
 
 import orjson
 from sqlalchemy import text
@@ -9,7 +9,7 @@ from sqlalchemy.engine import Engine
 
 from kiara.exceptions import KiaraException
 from kiara.registries import SqliteArchiveConfig
-from kiara.registries.metadata import MetadataArchive, MetadataStore
+from kiara.registries.metadata import MetadataArchive, MetadataStore, MetadataMatcher
 from kiara.utils.dates import get_current_time_incl_timezone
 from kiara.utils.db import create_archive_engine, delete_archive_db
 
@@ -152,6 +152,75 @@ CREATE TABLE IF NOT EXISTS metadata_references (
         # if self._lock:
         #     event.listen(self._cached_engine, "connect", _pragma_on_connect)
         return self._cached_engine
+
+    def _find_matching_metadata_items(self, matcher: "MetadataMatcher",
+                                          metadata_item_result_fields: Union[Iterable[str], None] = None,
+                                          reference_item_result_fields: Union[Iterable[str], None] = None) -> Generator[Tuple[Any, ...], None, None]:
+
+        # find all metadata items first
+
+        if not metadata_item_result_fields:
+            metadata_fields_str = "m.*"
+        else:
+            metadata_fields_str = ", ".join((f"m.{x}" for x in metadata_item_result_fields))
+
+        metadata_fields_str += ", :result_type as result_type"
+
+        sql_string = f"SELECT {metadata_fields_str} FROM metadata m "
+        conditions = []
+        params = {
+            "result_type": "metadata_item"
+        }
+
+        ref_query = False
+        if matcher.reference_item_types or matcher.reference_item_keys or matcher.reference_item_ids:
+            ref_query = True
+            sql_string += "JOIN metadata_references r ON m.metadata_item_id = r.metadata_item_id"
+
+        if matcher.metadata_item_keys:
+            conditions.append("WHERE m.metadata_item_key in :metadata_item_keys")
+            params["metadata_item_key"] = matcher.metadata_item_keys
+
+        if matcher.reference_item_ids:
+            assert ref_query
+            in_clause = []
+            for idx, item_id in enumerate(matcher.reference_item_ids):
+                params[f"ri_id_{idx}"] = item_id
+                in_clause.append(f":ri_id_{idx}")
+            in_clause_str = ", ".join(in_clause)
+            conditions.append(f"WHERE r.reference_item_id IN ({in_clause_str})")
+            params["reference_item_ids"] = tuple(matcher.reference_item_ids)
+
+        if matcher.reference_item_types:
+            assert ref_query
+            conditions.append("AND r.reference_item_type IN :reference_item_types")
+            params["reference_item_types"] = tuple(matcher.reference_item_types)
+
+        if matcher.reference_item_keys:
+            assert ref_query
+            conditions.append("AND r.reference_item_key IN :reference_item_keys")
+            params["reference_item_keys"] = tuple(matcher.reference_item_keys)
+
+        if conditions:
+
+            for cond in conditions:
+                sql_string += f" {cond} AND"
+
+            sql_string = sql_string[:-4]
+        sql = text(sql_string)
+
+        # ... now construct the query to find the reference items (if applicable)
+        if not reference_item_result_fields:
+            reference_fields_str = "*"
+        else:
+            reference_fields_str = ", ".join((f"r.{x}" for x in reference_item_result_fields))
+
+
+        with self.sqlite_engine.connect() as connection:
+            result = connection.execute(sql, params)
+            for row in result:
+                yield row
+
 
     def _retrieve_referenced_metadata_item_data(
         self, key: str, reference_type: str, reference_key: str, reference_id: str

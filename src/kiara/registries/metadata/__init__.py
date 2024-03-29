@@ -1,16 +1,51 @@
 # -*- coding: utf-8 -*-
 import uuid
-from typing import TYPE_CHECKING, Any, Callable, Dict, Literal, Mapping, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, Literal, Mapping, Union, List
 
-from pydantic import Field
+from pydantic import Field, field_validator
 
 from kiara.defaults import DEFAULT_METADATA_STORE_MARKER, DEFAULT_STORE_MARKER
+from kiara.models import KiaraModel
 from kiara.models.events import RegistryEvent
 from kiara.models.metadata import CommentMetadata, KiaraMetadata
 from kiara.registries.metadata.metadata_store import MetadataArchive, MetadataStore
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+
+
+class MetadataMatcher(KiaraModel):
+    """An object describing requirements metadata items should satisfy in order to be included in a query result.
+
+    """
+
+    @classmethod
+    def create_matcher(cls, **match_options: Any):
+        m = MetadataMatcher(**match_options)
+        return m
+
+    metadata_item_keys: Union[None, List[str]] = Field(description="The metadata item key to match (if provided).", default=None)
+    reference_item_types: Union[None, List[str]] = Field(description="A 'reference_item_type' a metadata item is referenced from.", default=None)
+    reference_item_keys: Union[None, List[str]] = Field(description="A 'reference_item_key' a metadata item is referenced from.", default=None)
+    reference_item_ids: Union[None, List[str]] = Field(description="An list of ids that a metadata item is referenced from.", default=None)
+
+
+    @field_validator("reference_item_types", "reference_item_keys", "reference_item_ids", "metadata_item_keys", mode="before")
+    @classmethod
+    def validate_reference_item_ids(cls, v):
+
+        print(v)
+        print(type(v))
+
+        if v is None:
+            return None
+        elif isinstance(v, str):
+            return [v]
+        else:
+            v = set(v)
+            return list(v)
+
+
 
 
 class MetadataArchiveAddedEvent(RegistryEvent):
@@ -140,6 +175,13 @@ class MetadataRegistry(object):
         raise Exception(
             f"Can't retrieve archive with id '{archive_id_or_alias}': no archive with that id registered."
         )
+
+    def find_metadata_items(self, matcher: MetadataMatcher) -> List[Dict[str, Any]]:
+
+        mounted_store: MetadataArchive = self.get_archive()
+
+        return mounted_store.find_matching_metadata_items(matcher=matcher)
+
 
     def retrieve_metadata_item(
         self,

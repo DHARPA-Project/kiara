@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import os
 import sqlite3
 import sys
@@ -101,7 +102,6 @@ def test_archive_export_values_no_alias(api: BaseAPI):
 
         temp_file_path = Path(temp_dir) / "export_test_no_alias.kiarchive"
         temp_file_path = temp_file_path.resolve()
-        print("temp_file_path", temp_file_path.as_posix())
 
         store_result = api.export_values(
             temp_file_path, result, alias_map=False, export_related_metadata=False
@@ -154,7 +154,6 @@ def test_archive_export_values_alias(api: BaseAPI):
 
         temp_file_path = Path(temp_dir) / "export_test_alias.kiarchive"
         temp_file_path = temp_file_path.resolve()
-        print("temp_file_path", temp_file_path.as_posix())
 
         store_result = api.export_values(
             temp_file_path, result, alias_map=True, export_related_metadata=False
@@ -192,7 +191,7 @@ def test_archive_export_values_alias(api: BaseAPI):
 
         result = run_sql_query('SELECT * FROM "aliases";', temp_file_path)
         assert len(result) == 1
-        assert len(result[0]) == 2
+
         assert result[0][0] == "y"
         assert uuid.UUID(result[0][1])
 
@@ -220,7 +219,6 @@ def test_archive_export_values_alias_multipe_values(api: BaseAPI):
 
         temp_file_path = Path(temp_dir) / "export_test_alias_multiple_values.kiarchive"
         temp_file_path = temp_file_path.resolve()
-        print("temp_file_path", temp_file_path.as_posix())
 
         store_result = api.export_values(
             temp_file_path, results, alias_map=True, export_related_metadata=False
@@ -259,10 +257,14 @@ def test_archive_export_values_alias_multipe_values(api: BaseAPI):
 
         result = run_sql_query('SELECT * FROM "aliases";', temp_file_path)
 
-        assert len(result[0]) == 2
+        print(result)
+        assert len(result) == 2
+        assert len(result[0]) == 3
         assert result[0][0] in ["result_1", "result_2"]
         assert uuid.UUID(result[0][1])
+        datetime.datetime.fromisoformat(result[0][2])
 
-        assert len(result[1]) == 2
+        assert len(result[1]) == 3
         assert result[1][0] in ["result_1", "result_2"]
         assert uuid.UUID(result[1][1])
+        datetime.datetime.fromisoformat(result[1][2])

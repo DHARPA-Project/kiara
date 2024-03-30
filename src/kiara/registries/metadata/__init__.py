@@ -70,7 +70,8 @@ class MetadataMatcher(KiaraModel):
             return [str(v)]
         else:
             v = set(v)
-            return [(str(x) for x in v)]
+            result = [str(x) for x in v]
+            return result
 
 
 class MetadataArchiveAddedEvent(RegistryEvent):

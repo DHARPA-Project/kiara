@@ -1828,16 +1828,17 @@ class BaseAPI(object):
                 )
 
             if store_related_metadata:
-                print("STORING_METADATA")
 
                 from kiara.registries.metadata import MetadataMatcher
-                matcher = MetadataMatcher.create_matcher(reference_item_ids=[value_obj.job_id, value_obj.value_id])
+                matcher = MetadataMatcher.create_matcher(
+                    reference_item_ids=[value_obj.job_id, value_obj.value_id]
+                )
 
                 target_store = self.context.metadata_registry.get_archive(store)
-                matching_metadata = self.context.metadata_registry.find_metadata_items(matcher=matcher)
+                matching_metadata = self.context.metadata_registry.find_metadata_items(
+                    matcher=matcher
+                )
                 target_store.store_metadata_and_ref_items(matching_metadata)
-
-
 
             if set_as_store_default:
                 store_instance = self.context.data_registry.get_archive(store)
@@ -1872,7 +1873,6 @@ class BaseAPI(object):
             uuid.UUID,
             Mapping[str, Union[str, uuid.UUID, Value]],
             Iterable[Union[str, uuid.UUID, Value]],
-
         ],
         alias_map: Union[Mapping[str, Iterable[str]], bool, str] = False,
         allow_alias_overwrite: bool = True,
@@ -1932,7 +1932,6 @@ class BaseAPI(object):
             an object outlining which values (identified by the specified value key or an enumerated index) where stored and how
 
         """
-
 
         if isinstance(values, (str, uuid.UUID, Value)):
             values = [values]
@@ -1995,7 +1994,7 @@ class BaseAPI(object):
                     alias=aliases,
                     allow_overwrite=allow_alias_overwrite,
                     store=store,
-                    store_related_metadata=store_related_metadata
+                    store_related_metadata=store_related_metadata,
                 )
                 result[str(value_obj.value_id)] = store_result
         else:
@@ -2021,8 +2020,7 @@ class BaseAPI(object):
                     alias=aliases_map,
                     allow_overwrite=allow_alias_overwrite,
                     store=store,
-                    store_related_metadata=store_related_metadata
-
+                    store_related_metadata=store_related_metadata,
                 )
                 result[field_name] = store_result
 
@@ -2217,7 +2215,6 @@ class BaseAPI(object):
             store=target_archive_ref,
             store_related_metadata=export_related_metadata,
         )
-
 
         if additional_archive_metadata:
             for k, v in additional_archive_metadata.items():

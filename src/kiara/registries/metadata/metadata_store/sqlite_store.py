@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 import uuid
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterable, Mapping, Tuple, Union, List
+from typing import Any, Dict, Generator, Iterable, List, Mapping, Tuple, Union
 
 import orjson
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
 from kiara.exceptions import KiaraException
-from kiara.registries import SqliteArchiveConfig
+from kiara.registries import SqliteArchiveConfig, ArchiveDetails
 from kiara.registries.metadata import MetadataArchive, MetadataMatcher, MetadataStore
 from kiara.utils.dates import get_current_time_incl_timezone
 from kiara.utils.db import create_archive_engine, delete_archive_db
@@ -140,7 +140,8 @@ CREATE TABLE IF NOT EXISTS metadata_references (
     reference_item_id TEXT NOT NULL,
     reference_created TEXT NOT NULL,
     metadata_item_id TEXT NOT NULL,
-    FOREIGN KEY (metadata_item_id) REFERENCES metadata (metadata_item_id)
+    FOREIGN KEY (metadata_item_id) REFERENCES metadata (metadata_item_id),
+    UNIQUE (reference_item_type, reference_item_key, reference_item_id, metadata_item_id, reference_created)
 );
 """
 
@@ -153,10 +154,13 @@ CREATE TABLE IF NOT EXISTS metadata_references (
         #     event.listen(self._cached_engine, "connect", _pragma_on_connect)
         return self._cached_engine
 
-    def _store_metadata_and_ref_items(self, items: Generator[Tuple[Any, ...], None, None]):
+    def _store_metadata_and_ref_items(
+        self, items: Generator[Tuple[Any, ...], None, None]
+    ):
 
         insert_metadata_sql = text(
-            "INSERT OR IGNORE INTO metadata (metadata_item_id, metadata_item_created, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_created, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)")
+            "INSERT OR IGNORE INTO metadata (metadata_item_id, metadata_item_created, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_created, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)"
+        )
 
         insert_ref_sql = text(
             "INSERT OR IGNORE INTO metadata_references (reference_item_type, reference_item_key, reference_item_id, reference_created, metadata_item_id) VALUES (:reference_item_type, :reference_item_key, :reference_item_id, :reference_created, :metadata_item_id)"
@@ -167,6 +171,7 @@ CREATE TABLE IF NOT EXISTS metadata_references (
         with self.sqlite_engine.connect() as conn:
 
             from sqlalchemy import Row
+
             metadata_items: List[Row] = []
             ref_items = []
 
@@ -174,25 +179,20 @@ CREATE TABLE IF NOT EXISTS metadata_references (
                 if item.result_type == "metadata_item":
                     metadata_items.append(item._asdict())
                 elif item.result_type == "metadata_ref_item":
-                    print(f"ADDING: {item}")
                     ref_items.append(item._asdict())
                 else:
                     raise KiaraException(f"Unknown result type '{item.result_type}'")
 
                 if len(metadata_items) >= batch_size:
-                    print(f"STOREING: {len(metadata_items)} metadata items")
                     conn.execute(insert_metadata_sql, metadata_items)
                     metadata_items.clear()
                 if len(ref_items) >= batch_size:
-                    print(f"STOREING: {len(ref_items)} reference items")
                     conn.execute(insert_ref_sql, ref_items)
                     ref_items.clear()
 
             if metadata_items:
-                print(f"STOREING: {len(metadata_items)} metadata items")
                 conn.execute(insert_metadata_sql, metadata_items)
             if ref_items:
-                print(f"STOREING: {len(ref_items)} reference items")
                 conn.execute(insert_ref_sql, ref_items)
 
             conn.commit()
@@ -322,7 +322,6 @@ CREATE TABLE IF NOT EXISTS metadata_references (
 
         ref_sql = text(ref_sql_string)
 
-
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(sql, params)
             for row in result:
@@ -374,6 +373,25 @@ CREATE TABLE IF NOT EXISTS metadata_references (
     def _delete_archive(self):
 
         delete_archive_db(db_path=self.sqlite_path)
+
+    def get_archive_details(self) -> ArchiveDetails:
+
+        all_metadata_items_sql = text("SELECT COUNT(*) FROM metadata")
+        all_references_sql = text("SELECT COUNT(*) FROM metadata_references")
+
+        with self.sqlite_engine.connect() as connection:
+            result = connection.execute(all_metadata_items_sql)
+            metadata_count = result.fetchone()[0]
+
+            result = connection.execute(all_references_sql)
+            reference_count = result.fetchone()[0]
+
+            details = {
+                "no_metadata_items": metadata_count,
+                "no_references": reference_count,
+                "dynamic_archive": False
+            }
+            return ArchiveDetails(**details)
 
 
 class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):

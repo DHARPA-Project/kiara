@@ -14,7 +14,8 @@ import structlog
 from bidict import bidict
 from rich.console import Group
 
-from kiara.defaults import ENVIRONMENT_MARKER_KEY
+from kiara.defaults import ENVIRONMENT_MARKER_KEY, DEFAULT_DATA_STORE_MARKER, DEFAULT_JOB_STORE_MARKER, \
+    DEFAULT_STORE_MARKER
 from kiara.exceptions import FailedJobException
 from kiara.models.events import KiaraEvent
 from kiara.models.events.job_registry import (
@@ -256,7 +257,7 @@ class JobRegistry(object):
 
     def get_archive(self, store_id: Union[str, None, uuid.UUID] = None) -> JobArchive:
 
-        if store_id is None:
+        if store_id in [None, DEFAULT_DATA_STORE_MARKER, DEFAULT_JOB_STORE_MARKER, DEFAULT_STORE_MARKER]:
             store_id = self.default_job_store
             if store_id is None:
                 raise Exception("Can't retrieve deafult job archive, none set (yet).")
@@ -300,7 +301,7 @@ class JobRegistry(object):
         )
         self._env_cache.setdefault(env_type, {})[env_hash] = environment
 
-    def store_job_record(self, job_id: uuid.UUID):
+    def store_job_record(self, job_id: uuid.UUID, store: Union[str, None]=None):
 
         # TODO: allow to store job record to external store
 
@@ -315,17 +316,9 @@ class JobRegistry(object):
             )
             return
 
-        store: JobStore = self.get_archive()  # type: ignore
+        store: JobStore = self.get_archive(store)  # type: ignore
         if not isinstance(store, JobStore):
             raise Exception("Can't store job record to archive: not writable.")
-
-        # if job_record.job_id in self._finished_jobs.values():
-        #     logger.debug(
-        #         "ignore.store.job_record",
-        #         reason="already stored in store",
-        #         job_id=str(job_id),
-        #     )
-        #     return
 
         logger.debug(
             "store.job_record",
@@ -424,7 +417,9 @@ class JobRegistry(object):
         for archive in self.job_archives.values():
             all_record_ids = archive.retrieve_all_job_ids().keys()
             for r in all_record_ids:
-                assert r not in all_records.keys()
+                if r in all_records.keys():
+                    continue
+
                 job_record = archive.retrieve_record_for_job_id(r)
                 assert job_record is not None
                 all_records[r] = job_record

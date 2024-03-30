@@ -59,16 +59,18 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
             reference_item_result_fields=reference_item_result_fields,
         )
 
-    def store_metadata_and_ref_items(self, items: Generator[Tuple[Any, ...], None, None]):
+    def store_metadata_and_ref_items(
+        self, items: Generator[Tuple[Any, ...], None, None]
+    ):
 
-            return self._store_metadata_and_ref_items(items)
-
+        return self._store_metadata_and_ref_items(items)
 
     @abc.abstractmethod
-    def _store_metadata_and_ref_items(self, items: Generator[Tuple[Any, ...], None, None]):
+    def _store_metadata_and_ref_items(
+        self, items: Generator[Tuple[Any, ...], None, None]
+    ):
 
         pass
-
 
     @abc.abstractmethod
     def _find_matching_metadata_and_ref_items(

@@ -86,8 +86,6 @@ if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.models.module.destiny import Destiny
     from kiara.models.module.manifest import Manifest
-    from kiara.models.runtime_environment import RuntimeEnvironment
-    from kiara.registries.metadata import MetadataStore
 
 
 logger = structlog.getLogger()
@@ -576,7 +574,7 @@ class DataRegistry(object):
         self._event_callback(store_event)
 
         if _value.job_id:
-            self._kiara.job_registry.store_job_record(job_id=_value.job_id)
+            self._kiara.job_registry.store_job_record(job_id=_value.job_id, store=data_store)
 
         return persisted_value
 

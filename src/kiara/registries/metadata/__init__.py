@@ -1,10 +1,21 @@
 # -*- coding: utf-8 -*-
 import uuid
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Literal, Mapping, Union, Generator, Tuple
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    Generator,
+    List,
+    Literal,
+    Mapping,
+    Tuple,
+    Union,
+)
 
 from pydantic import Field, field_validator
 
-from kiara.defaults import DEFAULT_METADATA_STORE_MARKER, DEFAULT_STORE_MARKER
+from kiara.defaults import DEFAULT_METADATA_STORE_MARKER, DEFAULT_STORE_MARKER, DEFAULT_DATA_STORE_MARKER
 from kiara.models import KiaraModel
 from kiara.models.events import RegistryEvent
 from kiara.models.metadata import CommentMetadata, KiaraMetadata
@@ -82,7 +93,7 @@ class MetadataRegistry(object):
         self._event_callback: Callable = self._kiara.event_registry.add_producer(self)
 
         self._metadata_archives: Dict[str, MetadataArchive] = {}
-        self._default_data_store: Union[str, None] = None
+        self._default_metadata_store: Union[str, None] = None
 
         # self._env_registry: EnvironmentRegistry = self._kiara.environment_registry
 
@@ -114,14 +125,14 @@ class MetadataRegistry(object):
         if isinstance(archive, MetadataStore):
             is_store = True
 
-            if set_as_default_store and self._default_data_store is not None:
+            if set_as_default_store and self._default_metadata_store is not None:
                 raise Exception(
                     f"Can't set data store '{alias}' as default store: default store already set."
                 )
 
-            if self._default_data_store is None or set_as_default_store:
+            if self._default_metadata_store is None or set_as_default_store:
                 is_default_store = True
-                self._default_data_store = alias
+                self._default_metadata_store = alias
 
         event = MetadataArchiveAddedEvent(
             kiara_id=self._kiara.id,
@@ -135,10 +146,10 @@ class MetadataRegistry(object):
         return alias
 
     @property
-    def default_data_store(self) -> str:
-        if self._default_data_store is None:
+    def default_metadata_store(self) -> str:
+        if self._default_metadata_store is None:
             raise Exception("No default metadata store set.")
-        return self._default_data_store
+        return self._default_metadata_store
 
     @property
     def metadata_archives(self) -> Mapping[str, MetadataArchive]:
@@ -152,8 +163,9 @@ class MetadataRegistry(object):
             None,
             DEFAULT_STORE_MARKER,
             DEFAULT_METADATA_STORE_MARKER,
+            DEFAULT_DATA_STORE_MARKER
         ):
-            archive_id_or_alias = self.default_data_store
+            archive_id_or_alias = self.default_metadata_store
             if archive_id_or_alias is None:
                 raise Exception(
                     "Can't retrieve default metadata archive, none set (yet)."
@@ -186,7 +198,9 @@ class MetadataRegistry(object):
             f"Can't retrieve archive with id '{archive_id_or_alias}': no archive with that id registered."
         )
 
-    def find_metadata_items(self, matcher: MetadataMatcher) -> Generator[Tuple[Any, ...], None, None]:
+    def find_metadata_items(
+        self, matcher: MetadataMatcher
+    ) -> Generator[Tuple[Any, ...], None, None]:
 
         mounted_store: MetadataArchive = self.get_archive()
 

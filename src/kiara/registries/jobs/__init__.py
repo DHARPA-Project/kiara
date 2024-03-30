@@ -14,8 +14,12 @@ import structlog
 from bidict import bidict
 from rich.console import Group
 
-from kiara.defaults import ENVIRONMENT_MARKER_KEY, DEFAULT_DATA_STORE_MARKER, DEFAULT_JOB_STORE_MARKER, \
-    DEFAULT_STORE_MARKER
+from kiara.defaults import (
+    DEFAULT_DATA_STORE_MARKER,
+    DEFAULT_JOB_STORE_MARKER,
+    DEFAULT_STORE_MARKER,
+    ENVIRONMENT_MARKER_KEY,
+)
 from kiara.exceptions import FailedJobException
 from kiara.models.events import KiaraEvent
 from kiara.models.events.job_registry import (
@@ -257,14 +261,25 @@ class JobRegistry(object):
 
     def get_archive(self, store_id: Union[str, None, uuid.UUID] = None) -> JobArchive:
 
-        if store_id in [None, DEFAULT_DATA_STORE_MARKER, DEFAULT_JOB_STORE_MARKER, DEFAULT_STORE_MARKER]:
-            store_id = self.default_job_store
-            if store_id is None:
+        if store_id in [
+            None,
+            "",
+            DEFAULT_DATA_STORE_MARKER,
+            DEFAULT_JOB_STORE_MARKER,
+            DEFAULT_STORE_MARKER,
+        ]:
+            if self.default_job_store is None:
                 raise Exception("Can't retrieve deafult job archive, none set (yet).")
+            _store_id: str = self.default_job_store
 
-        if isinstance(store_id, uuid.UUID):
-            raise NotImplementedError("Can't retrieve job archive by (uu)id (yet).")
-        return self._job_archives[store_id]
+        elif not isinstance(store_id, str):
+            raise NotImplementedError(
+                "Can't retrieve job archive by (uu)id or other type (yet)."
+            )
+        else:
+            _store_id = store_id
+
+        return self._job_archives[_store_id]
 
     @property
     def job_archives(self) -> Mapping[str, JobArchive]:
@@ -301,7 +316,7 @@ class JobRegistry(object):
         )
         self._env_cache.setdefault(env_type, {})[env_hash] = environment
 
-    def store_job_record(self, job_id: uuid.UUID, store: Union[str, None]=None):
+    def store_job_record(self, job_id: uuid.UUID, store: Union[str, None] = None):
 
         # TODO: allow to store job record to external store
 

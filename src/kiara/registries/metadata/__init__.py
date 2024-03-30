@@ -15,7 +15,11 @@ from typing import (
 
 from pydantic import Field, field_validator
 
-from kiara.defaults import DEFAULT_METADATA_STORE_MARKER, DEFAULT_STORE_MARKER, DEFAULT_DATA_STORE_MARKER
+from kiara.defaults import (
+    DEFAULT_DATA_STORE_MARKER,
+    DEFAULT_METADATA_STORE_MARKER,
+    DEFAULT_STORE_MARKER,
+)
 from kiara.models import KiaraModel
 from kiara.models.events import RegistryEvent
 from kiara.models.metadata import CommentMetadata, KiaraMetadata
@@ -66,7 +70,7 @@ class MetadataMatcher(KiaraModel):
             return [str(v)]
         else:
             v = set(v)
-            return list((str(x) for x in v))
+            return [(str(x) for x in v)]
 
 
 class MetadataArchiveAddedEvent(RegistryEvent):
@@ -163,7 +167,7 @@ class MetadataRegistry(object):
             None,
             DEFAULT_STORE_MARKER,
             DEFAULT_METADATA_STORE_MARKER,
-            DEFAULT_DATA_STORE_MARKER
+            DEFAULT_DATA_STORE_MARKER,
         ):
             archive_id_or_alias = self.default_metadata_store
             if archive_id_or_alias is None:

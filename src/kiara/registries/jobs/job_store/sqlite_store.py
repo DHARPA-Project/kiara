@@ -9,7 +9,7 @@ from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
 from kiara.models.module.jobs import JobMatcher, JobRecord
-from kiara.registries import SqliteArchiveConfig, ArchiveDetails
+from kiara.registries import ArchiveDetails, SqliteArchiveConfig
 from kiara.registries.jobs import JobArchive, JobStore
 from kiara.utils.db import create_archive_engine, delete_archive_db
 
@@ -282,11 +282,10 @@ CREATE TABLE IF NOT EXISTS job_records (
             result = connection.execute(all_job_records_sql)
             job_count = result.fetchone()[0]
 
-            details = {
-                "no_job_records": job_count,
-                "dynamic_archive": False
-            }
+            details = {"no_job_records": job_count, "dynamic_archive": False}
             return ArchiveDetails(**details)
+
+
 class SqliteJobStore(SqliteJobArchive, JobStore):
 
     _archive_type_name = "sqlite_job_store"

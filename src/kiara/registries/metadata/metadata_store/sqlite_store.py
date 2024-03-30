@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
 import uuid
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterable, List, Mapping, Tuple, Union
+from typing import (
+    Any,
+    Dict,
+    Generator,
+    Iterable,
+    Mapping,
+    Tuple,
+    Union,
+)
 
 import orjson
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
 from kiara.exceptions import KiaraException
-from kiara.registries import SqliteArchiveConfig, ArchiveDetails
+from kiara.registries import ArchiveDetails, SqliteArchiveConfig
 from kiara.registries.metadata import MetadataArchive, MetadataMatcher, MetadataStore
 from kiara.utils.dates import get_current_time_incl_timezone
 from kiara.utils.db import create_archive_engine, delete_archive_db
@@ -170,18 +178,16 @@ CREATE TABLE IF NOT EXISTS metadata_references (
 
         with self.sqlite_engine.connect() as conn:
 
-            from sqlalchemy import Row
-
-            metadata_items: List[Row] = []
+            metadata_items = []
             ref_items = []
 
             for item in items:
-                if item.result_type == "metadata_item":
-                    metadata_items.append(item._asdict())
-                elif item.result_type == "metadata_ref_item":
-                    ref_items.append(item._asdict())
+                if item.result_type == "metadata_item":  # type: ignore
+                    metadata_items.append(item._asdict())  # type: ignore
+                elif item.result_type == "metadata_ref_item":  # type: ignore
+                    ref_items.append(item._asdict())  # type: ignore
                 else:
-                    raise KiaraException(f"Unknown result type '{item.result_type}'")
+                    raise KiaraException(f"Unknown result type '{item.result_type}'")  # type: ignore
 
                 if len(metadata_items) >= batch_size:
                     conn.execute(insert_metadata_sql, metadata_items)
@@ -215,7 +221,7 @@ CREATE TABLE IF NOT EXISTS metadata_references (
 
         metadata_fields_str += ", :result_type as result_type"
 
-        sql_string = f"SELECT {metadata_fields_str} FROM metadata m "
+        sql_string = f"SELECT {metadata_fields_str} FROM metadata m "  # noqa
         conditions = []
         params = {"result_type": "metadata_item"}
 
@@ -280,7 +286,7 @@ CREATE TABLE IF NOT EXISTS metadata_references (
                 (f"r.{x}" for x in reference_item_result_fields)
             )
 
-        ref_sql_string = f"SELECT {reference_fields_str}, :result_type as result_type FROM metadata_references r"
+        ref_sql_string = f"SELECT {reference_fields_str}, :result_type as result_type FROM metadata_references r"  # noqa
         ref_params = {"result_type": "metadata_ref_item"}
         ref_conditions = []
 
@@ -389,7 +395,7 @@ CREATE TABLE IF NOT EXISTS metadata_references (
             details = {
                 "no_metadata_items": metadata_count,
                 "no_references": reference_count,
-                "dynamic_archive": False
+                "dynamic_archive": False,
             }
             return ArchiveDetails(**details)
 

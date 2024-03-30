@@ -28,8 +28,8 @@ import structlog
 from ruamel.yaml import YAML
 
 from kiara.defaults import (
+    CHUNK_COMPRESSION_TYPE,
     DATA_ARCHIVE_DEFAULT_VALUE_MARKER,
-    DEFAULT_CHUNK_COMPRESSION,
     DEFAULT_STORE_MARKER,
     OFFICIAL_KIARA_PLUGINS,
     VALID_VALUE_QUERY_CATEGORIES,
@@ -1830,6 +1830,7 @@ class BaseAPI(object):
             if store_related_metadata:
 
                 from kiara.registries.metadata import MetadataMatcher
+
                 matcher = MetadataMatcher.create_matcher(
                     reference_item_ids=[value_obj.job_id, value_obj.value_id]
                 )
@@ -2287,8 +2288,14 @@ class BaseAPI(object):
                 if kiarchive_alias.endswith(".kiarchive"):
                     kiarchive_alias = kiarchive_alias[:-10]
 
-                if "compression" not in create_params.keys():
-                    create_params["compression"] = DEFAULT_CHUNK_COMPRESSION
+                compression: Union[None, CHUNK_COMPRESSION_TYPE, str] = None
+                for k, v in create_params.items():
+                    if k == "compression":
+                        compression = v
+                    else:
+                        raise KiaraException(
+                            msg=f"Invalid archive creation parameter: '{k}'."
+                        )
 
                 archive = KiArchive.create_kiarchive(
                     kiara=self.context,
@@ -2296,28 +2303,36 @@ class BaseAPI(object):
                     allow_existing=False,
                     archive_name=kiarchive_alias,
                     allow_write_access=allow_write_access,
-                    **create_params,
+                    compression=compression,
                 )
                 log_message("archive.created", archive_name=archive.archive_name)
 
         else:
             raise NotImplementedError("Only local files are supported for now.")
 
+        data_archive = archive.data_archive
+        assert data_archive is not None
         data_alias = self.context.register_external_archive(
-            archive.data_archive,
+            data_archive,
             allow_write_access=allow_write_access,
         )
 
+        alias_archive = archive.alias_archive
+        assert alias_archive is not None
         alias_alias = self.context.register_external_archive(
-            archive.alias_archive, allow_write_access=allow_write_access
+            alias_archive, allow_write_access=allow_write_access
         )
 
+        job_archive = archive.job_archive
+        assert job_archive is not None
         job_alias = self.context.register_external_archive(
-            archive.job_archive, allow_write_access=allow_write_access
+            job_archive, allow_write_access=allow_write_access
         )
 
+        metadata_archive = archive.metadata_archive
+        assert metadata_archive is not None
         metadata_alias = self.context.register_external_archive(
-            archive.metadata_archive, allow_write_access=allow_write_access
+            metadata_archive, allow_write_access=allow_write_access
         )
         assert data_alias["data"] == alias_alias["alias"]
         assert data_alias["data"] == job_alias["job_record"]

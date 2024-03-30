@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, ClassVar, Mapping, Union
 
 from pydantic import Field, PrivateAttr
 
-from kiara.defaults import CHUNK_COMPRESSION_TYPE
+from kiara.defaults import CHUNK_COMPRESSION_TYPE, DEFAULT_CHUNK_COMPRESSION
 from kiara.models import KiaraModel
 
 if TYPE_CHECKING:
@@ -116,10 +116,13 @@ class KiArchive(KiaraModel):
         kiara: "Kiara",
         kiarchive_uri: Union[str, Path],
         archive_name: Union[str, None] = None,
-        compression: Union[CHUNK_COMPRESSION_TYPE, str] = CHUNK_COMPRESSION_TYPE.ZSTD,
+        compression: Union[None, CHUNK_COMPRESSION_TYPE, str] = None,
         allow_write_access: bool = True,
         allow_existing: bool = False,
     ) -> "KiArchive":
+
+        if compression is None:
+            compression = DEFAULT_CHUNK_COMPRESSION
 
         if isinstance(kiarchive_uri, str):
             kiarchive_uri = Path(kiarchive_uri)

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import uuid
+from collections.abc import Iterable, Mapping
 from pathlib import Path
 
 # BEGIN AUTO-GENERATED-IMPORTS
-from typing import TYPE_CHECKING, Any, ClassVar, Iterable, List, Mapping, Union
+from typing import TYPE_CHECKING, Any, ClassVar, List, Union
 from uuid import UUID
 
 if TYPE_CHECKING:
@@ -19,10 +20,8 @@ if TYPE_CHECKING:
         ValueInfo,
         ValuesInfo,
     )
-    from kiara.interfaces.python_api.models.job import JobDesc
     from kiara.interfaces.python_api.value import StoreValueResult, StoreValuesResult
     from kiara.models.context import ContextInfo, ContextInfos
-    from kiara.models.metadata import KiaraMetadata
     from kiara.models.module.operation import Operation
     from kiara.models.values.value import Value, ValueMapReadOnly
 
@@ -36,7 +35,9 @@ if TYPE_CHECKING:
         KiaraPluginInfo,
         KiaraPluginInfos,
     )
+    from kiara.interfaces.python_api.models.job import JobDesc
     from kiara.models.archives import KiArchiveInfo
+    from kiara.models.metadata import KiaraMetadata
     from kiara.models.module.jobs import ActiveJob, JobRecord
     from kiara.models.module.manifest import Manifest
 
@@ -218,7 +219,7 @@ class KiaraAPI(object):
             job_id = uuid.UUID(job_id)
 
         metadata: Union[
-            None, KiaraMetadata
+            None, "KiaraMetadata"
         ] = self._api.context.metadata_registry.retrieve_job_metadata_item(
             job_id=job_id, key="comment"
         )
@@ -772,6 +773,7 @@ class KiaraAPI(object):
         alias: Union[str, Iterable[str], None],
         allow_overwrite: bool = True,
         store: Union[str, None] = None,
+        store_related_metadata: bool = True,
         set_as_store_default: bool = False,
     ) -> "StoreValueResult":
         """Store the specified value in a value store.
@@ -788,8 +790,7 @@ class KiaraAPI(object):
             alias: (Optional) one or several aliases for the value
             allow_overwrite: whether to allow overwriting existing aliases
             store: in case data and alias store names are the same, you can use this, if you specify one or both of the others, this will be overwritten
-            data_store: the registered name (or archive id as string) of the store to write the data
-            alias_store: the registered name (or archive id as string) of the store to persist the alias(es)/value_id mapping
+            store_related_metadata: whether to store related metadata (comments, etc.) in the same store as the data
             set_as_store_default: whether to set the specified store as the default store for the value
         """
 
@@ -798,6 +799,7 @@ class KiaraAPI(object):
             alias=alias,
             allow_overwrite=allow_overwrite,
             store=store,
+            store_related_metadata=store_related_metadata,
             set_as_store_default=set_as_store_default,
         )
         return result
@@ -806,12 +808,15 @@ class KiaraAPI(object):
         self,
         values: Union[
             str,
+            "Value",
+            "UUID",
             Mapping[str, Union[str, "UUID", "Value"]],
             Iterable[Union[str, "UUID", "Value"]],
         ],
         alias_map: Union[Mapping[str, Iterable[str]], bool, str] = False,
         allow_alias_overwrite: bool = True,
         store: Union[str, None] = None,
+        store_related_metadata: bool = True,
     ) -> "StoreValuesResult":
         """Store multiple values into the (default) kiara value store.
 
@@ -870,8 +875,7 @@ class KiaraAPI(object):
             alias_map=alias_map,
             allow_alias_overwrite=allow_alias_overwrite,
             store=store,
-            data_store=data_store,
-            alias_store=alias_store,
+            store_related_metadata=store_related_metadata,
         )
         return result
 

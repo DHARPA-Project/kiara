@@ -502,7 +502,9 @@ class DataRegistry(object):
         self._registered_values[_value_id] = stored_value
         return self._registered_values[_value_id]
 
-    def _persist_environment(self, env_type: str, env_hash: str, store: str):
+    def _persist_environment(
+        self, env_type: str, env_hash: str, store: Union[str, None]
+    ):
 
         # cached = self._env_cache.get(env_type, {}).get(env_hash, None)
         # if cached is not None:
@@ -518,7 +520,7 @@ class DataRegistry(object):
     def store_value(
         self,
         value: Union[ValueLink, uuid.UUID, str],
-        data_store: Union[str, uuid.UUID, None] = None,
+        data_store: Union[str, None] = None,
     ) -> Union[PersistedData, None]:
         """Store a value into a data store.
 
@@ -574,7 +576,9 @@ class DataRegistry(object):
         self._event_callback(store_event)
 
         if _value.job_id:
-            self._kiara.job_registry.store_job_record(job_id=_value.job_id, store=data_store)
+            self._kiara.job_registry.store_job_record(
+                job_id=_value.job_id, store=data_store
+            )
 
         return persisted_value
 

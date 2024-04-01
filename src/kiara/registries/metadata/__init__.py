@@ -225,6 +225,9 @@ class MetadataRegistry(object):
                 raise KiaraException(
                     f"No environment with id '{env_cid}' available in metadata store."
                 )
+
+            from kiara.models.runtime_environment import RuntimeEnvironment
+
             if isinstance(_environment, RuntimeEnvironment):
                 environment = _environment
             else:

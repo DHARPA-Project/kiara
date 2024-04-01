@@ -55,6 +55,13 @@ class EnvironmentRegistry(object):
             )
         return envs[0]
 
+    def has_environment(self, env_cid: str) -> bool:
+
+        for env in self.environments.values():
+            if str(env.instance_cid) == env_cid:
+                return True
+        return False
+
     @property
     def environment_hashes(self) -> Mapping[str, Mapping[str, str]]:
 

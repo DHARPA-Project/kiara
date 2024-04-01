@@ -46,6 +46,19 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
         self._schema_stored_cache: Dict[str, Any] = {}
         self._schema_stored_item: Dict[str, uuid.UUID] = {}
 
+    def find_metadata_item_with_hash(
+        self, item_hash: str, key: Union[str, None] = None
+    ) -> Union[Tuple[str, Mapping[str, Any]], None]:
+        """Return the key of the metadata item with the specified hash."""
+
+        return self._retrieve_metadata_item_with_hash(item_hash=item_hash, key=key)
+
+    @abc.abstractmethod
+    def _retrieve_metadata_item_with_hash(
+        self, item_hash: str, key: Union[str, None] = None
+    ) -> Union[Tuple[str, Mapping[str, Any]], None]:
+        pass
+
     def find_matching_metadata_items(
         self,
         matcher: "MetadataMatcher",
@@ -58,19 +71,6 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
             metadata_item_result_fields=metadata_item_result_fields,
             reference_item_result_fields=reference_item_result_fields,
         )
-
-    def store_metadata_and_ref_items(
-        self, items: Generator[Tuple[Any, ...], None, None]
-    ):
-
-        return self._store_metadata_and_ref_items(items)
-
-    @abc.abstractmethod
-    def _store_metadata_and_ref_items(
-        self, items: Generator[Tuple[Any, ...], None, None]
-    ):
-
-        pass
 
     @abc.abstractmethod
     def _find_matching_metadata_and_ref_items(
@@ -250,4 +250,17 @@ class MetadataStore(MetadataArchive):
         model_type_id: str,
         model_schema_hash: str,
     ) -> uuid.UUID:
+        pass
+
+    def store_metadata_and_ref_items(
+        self, items: Generator[Tuple[Any, ...], None, None]
+    ):
+
+        return self._store_metadata_and_ref_items(items)
+
+    @abc.abstractmethod
+    def _store_metadata_and_ref_items(
+        self, items: Generator[Tuple[Any, ...], None, None]
+    ):
+
         pass

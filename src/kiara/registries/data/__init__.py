@@ -45,6 +45,7 @@ from kiara.defaults import (
 )
 from kiara.exceptions import (
     InvalidValuesException,
+    KiaraException,
     NoSuchValueAliasException,
     NoSuchValueException,
     NoSuchValueIdException,
@@ -502,15 +503,18 @@ class DataRegistry(object):
         self._registered_values[_value_id] = stored_value
         return self._registered_values[_value_id]
 
-    def _persist_environment(
-        self, env_type: str, env_hash: str, store: Union[str, None]
-    ):
+    def _persist_environment(self, env_hash: str, store: Union[str, None]):
 
         # cached = self._env_cache.get(env_type, {}).get(env_hash, None)
         # if cached is not None:
         #     return
 
-        environment = self._kiara.environment_registry.get_environment_for_cid(env_hash)
+        environment = self._kiara.metadata_registry.retrieve_environment_item(env_hash)
+
+        if not environment:
+            raise KiaraException(
+                f"Can't persist data environment with hash '{env_hash}': no such environment registered."
+            )
 
         self._kiara.metadata_registry.register_metadata_item(
             key=ENVIRONMENT_MARKER_KEY, item=environment, store=store
@@ -533,9 +537,9 @@ class DataRegistry(object):
         _value = self.get_value(value)
 
         # first, persist environment information
-        for env_type, env_hash in _value.pedigree.environments.items():
+        for env_hash in _value.pedigree.environments.values():
 
-            self._persist_environment(env_type, env_hash, store=data_store)
+            self._persist_environment(env_hash, store=data_store)
 
         store: DataStore = self.get_archive(archive_id_or_alias=data_store)  # type: ignore
         if not store.is_writeable():

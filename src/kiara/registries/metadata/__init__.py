@@ -20,6 +20,7 @@ from kiara.defaults import (
     DEFAULT_METADATA_STORE_MARKER,
     DEFAULT_STORE_MARKER,
 )
+from kiara.exceptions import KiaraException
 from kiara.models import KiaraModel
 from kiara.models.events import RegistryEvent
 from kiara.models.metadata import CommentMetadata, KiaraMetadata
@@ -27,6 +28,7 @@ from kiara.registries.metadata.metadata_store import MetadataArchive, MetadataSt
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
+    from kiara.models.runtime_environment import RuntimeEnvironment
 
 
 class MetadataMatcher(KiaraModel):
@@ -211,6 +213,56 @@ class MetadataRegistry(object):
 
         return mounted_store.find_matching_metadata_items(matcher=matcher)
 
+    def retrieve_environment_item(self, env_cid: str) -> "RuntimeEnvironment":
+
+        if self._kiara.environment_registry.has_environment(env_cid):
+            environment = self._kiara.environment_registry.get_environment_for_cid(
+                env_cid
+            )
+        else:
+            _environment = self.retrieve_metadata_item_with_hash(item_hash=env_cid)
+            if _environment is None:
+                raise KiaraException(
+                    f"No environment with id '{env_cid}' available in metadata store."
+                )
+            if isinstance(_environment, RuntimeEnvironment):
+                environment = _environment
+            else:
+                raise KiaraException(
+                    f"Invalid environment item with id '{env_cid}' available in metadata store."
+                )
+
+        return environment
+
+    def retrieve_metadata_item_with_hash(
+        self, item_hash: str, store: Union[str, uuid.UUID, None] = None
+    ) -> Union[KiaraMetadata, None]:
+        """Retrieves a metadata item by its hash."""
+
+        if store:
+            mounted_archive: MetadataStore = self.get_archive(archive_id_or_alias=store)  # type: ignore
+            result = mounted_archive.find_metadata_item_with_hash(item_hash=item_hash)
+        else:
+            mounted_archive: MetadataStore = self.get_archive(archive_id_or_alias=store)  # type: ignore
+            result = mounted_archive.find_metadata_item_with_hash(item_hash=item_hash)
+            if not result:
+                for archive in self.metadata_archives.values():
+
+                    result = archive.find_metadata_item_with_hash(item_hash=item_hash)
+                    if result:
+                        break
+
+        if result is None:
+            return None
+
+        model_type_id, data = result
+        model_cls = self._kiara.kiara_model_registry.get_model_cls(
+            kiara_model_id=model_type_id, required_subclass=KiaraMetadata
+        )
+
+        model_instance = model_cls(**data)
+        return model_instance  # type: ignore
+
     def retrieve_metadata_item(
         self,
         key: str,
@@ -221,14 +273,33 @@ class MetadataRegistry(object):
     ) -> Union[KiaraMetadata, None]:
         """Retrieves a metadata item."""
 
-        mounted_store: MetadataStore = self.get_archive(archive_id_or_alias=store)  # type: ignore
+        if store:
+            mounted_store: MetadataStore = self.get_archive(archive_id_or_alias=store)  # type: ignore
+            result = mounted_store.retrieve_metadata_item(
+                metadata_item_key=key,
+                reference_type=reference_item_type,
+                reference_key=reference_item_key,
+                reference_id=reference_item_id,
+            )
+        else:
+            mounted_store: MetadataStore = self.get_archive(archive_id_or_alias=store)  # type: ignore
+            result = mounted_store.retrieve_metadata_item(
+                metadata_item_key=key,
+                reference_type=reference_item_type,
+                reference_key=reference_item_key,
+                reference_id=reference_item_id,
+            )
+            if not result:
 
-        result = mounted_store.retrieve_metadata_item(
-            metadata_item_key=key,
-            reference_type=reference_item_type,
-            reference_key=reference_item_key,
-            reference_id=reference_item_id,
-        )
+                for archive in self.metadata_archives.values():
+                    result = archive.retrieve_metadata_item(
+                        metadata_item_key=key,
+                        reference_type=reference_item_type,
+                        reference_key=reference_item_key,
+                        reference_id=reference_item_id,
+                    )
+                    if result:
+                        break
 
         if result is None:
             return None
@@ -255,7 +326,7 @@ class MetadataRegistry(object):
 
         mounted_store: MetadataStore = self.get_archive(archive_id_or_alias=store)  # type: ignore
 
-        return mounted_store.store_metadata_item(
+        result = mounted_store.store_metadata_item(
             key=key,
             item=item,
             reference_item_type=reference_item_type,
@@ -264,6 +335,7 @@ class MetadataRegistry(object):
             replace_existing_references=replace_existing_references,
             allow_multiple_references=allow_multiple_references,
         )
+        return result
 
     def register_job_metadata_items(
         self,

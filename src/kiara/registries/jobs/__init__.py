@@ -20,7 +20,7 @@ from kiara.defaults import (
     DEFAULT_STORE_MARKER,
     ENVIRONMENT_MARKER_KEY,
 )
-from kiara.exceptions import FailedJobException
+from kiara.exceptions import FailedJobException, KiaraException
 from kiara.models.events import KiaraEvent
 from kiara.models.events.job_registry import (
     JobArchiveAddedEvent,
@@ -310,7 +310,13 @@ class JobRegistry(object):
         if cached is not None:
             return
 
-        environment = self._kiara.environment_registry.get_environment_for_cid(env_hash)
+        environment = self._kiara.metadata_registry.retrieve_environment_item(env_hash)
+
+        if not environment:
+            raise KiaraException(
+                f"Can't persist job environment for with hash '{env_hash}': no such environment registered."
+            )
+
         self._kiara.metadata_registry.register_metadata_item(
             key=ENVIRONMENT_MARKER_KEY, item=environment
         )

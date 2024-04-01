@@ -162,46 +162,49 @@ CREATE TABLE IF NOT EXISTS metadata_references (
         #     event.listen(self._cached_engine, "connect", _pragma_on_connect)
         return self._cached_engine
 
-    def _store_metadata_and_ref_items(
-        self, items: Generator[Tuple[Any, ...], None, None]
-    ):
+    def _retrieve_metadata_item_with_hash(
+        self, item_hash: str, key: Union[str, None] = None
+    ) -> Union[Tuple[str, Mapping[str, Any]], None]:
 
-        insert_metadata_sql = text(
-            "INSERT OR IGNORE INTO metadata (metadata_item_id, metadata_item_created, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_created, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)"
-        )
+        if not key:
+            sql = text(
+                """
+                SELECT m.model_type_id, m.metadata_value
+                FROM metadata m
+                WHERE m.metadata_item_hash = :item_hash
+            """
+            )
+        else:
+            sql = text(
+                """
+                SELECT m.model_type_id, m.metadata_value
+                FROM metadata m
+                WHERE m.metadata_item_hash = :item_hash AND m.metadata_item_key = :key
+            """
+            )
 
-        insert_ref_sql = text(
-            "INSERT OR IGNORE INTO metadata_references (reference_item_type, reference_item_key, reference_item_id, reference_created, metadata_item_id) VALUES (:reference_item_type, :reference_item_key, :reference_item_id, :reference_created, :metadata_item_id)"
-        )
+        with self.sqlite_engine.connect() as connection:
+            params = {"item_hash": item_hash}
+            if key:
+                params["key"] = key
+            result = connection.execute(sql, params)
+            row = result.fetchall()
+            if not row:
+                return None
 
-        batch_size = 100
+            if len(row) > 1:
+                msg = (
+                    f"Multiple ({len(row)}) metadata items found for hash '{item_hash}'"
+                )
+                if key:
+                    msg += f" and key '{key}'"
+                msg += "."
+                raise KiaraException(msg)
 
-        with self.sqlite_engine.connect() as conn:
+            data_str = row[0][1]
+            data = orjson.loads(data_str)
 
-            metadata_items = []
-            ref_items = []
-
-            for item in items:
-                if item.result_type == "metadata_item":  # type: ignore
-                    metadata_items.append(item._asdict())  # type: ignore
-                elif item.result_type == "metadata_ref_item":  # type: ignore
-                    ref_items.append(item._asdict())  # type: ignore
-                else:
-                    raise KiaraException(f"Unknown result type '{item.result_type}'")  # type: ignore
-
-                if len(metadata_items) >= batch_size:
-                    conn.execute(insert_metadata_sql, metadata_items)
-                    metadata_items.clear()
-                if len(ref_items) >= batch_size:
-                    conn.execute(insert_ref_sql, ref_items)
-                    ref_items.clear()
-
-            if metadata_items:
-                conn.execute(insert_metadata_sql, metadata_items)
-            if ref_items:
-                conn.execute(insert_ref_sql, ref_items)
-
-            conn.commit()
+            return (row[0][0], data)
 
     def _find_matching_metadata_and_ref_items(
         self,
@@ -545,3 +548,44 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
                 conn.execute(sql_replace, sql_replace_params)
                 conn.execute(sql_insert, sql_insert_params)
                 conn.commit()
+
+    def _store_metadata_and_ref_items(
+        self, items: Generator[Tuple[Any, ...], None, None]
+    ):
+
+        insert_metadata_sql = text(
+            "INSERT OR IGNORE INTO metadata (metadata_item_id, metadata_item_created, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_created, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)"
+        )
+
+        insert_ref_sql = text(
+            "INSERT OR IGNORE INTO metadata_references (reference_item_type, reference_item_key, reference_item_id, reference_created, metadata_item_id) VALUES (:reference_item_type, :reference_item_key, :reference_item_id, :reference_created, :metadata_item_id)"
+        )
+
+        batch_size = 100
+
+        with self.sqlite_engine.connect() as conn:
+
+            metadata_items = []
+            ref_items = []
+
+            for item in items:
+                if item.result_type == "metadata_item":  # type: ignore
+                    metadata_items.append(item._asdict())  # type: ignore
+                elif item.result_type == "metadata_ref_item":  # type: ignore
+                    ref_items.append(item._asdict())  # type: ignore
+                else:
+                    raise KiaraException(f"Unknown result type '{item.result_type}'")  # type: ignore
+
+                if len(metadata_items) >= batch_size:
+                    conn.execute(insert_metadata_sql, metadata_items)
+                    metadata_items.clear()
+                if len(ref_items) >= batch_size:
+                    conn.execute(insert_ref_sql, ref_items)
+                    ref_items.clear()
+
+            if metadata_items:
+                conn.execute(insert_metadata_sql, metadata_items)
+            if ref_items:
+                conn.execute(insert_ref_sql, ref_items)
+
+            conn.commit()

@@ -102,6 +102,7 @@ if TYPE_CHECKING:
     from kiara.models.module.pipeline import PipelineConfig, PipelineStructure
     from kiara.models.module.pipeline.pipeline import PipelineGroupInfo, PipelineInfo
     from kiara.registries import KiaraArchive
+    from kiara.registries.metadata import MetadataStore
 
 logger = structlog.getLogger()
 yaml = YAML(typ="safe")
@@ -1835,7 +1836,7 @@ class BaseAPI(object):
                     reference_item_ids=[value_obj.job_id, value_obj.value_id]
                 )
 
-                target_store = self.context.metadata_registry.get_archive(store)
+                target_store: MetadataStore = self.context.metadata_registry.get_archive(store)  # type: ignore
                 matching_metadata = self.context.metadata_registry.find_metadata_items(
                     matcher=matcher
                 )

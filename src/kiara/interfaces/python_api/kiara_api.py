@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import uuid
-from collections.abc import Iterable, Mapping
 from pathlib import Path
 
 # BEGIN AUTO-GENERATED-IMPORTS
-from typing import TYPE_CHECKING, Any, ClassVar, List, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Iterable, List, Mapping, Union
 from uuid import UUID
 
 if TYPE_CHECKING:

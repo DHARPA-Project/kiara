@@ -236,6 +236,7 @@ class BaseToKiaraApiRenderer(BaseApiRenderer):
         endpoint_data = []
         imports: Dict[str, Set[str]] = {}
         imports.setdefault("typing", set()).add("Dict")
+        imports.setdefault("typing", set()).add("Mapping")
         imports.setdefault("typing", set()).add("ClassVar")
 
         for endpoint_name in self.api_endpoints.api_endpint_names:
@@ -264,6 +265,9 @@ class BaseToKiaraApiRenderer(BaseApiRenderer):
                     "regex_str": regex_str,
                 }
             )
+
+        # remove abc modules
+        imports.pop("collections.abc", None)
 
         result = ""
         for endpoint_item in endpoint_data:

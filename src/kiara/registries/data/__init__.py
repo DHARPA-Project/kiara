@@ -33,6 +33,7 @@ from kiara.defaults import (
     DATA_ARCHIVE_DEFAULT_VALUE_MARKER,
     DEFAULT_DATA_STORE_MARKER,
     DEFAULT_STORE_MARKER,
+    ENVIRONMENT_MARKER_KEY,
     INVALID_HASH_MARKER,
     NO_SERIALIZATION_MARKER,
     NONE_STORE_ID,
@@ -44,6 +45,7 @@ from kiara.defaults import (
 )
 from kiara.exceptions import (
     InvalidValuesException,
+    KiaraException,
     NoSuchValueAliasException,
     NoSuchValueException,
     NoSuchValueIdException,
@@ -145,6 +147,7 @@ class DefaultAliasResolver(AliasResolver):
                         msg=f"Can't retrive value for alias '{rest}': no such alias registered.",
                     )
             elif ref_type == ARCHIVE_REF_TYPE_NAME:
+
                 if "#" in rest:
                     archive_ref, path_in_archive = rest.split("#", maxsplit=1)
                 else:
@@ -164,6 +167,10 @@ class DefaultAliasResolver(AliasResolver):
                             default_value = data_archive.get_archive_metadata(
                                 DATA_ARCHIVE_DEFAULT_VALUE_MARKER
                             )
+                            if default_value is None:
+                                raise NoSuchValueException(
+                                    f"No default value found for uri: {alias}"
+                                )
                             _value_id = uuid.UUID(default_value)
                         else:
                             from kiara.registries.aliases import AliasArchive
@@ -254,6 +261,7 @@ class DataRegistry(object):
         self._cached_data[NOT_SET_VALUE_ID] = SpecialValue.NOT_SET
         self._registered_values[NOT_SET_VALUE_ID] = self._not_set_value
         self._persisted_value_descs[NOT_SET_VALUE_ID] = NONE_PERSISTED_DATA
+        # self._env_cache: Dict[str, Dict[str, RuntimeEnvironment]] = {}
 
         self._none_value: Value = Value(
             value_id=NONE_VALUE_ID,
@@ -446,7 +454,11 @@ class DataRegistry(object):
                         raise Exception(
                             f"Can't retrieve value for '{value}': invalid type '{type(value)}'."
                         )
-                    _value_id = self._alias_resolver.resolve_alias(value)
+                    try:
+                        _value_id = self._alias_resolver.resolve_alias(value)
+                    except Exception as e:
+                        log_exception(e)
+                        raise e
         else:
             _value_id = value
 
@@ -491,19 +503,43 @@ class DataRegistry(object):
         self._registered_values[_value_id] = stored_value
         return self._registered_values[_value_id]
 
+    def _persist_environment(self, env_hash: str, store: Union[str, None]):
+
+        # cached = self._env_cache.get(env_type, {}).get(env_hash, None)
+        # if cached is not None:
+        #     return
+
+        environment = self._kiara.metadata_registry.retrieve_environment_item(env_hash)
+
+        if not environment:
+            raise KiaraException(
+                f"Can't persist data environment with hash '{env_hash}': no such environment registered."
+            )
+
+        self._kiara.metadata_registry.register_metadata_item(
+            key=ENVIRONMENT_MARKER_KEY, item=environment, store=store
+        )
+        # self._env_cache.setdefault(env_type, {})[env_hash] = environment
+
     def store_value(
         self,
         value: Union[ValueLink, uuid.UUID, str],
-        data_store: Union[str, uuid.UUID, None] = None,
+        data_store: Union[str, None] = None,
     ) -> Union[PersistedData, None]:
         """Store a value into a data store.
 
         If 'data_store' is not provided, the default data store is used. If the 'data_store' argument is of
         type uuid, the archive_id is used, if string, first it will be converted to an uuid, if that works,
         again, the archive_id is used, if not, the string is used as the archive alias.
+
         """
 
         _value = self.get_value(value)
+
+        # first, persist environment information
+        for env_hash in _value.pedigree.environments.values():
+
+            self._persist_environment(env_hash, store=data_store)
 
         store: DataStore = self.get_archive(archive_id_or_alias=data_store)  # type: ignore
         if not store.is_writeable():
@@ -544,7 +580,9 @@ class DataRegistry(object):
         self._event_callback(store_event)
 
         if _value.job_id:
-            self._kiara.job_registry.store_job_record(job_id=_value.job_id)
+            self._kiara.job_registry.store_job_record(
+                job_id=_value.job_id, store=data_store
+            )
 
         return persisted_value
 
@@ -1136,9 +1174,11 @@ class DataRegistry(object):
 
         archive = self.get_archive(archive_id)
 
-        return archive.retrieve_chunks(
+        chunks = archive.retrieve_chunks(
             chunk_ids, as_files=as_files, symlink_ok=symlink_ok
         )
+
+        return chunks
         # for chunk_id in chunk_ids:
         #     yield archive.retrieve_chunk(chunk_id)
 
@@ -1301,8 +1341,8 @@ class DataRegistry(object):
                     else:
                         try:
                             _d = self._alias_resolver.resolve_alias(_d)
-                        except Exception:
-                            pass
+                        except Exception as e:
+                            log_exception(e)
 
             if isinstance(_d, Value):
                 _resolved[input_name] = _d

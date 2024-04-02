@@ -73,10 +73,17 @@ from kiara.utils.dates import to_human_readable_date_string
 from kiara.utils.json import orjson_dumps
 from kiara.utils.output import extract_renderable
 
+try:
+    from typing import Self  # type: ignore
+except ImportError:
+    from typing_extensions import Self  # type: ignore
+
+
 if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.data_types import DataType
     from kiara.models.runtime_environment.python import PythonRuntimeEnvironment
+    from kiara.models.values.value_metadata import ValueMetadata
     from kiara.operations import OperationType
     from kiara.registries.aliases import AliasRegistry
     from kiara.registries.data import DataRegistry
@@ -326,7 +333,7 @@ class TypeInfoItemGroup(InfoItemGroup[TypeInfo]):
     @classmethod
     def create_from_type_items(
         cls, kiara: "Kiara", group_title: Union[str, None] = None, **items: Type
-    ) -> "TypeInfoItemGroup":
+    ) -> Self:
 
         type_infos: Mapping[str, TypeInfo[Any]] = {
             k: cls.base_info_class().create_from_type_class(type_cls=v, kiara=kiara)
@@ -790,6 +797,90 @@ class KiaraModuleConfigMetadata(KiaraModel):
         return self.python_class.full_name
 
 
+class MetadataTypeInfo(TypeInfo):
+
+    _kiara_model_id: ClassVar = "info.metadata_type"
+
+    @classmethod
+    def create_from_type_class(
+        self, type_cls: Type["ValueMetadata"], kiara: "Kiara"
+    ) -> "MetadataTypeInfo":
+
+        authors_md = AuthorsMetadataModel.from_class(type_cls)
+        doc = DocumentationMetadataModel.from_class_doc(type_cls)
+        python_class = PythonClass.from_class(type_cls)
+        properties_md = ContextMetadataModel.from_class(type_cls)
+        type_name = type_cls._metadata_key  # type: ignore
+        schema = type_cls.model_json_schema()
+
+        return MetadataTypeInfo(
+            type_name=type_name,
+            documentation=doc,
+            authors=authors_md,
+            context=properties_md,
+            python_class=python_class,
+            metadata_schema=schema,
+        )
+
+    @classmethod
+    def base_class(self) -> Type["ValueMetadata"]:
+        from kiara.models.values.value_metadata import ValueMetadata
+
+        return ValueMetadata
+
+    @classmethod
+    def category_name(cls) -> str:
+        return "value_metadata"
+
+    metadata_schema: Dict[str, Any] = Field(
+        description="The (json) schema for this metadata value."
+    )
+
+    def create_renderable(self, **config: Any) -> RenderableType:
+
+        include_doc = config.get("include_doc", True)
+        include_schema = config.get("include_schema", True)
+
+        table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
+        table.add_column("property", style="i")
+        table.add_column("value")
+
+        if include_doc:
+            table.add_row(
+                "Documentation",
+                Panel(self.documentation.create_renderable(), box=box.SIMPLE),
+            )
+        table.add_row("Author(s)", self.authors.create_renderable())
+        table.add_row("Context", self.context.create_renderable())
+
+        if hasattr(self, "python_class"):
+            table.add_row("Python class", self.python_class.create_renderable())
+
+        if include_schema:
+            schema = Syntax(
+                orjson_dumps(self.metadata_schema, option=orjson.OPT_INDENT_2),
+                "json",
+                background_color="default",
+            )
+            table.add_row("metadata_schema", schema)
+
+        return table
+
+
+class MetadataTypeClassesInfo(TypeInfoItemGroup):
+
+    _kiara_model_id: ClassVar = "info.metadata_types"
+
+    @classmethod
+    def base_info_class(cls) -> Type[TypeInfo]:
+        return MetadataTypeInfo
+
+    type_name: Literal["value_metadata"] = "value_metadata"
+    item_infos: Mapping[str, MetadataTypeInfo] = Field(  # type: ignore
+        description="The value metadata info instances for each type."
+    )
+
+
 class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
 
     _kiara_model_id: ClassVar = "info.data_type"
@@ -799,9 +890,25 @@ class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
         self, type_cls: Type["DataType"], kiara: Union["Kiara", None] = None
     ) -> "DataTypeClassInfo":
 
+        from kiara.utils.metadata import get_metadata_model_for_data_type
+
         authors = AuthorsMetadataModel.from_class(type_cls)
         doc = DocumentationMetadataModel.from_class_doc(type_cls)
         properties_md = ContextMetadataModel.from_class(type_cls)
+
+        if kiara is None:
+            raise NotImplementedError(
+                "Kiara instance is required to create DataTypeClassInfo."
+            )
+        else:
+            data_type_name = getattr(type_cls, "_data_type_name", None)
+            if not data_type_name:
+                raise KiaraException(
+                    f"Data type class '{type_cls.__name__}' does not have a '_data_type_name' attribute."
+                )
+            metadata_models = get_metadata_model_for_data_type(
+                kiara=kiara, data_type=data_type_name
+            )
 
         if kiara is not None:
             qual_profiles = kiara.type_registry.get_associated_profiles(type_cls._data_type_name)  # type: ignore
@@ -823,6 +930,7 @@ class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
                 documentation=doc,
                 authors=authors,
                 context=properties_md,
+                supported_properties=metadata_models,
             )
         except Exception as e:
             if isinstance(
@@ -854,6 +962,9 @@ class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
     qualifier_profiles: Union[Mapping[str, Mapping[str, Any]], None] = Field(
         description="A map of qualifier profiles for this data types."
     )
+    supported_properties: MetadataTypeClassesInfo = Field(
+        description="The supported property types for this data type."
+    )
     _kiara: Union["Kiara", None] = PrivateAttr(default=None)
 
     def _retrieve_id(self) -> str:
@@ -865,28 +976,32 @@ class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
     def create_renderable(self, **config: Any) -> RenderableType:
 
         include_doc = config.get("include_doc", True)
+        include_lineage = config.get("include_lineage", True)
+        include_qualifer_profiles = config.get("include_qualifier_profiles", True)
 
         table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
         table.add_column("property", style="i")
         table.add_column("value")
 
-        if self.lineage:
-            table.add_row("lineage", "\n".join(self.lineage[0:]))
-        else:
-            table.add_row("lineage", "-- n/a --")
+        if include_lineage:
+            if self.lineage:
+                table.add_row("lineage", "\n".join(self.lineage[0:]))
+            else:
+                table.add_row("lineage", "-- n/a --")
 
-        if self.qualifier_profiles:
-            qual_table = Table(show_header=False, box=box.SIMPLE)
-            qual_table.add_column("name")
-            qual_table.add_column("config")
-            for name, details in self.qualifier_profiles.items():
-                json_details = orjson_dumps(details, option=orjson.OPT_INDENT_2)
-                qual_table.add_row(
-                    name, Syntax(json_details, "json", background_color="default")
-                )
-            table.add_row("qualifier profile(s)", qual_table)
-        else:
-            table.add_row("qualifier profile(s)", "-- n/a --")
+        if include_qualifer_profiles:
+            if self.qualifier_profiles:
+                qual_table = Table(show_header=False, box=box.SIMPLE)
+                qual_table.add_column("name")
+                qual_table.add_column("config")
+                for name, details in self.qualifier_profiles.items():
+                    json_details = orjson_dumps(details, option=orjson.OPT_INDENT_2)
+                    qual_table.add_row(
+                        name, Syntax(json_details, "json", background_color="default")
+                    )
+                table.add_row("qualifier profile(s)", qual_table)
+            else:
+                table.add_row("qualifier profile(s)", "-- n/a --")
 
         if include_doc:
             table.add_row(
@@ -949,7 +1064,7 @@ class DataTypeClassesInfo(TypeInfoItemGroup):
     def create_renderable(self, **config: Any) -> RenderableType:
 
         full_doc = config.get("full_doc", False)
-        show_subtypes_inline = config.get("show_qualifier_profiles_inline", True)
+        show_subtypes_inline = config.get("show_qualifier_profiles_inline", False)
         show_lineage = config.get("show_type_lineage", True)
 
         show_lines = full_doc or show_subtypes_inline or show_lineage
@@ -974,28 +1089,20 @@ class DataTypeClassesInfo(TypeInfoItemGroup):
 
             t_md = self.item_infos[type_name]  # type: ignore
             row: List[Any] = [type_name]
-
             if show_lineage:
-                if self._kiara is None:
+                lineage = t_md.lineage
+                if lineage is None:
                     lineage_str = "-- n/a --"
                 else:
-                    lineage = list(
-                        self._kiara.type_registry.get_type_lineage(type_name)
-                    )
                     lineage_str = ", ".join(reversed(lineage[1:]))
                 row.append(lineage_str)
             if show_subtypes_inline:
-                if self._kiara is None:
-                    qual_profiles = "-- n/a --"
+                qual_profiles = t_md.qualifier_profiles
+                if not qual_profiles:
+                    qual_profiles_str = "-- n/a --"
                 else:
-                    qual_p = self._kiara.type_registry.get_associated_profiles(
-                        data_type_name=type_name
-                    ).keys()
-                    if qual_p:
-                        qual_profiles = "\n".join(qual_p)
-                    else:
-                        qual_profiles = "-- n/a --"
-                row.append(qual_profiles)
+                    qual_profiles_str = "\n".join(qual_profiles)
+                row.append(qual_profiles_str)
 
             if full_doc:
                 md = Markdown(t_md.documentation.full_doc)

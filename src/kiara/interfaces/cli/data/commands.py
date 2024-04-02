@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING, Iterable, Tuple, Union
 import rich_click as click
 import structlog
 
+from kiara.defaults import DATA_ARCHIVE_DEFAULT_VALUE_MARKER
 from kiara.exceptions import InvalidCommandLineInvocation
 from kiara.utils import is_develop, log_exception, log_message
 from kiara.utils.cli import output_format_option, terminal_print, terminal_print_model
@@ -37,7 +38,7 @@ from kiara.utils.cli.exceptions import handle_exception
 
 
 if TYPE_CHECKING:
-    from kiara.api import Kiara, KiaraAPI
+    from kiara.interfaces.python_api.base_api import BaseAPI, Kiara
     from kiara.operations.included_core_operations.filter import FilterOperationType
 
 logger = structlog.getLogger()
@@ -146,10 +147,9 @@ def list_values(
 ) -> None:
     """List all data items that are stored in kiara."""
 
-    from kiara.interfaces.python_api import ValuesInfo
-    from kiara.interfaces.python_api.models.info import RENDER_FIELDS
+    from kiara.interfaces.python_api.models.info import RENDER_FIELDS, ValuesInfo
 
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     if include_internal:
         all_values = True
@@ -269,7 +269,7 @@ def explain_value(
     All of the 'show-additional-information' flags are only applied when the 'terminal' output format is selected. This might change in the future.
     """
 
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     render_config = {
         "show_pedigree": pedigree,
@@ -321,7 +321,7 @@ def explain_value(
 def load_value(ctx, value: str):
     """Load a stored value and print it in a format suitable for the terminal."""
     # kiara_obj: Kiara = ctx.obj["kiara"]
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     try:
         _value = kiara_api.get_value(value=value)
@@ -412,7 +412,7 @@ def filter_value(
         silent = True
 
     kiara_obj: Kiara = ctx.obj.kiara
-    api: KiaraAPI = ctx.obj.kiara_api
+    api: BaseAPI = ctx.obj.kiara_api
 
     cmd_help = "[yellow bold]Usage: [/yellow bold][bold]kiara data filter VALUE FILTER_1:FILTER_2 [FILTER ARGS...][/bold]"
 
@@ -548,6 +548,7 @@ def filter_value(
     default="zstd",
 )
 @click.option("--append", "-a", help="Append data to existing archive.", is_flag=True)
+@click.option("--replace", help="Replace existing archive.", is_flag=True)
 # @click.option(
 #     "--no-default-value", "-nd", help="Do not set a default value.", is_flag=True
 # )
@@ -562,6 +563,7 @@ def export_data_archive(
     path: Union[str, None],
     compression: str,
     append: bool,
+    replace: bool,
     no_default_value: bool = False,
     no_aliases: bool = False,
 ):
@@ -570,7 +572,7 @@ def export_data_archive(
     Aliases that already exist in the target archve will be overwritten.
     """
 
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     values = []
     for idx, alias in enumerate(aliases, start=1):
@@ -608,13 +610,24 @@ def export_data_archive(
 
     full_path = Path(base_path) / file_name
 
-    if full_path.exists() and not append:
+    delete = False
+
+    if full_path.exists() and (not append and not replace):
         terminal_print(
-            f"[red]Error[/red]: File '{full_path}' already exists and '--append' not specified."
+            f"[red]Error[/red]: File '{full_path}' already exists and '--append' or '--replace' not specified."
         )
         sys.exit(1)
     elif full_path.exists():
-        terminal_print(f"Appending to existing data_store '{file_name}'...")
+        if append and replace:
+            terminal_print(
+                "[red]Error[/red]: Can't specify both '--append' and '--replace'."
+            )
+            sys.exit(1)
+        if append:
+            terminal_print(f"Appending to existing data_store '{file_name}'...")
+        else:
+            terminal_print(f"Replacing existing data_store '{file_name}'...")
+            delete = True
     else:
         terminal_print(f"Creating new data_store '{file_name}'...")
 
@@ -645,6 +658,17 @@ def export_data_archive(
         "compression": compression,
     }
     try:
+        no_default_value = False
+        if not no_default_value:
+            metadata_to_add = {
+                DATA_ARCHIVE_DEFAULT_VALUE_MARKER: str(values[0][0].value_id)
+            }
+        else:
+            metadata_to_add = None
+
+        if delete:
+            os.unlink(full_path)
+
         store_result = kiara_api.export_values(
             target_archive=full_path,
             values=values_to_store,
@@ -653,6 +677,7 @@ def export_data_archive(
             target_registered_name=archive_name,
             append=append,
             target_store_params=target_store_params,
+            additional_archive_metadata=metadata_to_add,
         )
         render_config = {"add_field_column": False}
         terminal_print_model(
@@ -679,7 +704,7 @@ def export_data_archive(
 def import_data_store(ctx, archive: str, values: Tuple[str], no_aliases: bool = False):
     """Import one or several values from a kiara archive."""
 
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     archive_path = Path(archive)
     if not archive_path.exists():
@@ -713,7 +738,7 @@ if is_develop():
     def write_serialized(ctx, value_id_or_alias: str, directory: str, force: bool):
         """Write the serialized form of a value to a directory"""
 
-        kiara_api: KiaraAPI = ctx.obj.kiara_api
+        kiara_api: BaseAPI = ctx.obj.kiara_api
 
         value = kiara_api.get_value(value_id_or_alias)
         serialized = value.serialized_data

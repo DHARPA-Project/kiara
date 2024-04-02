@@ -10,26 +10,28 @@
     - `kiara data import`
     - `kiara data export`
   - new api endpoints:
-    - `register_archive`
-    - `set_archive_metadata_value`
     - `retrieve_archive_info`
     - `export_archive`
     - `import_archive`
-    - `copy_archive`
     - `export_values`
     - `import_values`
+- allow a 'comment' to be associated with a job:
+  - require a 'comment' for every `run_job`/`queue_job` call
+  - new api endpoints:
     - `list_all_job_record_ids`
     - `list_job_record_ids`
     - `list_all_job_records`
     - `list_job_records`
     - `get_job_record`
     - `get_job_comment`
+    - `set_job_comment`
 - add convenience api endpoint `get_values`
 - improved input options for 'store_values' API endpoint
-- 'beta' implementation of 'value_create' property on 'Value' instances
-- fix: plugin info for plugins with '-'
-- add '--runtime-info' cli flag
-- require a 'comment' for every `run_job`/`queue_job` call
+- added 'value_created' property on 'Value' instances
+- add '--runtime-info' cli flag to display runtime folders/files used by *kiara*
+- fix: plugin info for plugins with '-' in name
+- moved `KiaraAPI` class to `kiara.interfaces.python_api.kiara_api` module (the 'offical' import path `kiara.api.KiaraAPI` is still available, and should be used)
+- have `KiaraAPI` proxy a `BaseAPI` class, to make it easier to extend the API and keep it stable
 
 ## Version 0.5.9
 

@@ -5,13 +5,14 @@ from typing import TYPE_CHECKING, Any, ClassVar, Mapping, Union
 
 from pydantic import Field, PrivateAttr
 
-from kiara.defaults import CHUNK_COMPRESSION_TYPE
+from kiara.defaults import CHUNK_COMPRESSION_TYPE, DEFAULT_CHUNK_COMPRESSION
 from kiara.models import KiaraModel
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.registries.aliases import AliasArchive, AliasStore
     from kiara.registries.data import DataArchive, DataStore
+    from kiara.registries.jobs import JobArchive, JobStore
     from kiara.registries.metadata import MetadataArchive, MetadataStore
 
 
@@ -62,29 +63,32 @@ class KiArchive(KiaraModel):
             alias_archive_config = None
             alias_archive = None
 
-        if data_archive is None and alias_archive is None:
-            raise Exception(f"No data archive found in file: {path}")
-        elif data_archive:
-            if alias_archive is not None:
-                if data_archive.archive_id != alias_archive.archive_id:
-                    raise Exception(
-                        f"Data and alias archives in file '{path}' have different IDs."
-                    )
-                if data_archive.archive_name != alias_archive.archive_name:
-                    raise Exception(
-                        f"Data and alias archives in file '{path}' have different aliases."
-                    )
-
-            archive_id = data_archive.archive_id
-            archive_alias = data_archive.archive_name
-        elif alias_archive:
-            # we can assume data archive is None here
-            archive_id = alias_archive.archive_id
-            archive_alias = alias_archive.archive_name
+        if "job_record" in archives.keys():
+            jobs_archive: Union[JobArchive, None] = archives["job_record"]  # type: ignore
+            jobs_archive_config: Union[Mapping[str, Any], None] = jobs_archive.config.model_dump()  # type: ignore
         else:
-            raise Exception(
-                "This should never happen, but we need to handle it anyway. Bug in code."
-            )
+            jobs_archive_config = None
+            jobs_archive = None
+
+        _archives = [
+            x
+            for x in (data_archive, alias_archive, metadata_archive, jobs_archive)
+            if x is not None
+        ]
+        if not _archives:
+            raise Exception(f"No archive found in file: {path}")
+        else:
+            archive_id = _archives[0].archive_id
+            archive_alias = _archives[0].archive_name
+            for archive in _archives:
+                if archive.archive_id != archive_id:
+                    raise Exception(
+                        f"Multiple different archive ids found in file: {path}"
+                    )
+                if archive.archive_name != archive_alias:
+                    raise Exception(
+                        f"Multiple different archive aliases found in file: {path}"
+                    )
 
         kiarchive = KiArchive(
             archive_id=archive_id,
@@ -92,6 +96,7 @@ class KiArchive(KiaraModel):
             metadata_archive_config=metadata_archive_config,
             data_archive_config=data_archive_config,
             alias_archive_config=alias_archive_config,
+            job_archive_config=jobs_archive_config,
             archive_base_path=archive_path.parent.as_posix(),
             archive_file_name=archive_path.name,
             allow_write_access=allow_write_access,
@@ -100,6 +105,7 @@ class KiArchive(KiaraModel):
         kiarchive._metadata_archive = metadata_archive
         kiarchive._data_archive = data_archive
         kiarchive._alias_archive = alias_archive
+        kiarchive._jobs_archive = jobs_archive
         kiarchive._kiara = kiara
 
         return kiarchive
@@ -110,10 +116,13 @@ class KiArchive(KiaraModel):
         kiara: "Kiara",
         kiarchive_uri: Union[str, Path],
         archive_name: Union[str, None] = None,
-        compression: Union[CHUNK_COMPRESSION_TYPE, str] = CHUNK_COMPRESSION_TYPE.ZSTD,
+        compression: Union[None, CHUNK_COMPRESSION_TYPE, str] = None,
         allow_write_access: bool = True,
         allow_existing: bool = False,
     ) -> "KiArchive":
+
+        if compression is None:
+            compression = DEFAULT_CHUNK_COMPRESSION
 
         if isinstance(kiarchive_uri, str):
             kiarchive_uri = Path(kiarchive_uri)
@@ -154,6 +163,7 @@ class KiArchive(KiaraModel):
                 store_type="sqlite_metadata_store",
                 file_name=archive_file_name,
                 allow_write_access=True,
+                set_archive_name_metadata=False,
             )
             metadata_store_config = metadata_store.config
 
@@ -163,12 +173,24 @@ class KiArchive(KiaraModel):
                 store_type="sqlite_alias_store",
                 file_name=archive_file_name,
                 allow_write_access=allow_write_access,
+                set_archive_name_metadata=False,
             )
             alias_store_config = alias_store.config
+
+            job_store: JobStore = create_new_archive(  # type: ignore
+                archive_name=archive_name,
+                store_base_path=archive_base_path,
+                store_type="sqlite_job_store",
+                file_name=archive_file_name,
+                allow_write_access=allow_write_access,
+                set_archive_name_metadata=False,
+            )
+            job_store_config = job_store.config
 
             kiarchive_id = data_store.archive_id
             assert alias_store.archive_id == kiarchive_id
             assert metadata_store.archive_id == kiarchive_id
+            assert job_store.archive_id == kiarchive_id
 
             kiarchive = KiArchive(
                 archive_id=kiarchive_id,
@@ -178,11 +200,13 @@ class KiArchive(KiaraModel):
                 metadata_archive_config=metadata_store_config.model_dump(),
                 data_archive_config=data_store_config.model_dump(),
                 alias_archive_config=alias_store_config.model_dump(),
+                job_archive_config=job_store_config.model_dump(),
                 allow_write_access=allow_write_access,
             )
             kiarchive._metadata_archive = metadata_store
             kiarchive._data_archive = data_store
             kiarchive._alias_archive = alias_store
+            kiarchive._jobs_archive = job_store
             kiarchive._kiara = kiara
 
         return kiarchive
@@ -205,17 +229,25 @@ class KiArchive(KiaraModel):
     alias_archive_config: Union[Mapping[str, Any], None] = Field(
         description="The archive to store aliases in.", default=None
     )
+    job_archive_config: Union[Mapping[str, Any], None] = Field(
+        description="The archive to store jobs in.", default=None
+    )
 
     _metadata_archive: Union["MetadataArchive", None] = PrivateAttr(default=None)
     _data_archive: Union["DataArchive", None] = PrivateAttr(default=None)
     _alias_archive: Union["AliasArchive", None] = PrivateAttr(default=None)
+    _jobs_archive: Union["JobArchive", None] = PrivateAttr(default=None)
+
     _kiara: Union["Kiara", None] = PrivateAttr(default=None)
 
     @property
-    def metadata_archive(self) -> "MetadataArchive":
+    def metadata_archive(self) -> Union["MetadataArchive", None]:
 
         if self._metadata_archive:
             return self._metadata_archive
+
+        if self.metadata_archive_config is None:
+            return None
 
         from kiara.utils.stores import create_new_archive
 
@@ -231,10 +263,13 @@ class KiArchive(KiaraModel):
         return self._metadata_archive
 
     @property
-    def data_archive(self) -> "DataArchive":
+    def data_archive(self) -> Union["DataArchive", None]:
 
         if self._data_archive:
             return self._data_archive
+
+        if self.data_archive_config is None:
+            return None
 
         from kiara.utils.stores import create_new_archive
 
@@ -250,15 +285,18 @@ class KiArchive(KiaraModel):
         return self._data_archive
 
     @property
-    def alias_archive(self) -> "AliasArchive":
+    def alias_archive(self) -> Union["AliasArchive", None]:
 
         if self._alias_archive is not None:
             return self._alias_archive
 
+        if self.alias_archive_config is None:
+            return None
+
         from kiara.utils.stores import create_new_archive
 
         alias_archive: AliasStore = create_new_archive(  # type: ignore
-            archive_alias=self.archive_name,
+            archive_name=self.archive_name,
             store_base_path=self.archive_base_path,
             store_type="sqlite_alias_store",
             file_name=self.archive_file_name,
@@ -266,3 +304,24 @@ class KiArchive(KiaraModel):
         )
         self._alias_archive = alias_archive
         return self._alias_archive
+
+    @property
+    def job_archive(self) -> Union["JobArchive", None]:
+
+        if self._jobs_archive is not None:
+            return self._jobs_archive
+
+        if self.job_archive_config is None:
+            return None
+
+        from kiara.utils.stores import create_new_archive
+
+        jobs_archive: JobStore = create_new_archive(  # type: ignore
+            archive_name=self.archive_name,
+            store_base_path=self.archive_base_path,
+            store_type="sqlite_job_store",
+            file_name=self.archive_file_name,
+            allow_write_access=True,
+        )
+        self._jobs_archive = jobs_archive
+        return self._jobs_archive

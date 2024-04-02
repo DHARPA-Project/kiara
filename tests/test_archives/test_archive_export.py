@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import os
 import sqlite3
 import sys
@@ -9,7 +10,7 @@ from typing import List, Union
 
 import pytest
 
-from kiara.api import KiaraAPI
+from kiara.interfaces.python_api.base_api import BaseAPI
 from kiara.models.values.value import ValueMapReadOnly, Value
 
 
@@ -91,7 +92,7 @@ def check_tables_are_not_empty(archive_file: Union[str, Path], *table_names: str
     sys.platform == "win32",
     reason="Does not run on Windows for some reason, need to investigate",
 )
-def test_archive_export_values_no_alias(api: KiaraAPI):
+def test_archive_export_values_no_alias(api: BaseAPI):
 
     result: ValueMapReadOnly = api.run_job(
         operation="logic.and", inputs={"a": True, "b": True}
@@ -101,9 +102,10 @@ def test_archive_export_values_no_alias(api: KiaraAPI):
 
         temp_file_path = Path(temp_dir) / "export_test_no_alias.kiarchive"
         temp_file_path = temp_file_path.resolve()
-        print("temp_file_path", temp_file_path.as_posix())
 
-        store_result = api.export_values(temp_file_path, result, alias_map=False)
+        store_result = api.export_values(
+            temp_file_path, result, alias_map=False, export_related_metadata=False
+        )
 
         if not temp_file_path.is_file():
             raise Exception(f"Export file {temp_file_path.as_posix()} was not created")
@@ -115,7 +117,6 @@ def test_archive_export_values_no_alias(api: KiaraAPI):
 
         required_tables = [
             "values_pedigree",
-            "environments",
             "values_metadata",
             "archive_metadata",
             "aliases",
@@ -130,7 +131,6 @@ def test_archive_export_values_no_alias(api: KiaraAPI):
         check_tables_are_not_empty(
             temp_file_path,
             "values_pedigree",
-            "environments",
             "values_metadata",
             "archive_metadata",
             "values_data",
@@ -144,7 +144,7 @@ def test_archive_export_values_no_alias(api: KiaraAPI):
     sys.platform == "win32",
     reason="Does not run on Windows for some reason, need to investigate",
 )
-def test_archive_export_values_alias(api: KiaraAPI):
+def test_archive_export_values_alias(api: BaseAPI):
 
     result: ValueMapReadOnly = api.run_job(
         operation="logic.and", inputs={"a": True, "b": True}
@@ -154,9 +154,10 @@ def test_archive_export_values_alias(api: KiaraAPI):
 
         temp_file_path = Path(temp_dir) / "export_test_alias.kiarchive"
         temp_file_path = temp_file_path.resolve()
-        print("temp_file_path", temp_file_path.as_posix())
 
-        store_result = api.export_values(temp_file_path, result, alias_map=True)
+        store_result = api.export_values(
+            temp_file_path, result, alias_map=True, export_related_metadata=False
+        )
 
         if not temp_file_path.is_file():
             raise Exception(f"Export file {temp_file_path.name} was not created")
@@ -168,7 +169,6 @@ def test_archive_export_values_alias(api: KiaraAPI):
 
         required_tables = [
             "values_pedigree",
-            "environments",
             "values_metadata",
             "archive_metadata",
             "aliases",
@@ -181,7 +181,6 @@ def test_archive_export_values_alias(api: KiaraAPI):
         check_tables_are_not_empty(
             temp_file_path,
             "values_pedigree",
-            "environments",
             "values_metadata",
             "archive_metadata",
             "values_data",
@@ -192,7 +191,7 @@ def test_archive_export_values_alias(api: KiaraAPI):
 
         result = run_sql_query('SELECT * FROM "aliases";', temp_file_path)
         assert len(result) == 1
-        assert len(result[0]) == 2
+
         assert result[0][0] == "y"
         assert uuid.UUID(result[0][1])
 
@@ -202,7 +201,7 @@ def test_archive_export_values_alias(api: KiaraAPI):
     sys.platform == "win32",
     reason="Does not run on Windows for some reason, need to investigate",
 )
-def test_archive_export_values_alias_multipe_values(api: KiaraAPI):
+def test_archive_export_values_alias_multipe_values(api: BaseAPI):
 
     result_1: Value = api.run_job(operation="logic.and", inputs={"a": True, "b": True})[
         "y"
@@ -220,9 +219,10 @@ def test_archive_export_values_alias_multipe_values(api: KiaraAPI):
 
         temp_file_path = Path(temp_dir) / "export_test_alias_multiple_values.kiarchive"
         temp_file_path = temp_file_path.resolve()
-        print("temp_file_path", temp_file_path.as_posix())
 
-        store_result = api.export_values(temp_file_path, results, alias_map=True)
+        store_result = api.export_values(
+            temp_file_path, results, alias_map=True, export_related_metadata=False
+        )
 
         if not temp_file_path.is_file():
             raise Exception(f"Export file {temp_file_path.name} was not created")
@@ -235,7 +235,6 @@ def test_archive_export_values_alias_multipe_values(api: KiaraAPI):
 
         required_tables = [
             "values_pedigree",
-            "environments",
             "values_metadata",
             "archive_metadata",
             "aliases",
@@ -248,7 +247,6 @@ def test_archive_export_values_alias_multipe_values(api: KiaraAPI):
         check_tables_are_not_empty(
             temp_file_path,
             "values_pedigree",
-            "environments",
             "values_metadata",
             "archive_metadata",
             "values_data",
@@ -259,10 +257,14 @@ def test_archive_export_values_alias_multipe_values(api: KiaraAPI):
 
         result = run_sql_query('SELECT * FROM "aliases";', temp_file_path)
 
-        assert len(result[0]) == 2
+        print(result)
+        assert len(result) == 2
+        assert len(result[0]) == 3
         assert result[0][0] in ["result_1", "result_2"]
         assert uuid.UUID(result[0][1])
+        datetime.datetime.fromisoformat(result[0][2])
 
-        assert len(result[1]) == 2
+        assert len(result[1]) == 3
         assert result[1][0] in ["result_1", "result_2"]
         assert uuid.UUID(result[1][1])
+        datetime.datetime.fromisoformat(result[1][2])

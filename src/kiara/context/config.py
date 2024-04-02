@@ -40,7 +40,6 @@ from kiara.defaults import (
     kiara_app_dirs,
 )
 from kiara.exceptions import KiaraException
-from kiara.registries.environment import EnvironmentRegistry
 from kiara.registries.ids import ID_REGISTRY
 from kiara.utils import log_message
 from kiara.utils.files import get_data_from_file
@@ -48,7 +47,6 @@ from kiara.utils.files import get_data_from_file
 if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.models.context import ContextInfo
-    from kiara.models.runtime_environment.kiara import KiaraTypesRuntimeEnvironment
     from kiara.registries import BaseArchive, KiaraArchive
 
 logger = structlog.getLogger()
@@ -358,12 +356,15 @@ KIARA_SETTINGS = KiaraSettings()
 
 
 def create_default_store_config(
-    store_type: str, stores_base_path: str
+    store_type: str, stores_base_path: str, use_wal_mode: bool = False
 ) -> KiaraArchiveConfig:
 
-    env_registry = EnvironmentRegistry.instance()
-    kiara_types: "KiaraTypesRuntimeEnvironment" = env_registry.environments["kiara_types"]  # type: ignore
-    available_archives = kiara_types.archive_types
+    from kiara.utils.archives import find_archive_types
+
+    # env_registry = EnvironmentRegistry.instance()
+    # find_archive_types = find_archive_types()
+    # kiara_types: "KiaraTypesRuntimeEnvironment" = env_registry.environments["kiara_types"]  # type: ignore
+    available_archives = find_archive_types()
 
     assert store_type in available_archives.item_infos.keys()
 
@@ -378,7 +379,9 @@ def create_default_store_config(
         store_type=cls.__name__,
     )
 
-    config = cls._config_cls.create_new_store_config(store_base_path=stores_base_path)
+    config = cls._config_cls.create_new_store_config(
+        store_base_path=stores_base_path, use_wal_mode=use_wal_mode
+    )
 
     # store_id: uuid.UUID = config.get_archive_id()
 
@@ -389,7 +392,7 @@ def create_default_store_config(
     return data_store
 
 
-DEFAULT_STORE_TYPE: Literal["auto"] = "auto"
+DEFAULT_STORE_TYPE: Literal["sqlite"] = "sqlite"
 
 
 class KiaraConfig(BaseSettings):
@@ -458,10 +461,10 @@ class KiaraConfig(BaseSettings):
         description="The name of the default context to use if none is provided.",
         default=DEFAULT_CONTEXT_NAME,
     )
-    default_store_type: Literal["auto", "sqlite", "filesystem"] = Field(
-        description="The default store type to use when creating new stores.",
-        default=DEFAULT_STORE_TYPE,
-    )
+    # default_store_type: Literal["sqlite", "filesystem"] = Field(
+    #     description="The default store type to use when creating new stores.",
+    #     default=DEFAULT_STORE_TYPE,
+    # )
     auto_generate_contexts: bool = Field(
         description="Whether to auto-generate requested contexts if they don't exist yet.",
         default=True,
@@ -595,7 +598,7 @@ class KiaraConfig(BaseSettings):
         sqlite_base_path = os.path.join(self.stores_base_path, "sqlite_stores")
         filesystem_base_path = os.path.join(self.stores_base_path, "filesystem_stores")
 
-        def create_default_sqlite_archive_config() -> Dict[str, Any]:
+        def create_default_sqlite_archive_config(use_wal_mode: bool) -> Dict[str, Any]:
 
             store_id = str(uuid.uuid4())
             file_name = f"{store_id}.karchive"
@@ -628,11 +631,17 @@ class KiaraConfig(BaseSettings):
             conn.commit()
             conn.close()
 
-            return {"sqlite_db_path": archive_path.as_posix()}
+            return {
+                "sqlite_db_path": archive_path.as_posix(),
+                "use_wal_mode": use_wal_mode,
+            }
 
         default_sqlite_config: Union[Dict[str, Any], None] = None
 
-        if self.default_store_type == "auto":
+        use_wal_mode: bool = True
+        default_store_type = "sqlite"
+
+        if default_store_type == "auto":
 
             # if windows, we want sqlite as default, because although it's slower, it does not
             # need the user to enable developer mode
@@ -645,30 +654,34 @@ class KiaraConfig(BaseSettings):
             alias_store_type = "sqlite"
             job_store_type = "sqlite"
             workflow_store_type = "sqlite"
-        elif self.default_store_type == "filesystem":
+        elif default_store_type == "filesystem":
             metadata_store_type = "filesystem"
             data_store_type = "filesystem"
             alias_store_type = "filesystem"
             job_store_type = "filesystem"
             workflow_store_type = "filesystem"
-        elif self.default_store_type == "sqlite":
+        elif default_store_type == "sqlite":
             metadata_store_type = "sqlite"
             data_store_type = "sqlite"
             alias_store_type = "sqlite"
             job_store_type = "sqlite"
             workflow_store_type = "sqlite"
         else:
-            raise Exception(f"Unknown store type: {self.default_store_type}")
+            raise Exception(f"Unknown store type: {default_store_type}")
 
         if DEFAULT_METADATA_STORE_MARKER not in context_config.archives.keys():
 
             if metadata_store_type == "sqlite":
-                default_sqlite_config = create_default_sqlite_archive_config()
+                default_sqlite_config = create_default_sqlite_archive_config(
+                    use_wal_mode=use_wal_mode
+                )
                 metaddata_store = KiaraArchiveConfig(
                     archive_type="sqlite_metadata_store", config=default_sqlite_config
                 )
             elif metadata_store_type == "filesystem":
-                default_sqlite_config = create_default_sqlite_archive_config()
+                default_sqlite_config = create_default_sqlite_archive_config(
+                    use_wal_mode=use_wal_mode
+                )
                 metaddata_store = KiaraArchiveConfig(
                     archive_type="sqlite_metadata_store", config=default_sqlite_config
                 )
@@ -684,7 +697,9 @@ class KiaraConfig(BaseSettings):
 
             if data_store_type == "sqlite":
                 if default_sqlite_config is None:
-                    default_sqlite_config = create_default_sqlite_archive_config()
+                    default_sqlite_config = create_default_sqlite_archive_config(
+                        use_wal_mode=use_wal_mode
+                    )
 
                 data_store = KiaraArchiveConfig(
                     archive_type="sqlite_data_store", config=default_sqlite_config
@@ -708,7 +723,9 @@ class KiaraConfig(BaseSettings):
             if job_store_type == "sqlite":
 
                 if default_sqlite_config is None:
-                    default_sqlite_config = create_default_sqlite_archive_config()
+                    default_sqlite_config = create_default_sqlite_archive_config(
+                        use_wal_mode=use_wal_mode
+                    )
 
                 job_store = KiaraArchiveConfig(
                     archive_type="sqlite_job_store", config=default_sqlite_config
@@ -732,7 +749,9 @@ class KiaraConfig(BaseSettings):
             if alias_store_type == "sqlite":
 
                 if default_sqlite_config is None:
-                    default_sqlite_config = create_default_sqlite_archive_config()
+                    default_sqlite_config = create_default_sqlite_archive_config(
+                        use_wal_mode=use_wal_mode
+                    )
 
                 alias_store = KiaraArchiveConfig(
                     archive_type="sqlite_alias_store", config=default_sqlite_config
@@ -902,9 +921,6 @@ class KiaraConfig(BaseSettings):
             }
         )
 
-        if data["default_store_type"] == DEFAULT_STORE_TYPE:
-            data.pop("default_store_type")
-
         with path.open("wt") as f:
             yaml.dump(
                 data,
@@ -916,6 +932,7 @@ class KiaraConfig(BaseSettings):
     def delete(
         self, context_name: Union[str, None] = None, dry_run: bool = True
     ) -> Union["ContextInfo", None]:
+        """Deletes the context with the specified name."""
 
         if context_name is None:
             context_name = self.default_context

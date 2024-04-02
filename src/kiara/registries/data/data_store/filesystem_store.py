@@ -411,15 +411,15 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
 
     _archive_type_name = "filesystem_data_store"
 
-    def _persist_environment_details(
-        self, env_type: str, env_hash: str, env_data: Mapping[str, Any]
-    ):
-
-        base_path = self.get_path(entity_type=EntityType.ENVIRONMENT)
-        env_details_file = base_path / f"{env_type}_{env_hash}.json"
-
-        if not env_details_file.exists():
-            env_details_file.write_text(orjson_dumps(env_data))
+    # def _persist_environment_details(
+    #     self, env_type: str, env_hash: str, env_data: Mapping[str, Any]
+    # ):
+    #
+    #     base_path = self.get_path(entity_type=EntityType.ENVIRONMENT)
+    #     env_details_file = base_path / f"{env_type}_{env_hash}.json"
+    #
+    #     if not env_details_file.exists():
+    #         env_details_file.write_text(orjson_dumps(env_data))
 
     def _persist_stored_value_info(self, value: Value, persisted_value: PersistedData):
 

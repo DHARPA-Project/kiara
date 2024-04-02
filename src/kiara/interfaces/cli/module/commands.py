@@ -18,7 +18,7 @@ from kiara.utils.cli import (
 )
 
 if TYPE_CHECKING:
-    from kiara.api import KiaraAPI
+    from kiara.interfaces.python_api.base_api import BaseAPI
 
 
 @click.group()
@@ -51,7 +51,7 @@ def list_modules(
     python_package: Union[str, None],
 ):
     """List available module data_types."""
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     module_types_info = kiara_api.retrieve_module_types_info(
         filter=filter, python_package=python_package
@@ -79,7 +79,7 @@ def explain_module_type(ctx, module_type: str, format: str):
     instantiated with configuration, before we can query all their properties (like
     input/output data_types).
     """
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
     info = kiara_api.retrieve_module_type_info(module_type=module_type)
 
     terminal_print_model(
@@ -106,7 +106,7 @@ def explain_module(ctx, module_type: str, module_config: Iterable[Any], format: 
     else:
         module_config = {}
 
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     operation = kiara_api.create_operation(
         module_type=module_type, module_config=module_config

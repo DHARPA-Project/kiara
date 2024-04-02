@@ -75,6 +75,9 @@ coverage: ## check code coverage quickly with the default Python
 
 check: black flake mypy test ## run dev-related checks
 
+render-api:
+	kiara render --source-type base_api --target-type kiara_api item kiara_api template_file=src/kiara/interfaces/python_api/kiara_api.py target_file=src/kiara/interfaces/python_api/kiara_api.py
+
 pre-commit: ## run pre-commit on all files
 	pre-commit run --all-files
 

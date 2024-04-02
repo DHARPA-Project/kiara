@@ -10,15 +10,16 @@ from rich.console import Group, RenderableType
 from rich.markdown import Markdown
 from rich.rule import Rule
 
-from kiara.api import KiaraAPI, ValueMap
 from kiara.exceptions import (
     FailedJobException,
     InvalidCommandLineInvocation,
     KiaraException,
     NoSuchExecutionTargetException,
 )
+from kiara.interfaces.python_api.base_api import BaseAPI
 from kiara.interfaces.python_api.utils import create_save_config
 from kiara.models.module.operation import Operation
+from kiara.models.values.value import ValueMap
 
 # from kiara.interfaces.python_api.operation import KiaraOperation
 from kiara.utils import log_exception
@@ -46,7 +47,7 @@ def _validate_save_option(save: Iterable[str]) -> bool:
 
 
 def validate_operation_in_terminal(
-    api: KiaraAPI,
+    api: BaseAPI,
     module_or_operation: Union[str, Path, Mapping[str, Any]],
     allow_external=False,
 ) -> Operation:
@@ -57,7 +58,7 @@ def validate_operation_in_terminal(
     #     operation_config=module_config,
     # )
     try:
-        operation = api.get_operation(operation=module_or_operation)
+        operation: Operation = api.get_operation(operation=module_or_operation)
         # validate that operation config is valid, ignoring inputs for now
         # kiara_op.operation
     except NoSuchExecutionTargetException as nset:
@@ -186,7 +187,7 @@ def calculate_aliases(
 
 
 def set_and_validate_inputs(
-    api: KiaraAPI,
+    api: BaseAPI,
     operation: Operation,
     inputs: Iterable[str],
     explain: bool,
@@ -326,7 +327,7 @@ def set_and_validate_inputs(
 
 
 def execute_job(
-    api: KiaraAPI,
+    api: BaseAPI,
     operation: Operation,
     inputs: ValueMap,
     silent: bool,
@@ -393,7 +394,7 @@ def execute_job(
         title = "Result details"
         format = "terminal"
 
-        from kiara.interfaces.python_api import ValueInfo
+        from kiara.interfaces.python_api.models.info import ValueInfo
 
         v_infos = (
             ValueInfo.create_from_instance(kiara=api.context, instance=v)

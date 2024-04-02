@@ -7,7 +7,7 @@
 
 
 import inspect
-from typing import Any, Dict, Iterable, Mapping, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Mapping, Type, Union
 
 from pydantic import BaseModel, Field, create_model
 from rich import box
@@ -15,6 +15,9 @@ from rich.table import Table
 
 from kiara.models.runtime_environment import RuntimeEnvironment, logger
 from kiara.utils import _get_all_subclasses, is_debug, to_camel_case
+
+if TYPE_CHECKING:
+    pass
 
 
 class EnvironmentRegistry(object):
@@ -28,17 +31,22 @@ class EnvironmentRegistry(object):
             cls._instance = EnvironmentRegistry()
         return cls._instance
 
-    def __init__(
-        self,
-    ) -> None:
+    def __init__(self) -> None:
+
         self._environments: Union[Dict[str, RuntimeEnvironment], None] = None
         self._environment_hashes: Union[Dict[str, Mapping[str, str]], None] = None
 
         self._full_env_model: Union[BaseModel, None] = None
 
+        # self._kiara: Kiara = kiara
+
     def get_environment_for_cid(self, env_cid: str) -> RuntimeEnvironment:
 
-        envs = [env for env in self.environments.values() if env.instance_id == env_cid]
+        envs = [
+            env
+            for env in self.environments.values()
+            if str(env.instance_cid) == env_cid
+        ]
         if len(envs) == 0:
             raise Exception(f"No environment with id '{env_cid}' available.")
         elif len(envs) > 1:
@@ -46,6 +54,13 @@ class EnvironmentRegistry(object):
                 f"Multipe environments with id '{env_cid}' available. This is most likely a bug."
             )
         return envs[0]
+
+    def has_environment(self, env_cid: str) -> bool:
+
+        for env in self.environments.values():
+            if str(env.instance_cid) == env_cid:
+                return True
+        return False
 
     @property
     def environment_hashes(self) -> Mapping[str, Mapping[str, str]]:
@@ -67,7 +82,7 @@ class EnvironmentRegistry(object):
             return self._environments
 
         import kiara.models.runtime_environment.kiara
-        import kiara.models.runtime_environment.operating_system
+        import kiara.models.runtime_environment.operating_system  # nowa
         import kiara.models.runtime_environment.python  # noqa
 
         subclasses: Iterable[Type[RuntimeEnvironment]] = _get_all_subclasses(

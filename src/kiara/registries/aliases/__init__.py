@@ -356,9 +356,12 @@ class AliasRegistry(object):
                 if isinstance(_value_id, str):
                     _value_id = uuid.UUID(_value_id)
             else:
-                _value_id = uuid.UUID(
-                    value_id  # type: ignore
-                )  # this should fail if not string or wrong string format
+                try:
+                    _value_id = uuid.UUID(
+                        value_id  # type: ignore
+                    )  # this should fail if not string or wrong string format
+                except ValueError:
+                    raise KiaraException(f"Could not resolve value id for: {value_id}")
         else:
             _value_id = value_id
 
@@ -401,13 +404,33 @@ class AliasRegistry(object):
     def register_aliases(
         self,
         value_id: Union[uuid.UUID, ValueLink, str],
-        *aliases: str,
+        aliases: Union[str, Iterable[str]],
         allow_overwrite: bool = False,
         alias_store: Union[str, None] = None,
     ):
 
+        value = self._kiara.data_registry.get_value(value=value_id)
+
         if alias_store in [DEFAULT_STORE_MARKER, DEFAULT_ALIAS_STORE_MARKER, None]:
             alias_store = self.default_alias_store
+
+        if isinstance(aliases, str):
+            aliases = [aliases]
+        else:
+            for alias in aliases:
+                if not isinstance(alias, str):
+                    raise KiaraException(
+                        msg=f"Invalid alias: {alias}.",
+                        details="Alias must be a string.",
+                    )
+                try:
+                    uuid.UUID(alias)
+                    raise KiaraException(
+                        msg=f"Invalid alias name: {alias}.",
+                        details="Alias can't be a UUID.",
+                    )
+                except Exception:
+                    pass
 
         aliases_to_store: Dict[str, List[str]] = {}
         for alias in aliases:
@@ -464,8 +487,6 @@ class AliasRegistry(object):
             if duplicates:
                 raise Exception(f"Aliases already registered: {duplicates}")
 
-        value_id = self._get_value_id(value_id=value_id)
-
         for store_alias, aliases_for_store in aliases_to_store.items():
 
             store: AliasStore = self.get_archive(archive_alias=store_alias)  # type: ignore
@@ -479,13 +500,13 @@ class AliasRegistry(object):
         for store_alias, aliases_for_store in aliases_to_store.items():
 
             store = self.get_archive(archive_alias=store_alias)  # type: ignore
-            store.register_aliases(value_id, *aliases_for_store)
+            store.register_aliases(value.value_id, *aliases_for_store)
 
             for alias in aliases:
                 alias_item = AliasItem(
                     full_alias=alias,
                     rel_alias=alias,
-                    value_id=value_id,
+                    value_id=value.value_id,
                     alias_archive=store_alias,
                     alias_archive_id=store.archive_id,
                 )

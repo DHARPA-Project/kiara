@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from kiara.api import KiaraAPI
+from kiara.interfaces.python_api.base_api import BaseAPI
 
 
-def test_pipeline_default_config_simple(api: KiaraAPI):
+def test_pipeline_default_config_simple(api: BaseAPI):
 
     pipeline_config = """
 pipeline_name: test_pipeline
@@ -24,7 +24,7 @@ steps:
     assert outputs_schema["step_1__y"].type == "boolean"
 
 
-def test_pipeline_config_aliases(api: KiaraAPI):
+def test_pipeline_config_aliases(api: BaseAPI):
 
     pipeline_config = """
 pipeline_name: test_pipeline
@@ -53,7 +53,7 @@ input_aliases:
     assert inputs_schema["d"].type == "boolean"
 
 
-def test_pipeline_config_aliases_2(api: KiaraAPI):
+def test_pipeline_config_aliases_2(api: BaseAPI):
 
     pipeline_config = """
 pipeline_name: test_pipeline
@@ -80,7 +80,7 @@ input_aliases:
     assert inputs_schema["b"].type == "boolean"
 
 
-def test_pipeline_module_config(api: KiaraAPI):
+def test_pipeline_module_config(api: BaseAPI):
 
     pipeline_config = """
 pipeline_name: test_pipeline

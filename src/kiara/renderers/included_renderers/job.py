@@ -11,7 +11,6 @@ from typing import (
 
 from jinja2 import Template
 
-from kiara.interfaces.python_api import JobDesc
 from kiara.models.module.pipeline.pipeline import Pipeline
 from kiara.renderers import (
     RenderInputsSchema,
@@ -20,6 +19,7 @@ from kiara.renderers import (
 from kiara.renderers.jinja import BaseJinjaRenderer, JinjaEnv
 
 if TYPE_CHECKING:
+    from kiara.api import JobDesc
     from kiara.context import Kiara
 
 
@@ -29,6 +29,8 @@ class JobDescTransformer(SourceTransformer):
         super().__init__()
 
     def retrieve_supported_python_classes(self) -> Iterable[Type]:
+        from kiara.api import JobDesc
+
         return [JobDesc, str, Mapping, Path]
 
     def retrieve_supported_inputs_descs(self) -> Union[str, Iterable[str]]:
@@ -38,7 +40,8 @@ class JobDescTransformer(SourceTransformer):
             "the job description as a Python dict",
         ]
 
-    def validate_and_transform(self, source: Any) -> Union[JobDesc, None]:
+    def validate_and_transform(self, source: Any) -> Union["JobDesc", None]:
+        from kiara.api import JobDesc
 
         if isinstance(source, JobDesc):
             return source
@@ -50,7 +53,7 @@ class JobDescTransformer(SourceTransformer):
             return None
 
 
-class JobDescPythonScriptRenderer(BaseJinjaRenderer[JobDesc, RenderInputsSchema]):
+class JobDescPythonScriptRenderer(BaseJinjaRenderer["JobDesc", RenderInputsSchema]):
     """Renders a simple executable python script from a job description.
 
     ## Examples

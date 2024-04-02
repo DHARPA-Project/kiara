@@ -420,10 +420,17 @@ class SqliteArchiveConfig(ArchiveConfig):
         # Close the connection
         conn.close()
 
-        return SqliteArchiveConfig(sqlite_db_path=archive_path)
+        use_wal_mode = kwargs.get("wal_mode", False)
+
+        return SqliteArchiveConfig(
+            sqlite_db_path=archive_path, use_wal_mode=use_wal_mode
+        )
 
     sqlite_db_path: str = Field(
         description="The path where the data for this archive is stored."
+    )
+    use_wal_mode: bool = Field(
+        description="Whether to use WAL mode for the SQLite database.", default=False
     )
 
 
@@ -474,9 +481,12 @@ class SqliteDataStoreConfig(SqliteArchiveConfig):
         # Close the connection
         conn.close()
 
+        use_wal_mode = kwargs.get("wal_mode", False)
+
         return SqliteDataStoreConfig(
             sqlite_db_path=archive_path,
             default_chunk_compression=default_chunk_compression,
+            use_wal_mode=use_wal_mode,
         )
 
     default_chunk_compression: Literal["none", "lz4", "zstd", "lzma"] = Field(  # type: ignore

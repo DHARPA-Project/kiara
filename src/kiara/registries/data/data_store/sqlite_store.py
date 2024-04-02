@@ -18,10 +18,15 @@ from typing import (
 )
 
 import orjson
-from sqlalchemy import create_engine, text
+from sqlalchemy import text
 from sqlalchemy.engine import Connection, Engine
 
-from kiara.defaults import CHUNK_COMPRESSION_TYPE, kiara_app_dirs
+from kiara.defaults import (
+    CHUNK_CACHE_BASE_DIR,
+    CHUNK_CACHE_DIR_DEPTH,
+    CHUNK_CACHE_DIR_WIDTH,
+    CHUNK_COMPRESSION_TYPE,
+)
 from kiara.models.values.value import PersistedData, Value
 from kiara.registries import (
     ARCHIVE_CONFIG_CLS,
@@ -31,8 +36,8 @@ from kiara.registries import (
 )
 from kiara.registries.data import DataArchive
 from kiara.registries.data.data_store import BaseDataStore
+from kiara.utils.db import create_archive_engine, delete_archive_db
 from kiara.utils.hashfs import shard
-from kiara.utils.json import orjson_dumps
 
 if TYPE_CHECKING:
     from multiformats import CID
@@ -94,11 +99,13 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
         )
         self._db_path: Union[Path, None] = None
         self._cached_engine: Union[Engine, None] = None
-        self._data_cache_dir = Path(kiara_app_dirs.user_cache_dir) / "data" / "chunks"
+        self._data_cache_dir = CHUNK_CACHE_BASE_DIR
         self._data_cache_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
-        self._cache_dir_depth = 2
-        self._cache_dir_width = 1
+
+        self._cache_dir_depth = CHUNK_CACHE_DIR_DEPTH
+        self._cache_dir_width = CHUNK_CACHE_DIR_WIDTH
         self._value_id_cache: Union[Iterable[uuid.UUID], None] = None
+        self._use_wal_mode: bool = archive_config.use_wal_mode
         # self._lock: bool = True
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
@@ -135,9 +142,9 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
         self._db_path.parent.mkdir(parents=True, exist_ok=True)
         return self._db_path
 
-    @property
-    def db_url(self) -> str:
-        return f"sqlite:///{self.sqlite_path}"
+    # @property
+    # def db_url(self) -> str:
+    #     return f"sqlite:///{self.sqlite_path}"
 
     def get_chunk_path(self, chunk_id: str) -> Path:
 
@@ -158,14 +165,18 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
         if self._cached_engine is not None:
             return self._cached_engine
 
-        # def _pragma_on_connect(dbapi_con, con_record):
-        #     dbapi_con.execute("PRAGMA query_only = ON")
-        self._cached_engine = create_engine(self.db_url, future=True)
+        self._cached_engine = create_archive_engine(
+            db_path=self.sqlite_path,
+            force_read_only=self.is_force_read_only(),
+            use_wal_mode=self._use_wal_mode,
+        )
+
         create_table_sql = """
 CREATE TABLE IF NOT EXISTS values_metadata (
     value_id TEXT PRIMARY KEY,
     value_hash TEXT NOT NULL,
     value_size INTEGER NOT NULL,
+    value_created TEXT NOT NULL,
     data_type_name TEXT NOT NULL,
     value_metadata TEXT NOT NULL
 );
@@ -477,7 +488,8 @@ CREATE TABLE IF NOT EXISTS environments (
                 assert not missing_chunk_ids
 
     def _delete_archive(self):
-        os.unlink(self.sqlite_path)
+
+        delete_archive_db(db_path=self.sqlite_path)
 
     def get_archive_details(self) -> ArchiveDetails:
 
@@ -552,26 +564,26 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
             conn.execute(sql, params)
             conn.commit()
 
-    def _persist_environment_details(
-        self, env_type: str, env_hash: str, env_data: Mapping[str, Any]
-    ):
-
-        sql = text(
-            "INSERT OR IGNORE INTO environments (environment_type, environment_hash, environment_data) VALUES (:environment_type, :environment_hash, :environment_data)"
-        )
-        env_data_json = orjson_dumps(env_data)
-        with self.sqlite_engine.connect() as conn:
-            params = {
-                "environment_type": env_type,
-                "environment_hash": env_hash,
-                "environment_data": env_data_json,
-            }
-            conn.execute(sql, params)
-            conn.commit()
-        # print(env_type)
-        # print(env_hash)
-        # print(env_data_json)
-        # raise NotImplementedError()
+    # def _persist_environment_details(
+    #     self, env_type: str, env_hash: str, env_data: Mapping[str, Any]
+    # ):
+    #
+    #     sql = text(
+    #         "INSERT OR IGNORE INTO environments (environment_type, environment_hash, environment_data) VALUES (:environment_type, :environment_hash, :environment_data)"
+    #     )
+    #     env_data_json = orjson_dumps(env_data)
+    #     with self.sqlite_engine.connect() as conn:
+    #         params = {
+    #             "environment_type": env_type,
+    #             "environment_hash": env_hash,
+    #             "environment_data": env_data_json,
+    #         }
+    #         conn.execute(sql, params)
+    #         conn.commit()
+    #     # print(env_type)
+    #     # print(env_hash)
+    #     # print(env_data_json)
+    #     # raise NotImplementedError()
 
     # def _persist_value_data(self, value: Value) -> PersistedData:
     #
@@ -692,16 +704,19 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
         value_size = value.value_size
         data_type_name = value.data_type_name
 
+        value_created = value.value_created.isoformat()
+
         metadata = value.model_dump_json()
 
         sql = text(
-            "INSERT INTO values_metadata (value_id, value_hash, value_size, data_type_name, value_metadata) VALUES (:value_id, :value_hash, :value_size, :data_type_name, :metadata)"
+            "INSERT INTO values_metadata (value_id, value_hash, value_size, value_created, data_type_name, value_metadata) VALUES (:value_id, :value_hash, :value_size, :value_created, :data_type_name, :metadata)"
         )
         with self.sqlite_engine.connect() as conn:
             params = {
                 "value_id": value_id,
                 "value_hash": value_hash,
                 "value_size": value_size,
+                "value_created": value_created,
                 "data_type_name": data_type_name,
                 "metadata": metadata,
             }

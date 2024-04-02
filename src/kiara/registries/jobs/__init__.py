@@ -14,7 +14,13 @@ import structlog
 from bidict import bidict
 from rich.console import Group
 
-from kiara.exceptions import FailedJobException
+from kiara.defaults import (
+    DEFAULT_DATA_STORE_MARKER,
+    DEFAULT_JOB_STORE_MARKER,
+    DEFAULT_STORE_MARKER,
+    ENVIRONMENT_MARKER_KEY,
+)
+from kiara.exceptions import FailedJobException, KiaraException
 from kiara.models.events import KiaraEvent
 from kiara.models.events.job_registry import (
     JobArchiveAddedEvent,
@@ -38,6 +44,7 @@ from kiara.utils import get_dev_config, is_develop
 if TYPE_CHECKING:
     from kiara.context import Kiara
     from kiara.context.runtime_config import JobCacheStrategy
+    from kiara.models.runtime_environment import RuntimeEnvironment
 
 logger = structlog.getLogger()
 
@@ -171,6 +178,8 @@ class JobRegistry(object):
 
         self._event_callback = self._kiara.event_registry.add_producer(self)
 
+        self._env_cache: Dict[str, Dict[str, RuntimeEnvironment]] = {}
+
         # default_archive = FileSystemJobStore.create_from_kiara_context(self._kiara)
         # self.register_job_archive(default_archive, store_alias=DEFAULT_STORE_MARKER)
 
@@ -250,14 +259,27 @@ class JobRegistry(object):
             raise Exception("No default job store set (yet).")
         return self._default_job_store  # type: ignore
 
-    def get_archive(self, store_id: Union[str, None] = None) -> JobArchive:
+    def get_archive(self, store_id: Union[str, None, uuid.UUID] = None) -> JobArchive:
 
-        if store_id is None:
-            store_id = self.default_job_store
-            if store_id is None:
+        if store_id in [
+            None,
+            "",
+            DEFAULT_DATA_STORE_MARKER,
+            DEFAULT_JOB_STORE_MARKER,
+            DEFAULT_STORE_MARKER,
+        ]:
+            if self.default_job_store is None:
                 raise Exception("Can't retrieve deafult job archive, none set (yet).")
+            _store_id: str = self.default_job_store
 
-        return self._job_archives[store_id]
+        elif not isinstance(store_id, str):
+            raise NotImplementedError(
+                "Can't retrieve job archive by (uu)id or other type (yet)."
+            )
+        else:
+            _store_id = store_id
+
+        return self._job_archives[_store_id]
 
     @property
     def job_archives(self) -> Mapping[str, JobArchive]:
@@ -282,14 +304,32 @@ class JobRegistry(object):
             self._finished_jobs[job_hash] = job_id
             self._archived_records[job_id] = job_record
 
-    def store_job_record(self, job_id: uuid.UUID):
+    def _persist_environment(self, env_type: str, env_hash: str):
 
-        if job_id not in self._archived_records.keys():
-            raise Exception(
-                f"Can't store job with id '{job_id}': no job record with that id exists."
+        cached = self._env_cache.get(env_type, {}).get(env_hash, None)
+        if cached is not None:
+            return
+
+        environment = self._kiara.metadata_registry.retrieve_environment_item(env_hash)
+
+        if not environment:
+            raise KiaraException(
+                f"Can't persist job environment for with hash '{env_hash}': no such environment registered."
             )
 
-        job_record = self._archived_records[job_id]
+        self._kiara.metadata_registry.register_metadata_item(
+            key=ENVIRONMENT_MARKER_KEY, item=environment
+        )
+        self._env_cache.setdefault(env_type, {})[env_hash] = environment
+
+    def store_job_record(self, job_id: uuid.UUID, store: Union[str, None] = None):
+
+        # TODO: allow to store job record to external store
+
+        job_record = self.get_job_record(job_id=job_id)
+
+        for env_type, env_hash in job_record.environment_hashes.items():
+            self._persist_environment(env_type, env_hash)
 
         if job_record._is_stored:
             logger.debug(
@@ -297,17 +337,9 @@ class JobRegistry(object):
             )
             return
 
-        store: JobStore = self.get_archive()  # type: ignore
+        store: JobStore = self.get_archive(store)  # type: ignore
         if not isinstance(store, JobStore):
             raise Exception("Can't store job record to archive: not writable.")
-
-        # if job_record.job_id in self._finished_jobs.values():
-        #     logger.debug(
-        #         "ignore.store.job_record",
-        #         reason="already stored in store",
-        #         job_id=str(job_id),
-        #     )
-        #     return
 
         logger.debug(
             "store.job_record",
@@ -331,7 +363,7 @@ class JobRegistry(object):
 
         return self._processor.get_job_record(job_id)
 
-    def get_job_record(self, job_id: uuid.UUID) -> Union[JobRecord, None]:
+    def get_job_record(self, job_id: uuid.UUID) -> JobRecord:
 
         if job_id in self._archived_records.keys():
             return self._archived_records[job_id]
@@ -342,13 +374,13 @@ class JobRegistry(object):
         except Exception:
             pass
 
-        try:
-            job = self._processor.get_job(job_id=job_id)
-            if job is not None:
-                if job.status == JobStatus.FAILED:
-                    return None
-        except Exception:
-            pass
+        # try:
+        #     job = self._processor.get_job(job_id=job_id)
+        #     if job is not None:
+        #         if job.status == JobStatus.FAILED:
+        #             return None
+        # except Exception:
+        #     pass
 
         all_job_records = self.retrieve_all_job_records()
         for r in all_job_records.values():
@@ -406,7 +438,9 @@ class JobRegistry(object):
         for archive in self.job_archives.values():
             all_record_ids = archive.retrieve_all_job_ids().keys()
             for r in all_record_ids:
-                assert r not in all_records.keys()
+                if r in all_records.keys():
+                    continue
+
                 job_record = archive.retrieve_record_for_job_id(r)
                 assert job_record is not None
                 all_records[r] = job_record

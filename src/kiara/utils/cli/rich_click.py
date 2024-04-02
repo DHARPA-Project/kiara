@@ -59,7 +59,7 @@ from rich_click.rich_click import (
 )
 
 from kiara.api import ValueMap
-from kiara.interfaces.python_api import KiaraAPI, OperationGroupInfo
+from kiara.interfaces.python_api.base_api import BaseAPI
 from kiara.models.module.operation import Operation
 
 # from kiara.interfaces.python_api.operation import KiaraOperation
@@ -73,7 +73,7 @@ from kiara.utils.operations import create_operation_status_renderable
 
 
 def rich_format_filter_operation_help(
-    api: KiaraAPI,
+    api: BaseAPI,
     obj: Union[click.Command, click.Group],
     ctx: click.Context,
     cmd_help: str,
@@ -107,6 +107,9 @@ def rich_format_filter_operation_help(
         filter_op_type: FilterOperationType = api.get_operation_type("filter")  # type: ignore
         v = api.get_value(value)
         ops = filter_op_type.find_filter_operations_for_data_type(v.data_type_name)
+
+        from kiara.interfaces.python_api.models.info import OperationGroupInfo
+
         ops_info = OperationGroupInfo.create_from_operations(
             kiara=api.context, group_title=f"{v.data_type_name} filters", **ops
         )

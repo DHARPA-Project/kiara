@@ -400,7 +400,8 @@ exclude = [
     "dist",
     "node_modules",
     "venv",
-    "examples/"
+    "examples/",
+    "dev/"
 ]
 
 # Assume Python 3.10.

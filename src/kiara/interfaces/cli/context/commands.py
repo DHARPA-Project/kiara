@@ -20,7 +20,7 @@ from kiara.utils.cli import (
 )
 
 if TYPE_CHECKING:
-    from kiara.api import Kiara, KiaraAPI, KiaraConfig
+    from kiara.interfaces.python_api.base_api import BaseAPI, Kiara, KiaraConfig
 
 
 @click.group("context")
@@ -33,7 +33,7 @@ def context(ctx):
 @click.pass_context
 def list_contexts(ctx) -> None:
     """List existing contexts."""
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     summaries = kiara_api.retrieve_context_infos()
 

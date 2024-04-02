@@ -12,8 +12,19 @@ def create_new_archive(
     store_base_path: str,
     store_type: str,
     allow_write_access: bool = False,
+    set_archive_name_metadata: bool = True,
     **kwargs: Any,
 ) -> "KiaraArchive":
+    """Create a new archive instance of the specified type.
+
+    Arguments:
+        archive_name: Name of the archive.
+        store_base_path: Base path for the archive.
+        store_type: Type of the archive.
+        allow_write_access: Whether write access should be allowed.
+        set_archive_name_metadata: Whether to set the archive name as metadata within the archive.
+        **kwargs: Additional arguments to pass to the archive config constructor.
+    """
 
     from kiara.utils.class_loading import find_all_archive_types
 
@@ -33,7 +44,7 @@ def create_new_archive(
 
     archive_instance = archive_cls(archive_name=archive_name, archive_config=config, force_read_only=force_read_only)  # type: ignore
 
-    if not force_read_only:
+    if not force_read_only and set_archive_name_metadata:
         archive_instance.set_archive_metadata_value(ARCHIVE_NAME_MARKER, archive_name)
 
     return archive_instance

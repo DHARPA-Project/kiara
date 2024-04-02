@@ -15,7 +15,7 @@ import structlog
 from kiara.utils.cli import dict_from_cli_args, terminal_print, terminal_print_model
 
 if typing.TYPE_CHECKING:
-    from kiara.api import Kiara, KiaraAPI
+    from kiara.interfaces.python_api.base_api import BaseAPI, Kiara
 
 logger = structlog.getLogger()
 
@@ -36,7 +36,7 @@ def workflow(ctx):
 @click.pass_context
 def list(ctx, all) -> None:
     """List existing workflows."""
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     if all:
         workflows = kiara_api.retrieve_workflows_info()
@@ -69,7 +69,7 @@ def create(
     force_alias: bool = False,
 ):
     """Create a new workflow."""
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
 
     inputs_dict: Union[None, Dict[str, Any]] = None
     if inputs:
@@ -99,7 +99,7 @@ def create(
 @click.pass_context
 def explain(ctx, workflow: str):
     """Explain the workflow with the specified id/alias."""
-    kiara_api: KiaraAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.kiara_api
     workflow_info = kiara_api.retrieve_workflow_info(workflow=workflow)
     terminal_print(
         workflow_info.create_renderable(),
@@ -120,7 +120,8 @@ def explain(ctx, workflow: str):
 @click.pass_context
 def set_input(ctx, workflow: str, inputs: Tuple[str], process: bool):
     """Set one or several inputs on the specified workflow."""
-    from kiara.interfaces.python_api import Workflow
+
+    from kiara.interfaces.python_api.workflow import Workflow
 
     kiara: Kiara = ctx.obj.kiara
 

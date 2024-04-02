@@ -29,15 +29,15 @@ if TYPE_CHECKING:
 
 class ApiRenderInputsSchema(RenderInputsSchema):
 
-    filter: Union[str, Iterable[str]] = Field(
-        description="One or a list of filter tokens -- if provided -- all of which must match for the api endpoing to be in the render result.",
-        default_factory=list,
-    )
+    pass
 
 
 class ApiRendererConfig(KiaraRendererConfig):
 
-    pass
+    filter: Union[str, Iterable[str]] = Field(
+        description="One or a list of filter tokens -- if provided -- all of which must match for the api endpoing to be in the render result.",
+        default_factory=list,
+    )
     # target_type: str = Field(description="The target type to render the api as.")
 
 
@@ -53,8 +53,17 @@ class ApiRenderer(
         renderer_config: Union[None, Mapping[str, Any], KiaraRendererConfig] = None,
     ):
 
-        self._api_endpoints: ApiEndpoints = ApiEndpoints(api_cls=KiaraAPI)
         super().__init__(kiara=kiara, renderer_config=renderer_config)
+
+        filters: Union[None, str, Iterable[str]] = self.renderer_config.filter
+        if not filters:
+            filters = None
+        elif isinstance(filters, str):
+            filters = [filters]
+
+        self._api_endpoints: ApiEndpoints = ApiEndpoints(
+            api_cls=KiaraAPI, filters=filters
+        )
 
     @property
     def api_endpoints(self) -> ApiEndpoints:
@@ -68,16 +77,16 @@ class ApiRenderer(
 
     def retrieve_doc(self) -> Union[str, None]:
 
-        return f"Render the kiara (of a supported type) to: '{self.get_target_type()}'."
+        return f"Render the kiara API endpoints to: '{self.get_target_type()}'."
 
     @abc.abstractmethod
     def get_target_type(self) -> str:
         pass
 
 
-class ApiDocRenderer(ApiRenderer):
+class KiaraApiDocRenderer(ApiRenderer):
 
-    _renderer_name = "api_doc_renderer"
+    _renderer_name = "kiara_api_doc_renderer"
 
     def get_target_type(self) -> str:
         return "html"
@@ -99,9 +108,9 @@ class ApiDocRenderer(ApiRenderer):
         return "xxx"
 
 
-class ApiDocTextRenderer(ApiRenderer):
+class KiaraApiDocTextRenderer(ApiRenderer):
 
-    _renderer_name = "api_doc_markdown_renderer"
+    _renderer_name = "kiara_api_doc_markdown_renderer"
 
     def get_target_type(self) -> str:
         return "markdown"
@@ -119,7 +128,7 @@ class ApiDocTextRenderer(ApiRenderer):
         for ep in self.api_endpoints.api_endpint_names:
             doc = self.api_endpoints.get_api_endpoint(ep).doc
             rendered = template.render(endpoint_name=ep, doc=doc)
-            result += rendered
+            result += f"{rendered}\n"
 
         # details = self.api_endpoints.get_api_endpoint("get_value")
         # dbg(details.validated_func.__dict__)

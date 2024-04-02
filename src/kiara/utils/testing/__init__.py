@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Mapping, Union
 
 from kiara.defaults import INIT_EXAMPLE_NAME
-from kiara.interfaces.python_api import JobDesc
+from kiara.interfaces.python_api.models.job import JobDesc
 from kiara.utils import log_exception
 from kiara.utils.files import get_data_from_file
 

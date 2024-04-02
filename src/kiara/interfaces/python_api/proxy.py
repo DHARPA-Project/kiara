@@ -26,6 +26,7 @@ class ApiEndpoint(object):
         self._wrapped: Union[None, ValidatedFunction] = None
         self._arg_names: Union[None, List[str]] = None
         self._param_details: Union[None, Dict[str, Any]] = None
+        self._raw_doc: Union[None, str] = None
         self._doc_string: Union[None, str] = None
         self._parsed_doc: Union[Docstring, None] = None
         self._doc: Union[DocumentationMetadataModel, None] = None
@@ -38,12 +39,25 @@ class ApiEndpoint(object):
         if self._doc_string is not None:
             return self._doc_string
 
+        _doc_string = self.raw_doc
+        self._doc_string = inspect.cleandoc(_doc_string)
+        return self._doc_string
+
+    @property
+    def func(self) -> Callable:
+        return self._func
+
+    @property
+    def raw_doc(self) -> str:
+
+        if self._raw_doc is not None:
+            return self._raw_doc
+
         _doc_string = self._func.__doc__
         if _doc_string is None:
             _doc_string = ""
-
-        self._doc_string = inspect.cleandoc(_doc_string)
-        return self._doc_string
+        self._raw_doc = _doc_string
+        return self._raw_doc
 
     @property
     def doc(self) -> DocumentationMetadataModel:
@@ -224,6 +238,7 @@ class ApiEndpoints(object):
         api_cls: Type,
         filters: Union[None, Iterable[str], str] = None,
         exclude: Union[None, Iterable[str], str] = None,
+        include_tags: Union[None, Iterable[str], str] = None,
     ):
 
         if filters is None:
@@ -236,9 +251,16 @@ class ApiEndpoints(object):
         elif isinstance(exclude, str):
             exclude = [exclude]
 
+        if include_tags is None:
+            include_tags = []
+        elif isinstance(include_tags, str):
+            include_tags = [include_tags]
+
         self._api_cls = api_cls
         self._filters: Iterable[str] = filters
         self._exclude: Iterable[str] = exclude
+        self._include_tags: Iterable[str] = include_tags
+
         self._api_endpoint_names: Union[None, List[str]] = None
         self._endpoint_details: Dict[str, ApiEndpoint] = {}
 
@@ -249,15 +271,36 @@ class ApiEndpoints(object):
             return self._api_endpoint_names
 
         temp = []
-        for func_name in dir(self._api_cls):
+
+        avail_methods = list(
+            inspect.getmembers(self._api_cls, predicate=inspect.isfunction)
+        )
+
+        avail_methods.sort(key=lambda x: inspect.getsourcelines(x[1])[1])
+
+        method_names = [x[0] for x in avail_methods]
+        for func_name in method_names:
             if func_name.startswith("_"):
                 continue
 
             if func_name in self._exclude:
                 continue
 
-            if not callable(getattr(self._api_cls, func_name)):
+            func = getattr(self._api_cls, func_name)
+            if not callable(func):
                 continue
+
+            if self._include_tags:
+                if not hasattr(func, "_tags"):
+                    continue
+                tags = getattr(func, "_tags")
+                match = False
+                for t in tags:
+                    if t in self._include_tags:
+                        match = True
+                        break
+                if not match:
+                    continue
 
             if self._filters:
                 match = True
@@ -271,7 +314,7 @@ class ApiEndpoints(object):
             else:
                 temp.append(func_name)
 
-        self._api_endpoint_names = sorted(temp)
+        self._api_endpoint_names = temp
         return self._api_endpoint_names
 
     def get_api_endpoint(self, endpoint_name: str) -> ApiEndpoint:

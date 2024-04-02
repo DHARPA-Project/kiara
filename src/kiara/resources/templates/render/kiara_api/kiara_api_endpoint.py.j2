@@ -1,0 +1,11 @@
+    {{ signature_str }}
+        {{ regex_str }}"""{{ doc }}
+        """
+{%  if result_type == None %}
+        self._api.{{ endpoint_name }}({{ arg_names_str }})
+{% else %}
+        result: {{ result_type }} = self._api.{{ endpoint_name }}({{ arg_names_str }})
+        return result
+{% endif %}
+
+

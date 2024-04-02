@@ -104,9 +104,9 @@ class Kiara(object):
     @classmethod
     def instance(cls) -> "Kiara":
         """The default *kiara* context. In most cases, it's recommended you create and manage your own, though."""
-        from kiara.interfaces.python_api import KiaraAPI
 
-        return KiaraAPI.instance().context
+        raise NotImplementedError("Kiara.instance() is not implemented yet.")
+        # return BaseAPI.instance().context
 
     def __init__(
         self,
@@ -131,7 +131,7 @@ class Kiara(object):
         self._config: KiaraContextConfig = config
         self._runtime_config: KiaraRuntimeConfig = runtime_config
 
-        self._env_mgmt: EnvironmentRegistry = EnvironmentRegistry.instance()
+        self._env_mgmt: EnvironmentRegistry = EnvironmentRegistry()
 
         self._event_registry: EventRegistry = EventRegistry(kiara=self)
         self._type_registry: TypeRegistry = TypeRegistry(self)
@@ -179,7 +179,9 @@ class Kiara(object):
                 file_name = f"{archive_path.name}.kiarchive"
 
                 js_config = SqliteArchiveConfig.create_new_store_config(
-                    store_base_path=archive.config["archive_path"], file_name=file_name
+                    store_base_path=archive.config["archive_path"],
+                    file_name=file_name,
+                    use_wal_mode=True,
                 )
                 archive = KiaraArchiveConfig(
                     archive_type="sqlite_job_store", config=js_config.model_dump()
@@ -264,6 +266,7 @@ class Kiara(object):
 
     @property
     def environment_registry(self) -> EnvironmentRegistry:
+
         return self._env_mgmt
 
     @property
@@ -486,7 +489,9 @@ class Kiara(object):
             value = _values[field_name]
             try:
                 if field_aliases:
-                    self.alias_registry.register_aliases(value.value_id, *field_aliases)
+                    self.alias_registry.register_aliases(
+                        value_id=value.value_id, aliases=field_aliases
+                    )
 
                 stored[field_name] = StoreValueResult(
                     value=value,

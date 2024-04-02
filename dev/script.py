@@ -2,7 +2,6 @@
 # %%
 
 
-from kiara.interfaces.python_api import Step
 from kiara.utils.cli import terminal_print
 
 step_read_files_in_folder = Step(

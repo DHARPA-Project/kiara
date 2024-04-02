@@ -44,6 +44,7 @@ results_{{ step_id }} = kiara.run_job('{{ step.manifest_src.module_type }}', ope
 {%- set pipeline_output_refs = pipeline.pipeline_output_refs -%}
 {% for field_name, output_ref in pipeline_output_refs.items() %}
 pipeline_result_{{ field_name }} = results_{{ output_ref.connected_output.step_id }}['{{ output_ref.connected_output.value_name }}']
-terminal_rendered_result_{{ field_name }} =  kiara.render_value(pipeline_result_{{ field_name }}, target_format="terminal_renderable", use_pretty_print=True)
-terminal_print(terminal_rendered_result_{{ field_name }}, in_panel='Pipeline result: [b]{{ field_name }}[/b]')
+
+terminal_print(pipeline_result_{{ field_name }}, in_panel='Pipeline result metadata: [b]{{ field_name }}[/b]')
+terminal_print(pipeline_result_{{ field_name }}.data, in_panel='Pipeline result data: [b]{{ field_name }}[/b]')
 {% endfor %}

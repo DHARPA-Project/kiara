@@ -15,7 +15,7 @@ from kiara.utils.files import get_data_from_file
 from kiara.utils.string_vars import replace_var_names_in_obj
 
 if TYPE_CHECKING:
-    from kiara.interfaces.python_api import KiaraAPI
+    from kiara.interfaces.python_api.base_api import BaseAPI
     from kiara.models.module.operation import Operation
     from kiara.models.values.value import ValueMap
 
@@ -149,10 +149,12 @@ class JobDesc(KiaraModel):
     def validate_doc(cls, value):
         return DocumentationMetadataModel.create(value)
 
-    def get_operation(self, kiara_api: "KiaraAPI") -> "Operation":
+    def get_operation(self, kiara_api: "BaseAPI") -> "Operation":
 
         if not self.module_config:
-            operation = kiara_api.get_operation(self.operation, allow_external=True)
+            operation: Operation = kiara_api.get_operation(
+                self.operation, allow_external=True
+            )
         else:
             data = {
                 "module_type": self.operation,
@@ -255,12 +257,12 @@ class RunSpec(BaseModel):
 class JobTest(object):
     def __init__(
         self,
-        kiara_api: "KiaraAPI",
+        kiara_api: "BaseAPI",
         job_desc: JobDesc,
         tests: Union[Mapping[str, Mapping[str, Any]], None] = None,
     ):
 
-        self._kiara_api: KiaraAPI = kiara_api
+        self._kiara_api: BaseAPI = kiara_api
         self._job_desc = job_desc
         if tests is None:
             tests = {}

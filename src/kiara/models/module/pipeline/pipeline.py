@@ -64,7 +64,7 @@ from kiara.utils.yaml import StringYAML
 
 if TYPE_CHECKING:
     from kiara.context import Kiara
-    from kiara.interfaces.python_api import KiaraAPI
+    from kiara.interfaces.python_api.base_api import BaseAPI
 
 yaml = StringYAML()
 
@@ -81,13 +81,13 @@ class Pipeline(object):
     @classmethod
     def create_pipeline(
         cls,
-        kiara: Union["Kiara", "KiaraAPI"],
+        kiara: Union["Kiara", "BaseAPI"],
         pipeline: Union[PipelineConfig, PipelineStructure, Mapping, str],
     ) -> "Pipeline":
 
-        from kiara.api import KiaraAPI
+        from kiara.interfaces.python_api.base_api import BaseAPI
 
-        if isinstance(kiara, KiaraAPI):
+        if isinstance(kiara, BaseAPI):
             kiara = kiara.context
 
         if isinstance(pipeline, Mapping):

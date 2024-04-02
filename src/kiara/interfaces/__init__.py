@@ -305,7 +305,7 @@ class KiaraAPIWrap(object):
             terminal_print(f"Error loading kiara config: {e}")
             sys.exit(1)
 
-        kiara_config.runtime_config.runtime_profile = "default"
+        # kiara_config.runtime_config.runtime_profile = "default"
 
         self._kiara_config = kiara_config
         return self._kiara_config

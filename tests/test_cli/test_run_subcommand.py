@@ -49,7 +49,7 @@ def test_run_with_valid_inputs():
     runner = CliRunner()
     result = runner.invoke(
         cli,
-        f"-cnf {KIARA_CONFIG_FILE} run logic.and a=true b=true --comment 'A comment.'",
+        f'-cnf {KIARA_CONFIG_FILE} run logic.and a=true b=true --comment "A comment."',
     )
     assert result.exit_code == 0
     assert "True" in result.stdout
@@ -61,7 +61,7 @@ def test_run_with_save():
     runner.invoke(cli, "context delete -f")
     result = runner.invoke(
         cli,
-        f"-cnf {KIARA_CONFIG_FILE} run logic.and a=true b=true --save test_save --comment 'A comment.'",
+        f'-cnf {KIARA_CONFIG_FILE} run logic.and a=true b=true --save test_save --comment "A comment."',
     )
     assert result.exit_code == 0
     assert "True" in result.stdout

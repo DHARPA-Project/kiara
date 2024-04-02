@@ -342,9 +342,15 @@ def execute_job(
     if comment is not None:
         job_metadata["comment"] = comment
 
-    job_id = api.queue_job(
-        operation=operation, inputs=inputs, operation_config=None, **job_metadata
-    )
+    try:
+        job_id = api.queue_job(
+            operation=operation, inputs=inputs, operation_config=None, **job_metadata
+        )
+    except Exception as e:
+        log_exception(e)
+        terminal_print()
+        terminal_print(e)
+        sys.exit(1)
 
     try:
         outputs = api.get_job_result(job_id=job_id)

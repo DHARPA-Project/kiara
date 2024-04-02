@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import os
+
 from click.testing import CliRunner
 
 from kiara.interfaces.cli import cli
@@ -7,6 +9,12 @@ from kiara.interfaces.cli import cli
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
+
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+DATA_FOLDER = os.path.join(ROOT_DIR, "examples", "data")
+TEST_RESOURCES_FOLDER = os.path.join(ROOT_DIR, "tests", "resources")
+KIARA_CONFIG_FILE = os.path.join(TEST_RESOURCES_FOLDER, "kiara.config")
 
 
 def test_run_without_module():
@@ -39,7 +47,10 @@ def test_run_with_missing_arg():
 def test_run_with_valid_inputs():
 
     runner = CliRunner()
-    result = runner.invoke(cli, "run logic.and a=true b=true")
+    result = runner.invoke(
+        cli,
+        f"-cnf {KIARA_CONFIG_FILE} run logic.and a=true b=true --comment 'A comment.'",
+    )
     assert result.exit_code == 0
     assert "True" in result.stdout
 
@@ -48,9 +59,20 @@ def test_run_with_save():
 
     runner = CliRunner(env={"KIARA_CONTEXT": "_unit_tests_run"})
     runner.invoke(cli, "context delete -f")
-    result = runner.invoke(cli, "run logic.and a=true b=true --save test_save")
+    result = runner.invoke(
+        cli,
+        f"-cnf {KIARA_CONFIG_FILE} run logic.and a=true b=true --save test_save --comment 'A comment.'",
+    )
     assert result.exit_code == 0
     assert "True" in result.stdout
 
     result_data = runner.invoke(cli, "data list")
     assert "test_save.y" in result_data.stdout
+
+
+def test_run_with_missing_comment():
+
+    runner = CliRunner()
+    result = runner.invoke(cli, f"-cnf {KIARA_CONFIG_FILE} run logic.and a=true b=true")
+    assert result.exit_code == 1
+    assert "No job metadata provided." in result.stdout

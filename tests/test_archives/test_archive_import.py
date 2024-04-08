@@ -22,6 +22,11 @@ def test_archive_import_values_no_alias(api: BaseAPI):
             f"Resources folder not found: {resources_folder} - {parent} - {parent_parent} - {parent_parent_parent}"
         )
 
+    if not resources_folder.is_dir():
+        raise NotADirectoryError(
+            f"Resources folder is not a directory: {resources_folder}"
+        )
+
     archive_file = resources_folder / "archives" / "nand_true.0.10.kiarchive"
 
     assert not api.list_all_value_ids()

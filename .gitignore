@@ -76,3 +76,6 @@ store.sqlite
 **.kontext
 dev/
 temp/
+# pixi environments
+.pixi
+

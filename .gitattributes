@@ -1,1 +1,4 @@
 .git_archival.txt  export-subst
+# GitHub syntax highlighting
+pixi.lock linguist-language=YAML
+

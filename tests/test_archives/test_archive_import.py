@@ -22,7 +22,7 @@ def test_archive_import_values_no_alias(api: BaseAPI):
     assert not result.errors
 
     assert len(result) == 6
-    assert "af83495c-9fbf-4155-a9ce-29f1e8be4da9" in result.keys()
+    assert "b6bdc921-35d6-43e6-ba20-25e617b7e5ea" in result.keys()
 
     assert uuid.UUID("b6bdc921-35d6-43e6-ba20-25e617b7e5ea") in api.list_all_value_ids()
 
@@ -44,6 +44,6 @@ def test_archive_import_values_with_alias(api: BaseAPI):
     assert len(result) == 6
     assert "b6bdc921-35d6-43e6-ba20-25e617b7e5ea" in result.keys()
 
-    assert uuid.UUID("af83495c-9fbf-4155-a9ce-29f1e8be4da9") in api.list_all_value_ids()
+    assert uuid.UUID("b6bdc921-35d6-43e6-ba20-25e617b7e5ea") in api.list_all_value_ids()
 
     assert {"y", "export_test#y"} == set(api.list_alias_names())

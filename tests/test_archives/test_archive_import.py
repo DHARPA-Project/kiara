@@ -39,7 +39,7 @@ def test_debug_ci(api: BaseAPI):
         return result_string
 
     result_string = print_directory_contents(
-        resources_folder, f"{resources_folder.as_posix()}"
+        resources_folder.as_posix(), f"{resources_folder.as_posix()}"
     )
 
     raise Exception(result_string)

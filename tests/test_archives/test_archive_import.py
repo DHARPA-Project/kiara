@@ -8,6 +8,8 @@ from kiara.interfaces.python_api.base_api import BaseAPI
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 TEST_RESOURCES_FOLDER = os.path.join(ROOT_DIR, "tests", "resources")
 
+VALUE_ID = "edbd6711-0432-430f-a147-08a6ae9df220"
+
 
 def test_archive_import_values_no_alias(api: BaseAPI):
 
@@ -22,11 +24,11 @@ def test_archive_import_values_no_alias(api: BaseAPI):
     assert not result.errors
 
     assert len(result) == 6
-    assert "b6bdc921-35d6-43e6-ba20-25e617b7e5ea" in result.keys()
+    assert VALUE_ID in result.keys()
 
-    assert uuid.UUID("b6bdc921-35d6-43e6-ba20-25e617b7e5ea") in api.list_all_value_ids()
+    assert uuid.UUID(VALUE_ID) in api.list_all_value_ids()
 
-    assert ["export_test#y"] == api.list_alias_names()
+    assert ["nand_true.0.10#y"] == api.list_alias_names()
 
 
 def test_archive_import_values_with_alias(api: BaseAPI):
@@ -42,8 +44,8 @@ def test_archive_import_values_with_alias(api: BaseAPI):
     assert not result.errors
 
     assert len(result) == 6
-    assert "b6bdc921-35d6-43e6-ba20-25e617b7e5ea" in result.keys()
+    assert VALUE_ID in result.keys()
 
-    assert uuid.UUID("b6bdc921-35d6-43e6-ba20-25e617b7e5ea") in api.list_all_value_ids()
+    assert uuid.UUID(VALUE_ID) in api.list_all_value_ids()
 
-    assert {"y", "export_test#y"} == set(api.list_alias_names())
+    assert {"y", "nand_true.0.10#y"} == set(api.list_alias_names())

@@ -33,7 +33,7 @@ def context(ctx):
 @click.pass_context
 def list_contexts(ctx) -> None:
     """List existing contexts."""
-    kiara_api: BaseAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.base_api
 
     summaries = kiara_api.retrieve_context_infos()
 

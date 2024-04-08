@@ -2149,6 +2149,8 @@ class BaseAPI(object):
         target_archive: Union[str, Path],
         values: Union[
             str,
+            Value,
+            uuid.UUID,
             Mapping[str, Union[str, uuid.UUID, Value]],
             Iterable[Union[str, uuid.UUID, Value]],
         ],

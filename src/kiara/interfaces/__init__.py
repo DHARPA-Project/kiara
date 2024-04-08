@@ -284,11 +284,11 @@ class KiaraAPIWrap(object):
     @property
     def current_kiara_context_id(self) -> uuid.UUID:
 
-        return self.kiara_api.context.id
+        return self.base_api.context.id
 
     @property
     def kiara(self) -> "Kiara":
-        return self.kiara_api.context
+        return self.base_api.context
 
     @property
     def kiara_config(self) -> "KiaraConfig":
@@ -315,7 +315,7 @@ class KiaraAPIWrap(object):
         return "asdf"
 
     @property
-    def kiara_api(self) -> "BaseAPI":
+    def base_api(self) -> "BaseAPI":
 
         if self._api is not None:
             return self._api

@@ -57,7 +57,7 @@ def list_plugins(ctx, filter_regex: str, format):
 
     from kiara.interfaces.python_api.models.info import KiaraPluginInfos
 
-    api: BaseAPI = ctx.obj.kiara_api
+    api: BaseAPI = ctx.obj.base_api
 
     title = "All available plugins"
     if filter_regex:
@@ -75,7 +75,7 @@ def list_plugins(ctx, filter_regex: str, format):
 @click.pass_context
 def explain_plugin_info(ctx, plugin_name: str, format: str):
 
-    kiara_api: BaseAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.base_api
 
     plugin_info = kiara_api.retrieve_plugin_info(plugin_name)
     title = f"Info for plugin: [i]{plugin_name}[/i]"

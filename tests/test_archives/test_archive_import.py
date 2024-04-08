@@ -13,7 +13,7 @@ def test_archive_import_values_no_alias(api: BaseAPI):
 
     resources_folder = Path(TEST_RESOURCES_FOLDER)
 
-    archive_file = resources_folder / "archives" / "export_test.kiarchive"
+    archive_file = resources_folder / "archives" / "nand_true.0.10.kiarchive"
 
     assert not api.list_all_value_ids()
 
@@ -21,10 +21,10 @@ def test_archive_import_values_no_alias(api: BaseAPI):
 
     assert not result.errors
 
-    assert len(result) == 8
+    assert len(result) == 6
     assert "af83495c-9fbf-4155-a9ce-29f1e8be4da9" in result.keys()
 
-    assert uuid.UUID("af83495c-9fbf-4155-a9ce-29f1e8be4da9") in api.list_all_value_ids()
+    assert uuid.UUID("b6bdc921-35d6-43e6-ba20-25e617b7e5ea") in api.list_all_value_ids()
 
     assert ["export_test#y"] == api.list_alias_names()
 
@@ -33,7 +33,7 @@ def test_archive_import_values_with_alias(api: BaseAPI):
 
     resources_folder = Path(TEST_RESOURCES_FOLDER)
 
-    archive_file = resources_folder / "archives" / "export_test.kiarchive"
+    archive_file = resources_folder / "archives" / "nand_true.0.10.kiarchive"
 
     assert not api.list_all_value_ids()
 
@@ -41,8 +41,8 @@ def test_archive_import_values_with_alias(api: BaseAPI):
 
     assert not result.errors
 
-    assert len(result) == 8
-    assert "af83495c-9fbf-4155-a9ce-29f1e8be4da9" in result.keys()
+    assert len(result) == 6
+    assert "b6bdc921-35d6-43e6-ba20-25e617b7e5ea" in result.keys()
 
     assert uuid.UUID("af83495c-9fbf-4155-a9ce-29f1e8be4da9") in api.list_all_value_ids()
 

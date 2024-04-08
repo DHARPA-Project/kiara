@@ -72,7 +72,7 @@ def list_types(ctx, full_doc: bool, format: str, filter: Iterable[str]):
 @handle_exception()
 def explain_type(ctx, operation_type: str, format: str):
 
-    kiara_api: BaseAPI = ctx.obj.kiara_api
+    kiara_api: BaseAPI = ctx.obj.base_api
 
     op_type = kiara_api.retrieve_operation_type_info(operation_type)
 
@@ -120,7 +120,7 @@ def list_operations(
 ):
 
     kiara_obj: Kiara = ctx.obj.kiara
-    api: BaseAPI = ctx.obj.kiara_api
+    api: BaseAPI = ctx.obj.base_api
 
     operations = api.list_operations(
         filter=filter, include_internal=include_internal, python_packages=python_package
@@ -182,7 +182,7 @@ def list_operations(
 def explain(ctx, operation_id: str, source: bool, format: str, module_info: bool):
 
     kiara_obj: Kiara = ctx.obj.kiara
-    api: BaseAPI = ctx.obj.kiara_api
+    api: BaseAPI = ctx.obj.base_api
 
     if os.path.isfile(os.path.realpath(operation_id)):
         operation = api.get_operation(operation_id)

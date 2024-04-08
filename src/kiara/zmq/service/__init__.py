@@ -117,7 +117,7 @@ class KiaraZmqAPI(object):
 
         try:
 
-            api = self._api_wrap.kiara_api
+            api = self._api_wrap.base_api
 
             timeout = self._initial_timeout
 

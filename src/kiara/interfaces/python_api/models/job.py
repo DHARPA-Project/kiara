@@ -15,6 +15,7 @@ from kiara.utils.files import get_data_from_file
 from kiara.utils.string_vars import replace_var_names_in_obj
 
 if TYPE_CHECKING:
+    from kiara.api import KiaraAPI
     from kiara.interfaces.python_api.base_api import BaseAPI
     from kiara.models.module.operation import Operation
     from kiara.models.values.value import ValueMap
@@ -262,7 +263,7 @@ class JobTest(object):
         tests: Union[Mapping[str, Mapping[str, Any]], None] = None,
     ):
 
-        self._kiara_api: BaseAPI = kiara_api
+        self._kiara_api: Union[BaseAPI, KiaraAPI] = kiara_api
         self._job_desc = job_desc
         if tests is None:
             tests = {}
@@ -297,6 +298,7 @@ class JobTest(object):
             import inspect
 
             from kiara.api import Value
+            from kiara.interfaces.python_api.base_api import BaseAPI
 
             for test_name, test in self._tests.items():
 
@@ -305,9 +307,14 @@ class JobTest(object):
                     value = result.get_value_obj(tokens[0])
 
                     if len(tokens) > 1:
-                        data_to_test = self._kiara_api.query_value(
-                            value, "::".join(tokens[1:])
-                        )
+                        if isinstance(self._kiara_api, BaseAPI):
+                            data_to_test = self._kiara_api.query_value(
+                                value, "::".join(tokens[1:])
+                            )
+                        else:
+                            data_to_test = self._kiara_api._api.query_value(
+                                value, "::".join(tokens[1:])
+                            )
                     else:
                         data_to_test = value
 

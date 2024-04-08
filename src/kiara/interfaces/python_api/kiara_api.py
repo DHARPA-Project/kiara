@@ -102,8 +102,8 @@ class KiaraAPI(object):
     def run_job(
         self,
         operation: Union[str, Path, "Manifest", "OperationInfo", "JobDesc"],
-        inputs: Mapping[str, Any],
-        comment: str,
+        inputs: Union[Mapping[str, Any], None] = None,
+        comment: Union[str, None] = None,
         operation_config: Union[None, Mapping[str, Any]] = None,
     ) -> "ValueMapReadOnly":
         """
@@ -132,6 +132,9 @@ class KiaraAPI(object):
             from kiara.exceptions import KiaraException
 
             raise KiaraException(msg="Can't submit job: no comment provided.")
+
+        if inputs is None:
+            inputs = {}
 
         return self._api.run_job(
             operation=operation,

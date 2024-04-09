@@ -26,6 +26,13 @@ from kiara.defaults import (
     CHUNK_CACHE_DIR_DEPTH,
     CHUNK_CACHE_DIR_WIDTH,
     CHUNK_COMPRESSION_TYPE,
+    REQUIRED_TABLES_DATA_ARCHIVE,
+    TABLE_NAME_ARCHIVE_METADATA,
+    TABLE_NAME_DATA_CHUNKS,
+    TABLE_NAME_DATA_DESTINIES,
+    TABLE_NAME_DATA_METADATA,
+    TABLE_NAME_DATA_PEDIGREE,
+    TABLE_NAME_DATA_SERIALIZATION_METADATA,
 )
 from kiara.models.values.value import PersistedData, Value
 from kiara.registries import (
@@ -69,15 +76,7 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
         tables = {x[0] for x in cursor.fetchall()}
         con.close()
 
-        required_tables = {
-            "values_pedigree",
-            "values_destinies",
-            "archive_metadata",
-            "persisted_values",
-            "values_metadata",
-            "values_data",
-            "environments",
-        }
+        required_tables = REQUIRED_TABLES_DATA_ARCHIVE
 
         if not required_tables.issubset(tables):
             return None
@@ -110,7 +109,7 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
 
-        sql = text("SELECT key, value FROM archive_metadata")
+        sql = text(f"SELECT key, value FROM {TABLE_NAME_ARCHIVE_METADATA}")
 
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(sql)
@@ -171,8 +170,8 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
             use_wal_mode=self._use_wal_mode,
         )
 
-        create_table_sql = """
-CREATE TABLE IF NOT EXISTS values_metadata (
+        create_table_sql = f"""
+CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_METADATA} (
     value_id TEXT PRIMARY KEY,
     value_hash TEXT NOT NULL,
     value_size INTEGER NOT NULL,
@@ -180,31 +179,25 @@ CREATE TABLE IF NOT EXISTS values_metadata (
     data_type_name TEXT NOT NULL,
     value_metadata TEXT NOT NULL
 );
-CREATE TABLE IF NOT EXISTS persisted_values (
+CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_SERIALIZATION_METADATA} (
     value_id TEXT PRIMARY KEY,
     value_hash TEXT NOT NULL,
     value_size INTEGER NOT NULL,
     data_type_name TEXT NOT NULL,
     persisted_value_metadata TEXT NOT NULL
 );
-CREATE TABLE IF NOT EXISTS values_data (
+CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_CHUNKS} (
     chunk_id TEXT PRIMARY KEY,
     chunk_data BLOB NOT NULL,
     compression_type INTEGER NULL
 );
-CREATE TABLE IF NOT EXISTS values_pedigree (
+CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_PEDIGREE} (
     value_id TEXT NOT NULL PRIMARY KEY,
     pedigree TEXT NOT NULL
 );
-CREATE TABLE IF NOT EXISTS values_destinies (
+CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
     value_id TEXT NOT NULL,
     destiny_name TEXT NOT NULL
-);
-CREATE TABLE IF NOT EXISTS environments (
-    environment_type TEXT NOT NULL,
-    environment_hash TEXT NOT NULL,
-    environment_data TEXT NOT NULL,
-    PRIMARY KEY (environment_type, environment_hash)
 );
 """
 
@@ -221,7 +214,7 @@ CREATE TABLE IF NOT EXISTS environments (
 
         value_id = str(value.value_id)
         sql = text(
-            "SELECT persisted_value_metadata FROM persisted_values WHERE value_id = :value_id"
+            f"SELECT persisted_value_metadata FROM {TABLE_NAME_DATA_SERIALIZATION_METADATA} WHERE value_id = :value_id"
         )
         with self.sqlite_engine.connect() as conn:
             cursor = conn.execute(sql, {"value_id": value_id})
@@ -232,7 +225,7 @@ CREATE TABLE IF NOT EXISTS environments (
     def _retrieve_value_details(self, value_id: uuid.UUID) -> Mapping[str, Any]:
 
         sql = text(
-            "SELECT value_metadata FROM values_metadata WHERE value_id = :value_id"
+            f"SELECT value_metadata FROM {TABLE_NAME_DATA_METADATA} WHERE value_id = :value_id"
         )
         params = {"value_id": str(value_id)}
         with self.sqlite_engine.connect() as conn:
@@ -241,17 +234,17 @@ CREATE TABLE IF NOT EXISTS environments (
             data: Mapping[str, Any] = orjson.loads(result[0])
             return data
 
-    def _retrieve_environment_details(
-        self, env_type: str, env_hash: str
-    ) -> Mapping[str, Any]:
-
-        sql = text(
-            "SELECT environment_data FROM environments_data WHERE environment_type = ? AND environment_hash = ?"
-        )
-        with self.sqlite_engine.connect() as conn:
-            cursor = conn.execute(sql, (env_type, env_hash))
-            result = cursor.fetchone()
-            return result[0]  # type: ignore
+    # def _retrieve_environment_details(
+    #     self, env_type: str, env_hash: str
+    # ) -> Mapping[str, Any]:
+    #
+    #     sql = text(
+    #         "SELECT environment_data FROM environments_data WHERE environment_type = ? AND environment_hash = ?"
+    #     )
+    #     with self.sqlite_engine.connect() as conn:
+    #         cursor = conn.execute(sql, (env_type, env_hash))
+    #         result = cursor.fetchone()
+    #         return result[0]  # type: ignore
 
     # def find_values(self, matcher: ValueMatcher) -> Iterable[Value]:
     #     raise NotImplementedError()
@@ -274,7 +267,7 @@ CREATE TABLE IF NOT EXISTS environments (
         """
 
         sql_text = text(
-            "SELECT EXISTS(SELECT 1 FROM values_metadata WHERE value_id = :value_id)"
+            f"SELECT EXISTS(SELECT 1 FROM {TABLE_NAME_DATA_METADATA} WHERE value_id = :value_id)"
         )
         with self.sqlite_engine.connect() as conn:
             result = conn.execute(sql_text, {"value_id": str(value_id)}).scalar()
@@ -287,7 +280,7 @@ CREATE TABLE IF NOT EXISTS environments (
         if self._value_id_cache is not None:
             return self._value_id_cache
 
-        sql = text("SELECT value_id FROM values_metadata")
+        sql = text(f"SELECT value_id FROM {TABLE_NAME_DATA_METADATA}")
         with self.sqlite_engine.connect() as conn:
             cursor = conn.execute(sql)
             result = cursor.fetchall()
@@ -297,7 +290,7 @@ CREATE TABLE IF NOT EXISTS environments (
 
     def retrieve_all_chunk_ids(self) -> Iterable[str]:
 
-        sql = text("SELECT chunk_id FROM values_data")
+        sql = text(f"SELECT chunk_id FROM {TABLE_NAME_DATA_CHUNKS}")
         with self.sqlite_engine.connect() as conn:
             cursor = conn.execute(sql)
             result = cursor.fetchall()
@@ -315,7 +308,9 @@ CREATE TABLE IF NOT EXISTS environments (
         if data_type_name is not None:
             raise NotImplementedError()
 
-        sql = text("SELECT value_id FROM values_metadata WHERE value_hash = ?")
+        sql = text(
+            f"SELECT value_id FROM {TABLE_NAME_DATA_METADATA} WHERE value_hash = ?"
+        )
         with self.sqlite_engine.connect() as conn:
             cursor = conn.execute(sql, (value_hash,))
             result = cursor.fetchall()
@@ -326,7 +321,7 @@ CREATE TABLE IF NOT EXISTS environments (
     ) -> Union[Mapping[str, uuid.UUID], None]:
 
         sql = text(
-            "SELECT destiny_name FROM values_destinies WHERE value_id = :value_id"
+            f"SELECT destiny_name FROM {TABLE_NAME_DATA_DESTINIES} WHERE value_id = :value_id"
         )
         params = {"value_id": str(value_id)}
         with self.sqlite_engine.connect() as conn:
@@ -410,14 +405,14 @@ CREATE TABLE IF NOT EXISTS environments (
 
                 id_list_str = ", ".join("'" + item + "'" for item in missing_ids)
                 sql = text(
-                    f"""SELECT chunk_id, chunk_data, compression_type FROM values_data
+                    f"""SELECT chunk_id, chunk_data, compression_type FROM {TABLE_NAME_DATA_CHUNKS}
                     WHERE
                         chunk_id in ({id_list_str})
                     ORDER BY
                       CASE chunk_id
                         {"".join([f"WHEN '{id}' THEN {i} " for i, id in enumerate(missing_ids)])}
                       END
-                    """  # noqa
+                    """
                 )
 
                 result = conn.execute(sql)
@@ -537,15 +532,7 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
         tables = {x[0] for x in cursor.fetchall()}
         con.close()
 
-        required_tables = {
-            "values_pedigree",
-            "values_destinies",
-            "archive_metadata",
-            "persisted_values",
-            "values_metadata",
-            "values_data",
-            "environments",
-        }
+        required_tables = REQUIRED_TABLES_DATA_ARCHIVE
 
         if not required_tables.issubset(tables):
             return None
@@ -557,7 +544,7 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
         """Set custom metadata for the archive."""
 
         sql = text(
-            "INSERT OR REPLACE INTO archive_metadata (key, value) VALUES (:key, :value)"
+            f"INSERT OR REPLACE INTO {TABLE_NAME_ARCHIVE_METADATA} (key, value) VALUES (:key, :value)"
         )
         with self.sqlite_engine.connect() as conn:
             params = {"key": key, "value": value}
@@ -660,7 +647,7 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
             else None
         )
         sql = text(
-            "INSERT INTO values_data (chunk_id, chunk_data, compression_type) VALUES (:chunk_id, :chunk_data, :compression_type)"
+            f"INSERT INTO {TABLE_NAME_DATA_CHUNKS} (chunk_id, chunk_data, compression_type) VALUES (:chunk_id, :chunk_data, :compression_type)"
         )
         params = {
             "chunk_id": chunk_id,
@@ -683,7 +670,7 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
         metadata = persisted_value.model_dump_json()
 
         sql = text(
-            "INSERT INTO persisted_values (value_id, value_hash, value_size, data_type_name, persisted_value_metadata) VALUES (:value_id, :value_hash, :value_size, :data_type_name, :metadata)"
+            f"INSERT INTO {TABLE_NAME_DATA_SERIALIZATION_METADATA} (value_id, value_hash, value_size, data_type_name, persisted_value_metadata) VALUES (:value_id, :value_hash, :value_size, :data_type_name, :metadata)"
         )
 
         with self.sqlite_engine.connect() as conn:
@@ -709,7 +696,7 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
         metadata = value.model_dump_json()
 
         sql = text(
-            "INSERT INTO values_metadata (value_id, value_hash, value_size, value_created, data_type_name, value_metadata) VALUES (:value_id, :value_hash, :value_size, :value_created, :data_type_name, :metadata)"
+            f"INSERT INTO {TABLE_NAME_DATA_METADATA} (value_id, value_hash, value_size, value_created, data_type_name, value_metadata) VALUES (:value_id, :value_hash, :value_size, :value_created, :data_type_name, :metadata)"
         )
         with self.sqlite_engine.connect() as conn:
             params = {
@@ -732,7 +719,7 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
             for destiny_value_id, destiny_name in value.destiny_backlinks.items():
 
                 sql = text(
-                    "INSERT INTO values_destinies (value_id, destiny_name) VALUES (:value_id, :destiny_name)"
+                    f"INSERT INTO {TABLE_NAME_DATA_DESTINIES} (value_id, destiny_name) VALUES (:value_id, :destiny_name)"
                 )
                 params = {
                     "value_id": value_id,
@@ -748,7 +735,7 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
         pedigree = value.pedigree.manifest_data_as_json()
 
         sql = text(
-            "INSERT INTO values_pedigree (value_id, pedigree) VALUES (:value_id, :pedigree)"
+            f"INSERT INTO {TABLE_NAME_DATA_PEDIGREE} (value_id, pedigree) VALUES (:value_id, :pedigree)"
         )
         with self.sqlite_engine.connect() as conn:
             params = {"value_id": value_id, "pedigree": pedigree}

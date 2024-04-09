@@ -15,15 +15,18 @@ import orjson
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
+from kiara.defaults import (
+    REQUIRED_TABLES_METADATA,
+    TABLE_NAME_ARCHIVE_METADATA,
+    TABLE_NAME_METADATA,
+    TABLE_NAME_METADATA_REFERENCES,
+    TABLE_NAME_METADATA_SCHEMAS,
+)
 from kiara.exceptions import KiaraException
 from kiara.registries import ArchiveDetails, SqliteArchiveConfig
 from kiara.registries.metadata import MetadataArchive, MetadataMatcher, MetadataStore
 from kiara.utils.dates import get_current_time_incl_timezone
 from kiara.utils.db import create_archive_engine, delete_archive_db
-
-REQUIRED_METADATA_TABLES = {
-    "metadata",
-}
 
 
 class SqliteMetadataArchive(MetadataArchive):
@@ -51,7 +54,7 @@ class SqliteMetadataArchive(MetadataArchive):
         tables = {x[0] for x in cursor.fetchall()}
         con.close()
 
-        if not REQUIRED_METADATA_TABLES.issubset(tables):
+        if not REQUIRED_TABLES_METADATA.issubset(tables):
             return None
 
         # config = SqliteArchiveConfig(sqlite_db_path=store_uri)
@@ -87,7 +90,7 @@ class SqliteMetadataArchive(MetadataArchive):
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
 
-        sql = text("SELECT key, value FROM archive_metadata")
+        sql = text(f"SELECT key, value FROM {TABLE_NAME_ARCHIVE_METADATA}")
 
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(sql)
@@ -125,13 +128,13 @@ class SqliteMetadataArchive(MetadataArchive):
             use_wal_mode=self._use_wal_mode,
         )
 
-        create_table_sql = """
-CREATE TABLE IF NOT EXISTS metadata_schemas (
+        create_table_sql = f"""
+CREATE TABLE IF NOT EXISTS {TABLE_NAME_METADATA_SCHEMAS} (
     model_schema_hash TEXT PRIMARY KEY,
     model_type_id TEXT NOT NULL,
     model_schema TEXT NOT NULL
 );
-CREATE TABLE IF NOT EXISTS metadata (
+CREATE TABLE IF NOT EXISTS {TABLE_NAME_METADATA} (
     metadata_item_id TEXT PRIMARY KEY,
     metadata_item_created TEXT NOT NULL,
     metadata_item_key TEXT NOT NULL,
@@ -142,7 +145,7 @@ CREATE TABLE IF NOT EXISTS metadata (
     FOREIGN KEY (model_schema_hash) REFERENCES metadata_schemas (model_schema_hash),
     UNIQUE (metadata_item_key, metadata_item_hash)
 );
-CREATE TABLE IF NOT EXISTS metadata_references (
+CREATE TABLE IF NOT EXISTS {TABLE_NAME_METADATA_REFERENCES} (
     reference_item_type TEXT NOT NULL,
     reference_item_key TEXT NOT NULL,
     reference_item_id TEXT NOT NULL,
@@ -168,17 +171,17 @@ CREATE TABLE IF NOT EXISTS metadata_references (
 
         if not key:
             sql = text(
-                """
+                f"""
                 SELECT m.model_type_id, m.metadata_value
-                FROM metadata m
+                FROM {TABLE_NAME_METADATA} m
                 WHERE m.metadata_item_hash = :item_hash
             """
             )
         else:
             sql = text(
-                """
+                f"""
                 SELECT m.model_type_id, m.metadata_value
-                FROM metadata m
+                FROM {TABLE_NAME_METADATA} m
                 WHERE m.metadata_item_hash = :item_hash AND m.metadata_item_key = :key
             """
             )
@@ -224,7 +227,7 @@ CREATE TABLE IF NOT EXISTS metadata_references (
 
         metadata_fields_str += ", :result_type as result_type"
 
-        sql_string = f"SELECT {metadata_fields_str} FROM metadata m "  # noqa
+        sql_string = f"SELECT {metadata_fields_str} FROM {TABLE_NAME_METADATA} m "
         conditions = []
         params = {"result_type": "metadata_item"}
 
@@ -289,7 +292,7 @@ CREATE TABLE IF NOT EXISTS metadata_references (
                 (f"r.{x}" for x in reference_item_result_fields)
             )
 
-        ref_sql_string = f"SELECT {reference_fields_str}, :result_type as result_type FROM metadata_references r"  # noqa
+        ref_sql_string = f"SELECT {reference_fields_str}, :result_type as result_type FROM metadata_references r"
         ref_params = {"result_type": "metadata_ref_item"}
         ref_conditions = []
 
@@ -345,10 +348,10 @@ CREATE TABLE IF NOT EXISTS metadata_references (
     ) -> Union[Tuple[str, Mapping[str, Any]], None]:
 
         sql = text(
-            """
+            f"""
             SELECT m.model_type_id, m.metadata_value
-            FROM metadata m
-            JOIN metadata_references r ON m.metadata_item_id = r.metadata_item_id
+            FROM {TABLE_NAME_METADATA} m
+            JOIN {TABLE_NAME_METADATA_REFERENCES} r ON m.metadata_item_id = r.metadata_item_id
             WHERE r.reference_item_type = :reference_type AND r.reference_item_key = :reference_key AND r.reference_item_id = :reference_id and m.metadata_item_key = :key
         """
         )
@@ -385,8 +388,10 @@ CREATE TABLE IF NOT EXISTS metadata_references (
 
     def get_archive_details(self) -> ArchiveDetails:
 
-        all_metadata_items_sql = text("SELECT COUNT(*) FROM metadata")
-        all_references_sql = text("SELECT COUNT(*) FROM metadata_references")
+        all_metadata_items_sql = text(f"SELECT COUNT(*) FROM {TABLE_NAME_METADATA}")
+        all_references_sql = text(
+            f"SELECT COUNT(*) FROM {TABLE_NAME_METADATA_REFERENCES}"
+        )
 
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(all_metadata_items_sql)
@@ -427,7 +432,7 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
         tables = {x[0] for x in cursor.fetchall()}
         con.close()
 
-        if not REQUIRED_METADATA_TABLES.issubset(tables):
+        if not REQUIRED_TABLES_METADATA.issubset(tables):
             return None
 
         # config = SqliteArchiveConfig(sqlite_db_path=store_uri)
@@ -437,7 +442,7 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
         """Set custom metadata for the archive."""
 
         sql = text(
-            "INSERT OR REPLACE INTO archive_metadata (key, value) VALUES (:key, :value)"
+            f"INSERT OR REPLACE INTO {TABLE_NAME_ARCHIVE_METADATA} (key, value) VALUES (:key, :value)"
         )
         with self.sqlite_engine.connect() as conn:
             params = {"key": key, "value": value}
@@ -449,7 +454,7 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
     ):
 
         sql = text(
-            "INSERT OR IGNORE INTO metadata_schemas (model_schema_hash, model_type_id, model_schema) VALUES (:model_schema_hash, :model_type_id, :model_schema)"
+            f"INSERT OR IGNORE INTO {TABLE_NAME_METADATA_SCHEMAS} (model_schema_hash, model_type_id, model_schema) VALUES (:model_schema_hash, :model_type_id, :model_schema)"
         )
         params = {
             "model_schema_hash": model_schema_hash,
@@ -474,7 +479,7 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
         metadata_item_created = get_current_time_incl_timezone().isoformat()
 
         sql = text(
-            "INSERT OR IGNORE INTO metadata (metadata_item_id, metadata_item_created, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_created, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)"
+            f"INSERT OR IGNORE INTO {TABLE_NAME_METADATA} (metadata_item_id, metadata_item_created, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_created, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)"
         )
 
         metadata_item_id = ID_REGISTRY.generate(
@@ -492,7 +497,7 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
         }
 
         query_metadata_id = text(
-            "SELECT metadata_item_id FROM metadata WHERE metadata_item_key = :metadata_item_key AND metadata_item_hash = :metadata_item_hash"
+            f"SELECT metadata_item_id FROM {TABLE_NAME_METADATA} WHERE metadata_item_key = :metadata_item_key AND metadata_item_hash = :metadata_item_hash"
         )
         query_metadata_params = {
             "metadata_item_key": key,
@@ -525,7 +530,7 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
         else:
 
             sql_replace = text(
-                "DELETE FROM metadata_references WHERE reference_item_type = :reference_item_type AND reference_item_key = :reference_item_key AND reference_item_id = :reference_item_id"
+                f"DELETE FROM {TABLE_NAME_METADATA_REFERENCES} WHERE reference_item_type = :reference_item_type AND reference_item_key = :reference_item_key AND reference_item_id = :reference_item_id"
             )
             sql_replace_params = {
                 "reference_item_type": reference_item_type,
@@ -535,7 +540,7 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
 
             metadata_reference_created = get_current_time_incl_timezone().isoformat()
             sql_insert = text(
-                "INSERT INTO metadata_references (reference_item_type, reference_item_key, reference_item_id, reference_created, metadata_item_id) VALUES (:reference_item_type, :reference_item_key, :reference_item_id, :reference_created, :metadata_item_id)"
+                f"INSERT INTO {TABLE_NAME_METADATA_REFERENCES} (reference_item_type, reference_item_key, reference_item_id, reference_created, metadata_item_id) VALUES (:reference_item_type, :reference_item_key, :reference_item_id, :reference_created, :metadata_item_id)"
             )
             sql_insert_params = {
                 "reference_item_type": reference_item_type,
@@ -554,11 +559,11 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
     ):
 
         insert_metadata_sql = text(
-            "INSERT OR IGNORE INTO metadata (metadata_item_id, metadata_item_created, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_created, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)"
+            f"INSERT OR IGNORE INTO {TABLE_NAME_METADATA} (metadata_item_id, metadata_item_created, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_created, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)"
         )
 
         insert_ref_sql = text(
-            "INSERT OR IGNORE INTO metadata_references (reference_item_type, reference_item_key, reference_item_id, reference_created, metadata_item_id) VALUES (:reference_item_type, :reference_item_key, :reference_item_id, :reference_created, :metadata_item_id)"
+            f"INSERT OR IGNORE INTO {TABLE_NAME_METADATA_REFERENCES} (reference_item_type, reference_item_key, reference_item_id, reference_created, metadata_item_id) VALUES (:reference_item_type, :reference_item_key, :reference_item_id, :reference_created, :metadata_item_id)"
         )
 
         batch_size = 100

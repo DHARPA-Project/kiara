@@ -198,31 +198,31 @@ class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG
             return False
         return value_id in all_value_ids
 
-    def retrieve_environment_details(
-        self, env_type: str, env_hash: str
-    ) -> Mapping[str, Any]:
-        """
-        Retrieve the environment details with the specified type and hash.
-
-        The environment is stored by the data store as a dictionary, including it's schema, not as the actual Python model.
-        This is to make sure it can still be loaded later on, in case the Python model has changed in later versions.
-        """
-        cached = self._env_cache.get(env_type, {}).get(env_hash, None)
-        if cached is not None:
-            return cached
-
-        env = self._retrieve_environment_details(env_type=env_type, env_hash=env_hash)
-        self._env_cache.setdefault(env_type, {})[env_hash] = env
-        return env
-
-    @abc.abstractmethod
-    def _retrieve_environment_details(
-        self, env_type: str, env_hash: str
-    ) -> Mapping[str, Any]:
-        """Retrieve the environment details with the specified type and hash.
-
-        Each store needs to implement this so environemnt details related to a value can be retrieved later on. Since in most cases the environment details will not change, a lookup is more efficient than having to store the full information with each value.
-        """
+    # def retrieve_environment_details(
+    #     self, env_type: str, env_hash: str
+    # ) -> Mapping[str, Any]:
+    #     """
+    #     Retrieve the environment details with the specified type and hash.
+    #
+    #     The environment is stored by the data store as a dictionary, including it's schema, not as the actual Python model.
+    #     This is to make sure it can still be loaded later on, in case the Python model has changed in later versions.
+    #     """
+    #     cached = self._env_cache.get(env_type, {}).get(env_hash, None)
+    #     if cached is not None:
+    #         return cached
+    #
+    #     env = self._retrieve_environment_details(env_type=env_type, env_hash=env_hash)
+    #     self._env_cache.setdefault(env_type, {})[env_hash] = env
+    #     return env
+    #
+    # @abc.abstractmethod
+    # def _retrieve_environment_details(
+    #     self, env_type: str, env_hash: str
+    # ) -> Mapping[str, Any]:
+    #     """Retrieve the environment details with the specified type and hash.
+    #
+    #     Each store needs to implement this so environemnt details related to a value can be retrieved later on. Since in most cases the environment details will not change, a lookup is more efficient than having to store the full information with each value.
+    #     """
 
     def find_values(self, matcher: ValueMatcher) -> Iterable[Value]:
         raise NotImplementedError()

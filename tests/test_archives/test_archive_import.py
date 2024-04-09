@@ -8,7 +8,7 @@ from kiara.interfaces.python_api.base_api import BaseAPI
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 TEST_RESOURCES_FOLDER = os.path.join(ROOT_DIR, "tests", "resources")
 
-VALUE_ID = "edbd6711-0432-430f-a147-08a6ae9df220"
+VALUE_ID = "4c929a5b-c91a-449e-9d5f-f21124298ea7"
 
 
 def test_archive_import_values_no_alias(api: BaseAPI):

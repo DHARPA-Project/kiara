@@ -182,20 +182,20 @@ class FileSystemDataArchive(
         result.mkdir(parents=True, exist_ok=True)
         return result
 
-    def _retrieve_environment_details(
-        self, env_type: str, env_hash: str
-    ) -> Mapping[str, Any]:
-
-        base_path = self.get_path(entity_type=EntityType.ENVIRONMENT)
-        env_details_file = base_path / f"{env_type}_{env_hash}.json"
-
-        if not env_details_file.exists():
-            raise Exception(
-                f"Can't load environment details, file does not exist: {env_details_file.as_posix()}"
-            )
-
-        environment: Mapping[str, Any] = orjson.loads(env_details_file.read_text())
-        return environment
+    # def _retrieve_environment_details(
+    #     self, env_type: str, env_hash: str
+    # ) -> Mapping[str, Any]:
+    #
+    #     base_path = self.get_path(entity_type=EntityType.ENVIRONMENT)
+    #     env_details_file = base_path / f"{env_type}_{env_hash}.json"
+    #
+    #     if not env_details_file.exists():
+    #         raise Exception(
+    #             f"Can't load environment details, file does not exist: {env_details_file.as_posix()}"
+    #         )
+    #
+    #     environment: Mapping[str, Any] = orjson.loads(env_details_file.read_text())
+    #     return environment
 
     def retrieve_all_job_hashes(
         self,

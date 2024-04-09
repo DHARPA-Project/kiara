@@ -6,6 +6,11 @@ from typing import Any, Dict, Mapping, Set, Union
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
+from kiara.defaults import (
+    REQUIRED_TABLES_ALIAS_ARCHIVE,
+    TABLE_NAME_ALIASES,
+    TABLE_NAME_ARCHIVE_METADATA,
+)
 from kiara.registries import SqliteArchiveConfig
 from kiara.registries.aliases import AliasArchive, AliasStore
 from kiara.utils.dates import get_current_time_incl_timezone
@@ -36,9 +41,7 @@ class SqliteAliasArchive(AliasArchive):
         tables = {x[0] for x in cursor.fetchall()}
         con.close()
 
-        required_tables = {
-            "aliases",
-        }
+        required_tables = REQUIRED_TABLES_ALIAS_ARCHIVE
 
         if not required_tables.issubset(tables):
             return None
@@ -66,7 +69,7 @@ class SqliteAliasArchive(AliasArchive):
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
 
-        sql = text("SELECT key, value FROM archive_metadata")
+        sql = text(f"SELECT key, value FROM {TABLE_NAME_ARCHIVE_METADATA}")
 
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(sql)
@@ -104,8 +107,8 @@ class SqliteAliasArchive(AliasArchive):
             use_wal_mode=self._use_wal_mode,
         )
 
-        create_table_sql = """
-CREATE TABLE IF NOT EXISTS aliases (
+        create_table_sql = f"""
+CREATE TABLE IF NOT EXISTS {TABLE_NAME_ALIASES} (
     alias TEXT PRIMARY KEY,
     value_id TEXT NOT NULL,
     alias_created TEXT NOT NULL
@@ -122,7 +125,7 @@ CREATE TABLE IF NOT EXISTS aliases (
 
     def find_value_id_for_alias(self, alias: str) -> Union[uuid.UUID, None]:
 
-        sql = text("SELECT value_id FROM aliases WHERE alias = :alias")
+        sql = text(f"SELECT value_id FROM {TABLE_NAME_ALIASES} WHERE alias = :alias")
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(sql, {"alias": alias})
             row = result.fetchone()
@@ -132,14 +135,14 @@ CREATE TABLE IF NOT EXISTS aliases (
 
     def find_aliases_for_value_id(self, value_id: uuid.UUID) -> Union[Set[str], None]:
 
-        sql = text("SELECT alias FROM aliases WHERE value_id = :value_id")
+        sql = text(f"SELECT alias FROM {TABLE_NAME_ALIASES} WHERE value_id = :value_id")
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(sql, {"value_id": str(value_id)})
             return {row[0] for row in result}
 
     def retrieve_all_aliases(self) -> Union[Mapping[str, uuid.UUID], None]:
 
-        sql = text("SELECT alias, value_id FROM aliases")
+        sql = text(f"SELECT alias, value_id FROM {TABLE_NAME_ALIASES}")
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(sql)
             return {row[0]: uuid.UUID(row[1]) for row in result}
@@ -173,9 +176,7 @@ class SqliteAliasStore(SqliteAliasArchive, AliasStore):
         tables = {x[0] for x in cursor.fetchall()}
         con.close()
 
-        required_tables = {
-            "aliases",
-        }
+        required_tables = REQUIRED_TABLES_ALIAS_ARCHIVE
 
         if not required_tables.issubset(tables):
             return None
@@ -187,7 +188,7 @@ class SqliteAliasStore(SqliteAliasArchive, AliasStore):
         """Set custom metadata for the archive."""
 
         sql = text(
-            "INSERT OR REPLACE INTO archive_metadata (key, value) VALUES (:key, :value)"
+            f"INSERT OR REPLACE INTO {TABLE_NAME_ARCHIVE_METADATA} (key, value) VALUES (:key, :value)"
         )
         with self.sqlite_engine.connect() as conn:
             params = {"key": key, "value": value}
@@ -199,7 +200,7 @@ class SqliteAliasStore(SqliteAliasArchive, AliasStore):
         alias_created = get_current_time_incl_timezone().isoformat()
 
         sql = text(
-            "INSERT OR REPLACE INTO aliases (alias, value_id, alias_created) VALUES (:alias, :value_id, :alias_created)"
+            f"INSERT OR REPLACE INTO {TABLE_NAME_ALIASES} (alias, value_id, alias_created) VALUES (:alias, :value_id, :alias_created)"
         )
 
         with self.sqlite_engine.connect() as connection:

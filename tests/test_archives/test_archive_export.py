@@ -10,6 +10,16 @@ from typing import List, Union
 
 import pytest
 
+from kiara.defaults import (
+    ALL_REQUIRED_TABLES,
+    TABLE_NAME_DATA_PEDIGREE,
+    TABLE_NAME_DATA_METADATA,
+    TABLE_NAME_ARCHIVE_METADATA,
+    TABLE_NAME_DATA_CHUNKS,
+    TABLE_NAME_DATA_DESTINIES,
+    TABLE_NAME_DATA_SERIALIZATION_METADATA,
+    TABLE_NAME_ALIASES,
+)
 from kiara.interfaces.python_api.base_api import BaseAPI
 from kiara.models.values.value import ValueMapReadOnly, Value
 
@@ -115,27 +125,19 @@ def test_archive_export_values_no_alias(api: BaseAPI):
         assert len(store_result) == 1
         assert "y" in store_result.keys()
 
-        required_tables = [
-            "values_pedigree",
-            "values_metadata",
-            "archive_metadata",
-            "aliases",
-            "values_data",
-            "values_destinies",
-            "persisted_values",
-        ]
+        required_tables = ALL_REQUIRED_TABLES
+
         check_archive_contains_table_names(temp_file_path, required_tables)
 
-        check_table_is_empty(temp_file_path, "aliases")
-
+        check_table_is_empty(temp_file_path, TABLE_NAME_ALIASES)
         check_tables_are_not_empty(
             temp_file_path,
-            "values_pedigree",
-            "values_metadata",
-            "archive_metadata",
-            "values_data",
-            "values_destinies",
-            "persisted_values",
+            TABLE_NAME_DATA_PEDIGREE,
+            TABLE_NAME_DATA_METADATA,
+            TABLE_NAME_ARCHIVE_METADATA,
+            TABLE_NAME_DATA_CHUNKS,
+            TABLE_NAME_DATA_DESTINIES,
+            TABLE_NAME_DATA_SERIALIZATION_METADATA,
         )
 
 
@@ -167,29 +169,21 @@ def test_archive_export_values_alias(api: BaseAPI):
         assert len(store_result) == 1
         assert "y" in store_result.keys()
 
-        required_tables = [
-            "values_pedigree",
-            "values_metadata",
-            "archive_metadata",
-            "aliases",
-            "values_data",
-            "values_destinies",
-            "persisted_values",
-        ]
+        required_tables = ALL_REQUIRED_TABLES
         check_archive_contains_table_names(temp_file_path, required_tables)
 
         check_tables_are_not_empty(
             temp_file_path,
-            "values_pedigree",
-            "values_metadata",
-            "archive_metadata",
-            "values_data",
-            "values_destinies",
-            "persisted_values",
-            "aliases",
+            TABLE_NAME_DATA_PEDIGREE,
+            TABLE_NAME_DATA_METADATA,
+            TABLE_NAME_ARCHIVE_METADATA,
+            TABLE_NAME_DATA_CHUNKS,
+            TABLE_NAME_DATA_DESTINIES,
+            TABLE_NAME_DATA_SERIALIZATION_METADATA,
+            TABLE_NAME_ALIASES,
         )
 
-        result = run_sql_query('SELECT * FROM "aliases";', temp_file_path)
+        result = run_sql_query(f'SELECT * FROM "{TABLE_NAME_ALIASES}";', temp_file_path)
         assert len(result) == 1
 
         assert result[0][0] == "y"
@@ -233,29 +227,21 @@ def test_archive_export_values_alias_multipe_values(api: BaseAPI):
         assert "result_1" in store_result.keys()
         assert "result_2" in store_result.keys()
 
-        required_tables = [
-            "values_pedigree",
-            "values_metadata",
-            "archive_metadata",
-            "aliases",
-            "values_data",
-            "values_destinies",
-            "persisted_values",
-        ]
+        required_tables = ALL_REQUIRED_TABLES
         check_archive_contains_table_names(temp_file_path, required_tables)
 
         check_tables_are_not_empty(
             temp_file_path,
-            "values_pedigree",
-            "values_metadata",
-            "archive_metadata",
-            "values_data",
-            "values_destinies",
-            "persisted_values",
-            "aliases",
+            TABLE_NAME_DATA_PEDIGREE,
+            TABLE_NAME_DATA_METADATA,
+            TABLE_NAME_ARCHIVE_METADATA,
+            TABLE_NAME_DATA_CHUNKS,
+            TABLE_NAME_DATA_DESTINIES,
+            TABLE_NAME_DATA_SERIALIZATION_METADATA,
+            TABLE_NAME_ALIASES,
         )
 
-        result = run_sql_query('SELECT * FROM "aliases";', temp_file_path)
+        result = run_sql_query(f'SELECT * FROM "{TABLE_NAME_ALIASES}";', temp_file_path)
 
         print(result)
         assert len(result) == 2

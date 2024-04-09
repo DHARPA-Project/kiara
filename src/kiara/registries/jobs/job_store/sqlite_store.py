@@ -8,6 +8,11 @@ import orjson
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
+from kiara.defaults import (
+    REQUIRED_TABLES_JOB_ARCHIVE,
+    TABLE_NAME_ARCHIVE_METADATA,
+    TABLE_NAME_JOB_RECORDS,
+)
 from kiara.models.module.jobs import JobMatcher, JobRecord
 from kiara.registries import ArchiveDetails, SqliteArchiveConfig
 from kiara.registries.jobs import JobArchive, JobStore
@@ -39,9 +44,7 @@ class SqliteJobArchive(JobArchive):
         tables = {x[0] for x in cursor.fetchall()}
         con.close()
 
-        required_tables = {
-            "job_records",
-        }
+        required_tables = REQUIRED_TABLES_JOB_ARCHIVE
 
         if not required_tables.issubset(tables):
             return None
@@ -78,7 +81,7 @@ class SqliteJobArchive(JobArchive):
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
 
-        sql = text("SELECT key, value FROM archive_metadata")
+        sql = text(f"SELECT key, value FROM {TABLE_NAME_ARCHIVE_METADATA}")
 
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(sql)
@@ -116,8 +119,8 @@ class SqliteJobArchive(JobArchive):
             use_wal_mode=self._use_wal_mode,
         )
 
-        create_table_sql = """
-CREATE TABLE IF NOT EXISTS job_records (
+        create_table_sql = f"""
+CREATE TABLE IF NOT EXISTS {TABLE_NAME_JOB_RECORDS} (
     job_id TEXT PRIMARY KEY,
     job_hash TEXT TEXT NOT NULL,
     job_submitted TEXT NOT NULL,
@@ -139,7 +142,9 @@ CREATE TABLE IF NOT EXISTS job_records (
 
     def _retrieve_record_for_job_hash(self, job_hash: str) -> Union[JobRecord, None]:
 
-        sql = text("SELECT job_metadata FROM job_records WHERE job_hash = :job_hash")
+        sql = text(
+            f"SELECT job_metadata FROM {TABLE_NAME_JOB_RECORDS} WHERE job_hash = :job_hash"
+        )
         params = {"job_hash": job_hash}
 
         with self.sqlite_engine.connect() as connection:
@@ -159,7 +164,7 @@ CREATE TABLE IF NOT EXISTS job_records (
         """
 
         sql = text(
-            "SELECT job_id, job_submitted FROM job_records ORDER BY job_submitted DESC;"
+            f"SELECT job_id, job_submitted FROM {TABLE_NAME_JOB_RECORDS} ORDER BY job_submitted DESC;"
         )
 
         with self.sqlite_engine.connect() as connection:
@@ -168,7 +173,9 @@ CREATE TABLE IF NOT EXISTS job_records (
 
     def _retrieve_record_for_job_id(self, job_id: uuid.UUID) -> Union[JobRecord, None]:
 
-        sql = text("SELECT job_metadata FROM job_records WHERE job_id = :job_id")
+        sql = text(
+            f"SELECT job_metadata FROM {TABLE_NAME_JOB_RECORDS} WHERE job_id = :job_id"
+        )
 
         params = {"job_id": str(job_id)}
 
@@ -217,7 +224,7 @@ CREATE TABLE IF NOT EXISTS job_records (
                 "Job matcher 'produced_outputs' not implemented yet"
             )
 
-        sql_query = "SELECT job_id, job_metadata FROM job_records"
+        sql_query = f"SELECT job_id, job_metadata FROM {TABLE_NAME_JOB_RECORDS}"
         if query_conditions:
             sql_query += " WHERE "
 
@@ -247,22 +254,22 @@ CREATE TABLE IF NOT EXISTS job_records (
 
         if not manifest_hash:
             if not inputs_id_hash:
-                sql = text("SELECT job_hash FROM job_records")
+                sql = text(f"SELECT job_hash FROM {TABLE_NAME_JOB_RECORDS}")
                 params = {}
             else:
                 sql = text(
-                    "SELECT job_hash FROM job_records WHERE inputs_hash = :inputs_hash"
+                    f"SELECT job_hash FROM {TABLE_NAME_JOB_RECORDS} WHERE inputs_hash = :inputs_hash"
                 )
                 params = {"inputs_hash": inputs_id_hash}
         else:
             if not inputs_id_hash:
                 sql = text(
-                    "SELECT job_hash FROM job_records WHERE manifest_hash = :manifest_hash"
+                    f"SELECT job_hash FROM {TABLE_NAME_JOB_RECORDS} WHERE manifest_hash = :manifest_hash"
                 )
                 params = {"manifest_hash": manifest_hash}
             else:
                 sql = text(
-                    "SELECT job_hash FROM job_records WHERE manifest_hash = :manifest_hash AND inputs_hash = :inputs_hash"
+                    f"SELECT job_hash FROM {TABLE_NAME_JOB_RECORDS} WHERE manifest_hash = :manifest_hash AND inputs_hash = :inputs_hash"
                 )
                 params = {"manifest_hash": manifest_hash, "inputs_hash": inputs_id_hash}
 
@@ -276,7 +283,7 @@ CREATE TABLE IF NOT EXISTS job_records (
 
     def get_archive_details(self) -> ArchiveDetails:
 
-        all_job_records_sql = text("SELECT COUNT(*) FROM job_records")
+        all_job_records_sql = text(f"SELECT COUNT(*) FROM {TABLE_NAME_JOB_RECORDS}")
 
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(all_job_records_sql)
@@ -310,9 +317,7 @@ class SqliteJobStore(SqliteJobArchive, JobStore):
         tables = {x[0] for x in cursor.fetchall()}
         con.close()
 
-        required_tables = {
-            "job_records",
-        }
+        required_tables = REQUIRED_TABLES_JOB_ARCHIVE
 
         if not required_tables.issubset(tables):
             return None
@@ -332,7 +337,7 @@ class SqliteJobStore(SqliteJobArchive, JobStore):
         job_submitted = job_record.job_submitted.isoformat()
 
         sql = text(
-            "INSERT OR IGNORE INTO job_records(job_id, job_submitted, job_hash, manifest_hash, input_ids_hash, inputs_data_hash, job_metadata) VALUES (:job_id, :job_submitted, :job_hash, :manifest_hash, :input_ids_hash, :inputs_data_hash, :job_metadata)"
+            f"INSERT OR IGNORE INTO {TABLE_NAME_JOB_RECORDS}(job_id, job_submitted, job_hash, manifest_hash, input_ids_hash, inputs_data_hash, job_metadata) VALUES (:job_id, :job_submitted, :job_hash, :manifest_hash, :input_ids_hash, :inputs_data_hash, :job_metadata)"
         )
         params = {
             "job_id": str(job_record.job_id),
@@ -353,7 +358,7 @@ class SqliteJobStore(SqliteJobArchive, JobStore):
         """Set custom metadata for the archive."""
 
         sql = text(
-            "INSERT OR REPLACE INTO archive_metadata (key, value) VALUES (:key, :value)"
+            f"INSERT OR REPLACE INTO {TABLE_NAME_ARCHIVE_METADATA} (key, value) VALUES (:key, :value)"
         )
         with self.sqlite_engine.connect() as conn:
             params = {"key": key, "value": value}

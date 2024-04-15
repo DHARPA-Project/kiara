@@ -267,26 +267,105 @@ class JobTest(object):
         self._job_desc = job_desc
         if tests is None:
             tests = {}
-        self._tests = tests
+        self._tests: Mapping[str, Mapping[str, Any]] = tests
 
     def run_tests(self):
 
         print(f"Running tests for job '{self._job_desc.job_alias}'...")  # noqa
 
         result = self.run_job()
-        self.check_result(result)
 
-    def run_job(self) -> "ValueMap":
+        if "fail" in self._job_desc.job_alias:
+            self.check_failure(result)
+        else:
+            self.check_result(result)
+
+    def run_job(self) -> Union["ValueMap", Exception]:
 
         print(f"Running checks for job '{self._job_desc.job_alias}'...")  # noqa
 
         try:
-            result = self._kiara_api.run_job(
+            result: Union[ValueMap, Exception] = self._kiara_api.run_job(
                 operation=self._job_desc,
                 comment=f"Test run '{self._job_desc.job_alias}'",
             )
+            success = True
+
         except Exception as e:
-            exc = KiaraException(f"Failed to run job '{self._job_desc.job_alias}': {e}")
+            success = False
+            result = KiaraException(
+                f"Failed to run job '{self._job_desc.job_alias}': {e}"
+            )
+
+        if success and "fail" in self._job_desc.job_alias:
+            raise KiaraException(
+                f"Job '{self._job_desc.job_alias}' should have failed but didn't."
+            )
+        elif not success and "fail" not in self._job_desc.job_alias:
+            raise KiaraException(
+                f"Job '{self._job_desc.job_alias}' should have succeeded but didn't."
+            )
+        elif not success:
+            terminal_print(result)
+            return result
+        else:
+            return result
+
+    def check_failure(self, result: Exception):
+
+        try:
+
+            import inspect
+
+            for test_name, test in self._tests.items():
+
+                if not callable(test):
+
+                    if not isinstance(test, str):
+                        raise KiaraException(
+                            f"Invalid test pattern for error check in test '{test_name}', must be a string: {test}"
+                        )
+
+                    tokens = test_name.split("::")
+                    if tokens[0] != "error":
+                        raise KiaraException(
+                            f"Invalid test pattern, must be 'error::msg' or 'error::msg_contains': {test_name}"
+                        )
+
+                    if tokens[1] == "msg":
+                        if test != str(result):
+                            raise AssertionError(
+                                f"Error test pattern check for job '{self._job_desc.job_alias}' failed: {result} (result) != {test} (expected)"
+                            )
+                    elif tokens[1].startswith("msg_contains"):
+                        if test not in str(result):
+                            raise AssertionError(
+                                f"Error test pattern check for job '{self._job_desc.job_alias}' failed: {result} (result) does not contain '{test}' (expected)"
+                            )
+                    else:
+                        raise KiaraException(
+                            f"Invalid test pattern, must be 'error::msg' or start with 'error::msg_contains': {test_name}"
+                        )
+
+                else:
+
+                    args = inspect.signature(test)
+                    arg_values: List[Any] = []
+
+                    for arg_name in args.parameters.keys():
+                        if arg_name == "kiara_api":
+                            arg_values.append(self._kiara_api)
+                        elif arg_name == "error":
+                            arg_values.append(result)
+                        else:
+                            raise KiaraException(
+                                f"Invalid test function: '{test_name}', argument '{arg_name}' not available in result. Available arguments: 'kiara', or 'error'."
+                            )
+                    test(*arg_values)
+        except Exception as e:
+            exc = KiaraException(
+                f"Failed to run test '{test}' for job '{self._job_desc.job_alias}': {e}"
+            )
             terminal_print(exc)
             raise e
         return result

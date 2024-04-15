@@ -2,11 +2,11 @@
 import types
 from inspect import getmembers, isfunction
 from pathlib import Path
-from typing import Any, Callable, Dict, Mapping, Union
+from typing import Any, Callable, Dict, List, Mapping, Union
 
 from kiara.defaults import INIT_EXAMPLE_NAME
 from kiara.interfaces.python_api.models.job import JobDesc
-from kiara.utils import log_exception
+from kiara.utils import log_exception, log_message
 from kiara.utils.files import get_data_from_file
 
 
@@ -27,29 +27,44 @@ def get_init_job(jobs_folder: Path) -> Union[None, JobDesc]:
     return None
 
 
-def list_job_descs(jobs_folder: Path):
+def list_job_descs(jobs_folder: Union[Path, List[Path]]):
 
-    init_job = get_init_job(jobs_folder)
-    if init_job is not None:
-        yield init_job
+    if isinstance(jobs_folder, Path):
+        jobs_folders = [jobs_folder]
+    else:
+        jobs_folders = jobs_folder
 
-    files = (
-        list(jobs_folder.glob("*.yaml"))
-        + list(jobs_folder.glob("*.yml"))
-        + list(jobs_folder.glob("*.json"))
-    )
-    for f in sorted(files):
-        if f.name in [
-            f"{INIT_EXAMPLE_NAME}.yaml",
-            f"{INIT_EXAMPLE_NAME}.yml",
-            "{INIT_EXAMPLE_NAME}.json",
-        ]:
-            continue
-        try:
-            job_desc = JobDesc.create_from_file(f)
-            yield job_desc
-        except Exception as e:
-            log_exception(e)
+    for _jobs_folder in jobs_folders:
+        init_job = get_init_job(_jobs_folder)
+        if init_job is not None:
+            yield init_job
+
+    job_names = set()
+    for _jobs_folder in jobs_folders:
+
+        files = (
+            list(_jobs_folder.glob("*.yaml"))
+            + list(_jobs_folder.glob("*.yml"))
+            + list(_jobs_folder.glob("*.json"))
+        )
+        for f in sorted(files):
+            if f.name in [
+                f"{INIT_EXAMPLE_NAME}.yaml",
+                f"{INIT_EXAMPLE_NAME}.yml",
+                "{INIT_EXAMPLE_NAME}.json",
+            ]:
+                continue
+            try:
+                job_desc = JobDesc.create_from_file(f)
+                if job_desc.job_alias in job_names:
+                    log_message(
+                        f"Duplicate job alias: {job_desc.job_alias}. Skipping..."
+                    )
+                    continue
+                job_names.add(job_desc.job_alias)
+                yield job_desc
+            except Exception as e:
+                log_exception(e)
 
 
 def get_tests_for_job(

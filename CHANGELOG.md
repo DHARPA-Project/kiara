@@ -15,16 +15,17 @@
     - `import_archive`
     - `export_values`
     - `import_values`
+- always store every job record and job result value(s)
 - allow a 'comment' to be associated with a job:
   - require a 'comment' for every `run_job`/`queue_job` call
-  - new api endpoints:
-    - `list_all_job_record_ids`
-    - `list_job_record_ids`
-    - `list_all_job_records`
-    - `list_job_records`
-    - `get_job_record`
-    - `get_job_comment`
-    - `set_job_comment`
+- new job record api endpoints:
+  - `list_all_job_record_ids`
+  - `list_job_record_ids`
+  - `list_all_job_records`
+  - `list_job_records`
+  - `get_job_record`
+  - `get_job_comment`
+  - `set_job_comment`
 - add convenience api endpoint `get_values`
 - improved input options for 'store_values' API endpoint
 - added 'value_created' property on 'Value' instances

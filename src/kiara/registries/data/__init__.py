@@ -1014,6 +1014,7 @@ class DataRegistry(object):
 
         data_type: Union[None, DataType] = None
         if reuse_existing and not isinstance(data, (Value, uuid.UUID, SpecialValue)):
+
             data_type = self._kiara.type_registry.retrieve_data_type(
                 data_type_name=schema.type, data_type_config=schema.type_config
             )

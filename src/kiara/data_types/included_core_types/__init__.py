@@ -403,7 +403,14 @@ class DictValueType(AnyType[KiaraDict, DataTypeConfig]):
                 dict_data = orjson.loads(data)
                 schema = {"title": "dict", "type": "object"}
             except Exception:
-                pass
+                try:
+                    from kiara.utils.cli import dict_from_cli_args
+
+                    tokens = data.split(",")
+                    dict_data = dict_from_cli_args(*tokens)
+                    schema = {"title": "dict", "type": "object"}
+                except Exception:
+                    pass
 
         if dict_data is None or schema is None:
             raise Exception(f"Invalid data for value type 'dict': {data}")

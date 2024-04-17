@@ -387,7 +387,11 @@ class JobRegistry(object):
             if r.job_id == job_id:
                 return r
 
-        raise NotImplementedError()
+        # raise a FailedJobException if the job is in the failed jobs list
+        self.get_active_job(job_id=job_id)
+
+        # this should never happen
+        raise KiaraException("Can't find job record with id: {job_id}")
 
     def find_job_records(self, matcher: JobMatcher) -> Mapping[uuid.UUID, JobRecord]:
 

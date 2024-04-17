@@ -309,10 +309,13 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
             raise NotImplementedError()
 
         sql = text(
-            f"SELECT value_id FROM {TABLE_NAME_DATA_METADATA} WHERE value_hash = ?"
+            f"SELECT value_id FROM {TABLE_NAME_DATA_METADATA} WHERE value_hash = :value_hash"
         )
+        params = {
+            "value_hash": value_hash,
+        }
         with self.sqlite_engine.connect() as conn:
-            cursor = conn.execute(sql, (value_hash,))
+            cursor = conn.execute(sql, parameters=params)
             result = cursor.fetchall()
             return {uuid.UUID(x[0]) for x in result}
 

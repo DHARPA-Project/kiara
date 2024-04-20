@@ -161,7 +161,7 @@ jobs:
       - mypy-linux
       - linting-linux
       - build_conda_package
-      - build_python_package   -
+      - build_python_package
     permissions:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:

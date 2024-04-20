@@ -125,10 +125,6 @@ jobs:
   build_python_package:
     name: build python package
     runs-on: ubuntu-latest
-    needs:
-      - test-linux
-      - mypy-linux
-      - linting-linux
     steps:
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
@@ -192,7 +188,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: install kiara_plugin.develop
-        run: pip install kiara_plugin.develop
+        run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.core_types@develop
       - name: build conda package
         run: kiara build conda pkg --channel dharpa --channel conda-forge --patch-data ci/conda/conda-pkg-patch.yaml --output-folder build-dir .
       - name: upload artifacts
@@ -223,7 +219,7 @@ jobs:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-3.12
       - name: install kiara_plugin.develop
-        run: pip install kiara_plugin.develop
+        run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.core_types@develop
       - name: Retrieve build distributions
         uses: actions/download-artifact@v4
         with:

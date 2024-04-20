@@ -4,8 +4,8 @@ requirements:
   docstring-parser: docstring_parser
 
 channels:
-  - conda-forge
   - dharpa
+  - conda-forge
 
 entry_points:
   kiara: kiara.interfaces.cli:cli
@@ -13,7 +13,7 @@ entry_points:
 host_requirements:
   - pip
   - python
-  - setuptools<=63
+  - setuptools
   - setuptools_scm
   - setuptools_scm_git_archive
 

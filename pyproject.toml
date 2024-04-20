@@ -230,6 +230,8 @@ dev_documentation = [
 ]
 
 dev_testing = [
+    "kiara_plugin.core_types",
+    "kiara_plugin.tabular",
     "pytest-cov>=4.1.0",
     "jsonschema>=4.0.0",
     "mypy>=0.800",

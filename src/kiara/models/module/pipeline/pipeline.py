@@ -604,9 +604,9 @@ class Pipeline(object):
             _alias = self._all_values.get_alias(alias)
             assert _alias is not None
             if k not in _alias.values_schema.keys():
-                invalid[
-                    k
-                ] = f"Invalid field '{k}'. Available fields: {', '.join(self.get_current_pipeline_inputs().keys())}"
+                invalid[k] = (
+                    f"Invalid field '{k}'. Available fields: {', '.join(self.get_current_pipeline_inputs().keys())}"
+                )
 
         if invalid:
             raise InvalidValuesException(invalid_values=invalid)

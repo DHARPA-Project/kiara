@@ -657,9 +657,9 @@ class PipelineStructure(KiaraModel):
                             is_constant=is_constant,
                         )
 
-                        existing_pipeline_input_points[
-                            pipeline_input_name
-                        ] = connected_pipeline_input
+                        existing_pipeline_input_points[pipeline_input_name] = (
+                            connected_pipeline_input
+                        )
 
                         data_flow_graph.add_node(
                             connected_pipeline_input, type=PipelineInputRef.__name__
@@ -668,9 +668,9 @@ class PipelineStructure(KiaraModel):
                             connected_pipeline_input, type=PipelineInputRef.__name__
                         )
                         if is_constant:
-                            constants[
-                                pipeline_input_name
-                            ] = step.module.get_config_value("constants")[input_name]
+                            constants[pipeline_input_name] = (
+                                step.module.get_config_value("constants")[input_name]
+                            )
 
                         default_val = step.module.get_config_value("defaults").get(
                             input_name, None

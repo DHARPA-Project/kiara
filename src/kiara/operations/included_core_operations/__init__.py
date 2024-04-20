@@ -66,9 +66,9 @@ class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
     _operation_type_name: ClassVar[str] = "custom_module"
 
     def __init__(self, kiara: "Kiara", op_type_name: str):
-        self._included_operations_cache: Dict[
-            type, List["ManifestOperationConfig"]
-        ] = {}
+        self._included_operations_cache: Dict[type, List["ManifestOperationConfig"]] = (
+            {}
+        )
         self._included_operations_lookup_cache: Dict[type, Dict["CID", str]] = {}
 
         super().__init__(kiara=kiara, op_type_name=op_type_name)

@@ -69,9 +69,9 @@ class OperationRegistry(object):
 
         self._kiara: "Kiara" = kiara
 
-        self._operation_type_classes: Union[
-            Dict[str, Type["OperationType"]], None
-        ] = None
+        self._operation_type_classes: Union[Dict[str, Type["OperationType"]], None] = (
+            None
+        )
 
         if operation_type_classes is not None:
             self._operation_type_classes = dict(operation_type_classes)

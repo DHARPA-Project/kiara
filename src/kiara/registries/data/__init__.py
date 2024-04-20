@@ -285,9 +285,9 @@ class DataRegistry(object):
         self._registered_values[NONE_VALUE_ID] = self._none_value
         self._persisted_value_descs[NONE_VALUE_ID] = NONE_PERSISTED_DATA
 
-        self._cached_value_aliases: Dict[
-            uuid.UUID, Dict[str, Union[Destiny, None]]
-        ] = {}
+        self._cached_value_aliases: Dict[uuid.UUID, Dict[str, Union[Destiny, None]]] = (
+            {}
+        )
 
         self._destinies: Dict[uuid.UUID, Destiny] = {}
         self._destinies_by_value: Dict[uuid.UUID, Dict[str, Destiny]] = {}
@@ -709,10 +709,10 @@ class DataRegistry(object):
 
         all_destinies: Dict[str, uuid.UUID] = {}
         for archive_id, archive in self._data_archives.items():
-            destinies: Union[
-                Mapping[str, uuid.UUID], None
-            ] = archive.find_destinies_for_value(
-                value_id=value_id, alias_filter=alias_filter
+            destinies: Union[Mapping[str, uuid.UUID], None] = (
+                archive.find_destinies_for_value(
+                    value_id=value_id, alias_filter=alias_filter
+                )
             )
             if not destinies:
                 continue
@@ -1194,9 +1194,9 @@ class DataRegistry(object):
             return self._cached_data[value.value_id]
 
         if value._serialized_data is None:
-            serialized_data: Union[
-                str, SerializedData
-            ] = self.retrieve_persisted_value_details(value_id=value.value_id)
+            serialized_data: Union[str, SerializedData] = (
+                self.retrieve_persisted_value_details(value_id=value.value_id)
+            )
             value._serialized_data = serialized_data
         else:
             serialized_data = value._serialized_data

@@ -24,9 +24,9 @@ def get_metadata_for_python_module_or_class(
             md = getattr(module_or_class, KIARA_MODULE_METADATA_ATTRIBUTE)
             assert isinstance(md, typing.Mapping)
             metadata.append(md)  # type: ignore
-        _module_or_class: typing.Union[
-            str, ModuleType, typing.Type
-        ] = module_or_class.__module__
+        _module_or_class: typing.Union[str, ModuleType, typing.Type] = (
+            module_or_class.__module__
+        )
     else:
         _module_or_class = module_or_class
 

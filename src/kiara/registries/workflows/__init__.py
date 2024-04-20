@@ -377,9 +377,9 @@ class WorkflowRegistry(object):
         )
 
         self._all_workflow_ids[workflow_metadata.workflow_id] = store_name  # type: ignore
-        self._cached_workflow_metadata_items[
-            workflow_metadata.workflow_id
-        ] = workflow_metadata
+        self._cached_workflow_metadata_items[workflow_metadata.workflow_id] = (
+            workflow_metadata
+        )
 
         if workflow_aliases:
             for workflow_alias in workflow_aliases:

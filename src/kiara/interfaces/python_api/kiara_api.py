@@ -220,10 +220,10 @@ class KiaraAPI(object):
         if isinstance(job_id, str):
             job_id = uuid.UUID(job_id)
 
-        metadata: Union[
-            None, "KiaraMetadata"
-        ] = self._api.context.metadata_registry.retrieve_job_metadata_item(
-            job_id=job_id, key="comment"
+        metadata: Union[None, "KiaraMetadata"] = (
+            self._api.context.metadata_registry.retrieve_job_metadata_item(
+                job_id=job_id, key="comment"
+            )
         )
 
         if not metadata:

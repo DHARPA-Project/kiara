@@ -2358,9 +2358,9 @@ class BaseAPI(object):
         """
 
         if archive_type == "data":
-            _archive: Union[
-                None, KiaraArchive
-            ] = self.context.data_registry.get_archive(archive)
+            _archive: Union[None, KiaraArchive] = (
+                self.context.data_registry.get_archive(archive)
+            )
             if _archive is None:
                 raise KiaraException(f"Archive '{archive}' does not exist.")
             _archive.set_archive_metadata_value(key, value)

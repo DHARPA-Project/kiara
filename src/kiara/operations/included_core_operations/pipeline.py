@@ -79,9 +79,9 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
             return self._pipelines
 
         ignore_errors = False
-        pipeline_paths: Dict[
-            str, Union[Dict[str, Any], None]
-        ] = find_all_kiara_pipeline_paths(skip_errors=ignore_errors)
+        pipeline_paths: Dict[str, Union[Dict[str, Any], None]] = (
+            find_all_kiara_pipeline_paths(skip_errors=ignore_errors)
+        )
 
         for ep in self._kiara.context_config.extra_pipelines:
             ep = os.path.realpath(ep)

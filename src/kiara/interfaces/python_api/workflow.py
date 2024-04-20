@@ -355,9 +355,9 @@ class Workflow(object):
         self._steps: Dict[str, PipelineStep] = {}
 
         self._current_workflow_inputs_schema: Union[Dict[str, ValueSchema], None] = None
-        self._current_workflow_outputs_schema: Union[
-            Dict[str, ValueSchema], None
-        ] = None
+        self._current_workflow_outputs_schema: Union[Dict[str, ValueSchema], None] = (
+            None
+        )
         self._workflow_input_aliases: Dict[str, str] = dict(
             _workflow_metadata.input_aliases
         )
@@ -634,9 +634,9 @@ class Workflow(object):
             keys=", ".join(inputs_to_set.keys()),
         )
 
-        changed: Mapping[
-            str, Mapping[str, Mapping[str, ChangedValue]]
-        ] = pipeline.set_pipeline_inputs(inputs=inputs_to_set)
+        changed: Mapping[str, Mapping[str, Mapping[str, ChangedValue]]] = (
+            pipeline.set_pipeline_inputs(inputs=inputs_to_set)
+        )
 
         self._current_pipeline_inputs = pipeline.get_current_pipeline_inputs()
 

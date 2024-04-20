@@ -26,7 +26,7 @@ jobs:
           python-version: "${{ matrix.python_version }}"
       - name: pip cache
         id: pip-cache
-        uses: actions/cache@v34
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ matrix.python_version }}

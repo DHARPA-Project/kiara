@@ -264,7 +264,7 @@ dev_utils = [
     "pytest>=6.2.2",
     "pytest-xdist>=3.2.1",
     "setup-cfg-fmt>=1.16.0",
-    "ruff>=0.4.0",
+    "ruff>=0.4.1",
     "types-Deprecated",
     "types-PyYAML",
     "types-pkg-resources",

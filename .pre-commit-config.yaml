@@ -41,11 +41,15 @@ repos:
     args: ["--config-file", "pyproject.toml"]
     additional_dependencies: [pydantic>=2.0.0, pydantic_settings, rich>=10.0.0, ruamel.yaml, anyio>=3.0.0, pyzmq>=22.0.3, bidict, sqlalchemy-stubs, types-python-slugify, types-setuptools, types-python-dateutil, dag_cbor>=0.3.0, multiformats>=0.2.0, textual, regex, types-pytz, types-orjson, dag_cbor>=0.3.2]
 
-- repo: https://github.com/charliermarsh/ruff-pre-commit
+- repo: https://github.com/astral-sh/ruff-pre-commit
   # Ruff version.
-  rev: 'v0.4.0'
+  rev: v0.4.1
   hooks:
+    # Run the linter.
     - id: ruff
+      args: [ --fix ]
+    # Run the formatter.
+    - id: ruff-format
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: 'v4.2.0'

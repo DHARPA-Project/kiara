@@ -186,7 +186,7 @@ def run(
                 pipeline_dir = os.path.abspath(os.path.dirname(path))
                 execution_context = ExecutionContext(pipeline_dir=pipeline_dir)
                 pc = PipelineConfig.from_config(
-                    data, execution_context=execution_context
+                    data, execution_context=execution_context, kiara=api.context
                 )
                 job_desc = JobDesc(
                     operation="pipeline",

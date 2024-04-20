@@ -214,11 +214,6 @@ all_plugins = [
     "kiara_plugin.core_types",
     "kiara_plugin.tabular",
     "kiara_plugin.onboarding",
-    "kiara_plugin.network_analysis",
-    "kiara_plugin.language_processing",
-    "kiara_plugin.html",
-    "kiara_plugin.jupyter",
-    "kiara_plugin.streamlit",
 ]
 
 dev_documentation = [
@@ -236,7 +231,6 @@ dev_documentation = [
 
 dev_testing = [
     "pytest-cov>=4.1.0",
-    "flake8>=3.8.4",
     "jsonschema>=4.0.0",
     "mypy>=0.800",
     "pandas-stubs",
@@ -257,19 +251,15 @@ dev_testing = [
     "types-humanfriendly",
     "types-setuptools",
     "sqlalchemy-stubs"
-
 ]
 
 dev_utils = [
     "kiara_plugin.core_types",
-    "kiara_plugin.tabular",
     "kiara_plugin.develop",
     "build",
-    "flake8>=3.8.4",
     "ipython",
     "mypy>=0.800",
     "pandas-stubs",
-    "pip-licenses>=3.3.0",
     "pre-commit>=2.9.3",
     "pytest>=6.2.2",
     "pytest-xdist>=3.2.1",
@@ -288,7 +278,6 @@ dev_utils = [
     "types-humanfriendly",
     "types-setuptools",
     "sqlalchemy-stubs",
-    "watchgod>=0.6",
     "wheel"
 ]
 
@@ -533,9 +522,22 @@ executionEnvironments = [
 ]
 
 [tool.pixi.project]
-name = "kiara"
 channels = ["dharpa", "conda-forge"]
 platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
 
 [tool.pixi.pypi-dependencies]
-kiara  = { path = ".", editable = true}
+kiara  = { path = ".", editable = true }
+
+[tool.pixi.environments]
+default = { solve-group = "default" }
+#dev = { features = ["dev_utils"], solve-group = "default" }
+
+
+[tool.pixi.tasks]
+pre-commit-check = "pre-commit run --all-files"
+tests = "py.test"
+mypy = "mypy  --namespace-packages --explicit-package-base src/kiara_plugin/{{ cookiecutter.project_slug }}"
+kiara = "kiara"
+show-versions = "kiara --version"
+delete-context = "kiara context delete"
+install-dev-dependencies = "pip install --upgrade -e '.[dev_utils]'"

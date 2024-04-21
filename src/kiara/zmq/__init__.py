@@ -8,7 +8,7 @@ import orjson
 from pydantic import BaseModel, Field
 
 from kiara.defaults import KIARA_MAIN_CONTEXT_DATA_PATH, KIARA_MAIN_CONTEXT_LOCKS_PATH
-from kiara.interfaces import KiaraAPIWrap
+from kiara.interfaces import BaseAPIWrap
 
 if typing.TYPE_CHECKING:
     pass
@@ -75,7 +75,7 @@ def get_context_details(context_name: str) -> Union[Dict, None]:
 
 
 def start_zmq_service(
-    api_wrap: KiaraAPIWrap,
+    api_wrap: BaseAPIWrap,
     host: Union[str, None],
     port: Union[int, None] = None,
     stdout: Union[str, None] = None,
@@ -196,7 +196,7 @@ def start_zmq_service(
 
 
 def ensure_zmq_service(
-    api_wrap: KiaraAPIWrap,
+    api_wrap: BaseAPIWrap,
     host: str,
     port: int,
     stdout: str,

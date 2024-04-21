@@ -23,7 +23,7 @@ from kiara.utils.cli import (
 from kiara.utils.cli.exceptions import handle_exception
 
 if typing.TYPE_CHECKING:
-    from kiara.interfaces import KiaraAPIWrap
+    from kiara.interfaces import BaseAPIWrap
     from kiara.interfaces.python_api.base_api import BaseAPI
 
 
@@ -51,7 +51,7 @@ def render(
 ) -> None:
     """Render-related sub-commands."""
 
-    api_wrap: KiaraAPIWrap = ctx.obj
+    api_wrap: BaseAPIWrap = ctx.obj
     api_wrap.add_item("source_type", source_type)
     api_wrap.add_item("target_type", target_type)
 
@@ -62,7 +62,7 @@ def render(
 @handle_exception()
 def list_render_combinations(ctx, format: str):
 
-    api_wrap: KiaraAPIWrap = ctx.obj
+    api_wrap: BaseAPIWrap = ctx.obj
     kiara_api: BaseAPI = api_wrap.base_api
 
     source_type = api_wrap.get_item("source_type")
@@ -103,7 +103,7 @@ def render_item(
 ) -> None:
     """Render an internal kiara item."""
 
-    api_wrap: KiaraAPIWrap = ctx.obj
+    api_wrap: BaseAPIWrap = ctx.obj
     kiara_api: BaseAPI = api_wrap.base_api
 
     source_type = api_wrap.get_item("source_type")

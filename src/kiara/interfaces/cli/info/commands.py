@@ -11,7 +11,7 @@ from kiara.utils.cli import output_format_option, terminal_print_model
 from kiara.utils.cli.exceptions import handle_exception
 
 if TYPE_CHECKING:
-    from kiara.interfaces import BaseAPI, KiaraAPIWrap
+    from kiara.interfaces import BaseAPI, BaseAPIWrap
 
 
 @click.group("info")
@@ -33,7 +33,7 @@ def print_config(ctx, format: str):
 
     from kiara.context import KiaraConfig
 
-    wrap: "KiaraAPIWrap" = ctx.obj
+    wrap: "BaseAPIWrap" = ctx.obj
     config: KiaraConfig = wrap.kiara_config
     title = "kiara config"
     if config._config_path:

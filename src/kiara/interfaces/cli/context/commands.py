@@ -9,8 +9,9 @@ from typing import TYPE_CHECKING, Tuple, Union
 import rich_click as click
 from rich import box
 from rich.panel import Panel
+from rich.table import Table
 
-from kiara.interfaces import KiaraAPIWrap, get_console
+from kiara.interfaces import BaseAPIWrap, get_console
 from kiara.utils import log_exception
 from kiara.utils.cli import (
     dict_from_cli_args,
@@ -458,7 +459,7 @@ def start_service(
     from kiara.utils.output import create_table_from_model_object
     from kiara.zmq import start_zmq_service
 
-    api_wrap: KiaraAPIWrap = ctx.obj
+    api_wrap: BaseAPIWrap = ctx.obj
 
     try:
         details = start_zmq_service(
@@ -530,11 +531,13 @@ def stop_service(ctx, context_name: Union[None, str]):
 
 
 @service.command("list")
+@click.option("--details", "-d", help="Show more details.", is_flag=True, default=False)
 @click.pass_context
-def list_services(ctx):
+def list_services(ctx, details: bool):
     """List all contexts that have a currently running service."""
 
-    from kiara.zmq import list_registered_contexts
+    from kiara.zmq import get_context_details, list_registered_contexts
+    from kiara.zmq.client import KiaraZmqClient
 
     contexts = list_registered_contexts()
     if not contexts:
@@ -543,9 +546,49 @@ def list_services(ctx):
         sys.exit(0)
 
     terminal_print()
-    terminal_print("Running services:")
-    for c in contexts:
-        terminal_print(f" - {c}")
+
+    if not details:
+        terminal_print("Running services:")
+        for c in contexts:
+            terminal_print(f" - {c}")
+
+    else:
+
+        from kiara.context import KiaraContextConfig, KiaraRuntimeConfig
+        from kiara.utils.output import create_table_from_model_object
+
+        table = Table(show_header=True, show_lines=False, box=box.SIMPLE)
+        table.add_column("context")
+        table.add_column("details")
+
+        for c in contexts:
+            context_details = get_context_details(c)
+            if not context_details:
+                table.add_row(c, "Can't get context details, skipping...")
+                continue
+            zmq_client = KiaraZmqClient(
+                host=context_details["host"], port=context_details["port"]
+            )
+            status = zmq_client.request(endpoint_name="service_status", args={})
+            state = status["state"]
+            timeout = status["timeout"]
+            context_config = KiaraContextConfig(**status["context_config"])
+            runtime_config = KiaraRuntimeConfig(**status["runtime_config"])
+
+            config_table = create_table_from_model_object(context_config)
+            runtime_table = create_table_from_model_object(runtime_config)
+
+            c_table = Table(show_header=False, show_lines=False, box=box.SIMPLE)
+            c_table.add_column("key", style="i")
+            c_table.add_column("value")
+            c_table.add_row("state", state)
+            c_table.add_row("timeout", str(timeout))
+            c_table.add_row("context config", config_table)
+            c_table.add_row("runtime config", runtime_table)
+
+            table.add_row(c, c_table)
+
+        terminal_print(table, in_panel="Service details")
 
 
 @service.command("request")

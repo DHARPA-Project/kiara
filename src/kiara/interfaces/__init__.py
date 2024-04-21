@@ -218,7 +218,7 @@ def set_console_width(width: Union[int, None] = None, prefer_env: bool = True):
         con.width = width
 
 
-class KiaraAPIWrap(object):
+class BaseAPIWrap(object):
     """A wrapper class to help with lazy loading.
 
     This is mostly relevant in terms of Python imports and the cli, because that allows

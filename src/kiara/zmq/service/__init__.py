@@ -9,8 +9,9 @@ import zmq
 
 from kiara.defaults import KIARA_MAIN_CONTEXT_LOCKS_PATH
 from kiara.exceptions import KiaraException
-from kiara.interfaces import BaseAPI, KiaraAPIWrap, get_console, get_proxy_console
+from kiara.interfaces import BaseAPIWrap, get_console, get_proxy_console
 from kiara.interfaces.cli.proxy_cli import proxy_cli
+from kiara.interfaces.python_api.base_api import BaseAPI
 from kiara.interfaces.python_api.proxy import ApiEndpoints
 from kiara.zmq import (
     KiaraZmqServiceDetails,
@@ -26,7 +27,7 @@ DEFAULT_PORT = 8000
 class KiaraZmqAPI(object):
     def __init__(
         self,
-        api_wrap: KiaraAPIWrap,
+        api_wrap: BaseAPIWrap,
         stdout: Union[str, None] = None,
         stderr: Union[str, None] = None,
         host: Union[str, None] = None,
@@ -48,7 +49,7 @@ class KiaraZmqAPI(object):
             with socketserver.TCPServer((host_ip, 0), None) as s:  # type: ignore
                 port = s.server_address[1]
 
-        self._api_wrap: KiaraAPIWrap = api_wrap
+        self._api_wrap: BaseAPIWrap = api_wrap
         self._api_wrap.exit_process = False
 
         self._listen_host: str = host_ip
@@ -158,6 +159,20 @@ class KiaraZmqAPI(object):
                         print("Shutting down...", file=self._stdout)
                         result = "ok"
                         stop = True
+                    elif decoded.endpoint == "service_status":
+                        context_config = (
+                            self._api_wrap.base_api.context.context_config.model_dump()
+                        )
+                        runtime_config = (
+                            self._api_wrap.base_api.context.runtime_config.model_dump()
+                        )
+
+                        result = {
+                            "state": "running",
+                            "timeout": timeout,
+                            "context_config": context_config,
+                            "runtime_config": runtime_config,
+                        }
                     elif decoded.endpoint == "cli":
                         result = self.call_cli(api=api, **decoded.args)
                     elif decoded.endpoint == "control":

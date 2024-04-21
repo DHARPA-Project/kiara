@@ -14,7 +14,7 @@ from typing import Tuple, Union
 import rich_click as click
 import structlog
 
-from kiara.interfaces import KiaraAPIWrap
+from kiara.interfaces import BaseAPIWrap
 from kiara.utils import is_debug, log_message
 from kiara.utils.class_loading import find_all_cli_subcommands
 from kiara.utils.cli import (
@@ -124,7 +124,7 @@ def cli(
         if context_details_data is None:
 
             timeout = 120 * 1000  # 2 minutes default timeout
-            api_wrap = KiaraAPIWrap(config, context, pipelines, plugin)
+            api_wrap = BaseAPIWrap(config, context, pipelines, plugin)
             context_details = start_zmq_service(
                 api_wrap=api_wrap,
                 host=None,
@@ -182,7 +182,7 @@ def cli(
             zmq_client.close()
 
     else:
-        lazy_wrapper = KiaraAPIWrap(config, context, pipelines, plugin)
+        lazy_wrapper = BaseAPIWrap(config, context, pipelines, plugin)
         ctx.obj = lazy_wrapper
 
 

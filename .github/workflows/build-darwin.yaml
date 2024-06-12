@@ -23,7 +23,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}-no-arm
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*')-macos-14 }}
       - uses: actions/checkout@v4
       - name: install core_types plugin
         run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.core_types@develop
@@ -36,31 +36,31 @@ jobs:
       - name: test with pytest
         run: make test
 
-  test-darwin-arm:
-    name: pytest on darwin (ARM)
-    runs-on: macos-14-arm64
-    strategy:
-      matrix:
-        python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-    steps:
-      - name: "Set up Python ${{ matrix.python_version }}"
-        uses: actions/setup-python@v5
-        with:
-          python-version: "${{ matrix.python_version }}"
-      - name: pip cache
-        id: pip-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}-arm
-      - uses: actions/checkout@v4
-      - name: install core_types plugin
-        run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.core_types@develop
-      - name: install tabular types plugin
-        run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.tabular@develop
-      - name: install kiara
-        run: pip install -U .[dev_testing]
-      - name: display installed kiara and module package versions
-        run: pip list | grep kiara
-      - name: test with pytest
-        run: make test
+#  test-darwin-arm:
+#    name: pytest on darwin (ARM)
+#    runs-on: macos-14-arm64
+#    strategy:
+#      matrix:
+#        python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+#    steps:
+#      - name: "Set up Python ${{ matrix.python_version }}"
+#        uses: actions/setup-python@v5
+#        with:
+#          python-version: "${{ matrix.python_version }}"
+#      - name: pip cache
+#        id: pip-cache
+#        uses: actions/cache@v4
+#        with:
+#          path: ~/.cache/pip
+#          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}-arm
+#      - uses: actions/checkout@v4
+#      - name: install core_types plugin
+#        run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.core_types@develop
+#      - name: install tabular types plugin
+#        run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.tabular@develop
+#      - name: install kiara
+#        run: pip install -U .[dev_testing]
+#      - name: display installed kiara and module package versions
+#        run: pip list | grep kiara
+#      - name: test with pytest
+#        run: make test

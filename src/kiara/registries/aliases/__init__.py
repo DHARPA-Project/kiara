@@ -520,6 +520,19 @@ class AliasRegistry(object):
                     logger.info("alias.replace", alias=actual_alias)
                     # raise NotImplementedError()
 
+                old_value = self.aliases.get(actual_alias)
+                if old_value and self._cached_aliases_by_id is not None:
+                    to_remove = set()
+                    old_aliases = self._cached_aliases_by_id.get(old_value.value_id)
+                    if old_aliases:
+                        for old_alias in old_aliases:
+                            if old_alias.full_alias == actual_alias:
+                                to_remove.add(old_alias)
+
+                        self._cached_aliases_by_id[old_value.value_id].remove(
+                            *to_remove
+                        )
+
                 self.aliases[actual_alias] = alias_item  # type: ignore
                 self._cached_aliases_by_id.setdefault(value.value_id, set()).add(alias_item)  # type: ignore
 

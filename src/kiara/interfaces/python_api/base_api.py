@@ -1847,6 +1847,8 @@ class BaseAPI(object):
                 store_instance.set_archive_metadata_value(
                     DATA_ARCHIVE_DEFAULT_VALUE_MARKER, str(value_obj.value_id)
                 )
+            if isinstance(alias, str):
+                alias = [alias]
             result = StoreValueResult(
                 value=value_obj,
                 aliases=sorted(alias) if alias else [],

@@ -23,7 +23,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}-no-arm
       - uses: actions/checkout@v4
       - name: install core_types plugin
         run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.core_types@develop

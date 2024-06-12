@@ -35,8 +35,9 @@ jobs:
         run: pip list | grep kiara
       - name: test with pytest
         run: make test
+
   test-darwin-arm:
-    name: pytest on darwin
+    name: pytest on darwin (ARM)
     runs-on: macos-14-arm64
     strategy:
       matrix:
@@ -51,7 +52,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/setup.*') }}-arm
       - uses: actions/checkout@v4
       - name: install core_types plugin
         run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.core_types@develop

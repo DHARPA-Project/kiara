@@ -631,6 +631,7 @@ class DataRegistry(object):
                     reasong=f"find_values not implemented for store: {store_id}",
                     solution="return all values",
                 )
+
                 all_value_ids = store.value_ids
                 if all_value_ids is None:
                     continue

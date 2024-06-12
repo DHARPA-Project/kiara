@@ -521,7 +521,7 @@ class AliasRegistry(object):
                     # raise NotImplementedError()
 
                 self.aliases[actual_alias] = alias_item  # type: ignore
-                self._cached_aliases_by_id.setdefault(value_id, set()).add(alias_item)  # type: ignore
+                self._cached_aliases_by_id.setdefault(value.value_id, set()).add(alias_item)  # type: ignore
 
 
 #

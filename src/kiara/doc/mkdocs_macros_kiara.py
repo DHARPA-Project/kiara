@@ -11,11 +11,11 @@ from typing import Any, Type, Union
 
 from pydantic import BaseModel
 
-from kiara.context import Kiara, KiaraContextInfo
+from kiara.context import KiaraContextInfo
 from kiara.utils.yaml import StringYAML
 
 yaml = StringYAML()
-kiara_obj = Kiara.instance()
+# kiara_obj = Kiara.instance()
 
 
 def define_env(env):

@@ -46,26 +46,11 @@ init: clean ## initialize a development environment (to be run in virtualenv)
 	pre-commit run --all-files || true
 	git add "*" ".*"
 
-update-modules:  ## update default modules dependency
-	pip install --extra-index-url https://pypi.fury.io/dharpa/ --extra-index-url https://gitlab.com/api/v4/projects/25344049/packages/pypi/simple -U -e '.[modules_all]'
-
-setup-cfg-fmt: # format setup.cfg
-	setup-cfg-fmt setup.cfg || true
-
-black: ## run black
-	black --config pyproject.toml setup.py src/kiara tests
-
-flake: ## check style with flake8
-	flake8 src/kiara tests
-
 mypy: ## run mypy
 	mypy src/kiara
 
 test: ## run tests quickly with the default Python
 	py.test
-
-test-all: ## run tests on every Python version with tox
-	tox
 
 coverage: ## check code coverage quickly with the default Python
 	coverage run -m pytest tests
@@ -73,15 +58,11 @@ coverage: ## check code coverage quickly with the default Python
 	coverage html
 	xdg-open htmlcov/index.html
 
-check: black flake mypy test ## run dev-related checks
-
 render-api:
 	kiara render --source-type base_api --target-type kiara_api item kiara_api template_file=src/kiara/interfaces/python_api/kiara_api.py target_file=src/kiara/interfaces/python_api/kiara_api.py
 
 pre-commit: ## run pre-commit on all files
 	pre-commit run --all-files
 
-dist: clean ## build source and wheel packages
-	python setup.py sdist
-	python setup.py bdist_wheel
-	ls -l dist
+doc: ## build documentation
+	mkdocs build

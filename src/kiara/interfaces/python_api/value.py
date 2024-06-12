@@ -47,6 +47,7 @@ class StoreValueResult(BaseModel):
         table.add_column("value")
 
         table.add_row("value_id", str(self.value.value_id))
+
         if self.aliases:
             if len(self.aliases) > 1:
                 a = "aliases"

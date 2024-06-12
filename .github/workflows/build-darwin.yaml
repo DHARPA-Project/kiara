@@ -2,14 +2,14 @@ name: "darwin tests for 'kiara'"
 # This workflow is triggered on pushes to the repository.
 on: [push]
 env:
-  DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+  DEVELOPER_DIR: /Applications/Xcode_15.4.app/Contents/Developer
   MACOSX_DEPLOYMENT_TARGET: 10.15
 
 
 jobs:
   test-darwin:
     name: pytest on darwin
-    runs-on: macos-11
+    runs-on: macos-14
     strategy:
       matrix:
         # python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]

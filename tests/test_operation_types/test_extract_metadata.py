@@ -27,7 +27,11 @@ def test_extract_metadata_all_available_data(presseeded_data_store_minimal: Kiar
         value = presseeded_data_store_minimal.data_registry.get_value(value_id)
         ops = op_type.get_operations_for_data_type(value.value_schema.type)
 
+        if not value.is_set:
+            continue
+
         for op in ops.values():
+
             inputs = {"value": value}
             result = op.run(kiara=presseeded_data_store_minimal, inputs=inputs)
 

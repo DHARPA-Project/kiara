@@ -1,6 +1,11 @@
 # Changelog
 
-## Version 0.5.10 (upcoming)
+## Version 0.5.11
+
+- bugfix release
+- updated ci & build processes
+
+## Version 0.5.10
 
 - archive export & import feature:
   - new cli subcommands:

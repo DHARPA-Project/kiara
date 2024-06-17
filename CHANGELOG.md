@@ -1,8 +1,12 @@
 # Changelog
 
+## Version 0.5.12 (upcoming)
+
 ## Version 0.5.11
 
-- bugfix release
+- bugfixes:
+  - cached aliases in session are not updated when aliases are stored
+  - minor store result printable output fix
 - updated ci & build processes
 
 ## Version 0.5.10

@@ -374,7 +374,9 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
                 serialized = data
                 not_serialized: bool = False
             else:
+
                 data = self.parse_python_obj(data)
+
                 if data is None:
                     raise Exception(
                         f"Invalid data, can't parse into a value of type '{schema.type}'."
@@ -382,6 +384,7 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
                 self._validate(data)
 
                 serialized = self.serialize(data)
+
                 if serialized is None:
                     serialized = NO_SERIALIZATION_MARKER
 

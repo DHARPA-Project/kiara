@@ -1045,6 +1045,7 @@ class DataRegistry(object):
                 # TODO: check pedigree
                 return (_existing, False)
         else:
+
             if data_type is None:
                 data_type = self._kiara.type_registry.retrieve_data_type(
                     data_type_name=schema.type, data_type_config=schema.type_config
@@ -1396,10 +1397,12 @@ class DataRegistry(object):
                 if not str(v):
                     _v = type(v).__name__
                 msg.append(f"{k}: {_v}")
+
             raise InvalidValuesException(
                 msg=f"Can't create values instance: {', '.join(msg)}",
                 invalid_values={k: str(v) for k, v in failed.items()},
             )
+
         return ValueMapReadOnly(value_items=values, values_schema=schema)  # type: ignore
 
     def create_renderable(self, **config: Any) -> RenderableType:

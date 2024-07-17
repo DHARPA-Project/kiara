@@ -205,7 +205,7 @@ class KiaraFile(KiaraModel):
         return content
 
     def __repr__(self):
-        return f"FileModel(name={self.file_name})"
+        return f"KiaraFile(name={self.file_name})"
 
     def __str__(self):
         return self.__repr__()

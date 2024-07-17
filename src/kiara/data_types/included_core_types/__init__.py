@@ -202,7 +202,7 @@ class BytesType(AnyType[bytes, DataTypeConfig]):
                 "environment": {},
                 "deserialize": {
                     "python_object": {
-                        "module_name": "load.bytes",
+                        "module_type": "load.bytes",
                         "module_config": {
                             "value_type": "bytes",
                             "target_profile": "python_object",
@@ -215,6 +215,7 @@ class BytesType(AnyType[bytes, DataTypeConfig]):
         from kiara.models.values.value import SerializationResult
 
         serialized = SerializationResult(**serialized_data)
+
         return serialized
 
     def _pretty_print_as__string(

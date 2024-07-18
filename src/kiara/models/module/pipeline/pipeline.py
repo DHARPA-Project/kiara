@@ -569,9 +569,9 @@ class Pipeline(object):
                     input_ref.value_name
                 ] = outputs[field_name]
 
-        for step_id, step_inputs in inputs_to_set.items():
+        for _step_id, step_inputs in inputs_to_set.items():
             changed_step_fields = self._set_step_inputs(
-                step_id=step_id, inputs=step_inputs
+                step_id=_step_id, inputs=step_inputs
             )
             dpath.merge(result, changed_step_fields)  # type: ignore
 

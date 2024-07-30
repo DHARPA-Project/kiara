@@ -285,12 +285,17 @@ class KiaraContextConfig(BaseModel):
             archive_type="filesystem_workflow_store",
             config={"archive_path": workflow_store_path},
         )
+        metadata_store_config = KiaraArchiveConfig(
+            archive_type="sqlite_metadata_store",
+            config={"sqlite_db_path": db_path.as_posix()},
+        )
 
         archives = {
             DEFAULT_DATA_STORE_MARKER: data_store_config,
             DEFAULT_ALIAS_STORE_MARKER: alias_store_config,
             DEFAULT_JOB_STORE_MARKER: job_store_config,
             DEFAULT_WORKFLOW_STORE_MARKER: workflow_store_config,
+            DEFAULT_METADATA_STORE_MARKER: metadata_store_config,
         }
 
         context_config = cls(

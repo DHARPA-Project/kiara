@@ -232,7 +232,7 @@ dev_documentation = [
 dev_testing = [
     "pytest-cov>=4.1.0",
     "jsonschema>=4.0.0",
-    "mypy>=0.800",
+    "mypy<1.10.1",
     "pandas-stubs",
     "pytest>=6.2.2",
     "pytest-cov>=2.11.1",

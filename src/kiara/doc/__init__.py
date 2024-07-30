@@ -63,9 +63,9 @@ class FrklDocumentationPlugin(BasePlugin):
                 use_directory_urls=config["use_directory_urls"],
             )
 
-            os.makedirs(os.path.dirname(_file.abs_src_path), exist_ok=True)
+            os.makedirs(os.path.dirname(_file.abs_src_path), exist_ok=True)  # type: ignore
 
-            with open(_file.abs_src_path, "w") as f:
+            with open(_file.abs_src_path, "w") as f:  # type: ignore
                 f.write(content)
 
             self._doc_files[k] = _file

@@ -391,7 +391,8 @@ exclude = [
     "node_modules",
     "venv",
     "examples/",
-    "dev/"
+    "dev/",
+    "docs/"
 ]
 
 # Assume Python 3.10.

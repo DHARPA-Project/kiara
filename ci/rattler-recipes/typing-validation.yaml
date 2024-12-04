@@ -1,0 +1,35 @@
+context:
+  version: "1.2.11"
+
+package:
+  name: "typing-validation"
+  version: ${{ version }}
+
+source:
+  - url:
+      - https://pypi.io/packages/source/t/typing-validation/typing-validation-${{ version }}.tar.gz
+    sha256: d977805a26eb59f6b48b8654e9161755a4ba8870ca40ab860df2cfad4a6ce08e
+
+build:
+  # Thanks to `noarch: python` this package works on all platforms
+  noarch: python
+  script:
+    - python -m pip install . -vv
+
+requirements:
+  host:
+    - pip
+    - python 3.10
+  run:
+    - typing_extensions >=4.6.0,<5.0.0
+
+about:
+  homepage: https://github.com/hashberg-io/typing-validation
+  license: MIT
+  license_file: LICENSE
+  summary: A simple library for runtime type-checking.
+
+
+  description: |
+    Typing-validation is a small library to perform runtime validation of Python objects using PEP 484 type hints.
+  repository: https://github.com/hashberg-io/typing-validation

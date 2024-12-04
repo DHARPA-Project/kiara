@@ -26,6 +26,7 @@ from typing import (
 
 import structlog
 from rich.console import RenderableType
+from sqlalchemy.exc import OperationalError
 
 from kiara.data_types import DataType
 from kiara.data_types.included_core_types import NoneType
@@ -534,57 +535,63 @@ class DataRegistry(object):
 
         """
 
-        _value = self.get_value(value)
+        try:
+            _value = self.get_value(value)
 
-        # first, persist environment information
-        for env_hash in _value.pedigree.environments.values():
+            # first, persist environment information
+            for env_hash in _value.pedigree.environments.values():
 
-            self._persist_environment(env_hash, store=data_store)
+                self._persist_environment(env_hash, store=data_store)
 
-        store: DataStore = self.get_archive(archive_id_or_alias=data_store)  # type: ignore
-        if not store.is_writeable():
-            if data_store:
-                raise Exception(
-                    f"Can't write value into store '{data_store}': not writable."
-                )
+            store: DataStore = self.get_archive(archive_id_or_alias=data_store)  # type: ignore
+            if not store.is_writeable():
+                if data_store:
+                    raise Exception(
+                        f"Can't write value into store '{data_store}': not writable."
+                    )
+                else:
+                    raise Exception("Can't write value into store: not writable.")
+
+            _data_store = store.archive_name
+            # make sure all property values are available
+            if _value.pedigree != ORPHAN:
+                for value_id in _value.pedigree.inputs.values():
+                    self.store_value(value=value_id, data_store=_data_store)
+
+            if not store.has_value(_value.value_id):
+                event = ValuePreStoreEvent(kiara_id=self._kiara.id, value=_value)
+                self._event_callback(event)
+                persisted_value = store.store_value(_value)
+                _value._is_stored = True
+
+                self._value_archive_lookup_map[_value.value_id] = _data_store
+                self._persisted_value_descs[_value.value_id] = persisted_value
+                property_values = _value.property_values
+
+                for property, property_value in property_values.items():
+                    self.store_value(value=property_value, data_store=_data_store)
+
+                store_required = True
             else:
-                raise Exception("Can't write value into store: not writable.")
+                persisted_value = None
+                store_required = False
 
-        _data_store = store.archive_name
-        # make sure all property values are available
-        if _value.pedigree != ORPHAN:
-            for value_id in _value.pedigree.inputs.values():
-                self.store_value(value=value_id, data_store=_data_store)
-
-        if not store.has_value(_value.value_id):
-            event = ValuePreStoreEvent(kiara_id=self._kiara.id, value=_value)
-            self._event_callback(event)
-            persisted_value = store.store_value(_value)
-            _value._is_stored = True
-
-            self._value_archive_lookup_map[_value.value_id] = _data_store
-            self._persisted_value_descs[_value.value_id] = persisted_value
-            property_values = _value.property_values
-
-            for property, property_value in property_values.items():
-                self.store_value(value=property_value, data_store=_data_store)
-
-            store_required = True
-        else:
-            persisted_value = None
-            store_required = False
-
-        store_event = ValueStoredEvent(
-            kiara_id=self._kiara.id, value=_value, storing_required=store_required
-        )
-        self._event_callback(store_event)
-
-        if _value.job_id:
-            self._kiara.job_registry.store_job_record(
-                job_id=_value.job_id, store=data_store
+            store_event = ValueStoredEvent(
+                kiara_id=self._kiara.id, value=_value, storing_required=store_required
             )
+            self._event_callback(store_event)
 
-        return persisted_value
+            if _value.job_id:
+                self._kiara.job_registry.store_job_record(
+                    job_id=_value.job_id, store=data_store
+                )
+
+            return persisted_value
+        except OperationalError as oe:
+            if "has no column named" in str(oe):
+                raise KiaraException("Your kiara data store is using an old version of the table schema, this is not supported. Either downgrade kiara to the version that was used to create the data store, or delete your current context (`kiara context delete').")
+            else:
+                raise oe
 
     def lookup_aliases(self, value: Union[Value, uuid.UUID]) -> Set[str]:
 

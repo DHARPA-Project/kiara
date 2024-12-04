@@ -50,7 +50,8 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12"
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13"
 ]
 
 
@@ -258,9 +259,9 @@ dev_utils = [
     "kiara_plugin.develop",
     "build",
     "ipython",
-    "mypy>=0.800",
+    "mypy>=1.13.0",
     "pandas-stubs",
-    "pre-commit>=2.9.3",
+    "pre-commit>=4.0.0",
     "pytest>=6.2.2",
     "pytest-xdist>=3.2.1",
     "setup-cfg-fmt>=1.16.0",
@@ -424,7 +425,7 @@ select = [
     "PIE",
 ]
 #select = ["E", "F", "RUF100", "W", "I001"]
-ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110", "PIE810", "PLR0911", "PLR0915", "PLR0912", "D", "D401", "PLW0603", "PLR5501", "PLW2901", "S603", "S608", "ISC001"]
+ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110", "PIE810", "PLR0911", "PLR0915", "PLR0912", "D", "D401", "PLW0603", "PLR5501", "PLW2901", "S603", "S608", "ISC001", "PLC0206", "RUF022"]
 per-file-ignores = { }
 
 
@@ -440,7 +441,7 @@ max-complexity = 10
 convention = "google"
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 mypy_path = "src"

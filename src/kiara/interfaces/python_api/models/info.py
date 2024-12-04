@@ -93,7 +93,8 @@ INFO_BASE_CLASS = TypeVar("INFO_BASE_CLASS", bound=type)
 
 
 def pretty_print_value_data_terminal(value: "ValueInfo"):
-
+    assert value._value is not None
+    assert value._value._data_registry is not None
     try:
         renderable = value._value._data_registry.pretty_print_data(
             value.value_id, target_type="terminal_renderable"
@@ -592,9 +593,9 @@ class ValueInfo(ItemInfo):
     is_persisted: bool = Field(
         description="Whether this value is stored in at least one data store."
     )
-    _alias_registry: "AliasRegistry" = PrivateAttr(default=None)
-    _data_registry: "DataRegistry" = PrivateAttr(default=None)
-    _value: Value = PrivateAttr(default=None)
+    _alias_registry: Union["AliasRegistry", None] = PrivateAttr(default=None)
+    _data_registry: Union["DataRegistry", None] = PrivateAttr(default=None)
+    _value: Union[Value, None] = PrivateAttr(default=None)
 
     def _retrieve_id(self) -> str:
         return str(self.value_id)
@@ -604,10 +605,12 @@ class ValueInfo(ItemInfo):
 
     @property
     def property_values(self) -> "ValueMap":
+        assert self._value is not None
         return self._value.property_values
 
     @property
     def lineage(self) -> "ValueLineage":
+        assert self._value is not None
         return self._value.lineage
 
     def resolve_aliases(self):
@@ -636,10 +639,12 @@ class ValueInfo(ItemInfo):
 
     def create_info_data(self, **config: Any) -> Mapping[str, Any]:
 
+        assert self._value is not None
         return self._value.create_info_data(**config)
 
     def create_renderable(self, **render_config: Any) -> RenderableType:
 
+        assert self._value is not None
         return self._value.create_renderable(**render_config)
 
 
@@ -1931,8 +1936,8 @@ class KiaraPluginInfo(ItemInfo):
 
         pkg_metadata = metadata(final_pkg_name)
 
-        summary = pkg_metadata.get("Summary", None)
-        desc = pkg_metadata.get("Description", None)
+        summary = pkg_metadata.get("Summary", None)  # type: ignore[attr-defined]
+        desc = pkg_metadata.get("Description", None)  # type: ignore[attr-defined]
 
         if not summary and not desc:
             doc = DocumentationMetadataModel.create()
@@ -1952,9 +1957,9 @@ class KiaraPluginInfo(ItemInfo):
             else:
                 return None, None
 
-        version = pkg_metadata["Version"]
+        version = pkg_metadata.get("Version")  # type: ignore[attr-defined]
         authors: List[AuthorModel] = []
-        for key in pkg_metadata.keys():
+        for key in pkg_metadata.keys():  # type: ignore[attr-defined]
             if key == "Author-email":
                 author, email = parse_name_email(pkg_metadata[key])
                 if not author:

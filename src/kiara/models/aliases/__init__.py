@@ -47,7 +47,7 @@ class AliasValueMap(ValueMap):
         description="The values contained in this set.", default_factory=dict
     )
 
-    _data_registry: "DataRegistry" = PrivateAttr(default=None)
+    _data_registry: Union["DataRegistry", None] = PrivateAttr(default=None)
     _schema_locked: bool = PrivateAttr(default=False)
     _auto_schema: bool = PrivateAttr(default=True)
     _is_stored: bool = PrivateAttr(default=False)
@@ -100,6 +100,7 @@ class AliasValueMap(ValueMap):
 
     def get_value_obj(self, field_name: str) -> Value:
 
+        assert self._data_registry is not None
         item = self.get_child_map(field_name=field_name)
         if item is None:
             return self._data_registry.NONE_VALUE
@@ -238,6 +239,7 @@ class AliasValueMap(ValueMap):
                         else:
                             data = copy.deepcopy(vs.default)
 
+                assert self._data_registry is not None
                 value = self._data_registry.register_data(data=data, schema=vs)
                 value_id = value.value_id
 
@@ -303,6 +305,7 @@ class AliasValueMap(ValueMap):
     ) -> "AliasValueMap":
 
         assert VALUE_ALIAS_SEPARATOR not in field_name
+        assert self._data_registry is not None
 
         value: Union[Value, None] = None
         if value_id is not None:
@@ -378,6 +381,7 @@ class AliasValueMap(ValueMap):
         tree = Tree(f"{base_name}{type_str}")
         if self.assoc_value:
             data = tree.add("__data__")
+            assert self._data_registry is not None
             value = self._data_registry.get_value(self.assoc_value)
             data.add(str(value.data))
 

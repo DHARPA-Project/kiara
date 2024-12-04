@@ -59,7 +59,7 @@ class KiaraModuleConfig(KiaraModel):
                     return True
         return False
 
-    _config_hash: str = PrivateAttr(default=None)
+    _config_hash: Union[str, None] = PrivateAttr(default=None)
     constants: Dict[str, Any] = Field(
         default_factory=dict, description="Value constants for this module."
     )

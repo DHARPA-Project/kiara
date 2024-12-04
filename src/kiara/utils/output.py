@@ -243,8 +243,7 @@ class TabularWrap(ABC):
 
         if rows_head is not None:
 
-            if rows_head < 0:
-                rows_head = 0
+            rows_head = max(rows_head, 0)
 
             if rows_head > self.num_rows:
                 rows_head = self.num_rows
@@ -304,8 +303,7 @@ class TabularWrap(ABC):
 
         if rows_head:
             if rows_tail is not None:
-                if rows_tail < 0:
-                    rows_tail = 0
+                rows_tail = max(rows_tail, 0)
 
                 tail = self.slice(self.num_rows - rows_tail)
                 table_dict = tail.to_pydict()
@@ -390,8 +388,7 @@ class DictTabularWrap(TabularWrap):
                     end = len(self._data)
                 else:
                     end = start + length
-                    if end > len(self._data):
-                        end = len(self._data)
+                    end = min(end, len(self._data))
             result[cn] = self._data[cn][start:end]
         return DictTabularWrap(result)
 
@@ -696,6 +693,7 @@ def create_value_map_status_renderable(
         if show_data:
             render_config = dict(render_config)
             render_config["max_no_rows"] = data_max_no_rows
+            assert value._data_registry is not None
             data = value._data_registry.pretty_print_data(
                 value_id=value.value_id,
                 target_type="terminal_renderable",
@@ -863,6 +861,7 @@ def create_renderable_from_values(
                 pedigree = value.pedigree.model_dump_json(indent=2)
             row.append(pedigree)
         if show_data:
+            assert value._data_registry is not None
             data = value._data_registry.pretty_print_data(
                 value_id=value.value_id, target_type="terminal_renderable", **config
             )

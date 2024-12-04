@@ -26,11 +26,11 @@ class JinjaEnv(BaseModel):
         default=None,
     )
 
-    _render_registry: "RenderRegistry" = PrivateAttr(default=None)
+    _render_registry: Union["RenderRegistry", None] = PrivateAttr(default=None)
 
     @property
     def instance(self) -> Environment:
-
+        assert self._render_registry is not None
         return self._render_registry.retrieve_jinja_env(self.template_base)
 
 

@@ -304,8 +304,8 @@ class JobRecord(JobConfig):
     #     description="Optional metadata for this job.", default_factory=dict
     # )
 
-    _is_stored: bool = PrivateAttr(default=None)
-    _outputs_hash: Union[int, None] = PrivateAttr(default=None)
+    _is_stored: bool = PrivateAttr(default=None)  # type: ignore
+    _outputs_hash: Union[int, None] = PrivateAttr(default=None)  # type: ignore
 
     # @field_validator("job_metadata", mode="before")
     # @classmethod

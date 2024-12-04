@@ -479,7 +479,7 @@ class KiaraConfig(BaseSettings):
     )
 
     _contexts: Dict[uuid.UUID, "Kiara"] = PrivateAttr(default_factory=dict)
-    _available_context_files: Dict[str, Path] = PrivateAttr(default=None)
+    _available_context_files: Union[Dict[str, Path], None] = PrivateAttr(default=None)
     _context_data: Dict[str, KiaraContextConfig] = PrivateAttr(default_factory=dict)
     _config_path: Union[Path, None] = PrivateAttr(default=None)
 
@@ -560,6 +560,8 @@ class KiaraConfig(BaseSettings):
 
         if context_name in self._context_data.keys():
             return self._context_data[context_name]
+
+        assert self._available_context_files is not None
 
         context_file = self._available_context_files[context_name]
         context_data = get_data_from_file(context_file, content_type="yaml")
@@ -840,6 +842,8 @@ class KiaraConfig(BaseSettings):
                 yaml.dump(context_config.model_dump(), f)
 
             context_config._context_config_path = context_file
+
+            assert self._available_context_files is not None
             self._available_context_files[context_alias] = context_file
 
         self._context_data[context_alias] = context_config

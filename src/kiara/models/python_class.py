@@ -8,7 +8,7 @@
 import importlib
 import inspect
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, ClassVar, Dict, Type
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Type, Union
 
 from pydantic.fields import Field, PrivateAttr
 
@@ -62,9 +62,9 @@ class PythonClass(KiaraModel):
     #     description="Context metadata for the class.", default=None
     # )
 
-    _module_cache: ModuleType = PrivateAttr(default=None)
-    _cls_cache: Type = PrivateAttr(default=None)
-    _src_cache: str = PrivateAttr(default=None)
+    _module_cache: Union[ModuleType, None] = PrivateAttr(default=None)
+    _cls_cache: Union[Type, None] = PrivateAttr(default=None)
+    _src_cache: Union[str, None] = PrivateAttr(default=None)
 
     def _retrieve_id(self) -> str:
         return self.full_name
@@ -130,7 +130,7 @@ class KiaraModuleInstance(PythonClass):
         description="The schema for the module output(s)."
     )
 
-    _module_instance_cache: "KiaraModule" = PrivateAttr(default=None)
+    _module_instance_cache: Union["KiaraModule", None] = PrivateAttr(default=None)
 
     def get_kiara_module_instance(self) -> "KiaraModule":
 

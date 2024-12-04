@@ -42,7 +42,7 @@ class PipelineOperationDetails(OperationDetails):
         description="The output schema for the pipeline."
     )
     pipeline_config: PipelineConfig = Field(description="The pipeline config.")
-    _op_schema: OperationSchema = PrivateAttr(default=None)
+    _op_schema: Union[OperationSchema, None] = PrivateAttr(default=None)
 
     def get_operation_schema(self) -> OperationSchema:
 

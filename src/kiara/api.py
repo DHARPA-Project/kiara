@@ -5,6 +5,7 @@ __all__ = [
     "KiaraConfig",
     "KiaraModule",
     "KiaraModuleConfig",
+    "KiArchive",
     "JobDesc",
     "Pipeline",
     "PipelineStructure",
@@ -13,7 +14,6 @@ __all__ = [
     "ValueMap",
     "ValueMapSchema",
     "ValueSchema",
-    "KiArchive",
 ]
 
 from .context import Kiara

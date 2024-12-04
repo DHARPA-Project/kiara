@@ -364,7 +364,7 @@ class SerializedChunkIDs(SerializedChunks):
         None, description="The preferred data archive to get the chunks from."
     )
     size: int = Field(description="The size of all chunks combined.")
-    _data_registry: "DataRegistry" = PrivateAttr(default=None)
+    _data_registry: Union["DataRegistry", None] = PrivateAttr(default=None)
 
     def get_chunks(
         self, as_files: bool = True, symlink_ok: bool = True
@@ -378,6 +378,7 @@ class SerializedChunkIDs(SerializedChunks):
         """
 
         chunk_ids = self.chunk_id_list
+        assert self._data_registry is not None
         return self._data_registry.retrieve_chunks(
             chunk_ids=chunk_ids,
             as_files=as_files,
@@ -560,8 +561,8 @@ class SerializationResult(SerializedData):
                     )
 
                 assert s_type != "chunk-ids"
-                cls = SERIALIZE_TYPES[s_type]
-                result[field_name] = cls(**data)
+                _cls = SERIALIZE_TYPES[s_type]
+                result[field_name] = _cls(**data)
 
         values["data"] = result
         return values
@@ -655,7 +656,7 @@ class DataTypeInfo(KiaraModel):
     data_type_class: PythonClass = Field(
         description="The python class that is associated with this model."
     )
-    _data_type_instance: "DataType" = PrivateAttr(default=None)
+    _data_type_instance: Union["DataType", None] = PrivateAttr(default=None)
 
     @property
     def data_type_instance(self) -> "DataType":
@@ -771,7 +772,7 @@ class Value(ValueDetails):
     _value_data: Any = PrivateAttr(default=SpecialValue.NOT_SET)
     _serialized_data: Union[None, str, SerializedData] = PrivateAttr(default=None)
     _data_retrieved: bool = PrivateAttr(default=False)
-    _data_registry: "DataRegistry" = PrivateAttr(default=None)
+    _data_registry: Union["DataRegistry", None] = PrivateAttr(default=None)
     # _data_type: "DataType" = PrivateAttr(default=None)
     _is_stored: bool = PrivateAttr(default=False)
     _cached_properties: Union["ValueMap", None] = PrivateAttr(default=None)
@@ -886,6 +887,7 @@ class Value(ValueDetails):
 
             return self._serialized_data
 
+        assert self._data_registry is not None
         self._serialized_data = self._data_registry.retrieve_persisted_value_details(
             self.value_id
         )
@@ -914,6 +916,7 @@ class Value(ValueDetails):
         elif self.value_status not in [ValueStatus.SET, ValueStatus.DEFAULT]:
             raise Exception(f"Invalid internal state of value '{self.value_id}'.")
 
+        assert self._data_registry is not None
         retrieved = self._data_registry.retrieve_value_data(value=self)
 
         if retrieved is None or isinstance(retrieved, SpecialValue):
@@ -958,6 +961,7 @@ class Value(ValueDetails):
 
         from kiara.models.values.lineage import ValueLineage
 
+        assert self._data_registry is not None
         self._lineage = ValueLineage(kiara=self._data_registry._kiara, value=self)
         return self._lineage
 
@@ -968,6 +972,7 @@ class Value(ValueDetails):
         if self._cached_properties is not None:
             return self._cached_properties
 
+        assert self._data_registry is not None
         self._cached_properties = self._data_registry.load_values(self.property_links)
         return self._cached_properties
 
@@ -982,6 +987,7 @@ class Value(ValueDetails):
                 f"Value '{self.value_id}' has no property with key '{property_key}."
             )
 
+        assert self._data_registry is not None
         return self._data_registry.get_value(self.property_links[property_key])
 
     def get_property_data(self, property_key: str) -> Any:
@@ -1090,7 +1096,9 @@ class Value(ValueDetails):
         if show_lineage:
             table["lineage"] = self.lineage
 
+        assert self._data_registry is not None
         if show_serialized:
+
             serialized = self._data_registry.retrieve_persisted_value_details(
                 self.value_id
             )
@@ -1280,6 +1288,7 @@ class Value(ValueDetails):
                 dr = destinies.create_renderable(show_header=False)
                 table.add_row("destinies", dr)
 
+        assert self._data_registry is not None
         if show_destiny_backlinks:
             if not self.destiny_backlinks:
                 table.add_row("destiny backlinks", "{}")
@@ -1498,6 +1507,7 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
 
             value = self.get_value_obj(field_name=field_name)
             if render_value_data:
+                assert value._data_registry is not None
                 rendered = value._data_registry.pretty_print_data(
                     value_id=value.value_id, target_type="terminal_renderable", **config
                 )
@@ -1579,8 +1589,8 @@ class ValueMapWritable(ValueMap):  # type: ignore
     )
 
     _values_uncommitted: Dict[str, Any] = PrivateAttr(default_factory=dict)
-    _kiara: "Kiara" = PrivateAttr(default=None)
-    _data_registry: "DataRegistry" = PrivateAttr(default=None)
+    _kiara: Union["Kiara", None] = PrivateAttr(default=None)
+    _data_registry: Union["DataRegistry", None] = PrivateAttr(default=None)
     _auto_commit: bool = PrivateAttr(default=True)
 
     def get_value_obj(self, field_name: str) -> Value:
@@ -1590,6 +1600,9 @@ class ValueMapWritable(ValueMap):  # type: ignore
         This class only creates the actual value object the first time it is requested, because there is a potential
         cost to assembling it, and it might not be needed ever.
         """
+
+        assert self._data_registry is not None
+
         if field_name not in self.values_schema.keys():
             raise Exception(
                 f"Can't set data for field '{field_name}': field not valid, valid field names: {', '.join(self.field_names)}."

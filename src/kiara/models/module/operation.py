@@ -118,7 +118,7 @@ class BaseOperationDetails(OperationDetails):
     module_outputs_schema: Mapping[str, ValueSchema] = Field(
         description="The output schemas of the module."
     )
-    _op_schema: OperationSchema = PrivateAttr(default=None)
+    _op_schema: Union[OperationSchema, None] = PrivateAttr(default=None)
 
     def get_operation_schema(self) -> OperationSchema:
 

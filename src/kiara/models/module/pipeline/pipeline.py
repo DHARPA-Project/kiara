@@ -764,8 +764,8 @@ class PipelineInfo(ItemInfo):
     )
     pipeline_state: PipelineState = Field(description="The current input details.")
     # stages: Mapping[int, PipelineStage] = Field(description="Details about this pipelines stages/execution order.")
-    _kiara: "Kiara" = PrivateAttr(default=None)
-    _structure: "PipelineStructure" = PrivateAttr(default=None)
+    _kiara: Union["Kiara", None] = PrivateAttr(default=None)
+    _structure: Union["PipelineStructure", None] = PrivateAttr(default=None)
 
     @property
     def pipeline_structure(self):
@@ -787,6 +787,7 @@ class PipelineInfo(ItemInfo):
         include_steps = config.get("include_steps", True)
 
         if include_pipeline_inputs:
+            assert self._kiara is not None
             input_values = self._kiara.data_registry.create_valuemap(
                 data=self.pipeline_state.pipeline_inputs,
                 schema=self.pipeline_structure.pipeline_inputs_schema,
@@ -828,6 +829,7 @@ class PipelineInfo(ItemInfo):
             table.add_row("steps", steps)
 
         if include_pipeline_outputs:
+            assert self._kiara is not None
             output_values = self._kiara.data_registry.load_values(
                 values=self.pipeline_state.pipeline_outputs
             )

@@ -36,7 +36,7 @@ class ApiRendererConfig(KiaraRendererConfig):
 
     filter: Union[str, Iterable[str]] = Field(
         description="One or a list of filter tokens -- if provided -- all of which must match for the api endpoing to be in the render result.",
-        default_factory=list,
+        default_factory=list,  # type: ignore
     )
     # target_type: str = Field(description="The target type to render the api as.")
 

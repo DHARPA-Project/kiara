@@ -241,7 +241,7 @@ def find_pipeline_data_in_paths(
     """
     all_pipelines = []
 
-    for _path in pipeline_paths.keys():
+    for _path, _md in pipeline_paths.items():
         path = Path(_path)
         if not path.exists():
             logger.warning(
@@ -272,7 +272,6 @@ def find_pipeline_data_in_paths(
                         data = get_pipeline_details_from_path(path=full_path)
                         data = check_doc_sidecar(full_path, data)
                         existing_metadata = data.pop("metadata", {})
-                        _md = pipeline_paths[_path]
                         if _md is None:
                             md = {}
                         else:
@@ -292,7 +291,6 @@ def find_pipeline_data_in_paths(
             data = get_pipeline_details_from_path(path=path)
             data = check_doc_sidecar(path, data)
             existing_metadata = data.pop("metadata", {})
-            _md = pipeline_paths[_path]
             if _md is None:
                 md = {}
             else:

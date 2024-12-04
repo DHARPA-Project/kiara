@@ -57,7 +57,7 @@ class WorkflowState(KiaraModel):
     )
 
     _pipeline: Union[Pipeline, None] = PrivateAttr(default=None)
-    _kiara: "Kiara" = PrivateAttr(default=None)
+    _kiara: Union["Kiara", None] = PrivateAttr(default=None)
 
     def _retrieve_data_to_hash(self) -> IPLDKind:
         return {

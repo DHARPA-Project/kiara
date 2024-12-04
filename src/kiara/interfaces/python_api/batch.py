@@ -98,7 +98,7 @@ class BatchOperation(BaseModel):
         validate_default=True,
     )
 
-    _kiara: Kiara = PrivateAttr(default=None)
+    _kiara: Union[Kiara, None] = PrivateAttr(default=None)
 
     @model_validator(mode="before")
     @classmethod
@@ -159,6 +159,7 @@ class BatchOperation(BaseModel):
         save: Union[None, bool, str, Mapping[str, Any]] = None,
     ) -> ValueMap:
 
+        assert self._kiara is not None
         pipeline = Pipeline(
             structure=self.pipeline_config.structure,
             kiara=self._kiara,

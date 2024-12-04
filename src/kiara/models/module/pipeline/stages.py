@@ -79,8 +79,7 @@ class PipelineStage(KiaraModel):
             for node_layers in layers.values():
                 for idx, node_layer in enumerate(node_layers):
                     if step_id in node_layer:
-                        if idx > max_idx:
-                            max_idx = idx
+                        max_idx = max(max_idx, idx)
                         break
             stages.setdefault(max_idx, []).append(step_id)
 

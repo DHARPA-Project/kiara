@@ -34,29 +34,29 @@ repos:
     # Run the formatter.
 #    - id: ruff-format
 
-#- repo: https://github.com/pre-commit/pre-commit-hooks
-#  rev: v5.0.0  # Use the ref you want to point at
-#  hooks:
-#  - id: trailing-whitespace
-#    exclude: '(setup.cfg|src/kiara/utils/cli/__init__.py)'
-##  - id: check-added-large-files
-#  - id: check-ast
-#  - id: check-json
-#  - id: check-merge-conflict
-#  - id: check-xml
-#  - id: check-yaml
-#    exclude: '(tests/\*|ci/conda/kiara/meta.yaml)'
-#  - id: debug-statements
-#  - id: end-of-file-fixer
-#    exclude: '(.*.json|.*.j2)'
-#  - id: requirements-txt-fixer
-#  - id: fix-encoding-pragma
-#  - id: mixed-line-ending
-#    args: ['--fix=no']
-#  - id: no-commit-to-branch
-#    args: [--branch, main]
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0  # Use the ref you want to point at
+  hooks:
+  - id: trailing-whitespace
+    exclude: '(setup.cfg|src/kiara/utils/cli/__init__.py)'
+#  - id: check-added-large-files
+  - id: check-ast
+  - id: check-json
+  - id: check-merge-conflict
+  - id: check-xml
+  - id: check-yaml
+    exclude: '(tests/\*|ci/conda/kiara/meta.yaml)'
+  - id: debug-statements
+  - id: end-of-file-fixer
+    exclude: '(.*.json|.*.j2)'
+  - id: requirements-txt-fixer
+  - id: fix-encoding-pragma
+  - id: mixed-line-ending
+    args: ['--fix=no']
+  - id: no-commit-to-branch
+    args: [--branch, main]
 
-#- repo: https://github.com/Kludex/no-optional
-#  rev: 0.4.0
-#  hooks:
-#    - id: no_optional
+- repo: https://github.com/Kludex/no-optional
+  rev: 0.4.0
+  hooks:
+    - id: no_optional

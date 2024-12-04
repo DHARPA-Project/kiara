@@ -3,7 +3,7 @@ import uuid
 from pathlib import Path
 
 # BEGIN AUTO-GENERATED-IMPORTS
-from typing import TYPE_CHECKING, Any, ClassVar, Iterable, List, Mapping, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Iterable, List, Mapping, Union
 from uuid import UUID
 
 if TYPE_CHECKING:
@@ -694,6 +694,67 @@ class KiaraAPI(object):
 
         result: "ValueInfo" = self._api.retrieve_value_info(value=value)
         return result
+
+    def retrieve_augmented_value_lineage(self, value: Union[str, "UUID", "Value", "Path"]) -> Dict[int, Dict[str, Any]]:
+        """Retrieve lineage data for the specified value, augmented with additional metadata.
+
+        The format of the returned data is a dictionary with the following keys:
+
+        - `id`: The ID of the node.
+        - `desc`: The description of the node.
+        - `parentIds`: A list of IDs of the parent nodes.
+        - `info`: Additional information about the node, including a preview of the value if it is set.
+
+        Args:
+            value: The value to retrieve the lineage data for.
+
+        Returns:
+            A dictionary containing the augmented lineage data.
+        """
+
+        _value = self.get_value(value)
+
+        graph = _value.lineage.module_graph
+
+        nodes = graph.nodes.data()
+        augmented_nodes = {}
+
+
+        def get_info(node):
+                # all this is terribly inefficient
+
+                if node[1]["node_type"] == "operation":
+
+                    result = self.retrieve_module_type_info(node[1]["module_type"]).model_dump()
+
+                elif node[1]["node_type"] == "value":
+
+                    value_id = node[0][6:]
+
+                    v = self.get_value(value_id)
+                    if v.is_set:
+                        render_result = self._api.render_value(value=v, target_format="string").rendered
+
+                    else:
+                        render_result = "None"
+
+                    result = {
+                        "preview": render_result
+                    }
+
+                return result
+
+        for idx, node in enumerate(nodes):
+                node_dict = {
+                    "id": node[0],
+                    "desc": node[1],
+                    "parentIds": list(graph.predecessors(node[0])),
+                    "info": get_info(node)
+                }
+                augmented_nodes[idx] = node_dict
+
+        return augmented_nodes
+
 
     def retrieve_values_info(self, **matcher_params: Any) -> "ValuesInfo":
         """Retrieve information about the matching values.

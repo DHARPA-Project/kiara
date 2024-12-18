@@ -741,6 +741,8 @@ class KiaraAPI(object):
                     result = {
                         "preview": render_result
                     }
+                else:
+                    raise Exception(f"Unknown node type: {node[1]}")
 
                 return result
 

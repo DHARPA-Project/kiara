@@ -1,0 +1,37 @@
+context:
+  version: "1.2.2post1"
+
+package:
+  name: "build"
+  version: ${{ version }}
+
+source:
+  - url:
+      - https://files.pythonhosted.org/packages/7d/46/aeab111f8e06793e4f0e421fcad593d547fb8313b50990f31681ee2fb1ad/build-1.2.2.post1.tar.gz
+
+    sha256: b36993e92ca9375a219c99e606a122ff365a760a2d4bba0caa09bd5278b608b7
+
+build:
+  # Thanks to `noarch: python` this package works on all platforms
+  noarch: python
+  script:
+    - python -m pip install . -vv
+
+requirements:
+  host:
+    - pip
+    - python 3.10
+    - flit-core >= 3.8
+  run:
+    - packaging >= 19.1
+    - pyproject_hooks
+    - tomli >= 1.1.0
+
+about:
+  homepage: https://github.com/pypa/build
+  license: MIT
+  license_file: LICENSE
+  summary: A simple, correct Python build frontend
+  description: |
+    A simple, correct Python build frontend.
+  repository: https://github.com/pypa/build

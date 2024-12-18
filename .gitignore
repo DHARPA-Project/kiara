@@ -79,3 +79,4 @@ temp/
 # pixi environments
 .pixi
 pixi.lock
+output

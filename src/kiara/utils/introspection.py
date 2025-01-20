@@ -27,7 +27,7 @@ def extract_cls(arg: Any, imports: Dict[str, typing.Set[str]]) -> str:
 
         imports.setdefault("typing", set()).add("Union")
         return f"Union[{', '.join(all_args)}]"
-    elif isinstance(arg, typing._LiteralSpecialForm):  # type: ignore
+    elif hasattr(typing, "_LiteralSpecialForm") and isinstance(arg, typing._LiteralSpecialForm):  # type: ignore
         return "Literal"
 
     elif isinstance(arg, typing._GenericAlias):  # type: ignore

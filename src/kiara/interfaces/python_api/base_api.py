@@ -44,6 +44,8 @@ from kiara.exceptions import (
 from kiara.interfaces.python_api.models.info import (
     DataTypeClassesInfo,
     DataTypeClassInfo,
+    JobInfo,
+    JobsInfo,
     KiaraPluginInfo,
     KiaraPluginInfos,
     ModuleTypeInfo,
@@ -3215,6 +3217,28 @@ class BaseAPI(object):
 
         job_record = self.context.job_registry.get_job_record(job_id=job_id)
         return job_record
+
+    @tag("kiara_api")
+    def retrieve_job_info(self, job_id: Union[str, uuid.UUID]) -> Union[JobInfo, None]:
+        """Retrieve the detailed job record for the specified job id.
+
+        If no job can be found, 'None' is returned.
+        """
+
+        job_record = self.get_job_record(job_id=job_id)
+        if job_record is None:
+            return None
+
+        job_info = JobInfo.create_from_instance(kiara=self.context, instance=job_record)
+        return job_info
+
+    @tag("kiara_api")
+    def retrieve_jobs_info(self, **matcher_params: Any) -> JobsInfo:
+
+        job_records = self.list_job_records(**matcher_params)
+
+        infos: JobsInfo = JobsInfo.create_from_instances(kiara=self.context, instances={str(j_id): j for j_id, j in job_records.items()})  # type: ignore
+        return infos
 
     def render_value(
         self,

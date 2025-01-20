@@ -2158,7 +2158,7 @@ class JobInfo(ItemInfo):
         return JobRecord
 
     @classmethod
-    def create_from_instance(cls, kiara: "Kiara", instance: JobRecord, **kwargs):
+    def create_from_instance(cls, kiara: "Kiara", instance: JobRecord, **kwargs) -> "JobInfo":
 
         type_name = str(instance.job_id)
 
@@ -2225,7 +2225,7 @@ class JobInfo(ItemInfo):
         return table
 
 
-class JobInfos(InfoItemGroup[JobInfo]):
+class JobsInfo(InfoItemGroup[JobInfo]):
     @classmethod
     def base_info_class(cls) -> Type[JobInfo]:
         return JobInfo

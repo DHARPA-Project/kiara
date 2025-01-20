@@ -380,7 +380,8 @@ class MetadataRegistry(object):
 
     def retrieve_job_metadata_items(self, job_id: uuid.UUID):
 
-        pass
+        raise NotImplementedError("Job metadata items retrieval is not yet implemented")
+
 
     def retrieve_job_metadata_item(
         self, job_id: uuid.UUID, key: str, store: Union[str, uuid.UUID, None] = None

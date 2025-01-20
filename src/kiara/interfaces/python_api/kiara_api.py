@@ -6,10 +6,14 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, ClassVar, Dict, Iterable, List, Mapping, Union
 from uuid import UUID
 
+from rich import box
+
 if TYPE_CHECKING:
     from kiara.interfaces.python_api.models.info import (
         DataTypeClassesInfo,
         DataTypeClassInfo,
+        JobInfo,
+        JobsInfo,
         KiaraPluginInfo,
         KiaraPluginInfos,
         ModuleTypeInfo,
@@ -237,7 +241,9 @@ class KiaraAPI(object):
             )
         return metadata.comment
 
-    def retrieve_augmented_value_lineage(self, value: Union[str, "UUID", "Value", "Path"]) -> Dict[int, Dict[str, Any]]:
+    def retrieve_augmented_value_lineage(
+        self, value: Union[str, "UUID", "Value", "Path"]
+    ) -> Dict[int, Dict[str, Any]]:
         """Retrieve lineage data for the specified value, augmented with additional metadata.
 
         The format of the returned data is a dictionary with the following keys:
@@ -261,43 +267,207 @@ class KiaraAPI(object):
         nodes = graph.nodes.data()
         augmented_nodes = {}
 
-
         def get_info(node):
-                # all this is terribly inefficient
+            # all this is terribly inefficient
 
-                if node[1]["node_type"] == "operation":
+            if node[1]["node_type"] == "operation":
 
-                    result = self.retrieve_module_type_info(node[1]["module_type"]).model_dump()
+                result = self.retrieve_module_type_info(
+                    node[1]["module_type"]
+                ).model_dump()
 
-                elif node[1]["node_type"] == "value":
+            elif node[1]["node_type"] == "value":
 
-                    value_id = node[0][6:]
+                value_id = node[0][6:]
 
-                    v = self.get_value(value_id)
-                    if v.is_set:
-                        render_result = self._api.render_value(value=v, target_format="string").rendered
+                v = self.get_value(value_id)
+                if v.is_set:
+                    render_result = self._api.render_value(
+                        value=v, target_format="string"
+                    ).rendered
 
-                    else:
-                        render_result = "None"
-
-                    result = {
-                        "preview": render_result
-                    }
                 else:
-                    raise Exception(f"Unknown node type: {node[1]}")
+                    render_result = "None"
 
-                return result
+                result = {"preview": render_result}
+            else:
+                raise Exception(f"Unknown node type: {node[1]}")
+
+            return result
 
         for idx, node in enumerate(nodes):
-                node_dict = {
-                    "id": node[0],
-                    "desc": node[1],
-                    "parentIds": list(graph.predecessors(node[0])),
-                    "info": get_info(node)
-                }
-                augmented_nodes[idx] = node_dict
+            node_dict = {
+                "id": node[0],
+                "desc": node[1],
+                "parentIds": list(graph.predecessors(node[0])),
+                "info": get_info(node),
+            }
+            augmented_nodes[idx] = node_dict
 
         return augmented_nodes
+
+    def print_all_jobs_info_data(self, aliases: bool = True, max_char: int = 0, show_inputs: bool=False, show_outputs: bool=False) -> None:
+        """Prints a table with all jobs info data.
+
+        If max_char > 0, the value previews will be truncated to max_char characters, unless aliases is True, in which case the aliases of a value will be shown (if available).
+
+        Arguments:
+            max_char: the maximum number of characters to show for value previews
+            aliases: whether to show aliases for values (if max_char is exceeded by preview)
+            show_inputs: whether to show the inputs of the jobs
+            show_outputs: whether to show the outputs of the jobs
+        """
+
+        from rich.table import Table
+
+        from kiara.utils.cli import terminal_print
+
+        data = self.get_all_jobs_info_data(aliases=aliases, max_char=max_char, add_inputs_preview=show_inputs, add_outputs_preview=show_outputs)
+
+        table = Table(show_lines=True, box=box.SIMPLE)
+        table.add_column("Module name")
+        table.add_column("Comment")
+        table.add_column("Time submitted")
+        table.add_column("Runtime")
+        if show_inputs:
+            table.add_column("Inputs")
+        if show_outputs:
+            table.add_column("Outputs")
+
+        for row_data in data:
+
+            row = [
+                row_data["module_name"],
+                row_data["comment"],
+                str(row_data["time_submitted"]),
+                str(row_data["runtime"]),
+            ]
+            if show_inputs:
+                inputs = row_data["inputs"]
+                inputs_table = Table(
+                    show_lines=False, box=box.SIMPLE, show_header=False
+                )
+                inputs_table.add_column("Field", style="b")
+                inputs_table.add_column("Value")
+                for input_name, input_value in inputs.items():
+                    inputs_table.add_row(input_name, str(input_value))
+
+                row.append(inputs_table)
+
+            if show_outputs:
+                outputs = row_data["outputs"]
+                outputs_table = Table(
+                    show_lines=False, box=box.SIMPLE, show_header=False
+                )
+                outputs_table.add_column("Field", style="b")
+                outputs_table.add_column("Value")
+                for output_name, output_value in outputs.items():
+                    outputs_table.add_row(output_name, str(output_value))
+                row.append(outputs_table)
+
+            table.add_row(*row)
+
+        terminal_print(table)
+
+    def get_all_jobs_info_data(self, aliases: bool = True, max_char: int = 0, add_inputs_preview: bool=False, add_outputs_preview: bool=False) -> List[Dict[str, Any]]:
+        """Retrieve all job info as a list of dicts.
+
+        If max_char > 0, the value previews will be truncated to max_char characters, unless aliases is True, in which case the aliases of a value will be shown (if available).
+
+        The result list items are dicts with the following keys:
+
+        - job_id: the job id
+        - module_name: the module name
+        - module_config: the module config that was used (if applicable, otherwise this key will not be present)
+        - time_submitted: the time the job was submitted
+        - runtime: the runtime of the job
+        - comment: the comment for the job
+        - inputs: a dict of input field names and values (when 'add_inputs_preview' is set)
+        - outputs: a dict of output field names and values (when 'add_outputs_preview' is set)
+
+        Arguments:
+            max_char: the maximum number of characters to show for value previews
+            aliases: whether to show aliases for values (if max_char is exceeded by preview)
+            add_inputs_preview: whether to add preview data for input fields
+            add_outputs_preview: whether to add preview data for output fields
+        """
+
+        job_infos = self.retrieve_jobs_info(allow_internal=False)
+
+        def get_value_str(value_info: "ValueInfo") -> str:
+
+            if not value_info._value:
+                value_obj = self.get_value(value_info.value_id)
+            else:
+                value_obj = value_info._value
+
+            if value_obj.is_set:
+                rendered: str = self._api.render_value(
+                    value=value_obj, target_format="string"
+                ).rendered  # type: ignore
+
+                if max_char > 0 and len(rendered) <= max_char:
+                    return rendered
+
+                if aliases is True:
+                    value_aliases = value_info.aliases
+                    if value_aliases:
+                        value_aliases_str = ", ".join(value_aliases)
+                        return value_aliases_str
+
+                # means no aliases
+                if max_char > 0:
+                    return rendered[0:max_char] + "..."
+                else:
+                    return rendered
+
+            else:
+                return value_obj.value_status.value
+
+        result = []
+        for job_id, job_info in job_infos.item_infos.items():
+
+            module_name = job_info.job_record.module_type
+            module_config = job_info.job_record.module_config
+            comment = self.get_job_comment(job_info.job_record.job_id)
+            time_submitted = job_info.job_record.job_submitted
+            runtime_details = job_info.job_record.runtime_details
+            if not runtime_details:
+                runtime = "n/a"
+            else:
+                runtime = str(runtime_details.runtime)
+
+            inputs = {}
+            if add_inputs_preview:
+                for field_name, value_info in job_info.inputs.items():
+                    value_str = get_value_str(value_info)
+                    inputs[field_name] = value_str
+            outputs = {}
+            if add_outputs_preview:
+                for field_name, value_info in job_info.outputs.items():
+                    value_str = get_value_str(value_info)
+                    outputs[field_name] = value_str
+
+            result_item = {
+                "job_id": str(job_id),
+                "module_name": module_name,
+                "time_submitted": time_submitted,
+                "comment": comment,
+                "runtime": runtime,
+            }
+
+            if add_inputs_preview:
+                result_item["inputs"] = inputs
+            if add_outputs_preview:
+                result_item["outputs"] = outputs
+
+
+            if module_config:
+                result_item["module_config"] = module_config
+
+            result.append(result_item)
+
+        return sorted(result, key=lambda x: x["time_submitted"])
 
     # BEGIN IMPORTED-ENDPOINTS
     def list_available_plugin_names(
@@ -757,9 +927,6 @@ class KiaraAPI(object):
         result: "ValueInfo" = self._api.retrieve_value_info(value=value)
         return result
 
-
-
-
     def retrieve_values_info(self, **matcher_params: Any) -> "ValuesInfo":
         """Retrieve information about the matching values.
 
@@ -995,6 +1162,8 @@ class KiaraAPI(object):
         target_archive: Union[str, "Path"],
         values: Union[
             str,
+            "Value",
+            "UUID",
             Mapping[str, Union[str, "UUID", "Value"]],
             Iterable[Union[str, "UUID", "Value"]],
         ],
@@ -1231,6 +1400,21 @@ class KiaraAPI(object):
         """
 
         result: Union["JobRecord", None] = self._api.get_job_record(job_id=job_id)
+        return result
+
+    def retrieve_job_info(self, job_id: Union[str, "UUID"]) -> Union["JobInfo", None]:
+        """Retrieve the detailed job record for the specified job id.
+
+        If no job can be found, 'None' is returned.
+        """
+
+        result: Union["JobInfo", None] = self._api.retrieve_job_info(job_id=job_id)
+        return result
+
+    def retrieve_jobs_info(self, **matcher_params: Any) -> "JobsInfo":
+        """ """
+
+        result: "JobsInfo" = self._api.retrieve_jobs_info(**matcher_params)
         return result
 
     # END IMPORTED-ENDPOINTS

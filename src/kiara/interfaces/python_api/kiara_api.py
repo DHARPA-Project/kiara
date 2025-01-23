@@ -306,7 +306,7 @@ class KiaraAPI(object):
 
         return augmented_nodes
 
-    def print_all_jobs_info_data(self, aliases: bool = True, max_char: int = 0, show_inputs: bool=False, show_outputs: bool=False) -> None:
+    def print_all_jobs_info_data(self, aliases: bool = True, max_char: int = 0, show_inputs: bool=True, show_outputs: bool=True) -> None:
         """Prints a table with all jobs info data.
 
         If max_char > 0, the value previews will be truncated to max_char characters, unless aliases is True, in which case the aliases of a value will be shown (if available).
@@ -369,7 +369,7 @@ class KiaraAPI(object):
 
         terminal_print(table)
 
-    def get_all_jobs_info_data(self, aliases: bool = True, max_char: int = 0, add_inputs_preview: bool=False, add_outputs_preview: bool=False) -> List[Dict[str, Any]]:
+    def get_all_jobs_info_data(self, aliases: bool = True, max_char: int = 0, add_inputs_preview: bool=True, add_outputs_preview: bool=True) -> List[Dict[str, Any]]:
         """Retrieve all job info as a list of dicts.
 
         If max_char > 0, the value previews will be truncated to max_char characters, unless aliases is True, in which case the aliases of a value will be shown (if available).

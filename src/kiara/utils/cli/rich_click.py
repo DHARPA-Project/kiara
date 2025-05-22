@@ -266,7 +266,7 @@ def rich_format_operation_help(
                 metavar_str = param.make_metavar(ctx=ctx)
             except Exception:
                 # for Python 3.9
-                metavar_str = param.make_metavar()
+                metavar_str = param.make_metavar()  # type: ignore
 
             # Do it ourselves if this is a positional argument
             if type(param) is click.core.Argument and metavar_str == param.name.upper():  # type: ignore

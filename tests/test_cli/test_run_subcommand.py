@@ -24,7 +24,7 @@ def test_run_without_module():
     runner = CliRunner()
     result = runner.invoke(cli, "run")
     assert result.exit_code == 2
-    assert "Missing argument" in result.stdout
+    assert "Missing argument" in result.stderr
 
 
 def test_run_without_args():

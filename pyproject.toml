@@ -74,7 +74,7 @@ dependencies = [
     "lz4>=4.3.0",
     "patool>=1.12",
     "mistune>=3.0.0",
-    "mmhash3>=3.0.1",
+    "mmh3>=3.5.1",
     "multiformats>=0.3.1,<0.4.0",
     "multiformats-config>=0.3.1,<0.4.0",
     "networkx>=3.0,<4.0",
@@ -234,7 +234,7 @@ dev_documentation = [
 dev_testing = [
     "pytest-cov>=4.1.0",
     "jsonschema>=4.0.0",
-    "mypy<1.10.1",
+    "mypy>=1.13.0",
     "pandas-stubs",
     "pytest>=6.2.2",
     "pytest-cov>=2.11.1",

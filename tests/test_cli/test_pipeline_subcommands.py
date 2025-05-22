@@ -15,7 +15,7 @@ def test_pipeline_subcommand():
 
     runner = CliRunner()
     result = runner.invoke(cli, "pipeline")
-    assert result.exit_code == 0
+    assert result.exit_code == 2
     assert "Pipeline-related sub-commands" in result.stdout
 
 

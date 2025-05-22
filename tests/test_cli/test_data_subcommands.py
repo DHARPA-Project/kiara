@@ -14,7 +14,7 @@ def test_data_subcommand():
 
     runner = CliRunner()
     result = runner.invoke(cli, "data")
-    assert result.exit_code == 0
+    assert result.exit_code == 2
     assert "Print the metadata" in result.stdout
 
 

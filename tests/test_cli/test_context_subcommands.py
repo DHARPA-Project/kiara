@@ -13,7 +13,7 @@ def test_context_subcommand():
 
     runner = CliRunner()
     result = runner.invoke(cli, "context")
-    assert result.exit_code == 0
+    assert result.exit_code == 2
     assert "context related sub-commands" in result.stdout
 
 

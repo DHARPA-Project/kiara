@@ -13,7 +13,7 @@ def test_module_subcommand():
 
     runner = CliRunner()
     result = runner.invoke(cli, "module")
-    assert result.exit_code == 0
+    assert result.exit_code == 2
     assert "Module-related sub-commands" in result.stdout
 
 

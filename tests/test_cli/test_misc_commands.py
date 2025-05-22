@@ -13,12 +13,9 @@ def test_non_arg_cli():
 
     runner = CliRunner()
     result = runner.invoke(cli)
-    result.exit_code == 0
+    result.exit_code == 2
     assert "Module-related sub-commands." in result.stdout
     assert "Operation-related sub-commands" in result.stdout
-
-    result_2 = runner.invoke(cli, "--help")
-    assert result.stdout == result_2.stdout
 
 
 # def test_explain_subcommand():

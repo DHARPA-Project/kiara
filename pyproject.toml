@@ -491,6 +491,7 @@ module = [
     "lz4.*",
     "mmh3",
     "pickle5",
+    "pip.*",
     "pp",
     "mkdocstrings.*",
     "mkdocs.*",

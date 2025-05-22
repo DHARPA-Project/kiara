@@ -213,10 +213,7 @@ class Pipeline(object):
 
         self._all_values = values
 
-        initial_inputs = {
-            k: SpecialValue.NOT_SET
-            for k in self._structure.pipeline_inputs_schema.keys()
-        }
+        initial_inputs = dict.fromkeys(self._structure.pipeline_inputs, SpecialValue.NOT_SET)
         self.set_pipeline_inputs(inputs=initial_inputs)
 
     def __eq__(self, other):
@@ -506,7 +503,8 @@ class Pipeline(object):
         }
 
         step_outputs = self._structure.get_step_output_refs(step_id=step_id)
-        null_outputs = {k: NOT_SET_VALUE_ID for k in step_outputs.keys()}
+        # null_outputs = {k: NOT_SET_VALUE_ID for k in step_outputs.keys()}
+        null_outputs = dict.fromkeys(step_outputs, NOT_SET_VALUE_ID)
 
         changed_outputs = self.set_step_outputs(
             step_id=step_id, outputs=null_outputs, notify_listeners=False

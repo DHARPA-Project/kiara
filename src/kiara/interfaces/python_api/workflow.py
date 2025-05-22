@@ -473,8 +473,9 @@ class Workflow(object):
     def clear_current_inputs_for_step(self, step_id):
 
         fields = self.get_current_inputs_schema_for_step(step_id)
-        for field in fields.keys():
-            self.set_inputs(**{k: None for k in fields.keys()})
+        vals = dict.fromkeys(fields, None)
+        self.set_inputs(**vals)
+        # self.set_inputs(**{k: None for k in fields.keys()})
 
     @property
     def current_inputs_schema(self) -> Mapping[str, ValueSchema]:

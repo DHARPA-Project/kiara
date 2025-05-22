@@ -162,4 +162,4 @@ def get_version() -> str:
         if __version__ is None:
             __version__ = "unknown"
 
-    return __version__
+    return __version__  # type: ignore

@@ -262,7 +262,11 @@ def rich_format_operation_help(
 
             # Column for a metavar, if we have one
             metavar = Text(style=STYLE_METAVAR, overflow="fold")
-            metavar_str = param.make_metavar(ctx=ctx)
+            try:
+                metavar_str = param.make_metavar(ctx=ctx)
+            except Exception:
+                # for Python 3.9
+                metavar_str = param.make_metavar()
 
             # Do it ourselves if this is a positional argument
             if type(param) is click.core.Argument and metavar_str == param.name.upper():  # type: ignore

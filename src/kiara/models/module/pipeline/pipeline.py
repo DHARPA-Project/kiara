@@ -213,7 +213,7 @@ class Pipeline(object):
 
         self._all_values = values
 
-        initial_inputs = dict.fromkeys(self._structure.pipeline_inputs, SpecialValue.NOT_SET)
+        initial_inputs = dict.fromkeys(self._structure.pipeline_inputs_schema, SpecialValue.NOT_SET)
         self.set_pipeline_inputs(inputs=initial_inputs)
 
     def __eq__(self, other):

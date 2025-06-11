@@ -30,7 +30,7 @@ if typing.TYPE_CHECKING:
 @click.argument("inputs", nargs=-1, required=False)
 @click.option(
     "--module-config",
-    "-c",
+    "-mc",
     required=False,
     help="(Optional) module configuration, only valid when run target is a module name.",
     multiple=True,

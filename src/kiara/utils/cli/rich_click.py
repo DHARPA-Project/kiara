@@ -307,7 +307,7 @@ def rich_format_operation_help(
                 highlighter(highlighter(",".join(opt_long_strs))),
                 highlighter(highlighter(",".join(opt_short_strs))),
                 metavar_highlighter(metavar),
-                _get_option_help(param, ctx),
+                _get_option_help(param, ctx),  # type: ignore
             ]
 
             # Remove metavar if specified in config

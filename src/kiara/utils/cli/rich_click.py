@@ -52,11 +52,9 @@ from rich_click.rich_click import (
     STYLE_OPTIONS_TABLE_SHOW_LINES,
     STYLE_REQUIRED_SHORT,
     USE_CLICK_SHORT_HELP,
-    _get_option_help,
-    _make_command_help,
-    _make_rich_rext,
     highlighter,
 )
+from rich_click.rich_help_rendering import _make_rich_rext, _make_command_help
 
 from kiara.api import ValueMap
 from kiara.interfaces.python_api.base_api import BaseAPI

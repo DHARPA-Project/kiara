@@ -8,7 +8,7 @@ from kiara.models import KiaraModel
 
 class KiaraMetadata(KiaraModel):
     def _retrieve_data_to_hash(self) -> Any:
-        return {"metadata": self.model_dump(), "schema": self.schema_json()}
+        return {"metadata": self.model_dump(), "schema": self.__class__.model_json_schema()}
 
 
 class CommentMetadata(KiaraMetadata):

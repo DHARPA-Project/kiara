@@ -264,7 +264,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")
         table.add_column("Value")
-        for k in self.model_fields.keys():
+        for k in self.__class__.model_fields.keys():
             if include is not None and k not in include:
                 continue
             attr = getattr(self, k)

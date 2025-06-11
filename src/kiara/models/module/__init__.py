@@ -70,7 +70,7 @@ class KiaraModuleConfig(KiaraModel):
 
     def get(self, key: str) -> Any:
         """Get the value for the specified configuation key."""
-        if key not in self.model_fields:
+        if key not in self.__class__.model_fields:
             raise Exception(
                 f"No config value '{key}' in module config class '{self.__class__.__name__}'."
             )

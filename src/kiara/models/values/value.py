@@ -1057,7 +1057,7 @@ class Value(ValueDetails):
         if "kiara_id" not in ignore_fields:
             table["kiara_id"] = self.kiara_id
 
-        for k in sorted(self.model_fields.keys()):
+        for k in sorted(self.__class__.model_fields.keys()):
 
             if (
                 k

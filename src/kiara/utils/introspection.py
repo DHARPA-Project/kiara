@@ -77,8 +77,8 @@ def create_default_string(default: Any) -> str:
         return str(default)
     elif isinstance(default, str):
         if "\\" in default:
-            default = f'r"{default}"'
-            return default
+            _default = f'r"{default}"'
+            return _default
         else:
             return f'"{default}"'
     else:

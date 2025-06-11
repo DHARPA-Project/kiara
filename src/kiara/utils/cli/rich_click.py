@@ -54,7 +54,7 @@ from rich_click.rich_click import (
     USE_CLICK_SHORT_HELP,
     highlighter,
 )
-from rich_click.rich_help_rendering import _make_rich_rext, _make_command_help
+from rich_click.rich_help_rendering import _make_rich_rext, _make_command_help, _get_option_help
 
 from kiara.api import ValueMap
 from kiara.interfaces.python_api.base_api import BaseAPI
@@ -82,7 +82,7 @@ def rich_format_filter_operation_help(
     # Header text if we have it
     if HEADER_TEXT:
         renderables.append(
-            Padding(_make_rich_rext(HEADER_TEXT, STYLE_HEADER_TEXT), (1, 1, 0, 1))
+            Padding(_make_rich_rext(HEADER_TEXT, STYLE_HEADER_TEXT), (1, 1, 0, 1))  # type: ignore
         )
 
     # Print usage
@@ -130,7 +130,7 @@ def rich_format_filter_operation_help(
     # Footer text if we have it
     if FOOTER_TEXT:
         renderables.append(
-            Padding(_make_rich_rext(FOOTER_TEXT, STYLE_FOOTER_TEXT), (1, 1, 0, 1))
+            Padding(_make_rich_rext(FOOTER_TEXT, STYLE_FOOTER_TEXT), (1, 1, 0, 1))  # type: ignore
         )
 
     terminal_print(Group(*renderables))
@@ -163,7 +163,7 @@ def rich_format_operation_help(
     # Header text if we have it
     if HEADER_TEXT:
         renderables.append(
-            Padding(_make_rich_rext(HEADER_TEXT, STYLE_HEADER_TEXT), (1, 1, 0, 1))
+            Padding(_make_rich_rext(HEADER_TEXT, STYLE_HEADER_TEXT), (1, 1, 0, 1))  # type: ignore
         )
 
     # Print usage
@@ -307,7 +307,7 @@ def rich_format_operation_help(
                 highlighter(highlighter(",".join(opt_long_strs))),
                 highlighter(highlighter(",".join(opt_short_strs))),
                 metavar_highlighter(metavar),
-                _get_option_help(param, ctx),  # type: ignore
+                _get_option_help(param, ctx),
             ]
 
             # Remove metavar if specified in config
@@ -405,7 +405,7 @@ def rich_format_operation_help(
                 else:
                     # Use short_help function argument if used, or the full help
                     helptext = cmd.short_help or cmd.help or ""
-                commands_table.add_row(command, _make_command_help(helptext))
+                commands_table.add_row(command, _make_command_help(helptext))  # type: ignore
             if commands_table.row_count > 0:
                 renderables.append(
                     Panel(
@@ -457,7 +457,7 @@ def rich_format_operation_help(
     # Footer text if we have it
     if FOOTER_TEXT:
         renderables.append(
-            Padding(_make_rich_rext(FOOTER_TEXT, STYLE_FOOTER_TEXT), (1, 1, 0, 1))
+            Padding(_make_rich_rext(FOOTER_TEXT, STYLE_FOOTER_TEXT), (1, 1, 0, 1))  # type: ignore
         )
 
     group = Group(*renderables)

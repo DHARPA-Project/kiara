@@ -147,7 +147,7 @@ class PipelineStep(Manifest):
                         merged_module_config["defaults"].update(defaults)
                         merged_module_config["constants"].update(constants)
                     else:
-                        merged_module_config = resolved_module_config
+                        merged_module_config = dict(resolved_module_config)
 
                     manifest = kiara.create_manifest(
                         module_or_operation=resolved_module_type,

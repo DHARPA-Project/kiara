@@ -124,7 +124,7 @@ class PipelineStructure(KiaraModel):
         if invalid_input_aliases:
             raise InvalidPipelineConfig(
                 f"Invalid input aliases, aliases can't contain special characters: {', '.join(invalid_input_aliases)}.",
-                config=values.get("pipeline_config", None),
+                config=values.get("pipeline_config", None),  # type: ignore
                 details=f"Invalid characters: {', '.join(invalid_input_aliases)}.",
             )
         invalid_output_aliases = [a for a in _input_aliases.values() if "." in a]

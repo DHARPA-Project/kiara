@@ -236,6 +236,7 @@ dev_utils = [
     "pdoc",
     "pre-commit>=4.0.0",
     "pytest>=6.2.2",
+    "pytest-cov>=4.1.0",
     "pytest-xdist>=3.2.1",
     "ruff>=0.4.1",
     "types-Deprecated",

@@ -1,32 +1,9 @@
 [build-system]
 requires = [
-    "setuptools>=63",
-    "setuptools_scm[toml]>7.0.0",
-    "wheel",
+    "hatchling>=1.18.0",
+    "hatch-vcs>=0.3.0",
 ]
-build-backend = 'setuptools.build_meta'
-
-[options]
-packages = { find = { where = "src", exclude = ["tests"] } }
-include_package_data = true
-package_dir = { "" = "src" }
-zip_safe = false
-
-[options.entry_points]
-mkdocs.plugins = [
-    "frkl-docgen = kiara.doc:FrklDocumentationPlugin"
-]
-
-[tool.aliases]
-build = "bdist_wheel"
-release = "build upload"
-
-[tool.bdist_wheel]
-universal = 0
-
-[tool.devpi.upload]
-no-vcs = 1
-formats = ["sdist", "bdist_wheel"]
+build-backend = "hatchling.build"
 
 [project]
 name = "kiara"
@@ -35,7 +12,7 @@ authors = [
     { name = "Markus Binsteiner", email = "markus@frkl.io" }
 ]
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 keywords = ["kiara"]
 license = { text = "MPL-2.0" }
 classifiers = [
@@ -99,6 +76,11 @@ dependencies = [
     "zstandard>=0.22.0"
 ]
 dynamic = ["version"]
+
+[dependency-groups]
+dev = [
+    "kiara[dev_utils]",
+]
 
 [project.scripts]
 kiara = "kiara.interfaces.cli:cli"
@@ -218,19 +200,6 @@ all_plugins = [
     "kiara_plugin.onboarding",
 ]
 
-dev_documentation = [
-    "icecream>=2.1.0",
-    "jupyter",
-    "mike>=1.0.1",
-    "mkdocs-awesome-pages-plugin>=2.5.0",
-    "mkdocs-literate-nav>=0.4.0",
-    "mkdocs-macros-plugin>=0.7.0,<1.1.0",
-    "mkdocs-material>=8.0.0",
-    "mkdocs-section-index>0.3.0",
-    "mkdocstrings[python]>=0.18",
-    "mkdocs-gen-files>=0.3.1"
-]
-
 dev_testing = [
     "pytest-cov>=4.1.0",
     "jsonschema>=4.0.0",
@@ -264,10 +233,10 @@ dev_utils = [
     "ipython",
     "mypy>=1.13.0",
     "pandas-stubs",
+    "pdoc",
     "pre-commit>=4.0.0",
     "pytest>=6.2.2",
     "pytest-xdist>=3.2.1",
-    "setup-cfg-fmt>=1.16.0",
     "ruff>=0.4.1",
     "types-Deprecated",
     "types-PyYAML",
@@ -286,13 +255,6 @@ dev_utils = [
     "wheel"
 ]
 
-doc = [
-    "airium>=0.2.5",
-    "black>=22.3.0",
-    "jupytext>=1.14.0",
-    "mkdocstrings>=0.18.0"
-]
-
 jupyter = [
     "jupyterlab",
     "pygraphviz",
@@ -304,25 +266,15 @@ homepage = "https://github.com/DHARPA-Project/kiara"
 documentation = "https://dharpa.org/kiara.documentation"
 repository = "https://github.com/DHARPA-Project/kiara"
 
-[tool.black]
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-  | external
-)/
-'''
+[tool.hatch.version]
+source = "vcs"
+fallback-version = "0.0.0"
 
-[tool.setuptools_scm]
-write_to = "src/kiara/version.txt"
+[tool.hatch.build.hooks.vcs]
+version-file = "src/kiara/version.txt"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/kiara"]
 
 [tool.pytest.ini_options]
 pythonpath = [

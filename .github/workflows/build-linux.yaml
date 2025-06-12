@@ -31,6 +31,8 @@ jobs:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ matrix.python_version }}
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: install core_types plugin
         run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.core_types@develop
       - name: install tabular plugin
@@ -78,6 +80,8 @@ jobs:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ matrix.python_version }}
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: install kiara
         run: pip install -U  .[dev_utils]
       - name: Test with mypy

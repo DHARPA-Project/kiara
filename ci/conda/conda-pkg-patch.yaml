@@ -2,7 +2,7 @@ requirements:
 #  mmhash3: "mmh3"
   email-validator: "email-validator>=1.0.0"
   docstring-parser: docstring_parser
-
+  ruamel-yaml: ruamel.yaml
 channels:
   - dharpa
   - conda-forge
@@ -11,8 +11,8 @@ entry_points:
   kiara: kiara.interfaces.cli:cli
 
 host_requirements:
-  - pip
   - python
+  - pip
   - hatchling
   - hatch-vcs
 

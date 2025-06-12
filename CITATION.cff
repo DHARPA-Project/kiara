@@ -1,0 +1,50 @@
+cff-version: 1.2.0
+message: "Please use the following information when citing this software"
+title: kiara
+abstract: >-
+  Kiara is the data orchestration engine developed by the DHARPA project. 
+  It uses a modular approach to let users re-use tried and tested data 
+  also helps you manage your research data, and augment it orchestration 
+  pipelines, as well as create new ones from existing building blocks. It
+  with automatically-, semi-automatically-, and manually-created metadata.
+authors:
+  - family-names: Binsteiner
+    given-names: Markus
+  - family-names: Takats
+    given-names: Sean
+    orcid: "https://orcid.org/0000-0002-7851-5069"
+  - name: "Digital History Advanced Research Projects Accelerator (DHARPA)"
+version: 0.5.9
+date-released: "2023-12-29"
+identifiers:
+  - description: "The research project behind kiara."
+    type: url
+    value: "https://dharpa.org"
+license: MPL-2.0
+repository-code: "https://github.com/DHARPA-Project/kiara"
+references:
+  - authors:
+      - family-names: Cunningham
+        given-names: Angela
+        orcid: "https://orcid.org/0000-0001-7379-5383"
+      - family-names: Jaskov
+        given-names: Helena
+        orcid: "https://orcid.org/0000-0002-2280-497X"
+    - family-names: Takats
+        given-names: Sean
+        orcid: "https://orcid.org/0000-0002-7851-5069"
+      - family-names: Viola
+        given-names: Lorella
+        orcid: "https://orcid.org/0000-0001-9994-0841"
+      - family-names: Binsteiner
+        given-names: Markus
+      - family-names: Crouy-Chanel
+        given-names: Mariella
+        name-particle: de
+    doi: https://doi.org/10.17613/03ds-9973.
+    journal: "DH Benelux Journal, The Humanities in a Digital World"
+    scope: "An introduction to the research project behind kiara."
+    title: "Introducing the DHARPA Project: An Interdisciplinary Lab to Enable Critical DH Practice"
+    type: article
+    year: 2022
+

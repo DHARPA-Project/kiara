@@ -1,6 +1,6 @@
 requirements:
 #  mmhash3: "mmh3"
-  email-validator: "email-validator>=1.0.0"
+  email-validator: "email-validator"
   docstring-parser: docstring_parser
   ruamel-yaml: ruamel.yaml
 channels:

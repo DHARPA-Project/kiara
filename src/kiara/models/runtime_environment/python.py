@@ -6,6 +6,7 @@
 
 import sys
 from functools import lru_cache
+from pathlib import Path
 from typing import Any, ClassVar, Dict, List, Literal, Mapping, Union
 
 from pydantic import BaseModel, Field
@@ -17,7 +18,7 @@ from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.utils.output import extract_renderable
 
 try:
-    from importlib.metadata import distribution, packages_distributions  # type: ignore
+    from importlib.metadata import distribution, packages_distributions, distributions  # type: ignore
 except Exception:
     from importlib_metadata import distribution, packages_distributions  # type:ignore
 
@@ -85,33 +86,81 @@ class PythonRuntimeEnvironment(RuntimeEnvironment):
         }
 
     @classmethod
+    @lru_cache()
     def retrieve_environment_data(cls) -> Dict[str, Any]:
 
         packages: Dict[str, str] = {}
-        all_packages = find_all_distributions()
-
+        # Method 1: Use packages_distributions (your current approach)
+        all_packages = packages_distributions()
         for name, pkgs in all_packages.items():
             for pkg in pkgs:
-                dist = distribution(pkg)
-                if pkg in packages.keys() and packages[pkg] != dist.version:
-                    raise Exception(
-                        f"Multiple versions of package '{pkg}' available: {packages[pkg]} and {dist.version}."
-                    )
-                packages[pkg] = dist.version
+                try:
+                    dist = distribution(pkg)
+                    packages[pkg] = dist.version
+                except Exception:
+                    continue
 
-        result: Dict[str, Any] = {
+        # Method 2: Use distributions() to catch packages that might be missed
+        for dist in distributions():
+            name = dist.metadata['Name']
+            version = dist.version
+            packages[name] = version
+
+        # # Method 3: Check for local/editable packages by scanning sys.path
+        # # This is particularly useful for uv workspace packages
+        # for path_str in sys.path:
+        #     path = Path(path_str)
+        #     if path.exists() and path.is_dir():
+        #         # Look for .egg-info or .dist-info directories
+        #         for info_dir in path.glob('*.egg-info'):
+        #             try:
+        #                 pkg_name = info_dir.stem.split('-')[0]
+        #                 if pkg_name not in packages:
+        #                     # Try to get version from PKG-INFO or METADATA
+        #                     pkg_info_file = info_dir / 'PKG-INFO'
+        #                     metadata_file = info_dir / 'METADATA'
+        #
+        #                     version = 'unknown'
+        #                     for info_file in [metadata_file, pkg_info_file]:
+        #                         if info_file.exists():
+        #                             content = info_file.read_text()
+        #                             for line in content.split('\n'):
+        #                                 if line.startswith('Version:'):
+        #                                     version = line.split(':', 1)[1].strip()
+        #                                     break
+        #                             if version != 'unknown':
+        #                                 break
+        #
+        #                     packages[pkg_name] = version
+        #             except Exception:
+        #                 continue
+        #
+        #         # Also check for .dist-info directories
+        #         for info_dir in path.glob('*.dist-info'):
+        #             try:
+        #                 pkg_name = info_dir.stem.split('-')[0]
+        #                 if pkg_name not in packages:
+        #                     metadata_file = info_dir / 'METADATA'
+        #                     version = 'unknown'
+        #
+        #                     if metadata_file.exists():
+        #                         content = metadata_file.read_text()
+        #                         for line in content.split('\n'):
+        #                             if line.startswith('Version:'):
+        #                                 version = line.split(':', 1)[1].strip()
+        #                                 break
+        #
+        #                     packages[pkg_name] = version
+        #             except Exception:
+        #                 continue
+
+        return {
             "python_version": sys.version,
             "packages": [
                 {"name": p, "version": packages[p]}
                 for p in sorted(packages.keys(), key=lambda x: x.lower())
-            ],
+            ]
         }
-
-        # if config.include_all_info:
-        #     import sysconfig
-        #     result["python_config"] = sysconfig.get_config_vars()
-
-        return result
 
 
 class KiaraPluginsRuntimeEnvironment(RuntimeEnvironment):

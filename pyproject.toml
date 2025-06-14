@@ -195,38 +195,6 @@ default = "kiara:find_renderer_classes"
 
 
 [project.optional-dependencies]
-all_plugins = [
-    "kiara_plugin.core_types",
-    "kiara_plugin.tabular",
-    "kiara_plugin.onboarding",
-]
-
-dev_testing = [
-    "pytest-cov>=4.1.0",
-    "jsonschema>=4.0.0",
-    "mypy>=1.13.0",
-    "pandas-stubs",
-    "pytest>=6.2.2",
-    "pytest-cov>=2.11.1",
-    "pytest-html>=3.1.0",
-    "pytest-xdist>=3.2.1",
-    "tox>=3.21.2",
-    "types-Deprecated",
-    "types-PyYAML",
-    "types-setuptools",
-    "types-python-dateutil",
-    "types-pytz",
-    "types-tzlocal",
-    "types-orjson",
-    "types-Pygments",
-    "types-Markdown",
-    "types-humanfriendly",
-    "types-colorama",
-    "types-decorator",
-    "types-pexpect",
-    "sqlalchemy-stubs"
-]
-
 dev_utils = [
     "kiara_plugin.core_types",
     "kiara_plugin.develop",

@@ -94,7 +94,7 @@ class PythonRuntimeEnvironment(RuntimeEnvironment):
                 try:
                     dist = distribution(pkg)
                     packages[pkg] = dist.version
-                except Exception:
+                except Exception:  # noqa
                     continue
 
         # Method 2: Use distributions() to catch packages that might be missed

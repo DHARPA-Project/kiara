@@ -243,7 +243,7 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         try:
             from kiara.utils.html import generate_html
 
-            html: str = generate_html(item=self, add_header=False)
+            html: str = generate_html(item=self, add_header=False)  # type: ignore
             return html
         except Exception as e:
             log_dev_message(

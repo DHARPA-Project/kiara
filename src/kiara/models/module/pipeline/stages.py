@@ -76,8 +76,8 @@ class PipelineStage(KiaraModel):
         for step in structure.steps:
             step_id = step.step_id
             max_idx = 0
-            for node_layers in layers.values():
-                for idx, node_layer in enumerate(node_layers):
+            for _node_layers in layers.values():
+                for idx, node_layer in enumerate(_node_layers):
                     if step_id in node_layer:
                         max_idx = max(max_idx, idx)
                         break
@@ -219,7 +219,7 @@ class PipelineStage(KiaraModel):
         if self._graph is not None:
             return self._graph
 
-        fragment = nx.DiGraph()
+        fragment: nx.DiGraph = nx.DiGraph()
         stage_id = f"Stage: {self.stage_index}"
         fragment.add_node(stage_id, type="stage", stage_index=self.stage_index)
 

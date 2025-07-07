@@ -351,7 +351,7 @@ class PipelineStructure(KiaraModel):
             stages_extraction_type=stages_extraction_type
         )
 
-        graph = nx.DiGraph()
+        graph: nx.DiGraph = nx.DiGraph()
         for stage in stages:
             fragment = stage.get_graph_fragment()
             graph = nx.compose(graph, fragment)
@@ -476,9 +476,9 @@ class PipelineStructure(KiaraModel):
     def _process_steps(self) -> None:
         """The core method of this class, it connects all the processing modules, their inputs and outputs."""
         steps_details: Dict[str, Any] = {}
-        execution_graph = nx.DiGraph()
+        execution_graph: nx.DiGraph = nx.DiGraph()
         execution_graph.add_node("__root__")
-        data_flow_graph = nx.DiGraph()
+        data_flow_graph: nx.DiGraph = nx.DiGraph()
         data_flow_graph_simple = nx.DiGraph()
         constants = {}
         structure_defaults = {}

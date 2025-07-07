@@ -96,7 +96,7 @@ def assemble_subcomponent_graph(data: "KiaraModel") -> Union[nx.DiGraph, None]:
 
     from kiara.models import KiaraModel
 
-    graph = nx.DiGraph()
+    graph: nx.DiGraph = nx.DiGraph()
 
     def assemble_graph(info_model: KiaraModel, current_node_id, level: int = 0):
         graph.add_node(current_node_id, obj=info_model, level=level)

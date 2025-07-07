@@ -139,7 +139,7 @@ class TypeRegistry(object):
 
         import networkx as nx
 
-        hierarchy = nx.DiGraph()
+        hierarchy: nx.DiGraph = nx.DiGraph()
         hierarchy.add_node(KIARA_ROOT_TYPE_NAME)
 
         for name, _bases in bases.items():

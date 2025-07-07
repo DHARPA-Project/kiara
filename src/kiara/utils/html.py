@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import TYPE_CHECKING, Any, Iterable, Mapping, Union
+from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Union
 
 from pydantic import BaseModel
 
@@ -52,7 +52,7 @@ def generate_html(
             if exclude_fields and field_name in exclude_fields:
                 continue
 
-            row = [field_name]
+            row: List[Any] = [field_name]
 
             p = props.get(field_name, None)
             if add_type_column:
@@ -99,7 +99,7 @@ def generate_html(
                 with doc.tr():
                     doc.td(_t=k)
                     value_el = generate_html(v)
-                    doc.td(_t=value_el)
+                    doc.td(_t=value_el)  # type: ignore
     elif isinstance(item, Iterable):
 
         with doc.ul():

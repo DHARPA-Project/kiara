@@ -206,6 +206,7 @@ dev_utils = [
     "kiara_plugin.develop",
     "build",
     "ipython",
+    "just-bin; sys_platform != 'win32'",
     "mypy>=1.13.0",
     "pandas-stubs",
     "pdoc",

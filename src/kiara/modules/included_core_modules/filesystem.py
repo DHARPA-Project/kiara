@@ -57,6 +57,42 @@ class ImportLocalFileModule(KiaraModule):
         file = KiaraFile.load_file(source=path)
         outputs.set_value("file", file)
 
+class CreateFileFromBytesModule(KiaraModule):
+    """Import a file from a byte array."""
+
+    _module_type_name = "create.file.from.bytes"
+
+    def create_inputs_schema(
+        self,
+    ) -> ValueMapSchema:
+
+        return {
+            "bytes": {
+                "type": "bytes",
+                "doc": "The bytes array to import."
+            },
+            "file_name": {
+                "type": "string",
+                "doc": "The name of the file."
+            }
+        }
+
+    def create_outputs_schema(
+        self,
+    ) -> ValueMapSchema:
+
+        return {"file": {"type": "file", "doc": "The loaded files."}}
+
+    def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
+        return ModuleCharacteristics(is_idempotent=False)
+
+    def process(self, inputs: ValueMap, outputs: ValueMap):
+
+        bytes_value = inputs.get_value_data("bytes")
+        file_name = inputs.get_value_data("file_name")
+
+        file = KiaraFile.from_bytes(bytes_value, file_name=file_name)
+        outputs.set_value("file", file)
 
 class DeserializeFileModule(DeserializeValueModule):
     """Deserialize data to a 'file' value instance."""

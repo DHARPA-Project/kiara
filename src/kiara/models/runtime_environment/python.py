@@ -86,7 +86,6 @@ class PythonRuntimeEnvironment(RuntimeEnvironment):
         }
 
     @classmethod
-    @lru_cache()
     def retrieve_environment_data(cls) -> Dict[str, Any]:
 
         packages: Dict[str, str] = {}

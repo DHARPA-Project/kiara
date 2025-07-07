@@ -100,7 +100,6 @@ class KiaraAPI(object):
     def __init__(self, kiara_config: Union["KiaraConfig", None] = None):
 
         from kiara.interfaces.python_api.base_api import BaseAPI
-
         self._api: BaseAPI = BaseAPI(kiara_config=kiara_config)
 
     def run_job(
@@ -132,10 +131,10 @@ class KiaraAPI(object):
 
         """
 
-        if not comment and comment != "":
-            from kiara.exceptions import KiaraException
-
-            raise KiaraException(msg="Can't submit job: no comment provided.")
+        # if not comment and comment != "":
+        #     from kiara.exceptions import KiaraException
+        #
+        #     raise KiaraException(msg="Can't submit job: no comment provided.")
 
         if inputs is None:
             inputs = {}
@@ -555,6 +554,10 @@ class KiaraAPI(object):
 
     def set_active_context(self, context_name: str, create: bool = False):
         """Set the currently active context for this KiarAPI instance.
+
+        Arguments:
+            context_name: the name of the context to set as active
+            create: if True, create the context if it doesn't exist
 
         NOTE: this functionality might be changed in the future, depending on requirements and feedback and whether we want to support single-file contexts in the future.
         """

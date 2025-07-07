@@ -2945,6 +2945,9 @@ class BaseAPI(object):
             save_values = True
         else:
             save_values = False
+            if "comment" in job_metadata.keys() and job_metadata["comment"] is None:
+                del job_metadata["comment"]
+
 
         if inputs is None:
             inputs = {}

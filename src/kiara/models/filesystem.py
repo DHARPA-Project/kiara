@@ -48,6 +48,17 @@ class KiaraFile(KiaraModel):
     _kiara_model_id: ClassVar = "instance.data.file"
 
     @classmethod
+    def from_bytes(cls, content_bytes: bytes, file_name: str):
+
+        temp_f = tempfile.mkstemp()
+        os.close(temp_f[0])
+        with open(temp_f[1], "wb") as f:
+            f.write(content_bytes)
+        file = cls.load_file(temp_f[1], file_name=file_name)
+        atexit.register(os.remove, temp_f[1])
+        return file
+
+    @classmethod
     def load_file(
         cls,
         source: str,
@@ -106,7 +117,7 @@ class KiaraFile(KiaraModel):
     file_name: str = Field("The name of the file.")
     size: int = Field(description="The size of the file.")
     metadata: Dict[str, Any] = Field(
-        description="Additional, ustructured, user-defined metadata.",
+        description="Additional, unstructured, user-defined metadata.",
         default_factory=dict,
     )
     metadata_schemas: Dict[str, str] = Field(

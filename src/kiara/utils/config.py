@@ -39,6 +39,7 @@ def assemble_kiara_config(
 
     else:
         config_file_path = Path(KIARA_MAIN_CONFIG_FILE)
+
         if not config_file_path.exists():
             exists = False
         else:

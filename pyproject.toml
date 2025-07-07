@@ -366,7 +366,7 @@ select = [
     "PIE",
 ]
 
-ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110", "PIE810", "PLR0911", "PLR0915", "PLR0912", "D", "D401", "PLW0603", "PLR5501", "PLW2901", "S603", "S608", "ISC001", "PLC0206", "RUF022", "PLC0415"]
+ignore = ["E501", "S101", "SIM118", "SIM108", "PLR2004", "PLR0913", "S110", "PIE810", "PLR0911", "PLR0915", "PLR0912", "D", "D401", "PLW0603", "PLR5501", "PLW2901", "S603", "S608", "ISC001", "PLC0206", "RUF022", "PLC0415", "RUF005"]
 per-file-ignores = { }
 
 

@@ -11,7 +11,6 @@ from pydantic import BaseModel, Field
 
 
 class ValueStatus(Enum):
-
     UNKNONW = "unknown"
     NOT_SET = "not set"
     NONE = "none"
@@ -20,7 +19,6 @@ class ValueStatus(Enum):
 
 
 class DataTypeCharacteristics(BaseModel):
-
     is_scalar: bool = Field(
         description="Whether the data desribed by this data type behaves like a skalar.",
         default=False,

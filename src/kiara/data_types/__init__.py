@@ -24,6 +24,7 @@ using their own serializing functions), or will have to implement custom seriali
 be discouraged, since this might not be trivial and there are quite a few things to consider).
 
 """
+
 import abc
 import uuid
 from typing import TYPE_CHECKING, Any, Generic, Mapping, Tuple, Type, TypeVar, Union
@@ -100,7 +101,6 @@ class DataTypeConfig(BaseModel):
 
     @property
     def config_hash(self) -> int:
-
         if self._config_hash is None:
             _d = self.model_dump()
             hashes = DeepHash(_d)
@@ -108,20 +108,17 @@ class DataTypeConfig(BaseModel):
         return self._config_hash
 
     def __eq__(self, other):
-
         if self.__class__ != other.__class__:
             return False
 
         return self.model_dump() == other.model_dump()
 
     def __hash__(self):
-
         return self.config_hash
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-
         my_table = Table(box=box.MINIMAL, show_header=False)
         my_table.add_column("Field name", style="i")
         my_table.add_column("Value")
@@ -172,7 +169,6 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
     def _calculate_data_type_hash(
         cls, data_type_config: Union[Mapping[str, Any], DataTypeConfig]
     ) -> int:
-
         if isinstance(data_type_config, Mapping):
             data_type_config = cls.data_type_config_class()(**data_type_config)  # type: ignore
 
@@ -185,7 +181,6 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
         return result
 
     def __init__(self, **type_config: Any):
-
         try:
             self._type_config: TYPE_CONFIG_CLS = (
                 self.__class__.data_type_config_class()(**type_config)
@@ -216,7 +211,6 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
     @property
     def info(self) -> "DataTypeInfo":
-
         if self._info is not None:
             return self._info
 
@@ -255,7 +249,6 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
         return data.data_size
 
     def serialize_as_json(self, data: Any) -> "SerializedData":
-
         _data = {"data": {"type": "inline-json", "inline_data": data, "codec": "json"}}
 
         serialized_data = {
@@ -279,7 +272,6 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
         return serialized
 
     def serialize(self, data: TYPE_PYTHON_CLS) -> Union[None, str, "SerializedData"]:
-
         logger.debug(
             "ignore.serialize_request",
             data_type=self.data_type_name,
@@ -328,7 +320,6 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
     def _pre_examine_data(
         self, data: Any, schema: ValueSchema
     ) -> Tuple[Any, Union[str, "SerializedData"], ValueStatus, str, int]:
-
         assert data is not None
 
         if data is SpecialValue.NOT_SET:
@@ -364,7 +355,6 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
             value_hash = INVALID_HASH_MARKER
             serialized: Union[None, str, "SerializedData"] = NO_SERIALIZATION_MARKER
         else:
-
             from kiara.models.values.value import SerializedData
 
             if isinstance(data, SerializedData):
@@ -374,7 +364,6 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
                 serialized = data
                 not_serialized: bool = False
             else:
-
                 data = self.parse_python_obj(data)
 
                 if data is None:
@@ -418,7 +407,6 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
         kiara_id: uuid.UUID,
         pedigree_output_name: str,
     ) -> Tuple["Value", Any]:
-
         from kiara.models.values.value import Value
 
         if isinstance(status, str):
@@ -426,7 +414,6 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
 
         if status in [ValueStatus.SET, ValueStatus.DEFAULT]:
             try:
-
                 value = Value(
                     value_id=value_id,
                     kiara_id=kiara_id,
@@ -491,7 +478,6 @@ class DataType(abc.ABC, Generic[TYPE_PYTHON_CLS, TYPE_CONFIG_CLS]):
             )
 
     def create_renderable(self, **config):
-
         show_type_info = config.get("show_type_info", False)
 
         table = Table(show_header=False, box=box.SIMPLE)

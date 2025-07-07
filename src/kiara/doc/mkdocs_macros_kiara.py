@@ -29,7 +29,6 @@ def define_env(env):
 
     @env.macro
     def get_schema_for_model(model_class: Union[str, Type[BaseModel]]):
-
         if isinstance(model_class, str):
             _class: Type[BaseModel] = locate(model_class)  # type: ignore
         else:
@@ -41,7 +40,6 @@ def define_env(env):
 
     @env.macro
     def get_src_of_object(obj: Union[str, Any]):
-
         try:
             if isinstance(obj, str):
                 _obj: Type[BaseModel] = locate(obj)  # type: ignore
@@ -55,7 +53,6 @@ def define_env(env):
 
     @env.macro
     def get_context_info() -> KiaraContextInfo:
-
         return builtins.plugin_package_context_info  # type: ignore
 
     # @env.macro

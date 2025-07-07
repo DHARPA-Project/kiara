@@ -8,7 +8,6 @@ from kiara.models.events import RegistryEvent
 
 
 class DestinyArchiveAddedEvent(RegistryEvent):
-
     event_type: Literal["destiny_archive_added"] = "destiny_archive_added"
     destiny_archive_id: uuid.UUID = Field(
         description="The unique id of this destiny archive."

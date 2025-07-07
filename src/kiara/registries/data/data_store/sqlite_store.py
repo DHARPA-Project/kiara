@@ -52,7 +52,6 @@ if TYPE_CHECKING:
 
 
 class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG_CLS]):
-
     _archive_type_name = "sqlite_data_archive"
     _config_cls = SqliteArchiveConfig
 
@@ -60,7 +59,6 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
     def _load_archive_config(
         cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Dict[str, Any], None]:
-
         if allow_write_access:
             return None
 
@@ -90,7 +88,6 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
         archive_config: SqliteArchiveConfig,
         force_read_only: bool = False,
     ):
-
         super().__init__(
             archive_name=archive_name,
             archive_config=archive_config,
@@ -108,7 +105,6 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
         # self._lock: bool = True
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
-
         sql = text(f"SELECT key, value FROM {TABLE_NAME_ARCHIVE_METADATA}")
 
         with self.sqlite_engine.connect() as connection:
@@ -127,7 +123,6 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
 
     @property
     def sqlite_path(self):
-
         if self._db_path is not None:
             return self._db_path
 
@@ -146,7 +141,6 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
     #     return f"sqlite:///{self.sqlite_path}"
 
     def get_chunk_path(self, chunk_id: str) -> Path:
-
         chunk_id = chunk_id.replace("-", "")
         chunk_id = chunk_id.lower()
 
@@ -160,7 +154,6 @@ class SqliteDataArchive(DataArchive[SqliteArchiveConfig], Generic[ARCHIVE_CONFIG
 
     @property
     def sqlite_engine(self) -> "Engine":
-
         if self._cached_engine is not None:
             return self._cached_engine
 
@@ -211,7 +204,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
         return self._cached_engine
 
     def _retrieve_serialized_value(self, value: Value) -> PersistedData:
-
         value_id = str(value.value_id)
         sql = text(
             f"SELECT persisted_value_metadata FROM {TABLE_NAME_DATA_SERIALIZATION_METADATA} WHERE value_id = :value_id"
@@ -223,7 +215,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
             return PersistedData(**data)
 
     def _retrieve_value_details(self, value_id: uuid.UUID) -> Mapping[str, Any]:
-
         sql = text(
             f"SELECT value_metadata FROM {TABLE_NAME_DATA_METADATA} WHERE value_id = :value_id"
         )
@@ -276,7 +267,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
     def _retrieve_all_value_ids(
         self, data_type_name: Union[str, None] = None
     ) -> Union[None, Iterable[uuid.UUID]]:
-
         if self._value_id_cache is not None:
             return self._value_id_cache
 
@@ -289,7 +279,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
             return result_set
 
     def retrieve_all_chunk_ids(self) -> Iterable[str]:
-
         sql = text(f"SELECT chunk_id FROM {TABLE_NAME_DATA_CHUNKS}")
         with self.sqlite_engine.connect() as conn:
             cursor = conn.execute(sql)
@@ -302,7 +291,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
         value_size: Union[int, None] = None,
         data_type_name: Union[str, None] = None,
     ) -> Union[Set[uuid.UUID], None]:
-
         if value_size is not None:
             raise NotImplementedError()
         if data_type_name is not None:
@@ -322,7 +310,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
     def _find_destinies_for_value(
         self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
     ) -> Union[Mapping[str, uuid.UUID], None]:
-
         sql = text(
             f"SELECT destiny_name FROM {TABLE_NAME_DATA_DESTINIES} WHERE value_id = :value_id"
         )
@@ -390,7 +377,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
         as_files: Union[bool, None] = None,
         symlink_ok: bool = True,
     ) -> Generator[Union["BytesLike", str], None, None]:
-
         import lzma
 
         import lz4.frame
@@ -405,7 +391,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
             def retrieve_missing_chunks(
                 missing_ids: List[str],
             ) -> Generator[Union["BytesLike", str], None, None]:
-
                 id_list_str = ", ".join("'" + item + "'" for item in missing_ids)
                 sql = text(
                     f"""SELECT chunk_id, chunk_data, compression_type FROM {TABLE_NAME_DATA_CHUNKS}
@@ -459,7 +444,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
             missing_chunk_ids: List[str] = []
 
             for idx, chunk_id in enumerate(chunk_ids):
-
                 if as_files:
                     chunk_path = self.get_chunk_path(chunk_id)
 
@@ -486,11 +470,9 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
                 assert not missing_chunk_ids
 
     def _delete_archive(self):
-
         delete_archive_db(db_path=self.sqlite_path)
 
     def get_archive_details(self) -> ArchiveDetails:
-
         size = self.sqlite_path.stat().st_size
         all_values = self.value_ids
 
@@ -510,7 +492,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
 
 
 class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
-
     _archive_type_name = "sqlite_data_store"
     _config_cls = SqliteDataStoreConfig
 
@@ -518,7 +499,6 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
     def _load_archive_config(
         cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Dict[str, Any], None]:
-
         if not allow_write_access:
             return None
 
@@ -584,11 +564,9 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
     #     raise NotImplementedError()
 
     def _persist_chunks(self, chunks: Mapping["CID", Union[str, BytesIO]]):
-
         all_chunk_ids = self.retrieve_all_chunk_ids()
 
         with self.sqlite_engine.connect() as conn:
-
             for chunk_id, chunk in chunks.items():
                 cid_str = str(chunk_id)
                 if cid_str in all_chunk_ids:
@@ -600,7 +578,6 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
     def _persist_chunk(
         self, conn: Connection, chunk_id: str, chunk: Union[str, BytesIO]
     ):
-
         import lzma
 
         import lz4.frame
@@ -662,7 +639,6 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
         # conn.commit()
 
     def _persist_stored_value_info(self, value: Value, persisted_value: PersistedData):
-
         self._value_id_cache = None
 
         value_id = str(value.value_id)
@@ -688,7 +664,6 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
             conn.commit()
 
     def _persist_value_details(self, value: Value):
-
         value_id = str(value.value_id)
         value_hash = value.value_hash
         value_size = value.value_size
@@ -714,13 +689,10 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
             conn.commit()
 
     def _persist_destiny_backlinks(self, value: Value):
-
         value_id = str(value.value_id)
 
         with self.sqlite_engine.connect() as conn:
-
             for destiny_value_id, destiny_name in value.destiny_backlinks.items():
-
                 sql = text(
                     f"INSERT INTO {TABLE_NAME_DATA_DESTINIES} (value_id, destiny_name) VALUES (:value_id, :destiny_name)"
                 )
@@ -733,7 +705,6 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
             conn.commit()
 
     def _persist_value_pedigree(self, value: Value):
-
         value_id = str(value.value_id)
         pedigree = value.pedigree.manifest_data_as_json()
 

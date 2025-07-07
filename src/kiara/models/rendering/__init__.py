@@ -19,7 +19,6 @@ DataT = TypeVar("DataT")
 
 
 class RenderScene(KiaraModel):
-
     _kiara_model_id: ClassVar = "instance.render_scene"
 
     title: str = Field(description="The title of this scene.")
@@ -45,7 +44,6 @@ class RenderScene(KiaraModel):
     @field_validator("manifest_hash", mode="before")
     @classmethod
     def validate_manifest_hash(cls, value):
-
         if hasattr(value, "manifest_hash"):
             return value.manifest_hash  # type: ignore
         else:
@@ -83,11 +81,9 @@ class RenderValueResult(KiaraModel):
         }
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         show_render_result = config.get("show_render_result", True)
         show_render_metadata = config.get("show_render_metadata", False)
         if show_render_metadata:
-
             table: Table = Table(show_header=False)
             table.add_column("key")
             table.add_column("value")

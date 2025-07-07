@@ -33,7 +33,6 @@ def fill_renderable_lineage_tree(
     include_ids: bool = False,
     level: int = 0,
 ) -> Tree:
-
     color = COLOR_LIST[level % len(COLOR_LIST)]
     title = f"[b {color}]{pedigree.module_type}[/b {color}]"
     if node is None:
@@ -42,7 +41,6 @@ def fill_renderable_lineage_tree(
         main = node.add(title)
 
     for input_name in sorted(pedigree.inputs.keys()):
-
         child_value_id = pedigree.inputs[input_name]
 
         child_value = kiara.data_registry.get_value(child_value_id)
@@ -75,7 +73,6 @@ def fill_dict_with_lineage(
     include_module_info: bool = False,
     level: int = 0,
 ) -> Dict[str, Any]:
-
     pedigree = value.pedigree
     title = pedigree.module_type
     if node is None:
@@ -107,7 +104,6 @@ def fill_dict_with_lineage(
         main["module"]["info"] = info.model_dump()
 
     for input_name in sorted(pedigree.inputs.keys()):
-
         child_value_id = pedigree.inputs[input_name]
         child_value = kiara.data_registry.get_value(child_value_id)
 
@@ -149,7 +145,6 @@ def create_lineage_graph(
     parent: Union[None, str] = None,
     level: int = 1,
 ) -> DiGraph:
-
     if graph is None:
         graph = DiGraph()
         graph.add_node(
@@ -181,7 +176,6 @@ def create_lineage_graph(
     )
 
     for input_name in sorted(value.pedigree.inputs.keys()):
-
         child_value_id = value.pedigree.inputs[input_name]
         child_value = kiara.data_registry.get_value(child_value_id)
 
@@ -223,7 +217,6 @@ def create_lineage_graph_modules(
     input_field: Union[None, str] = None,
     level: int = 1,
 ) -> DiGraph:
-
     if graph is None:
         graph = DiGraph()
         graph.add_node(
@@ -266,7 +259,6 @@ def create_lineage_graph_modules(
         )
 
     for input_name in sorted(value.pedigree.inputs.keys()):
-
         child_value_id = value.pedigree.inputs[input_name]
         child_value = kiara.data_registry.get_value(child_value_id)
 
@@ -304,7 +296,6 @@ def create_lineage_graph_modules(
 
 class ValueLineage(JupyterMixin):
     def __init__(self, kiara: "Kiara", value: Value) -> None:
-
         self._value: Value = value
         self._kiara: Kiara = kiara
         self._full_graph: Union[None, DiGraph] = None
@@ -316,7 +307,6 @@ class ValueLineage(JupyterMixin):
 
     @property
     def full_graph(self) -> DiGraph:
-
         if self._full_graph is not None:
             return self._full_graph
 
@@ -325,7 +315,6 @@ class ValueLineage(JupyterMixin):
 
     @property
     def module_graph(self) -> DiGraph:
-
         if self._module_graph is not None:
             return self._module_graph
 
@@ -340,7 +329,6 @@ class ValueLineage(JupyterMixin):
         include_module_info: bool = False,
         ensure_json_serializable: bool = False,
     ) -> Dict[str, Any]:
-
         data = fill_dict_with_lineage(
             kiara=self._kiara,
             value=self._value,
@@ -354,7 +342,6 @@ class ValueLineage(JupyterMixin):
         return data
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         include_ids: bool = config.get("include_ids", True)
         tree = fill_renderable_lineage_tree(
             kiara=self._kiara, pedigree=self._value.pedigree, include_ids=include_ids
@@ -364,5 +351,4 @@ class ValueLineage(JupyterMixin):
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-
         yield self.create_renderable()

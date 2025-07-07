@@ -18,7 +18,6 @@ class KiaraApiMsgBuilder(object):
         ) + int.to_bytes(self._version_nr_minor, length=1, byteorder="big")
 
     def encode_msg(self, endpoint_name: str, args: Any) -> List[bytes]:
-
         try:
             if args:
                 if hasattr(args, "model_dump_json"):
@@ -38,7 +37,6 @@ class KiaraApiMsgBuilder(object):
             ]
 
     def decode_msg(self, msg: List[bytes]) -> ReqMsg:
-
         version, endpoint = msg[0], msg[1]
         if len(msg) == 3:
             args = orjson.loads(msg[2])

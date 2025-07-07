@@ -75,7 +75,6 @@ class NoOpSourceTransformer(SourceTransformer):
 class KiaraRenderer(
     abc.ABC, Generic[SOURCE_TYPE, INPUTS_SCHEMA, TARGET_TYPE, RENDERER_CONFIG]
 ):
-
     _renderer_config_cls: Type[RENDERER_CONFIG] = KiaraRendererConfig  # type: ignore
     _inputs_schema: Type[INPUTS_SCHEMA] = RenderInputsSchema  # type: ignore
 
@@ -84,7 +83,6 @@ class KiaraRenderer(
         kiara: "Kiara",
         renderer_config: Union[None, Mapping[str, Any], KiaraRendererConfig] = None,
     ):
-
         self._kiara: "Kiara" = kiara
         self._source_transformers: Union[None, Iterable[SourceTransformer]] = None
         self._doc: Union[DocumentationMetadataModel, None] = None
@@ -107,7 +105,6 @@ class KiaraRenderer(
 
     @property
     def supported_inputs_descs(self) -> Iterable[str]:
-
         if self._supported_inputs_desc is not None:
             return self._supported_inputs_desc
 
@@ -182,11 +179,9 @@ class KiaraRenderer(
         return rendered
 
     def render(self, instance: SOURCE_TYPE, render_config: INPUTS_SCHEMA) -> Any:
-
         transformed = None
         for transformer in self.source_transformers:
             try:
-
                 for cls in transformer.retrieve_supported_python_classes():
                     if isinstance(instance, cls):
                         transformed = transformer.validate_and_transform(instance)
@@ -203,7 +198,6 @@ class KiaraRenderer(
                 instance=transformed, render_config=render_config
             )
         except Exception as e:
-
             if isinstance(e, TemplateNotFound):
                 details = f"Template not found: {e}"
                 raise KiaraException("Error while rendering item.", details=details)

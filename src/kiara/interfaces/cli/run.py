@@ -140,7 +140,6 @@ def run(
     job_descs: List[JobDesc] = []
 
     if not module_config and os.path.isfile(module_or_operation):
-
         path: Path = Path(module_or_operation)
         data = get_data_from_file(path)
         repl_dict: Dict[str, Any] = {"this_dir": path.parent.absolute().as_posix()}
@@ -171,7 +170,6 @@ def run(
                 )
                 job_descs.extend(run_desc.jobs)
             elif "steps" not in data.keys():
-
                 terminal_print()
                 terminal_print(
                     f"Can't run file '{path}', it does not contain a valid pipeline, job or run specification."
@@ -210,7 +208,6 @@ def run(
     assert len(job_descs) > 0
 
     for job_desc in job_descs:
-
         if job_desc.module_config:
             op: Union[str, Mapping[str, Any]] = {
                 "module_type": job_desc.operation,

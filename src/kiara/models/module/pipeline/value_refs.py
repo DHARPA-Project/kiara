@@ -42,7 +42,6 @@ class StepValueAddress(BaseModel):
         return generate_step_alias(self.step_id, self.value_name)
 
     def __eq__(self, other):
-
         if not isinstance(other, StepValueAddress):
             return False
 
@@ -53,11 +52,9 @@ class StepValueAddress(BaseModel):
         )
 
     def __hash__(self):
-
         return hash((self.step_id, self.value_name, self.sub_value))
 
     def __repr__(self):
-
         if self.sub_value:
             sub_value = f" sub_value={self.sub_value}"
         else:
@@ -93,7 +90,6 @@ class ValueRef(BaseModel):
     value_schema: ValueSchema
 
     def __eq__(self, other):
-
         if not isinstance(other, self.__class__):
             return False
 
@@ -135,7 +131,6 @@ class StepInputRef(ValueRef):
     @model_validator(mode="before")
     @classmethod
     def ensure_single_connected_item(cls, values):
-
         if values.get("connected_outputs", None) and values.get(
             "connected_pipeline_input"
         ):

@@ -14,7 +14,6 @@ from kiara.models.module.jobs import JobRecord
 
 
 class JobArchiveAddedEvent(RegistryEvent):
-
     event_type: Literal["job_archive_added"] = "job_archive_added"
 
     job_archive_id: uuid.UUID = Field(description="The unique id of this job archive.")
@@ -30,12 +29,10 @@ class JobArchiveAddedEvent(RegistryEvent):
 
 
 class JobRecordPreStoreEvent(RegistryEvent):
-
     event_type: Literal["job_record_pre_store"] = "job_record_pre_store"
     job_record: JobRecord = Field(description="The job record.")
 
 
 class JobRecordStoredEvent(RegistryEvent):
-
     event_type: Literal["job_record_stored"] = "job_record_stored"
     job_record: JobRecord = Field(description="The job record.")

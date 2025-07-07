@@ -27,7 +27,6 @@ logger = structlog.getLogger()
 
 
 class FileTypeConfig(DataTypeConfig):
-
     content_type: Union[str, None] = Field(
         description="The content type of this file.", default=None
     )
@@ -57,7 +56,6 @@ class FileValueType(KiaraModelValueBaseType[KiaraFile, FileTypeConfig]):
         return FileTypeConfig
 
     def serialize(self, data: KiaraFile) -> "SerializedData":
-
         # metadata = orjson_dumps(data.metadata)
         # metadata_schemas = orjson_dumps(data.metadata_schema)
         _data = {
@@ -104,7 +102,6 @@ class FileValueType(KiaraModelValueBaseType[KiaraFile, FileTypeConfig]):
         return serialized
 
     def create_model_from_python_obj(self, data: Any) -> KiaraFile:
-
         if isinstance(data, Mapping):
             return KiaraFile(**data)
         if isinstance(data, str):
@@ -115,7 +112,6 @@ class FileValueType(KiaraModelValueBaseType[KiaraFile, FileTypeConfig]):
     def _pretty_print_as__string(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
-
         data: KiaraFile = value.data
         max_lines = render_config.get("max_lines", 34)
         try:
@@ -144,7 +140,6 @@ class FileValueType(KiaraModelValueBaseType[KiaraFile, FileTypeConfig]):
     def _pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
-
         data: KiaraFile = value.data
         max_lines = render_config.get("max_lines", 34)
         try:
@@ -207,7 +202,6 @@ class FileBundleValueType(AnyType[KiaraFileBundle, FileTypeConfig]):
         return FileTypeConfig
 
     def serialize(self, data: KiaraFileBundle) -> "SerializedData":
-
         file_data: Dict[str, Any] = {}
         file_metadata = {}
         for rel_path, file in data.included_files.items():
@@ -265,7 +259,6 @@ class FileBundleValueType(AnyType[KiaraFileBundle, FileTypeConfig]):
         return serialized
 
     def parse_python_obj(self, data: Any) -> KiaraFileBundle:
-
         if isinstance(data, KiaraFileBundle):
             return data
         elif isinstance(data, str):
@@ -278,7 +271,6 @@ class FileBundleValueType(AnyType[KiaraFileBundle, FileTypeConfig]):
     def _pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
-
         bundle: KiaraFileBundle = value.data
         renderable = bundle.create_renderable(**render_config)
 
@@ -298,7 +290,6 @@ class FileBundleValueType(AnyType[KiaraFileBundle, FileTypeConfig]):
     def _pretty_print_as__string(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
-
         bundle: KiaraFileBundle = value.data
         result = []
         result.append(f"File bundle '{bundle.bundle_name}")

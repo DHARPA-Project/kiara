@@ -14,7 +14,6 @@ yaml = YAML(typ="safe")
 def get_data_from_file(
     path: Union[str, Path], content_type: Union[str, None] = None
 ) -> Any:
-
     if isinstance(path, str):
         path = Path(os.path.expanduser(path))
 
@@ -33,7 +32,6 @@ def get_data_from_file(
             content_type = "yaml"
 
     if content_type:
-
         if content_type not in ["json", "yaml"]:
             raise KiaraException(
                 "Invalid content type, only 'json' or 'yaml' are supported currently."
@@ -58,7 +56,6 @@ def get_data_from_file(
 def unpack_archive(
     archive_file: str, out_dir: str, autodetect_file_type: bool = False
 ) -> None:
-
     if autodetect_file_type:
         raise NotImplementedError("Autodetecting file type is not implemented yet.")
         # import puremagic

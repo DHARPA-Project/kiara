@@ -13,7 +13,6 @@ from kiara.models.events import RegistryEvent
 
 
 class AliasArchiveAddedEvent(RegistryEvent):
-
     event_type: Literal["alias_archive_added"] = "alias_archive_added"
     alias_archive_id: uuid.UUID = Field(
         description="The unique id of this data archive."
@@ -33,12 +32,10 @@ class AliasArchiveAddedEvent(RegistryEvent):
 
 
 class AliasPreStoreEvent(RegistryEvent):
-
     event_type: Literal["alias_pre_store"] = "alias_pre_store"
     aliases: Iterable[str] = Field(description="The alias.")
 
 
 class AliasStoredEvent(RegistryEvent):
-
     event_type: Literal["alias_stored"] = "alias_stored"
     alias: str = Field(description="The alias.")

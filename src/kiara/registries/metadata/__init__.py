@@ -63,7 +63,6 @@ class MetadataMatcher(KiaraModel):
     )
     @classmethod
     def validate_reference_item_ids(cls, v):
-
         if v is None:
             return None
         elif isinstance(v, str):
@@ -77,7 +76,6 @@ class MetadataMatcher(KiaraModel):
 
 
 class MetadataArchiveAddedEvent(RegistryEvent):
-
     event_type: Literal["metadata_archive_added"] = "metadata_archive_added"
     metadata_archive_id: uuid.UUID = Field(
         description="The unique id of this metadata archive."
@@ -95,7 +93,6 @@ class MetadataArchiveAddedEvent(RegistryEvent):
 
 class MetadataRegistry(object):
     def __init__(self, kiara: "Kiara"):
-
         self._kiara: Kiara = kiara
         self._event_callback: Callable = self._kiara.event_registry.add_producer(self)
 
@@ -113,7 +110,6 @@ class MetadataRegistry(object):
         archive: MetadataArchive,
         set_as_default_store: Union[bool, None] = None,
     ) -> str:
-
         alias = archive.archive_name
 
         if not alias:
@@ -165,7 +161,6 @@ class MetadataRegistry(object):
     def get_archive(
         self, archive_id_or_alias: Union[None, uuid.UUID, str] = None
     ) -> MetadataArchive:
-
         if archive_id_or_alias in (
             None,
             DEFAULT_STORE_MARKER,
@@ -208,13 +203,11 @@ class MetadataRegistry(object):
     def find_metadata_items(
         self, matcher: MetadataMatcher
     ) -> Generator[Tuple[Any, ...], None, None]:
-
         mounted_store: MetadataArchive = self.get_archive()
 
         return mounted_store.find_matching_metadata_items(matcher=matcher)
 
     def retrieve_environment_item(self, env_cid: str) -> "RuntimeEnvironment":
-
         if self._kiara.environment_registry.has_environment(env_cid):
             environment = self._kiara.environment_registry.get_environment_for_cid(
                 env_cid
@@ -250,7 +243,6 @@ class MetadataRegistry(object):
             result = mounted_archive.find_metadata_item_with_hash(item_hash=item_hash)
             if not result:
                 for archive in self.metadata_archives.values():
-
                     result = archive.find_metadata_item_with_hash(item_hash=item_hash)
                     if result:
                         break
@@ -293,7 +285,6 @@ class MetadataRegistry(object):
                 reference_id=reference_item_id,
             )
             if not result:
-
                 for archive in self.metadata_archives.values():
                     result = archive.retrieve_metadata_item(
                         metadata_item_key=key,
@@ -326,7 +317,6 @@ class MetadataRegistry(object):
         allow_multiple_references: bool = False,
         store: Union[str, uuid.UUID, None] = None,
     ) -> uuid.UUID:
-
         mounted_store: MetadataStore = self.get_archive(archive_id_or_alias=store)  # type: ignore
 
         result = mounted_store.store_metadata_item(
@@ -349,9 +339,7 @@ class MetadataRegistry(object):
         replace_existing_references: bool = True,
         allow_multiple_references: bool = False,
     ) -> None:
-
         for key, value in items.items():
-
             _reference_item_key = None
             if isinstance(value, str):
                 value = CommentMetadata(comment=value)
@@ -379,14 +367,11 @@ class MetadataRegistry(object):
             )
 
     def retrieve_job_metadata_items(self, job_id: uuid.UUID):
-
         raise NotImplementedError("Job metadata items retrieval is not yet implemented")
-
 
     def retrieve_job_metadata_item(
         self, job_id: uuid.UUID, key: str, store: Union[str, uuid.UUID, None] = None
     ) -> Union[KiaraMetadata, None]:
-
         return self.retrieve_metadata_item(
             key=key,
             reference_item_type="job",

@@ -40,7 +40,6 @@ class KiArchiveTransformer(SourceTransformer):
         ]
 
     def validate_and_transform(self, source: Any) -> Union["KiArchive", None]:
-
         if isinstance(source, (str, Path)):
             archive: Union[KiArchive, None] = KiArchive.load_kiarchive(
                 kiara=self._kiara, path=source
@@ -73,18 +72,15 @@ class ArchiveRendererHtml(BaseJinjaRenderer[Type[Pipeline], RenderInputsSchema])
         return [KiArchiveTransformer(kiara=self._kiara)]
 
     def retrieve_jinja_env(self) -> JinjaEnv:
-
         jinja_env = JinjaEnv(template_base="kiara")
         return jinja_env
 
     def get_template(self, render_config: RenderInputsSchema) -> Template:
-
         return self.get_jinja_env().get_template("archive/static_page/page.html.j2")
 
     def assemble_render_inputs(
         self, instance: Any, render_config: RenderInputsSchema
     ) -> Mapping[str, Any]:
-
         inputs = {
             "archive": instance,
         }

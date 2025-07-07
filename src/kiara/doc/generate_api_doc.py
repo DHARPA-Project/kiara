@@ -19,7 +19,6 @@ def gen_pages_for_module(
     result = {}
     modules_info = get_source_tree(module)
     for module_name, path in modules_info.items():
-
         page_name = module_name
 
         if page_name.endswith("__init__"):
@@ -64,7 +63,6 @@ def get_source_tree(module: typing.Union[str, ModuleType]):
     src = {}
 
     for path in Path(module_root).glob("**/*.py"):
-
         rel = os.path.relpath(path, module_root)
         mod_name = f"{module_name}.{rel[0:-3].replace(os.path.sep, '.')}"
         rel_path = f"{module_name}{os.path.sep}{rel}"

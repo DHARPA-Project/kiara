@@ -6,7 +6,6 @@ import dpath
 
 
 def merge_dicts(*dicts: Mapping[str, Any]) -> Dict[str, Any]:
-
     if not dicts:
         return {}
 

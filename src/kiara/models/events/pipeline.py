@@ -39,13 +39,11 @@ if TYPE_CHECKING:
 
 
 class ChangedValue(BaseModel):
-
     old: Union[uuid.UUID, None] = None
     new: Union[uuid.UUID, None] = None
 
 
 class StepDetails(BaseModel):
-
     kiara_id: uuid.UUID = Field(description="The id of the kiara context.")
     pipeline_id: uuid.UUID = Field(description="The id of the pipeline.")
     step: PipelineStep = Field(description="The pipeline step details.")
@@ -67,7 +65,6 @@ class StepDetails(BaseModel):
     @field_validator("inputs")
     @classmethod
     def replace_none_values_inputs(cls, value):
-
         result = {}
         for k, v in value.items():
             if v is None:
@@ -78,7 +75,6 @@ class StepDetails(BaseModel):
     @field_validator("outputs")
     @classmethod
     def replace_none_values_outputs(cls, value):
-
         result = {}
         for k, v in value.items():
             if v is None:
@@ -93,7 +89,6 @@ class StepDetails(BaseModel):
         return f"{self.kiara_id}.{self.pipeline_id}.{self.step_id}"
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         display_pipeline_id = config.get("display_pipeline_id", False)
         display_extended_step_details = config.get(
             "display_extended_step_details", False
@@ -134,7 +129,6 @@ class StepDetails(BaseModel):
 
 
 class PipelineState(KiaraModel):
-
     _kiara_model_id: ClassVar = "instance.pipeline_state"
 
     kiara_id: uuid.UUID = Field(description="The id of the kiara context.")
@@ -177,14 +171,12 @@ class PipelineState(KiaraModel):
         }
 
     def get_steps_by_processing_stage(self) -> MutableMapping[int, List[StepDetails]]:
-
         result: MutableMapping[int, List[StepDetails]] = SortedDict()
         for step_details in self.step_states.values():
             result.setdefault(step_details.processing_stage, []).append(step_details)
         return result
 
     def get_processing_stage_status(self, stage: int) -> StepStatus:
-
         step_states = self.get_steps_by_processing_stage()
 
         status: StepStatus = StepStatus.RESULTS_READY
@@ -209,7 +201,6 @@ class PipelineState(KiaraModel):
         return status
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         display_step_states = config.get("display_step_details", False)
 
         table = Table(show_header=False, box=box.SIMPLE)
@@ -247,7 +238,6 @@ class PipelineState(KiaraModel):
             processing_stage,
             state_step_details,
         ) in self.get_steps_by_processing_stage().items():
-
             proc_status = self.get_processing_stage_status(processing_stage)
             proc_status_str = StepStatus.to_console_renderable(proc_status)
             step_details_table.add_row(
@@ -291,7 +281,6 @@ class PipelineEvent(KiaraEvent):
         pipeline: "Pipeline",
         changed: Mapping[str, Mapping[str, Mapping[str, ChangedValue]]],
     ) -> Union["PipelineEvent", None]:
-
         pipeline_inputs = changed.get("__pipeline__", {}).get("inputs", {})
         pipeline_outputs = changed.get("__pipeline__", {}).get("outputs", {})
 

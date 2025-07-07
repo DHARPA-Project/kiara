@@ -26,7 +26,6 @@ logget = structlog.getLogger()
 
 class ModuleRegistry(object):
     def __init__(self, kiara: "Kiara"):
-
         self._kiara: Kiara = kiara
 
         self._cached_modules: Dict[str, Dict[CID, KiaraModule]] = {}
@@ -46,7 +45,6 @@ class ModuleRegistry(object):
         return self._module_classes
 
     def get_module_class(self, module_type: str) -> Type["KiaraModule"]:
-
         cls = self._module_classes.get(module_type, None)
         if cls is None:
             raise InvalidManifestException(
@@ -60,7 +58,6 @@ class ModuleRegistry(object):
         return self._module_classes.keys()
 
     def get_module_type_metadata(self, type_name: str) -> ModuleTypeInfo:
-
         md = self._module_class_metadata.get(type_name, None)
         if md is None:
             md = ModuleTypeInfo.create_from_type_class(
@@ -72,7 +69,6 @@ class ModuleRegistry(object):
     def get_context_metadata(
         self, alias: Union[str, None] = None, only_for_package: Union[str, None] = None
     ) -> ModuleTypesInfo:
-
         result = {}
         for type_name in self.module_types.keys():
             md = self.get_module_type_metadata(type_name=type_name)

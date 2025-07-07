@@ -35,19 +35,16 @@ logger = structlog.getLogger()
 
 
 def render_model_filter(render_registry: "RenderRegistry", instance: "KiaraModel"):
-
     template = render_registry.get_template("kiara/render/models/model_data.html")
     rendered = template.render(instance=instance)
     return rendered
 
 
 def boolean_filter(data: bool):
-
     return "yes" if data else "no"
 
 
 def default_filter(data: Any):
-
     if data in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
         return ""
     elif callable(data):
@@ -66,7 +63,6 @@ class RenderRegistry(object):
     _instance = None
 
     def __init__(self, kiara: "Kiara") -> None:
-
         self._kiara: Kiara = kiara
 
         self._renderer_types: Union[Mapping[str, Type[KiaraRenderer]], None] = None
@@ -79,7 +75,6 @@ class RenderRegistry(object):
         self._default_jinja_env: Union[None, Environment] = None
 
     def register_renderer_cls(self, renderer_cls: Type[KiaraRenderer]):
-
         try:
             self.register_renderer(renderer_type=renderer_cls)
         except Exception as e:
@@ -91,7 +86,6 @@ class RenderRegistry(object):
             )
 
         if hasattr(renderer_cls, "_renderer_profiles"):
-
             try:
                 profiles = renderer_cls._renderer_profiles  # type: ignore
                 if callable(profiles):
@@ -117,7 +111,9 @@ class RenderRegistry(object):
 
         if renderer_cls == ValueRenderer:
             target_types = set()
-            op_type: RenderValueOperationType = self._kiara.operation_registry.get_operation_type("render_value")  # type: ignore
+            op_type: RenderValueOperationType = (
+                self._kiara.operation_registry.get_operation_type("render_value")
+            )  # type: ignore
             for op in op_type.operations.values():
                 details = op_type.retrieve_operation_details(op)
                 target_type = details.target_data_type
@@ -134,7 +130,6 @@ class RenderRegistry(object):
         renderer_type: Union[str, Type[KiaraRenderer]],
         renderer_config: Union[Mapping[str, Any], None] = None,
     ):
-
         if isinstance(renderer_type, str):
             renderer_cls = self.renderer_types.get(renderer_type, None)
         else:
@@ -167,7 +162,6 @@ class RenderRegistry(object):
 
     @property
     def renderer_types(self) -> Mapping[str, Type[KiaraRenderer]]:
-
         if self._renderer_types is not None:
             return self._renderer_types
 
@@ -178,12 +172,10 @@ class RenderRegistry(object):
 
     @property
     def default_jinja_environment(self) -> Environment:
-
         return self.retrieve_jinja_env()
 
     @property
     def template_loaders(self) -> Mapping[str, BaseLoader]:
-
         if self._template_pkg_loaders is not None:
             return self._template_pkg_loaders
 
@@ -195,7 +187,6 @@ class RenderRegistry(object):
         from importlib_metadata import entry_points
 
         for entry_point in entry_points(group="kiara.plugin"):
-
             try:
                 template_pkg_loaders[entry_point.value] = PackageLoader(
                     package_name=entry_point.value, package_path="resources/templates"
@@ -210,7 +201,6 @@ class RenderRegistry(object):
 
     @property
     def template_folders(self) -> Mapping[str, FileSystemLoader]:
-
         if self._template_folders is not None:
             return self._template_folders
 
@@ -218,13 +208,11 @@ class RenderRegistry(object):
         return self._template_folders
 
     def retrieve_jinja_env(self, template_base: Union[str, None] = None) -> Environment:
-
         if not template_base:
             if self._default_jinja_env is not None:
                 return self._default_jinja_env
             loader: BaseLoader = self.template_loader
         else:
-
             if template_base in self.template_folders.keys():
                 loader = self.template_folders[template_base]
             elif template_base in self.template_loaders.keys():
@@ -261,7 +249,6 @@ class RenderRegistry(object):
 
     @property
     def registered_renderers(self) -> Iterable[KiaraRenderer]:
-
         # make sure all the renderers are registered
         self.renderer_types
         return self._registered_renderers.values()
@@ -269,7 +256,6 @@ class RenderRegistry(object):
     def retrieve_renderers_for_source_type(
         self, source_type: str
     ) -> List[KiaraRenderer]:
-
         result = []
         for renderer in self.registered_renderers:
             if source_type in renderer.retrieve_supported_render_sources():
@@ -279,7 +265,6 @@ class RenderRegistry(object):
     def retrieve_renderers_for_source_target_combination(
         self, source_type: str, target_type: str
     ) -> List[KiaraRenderer]:
-
         result = []
 
         for renderer in self.registered_renderers:
@@ -297,7 +282,6 @@ class RenderRegistry(object):
         target_type: str,
         render_config: Union[Mapping[str, Any], None] = None,
     ) -> Any:
-
         renderers = self.retrieve_renderers_for_source_target_combination(
             source_type, target_type
         )
@@ -320,7 +304,6 @@ class RenderRegistry(object):
 
     @property
     def template_loader(self) -> PrefixLoader:
-
         if self._template_loader is not None:
             return self._template_loader
 
@@ -331,7 +314,6 @@ class RenderRegistry(object):
         return self._template_loader
 
     def register_template_folder(self, alias: str, path: str):
-
         if alias in self.template_folders.keys():
             raise Exception(f"Duplicate template alias: {alias}")
         if alias in self.template_loaders.keys():
@@ -343,7 +325,6 @@ class RenderRegistry(object):
         self._template_loader = None
 
     def register_template_pkg_location(self, alias: str, pkg_name: str, path: str):
-
         if alias in self.template_loaders.keys():
             raise Exception(f"Duplicate template alias: {alias}")
         if alias in self.template_folders.keys():

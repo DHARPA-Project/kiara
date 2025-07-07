@@ -59,7 +59,6 @@ class DataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], typing.Generic[ARCHIVE_CONFIG
         archive_config: ARCHIVE_CONFIG_CLS,
         force_read_only: bool = False,
     ):
-
         super().__init__(
             archive_name=archive_name,
             archive_config=archive_config,
@@ -386,7 +385,6 @@ class BaseDataStore(DataStore):
         """Persist the destiny backlinks."""
 
     def store_value(self, value: Value) -> PersistedData:
-
         logger.debug(
             "store.value",
             data_type=value.value_schema.type,
@@ -425,7 +423,6 @@ class BaseDataStore(DataStore):
         """
 
     def _persist_value_data(self, value: Value) -> PersistedData:
-
         serialized_value: SerializedData = value.serialized_data
 
         # dbg(serialized_value.model_dump())
@@ -437,7 +434,6 @@ class BaseDataStore(DataStore):
         chunks_persisted: Set[CID] = set()
         current_size = 0
         for key in serialized_value.get_keys():
-
             data_model = serialized_value.get_serialized_data(key)
 
             if data_model.type == "chunk":  # type: ignore
@@ -454,7 +450,8 @@ class BaseDataStore(DataStore):
                 # means this is already serialized in a different store
                 data_model_instance: SerializedChunkIDs = data_model  # type: ignore
                 chunks = (
-                    BytesIO(x) for x in data_model_instance.get_chunks(as_files=False)  # type: ignore
+                    BytesIO(x)
+                    for x in data_model_instance.get_chunks(as_files=False)  # type: ignore
                 )
 
             else:
@@ -512,7 +509,6 @@ class BaseDataStore(DataStore):
         return pers_value
 
     def _persist_value(self, value: Value) -> PersistedData:
-
         # TODO: check if value id is already persisted?
         if value.is_set:
             persisted_value_info: PersistedData = self._persist_value_data(value=value)
@@ -571,7 +567,6 @@ class BaseDataStore(DataStore):
         all_value_ids = self.value_ids
         if all_value_ids:
             for value_id in all_value_ids:
-
                 value = self.kiara_context.data_registry.get_value(value_id)
                 all_values[str(value_id)] = value
             table = create_renderable_from_values(values=all_values, config=config)

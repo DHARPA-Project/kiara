@@ -34,7 +34,6 @@ class OSRuntimeEnvironment(RuntimeEnvironment):
 
     @classmethod
     def retrieve_environment_data(self) -> Dict[str, Any]:
-
         os_specific: Dict[str, Any] = {}
         platform_system = platform.system()
         if platform_system == "Linux":

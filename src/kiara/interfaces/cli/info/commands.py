@@ -30,7 +30,6 @@ def config(ctx):
 @output_format_option()
 @click.pass_context
 def print_config(ctx, format: str):
-
     from kiara.context import KiaraConfig
 
     wrap: "BaseAPIWrap" = ctx.obj
@@ -74,7 +73,6 @@ def list_plugins(ctx, filter_regex: str, format):
 @handle_exception()
 @click.pass_context
 def explain_plugin_info(ctx, plugin_name: str, format: str):
-
     kiara_api: BaseAPI = ctx.obj.base_api
 
     plugin_info = kiara_api.retrieve_plugin_info(plugin_name)

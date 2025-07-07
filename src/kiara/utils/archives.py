@@ -12,7 +12,6 @@ if TYPE_CHECKING:
 def find_archive_types(
     alias: Union[str, None] = None, only_for_package: Union[str, None] = None
 ) -> "ArchiveTypeClassesInfo":
-
     from kiara.models.archives import ArchiveTypeClassesInfo
     from kiara.utils.class_loading import find_all_archive_types
 
@@ -30,7 +29,9 @@ def find_archive_types(
                 temp[key] = info  # type: ignore
 
         group = ArchiveTypeClassesInfo(
-            group_id=group.group_id, group_title=group.group_alias, item_infos=temp  # type: ignore
+            group_id=group.group_id,
+            group_title=group.group_alias,
+            item_infos=temp,  # type: ignore
         )
 
     return group

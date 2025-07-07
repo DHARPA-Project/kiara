@@ -23,7 +23,6 @@ from kiara.utils import log_message
 
 
 class PrettyPrintDetails(BaseOperationDetails):
-
     source_type: str = Field(description="The type of the value to be rendered.")
     target_type: str = Field(description="The type of the render result.")
 
@@ -69,7 +68,6 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
     _operation_type_name: ClassVar[str] = "pretty_print"
 
     def _calculate_op_id(self, source_type: str, target_type: str):
-
         if source_type == "any":
             operation_id = f"pretty_print.as.{target_type}"
         else:
@@ -80,10 +78,8 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:
-
         result = {}
         for name, module_cls in self._kiara.module_type_classes.items():
-
             if not issubclass(module_cls, PrettyPrintModule):
                 continue
 
@@ -92,7 +88,14 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
                 target_type,
             ) in module_cls.retrieve_supported_render_combinations():
                 if source_type not in self._kiara.data_type_names:
-                    log_message("ignore.operation_config", operation_type="pretty_print", module_type=module_cls._module_type_name, source_type=source_type, target_type=target_type, reason=f"Source type '{source_type}' not registered.")  # type: ignore
+                    log_message(
+                        "ignore.operation_config",
+                        operation_type="pretty_print",
+                        module_type=module_cls._module_type_name,
+                        source_type=source_type,
+                        target_type=target_type,
+                        reason=f"Source type '{source_type}' not registered.",
+                    )  # type: ignore
                     continue
                 if target_type not in self._kiara.data_type_names:
                     log_message(
@@ -148,7 +151,6 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
     def check_matching_operation(
         self, module: "KiaraModule"
     ) -> Union[PrettyPrintDetails, None]:
-
         details = self.extract_details(module)
 
         if details is None:
@@ -157,7 +159,6 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
             return details
 
     def extract_details(self, module: "KiaraModule") -> Union[PrettyPrintDetails, None]:
-
         if len(module.inputs_schema) != 2 or len(module.outputs_schema) != 1:
             return None
 
@@ -193,7 +194,6 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
         return result
 
     def get_target_types_for(self, source_type: str) -> Mapping[str, Operation]:
-
         # TODO: support for sub-types
         result: Dict[str, Operation] = {}
         for operation in self.operations.values():
@@ -212,7 +212,6 @@ class PrettyPrintOperationType(OperationType[PrettyPrintDetails]):
     def get_operation_for_render_combination(
         self, source_type: str, target_type: str
     ) -> Operation:
-
         type_lineage = self._kiara.type_registry.get_type_lineage(
             data_type_name=source_type
         )

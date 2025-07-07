@@ -142,7 +142,6 @@ class HashFS(object):
     def put_with_precomputed_hash(
         self, file: Union[str, Path, BinaryIO], hash_id: str
     ) -> "HashAddress":
-
         stream = Stream(file)
         with closing(stream):
             filepath, is_duplicate = self._copy(stream=stream, id=hash_id)

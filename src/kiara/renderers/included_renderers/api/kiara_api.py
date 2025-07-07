@@ -28,12 +28,10 @@ if TYPE_CHECKING:
 
 
 class ApiRenderInputsSchema(RenderInputsSchema):
-
     pass
 
 
 class ApiRendererConfig(KiaraRendererConfig):
-
     filter: Union[str, Iterable[str]] = Field(
         description="One or a list of filter tokens -- if provided -- all of which must match for the api endpoing to be in the render result.",
         default_factory=list,  # type: ignore
@@ -52,7 +50,6 @@ class ApiRenderer(
         kiara: "Kiara",
         renderer_config: Union[None, Mapping[str, Any], KiaraRendererConfig] = None,
     ):
-
         super().__init__(kiara=kiara, renderer_config=renderer_config)
 
         filters: Union[None, str, Iterable[str]] = self.renderer_config.filter
@@ -76,7 +73,6 @@ class ApiRenderer(
         return "kiara_api"
 
     def retrieve_doc(self) -> Union[str, None]:
-
         return f"Render the kiara API endpoints to: '{self.get_target_type()}'."
 
     @abc.abstractmethod
@@ -85,7 +81,6 @@ class ApiRenderer(
 
 
 class KiaraApiDocRenderer(ApiRenderer):
-
     _renderer_name = "kiara_api_doc_renderer"
 
     def get_target_type(self) -> str:
@@ -95,7 +90,6 @@ class KiaraApiDocRenderer(ApiRenderer):
         return "html"
 
     def _render(self, instance: KiaraAPI, render_config: ApiRenderInputsSchema) -> Any:
-
         # details = self.api_endpoints.get_api_endpoint("get_value")
         details = self.api_endpoints.get_api_endpoint("retrieve_aliases_info")
 
@@ -109,7 +103,6 @@ class KiaraApiDocRenderer(ApiRenderer):
 
 
 class KiaraApiDocTextRenderer(ApiRenderer):
-
     _renderer_name = "kiara_api_doc_markdown_renderer"
 
     def get_target_type(self) -> str:
@@ -119,7 +112,6 @@ class KiaraApiDocTextRenderer(ApiRenderer):
         return "markdown"
 
     def _render(self, instance: KiaraAPI, render_config: ApiRenderInputsSchema) -> Any:
-
         template = self._kiara.render_registry.get_template(
             "kiara_api/api_doc.md.j2", "kiara"
         )

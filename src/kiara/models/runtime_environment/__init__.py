@@ -28,7 +28,6 @@ class RuntimeEnvironment(KiaraMetadata):
 
     @classmethod
     def get_environment_type_name(cls) -> str:
-
         env_type = cls.model_fields["environment_type"]
         args: Sequence[str] = get_args(env_type.annotation)
         assert len(args) == 1
@@ -37,7 +36,6 @@ class RuntimeEnvironment(KiaraMetadata):
 
     @classmethod
     def create_environment_model(cls):
-
         try:
             type_name = cls.get_environment_type_name()
             data = cls.retrieve_environment_data()
@@ -64,7 +62,6 @@ class RuntimeEnvironment(KiaraMetadata):
     def _create_renderable_for_field(
         self, field_name: str, for_summary: bool = False
     ) -> Union[RenderableType, None]:
-
         return extract_renderable(getattr(self, field_name))
 
     def _retrieve_id(self) -> str:
@@ -72,7 +69,6 @@ class RuntimeEnvironment(KiaraMetadata):
 
     @property
     def env_hashes(self) -> Mapping[str, str]:
-
         if self._env_hashes is not None:
             return self._env_hashes
 
@@ -96,7 +92,6 @@ class RuntimeEnvironment(KiaraMetadata):
         return {DEFAULT_ENV_HASH_KEY: self._retrieve_data_to_hash()}
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         summary = config.get("summary", False)
 
         table = Table(show_header=False, box=box.SIMPLE)

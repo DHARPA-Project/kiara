@@ -16,7 +16,6 @@ if TYPE_CHECKING:
 
 
 class PipelineStage(KiaraModel):
-
     _kiara_model_id: ClassVar = "info.pipeline_stage"
 
     @classmethod
@@ -25,7 +24,6 @@ class PipelineStage(KiaraModel):
         structure: "PipelineStructure",
         stages_extraction_type: str = KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
     ) -> List[List[str]]:
-
         func_name = f"extract_stages__{stages_extraction_type}"
         if not hasattr(cls, func_name):
             msg = f"Invalid stages extraction type: {stages_extraction_type}."
@@ -97,7 +95,6 @@ class PipelineStage(KiaraModel):
         processing_stages = []
         path_lengths: Dict[str, int] = {}
         for step in structure.steps:
-
             step_id = step.step_id
 
             paths = list(nx.all_simple_paths(execution_graph, "__root__", step_id))
@@ -123,7 +120,6 @@ class PipelineStage(KiaraModel):
         structure: "PipelineStructure",
         stages: Union[List[List[str]], str] = KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
     ) -> List["PipelineStage"]:
-
         if isinstance(stages, str):
             if stages == "late":
                 stages = cls.extract_stages__late(structure=structure)
@@ -249,7 +245,6 @@ class PipelineStages(KiaraModel):
         structure: "PipelineStructure",
         stages_extraction_type: str = KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
     ) -> "PipelineStages":
-
         stages_info = structure.extract_processing_stages_info(
             stages_extraction_type=stages_extraction_type
         )
@@ -262,7 +257,6 @@ class PipelineStages(KiaraModel):
     _structure: Union[None, "PipelineStructure"] = PrivateAttr(default=None)
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         table = Table(show_header=True, box=box.SIMPLE)
         table.add_column("Stage")
         table.add_column("Details")

@@ -74,7 +74,6 @@ class KiaraHandler(BaseHandler):
         return {"obj": item, "identifier": identifier}
 
     def get_anchors(self, data: CollectorItem) -> typing.Tuple[str, ...]:
-
         if data is None:
             return ()
 
@@ -83,7 +82,6 @@ class KiaraHandler(BaseHandler):
     def render(
         self, data: CollectorItem, config: typing.Mapping[str, typing.Any]
     ) -> str:
-
         # final_config = ChainMap(config, self.default_config)
 
         obj = data["obj"]

@@ -19,7 +19,6 @@ from kiara.utils.hashing import compute_cid
 
 
 class KiaraDict(BaseModel, Mapping):
-
     dict_data: Dict[str, Any] = Field(description="The data.")
     data_schema: Dict[str, Any] = Field(description="The schema.")
     python_class: PythonClass = Field(

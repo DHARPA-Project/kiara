@@ -33,7 +33,6 @@ class JobDesc(KiaraModel):
 
     @classmethod
     def parse_from_file(cls, path: Union[str, Path]) -> Mapping[str, Any]:
-
         if isinstance(path, str):
             path = Path(path)
 
@@ -61,7 +60,6 @@ class JobDesc(KiaraModel):
         var_repl_dict: Union[Mapping[str, Any], None] = None,
         alias: Union[str, None] = None,
     ) -> Mapping[str, Any]:
-
         if not isinstance(data, Mapping):
             raise KiaraException("Job description data is not a mapping.")
 
@@ -87,7 +85,6 @@ class JobDesc(KiaraModel):
         var_repl_dict: Union[Mapping[str, Any], None] = None,
         alias: Union[str, None] = None,
     ) -> "JobDesc":
-
         run_data = cls.parse_data(data=data, var_repl_dict=var_repl_dict, alias=alias)
         return cls(**run_data)
 
@@ -131,7 +128,6 @@ class JobDesc(KiaraModel):
     @model_validator(mode="before")
     @classmethod
     def validate_inputs(cls, values):
-
         if len(values) == 1 and "data" in values.keys():
             data = values["data"]
             if isinstance(data, str):
@@ -151,7 +147,6 @@ class JobDesc(KiaraModel):
         return DocumentationMetadataModel.create(value)
 
     def get_operation(self, kiara_api: "BaseAPI") -> "Operation":
-
         if not self.module_config:
             operation: Operation = kiara_api.get_operation(
                 self.operation, allow_external=True
@@ -171,7 +166,6 @@ class RunSpec(BaseModel):
 
     @classmethod
     def create_from_file(cls, path: Union[str, Path]):
-
         if isinstance(path, str):
             path = Path(path)
 
@@ -197,7 +191,6 @@ class RunSpec(BaseModel):
         var_repl_dict: Union[Mapping[str, Any], None] = None,
         alias: Union[str, None] = None,
     ):
-
         if not isinstance(data, Mapping):
             raise KiaraException("Run spec data is not a mapping.")
 
@@ -262,7 +255,6 @@ class JobTest(object):
         job_desc: JobDesc,
         tests: Union[Mapping[str, Mapping[str, Any]], None] = None,
     ):
-
         self._kiara_api: Union[BaseAPI, KiaraAPI] = kiara_api
         self._job_desc = job_desc
         if tests is None:
@@ -270,7 +262,6 @@ class JobTest(object):
         self._tests: Mapping[str, Mapping[str, Any]] = tests
 
     def run_tests(self):
-
         print(f"Running tests for job '{self._job_desc.job_alias}'...")  # noqa
 
         result = self.run_job()
@@ -281,7 +272,6 @@ class JobTest(object):
             self.check_result(result)
 
     def run_job(self) -> Union["ValueMap", Exception]:
-
         print(f"Running checks for job '{self._job_desc.job_alias}'...")  # noqa
 
         try:
@@ -312,15 +302,11 @@ class JobTest(object):
             return result
 
     def check_failure(self, result: Exception):
-
         try:
-
             import inspect
 
             for test_name, test in self._tests.items():
-
                 if not callable(test):
-
                     if not isinstance(test, str):
                         raise KiaraException(
                             f"Invalid test pattern for error check in test '{test_name}', must be a string: {test}"
@@ -348,7 +334,6 @@ class JobTest(object):
                         )
 
                 else:
-
                     args = inspect.signature(test)
                     arg_values: List[Any] = []
 
@@ -371,16 +356,13 @@ class JobTest(object):
         return result
 
     def check_result(self, result: "ValueMap"):
-
         try:
-
             import inspect
 
             from kiara.api import Value
             from kiara.interfaces.python_api.base_api import BaseAPI
 
             for test_name, test in self._tests.items():
-
                 if not callable(test):
                     tokens = test_name.split("::")
                     value = result.get_value_obj(tokens[0])
@@ -406,7 +388,6 @@ class JobTest(object):
                         )
 
                 else:
-
                     args = inspect.signature(test)
                     arg_values: List[Any] = []
 

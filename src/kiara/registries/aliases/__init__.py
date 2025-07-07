@@ -110,7 +110,6 @@ class AliasRegistry(object):
     """
 
     def __init__(self, kiara: "Kiara"):
-
         self._kiara: Kiara = kiara
 
         self._event_callback: Callable = self._kiara.event_registry.add_producer(self)
@@ -136,7 +135,6 @@ class AliasRegistry(object):
         set_as_default_store: Union[bool, None] = None,
         mount_point: Union[str, None] = None,
     ) -> str:
-
         alias = archive.archive_name
 
         if not alias:
@@ -203,7 +201,6 @@ class AliasRegistry(object):
 
     @property
     def default_alias_store(self) -> str:
-
         if self._default_alias_store is None:
             raise Exception("No default alias store set (yet).")
         return self._default_alias_store
@@ -234,7 +231,6 @@ class AliasRegistry(object):
 
     @property
     def all_aliases(self) -> Iterable[str]:
-
         return self.aliases.keys()
 
     @property
@@ -261,7 +257,6 @@ class AliasRegistry(object):
         dynamic_stores = []
 
         for archive_alias, archive in self._alias_archives.items():
-
             alias_map = archive.retrieve_all_aliases()
             if alias_map is None:
                 dynamic_stores.append(archive_alias)
@@ -408,7 +403,6 @@ class AliasRegistry(object):
         allow_overwrite: bool = False,
         alias_store: Union[str, None] = None,
     ):
-
         value = self._kiara.data_registry.get_value(value=value_id)
 
         if alias_store in [DEFAULT_STORE_MARKER, DEFAULT_ALIAS_STORE_MARKER, None]:
@@ -488,7 +482,6 @@ class AliasRegistry(object):
                 raise Exception(f"Aliases already registered: {duplicates}")
 
         for store_alias, aliases_for_store in aliases_to_store.items():
-
             store: AliasStore = self.get_archive(archive_alias=store_alias)  # type: ignore
             if store is None:
                 raise Exception(f"Invalid alias store: '{store_alias}' not registered.")
@@ -498,7 +491,6 @@ class AliasRegistry(object):
                 )
 
         for store_alias, aliases_for_store in aliases_to_store.items():
-
             store = self.get_archive(archive_alias=store_alias)  # type: ignore
             store.register_aliases(value.value_id, *aliases_for_store)
 
@@ -534,7 +526,9 @@ class AliasRegistry(object):
                         )
 
                 self.aliases[actual_alias] = alias_item  # type: ignore
-                self._cached_aliases_by_id.setdefault(value.value_id, set()).add(alias_item)  # type: ignore
+                self._cached_aliases_by_id.setdefault(value.value_id, set()).add(
+                    alias_item
+                )  # type: ignore
 
 
 #

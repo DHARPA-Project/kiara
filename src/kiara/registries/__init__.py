@@ -98,7 +98,6 @@ NON_ARCHIVE_DETAILS = ArchiveDetails(root={})
 
 
 class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
-
     _config_cls: Type[ARCHIVE_CONFIG_CLS] = None  # type: ignore
 
     # @classmethod
@@ -140,7 +139,6 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
     def load_archive_config(
         cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Dict[str, Any], None]:
-
         log_message(
             "attempt_loading_existing_store",
             archive_uri=archive_uri,
@@ -155,7 +153,6 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
     def create_new_store_config(
         cls, store_base_path: str, **kwargs
     ) -> ARCHIVE_CONFIG_CLS:
-
         log_message(
             "create_new_store",
             store_base_path=store_base_path,
@@ -175,7 +172,6 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
         force_read_only: bool = False,
         archive_name: Union[str, None] = None,
     ):
-
         self._archive_instance_name: Union[str, None] = archive_name
         self._config: ARCHIVE_CONFIG_CLS = archive_config
         self._force_read_only: bool = force_read_only
@@ -184,7 +180,6 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
 
     @property
     def archive_metadata(self) -> ArchiveMetadata:
-
         if self._archive_metadata is None:
             archive_metadata = self._retrieve_archive_metadata()
             self._archive_metadata = ArchiveMetadata(root=archive_metadata)
@@ -216,11 +211,9 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
         raise NotImplementedError()
 
     def get_archive_metadata(self, key: str) -> Any:
-
         return self.archive_metadata.get(key, None)
 
     def set_archive_metadata_value(self, key: str, value: Any):
-
         if not self.is_writeable():
             raise Exception("Can't set metadata on read-only archive.")
 
@@ -262,7 +255,6 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
 
     @property
     def archive_id(self) -> uuid.UUID:
-
         try:
             result = self.archive_metadata["archive_id"]
         except KeyError:
@@ -277,7 +269,6 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
         return NON_ARCHIVE_DETAILS
 
     def delete_archive(self, archive_id: Union[uuid.UUID, None] = None):
-
         if archive_id != self.archive_id:
             raise Exception(
                 f"Not deleting archive with id '{self.archive_id}': confirmation id '{archive_id}' does not match."
@@ -296,11 +287,9 @@ class KiaraArchive(abc.ABC, Generic[ARCHIVE_CONFIG_CLS]):
         pass
 
     def __hash__(self):
-
         return hash(self.__class__) + hash(self.archive_id)
 
     def __eq__(self, other):
-
         if self.__class__ != other.__class__:
             return False
 
@@ -316,7 +305,6 @@ class BaseArchive(KiaraArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CLS])
         archive_config: ARCHIVE_CONFIG_CLS,
         force_read_only: bool = False,
     ):
-
         super().__init__(
             archive_name=archive_name,
             archive_config=archive_config,
@@ -340,7 +328,6 @@ class BaseArchive(KiaraArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CLS])
         self._kiara = kiara
 
     def _delete_archive(self):
-
         logger.info(
             "ignore.archive_delete_request",
             reason="not implemented/applicable",
@@ -361,7 +348,6 @@ class FileSystemArchiveConfig(ArchiveConfig):
     def create_new_store_config(
         cls, store_base_path: str, **kwargs
     ) -> "FileSystemArchiveConfig":
-
         store_id = str(uuid.uuid4())
         if "path" in kwargs:
             file_name = kwargs["path"]
@@ -382,7 +368,6 @@ class SqliteArchiveConfig(ArchiveConfig):
     def create_new_store_config(
         cls, store_base_path: str, **kwargs
     ) -> "SqliteArchiveConfig":
-
         store_id = str(uuid.uuid4())
 
         if "file_name" in kwargs:
@@ -439,7 +424,6 @@ class SqliteDataStoreConfig(SqliteArchiveConfig):
     def create_new_store_config(
         cls, store_base_path: str, **kwargs
     ) -> "SqliteDataStoreConfig":
-
         store_id = str(uuid.uuid4())
 
         if "file_name" in kwargs:
@@ -496,7 +480,6 @@ class SqliteDataStoreConfig(SqliteArchiveConfig):
 
     @field_validator("default_chunk_compression", mode="before")
     def validate_compression(cls, v):
-
         if v is None:
             v = "none"
         elif isinstance(v, CHUNK_COMPRESSION_TYPE):

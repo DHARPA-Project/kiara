@@ -30,7 +30,6 @@ if TYPE_CHECKING:
 
 
 class ExecutionContext(KiaraModel):
-
     _kiara_model_id: ClassVar = "instance.execution_context"
 
     working_dir: str = Field(
@@ -43,7 +42,6 @@ class ExecutionContext(KiaraModel):
 
 
 class JobStatus(Enum):
-
     CREATED = "__job_created__"
     STARTED = "__job_started__"
     SUCCESS = "__job_success__"
@@ -51,7 +49,6 @@ class JobStatus(Enum):
 
 
 class LogMessage(BaseModel):
-
     timestamp: datetime = Field(
         description="The time the message was logged.", default_factory=datetime.now
     )
@@ -60,7 +57,6 @@ class LogMessage(BaseModel):
 
 
 class JobLog(BaseModel):
-
     log: List[LogMessage] = Field(
         description="The logs for this job.", default_factory=list
     )
@@ -70,19 +66,16 @@ class JobLog(BaseModel):
     )
 
     def add_log(self, msg: str, log_level: int = logging.DEBUG):
-
         _msg = LogMessage(msg=msg, log_level=log_level)
         self.log.append(_msg)
 
 
 class PipelineMetadata(BaseModel):
-
     pipeline_id: uuid.UUID = Field(description="The id of the pipeline.")
     step_id: str = Field(description="The id of the step in the pipeline.")
 
 
 class JobConfig(InputsManifest):
-
     _kiara_model_id: ClassVar = "instance.job_config"
 
     @classmethod
@@ -92,7 +85,6 @@ class JobConfig(InputsManifest):
         module: "KiaraModule",
         inputs: Mapping[str, Any],
     ) -> "JobConfig":
-
         augmented = module.augment_module_inputs(inputs=inputs)
 
         values = data_registry.create_valuemap(
@@ -129,7 +121,6 @@ class JobConfig(InputsManifest):
 
 
 class ActiveJob(KiaraModel):
-
     _kiara_model_id: ClassVar = "instance.active_job"
 
     job_id: uuid.UUID = Field(description="The job id.")
@@ -172,7 +163,6 @@ class ActiveJob(KiaraModel):
 
     @property
     def runtime(self) -> Union[float, None]:
-
         if self.started is None or self.finished is None:
             return None
 
@@ -181,7 +171,6 @@ class ActiveJob(KiaraModel):
 
 
 class JobRuntimeDetails(BaseModel):
-
     # @classmethod
     # def from_manifest(
     #     cls,
@@ -204,7 +193,6 @@ class JobRuntimeDetails(BaseModel):
     runtime: float = Field(description="The duration of the job (in seconds).")
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")
         table.add_column("Value")
@@ -226,12 +214,10 @@ class JobRuntimeDetails(BaseModel):
 
 
 class JobRecord(JobConfig):
-
     _kiara_model_id: ClassVar = "instance.job_record"
 
     @classmethod
     def from_active_job(self, kiara: "Kiara", active_job: ActiveJob):
-
         assert active_job.status == JobStatus.SUCCESS
         assert active_job.results is not None
 
@@ -323,7 +309,6 @@ class JobRecord(JobConfig):
         }
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         from kiara.utils.output import extract_renderable
 
         include = config.get("include", None)
@@ -356,7 +341,6 @@ class JobRecord(JobConfig):
 class JobMatcher(KiaraModel):
     @classmethod
     def create_matcher(self, **match_options: Any):
-
         m = JobMatcher(**match_options)
         return m
 
@@ -383,7 +367,6 @@ class JobMatcher(KiaraModel):
     @field_validator("job_ids", mode="before")
     @classmethod
     def validate_job_ids(cls, v):
-
         if v is None:
             return []
         elif isinstance(v, uuid.UUID):

@@ -21,7 +21,6 @@ from kiara.utils import log_message
 
 
 class PrettyPrintConfig(KiaraModuleConfig):
-
     source_type: str = Field(description="The value type of the source value.")
     target_type: str = Field(description="The value type of the rendered value.")
 
@@ -34,13 +33,11 @@ class PrettyPrintConfig(KiaraModuleConfig):
 
 
 class PrettyPrintModule(KiaraModule):
-
     _module_type_name: str = None  # type: ignore
     _config_cls = PrettyPrintConfig
 
     @classmethod
     def retrieve_supported_render_combinations(cls) -> Iterable[Tuple[str, str]]:
-
         result = []
         for attr in dir(cls):
             if (
@@ -66,7 +63,6 @@ class PrettyPrintModule(KiaraModule):
     def create_inputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
-
         source_type = self.get_config_value("source_type")
         assert source_type not in ["target", "base_name"]
 
@@ -84,7 +80,6 @@ class PrettyPrintModule(KiaraModule):
     def create_outputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
-
         return {
             "rendered_value": {
                 "type": self.get_config_value("target_type"),
@@ -93,7 +88,6 @@ class PrettyPrintModule(KiaraModule):
         }
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
-
         source_type = self.get_config_value("source_type")
         target_type = self.get_config_value("target_type")
 
@@ -114,7 +108,6 @@ class PrettyPrintModule(KiaraModule):
 
 
 class ValueTypePrettyPrintModule(KiaraModule):
-
     _module_type_name = "pretty_print.value"
     _config_cls = PrettyPrintConfig
 
@@ -124,7 +117,6 @@ class ValueTypePrettyPrintModule(KiaraModule):
     def create_inputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
-
         source_type = self.get_config_value("source_type")
         assert source_type not in ["target", "base_name"]
 
@@ -146,7 +138,6 @@ class ValueTypePrettyPrintModule(KiaraModule):
     def create_outputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
-
         return {
             "rendered_value": {
                 "type": self.get_config_value("target_type"),
@@ -155,7 +146,6 @@ class ValueTypePrettyPrintModule(KiaraModule):
         }
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
-
         # source_type = self.get_config_value("source_type")
         target_type = self.get_config_value("target_type")
 
@@ -190,7 +180,6 @@ class ValueTypePrettyPrintModule(KiaraModule):
 
 
 class PrettyPrintAnyValueModule(PrettyPrintModule):
-
     _module_type_name = "pretty_print.any.value"
 
     # def pretty_print__any__as__string(self, value: Value, render_config: Dict[str, Any]):

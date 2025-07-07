@@ -44,7 +44,6 @@ class OperationSchema(InputOutputObject):
     def __init__(
         self, alias: str, inputs_schema: ValueMapSchema, outputs_schema: ValueMapSchema
     ):
-
         allow_empty_inputs = True
         allow_empty_outputs = True
 
@@ -64,12 +63,10 @@ class OperationSchema(InputOutputObject):
     def create_outputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
-
         return self._outputs_schema_static
 
 
 class OperationDetails(KiaraModel):
-
     _kiara_model_id: ClassVar = "instance.operation_details"
 
     # inputs_map: Dict[str, str] = Field(description="A map with the operations input fields as keys, and the underlying modules input fields as values, used to translate input value maps.")
@@ -77,7 +74,6 @@ class OperationDetails(KiaraModel):
 
     @classmethod
     def create_operation_details(cls, **details: Any) -> Self:
-
         if PYDANTIC_USE_CONSTRUCT:
             result = cls(**details)
         else:
@@ -109,7 +105,6 @@ class OperationDetails(KiaraModel):
 
 
 class BaseOperationDetails(OperationDetails):
-
     _kiara_model_id: ClassVar = "instance.operation_details.base"
 
     module_inputs_schema: Mapping[str, ValueSchema] = Field(
@@ -121,7 +116,6 @@ class BaseOperationDetails(OperationDetails):
     _op_schema: Union[OperationSchema, None] = PrivateAttr(default=None)
 
     def get_operation_schema(self) -> OperationSchema:
-
         if self._op_schema is not None:
             return self._op_schema
 
@@ -134,7 +128,6 @@ class BaseOperationDetails(OperationDetails):
 
 
 class OperationConfig(KiaraModel):
-
     doc: DocumentationMetadataModel = Field(
         description="Documentation for this operation."
     )
@@ -154,7 +147,6 @@ class OperationConfig(KiaraModel):
 
 
 class ManifestOperationConfig(OperationConfig):
-
     _kiara_model_id: ClassVar = "instance.operation_config.manifest"
 
     module_type: str = Field(description="The module type.")
@@ -176,7 +168,6 @@ class ManifestOperationConfig(OperationConfig):
         return self.module_config
 
     def get_manifest(self) -> Manifest:
-
         if self._manifest_cache is None:
             self._manifest_cache = Manifest(
                 module_type=self.module_type, module_config=self.module_config
@@ -185,7 +176,6 @@ class ManifestOperationConfig(OperationConfig):
 
 
 class PipelineOperationConfig(OperationConfig):
-
     _kiara_model_id: ClassVar = "instance.operation_config.pipeline"
 
     pipeline_name: str = Field(description="The pipeline id.")
@@ -211,7 +201,6 @@ class PipelineOperationConfig(OperationConfig):
         return "pipeline"
 
     def retrieve_module_config(self, kiara: "Kiara") -> Mapping[str, Any]:
-
         # using _from_config here because otherwise we'd enter an infinite loop
         pipeline_config = PipelineConfig._from_config(
             pipeline_name=self.pipeline_name,
@@ -226,23 +215,19 @@ class PipelineOperationConfig(OperationConfig):
 
     @property
     def required_module_types(self) -> Iterable[str]:
-
         return [step["module_type"] for step in self.pipeline_config["steps"]]
 
     def __repr__(self):
-
         return f"{self.__class__.__name__}(pipeline_name={self.pipeline_name} required_modules={list(self.required_module_types)} instance_id={self.instance_id} fields=[{', '.join(self.model_fields.keys())}])"
 
 
 class Operation(Manifest):
-
     _kiara_model_id: ClassVar = "instance.operation"
 
     @classmethod
     def create_from_module(
         cls, module: KiaraModule, doc: Union[Any, None] = None
     ) -> "Operation":
-
         from kiara.operations.included_core_operations import (
             CustomModuleOperationDetails,
         )
@@ -320,7 +305,6 @@ class Operation(Manifest):
     def prepare_job_config(
         self, kiara: "Kiara", inputs: Mapping[str, Any]
     ) -> JobConfig:
-
         augmented_inputs = (
             self.operation_details.get_operation_schema().augment_module_inputs(
                 inputs=inputs
@@ -337,7 +321,6 @@ class Operation(Manifest):
         return job_config
 
     def run(self, kiara: "Kiara", inputs: Mapping[str, Any]) -> ValueMap:
-
         logger.debug("run.operation", operation_id=self.operation_id)
         job_config = self.prepare_job_config(kiara=kiara, inputs=inputs)
 
@@ -349,15 +332,15 @@ class Operation(Manifest):
         return result
 
     def process_job_outputs(self, outputs: ValueMap) -> ValueMap:
-
         # op_outputs = self.operation_details.create_operation_outputs(outputs=outputs)
 
-        value_set = ValueMapReadOnly(value_items=outputs, values_schema=self.outputs_schema)  # type: ignore
+        value_set = ValueMapReadOnly(
+            value_items=outputs, values_schema=self.outputs_schema
+        )  # type: ignore
         return value_set
 
     @property
     def pipeline_config(self) -> PipelineConfig:
-
         if not self.module.is_pipeline():
             raise Exception(
                 f"Can't retrieve pipeline details from operation '{self.operation_id}: not a pipeline operation type.'"
@@ -459,7 +442,6 @@ class Operation(Manifest):
 
 
 class Filter(KiaraModel):
-
     operation: Operation = Field(
         description="The underlying operation providing which does the filtering."
     )

@@ -66,7 +66,6 @@ class OperationRegistry(object):
         kiara: "Kiara",
         operation_type_classes: Union[Mapping[str, Type[OperationType]], None] = None,
     ):
-
         self._kiara: "Kiara" = kiara
 
         self._operation_type_classes: Union[Dict[str, Type["OperationType"]], None] = (
@@ -89,11 +88,9 @@ class OperationRegistry(object):
 
     @property
     def is_initialized(self) -> bool:
-
         return self._operations is not None
 
     def get_module_map(self) -> Mapping[str, Mapping[str, Any]]:
-
         if not self.is_initialized:
             raise Exception(
                 "Can't retrieve module map: operations not initialized yet."
@@ -113,7 +110,6 @@ class OperationRegistry(object):
 
     @property
     def operation_types(self) -> Mapping[str, OperationType]:
-
         if self._operation_types is not None:
             return self._operation_types
 
@@ -132,7 +128,6 @@ class OperationRegistry(object):
         return self._operation_types
 
     def get_operation_type(self, op_type: Union[str, Type[OP_TYPE]]) -> OP_TYPE:
-
         if not isinstance(op_type, str):
             try:
                 op_type = op_type._operation_type_name  # type: ignore
@@ -149,7 +144,6 @@ class OperationRegistry(object):
         return self.operation_types[op_type]  # type: ignore
 
     def get_type_metadata(self, type_name: str) -> OperationTypeInfo:
-
         md = self._operation_type_metadata.get(type_name, None)
         if md is None:
             md = OperationTypeInfo.create_from_type_class(
@@ -161,7 +155,6 @@ class OperationRegistry(object):
     def get_context_metadata(
         self, alias: Union[str, None] = None, only_for_package: Union[str, None] = None
     ) -> OperationTypeClassesInfo:
-
         result = {}
         for type_name in self.operation_type_classes.keys():
             md = self.get_type_metadata(type_name=type_name)
@@ -177,7 +170,6 @@ class OperationRegistry(object):
     def operation_type_classes(
         self,
     ) -> Mapping[str, Type["OperationType"]]:
-
         if self._operation_type_classes is not None:
             return self._operation_type_classes
 
@@ -196,7 +188,6 @@ class OperationRegistry(object):
 
     @property
     def operations(self) -> Mapping[str, Operation]:
-
         if self._operations is not None:
             return self._operations
 
@@ -223,9 +214,7 @@ class OperationRegistry(object):
 
         # first iteration
         for op_config in all_op_configs:
-
             try:
-
                 if isinstance(op_config, PipelineOperationConfig):
                     for mt in op_config.required_module_types:
                         if mt not in self._kiara.module_type_names:
@@ -251,7 +240,6 @@ class OperationRegistry(object):
                 continue
 
             try:
-
                 module_type = op_config.retrieve_module_type(kiara=self._kiara)
                 if module_type not in self._kiara.module_type_names:
                     deferred_module_names.setdefault(module_type, []).append(op_config)
@@ -294,7 +282,6 @@ class OperationRegistry(object):
 
         error_details = {}
         while deferred_module_names:
-
             deferred_length = len(deferred_module_names)
 
             remove_deferred_names = set()
@@ -305,17 +292,13 @@ class OperationRegistry(object):
                     continue
 
                 for op_config in deferred_module_names[missing_op_id]:
-
                     try:
-
                         if isinstance(op_config, PipelineOperationConfig):
-
                             if all(
                                 mt in self._kiara.module_type_names
                                 or mt in operations.keys()
                                 for mt in op_config.required_module_types
                             ):
-
                                 module_map = {}
                                 for mt in op_config.required_module_types:
                                     if mt in operations.keys():
@@ -366,7 +349,6 @@ class OperationRegistry(object):
                             #                       module_config=new_module_config)
 
                         for op_type_name, _op in ops.items():
-
                             if _op.operation_id in operations.keys():
                                 raise Exception(
                                     f"Duplicate operation id: {_op.operation_id}"
@@ -412,7 +394,6 @@ class OperationRegistry(object):
                 deferred_module_names.pop(rdn)
 
             if len(deferred_module_names) == deferred_length:
-
                 for mn in deferred_module_names:
                     if mn in operations.keys():
                         continue
@@ -483,7 +464,6 @@ class OperationRegistry(object):
         data: Union[Path, str, Mapping[str, Any]],
         operation_id: Union[str, None] = None,
     ) -> Operation:
-
         if isinstance(data, Path):
             if not data.is_file():
                 raise Exception(
@@ -494,7 +474,6 @@ class OperationRegistry(object):
                 data.as_posix(), kiara=self._kiara, pipeline_name=operation_id
             )
         elif isinstance(data, Mapping):
-
             pipeline_config = PipelineConfig.from_config(
                 pipeline_name=operation_id, data=data, kiara=self._kiara
             )
@@ -586,7 +565,6 @@ class OperationRegistry(object):
         doc: Any,
         metadata: Union[Mapping[str, Any], None] = None,
     ) -> Dict[str, Operation]:
-
         module = self._kiara.module_registry.create_module(manifest)
         op_types = {}
 
@@ -594,7 +572,6 @@ class OperationRegistry(object):
             metadata = {}
 
         for op_name, op_type in self.operation_types.items():
-
             op_details = op_type.check_matching_operation(module=module)
             if not op_details:
                 continue
@@ -615,7 +592,6 @@ class OperationRegistry(object):
         return op_types
 
     def get_operation(self, operation_id: str) -> Operation:
-
         if operation_id not in self.operation_ids:
             if operation_id in self._invalid_operations.keys():
                 raise InvalidOperationException(self._invalid_operations[operation_id])
@@ -629,7 +605,6 @@ class OperationRegistry(object):
         return op
 
     def find_all_operation_types(self, operation_id: str) -> Set[str]:
-
         result = set()
         for op_type, ops in self.operations_by_type.items():
             if operation_id in ops:
@@ -639,13 +614,11 @@ class OperationRegistry(object):
 
     @property
     def operations_by_type(self) -> Mapping[str, Iterable[str]]:
-
         if self._operations_by_type is None:
             self.operations
         return self._operations_by_type  # type: ignore
 
     def find_operation_id(self, manifest: Manifest) -> Union[str, None]:
-
         for op in self.operations.values():
             if manifest.manifest_cid == op.manifest_cid:
                 return op.operation_id

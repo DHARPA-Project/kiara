@@ -148,7 +148,6 @@ class BaseAPI(object):
     """
 
     def __init__(self, kiara_config: Union["KiaraConfig", None] = None):
-
         if kiara_config is None:
             from kiara.context import Kiara, KiaraConfig
 
@@ -559,7 +558,6 @@ class BaseAPI(object):
                     match = True
 
                     for f in filter:
-
                         if f.lower() not in m.lower():
                             match = False
                             break
@@ -628,7 +626,6 @@ class BaseAPI(object):
         """
 
         if python_package:
-
             modules_type_info = self.context.module_registry.get_context_metadata(
                 only_for_package=python_package
             )
@@ -644,7 +641,6 @@ class BaseAPI(object):
                     match = True
 
                     for f in filter:
-
                         if f.lower() not in m.lower():
                             match = False
                             break
@@ -662,9 +658,7 @@ class BaseAPI(object):
                 module_types_info.group_title = title
 
         else:
-
             if filter:
-
                 if isinstance(filter, str):
                     filter = [filter]
                 title = f"Filtered modules: {filter}"
@@ -674,7 +668,6 @@ class BaseAPI(object):
                     match = True
 
                     for f in filter:
-
                         if f.lower() not in m.lower():
                             match = False
                             break
@@ -839,7 +832,6 @@ class BaseAPI(object):
             operation = operation["module_type"]
 
         if isinstance(operation, str):
-
             if operation in self.list_operation_ids(include_internal=True):
                 _operation = self.context.operation_registry.get_operation(operation)
                 return _operation
@@ -1690,7 +1682,6 @@ class BaseAPI(object):
         allow_overwrite: bool = False,
         alias_store: Union[str, None] = None,
     ) -> None:
-
         self.context.alias_registry.register_aliases(
             value_id=value,
             aliases=alias,
@@ -1728,7 +1719,6 @@ class BaseAPI(object):
         if register_data:
             temp: Dict[str, Union[str, Value, uuid.UUID, None]] = {}
             for k, v in values.items():
-
                 if isinstance(v, (Value, uuid.UUID)):
                     temp[k] = v
                     continue
@@ -1746,7 +1736,6 @@ class BaseAPI(object):
                     )
 
                 if isinstance(v, str):
-
                     if v.startswith("alias:"):
                         temp[k] = v
                         continue
@@ -1831,14 +1820,15 @@ class BaseAPI(object):
                 )
 
             if store_related_metadata:
-
                 from kiara.registries.metadata import MetadataMatcher
 
                 matcher = MetadataMatcher.create_matcher(
                     reference_item_ids=[value_obj.job_id, value_obj.value_id]
                 )
 
-                target_store: MetadataStore = self.context.metadata_registry.get_archive(store)  # type: ignore
+                target_store: MetadataStore = (
+                    self.context.metadata_registry.get_archive(store)
+                )  # type: ignore
                 matching_metadata = self.context.metadata_registry.find_metadata_items(
                     matcher=matcher
                 )
@@ -1947,7 +1937,6 @@ class BaseAPI(object):
             if not alias_map:
                 use_aliases = False
             elif alias_map and (alias_map is True or isinstance(alias_map, str)):
-
                 invalid: List[Union[str, uuid.UUID, Value]] = []
                 valid: Dict[str, List[str]] = {}
                 for value in values:
@@ -1985,7 +1974,6 @@ class BaseAPI(object):
                 use_aliases = True
 
             for value in values:
-
                 aliases: Set[str] = set()
 
                 value_obj = self.get_value(value)
@@ -2004,7 +1992,6 @@ class BaseAPI(object):
                 )
                 result[str(value_obj.value_id)] = store_result
         else:
-
             for field_name, value in values.items():
                 if alias_map is False:
                     aliases_map: Union[None, Iterable[str]] = None
@@ -2270,7 +2257,6 @@ class BaseAPI(object):
             archive = Path(archive)
 
         if isinstance(archive, Path):
-
             if not archive.name.endswith(".kiarchive"):
                 archive = archive.parent / f"{archive.name}.kiarchive"
 
@@ -2586,7 +2572,6 @@ class BaseAPI(object):
             aliases = self.list_aliases(in_data_archives=[source_archive_ref])
             alias_map: Union[bool, Dict[str, List[str]]] = {}
             for alias, value in aliases.items():
-
                 if source_archive_ref != DEFAULT_STORE_MARKER:
                     # TODO: maybe add a matcher arg to the list_aliases endpoint
                     if not alias.startswith(f"{source_archive_ref}#"):
@@ -2678,7 +2663,9 @@ class BaseAPI(object):
         Returns:
             the (pipeline) module configuration of the filter pipeline
         """
-        filter_op_type: FilterOperationType = self.context.operation_registry.get_operation_type("filter")  # type: ignore
+        filter_op_type: FilterOperationType = (
+            self.context.operation_registry.get_operation_type("filter")
+        )  # type: ignore
         pipeline_config = filter_op_type.assemble_filter_pipeline_config(
             data_type=data_type,
             filters=filters,
@@ -2731,7 +2718,6 @@ class BaseAPI(object):
         )
 
     def find_metadata_items(self, **matcher_params: Any):
-
         from kiara.registries.metadata import MetadataMatcher
 
         matcher = MetadataMatcher.create_matcher(**matcher_params)
@@ -2767,7 +2753,8 @@ class BaseAPI(object):
             raise KiaraException(msg="Cannot retrieve renderers for target type only.")
         else:
             renderers = self.context.render_registry.retrieve_renderers_for_source_target_combination(
-                source_type=source_type, target_type=target_type  # type: ignore
+                source_type=source_type,
+                target_type=target_type,  # type: ignore
             )
 
         group = {k.get_renderer_alias(): k for k in renderers}
@@ -2857,11 +2844,11 @@ class BaseAPI(object):
             )  # type: ignore
             ops = pretty_print_op_type.get_target_types_for(data_type)
         else:
-            render_op_type: (
-                RenderValueOperationType
-            ) = self.context.operation_registry.get_operation_type(
-                # type: ignore
-                "render_value"
+            render_op_type: RenderValueOperationType = (
+                self.context.operation_registry.get_operation_type(
+                    # type: ignore
+                    "render_value"
+                )
             )  # type: ignore
             ops = render_op_type.get_render_operations_for_source_type(data_type)
 
@@ -2947,7 +2934,6 @@ class BaseAPI(object):
             save_values = False
             if "comment" in job_metadata.keys() and job_metadata["comment"] is None:
                 del job_metadata["comment"]
-
 
         if inputs is None:
             inputs = {}
@@ -3237,10 +3223,12 @@ class BaseAPI(object):
 
     @tag("kiara_api")
     def retrieve_jobs_info(self, **matcher_params: Any) -> JobsInfo:
-
         job_records = self.list_job_records(**matcher_params)
 
-        infos: JobsInfo = JobsInfo.create_from_instances(kiara=self.context, instances={str(j_id): j for j_id, j in job_records.items()})  # type: ignore
+        infos: JobsInfo = JobsInfo.create_from_instances(
+            kiara=self.context,
+            instances={str(j_id): j for j_id, j in job_records.items()},
+        )  # type: ignore
         return infos
 
     def render_value(
@@ -3281,7 +3269,6 @@ class BaseAPI(object):
             )
 
         except Exception as e:
-
             log_message(
                 "create_render_pipeline.failure",
                 source_type=_value.data_type_name,
@@ -3290,7 +3277,9 @@ class BaseAPI(object):
             )
 
             if use_pretty_print:
-                pretty_print_ops: PrettyPrintOperationType = self.context.operation_registry.get_operation_type("pretty_print")  # type: ignore
+                pretty_print_ops: PrettyPrintOperationType = (
+                    self.context.operation_registry.get_operation_type("pretty_print")
+                )  # type: ignore
                 if not isinstance(target_format, str):
                     raise NotImplementedError(
                         "Can't handle multiple target formats for 'render_value' yet."
@@ -3301,7 +3290,9 @@ class BaseAPI(object):
                     )
                 )
             else:
-                render_ops: RenderValueOperationType = self.context.operation_registry.get_operation_type("render_value")  # type: ignore
+                render_ops: RenderValueOperationType = (
+                    self.context.operation_registry.get_operation_type("render_value")
+                )  # type: ignore
                 if not isinstance(target_format, str):
                     raise NotImplementedError(
                         "Can't handle multiple target formats for 'render_value' yet."
@@ -3461,7 +3452,6 @@ class BaseAPI(object):
                 alias,
                 workflow_id,
             ) in self.context.workflow_registry.workflow_aliases.items():
-
                 workflow = self.get_workflow(workflow=workflow_id)
                 workflows[workflow.workflow_id] = workflow
             return WorkflowsMap(root={str(k): v for k, v in workflows.items()})
@@ -3597,7 +3587,6 @@ class BaseAPI(object):
         return workflow_obj
 
     def _repr_html_(self):
-
         info = self.get_context_info()
         r = info.create_renderable()
         mime_bundle = r._repr_mimebundle_(include=[], exclude=[])  # type: ignore

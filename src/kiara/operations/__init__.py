@@ -58,7 +58,6 @@ class OperationType(abc.ABC, Generic[OPERATION_TYPE_DETAILS]):
         return operation.operation_details  # type: ignore
 
     def create_renderable(self, **config):
-
         info = OperationTypeInfo.create_from_type_class(
             kiara=None, type_cls=self.__class__
         )

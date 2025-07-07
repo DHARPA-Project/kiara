@@ -84,7 +84,6 @@ class Pipeline(object):
         kiara: Union["Kiara", "BaseAPI"],
         pipeline: Union[PipelineConfig, PipelineStructure, Mapping, str],
     ) -> "Pipeline":
-
         from kiara.interfaces.python_api.base_api import BaseAPI
 
         if isinstance(kiara, BaseAPI):
@@ -137,7 +136,6 @@ class Pipeline(object):
         return pipeline_obj
 
     def __init__(self, structure: PipelineStructure, kiara: "Kiara"):
-
         self._id: uuid.UUID = uuid.uuid4()
 
         self._structure: PipelineStructure = structure
@@ -213,22 +211,21 @@ class Pipeline(object):
 
         self._all_values = values
 
-        initial_inputs = dict.fromkeys(self._structure.pipeline_inputs_schema, SpecialValue.NOT_SET)
+        initial_inputs = dict.fromkeys(
+            self._structure.pipeline_inputs_schema, SpecialValue.NOT_SET
+        )
         self.set_pipeline_inputs(inputs=initial_inputs)
 
     def __eq__(self, other):
-
         if not isinstance(other, Pipeline):
             return False
 
         return self._id == other._id
 
     def __hash__(self):
-
         return hash(self._id)
 
     def add_listener(self, listener: PipelineListener):
-
         self._listeners.append(listener)
 
     @property
@@ -272,12 +269,10 @@ class Pipeline(object):
         return alias_map.get_all_value_ids()  # type: ignore
 
     def get_current_step_inputs(self, step_id) -> Dict[str, uuid.UUID]:
-
         alias_map = self._all_values.get_alias(f"steps.{step_id}.inputs")
         return alias_map.get_all_value_ids()  # type: ignore
 
     def get_current_step_outputs(self, step_id) -> Dict[str, uuid.UUID]:
-
         alias_map = self._all_values.get_alias(f"steps.{step_id}.outputs")
         return alias_map.get_all_value_ids()  # type: ignore
 
@@ -302,12 +297,10 @@ class Pipeline(object):
         return result
 
     def _notify_pipeline_listeners(self, event: PipelineEvent):
-
         for listener in self._listeners:
             listener._pipeline_event_occurred(event=event)
 
     def get_pipeline_details(self) -> PipelineState:
-
         pipeline_inputs = self._all_values.get_alias("pipeline.inputs")
         pipeline_outputs = self._all_values.get_alias("pipeline.outputs")
 
@@ -353,7 +346,6 @@ class Pipeline(object):
         return details
 
     def get_step_details(self, step_id: str) -> StepDetails:
-
         step_input_ids = self.get_current_step_inputs(step_id=step_id)
         step_output_ids = self.get_current_step_outputs(step_id=step_id)
         step_inputs = self._all_values.get_alias(f"steps.{step_id}.inputs")
@@ -493,7 +485,6 @@ class Pipeline(object):
     def _set_step_inputs(
         self, step_id: str, inputs: Mapping[str, Union[uuid.UUID, None]]
     ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
-
         changed_step_inputs = self._set_values(f"steps.{step_id}.inputs", **inputs)
         if not changed_step_inputs:
             return {}
@@ -520,7 +511,6 @@ class Pipeline(object):
         changed_outputs: Mapping[str, Mapping[str, Union[uuid.UUID, None]]],
         notify_listeners: bool = True,
     ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
-
         results: Dict[str, Dict[str, Dict[str, ChangedValue]]] = {}
         for step_id, outputs in changed_outputs.items():
             step_results = self.set_step_outputs(
@@ -541,7 +531,6 @@ class Pipeline(object):
         outputs: Mapping[str, Union[uuid.UUID, None]],
         notify_listeners: bool = True,
     ) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
-
         # make sure pedigrees match with respective inputs?
 
         changed_step_outputs = self._set_values(f"steps.{step_id}.outputs", **outputs)
@@ -589,7 +578,6 @@ class Pipeline(object):
     def _set_pipeline_outputs(
         self, **outputs: Union[uuid.UUID, None]
     ) -> Mapping[str, ChangedValue]:
-
         changed_pipeline_outputs = self._set_values("pipeline.outputs", **outputs)
         return changed_pipeline_outputs
 
@@ -617,7 +605,6 @@ class Pipeline(object):
         changed: Dict[str, ChangedValue] = {}
 
         for field_name, new_value in values.items():
-
             current_value = self._all_values.get_alias(f"{alias}.{field_name}")
             if current_value is not None:
                 current_value_id = current_value.assoc_value
@@ -688,7 +675,6 @@ class Pipeline(object):
         return self._steps_by_stage
 
     def create_job_config_for_step(self, step_id: str) -> JobConfig:
-
         step_inputs: Mapping[str, uuid.UUID] = self.get_current_step_inputs(step_id)
         step_details: StepDetails = self.get_step_details(step_id=step_id)
         step: PipelineStep = self.get_step(step_id=step_id)
@@ -707,14 +693,12 @@ class Pipeline(object):
         return job_config
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         return PipelineInfo.create_from_pipeline(
             kiara=self._kiara, pipeline=self
         ).create_renderable(**config)
 
 
 class PipelineInfo(ItemInfo):
-
     _kiara_model_id: ClassVar = "info.pipeline"
 
     @classmethod
@@ -725,7 +709,6 @@ class PipelineInfo(ItemInfo):
     def create_from_instance(
         cls, kiara: "Kiara", instance: Any, **kwargs
     ) -> "PipelineInfo":
-
         return cls.create_from_pipeline(kiara=kiara, pipeline=instance)
 
     @classmethod
@@ -734,7 +717,6 @@ class PipelineInfo(ItemInfo):
 
     @classmethod
     def create_from_pipeline(cls, kiara: "Kiara", pipeline: Pipeline) -> "PipelineInfo":
-
         # doc = DocumentationMetadataModel.create(None)
 
         doc = pipeline.doc
@@ -770,7 +752,6 @@ class PipelineInfo(ItemInfo):
         return self.pipeline_config.structure
 
     def create_pipeline_table(self, **config: Any) -> Table:
-
         table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
         table.add_column("property", style="i")
         table.add_column("value")
@@ -779,7 +760,6 @@ class PipelineInfo(ItemInfo):
         return table
 
     def _fill_table(self, table: Table, config: Mapping[str, Any]):
-
         include_pipeline_inputs = config.get("include_pipeline_inputs", True)
         include_pipeline_outputs = config.get("include_pipeline_outputs", True)
         include_steps = config.get("include_steps", True)
@@ -802,7 +782,6 @@ class PipelineInfo(ItemInfo):
 
             fields = []
             for stage in sorted(ordered_fields.keys()):
-
                 for f in sorted(ordered_fields[stage]):
                     if f not in fields:
                         fields.append(f)
@@ -861,7 +840,6 @@ class PipelineInfo(ItemInfo):
             table.add_row("pipeline outputs", t_outputs)
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         include_details = config.get("include_details", False)
         include_doc = config.get("include_doc", False)
         include_authors = config.get("include_authors", False)
@@ -896,7 +874,6 @@ class PipelineInfo(ItemInfo):
 
 
 class PipelineGroupInfo(InfoItemGroup):
-
     _kiara_model_id: ClassVar = "info.pipelines"
 
     @classmethod
@@ -907,7 +884,6 @@ class PipelineGroupInfo(InfoItemGroup):
     def create_from_pipelines(
         cls, kiara: "Kiara", group_title: Union[str, None] = None, **items: Pipeline
     ) -> "PipelineGroupInfo":
-
         p_infos = {
             k: PipelineInfo.create_from_pipeline(kiara=kiara, pipeline=v)
             for k, v in items.items()
@@ -922,11 +898,9 @@ class PipelineGroupInfo(InfoItemGroup):
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         return self._create_renderable_list(**config)
 
     def _create_renderable_list(self, **config) -> RenderableType:
-
         full_doc = config.get("full_doc", False)
         filter = config.get("filter", [])
 
@@ -936,7 +910,6 @@ class PipelineGroupInfo(InfoItemGroup):
 
         p_info: PipelineInfo
         for op_id, p_info in self.item_infos.items():
-
             desc_str = p_info.documentation.description
             if full_doc:
                 desc = Markdown(p_info.documentation.full_doc)

@@ -10,7 +10,6 @@ from pydantic import BaseModel, Field
 
 
 class ByteProvisioningStrategy(Enum):
-
     INLINE = "INLINE"
     BYTES = "bytes"
     FILE_PATH_MAP = "link_map"
@@ -33,7 +32,6 @@ class BytesStructure(BaseModel):
 
 
 class BytesAliasStructure(BaseModel):
-
     data_type: str = Field(description="The data type.")
     data_type_config: Mapping[str, Any] = Field(description="The data type config.")
     chunk_id_map: Mapping[str, List[str]] = Field(

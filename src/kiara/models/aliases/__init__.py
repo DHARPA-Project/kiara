@@ -71,7 +71,6 @@ class AliasValueMap(ValueMap):
             raise NotImplementedError()
 
         if VALUE_ALIAS_SEPARATOR not in field_name:
-
             if self.values_schema.get(field_name, None) is None:
                 if not self.values_schema:
                     msg = "No available fields"
@@ -99,7 +98,6 @@ class AliasValueMap(ValueMap):
             return child_map.get_child_map(rest)
 
     def get_value_obj(self, field_name: str) -> Value:
-
         assert self._data_registry is not None
         item = self.get_child_map(field_name=field_name)
         if item is None:
@@ -110,7 +108,6 @@ class AliasValueMap(ValueMap):
         return self._data_registry.get_value(value=item.assoc_value)
 
     def get_value_id(self, field_name: str) -> uuid.UUID:
-
         item = self.get_child_map(field_name=field_name)
         if item is None:
             result = NONE_VALUE_ID
@@ -122,7 +119,6 @@ class AliasValueMap(ValueMap):
     def get_all_value_ids(
         self,
     ) -> Dict[str, uuid.UUID]:
-
         result: Dict[str, uuid.UUID] = {}
         for k in self.values_schema.keys():
             v_id = self.get_value_id(field_name=k)
@@ -132,12 +128,10 @@ class AliasValueMap(ValueMap):
         return result
 
     def set_alias_schema(self, alias: str, schema: ValueSchema):
-
         if self._schema_locked:
             raise Exception(f"Can't add schema for alias '{alias}': schema locked.")
 
         if VALUE_ALIAS_SEPARATOR not in alias:
-
             self._set_local_field_schema(field_name=alias, schema=schema)
         else:
             child, rest = alias.split(VALUE_ALIAS_SEPARATOR, maxsplit=1)
@@ -155,7 +149,6 @@ class AliasValueMap(ValueMap):
             child_map.set_alias_schema(alias=rest, schema=schema)
 
     def _set_local_field_schema(self, field_name: str, schema: ValueSchema):
-
         assert field_name is not None
         if VALUE_ALIAS_SEPARATOR in field_name:
             raise Exception(
@@ -180,7 +173,6 @@ class AliasValueMap(ValueMap):
         self.value_items[field_name] = {}
 
     def get_alias(self, alias: str) -> Union["AliasValueMap", None]:
-
         if VALUE_ALIAS_SEPARATOR not in alias:
             if "@" in alias:
                 raise NotImplementedError()
@@ -204,13 +196,11 @@ class AliasValueMap(ValueMap):
             return child_map.get_alias(rest)
 
     def set_value(self, field_name: str, data: Any) -> None:
-
         assert VALUE_ALIAS_SEPARATOR not in field_name
 
         self._set_alias(alias=field_name, data=data)
 
     def _set_aliases(self, **aliases: Any) -> Mapping[str, "AliasValueMap"]:
-
         result = {}
         for k, v in aliases.items():
             r = self._set_alias(alias=k, data=v)
@@ -219,7 +209,6 @@ class AliasValueMap(ValueMap):
         return result
 
     def _set_alias(self, alias: str, data: Any) -> "AliasValueMap":
-
         if VALUE_ALIAS_SEPARATOR not in alias:
             field_name: Union[str, None] = alias
 
@@ -231,7 +220,6 @@ class AliasValueMap(ValueMap):
                 assert data is None
                 value_id = None
             else:
-
                 if data in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
                     if vs.default:
                         if callable(vs.default):
@@ -303,7 +291,6 @@ class AliasValueMap(ValueMap):
     def _set_local_value_item(
         self, field_name: str, value_id: Union[uuid.UUID, None] = None
     ) -> "AliasValueMap":
-
         assert VALUE_ALIAS_SEPARATOR not in field_name
         assert self._data_registry is not None
 
@@ -362,12 +349,10 @@ class AliasValueMap(ValueMap):
         return new_map
 
     def print_tree(self):
-
         t = self.get_tree("base")
         terminal_print(t)
 
     def get_tree(self, base_name: str) -> Tree:
-
         if self.assoc_schema:
             type_name = self.assoc_schema.type
         else:
@@ -386,7 +371,6 @@ class AliasValueMap(ValueMap):
             data.add(str(value.data))
 
         for field_name, schema in self.values_schema.items():
-
             alias = self.get_alias(alias=field_name)
             if alias is not None:
                 tree.add(alias.get_tree(base_name=field_name))
@@ -401,7 +385,6 @@ class AliasValueMap(ValueMap):
         return tree
 
     def __repr__(self):
-
         return f"AliasMap(assoc_value={self.assoc_value}, field_names={self.value_items.keys()})"
 
     def __str__(self):

@@ -6,6 +6,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Pipeline-related subcommands for the cli."""
+
 import sys
 import typing
 from pathlib import Path
@@ -61,7 +62,6 @@ def render(
 @click.pass_context
 @handle_exception()
 def list_render_combinations(ctx, format: str):
-
     api_wrap: BaseAPIWrap = ctx.obj
     kiara_api: BaseAPI = api_wrap.base_api
 
@@ -114,7 +114,6 @@ def render_item(
     available_render_source_types = infos.get_render_source_types()
 
     if source_type is None:
-
         if item_to_render in available_render_source_types:
             source_type = item_to_render
         else:
@@ -202,7 +201,6 @@ def render_item(
             )
 
     else:
-
         if isinstance(result, str):
             print(result)  # noqa
         elif isinstance(result, bytes):

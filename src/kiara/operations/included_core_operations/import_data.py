@@ -18,7 +18,6 @@ logger = structlog.getLogger()
 
 
 class ImportDataOpDetails(BaseOperationDetails):
-
     source_type: str = Field(description="The type of the value to be created.")
     target_type: str = Field(description="The result type.")
     optional_args: Mapping[str, ValueSchema] = Field(description="Optional arguments.")
@@ -44,11 +43,9 @@ class ImportDataOpDetails(BaseOperationDetails):
 
 
 class ImportDataOperationType(OperationType[ImportDataOpDetails]):
-
     _operation_type_name: ClassVar[str] = "import_data"
 
     def _calculate_op_id(self, source_type: str, target_type: str):
-
         if source_type == "any":
             operation_id = f"import.{target_type}"
         else:
@@ -59,7 +56,6 @@ class ImportDataOperationType(OperationType[ImportDataOpDetails]):
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:
-
         result: Iterable[Union[Mapping, OperationConfig]] = []
         return result
         # for name, module_cls in self._kiara.module_type_classes.items():
@@ -119,7 +115,6 @@ class ImportDataOperationType(OperationType[ImportDataOpDetails]):
     def check_matching_operation(
         self, module: "KiaraModule"
     ) -> Union[ImportDataOpDetails, None]:
-
         return None
 
         # if not isinstance(module, CreateFromModule):

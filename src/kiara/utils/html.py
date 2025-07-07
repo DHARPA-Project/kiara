@@ -28,7 +28,6 @@ def generate_html(
     if isinstance(item, str):
         doc(item)
     elif isinstance(item, BaseModel):
-
         from kiara.models import KiaraModel
 
         if isinstance(item, KiaraModel):
@@ -48,7 +47,6 @@ def generate_html(
 
         rows = []
         for field_name, field in model_cls.model_fields.items():
-
             if exclude_fields and field_name in exclude_fields:
                 continue
 
@@ -101,7 +99,6 @@ def generate_html(
                     value_el = generate_html(v)
                     doc.td(_t=value_el)  # type: ignore
     elif isinstance(item, Iterable):
-
         with doc.ul():
             for i in item:
                 with doc.li():

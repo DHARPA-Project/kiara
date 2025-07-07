@@ -7,7 +7,6 @@ from kiara.interfaces import get_console
 
 class KiaraZmqClient(object):
     def __init__(self, host: Union[None, str] = None, port: Union[None, int] = None):
-
         import zmq
 
         from kiara.zmq.messages import KiaraApiMsgBuilder
@@ -31,7 +30,6 @@ class KiaraZmqClient(object):
         self._context.destroy()
 
     def request_cli(self, args: Any) -> Any:
-
         width = get_console().width
         args = {"console_width": width, "sub-command": args, "executable": sys.argv[0]}
 
@@ -47,7 +45,6 @@ class KiaraZmqClient(object):
             print(stderr, file=sys.stderr)  # noqa
 
     def request(self, endpoint_name: str, args: Any = None) -> Any:
-
         if endpoint_name == "cli":
             self.request_cli(args=args)
             return

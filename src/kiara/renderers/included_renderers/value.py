@@ -22,21 +22,20 @@ if TYPE_CHECKING:
 
 class ValueTransformer(SourceTransformer):
     def __init__(self, kiara: "Kiara", target_type: str):
-
         self._kiara: Kiara = kiara
         self._target_type: str = target_type
         super().__init__()
 
     def retrieve_supported_python_classes(self) -> Iterable[Type]:
-
         return [Value, uuid.UUID, str]
 
     def validate_and_transform(self, source: Any) -> Union[Value, None]:
-
         return self._kiara.data_registry.get_value(source)
 
     def retrieve_supported_inputs_descs(self) -> Union[str, Iterable[str]]:
-        op_type: RenderValueOperationType = self._kiara.operation_registry.get_operation_type("render_value")  # type: ignore
+        op_type: RenderValueOperationType = (
+            self._kiara.operation_registry.get_operation_type("render_value")
+        )  # type: ignore
         ops = op_type.get_render_operations_for_target_type(
             target_type=self._target_type
         )
@@ -96,11 +95,9 @@ class ValueRenderer(
         ]
 
     def retrieve_doc(self) -> Union[str, None]:
-
         return f"Render a value (of a supported type) to a value of type '{self.renderer_config.target_type}'."
 
     def _render(self, instance: Value, render_config: ValueRenderInputsSchema) -> Any:
-
         target_type = self.renderer_config.target_type
         op_type: RenderValueOperationType = (
             self._kiara.operation_registry.get_operation_type("render_value")

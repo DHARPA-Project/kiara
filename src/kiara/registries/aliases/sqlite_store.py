@@ -18,7 +18,6 @@ from kiara.utils.db import create_archive_engine, delete_archive_db
 
 
 class SqliteAliasArchive(AliasArchive):
-
     _archive_type_name = "sqlite_alias_archive"
     _config_cls = SqliteArchiveConfig
 
@@ -26,7 +25,6 @@ class SqliteAliasArchive(AliasArchive):
     def _load_archive_config(
         cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Dict[str, Any], None]:
-
         if allow_write_access:
             return None
 
@@ -55,7 +53,6 @@ class SqliteAliasArchive(AliasArchive):
         archive_config: SqliteArchiveConfig,
         force_read_only: bool = False,
     ):
-
         AliasArchive.__init__(
             self,
             archive_name=archive_name,
@@ -68,7 +65,6 @@ class SqliteAliasArchive(AliasArchive):
         # self._lock: bool = True
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
-
         sql = text(f"SELECT key, value FROM {TABLE_NAME_ARCHIVE_METADATA}")
 
         with self.sqlite_engine.connect() as connection:
@@ -77,7 +73,6 @@ class SqliteAliasArchive(AliasArchive):
 
     @property
     def sqlite_path(self):
-
         if self._db_path is not None:
             return self._db_path
 
@@ -97,7 +92,6 @@ class SqliteAliasArchive(AliasArchive):
 
     @property
     def sqlite_engine(self) -> "Engine":
-
         if self._cached_engine is not None:
             return self._cached_engine
 
@@ -124,7 +118,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_ALIASES} (
         return self._cached_engine
 
     def find_value_id_for_alias(self, alias: str) -> Union[uuid.UUID, None]:
-
         sql = text(f"SELECT value_id FROM {TABLE_NAME_ALIASES} WHERE alias = :alias")
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(sql, {"alias": alias})
@@ -134,33 +127,28 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_ALIASES} (
             return uuid.UUID(row[0])
 
     def find_aliases_for_value_id(self, value_id: uuid.UUID) -> Union[Set[str], None]:
-
         sql = text(f"SELECT alias FROM {TABLE_NAME_ALIASES} WHERE value_id = :value_id")
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(sql, {"value_id": str(value_id)})
             return {row[0] for row in result}
 
     def retrieve_all_aliases(self) -> Union[Mapping[str, uuid.UUID], None]:
-
         sql = text(f"SELECT alias, value_id FROM {TABLE_NAME_ALIASES}")
         with self.sqlite_engine.connect() as connection:
             result = connection.execute(sql)
             return {row[0]: uuid.UUID(row[1]) for row in result}
 
     def _delete_archive(self):
-
         delete_archive_db(db_path=self.sqlite_path)
 
 
 class SqliteAliasStore(SqliteAliasArchive, AliasStore):
-
     _archive_type_name = "sqlite_alias_store"
 
     @classmethod
     def _load_archive_config(
         cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Dict[str, Any], None]:
-
         if not allow_write_access:
             return None
 
@@ -196,7 +184,6 @@ class SqliteAliasStore(SqliteAliasArchive, AliasStore):
             conn.commit()
 
     def register_aliases(self, value_id: uuid.UUID, *aliases: str):
-
         alias_created = get_current_time_incl_timezone().isoformat()
 
         sql = text(

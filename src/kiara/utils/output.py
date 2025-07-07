@@ -51,14 +51,12 @@ log = structlog.getLogger()
 
 
 class RenderConfig(BaseModel):
-
     render_format: str = Field(description="The output format.", default="terminal")
 
 
 class OutputDetails(BaseModel):
     @classmethod
     def from_data(cls, data: Any):
-
         if isinstance(data, str):
             if "=" in data:
                 data = [data]
@@ -89,7 +87,6 @@ class OutputDetails(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def _set_defaults(cls, values) -> Dict[str, Any]:
-
         target: str = values.pop("target", "terminal")
         format: str = values.pop("format", None)
         if format is None:
@@ -150,7 +147,6 @@ class TabularWrap(ABC):
         max_row_height: Union[int, None] = None,
         max_cell_length: Union[int, None] = None,
     ):
-
         table_str = ""
         for cn in self.column_names:
             table_str = f"{table_str}{cn}\t"
@@ -176,7 +172,6 @@ class TabularWrap(ABC):
         max_row_height: Union[int, None] = None,
         max_cell_length: Union[int, None] = None,
     ) -> str:
-
         table_str = "<table><tr>"
         for cn in self.column_names:
             table_str = f"{table_str}<th>{cn}</th>"
@@ -204,7 +199,6 @@ class TabularWrap(ABC):
         max_cell_length: Union[int, None] = None,
         show_table_header: bool = True,
     ) -> RichTable:
-
         rich_table = RichTable(show_header=show_table_header, box=box.SIMPLE)
         if max_row_height == 1:
             overflow = "ignore"
@@ -235,14 +229,12 @@ class TabularWrap(ABC):
         max_row_height: Union[int, None] = None,
         max_cell_length: Union[int, None] = None,
     ) -> Iterator[Iterable[Any]]:
-
         if return_column_names:
             yield self.column_names
 
         num_split_rows = 2
 
         if rows_head is not None:
-
             rows_head = max(rows_head, 0)
 
             if rows_head > self.num_rows:
@@ -308,10 +300,8 @@ class TabularWrap(ABC):
                 tail = self.slice(self.num_rows - rows_tail)
                 table_dict = tail.to_pydict()
                 for i in range(0, num_rows):  # noqa
-
                     row = []
                     for cn in self.column_names:
-
                         cell = table_dict[cn][i]
                         cell_str = str(cell)
 
@@ -328,7 +318,6 @@ class TabularWrap(ABC):
                         if max_cell_length and max_cell_length > 0:
                             lines = []
                             for line in cell_str.split("\n"):
-
                                 if len(line) > max_cell_length:
                                     line = line[0:(max_cell_length)] + " ..."
                                 lines.append(line)
@@ -359,7 +348,6 @@ class ArrowTabularWrap(TabularWrap):
 
 class DictTabularWrap(TabularWrap):
     def __init__(self, data: Mapping[str, List[Any]]):
-
         self._data: Mapping[str, List[Any]] = data
         # TODO: assert all rows are equal length
         super().__init__()
@@ -375,7 +363,6 @@ class DictTabularWrap(TabularWrap):
         return self._data
 
     def slice(self, offset: int = 0, length: Union[int, None] = None) -> "TabularWrap":
-
         result = {}
         start = None
         end = None
@@ -394,7 +381,6 @@ class DictTabularWrap(TabularWrap):
 
 
 def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
-
     table = RichTable(box=box.SIMPLE, show_lines=True)
     table.add_column("Field")
     table.add_column("Type")
@@ -438,7 +424,6 @@ def create_table_from_base_model_cls(model_cls: Type[BaseModel]):
 
 
 def create_table_from_base_model_v1_cls(model_cls: Type[BaseModel1]):
-
     table = RichTable(box=box.SIMPLE, show_lines=True)
     table.add_column("Field")
     table.add_column("Type")
@@ -489,7 +474,6 @@ def create_dict_from_field_schemas(
     _constants: Union[Mapping[str, Any], None] = None,
     _doc_to_string: bool = True,
 ) -> Mapping[str, List[Any]]:
-
     table: Dict[str, List[Any]] = {}
     table["field_name"] = []
     table["data_type"] = []
@@ -501,7 +485,6 @@ def create_dict_from_field_schemas(
         table["default"] = []
 
     for field_name, schema in fields.items():
-
         table["field_name"].append(field_name)
         table["data_type"].append(schema.type)
         if _doc_to_string:
@@ -537,7 +520,6 @@ def create_table_from_field_schemas(
     _show_header: bool = False,
     _constants: Union[Mapping[str, Any], None] = None,
 ) -> RichTable:
-
     table = RichTable(box=box.SIMPLE, show_header=_show_header)
     table.add_column("field name", style="i", overflow="fold")
     table.add_column("type")
@@ -551,7 +533,6 @@ def create_table_from_field_schemas(
         else:
             table.add_column("Default")
     for field_name, schema in fields.items():
-
         row: List[RenderableType] = [field_name, schema.type, schema.doc]
 
         if _add_required:
@@ -593,7 +574,6 @@ def create_value_map_status_renderable(
     render_config: Union[Mapping[str, Any], None] = None,
     fields: Union[None, Iterable[str]] = None,
 ) -> RichTable:
-
     if render_config is None:
         render_config = {}
 
@@ -635,7 +615,6 @@ def create_value_map_status_renderable(
         field_order = sorted(inputs.keys())
 
     for field_name in field_order:
-
         value = inputs.get(field_name, None)
         if value is None:
             log.debug(
@@ -711,7 +690,6 @@ def create_table_from_model_object(
     render_config: Union[Mapping[str, Any], None] = None,
     exclude_fields: Union[Set[str], None] = None,
 ) -> RichTable:
-
     model_cls = model.__class__
 
     show_header: bool = True
@@ -881,7 +859,6 @@ def create_renderable_from_values(
 def create_pipeline_steps_tree(
     pipeline_structure: "PipelineStructure", pipeline_details: "PipelineState"
 ) -> Tree:
-
     from kiara.models.module.pipeline import StepStatus
 
     steps = Tree("steps")
@@ -909,7 +886,6 @@ def create_recursive_table_from_model_object(
     model: BaseModel,
     render_config: Union[Mapping[str, Any], None] = None,
 ):
-
     if render_config is None:
         render_config = {}
 
@@ -925,7 +901,6 @@ def create_recursive_table_from_model_object(
     props = model_cls.schema().get("properties", {})
 
     for field_name in sorted(model_cls.model_fields.keys()):
-
         data = getattr(model, field_name)
         p = props.get(field_name, None)
         p_type = None
@@ -973,7 +948,6 @@ def create_recursive_table_from_model_object(
 def create_table_from_data_and_schema(
     data: Mapping[str, Any], schema: Union[None, Dict[str, Any]] = None
 ):
-
     table = RichTable(box=box.SIMPLE, show_header=False)
     table.add_column("key", style="i")
     table.add_column("value")

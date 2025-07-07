@@ -89,7 +89,6 @@ class KiaraArchiveReference(BaseModel):
         archive_name: Union[str, None] = None,
         **kwargs: Any,
     ) -> "KiaraArchiveReference":
-
         from kiara.utils.class_loading import find_all_archive_types
 
         archive_types = find_all_archive_types()
@@ -191,7 +190,6 @@ class KiaraArchiveReference(BaseModel):
 
     @property
     def archives(self) -> List["KiaraArchive"]:
-
         if self._archives is not None:
             return self._archives
 
@@ -226,7 +224,6 @@ class KiaraArchiveReference(BaseModel):
 class KiaraContextConfig(BaseModel):
     @classmethod
     def create_from_sqlite_db(cls, db_path: Path) -> "KiaraContextConfig":
-
         import sqlite3
 
         if not db_path.exists():
@@ -252,7 +249,6 @@ class KiaraContextConfig(BaseModel):
             conn.close()
         else:
             try:
-
                 with sqlite3.connect(db_path) as conn:
                     context_id = conn.execute(
                         "SELECT value FROM context_metadata WHERE key = 'context_id'"
@@ -319,7 +315,6 @@ class KiaraContextConfig(BaseModel):
     _context_config_path: Union[Path, None] = PrivateAttr(default=None)
 
     def add_pipelines(self, *pipelines: str):
-
         for pipeline in pipelines:
             if os.path.exists(pipeline):
                 self.extra_pipelines.append(pipeline)
@@ -363,7 +358,6 @@ KIARA_SETTINGS = KiaraSettings()
 def create_default_store_config(
     store_type: str, stores_base_path: str, use_wal_mode: bool = False
 ) -> KiaraArchiveConfig:
-
     from kiara.utils.archives import find_archive_types
 
     # env_registry = EnvironmentRegistry.instance()
@@ -401,14 +395,12 @@ DEFAULT_STORE_TYPE: Literal["sqlite"] = "sqlite"
 
 
 class KiaraConfig(BaseSettings):
-
     model_config = SettingsConfigDict(
         env_prefix="kiara_", extra="forbid", use_enum_values=True
     )
 
     @classmethod
     def create_in_folder(cls, path: Union[Path, str]) -> "KiaraConfig":
-
         if isinstance(path, str):
             path = Path(path)
         path = path.absolute()
@@ -426,7 +418,6 @@ class KiaraConfig(BaseSettings):
 
     @classmethod
     def load_from_file(cls, path: Union[Path, str, None] = None) -> "KiaraConfig":
-
         if path is None:
             path = Path(KIARA_MAIN_CONFIG_FILE)
         elif isinstance(path, str):
@@ -486,7 +477,6 @@ class KiaraConfig(BaseSettings):
     @field_validator("context_search_paths")
     @classmethod
     def validate_context_search_paths(cls, v):
-
         if not v or not v[0]:
             v = [KIARA_MAIN_CONTEXTS_PATH]
 
@@ -495,7 +485,6 @@ class KiaraConfig(BaseSettings):
     @model_validator(mode="before")
     @classmethod
     def _set_paths(cls, values: Any):
-
         base_path = values.get("base_data_path", None)
         if not base_path:
             base_path = os.path.abspath(kiara_app_dirs.user_data_dir)
@@ -518,7 +507,6 @@ class KiaraConfig(BaseSettings):
 
     @property
     def available_context_names(self) -> Iterable[str]:
-
         if self._available_context_files is not None:
             return self._available_context_files.keys()
 
@@ -535,7 +523,6 @@ class KiaraConfig(BaseSettings):
 
     @property
     def context_configs(self) -> Mapping[str, KiaraContextConfig]:
-
         return {a: self.get_context_config(a) for a in self.available_context_names}
 
     def get_context_config(
@@ -543,7 +530,6 @@ class KiaraConfig(BaseSettings):
         context_name: Union[str, None] = None,
         auto_generate: Union[bool, None] = None,
     ) -> KiaraContextConfig:
-
         if auto_generate is None:
             auto_generate = self.auto_generate_contexts
 
@@ -599,14 +585,12 @@ class KiaraConfig(BaseSettings):
         return context
 
     def _validate_context(self, context_config: KiaraContextConfig) -> bool:
-
         changed = False
 
         sqlite_base_path = os.path.join(self.stores_base_path, "sqlite_stores")
         filesystem_base_path = os.path.join(self.stores_base_path, "filesystem_stores")
 
         def create_default_sqlite_archive_config(use_wal_mode: bool) -> Dict[str, Any]:
-
             store_id = str(uuid.uuid4())
             file_name = f"{store_id}.karchive"
             archive_path = Path(
@@ -649,7 +633,6 @@ class KiaraConfig(BaseSettings):
         default_store_type = "sqlite"
 
         if default_store_type == "auto":
-
             # if windows, we want sqlite as default, because although it's slower, it does not
             # need the user to enable developer mode
             if os.name == "nt":
@@ -677,7 +660,6 @@ class KiaraConfig(BaseSettings):
             raise Exception(f"Unknown store type: {default_store_type}")
 
         if DEFAULT_METADATA_STORE_MARKER not in context_config.archives.keys():
-
             if metadata_store_type == "sqlite":
                 default_sqlite_config = create_default_sqlite_archive_config(
                     use_wal_mode=use_wal_mode
@@ -701,7 +683,6 @@ class KiaraConfig(BaseSettings):
             changed = True
 
         if DEFAULT_DATA_STORE_MARKER not in context_config.archives.keys():
-
             if data_store_type == "sqlite":
                 if default_sqlite_config is None:
                     default_sqlite_config = create_default_sqlite_archive_config(
@@ -726,9 +707,7 @@ class KiaraConfig(BaseSettings):
             changed = True
 
         if DEFAULT_JOB_STORE_MARKER not in context_config.archives.keys():
-
             if job_store_type == "sqlite":
-
                 if default_sqlite_config is None:
                     default_sqlite_config = create_default_sqlite_archive_config(
                         use_wal_mode=use_wal_mode
@@ -752,9 +731,7 @@ class KiaraConfig(BaseSettings):
             changed = True
 
         if DEFAULT_ALIAS_STORE_MARKER not in context_config.archives.keys():
-
             if alias_store_type == "sqlite":
-
                 if default_sqlite_config is None:
                     default_sqlite_config = create_default_sqlite_archive_config(
                         use_wal_mode=use_wal_mode
@@ -778,7 +755,6 @@ class KiaraConfig(BaseSettings):
             changed = True
 
         if DEFAULT_WORKFLOW_STORE_MARKER not in context_config.archives.keys():
-
             # TODO: impolement sqlite type, or remove workflows entirely
 
             workflow_store_type = "filesystem_workflow_store"
@@ -796,7 +772,6 @@ class KiaraConfig(BaseSettings):
     def create_context_config(
         self, context_alias: Union[str, None] = None
     ) -> KiaraContextConfig:
-
         if not context_alias:
             context_alias = DEFAULT_CONTEXT_NAME
 
@@ -813,7 +788,6 @@ class KiaraConfig(BaseSettings):
             self._validate_context(context_config=context_config)
             context_config._context_config_path = context_db_file
         else:
-
             if os.path.sep in context_alias:
                 raise Exception(
                     f"Can't create context with alias '{context_alias}': no special characters allowed."
@@ -855,7 +829,6 @@ class KiaraConfig(BaseSettings):
         context: Union[None, str, uuid.UUID, Path] = None,
         extra_pipelines: Union[None, str, Iterable[str]] = None,
     ) -> "Kiara":
-
         if not context:
             context = self.default_context
         else:

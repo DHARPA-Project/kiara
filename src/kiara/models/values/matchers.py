@@ -16,7 +16,6 @@ class ValueMatcher(KiaraModel):
 
     @classmethod
     def create_matcher(self, **match_options: Any):
-
         m = ValueMatcher(**match_options)
         return m
 
@@ -44,7 +43,6 @@ class ValueMatcher(KiaraModel):
     @field_validator("in_data_archives", mode="before")
     @classmethod
     def validate_in_archives(cls, v):
-
         if v is None:
             return v
         elif isinstance(v, str):
@@ -69,7 +67,6 @@ class ValueMatcher(KiaraModel):
             return list(v)
 
     def is_match(self, value: Value, kiara: "Kiara") -> bool:
-
         has_alias = self.has_alias or self.alias_matchers
 
         match = False
@@ -106,7 +103,6 @@ class ValueMatcher(KiaraModel):
                 return False
 
         if has_alias:
-
             aliases = kiara.alias_registry.find_aliases_for_value_id(
                 value_id=value.value_id
             )

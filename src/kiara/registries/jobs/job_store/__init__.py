@@ -57,7 +57,6 @@ class JobArchive(BaseArchive):
         pass
 
     def retrieve_record_for_job_hash(self, job_hash: str) -> Union[JobRecord, None]:
-
         job_record = self._retrieve_record_for_job_hash(job_hash=job_hash)
         return job_record
 

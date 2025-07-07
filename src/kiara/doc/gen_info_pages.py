@@ -18,7 +18,6 @@ _jinja_env = None
 
 
 def get_jina_env():
-
     global _jinja_env
     if _jinja_env is None:
         from jinja2 import Environment
@@ -41,7 +40,6 @@ def get_jina_env():
 def render_item_listing(
     item_type: str, items: Mapping[str, ItemInfo], sub_path: str = "info"
 ):
-
     list_template = get_jina_env().get_template("info_listing.j2")
 
     render_args = {"items": items, "item_type": item_type}
@@ -59,7 +57,6 @@ def generate_detail_pages(
     sub_path: str = "info",
     add_summary_page: bool = False,
 ):
-
     pages = {}
     summary = []
 

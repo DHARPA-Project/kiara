@@ -71,13 +71,11 @@ class NoneType(DataType[SpecialValue, DataTypeConfig]):
     def pretty_print_as__string(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
-
         return "None"
 
     def pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ):
-
         return "None"
 
 
@@ -104,9 +102,10 @@ class AnyType(
     def pretty_print_as__string(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> str:
-
         if hasattr(self, "_pretty_print_as__string"):
-            return self._pretty_print_as__string(value=value, render_config=render_config)  # type: ignore
+            return self._pretty_print_as__string(
+                value=value, render_config=render_config
+            )  # type: ignore
 
         try:
             return str(value.data)
@@ -116,9 +115,10 @@ class AnyType(
     def pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> RenderableType:
-
         if hasattr(self, "_pretty_print_as__terminal_renderable"):
-            return self._pretty_print_as__terminal_renderable(value=value, render_config=render_config)  # type: ignore
+            return self._pretty_print_as__terminal_renderable(
+                value=value, render_config=render_config
+            )  # type: ignore
 
         try:
             data = value.data
@@ -156,16 +156,16 @@ class AnyType(
         self, value: "Value", render_config: Mapping[str, Any], manifest: "Manifest"
     ) -> str:
         if hasattr(self, "_render_as__string"):
-            return self._render_as__string(value=value, render_scene=render_config, manifest=manifest)  # type: ignore
+            return self._render_as__string(
+                value=value, render_scene=render_config, manifest=manifest
+            )  # type: ignore
         else:
             return self.pretty_print_as__string(value=value, render_config={})
 
     def render_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any], manifest: "Manifest"
     ) -> RenderableType:
-
         if not hasattr(self, "_render_as__terminal_renderable"):
-
             try:
                 value.data
                 return self.render_as__string(
@@ -177,7 +177,9 @@ class AnyType(
                 )
 
         else:
-            return self._render_as__terminal_renderable(value=value, render_config=render_config, manifest=manifest)  # type: ignore
+            return self._render_as__terminal_renderable(
+                value=value, render_config=render_config, manifest=manifest
+            )  # type: ignore
 
 
 class BytesType(AnyType[bytes, DataTypeConfig]):
@@ -190,7 +192,6 @@ class BytesType(AnyType[bytes, DataTypeConfig]):
         return bytes
 
     def serialize(self, data: bytes) -> "SerializedData":
-
         _data = {"bytes": {"type": "chunk", "chunk": data, "codec": "raw"}}
 
         serialized_data = {
@@ -221,13 +222,11 @@ class BytesType(AnyType[bytes, DataTypeConfig]):
     def _pretty_print_as__string(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
-
         data: bytes = value.data
         return data.decode()
 
 
 class StringTypeConfig(DataTypeConfig):
-
     allowed_strings: Union[None, List[str]] = Field(
         description="A list of allowed strings, if empty or None, any string is allowed.",
         default=None,
@@ -252,7 +251,6 @@ class StringType(AnyType[str, StringTypeConfig]):
         return str
 
     def serialize(self, data: str) -> "SerializedData":
-
         _data = {
             "string": {"type": "chunk", "chunk": data.encode("utf-8"), "codec": "raw"}
         }
@@ -285,12 +283,10 @@ class StringType(AnyType[str, StringTypeConfig]):
         return SCALAR_CHARACTERISTICS
 
     def parse_python_obj(self, data: Any) -> str:
-
         # TODO: check if this is actually ok to do always
         return str(data)
 
     def _validate(self, value: Any) -> None:
-
         if not isinstance(value, str):
             raise ValueError(f"Invalid type '{type(value)}': string required")
 
@@ -308,7 +304,6 @@ class StringType(AnyType[str, StringTypeConfig]):
 
 
 class BooleanType(AnyType[bool, DataTypeConfig]):
-
     "A boolean."
 
     _data_type_name: ClassVar[str] = "boolean"
@@ -331,7 +326,6 @@ class BooleanType(AnyType[bool, DataTypeConfig]):
     #     return 1 if data else 0
 
     def parse_python_obj(self, data: Any) -> bool:
-
         if data is True or data is False:
             return data
         elif data == 0:
@@ -374,13 +368,11 @@ class DictValueType(AnyType[KiaraDict, DataTypeConfig]):
         return DataTypeCharacteristics(is_scalar=False, is_json_serializable=True)
 
     def parse_python_obj(self, data: Any) -> KiaraDict:
-
         python_cls = data.__class__
         dict_data = None
         schema = None
 
         if isinstance(data, Mapping):
-
             if (
                 len(data) == 3
                 and "dict_data" in data.keys()
@@ -424,7 +416,6 @@ class DictValueType(AnyType[KiaraDict, DataTypeConfig]):
         return KiaraDict(**result)
 
     def _validate(self, data: KiaraDict) -> None:
-
         if not isinstance(data, KiaraDict):
             raise Exception(f"Invalid type: {type(data)}.")
 
@@ -436,7 +427,6 @@ class DictValueType(AnyType[KiaraDict, DataTypeConfig]):
     def _pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ):
-
         show_schema = render_config.get("show_schema", True)
 
         table = Table(show_header=False, box=box.SIMPLE)
@@ -460,14 +450,12 @@ class DictValueType(AnyType[KiaraDict, DataTypeConfig]):
         return table
 
     def serialize(self, data: KiaraDict) -> "SerializedData":
-
         result = self.serialize_as_json(data.model_dump())
         return result
 
     def render_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any], manifest: "Manifest"
     ) -> RenderableType:
-
         render_item = render_config.get("render_item", "data")
         width = render_config.get("display_width", 0)
 
@@ -548,7 +536,6 @@ class KiaraModelValueBaseType(
         pass
 
     def parse_python_obj(self, data: Any) -> KIARA_MODEL_CLS:
-
         if isinstance(data, self.__class__.python_class()):
             return data  # type: ignore
 
@@ -556,7 +543,6 @@ class KiaraModelValueBaseType(
         return _data
 
     def _validate(self, data: KiaraModel) -> None:
-
         if not isinstance(data, self.__class__.python_class()):
             raise Exception(
                 f"Invalid type '{type(data)}', must be: {self.__class__.python_class().__name__}, or subclass."

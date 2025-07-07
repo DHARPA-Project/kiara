@@ -15,7 +15,6 @@ logger = structlog.getLogger()
 
 
 class StoreValueResult(BaseModel):
-
     value: Value = Field(description="The stored value.")
     aliases: List[str] = Field(
         description="The aliases that where assigned to the value when stored."
@@ -29,7 +28,6 @@ class StoreValueResult(BaseModel):
     )
 
     def _repr_html_(self):
-
         r = self.create_renderable()
         mime_bundle = r._repr_mimebundle_(include=[], exclude=[])  # type: ignore
         return mime_bundle["text/html"]
@@ -37,11 +35,9 @@ class StoreValueResult(BaseModel):
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-
         yield self.create_renderable()
 
     def create_renderable(self, **config) -> RenderableType:
-
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("key", "i")
         table.add_column("value")
@@ -66,11 +62,9 @@ class StoreValueResult(BaseModel):
 
 
 class StoreValuesResult(RootModel):
-
     root: Dict[str, StoreValueResult]
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         add_field_column = config.get("add_field_column", True)
 
         errors = {}
@@ -119,7 +113,6 @@ class StoreValuesResult(RootModel):
 
     @property
     def errors(self) -> Dict[str, str]:
-
         result = {}
         for field_name, value_result in self.root.items():
             if value_result.error:

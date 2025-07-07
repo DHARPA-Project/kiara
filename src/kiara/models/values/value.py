@@ -73,7 +73,6 @@ if TYPE_CHECKING:
 
 
 class SerializedChunks(BaseModel, abc.ABC):
-
     model_config = ConfigDict(extra="forbid")
 
     _size_cache: Union[int, None] = PrivateAttr(default=None)
@@ -105,13 +104,11 @@ class SerializedChunks(BaseModel, abc.ABC):
         pass
 
     def get_size(self) -> int:
-
         if self._size_cache is None:
             self._size_cache = self._get_size()
         return self._size_cache
 
     def get_cids(self, hash_codec: str) -> Sequence[CID]:
-
         if self._hashes_cache.get(hash_codec, None) is None:
             self._hashes_cache[hash_codec] = self._create_cids(hash_codec=hash_codec)
         return self._hashes_cache[hash_codec]
@@ -140,7 +137,6 @@ class SerializedChunks(BaseModel, abc.ABC):
         return file
 
     def _read_bytes_from_file(self, file: str) -> bytes:
-
         with open(file, "rb") as f:
             content = f.read()
 
@@ -148,19 +144,16 @@ class SerializedChunks(BaseModel, abc.ABC):
 
 
 class SerializedPreStoreChunks(SerializedChunks):
-
     codec: str = Field(
         description="The codec used to encode the chunks in this model. Using the [multicodecs](https://github.com/multiformats/multicodec) codec table."
     )
 
     def _create_cid_from_chunk(self, chunk: bytes, hash_codec: str) -> CID:
-
         multihash = Multihash(codec=hash_codec)
         hash = multihash.digest(chunk)
         return create_cid_digest(digest=hash, codec=self.codec)
 
     def _create_cid_from_file(self, file: str, hash_codec: str) -> CID:
-
         assert hash_codec == "sha2-256"
 
         hash_func = hashlib.sha256
@@ -178,14 +171,12 @@ class SerializedPreStoreChunks(SerializedChunks):
 
 
 class SerializedBytes(SerializedPreStoreChunks):
-
     type: Literal["chunk"] = "chunk"
     chunk: bytes = Field(description="A byte-array")
 
     def get_chunks(
         self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
     ) -> Generator[Union[str, BytesLike], None, None]:
-
         if as_files is False:
             yield self.chunk
         else:
@@ -210,7 +201,6 @@ class SerializedBytes(SerializedPreStoreChunks):
 
 
 class SerializedListOfBytes(SerializedPreStoreChunks):
-
     type: Literal["chunks"] = "chunks"
     chunks: List[bytes] = Field(description="A list of byte arrays.")
 
@@ -250,14 +240,12 @@ class SerializedListOfBytes(SerializedPreStoreChunks):
 
 
 class SerializedFile(SerializedPreStoreChunks):
-
     type: Literal["file"] = "file"
     file: str = Field(description="A path to a file containing the serialized data.")
 
     def get_chunks(
         self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
     ) -> Generator[Union[str, BytesLike], None, None]:
-
         if as_files is False:
             chunk = self._read_bytes_from_file(self.file)
             yield chunk
@@ -289,7 +277,6 @@ class SerializedFile(SerializedPreStoreChunks):
 
 
 class SerializedFiles(SerializedPreStoreChunks):
-
     type: Literal["files"] = "files"
     files: List[str] = Field(
         description="A list of strings, pointing to files containing parts of the serialized data."
@@ -304,7 +291,6 @@ class SerializedFiles(SerializedPreStoreChunks):
         return len(self.files)
 
     def _get_size(self) -> int:
-
         size = 0
         for file in self.files:
             size = size + os.path.getsize(os.path.realpath(file))
@@ -318,7 +304,6 @@ class SerializedFiles(SerializedPreStoreChunks):
 
 
 class SerializedInlineJson(SerializedPreStoreChunks):
-
     type: Literal["inline-json"] = "inline-json"
     inline_data: Any = Field(
         None,
@@ -338,7 +323,6 @@ class SerializedInlineJson(SerializedPreStoreChunks):
     def get_chunks(
         self, as_files: Union[bool, str, Sequence[str]] = True, symlink_ok: bool = True
     ) -> Generator[Union[str, BytesLike], None, None]:
-
         if as_files is False:
             yield self.as_json()
         else:
@@ -355,7 +339,6 @@ class SerializedInlineJson(SerializedPreStoreChunks):
 
 
 class SerializedChunkIDs(SerializedChunks):
-
     type: Literal["chunk-ids"] = "chunk-ids"
     chunk_id_list: List[str] = Field(
         description="A list of chunk ids, which will be resolved via the attached data registry."
@@ -403,7 +386,6 @@ class SerializedChunkIDs(SerializedChunks):
         return self.size
 
     def _create_cids(self, hash_codec: str) -> Sequence[CID]:
-
         result = []
         for chunk_id in self.chunk_id_list:
             cid = CID.decode(chunk_id)
@@ -423,7 +405,6 @@ SERIALIZE_TYPES = {
 
 
 class SerializationMetadata(KiaraModel):
-
     _kiara_model_id: ClassVar = "metadata.serialized_data"
 
     environment: Mapping[str, int] = Field(
@@ -437,7 +418,6 @@ class SerializationMetadata(KiaraModel):
 
 
 class SerializedData(KiaraModel):
-
     data_type: str = Field(
         description="The name of the data type for this serialized value."
     )
@@ -463,7 +443,6 @@ class SerializedData(KiaraModel):
     # _cached_cid: Optional[CID] = PrivateAttr(default=None)
 
     def _retrieve_data_to_hash(self) -> Any:
-
         return self.dag
 
     @property
@@ -487,7 +466,6 @@ class SerializedData(KiaraModel):
         pass
 
     def get_cids_for_key(self, key) -> Sequence[CID]:
-
         if key in self._cids_cache.keys():
             return self._cids_cache[key]
 
@@ -497,7 +475,6 @@ class SerializedData(KiaraModel):
 
     @property
     def dag(self) -> Mapping[str, Sequence[CID]]:
-
         if self._cached_dag is not None:
             return self._cached_dag
 
@@ -510,7 +487,6 @@ class SerializedData(KiaraModel):
 
 
 class SerializationResult(SerializedData):
-
     _kiara_model_id: ClassVar[str] = "instance.serialization_result"
 
     data: Dict[
@@ -535,7 +511,6 @@ class SerializationResult(SerializedData):
     @model_validator(mode="before")
     @classmethod
     def validate_data(cls, values):
-
         codec = values.get("codec", None)
         if codec is None:
             codec = "sha2-256"
@@ -568,7 +543,6 @@ class SerializationResult(SerializedData):
         return values
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("key")
         table.add_column("value")
@@ -591,7 +565,6 @@ class SerializationResult(SerializedData):
         return table
 
     def __repr__(self):
-
         return f"{self.__class__.__name__}(type={self.data_type} size={self.data_size})"
 
     def __str__(self):
@@ -599,7 +572,6 @@ class SerializationResult(SerializedData):
 
 
 class PersistedData(SerializedData):
-
     _kiara_model_id: ClassVar = "instance.persisted_data"
 
     archive_id: uuid.UUID = Field(
@@ -617,7 +589,6 @@ class PersistedData(SerializedData):
 
 
 class ValuePedigree(InputsManifest):
-
     _kiara_model_id: ClassVar = "instance.value_pedigree"
 
     kiara_id: uuid.UUID = Field(
@@ -642,7 +613,6 @@ class ValuePedigree(InputsManifest):
 
 
 class DataTypeInfo(KiaraModel):
-
     _kiara_model_id: ClassVar = "info.data_type_instance"
 
     data_type_name: str = Field(description="The registered name of this data type.")
@@ -660,7 +630,6 @@ class DataTypeInfo(KiaraModel):
 
     @property
     def data_type_instance(self) -> "DataType":
-
         if self._data_type_instance is not None:
             return self._data_type_instance
 
@@ -757,16 +726,13 @@ class ValueDetails(KiaraModel):
         return result
 
     def __repr__(self):
-
         return f"{self.__class__.__name__}(id={self.value_id}, type={self.data_type_name}, status={self.value_status.value})"
 
     def __str__(self):
-
         return self.__repr__()
 
 
 class Value(ValueDetails):
-
     _kiara_model_id: ClassVar = "instance.value"
 
     _value_data: Any = PrivateAttr(default=SpecialValue.NOT_SET)
@@ -804,7 +770,6 @@ class Value(ValueDetails):
         property_path: str,
         add_origin_to_property_value: bool = True,
     ):
-
         value = None
         try:
             value_temp = value
@@ -847,7 +812,6 @@ class Value(ValueDetails):
         self._cached_properties = None
 
     def add_destiny_details(self, value_id: uuid.UUID, destiny_alias: str):
-
         if self._is_stored:
             raise Exception(
                 f"Can't set destiny_refs to value '{self.value_id}': value already locked."
@@ -857,7 +821,6 @@ class Value(ValueDetails):
 
     @property
     def is_serializable(self) -> bool:
-
         try:
             if self._serialized_data == NO_SERIALIZATION_MARKER:
                 return False
@@ -875,7 +838,6 @@ class Value(ValueDetails):
 
     @property
     def serialized_data(self) -> SerializedData:
-
         # if not self.is_set:
         #     raise Exception(f"Can't retrieve serialized data: value not set.")
 
@@ -906,7 +868,6 @@ class Value(ValueDetails):
             raise dtue
 
     def _retrieve_data(self) -> Any:
-
         if self._value_data is not SpecialValue.NOT_SET:
             return self._value_data
 
@@ -934,7 +895,6 @@ class Value(ValueDetails):
     #     )
 
     def __repr__(self):
-
         return f"{self.__class__.__name__}(id={self.value_id}, type={self.data_type_name}, status={self.value_status.value}, initialized={self.is_initialized} optional={self.value_schema.optional})"
 
     def _set_registry(self, data_registry: "DataRegistry") -> None:
@@ -951,7 +911,6 @@ class Value(ValueDetails):
 
     @property
     def data_type(self) -> "DataType":
-
         return self.data_type_info.data_type_instance
 
     @property
@@ -981,7 +940,6 @@ class Value(ValueDetails):
         return self.property_links.keys()
 
     def get_property_value(self, property_key) -> "Value":
-
         if property_key not in self.property_links.keys():
             raise Exception(
                 f"Value '{self.value_id}' has no property with key '{property_key}."
@@ -991,7 +949,6 @@ class Value(ValueDetails):
         return self._data_registry.get_value(self.property_links[property_key])
 
     def get_property_data(self, property_key: str) -> Any:
-
         try:
             return self.get_property_value(property_key=property_key).data
         except Exception as e:
@@ -999,7 +956,6 @@ class Value(ValueDetails):
             return None
 
     def get_all_property_data(self, flatten_models: bool = False) -> Mapping[str, Any]:
-
         result = {k: self.get_property_data(k) for k in self.property_names}
         if not flatten_models:
             return result
@@ -1015,7 +971,6 @@ class Value(ValueDetails):
         return flat
 
     def lookup_self_aliases(self) -> Set[str]:
-
         if not self._data_registry:
             raise Exception(
                 f"Can't lookup aliases for value '{self.value_id}': data registry not set (yet)."
@@ -1024,7 +979,6 @@ class Value(ValueDetails):
         return self._data_registry.lookup_aliases(self)
 
     def create_info(self) -> "ValueInfo":
-
         if not self._data_registry:
             raise Exception(
                 f"Can't create info object for value '{self.value_id}': data registry not set (yet)."
@@ -1033,7 +987,6 @@ class Value(ValueDetails):
         return self._data_registry.create_value_info(value=self.value_id)
 
     def create_info_data(self, **config: Any) -> Mapping[str, Any]:
-
         show_pedigree = config.get("show_pedigree", False)
         show_lineage = config.get("show_lineage", False)
         show_properties = config.get("show_properties", False)
@@ -1058,7 +1011,6 @@ class Value(ValueDetails):
             table["kiara_id"] = self.kiara_id
 
         for k in sorted(self.__class__.model_fields.keys()):
-
             if (
                 k
                 in [
@@ -1098,7 +1050,6 @@ class Value(ValueDetails):
 
         assert self._data_registry is not None
         if show_serialized:
-
             serialized = self._data_registry.retrieve_persisted_value_details(
                 self.value_id
             )
@@ -1153,7 +1104,6 @@ class Value(ValueDetails):
         return table
 
     def create_renderable(self, **render_config: Any) -> RenderableType:
-
         from kiara.utils.output import extract_renderable
 
         show_pedigree = render_config.get("show_pedigree", False)
@@ -1190,7 +1140,6 @@ class Value(ValueDetails):
         table.add_row("", "")
         table.add_row("", Rule())
         for k in sorted(info_data.keys()):
-
             if (
                 k
                 in [
@@ -1335,7 +1284,6 @@ class UnloadableData(KiaraModel):
 
 
 class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
-
     values_schema: Dict[str, ValueSchema] = Field(
         description="The schemas for all the values in this set."
     )
@@ -1365,16 +1313,13 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
         """Check whether the value set is invalid, if it is, return a description of what's wrong."""
         invalid: Dict[str, str] = {}
         for field_name in self.values_schema.keys():
-
             item = self.get_value_obj(field_name)
             field_schema = self.values_schema[field_name]
             if not field_schema.optional:
                 msg: Union[str, None] = None
                 if not item.value_status == ValueStatus.SET:
-
                     item_schema = self.values_schema[field_name]
                     if item_schema.is_required():
-
                         if not item.is_set:
                             msg = "not set"
                         elif item.value_status == ValueStatus.NONE:
@@ -1433,7 +1378,6 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
         )
 
     def set_values(self, **values) -> None:
-
         for k, v in values.items():
             self.set_value(k, v)
 
@@ -1443,16 +1387,13 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
         )
 
     def __getitem__(self, item: str) -> Value:
-
         return self.get_value_obj(item)
 
     def __setitem__(self, key: str, value):
-
         raise NotImplementedError()
         # self.set_value(key, value)
 
     def __delitem__(self, key: str):
-
         raise Exception(f"Removing items not supported: {key}")
 
     def __iter__(self):
@@ -1468,7 +1409,6 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
         return self.__repr__()
 
     def create_invalid_renderable(self, **config) -> Union[RenderableType, None]:
-
         inv = self.check_invalid()
         if not inv:
             return None
@@ -1483,7 +1423,6 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
         return table
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         in_panel = config.get("in_panel", None)
         if in_panel is None:
             if is_jupyter():
@@ -1504,7 +1443,6 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
         table.add_column(value_title, style="i")
 
         for field_name in self.field_names:
-
             value = self.get_value_obj(field_name=field_name)
             if render_value_data:
                 assert value._data_registry is not None
@@ -1526,19 +1464,16 @@ class ValueMap(KiaraModel, MutableMapping[str, Value]):  # type: ignore
 
 
 class ValueMapReadOnly(ValueMap):  # type: ignore
-
     _kiara_model_id: ClassVar = "instance.value_map.readonly"
 
     @classmethod
     def create_from_ids(cls, data_registry: "DataRegistry", **value_ids: uuid.UUID):
-
         values = {k: data_registry.get_value(v) for k, v in value_ids.items()}
         values_schema = {k: v.value_schema for k, v in values.items()}
         return ValueMapReadOnly(value_items=values, values_schema=values_schema)
 
     @classmethod
     def create_from_values(cls, **values: Value) -> "ValueMapReadOnly":
-
         values_schema = {k: v.value_schema for k, v in values.items()}
         return ValueMapReadOnly(value_items=values, values_schema=values_schema)
 
@@ -1547,7 +1482,6 @@ class ValueMapReadOnly(ValueMap):  # type: ignore
     )
 
     def get_value_obj(self, field_name: str) -> Value:
-
         if field_name not in self.value_items.keys():
             raise KeyError(
                 f"Field '{field_name}' not available in value set. Available fields: {', '.join(self.field_names)}"
@@ -1556,7 +1490,6 @@ class ValueMapReadOnly(ValueMap):  # type: ignore
 
 
 class ValueMapWritable(ValueMap):  # type: ignore
-
     _kiara_model_id: ClassVar = "instance.value_map.writeable"
 
     @classmethod
@@ -1567,7 +1500,6 @@ class ValueMapWritable(ValueMap):  # type: ignore
         pedigree: ValuePedigree,
         unique_value_ids: bool = False,
     ) -> "ValueMapWritable":
-
         v = ValueMapWritable(
             values_schema=dict(schema),
             pedigree=pedigree,
@@ -1635,7 +1567,6 @@ class ValueMapWritable(ValueMap):  # type: ignore
         return self.value_items[field_name]
 
     def sync_values(self):
-
         for field_name in self.field_names:
             self.get_value_obj(field_name)
 

@@ -56,7 +56,6 @@ try:
         file: typing.Union[typing.IO[str], None] = None,
         flush: bool = False,
     ):
-
         for obj in objects:
             if hasattr(obj, "create_renderable"):
                 obj = obj.create_renderable()
@@ -76,7 +75,6 @@ try:
         file: typing.Union[typing.IO[str], None] = None,
         flush: bool = False,
     ):
-
         objs = (
             ["[green]----------------------------------------------[/green]"]  # noqa
             + list(objects)
@@ -146,7 +144,6 @@ def get_version() -> str:
         dist_name = __name__
         __version__ = get_distribution(dist_name).version
     except DistributionNotFound:
-
         try:
             version_file = os.path.join(os.path.dirname(__file__), "version.txt")
 

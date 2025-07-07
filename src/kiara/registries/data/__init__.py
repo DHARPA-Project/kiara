@@ -94,7 +94,6 @@ logger = structlog.getLogger()
 
 
 class ValueLink(Protocol):
-
     value_id: uuid.UUID
 
 
@@ -111,7 +110,6 @@ NONE_PERSISTED_DATA = PersistedData(
 
 class AliasResolver(abc.ABC):
     def __init__(self, kiara: "Kiara"):
-
         self._kiara: "Kiara" = kiara
 
     @abc.abstractmethod
@@ -124,11 +122,9 @@ ARCHIVE_REF_TYPE_NAME = "archive"
 
 class DefaultAliasResolver(AliasResolver):
     def __init__(self, kiara: "Kiara"):
-
         super().__init__(kiara=kiara)
 
     def resolve_alias(self, alias: str) -> uuid.UUID:
-
         # preprocessing alias
         if alias.endswith(".kiarchive"):
             alias = f"archive:{alias}"
@@ -148,7 +144,6 @@ class DefaultAliasResolver(AliasResolver):
                         msg=f"Can't retrive value for alias '{rest}': no such alias registered.",
                     )
             elif ref_type == ARCHIVE_REF_TYPE_NAME:
-
                 if "#" in rest:
                     archive_ref, path_in_archive = rest.split("#", maxsplit=1)
                 else:
@@ -214,7 +209,6 @@ class DefaultAliasResolver(AliasResolver):
 
 class DataRegistry(object):
     def __init__(self, kiara: "Kiara"):
-
         self._kiara: Kiara = kiara
 
         self._event_callback: Callable = self._kiara.event_registry.add_producer(self)
@@ -286,9 +280,9 @@ class DataRegistry(object):
         self._registered_values[NONE_VALUE_ID] = self._none_value
         self._persisted_value_descs[NONE_VALUE_ID] = NONE_PERSISTED_DATA
 
-        self._cached_value_aliases: Dict[uuid.UUID, Dict[str, Union[Destiny, None]]] = (
-            {}
-        )
+        self._cached_value_aliases: Dict[
+            uuid.UUID, Dict[str, Union[Destiny, None]]
+        ] = {}
 
         self._destinies: Dict[uuid.UUID, Destiny] = {}
         self._destinies_by_value: Dict[uuid.UUID, Dict[str, Destiny]] = {}
@@ -306,7 +300,6 @@ class DataRegistry(object):
         return self._none_value
 
     def retrieve_all_available_value_ids(self) -> Set[uuid.UUID]:
-
         result: Set[uuid.UUID] = set()
         for alias, store in self._data_archives.items():
             ids = store.value_ids
@@ -320,7 +313,6 @@ class DataRegistry(object):
         archive: DataArchive,
         set_as_default_store: Union[bool, None] = None,
     ) -> str:
-
         alias = archive.archive_name
 
         if not alias:
@@ -372,7 +364,6 @@ class DataRegistry(object):
     def get_archive(
         self, archive_id_or_alias: Union[None, uuid.UUID, str] = None
     ) -> DataArchive:
-
         if archive_id_or_alias in (
             None,
             DEFAULT_STORE_MARKER,
@@ -410,7 +401,6 @@ class DataRegistry(object):
         )
 
     def find_store_id_for_value(self, value_id: uuid.UUID) -> Union[str, None]:
-
         if value_id in self._value_archive_lookup_map.keys():
             return self._value_archive_lookup_map[value_id]
 
@@ -440,7 +430,6 @@ class DataRegistry(object):
                 if isinstance(_value_id, str):
                     _value_id = uuid.UUID(_value_id)
             else:
-
                 try:
                     _value_id = uuid.UUID(
                         value  # type: ignore
@@ -473,7 +462,6 @@ class DataRegistry(object):
             archive_id_or_alias=self.default_data_store
         )
         if not default_store.has_value(value_id=_value_id):
-
             matches = []
             for store_id, store in self.data_archives.items():
                 match = store.has_value(value_id=_value_id)
@@ -505,7 +493,6 @@ class DataRegistry(object):
         return self._registered_values[_value_id]
 
     def _persist_environment(self, env_hash: str, store: Union[str, None]):
-
         # cached = self._env_cache.get(env_type, {}).get(env_hash, None)
         # if cached is not None:
         #     return
@@ -540,7 +527,6 @@ class DataRegistry(object):
 
             # first, persist environment information
             for env_hash in _value.pedigree.environments.values():
-
                 self._persist_environment(env_hash, store=data_store)
 
             store: DataStore = self.get_archive(archive_id_or_alias=data_store)  # type: ignore
@@ -589,19 +575,19 @@ class DataRegistry(object):
             return persisted_value
         except OperationalError as oe:
             if "has no column named" in str(oe):
-                raise KiaraException("Your kiara data store is using an old version of the table schema, this is not supported. Either downgrade kiara to the version that was used to create the data store, or delete your current context (`kiara context delete').")
+                raise KiaraException(
+                    "Your kiara data store is using an old version of the table schema, this is not supported. Either downgrade kiara to the version that was used to create the data store, or delete your current context (`kiara context delete')."
+                )
             else:
                 raise oe
 
     def lookup_aliases(self, value: Union[Value, uuid.UUID]) -> Set[str]:
-
         if isinstance(value, Value):
             value = value.value_id
 
         return self._kiara.alias_registry.find_aliases_for_value_id(value_id=value)
 
     def create_value_info(self, value: Union[Value, uuid.UUID]) -> ValueInfo:
-
         if isinstance(value, uuid.UUID):
             value = self.get_value(value=value)
 
@@ -609,10 +595,8 @@ class DataRegistry(object):
         return value_info
 
     def find_values(self, matcher: ValueMatcher) -> Dict[uuid.UUID, Value]:
-
         matches: Dict[uuid.UUID, Value] = {}
         for store_id, store in self.data_archives.items():
-
             if matcher.in_data_archives and store_id not in matcher.in_data_archives:
                 continue
 
@@ -660,7 +644,6 @@ class DataRegistry(object):
         return matches
 
     def find_values_with_aliases(self, matcher: ValueMatcher) -> Dict[str, Value]:
-
         matcher = matcher.model_copy(update={"has_aliases": True})
         all_values = self.find_values(matcher)
         result = {}
@@ -677,7 +660,6 @@ class DataRegistry(object):
     def find_values_for_hash(
         self, value_hash: str, data_type_name: Union[str, None] = None
     ) -> Set[Value]:
-
         if data_type_name:
             raise NotImplementedError()
 
@@ -711,7 +693,6 @@ class DataRegistry(object):
     def retrieve_destinies_for_value_from_archives(
         self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
     ) -> Mapping[str, uuid.UUID]:
-
         if alias_filter:
             raise NotImplementedError()
 
@@ -734,7 +715,6 @@ class DataRegistry(object):
     def get_destiny_aliases_for_value(
         self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
     ) -> Iterable[str]:
-
         # TODO: cache the result of this
 
         if alias_filter is not None:
@@ -786,7 +766,6 @@ class DataRegistry(object):
         )
 
         for value_id in destiny.fixed_inputs.values():
-
             self._destinies[destiny.destiny_id] = destiny
             # TODO: store history?
             self._destinies_by_value.setdefault(value_id, {})[destiny_alias] = destiny
@@ -799,7 +778,6 @@ class DataRegistry(object):
         destiny: Union[uuid.UUID, "Destiny"],
         field_names: Union[Iterable[str], None] = None,
     ):
-
         if field_names:
             raise NotImplementedError()
 
@@ -833,7 +811,6 @@ class DataRegistry(object):
     def get_registered_destiny(
         self, value_id: uuid.UUID, destiny_alias: str
     ) -> "Destiny":
-
         destiny = self._destinies_by_value.get(value_id, {}).get(destiny_alias, None)
         if destiny is None:
             raise Exception(
@@ -850,7 +827,6 @@ class DataRegistry(object):
         pedigree_output_name: Union[str, None] = None,
         reuse_existing: bool = True,
     ) -> Value:
-
         value, newly_created = self._create_value(
             data=data,
             schema=schema,
@@ -880,14 +856,11 @@ class DataRegistry(object):
         str,
         int,
     ]:
-
         if schema is None:
             raise NotImplementedError()
 
         if isinstance(data, Value):
-
             if data.value_id in self._registered_values.keys():
-
                 if data.is_set and data.is_serializable:
                     serialized: Union[str, SerializedData] = data.serialized_data
                 else:
@@ -1022,7 +995,6 @@ class DataRegistry(object):
 
         data_type: Union[None, DataType] = None
         if reuse_existing and not isinstance(data, (Value, uuid.UUID, SpecialValue)):
-
             data_type = self._kiara.type_registry.retrieve_data_type(
                 data_type_name=schema.type, data_type_config=schema.type_config
             )
@@ -1052,7 +1024,6 @@ class DataRegistry(object):
                 # TODO: check pedigree
                 return (_existing, False)
         else:
-
             if data_type is None:
                 data_type = self._kiara.type_registry.retrieve_data_type(
                     data_type_name=schema.type, data_type_config=schema.type_config
@@ -1105,7 +1076,6 @@ class DataRegistry(object):
         return (value, True)
 
     def retrieve_persisted_value_details(self, value_id: uuid.UUID) -> PersistedData:
-
         if (
             value_id in self._persisted_value_descs.keys()
             and self._persisted_value_descs[value_id] is not None
@@ -1195,7 +1165,6 @@ class DataRegistry(object):
     def retrieve_value_data(
         self, value: Union[uuid.UUID, Value], target_profile: Union[str, None] = None
     ) -> Any:
-
         if isinstance(value, uuid.UUID):
             value = self.get_value(value=value)
 
@@ -1281,10 +1250,8 @@ class DataRegistry(object):
         values: Mapping[str, Union[uuid.UUID, None, str, ValueLink]],
         values_schema: Union[None, Mapping[str, ValueSchema]] = None,
     ) -> ValueMapReadOnly:
-
         value_items = {}
         if values_schema:
-
             schemas = values_schema
             for k in schemas.keys():
                 if k not in values.keys():
@@ -1310,7 +1277,6 @@ class DataRegistry(object):
     def load_data(
         self, values: Mapping[str, Union[uuid.UUID, None]]
     ) -> Mapping[str, Any]:
-
         result_values = self.load_values(values=values)
         return {k: v.data for k, v in result_values.items()}
 
@@ -1366,7 +1332,6 @@ class DataRegistry(object):
             values[input_name] = _value
 
         for input_name, _data in _unresolved.items():
-
             value_schema = input_details[input_name]["schema"]
 
             if input_name not in data.keys():
@@ -1387,7 +1352,6 @@ class DataRegistry(object):
                 values[input_name] = value
 
             except Exception as e:
-
                 log_exception(e)
 
                 msg: Any = str(e)
@@ -1427,7 +1391,6 @@ class DataRegistry(object):
         target_type="terminal_renderable",
         **render_config: Any,
     ) -> Any:
-
         assert isinstance(value_id, uuid.UUID)
 
         return pretty_print_data(

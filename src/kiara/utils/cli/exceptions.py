@@ -8,7 +8,6 @@ from kiara.utils.cli import terminal_print
 def handle_exception(
     func=None,
 ):
-
     if not func:
         return partial(handle_exception)
 
@@ -17,7 +16,6 @@ def handle_exception(
         try:
             return func(*args, **kwargs)
         except Exception as e:
-
             if is_debug() or is_develop():
                 import traceback
 

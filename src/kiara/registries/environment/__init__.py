@@ -21,7 +21,6 @@ if TYPE_CHECKING:
 
 
 class EnvironmentRegistry(object):
-
     _instance = None
 
     @classmethod
@@ -32,7 +31,6 @@ class EnvironmentRegistry(object):
         return cls._instance
 
     def __init__(self) -> None:
-
         self._environments: Union[Dict[str, RuntimeEnvironment], None] = None
         self._environment_hashes: Union[Dict[str, Mapping[str, str]], None] = None
 
@@ -41,7 +39,6 @@ class EnvironmentRegistry(object):
         # self._kiara: Kiara = kiara
 
     def get_environment_for_cid(self, env_cid: str) -> RuntimeEnvironment:
-
         envs = [
             env
             for env in self.environments.values()
@@ -56,7 +53,6 @@ class EnvironmentRegistry(object):
         return envs[0]
 
     def has_environment(self, env_cid: str) -> bool:
-
         for env in self.environments.values():
             if str(env.instance_cid) == env_cid:
                 return True
@@ -64,7 +60,6 @@ class EnvironmentRegistry(object):
 
     @property
     def environment_hashes(self) -> Mapping[str, Mapping[str, str]]:
-
         if self._environment_hashes is not None:
             return self._environment_hashes
 
@@ -153,7 +148,6 @@ class EnvironmentRegistry(object):
         return self._full_env_model
 
     def create_renderable(self, **config: Any):
-
         full_details = config.get("full_details", False)
 
         table = Table(show_header=True, box=box.SIMPLE)

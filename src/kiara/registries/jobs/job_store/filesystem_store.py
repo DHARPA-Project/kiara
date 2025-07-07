@@ -22,7 +22,6 @@ log = structlog.getLogger()
 
 
 class FileSystemJobArchive(JobArchive):
-
     _archive_type_name = "filesystem_job_archive"
     _config_cls = FileSystemArchiveConfig  # type: ignore
 
@@ -36,7 +35,6 @@ class FileSystemJobArchive(JobArchive):
         archive_config: FileSystemArchiveConfig,
         force_read_only: bool = False,
     ):
-
         super().__init__(
             archive_name=archive_name,
             archive_config=archive_config,
@@ -45,14 +43,12 @@ class FileSystemJobArchive(JobArchive):
         self._base_path: Union[Path, None] = None
 
     def get_archive_details(self) -> ArchiveDetails:
-
         size = sum(
             f.stat().st_size for f in self.job_store_path.glob("**/*") if f.is_file()
         )
         return ArchiveDetails(root={"size": size})
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
-
         if not self.archive_metadata_path.is_file():
             _archive_metadata = {}
         else:
@@ -78,7 +74,6 @@ class FileSystemJobArchive(JobArchive):
 
     @property
     def job_store_path(self) -> Path:
-
         if self._base_path is not None:
             return self._base_path
 
@@ -88,7 +83,6 @@ class FileSystemJobArchive(JobArchive):
         return self._base_path
 
     def _delete_archive(self) -> None:
-
         shutil.rmtree(self.job_store_path)
 
     def retrieve_all_job_hashes(
@@ -97,7 +91,6 @@ class FileSystemJobArchive(JobArchive):
         inputs_id_hash: Union[str, None] = None,
         inputs_data_hash: Union[str, None] = None,
     ) -> Iterable[str]:
-
         base_path = self.job_store_path / MANIFEST_SUB_PATH
         if not manifest_hash:
             if not inputs_id_hash:
@@ -118,7 +111,6 @@ class FileSystemJobArchive(JobArchive):
         return result
 
     def _retrieve_record_for_job_hash(self, job_hash: str) -> Union[JobRecord, None]:
-
         base_path = self.job_store_path / MANIFEST_SUB_PATH
         records = list(base_path.glob(f"*/*/{job_hash}.job_record"))
 
@@ -136,17 +128,14 @@ class FileSystemJobArchive(JobArchive):
         return job_record
 
     def _retrieve_all_job_ids(self) -> Mapping[uuid.UUID, datetime.datetime]:
-
         raise NotImplementedError()
 
     def _retrieve_matching_job_records(
         self, matcher: JobMatcher
     ) -> Generator[JobRecord, None, None]:
-
         raise NotImplementedError()
 
     def _retrieve_record_for_job_id(self, job_id: uuid.UUID) -> Union[JobRecord, None]:
-
         raise NotImplementedError()
 
     # def find_matching_job_record(
@@ -188,11 +177,9 @@ class FileSystemJobArchive(JobArchive):
 
 
 class FileSystemJobStore(FileSystemJobArchive, JobStore):
-
     _archive_type_name = "filesystem_job_store"
 
     def store_job_record(self, job_record: JobRecord):
-
         manifest_cid = job_record.manifest_cid
 
         input_ids_hash = job_record.input_ids_hash
@@ -234,7 +221,6 @@ class FileSystemJobStore(FileSystemJobArchive, JobStore):
         job_details_file.write_text(job_record.model_dump_json())
 
         for output_name, output_v_id in job_record.outputs.items():
-
             outputs_file_name = (
                 job_folder / f"output__{output_name}__value_id__{output_v_id}.json"
             )

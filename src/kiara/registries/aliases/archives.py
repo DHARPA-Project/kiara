@@ -19,7 +19,6 @@ from kiara.utils.windows import fix_windows_longpath
 
 
 class FileSystemAliasArchive(AliasArchive):
-
     _archive_type_name = "filesystem_alias_archive"
     _config_cls = FileSystemArchiveConfig  # type: ignore
 
@@ -29,7 +28,6 @@ class FileSystemAliasArchive(AliasArchive):
         archive_config: ARCHIVE_CONFIG_CLS,
         force_read_only: bool = False,
     ):
-
         super().__init__(
             archive_name=archive_name,
             archive_config=archive_config,
@@ -39,7 +37,6 @@ class FileSystemAliasArchive(AliasArchive):
         self._base_path: Union[Path, None] = None
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
-
         if not self.archive_metadata_path.is_file():
             _archive_metadata = {}
         else:
@@ -61,7 +58,6 @@ class FileSystemAliasArchive(AliasArchive):
 
     @property
     def alias_store_path(self) -> Path:
-
         if self._base_path is not None:
             return self._base_path
 
@@ -86,7 +82,6 @@ class FileSystemAliasArchive(AliasArchive):
         shutil.rmtree(self.alias_store_path)
 
     def _translate_alias(self, alias: str) -> Path:
-
         if "." in alias:
             tokens = alias.split(".")
             alias_path = (
@@ -97,7 +92,6 @@ class FileSystemAliasArchive(AliasArchive):
         return alias_path
 
     def _translate_alias_path(self, alias_path: Path) -> str:
-
         relative = (
             alias_path.absolute()
             .relative_to(self.aliases_path.absolute())
@@ -114,7 +108,6 @@ class FileSystemAliasArchive(AliasArchive):
         return alias
 
     def _translate_value_id(self, value_id: uuid.UUID) -> Path:
-
         tokens = str(value_id).split("-")
         value_id_path = (
             self.value_id_path.joinpath(*tokens[0:-1]) / f"{tokens[-1]}.value"
@@ -122,7 +115,6 @@ class FileSystemAliasArchive(AliasArchive):
         return value_id_path
 
     def _translate_value_path(self, value_path: Path) -> uuid.UUID:
-
         relative = (
             fix_windows_longpath(value_path.absolute())
             .relative_to(fix_windows_longpath(self.value_id_path.absolute()))
@@ -134,7 +126,6 @@ class FileSystemAliasArchive(AliasArchive):
         return uuid.UUID(value_id_str)
 
     def retrieve_all_aliases(self) -> Mapping[str, uuid.UUID]:
-
         all_aliases = self.aliases_path.rglob("*.alias")
         result = {}
         for alias_path in all_aliases:
@@ -152,7 +143,6 @@ class FileSystemAliasArchive(AliasArchive):
         return self._find_value_id_for_alias_path(alias_path=alias_path)
 
     def _find_value_id_for_alias_path(self, alias_path: Path) -> Union[uuid.UUID, None]:
-
         resolved = alias_path.resolve()
 
         assert resolved.name.endswith(".value")
@@ -165,11 +155,9 @@ class FileSystemAliasArchive(AliasArchive):
 
 
 class FileSystemAliasStore(FileSystemAliasArchive, AliasStore):
-
     _archive_type_name = "filesystem_alias_store"
 
     def register_aliases(self, value_id: uuid.UUID, *aliases: str):
-
         value_path = self._translate_value_id(value_id=value_id)
         value_path.parent.mkdir(parents=True, exist_ok=True)
         value_path.touch()

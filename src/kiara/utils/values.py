@@ -29,7 +29,6 @@ def construct_valuemap(
     kiara_api: "BaseAPI",
     values: Mapping[str, Union[uuid.UUID, None, str, "ValueLink"]],
 ) -> "ValueMapReadOnly":
-
     value_items = {}
     schemas = {}
     for field_name, value_id in values.items():
@@ -48,7 +47,6 @@ def construct_valuemap(
 def create_schema_dict(
     schema_config: Mapping[str, Union[ValueSchema, Mapping[str, Any]]],
 ) -> Mapping[str, ValueSchema]:
-
     invalid = check_valid_field_names(*schema_config.keys())
     if invalid:
         raise Exception(
@@ -57,7 +55,6 @@ def create_schema_dict(
 
     result = {}
     for k, v in schema_config.items():
-
         if isinstance(v, ValueSchema):
             result[k] = v
         elif isinstance(v, Mapping):
@@ -84,9 +81,7 @@ def overlay_constants_and_defaults(
     defaults: Mapping[str, Any],
     constants: Mapping[str, Any],
 ):
-
     for k, v in schemas.items():
-
         default_value = defaults.get(k, None)
         constant_value = constants.get(k, None)
 
@@ -121,7 +116,6 @@ def augment_values(
     schemas: Mapping[str, ValueSchema],
     constants: Union[Mapping[str, ValueSchema], None] = None,
 ) -> Dict[str, Any]:
-
     # TODO: check if extra fields were provided
 
     if constants:
@@ -141,7 +135,6 @@ def augment_values(
                 values_new[field_name] = copy.deepcopy(v)
 
     for field_name, schema in schemas.items():
-
         if field_name in values_new.keys():
             raise Exception(
                 f"Duplicate field '{field_name}', this is most likely a bug."
@@ -172,7 +165,6 @@ def augment_values(
 
 
 def extract_raw_values(kiara: "Kiara", **value_ids: uuid.UUID) -> Dict[str, Any]:
-
     result = {}
     for field_name, value_id in value_ids.items():
         result[field_name] = extract_raw_value(kiara=kiara, value_id=value_id)

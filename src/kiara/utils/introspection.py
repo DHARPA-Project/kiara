@@ -5,7 +5,6 @@ from typing import Any, Callable, Dict
 
 
 def extract_cls(arg: Any, imports: Dict[str, typing.Set[str]]) -> str:
-
     if arg in (type(None), None):
         return "None"
     elif isinstance(arg, type):
@@ -27,11 +26,12 @@ def extract_cls(arg: Any, imports: Dict[str, typing.Set[str]]) -> str:
 
         imports.setdefault("typing", set()).add("Union")
         return f"Union[{', '.join(all_args)}]"
-    elif hasattr(typing, "_LiteralSpecialForm") and isinstance(arg, typing._LiteralSpecialForm):  # type: ignore
+    elif hasattr(typing, "_LiteralSpecialForm") and isinstance(
+        arg, typing._LiteralSpecialForm
+    ):  # type: ignore
         return "Literal"
 
     elif isinstance(arg, typing._GenericAlias):  # type: ignore
-
         origin_cls = extract_cls(arg.__origin__, imports=imports)
         if origin_cls == "Literal":
             all_args_str = ", ".join((f'"{x}"' for x in arg.__args__))
@@ -70,7 +70,6 @@ def extract_cls(arg: Any, imports: Dict[str, typing.Set[str]]) -> str:
 
 
 def create_default_string(default: Any) -> str:
-
     if default is None:
         return "None"
     elif isinstance(default, bool):
@@ -113,7 +112,6 @@ def parse_signature_args(func: Callable, imports: Dict[str, typing.Set[str]]) ->
 
 
 def parse_signature_return(func: Callable, imports: Dict[str, typing.Set[str]]) -> str:
-
     sig = inspect.signature(func)
     sig_return_type = sig.return_annotation
     if isinstance(sig_return_type, str):
@@ -128,7 +126,6 @@ def parse_signature_return(func: Callable, imports: Dict[str, typing.Set[str]]) 
 def create_signature_string(
     func: Callable, imports: Dict[str, typing.Set[str]]
 ) -> typing.Tuple[str, typing.Union[str, None]]:
-
     params = parse_signature_args(func=func, imports=imports)
     return_type = parse_signature_return(func=func, imports=imports)
     if return_type == "None":
@@ -147,11 +144,9 @@ def extract_arg_names(func: Callable) -> typing.List[str]:
 
 
 def extract_proxy_arg_str(func: Callable) -> str:
-
     sig = inspect.signature(func)
     arg_str = ""
     for field_name, param in sig.parameters.items():
-
         if field_name == "self":
             continue
 

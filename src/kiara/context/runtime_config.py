@@ -7,7 +7,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class JobCacheStrategy(Enum):
-
     no_cache = "no_cache"
     value_id = "value_id"
     data_hash = "data_hash"

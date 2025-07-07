@@ -29,7 +29,6 @@ logger = structlog.getLogger()
 
 
 class FilterOperationDetails(BaseOperationDetails):
-
     data_type: str = Field(description="The data type of the value to be filtered.")
     data_type_config: Mapping[str, Any] = Field(
         description="The configuration of the data type to be filtered.",
@@ -83,17 +82,14 @@ class FilterOperationDetails(BaseOperationDetails):
 
 
 class FilterOperationType(OperationType[FilterOperationDetails]):
-
     _operation_type_name: ClassVar[str] = "filter"
 
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:
-
         result = []
 
         for name, module_cls in self._kiara.module_type_classes.items():
-
             if not issubclass(module_cls, FilterModule):
                 continue
 
@@ -113,7 +109,6 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
 
                 supported_filters = module_cls.get_supported_filters()
                 for filter in supported_filters:
-
                     func_name = f"filter__{filter}"
 
                     if not hasattr(module_cls, func_name):
@@ -144,7 +139,6 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
     def check_matching_operation(
         self, module: "KiaraModule"
     ) -> Union[FilterOperationDetails, None]:
-
         if not isinstance(module, FilterModule):
             return None
 
@@ -181,7 +175,6 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
     def find_filter_operations_for_data_type(
         self, data_type: str
     ) -> Dict[str, Operation]:
-
         result = {}
         for op in self.operations.values():
             details: FilterOperationDetails = op.operation_details  # type: ignore
@@ -191,7 +184,6 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
         return result
 
     def get_filter(self, data_type: str, filter_name: str) -> Filter:
-
         try:
             op = self._kiara.operation_registry.get_operation(operation_id=filter_name)
         except Exception:
@@ -392,7 +384,6 @@ class FilterOperationType(OperationType[FilterOperationDetails]):
         endpoint_input_field: Union[str, None] = None,
         endpoint_step_id: Union[str, None] = None,
     ) -> Operation:
-
         pipeline_config = self.assemble_filter_pipeline_config(
             data_type=data_type,
             filters=filters,

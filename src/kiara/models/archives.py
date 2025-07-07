@@ -41,14 +41,12 @@ if TYPE_CHECKING:
 
 
 class ArchiveTypeInfo(TypeInfo):
-
     _kiara_model_id: ClassVar = "info.archive_type"
 
     @classmethod
     def create_from_type_class(
         self, type_cls: Type[KiaraArchive], kiara: "Kiara"
     ) -> "ArchiveTypeInfo":
-
         authors_md = AuthorsMetadataModel.from_class(type_cls)
         doc = DocumentationMetadataModel.from_class_doc(type_cls)
         python_class = PythonClass.from_class(type_cls)
@@ -80,7 +78,6 @@ class ArchiveTypeInfo(TypeInfo):
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         include_doc = config.get("include_doc", True)
 
         table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
@@ -106,7 +103,6 @@ class ArchiveTypeInfo(TypeInfo):
 
 
 class ArchiveTypeClassesInfo(TypeInfoItemGroup):
-
     _kiara_model_id: ClassVar = "info.archive_types"
 
     @classmethod
@@ -126,7 +122,6 @@ class ArchiveInfo(ItemInfo):
 
     @classmethod
     def create_from_instance(cls, kiara: "Kiara", instance: KiaraArchive, **kwargs):
-
         if kwargs:
             raise ValueError("kwargs not supported.")
 
@@ -139,7 +134,6 @@ class ArchiveInfo(ItemInfo):
         archive: KiaraArchive,
         # archive_aliases: Union[Iterable[str], None] = None,
     ):
-
         doc_str = archive.archive_metadata.get("description", None)
         doc = DocumentationMetadataModel.create(doc_str)
 
@@ -230,7 +224,6 @@ class ArchiveInfo(ItemInfo):
 
 
 class ArchiveGroupInfo(InfoItemGroup):
-
     _kiara_model_id: ClassVar = "info.archives"
 
     @classmethod
@@ -241,7 +234,6 @@ class ArchiveGroupInfo(InfoItemGroup):
     def create_from_context(
         cls, kiara: "Kiara", group_title: Union[str, None] = None
     ) -> "ArchiveGroupInfo":
-
         archives = {}
         for archive, aliases in kiara.get_all_archives().items():
             title = str(archive.archive_id) + ", ".join(aliases)
@@ -261,7 +253,6 @@ class ArchiveGroupInfo(InfoItemGroup):
 
     @property
     def combined_size(self) -> int:
-
         combined = 0
         archive_ids = set()
         for archive_info in self.item_infos.values():
@@ -275,7 +266,6 @@ class ArchiveGroupInfo(InfoItemGroup):
         return combined
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         show_archive_id = config.get("show_archive_id", False)
         show_config = config.get("show_config", True)
         show_details = config.get("show_details", False)
@@ -335,12 +325,10 @@ class KiArchiveInfo(ItemInfo):
     def create_from_instance(
         cls, kiara: "Kiara", instance: "KiArchive", **kwargs
     ) -> "KiArchiveInfo":
-
         return cls.create_from_kiarchive(kiarchive=instance, **kwargs)
 
     @classmethod
     def create_from_kiarchive(cls, kiarchive: "KiArchive") -> "KiArchiveInfo":
-
         data_archive = kiarchive.data_archive
         alias_archive = kiarchive.alias_archive
         job_archive = kiarchive.job_archive
@@ -420,7 +408,6 @@ class KiArchiveInfo(ItemInfo):
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("property", style="i")
         table.add_column("value")

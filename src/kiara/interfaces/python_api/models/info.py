@@ -170,7 +170,6 @@ RENDER_FIELDS: Dict[str, Dict[str, Any]] = {
 
 
 class ValueTypeAndDescription(BaseModel):
-
     description: str = Field(description="The description for the value.")
     type: str = Field(description="The value type.")
     value_default: Any = Field(description="Default for the value.", default=None)
@@ -193,7 +192,6 @@ class ItemInfo(KiaraModel):
     @field_validator("documentation", mode="before")
     @classmethod
     def validate_doc(cls, value):
-
         return DocumentationMetadataModel.create(value)
 
     type_name: str = Field(description="The registered name for this item type.")
@@ -214,7 +212,6 @@ class ItemInfo(KiaraModel):
         return self.type_name
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         include_doc = config.get("include_doc", True)
 
         table = Table(box=box.SIMPLE, show_header=False, padding=(0, 0, 0, 0))
@@ -222,7 +219,6 @@ class ItemInfo(KiaraModel):
         table.add_column("value")
 
         if include_doc:
-
             table.add_row(
                 "Documentation",
                 Panel(self.documentation.create_renderable(), box=box.SIMPLE),
@@ -239,7 +235,6 @@ class ItemInfo(KiaraModel):
 class TypeInfo(ItemInfo, Generic[INFO_BASE_CLASS]):
     @classmethod
     def create_from_instance(cls, kiara: "Kiara", instance: INFO_BASE_CLASS, **kwargs):
-
         return cls.create_from_type_class(type_cls=instance, kiara=kiara)
 
     @classmethod
@@ -274,7 +269,6 @@ class InfoItemGroup(KiaraModel, Generic[INFO_ITEM_TYPE]):
         instances: Mapping[str, Any],
         **kwargs: Any,
     ) -> "InfoItemGroup[INFO_ITEM_TYPE]":
-
         info_cls = cls.base_info_class()
         items = {}
         for k in sorted(instances.keys()):
@@ -294,10 +288,12 @@ class InfoItemGroup(KiaraModel, Generic[INFO_ITEM_TYPE]):
         return self.item_infos.keys()
 
     def _retrieve_data_to_hash(self) -> Any:
-        return {"type_name": self.__class__._kiara_model_name, "included_types": list(self.item_infos.keys())}  # type: ignore
+        return {
+            "type_name": self.__class__._kiara_model_name,
+            "included_types": list(self.item_infos.keys()),
+        }  # type: ignore
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         full_doc = config.get("full_doc", False)
 
         table = Table(show_header=True, box=box.SIMPLE, show_lines=full_doc)
@@ -315,7 +311,6 @@ class InfoItemGroup(KiaraModel, Generic[INFO_ITEM_TYPE]):
         return table
 
     def __getitem__(self, item: str) -> INFO_ITEM_TYPE:
-
         return self.item_infos[item]
 
     # def __iter__(self):
@@ -335,7 +330,6 @@ class TypeInfoItemGroup(InfoItemGroup[TypeInfo]):
     def create_from_type_items(
         cls, kiara: "Kiara", group_title: Union[str, None] = None, **items: Type
     ) -> Self:
-
         type_infos: Mapping[str, TypeInfo[Any]] = {
             k: cls.base_info_class().create_from_type_class(type_cls=v, kiara=kiara)
             for k, v in items.items()
@@ -345,14 +339,12 @@ class TypeInfoItemGroup(InfoItemGroup[TypeInfo]):
 
 
 class KiaraModelTypeInfo(TypeInfo[Type[KiaraModel]]):
-
     _kiara_model_id: ClassVar = "info.kiara_model"
 
     @classmethod
     def create_from_type_class(
         self, type_cls: Type[KiaraModel], kiara: "Kiara"
     ) -> "KiaraModelTypeInfo":
-
         authors_md = AuthorsMetadataModel.from_class(type_cls)
         doc = DocumentationMetadataModel.from_class_doc(type_cls)
         python_class = PythonClass.from_class(type_cls)
@@ -374,7 +366,6 @@ class KiaraModelTypeInfo(TypeInfo[Type[KiaraModel]]):
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         include_doc = config.get("include_doc", True)
         include_schema = config.get("include_schema", False)
 
@@ -405,19 +396,19 @@ class KiaraModelTypeInfo(TypeInfo[Type[KiaraModel]]):
 
 
 class KiaraModelClassesInfo(TypeInfoItemGroup):
-
     _kiara_model_id: ClassVar = "info.kiara_models"
 
     @classmethod
     def find_kiara_models(
         cls, alias: Union[str, None] = None, only_for_package: Union[str, None] = None
     ) -> "KiaraModelClassesInfo":
-
         models = find_all_kiara_model_classes()
 
         # we don't need the kiara instance, this is just to satisfy mypy
         kiara: Kiara = None  # type: ignore
-        group: KiaraModelClassesInfo = KiaraModelClassesInfo.create_from_type_items(kiara=kiara, group_title=alias, **models)  # type: ignore
+        group: KiaraModelClassesInfo = KiaraModelClassesInfo.create_from_type_items(
+            kiara=kiara, group_title=alias, **models
+        )  # type: ignore
 
         if only_for_package:
             temp = {}
@@ -426,7 +417,9 @@ class KiaraModelClassesInfo(TypeInfoItemGroup):
                     temp[key] = info
 
             group = KiaraModelClassesInfo(
-                group_id=group.instance_id, group_title=group.group_alias, item_infos=temp  # type: ignore
+                group_id=group.instance_id,
+                group_title=group.group_alias,
+                item_infos=temp,  # type: ignore
             )
 
         return group
@@ -442,7 +435,6 @@ class KiaraModelClassesInfo(TypeInfoItemGroup):
 
 
 class ValueInfo(ItemInfo):
-
     _kiara_model_id: ClassVar = "info.value"
 
     @classmethod
@@ -453,7 +445,6 @@ class ValueInfo(ItemInfo):
     def create_from_instance(
         cls, kiara: "Kiara", instance: Value, **kwargs: Any
     ) -> "ValueInfo":
-
         resolve_aliases = kwargs.get("resolve_aliases", True)
         resolve_destinies = kwargs.get("resolve_destinies", True)
         resolve_properties = kwargs.get("resolve_properties", True)
@@ -638,12 +629,10 @@ class ValueInfo(ItemInfo):
             self.destiny_links = filtered_destinies
 
     def create_info_data(self, **config: Any) -> Mapping[str, Any]:
-
         assert self._value is not None
         return self._value.create_info_data(**config)
 
     def create_renderable(self, **render_config: Any) -> RenderableType:
-
         assert self._value is not None
         return self._value.create_renderable(**render_config)
 
@@ -656,7 +645,6 @@ class ValuesInfo(InfoItemGroup[ValueInfo]):
     def create_render_map(
         self, render_type: str, default_render_func: Callable, **render_config
     ):
-
         list_by_alias = render_config.get("list_by_alias", True)
         show_internal = render_config.get("show_internal_values", False)
 
@@ -678,7 +666,6 @@ class ValuesInfo(InfoItemGroup[ValueInfo]):
 
             details = {}
             for property in render_fields:
-
                 render_func = (
                     RENDER_FIELDS.get(property, {})
                     .get("render", {})
@@ -715,7 +702,6 @@ class ValuesInfo(InfoItemGroup[ValueInfo]):
             return result
 
     def create_renderable(self, render_type: str = "terminal", **render_config: Any):
-
         render_map = self.create_render_map(
             render_type=render_type,
             default_render_func=extract_renderable,
@@ -750,7 +736,6 @@ class ValuesInfo(InfoItemGroup[ValueInfo]):
 
 
 class KiaraModuleConfigMetadata(KiaraModel):
-
     _kiara_model_id: ClassVar = "metadata.module_config"
 
     @classmethod
@@ -758,13 +743,11 @@ class KiaraModuleConfigMetadata(KiaraModel):
         cls,
         config_cls: Type[KiaraModuleConfig],
     ):
-
         schema = config_cls.model_json_schema()
         fields = schema["properties"]
 
         config_values = {}
         for field_name, details in fields.items():
-
             type_str = "unknown"
             if "type" in details.keys():
                 type_str = details["type"]
@@ -803,14 +786,12 @@ class KiaraModuleConfigMetadata(KiaraModel):
 
 
 class MetadataTypeInfo(TypeInfo):
-
     _kiara_model_id: ClassVar = "info.metadata_type"
 
     @classmethod
     def create_from_type_class(
         self, type_cls: Type["ValueMetadata"], kiara: "Kiara"
     ) -> "MetadataTypeInfo":
-
         authors_md = AuthorsMetadataModel.from_class(type_cls)
         doc = DocumentationMetadataModel.from_class_doc(type_cls)
         python_class = PythonClass.from_class(type_cls)
@@ -842,7 +823,6 @@ class MetadataTypeInfo(TypeInfo):
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         include_doc = config.get("include_doc", True)
         include_schema = config.get("include_schema", True)
 
@@ -873,7 +853,6 @@ class MetadataTypeInfo(TypeInfo):
 
 
 class MetadataTypeClassesInfo(TypeInfoItemGroup):
-
     _kiara_model_id: ClassVar = "info.metadata_types"
 
     @classmethod
@@ -887,14 +866,12 @@ class MetadataTypeClassesInfo(TypeInfoItemGroup):
 
 
 class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
-
     _kiara_model_id: ClassVar = "info.data_type"
 
     @classmethod
     def create_from_type_class(
         self, type_cls: Type["DataType"], kiara: Union["Kiara", None] = None
     ) -> "DataTypeClassInfo":
-
         from kiara.utils.metadata import get_metadata_model_for_data_type
 
         authors = AuthorsMetadataModel.from_class(type_cls)
@@ -916,7 +893,9 @@ class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
             )
 
         if kiara is not None:
-            qual_profiles = kiara.type_registry.get_associated_profiles(type_cls._data_type_name)  # type: ignore
+            qual_profiles = kiara.type_registry.get_associated_profiles(
+                type_cls._data_type_name
+            )  # type: ignore
             lineage = kiara.type_registry.get_type_lineage(type_cls._data_type_name)  # type: ignore
         else:
             qual_profiles = None
@@ -979,7 +958,6 @@ class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
         return self.type_name
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         include_doc = config.get("include_doc", True)
         include_lineage = config.get("include_lineage", True)
         include_qualifer_profiles = config.get("include_qualifier_profiles", True)
@@ -1025,7 +1003,6 @@ class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
 
 
 class DataTypeClassesInfo(TypeInfoItemGroup):
-
     _kiara_model_id: ClassVar = "info.data_types"
 
     # @classmethod
@@ -1067,7 +1044,6 @@ class DataTypeClassesInfo(TypeInfoItemGroup):
     # _kiara: Union["Kiara", None] = PrivateAttr(default=None)
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         full_doc = config.get("full_doc", False)
         show_subtypes_inline = config.get("show_qualifier_profiles_inline", False)
         show_lineage = config.get("show_type_lineage", True)
@@ -1091,7 +1067,6 @@ class DataTypeClassesInfo(TypeInfoItemGroup):
         all_types = self.item_infos.keys()
 
         for type_name in sorted(all_types):  # type: ignore
-
             t_md = self.item_infos[type_name]  # type: ignore
             row: List[Any] = [type_name]
             if show_lineage:
@@ -1120,18 +1095,17 @@ class DataTypeClassesInfo(TypeInfoItemGroup):
 
 
 class ModuleTypeInfo(TypeInfo[Type["KiaraModule"]]):
-
     _kiara_model_id: ClassVar = "info.kiara_module_type"
 
     @classmethod
-    def create_from_type_class(cls, type_cls: Type["KiaraModule"], kiara: "Kiara") -> "ModuleTypeInfo":  # type: ignore
-
+    def create_from_type_class(
+        cls, type_cls: Type["KiaraModule"], kiara: "Kiara"
+    ) -> "ModuleTypeInfo":  # type: ignore
         module_attrs = cls.extract_module_attributes(module_cls=type_cls)
         return cls(**module_attrs)
 
     @classmethod
     def base_class(self) -> Type["KiaraModule"]:
-
         from kiara.modules import KiaraModule
 
         return KiaraModule
@@ -1144,7 +1118,6 @@ class ModuleTypeInfo(TypeInfo[Type["KiaraModule"]]):
     def extract_module_attributes(
         self, module_cls: Type["KiaraModule"]
     ) -> Dict[str, Any]:
-
         if not hasattr(module_cls, "process"):
             raise Exception(f"Module class '{module_cls}' misses 'process' method.")
 
@@ -1174,7 +1147,6 @@ class ModuleTypeInfo(TypeInfo[Type["KiaraModule"]]):
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         include_config_schema = config.get("include_config_schema", True)
         include_src = config.get("include_src", False)
         include_doc = config.get("include_doc", True)
@@ -1215,7 +1187,6 @@ class ModuleTypeInfo(TypeInfo[Type["KiaraModule"]]):
 
 
 class ModuleTypesInfo(TypeInfoItemGroup):
-
     _kiara_model_id: ClassVar = "info.module_types"
 
     @classmethod
@@ -1229,14 +1200,14 @@ class ModuleTypesInfo(TypeInfoItemGroup):
 
 
 class OperationTypeInfo(TypeInfo[Type["OperationType"]]):
-
     _kiara_model_id: ClassVar = "info.operation_type"
 
     @classmethod
     def create_from_type_class(  # type: ignore
-        cls, kiara: "Kiara", type_cls: Type["OperationType"]  # type: ignore
+        cls,
+        kiara: "Kiara",
+        type_cls: Type["OperationType"],  # type: ignore
     ) -> "OperationTypeInfo":
-
         authors_md = AuthorsMetadataModel.from_class(type_cls)
         doc = DocumentationMetadataModel.from_class_doc(type_cls)
         python_class = PythonClass.from_class(type_cls)
@@ -1268,7 +1239,6 @@ class OperationTypeInfo(TypeInfo[Type["OperationType"]]):
 
 
 class OperationTypeClassesInfo(TypeInfoItemGroup):
-
     _kiara_model_id: ClassVar = "info.operation_types"
 
     @classmethod
@@ -1282,7 +1252,6 @@ class OperationTypeClassesInfo(TypeInfoItemGroup):
 
 
 class FieldInfo(BaseModel):
-
     field_name: str = Field(description="The field name.")
     field_schema: ValueSchema = Field(description="The schema of the field.")
     data_type_info: DataTypeInfo = Field(
@@ -1294,7 +1263,6 @@ class FieldInfo(BaseModel):
 
 
 class PipelineStructureInfo(ItemInfo):
-
     _kiara_model_id: ClassVar = "info.pipeline_structure"
 
     @classmethod
@@ -1305,7 +1273,6 @@ class PipelineStructureInfo(ItemInfo):
     def create_from_instance(
         cls, kiara: "Kiara", instance: PipelineStructure, **kwargs
     ):
-
         authors = AuthorsMetadataModel()
         context = ContextMetadataModel()
 
@@ -1422,7 +1389,6 @@ class PipelineStructureInfo(ItemInfo):
         return self.step_details[step_id]
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         tree = Tree("pipeline")
         inputs = tree.add("inputs")
         for field_name, field_info in self.pipeline_input_fields.items():
@@ -1446,7 +1412,6 @@ class PipelineStructureInfo(ItemInfo):
 
 
 class OperationInfo(ItemInfo):
-
     _kiara_model_id: ClassVar = "info.operation"
 
     @classmethod
@@ -1455,14 +1420,12 @@ class OperationInfo(ItemInfo):
 
     @classmethod
     def create_from_instance(cls, kiara: "Kiara", instance: Operation, **kwargs):
-
         return cls.create_from_operation(kiara=kiara, operation=instance)
 
     @classmethod
     def create_from_operation(
         cls, kiara: "Kiara", operation: Operation
     ) -> "OperationInfo":
-
         module = operation.module
         module_cls = module.__class__
 
@@ -1475,7 +1438,6 @@ class OperationInfo(ItemInfo):
 
         input_fields = {}
         for field_name, schema in operation.inputs_schema.items():
-
             try:
                 dt = kiara.type_registry.get_data_type_instance(
                     type_name=schema.type, type_config=schema.type_config
@@ -1545,7 +1507,6 @@ class OperationInfo(ItemInfo):
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         include_doc = config.get("include_doc", False)
         include_module_details = config.get("include_module_details", True)
         include_op_details = config.get("include_op_details", True)
@@ -1584,7 +1545,6 @@ class OperationInfo(ItemInfo):
 
 
 class OperationGroupInfo(InfoItemGroup):
-
     _kiara_model_id: ClassVar = "info.operations"
 
     @classmethod
@@ -1595,7 +1555,6 @@ class OperationGroupInfo(InfoItemGroup):
     def create_from_operations(
         cls, kiara: "Kiara", group_title: Union[str, None] = None, **items: Operation
     ) -> "OperationGroupInfo":
-
         op_infos = {
             k: OperationInfo.create_from_operation(kiara=kiara, operation=v)
             for k, v in items.items()
@@ -1610,7 +1569,6 @@ class OperationGroupInfo(InfoItemGroup):
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         by_type = config.get("by_type", False)
 
         if by_type:
@@ -1619,7 +1577,6 @@ class OperationGroupInfo(InfoItemGroup):
             return self._create_renderable_list(**config)
 
     def _create_renderable_list(self, **config) -> RenderableType:
-
         include_internal_operations = config.get("include_internal_operations", True)
         full_doc = config.get("full_doc", False)
         filter = config.get("filter", [])
@@ -1633,7 +1590,6 @@ class OperationGroupInfo(InfoItemGroup):
         table.add_column("Description")
 
         for op_id, op_info in self.item_infos.items():
-
             if (
                 not include_internal_operations
                 and op_info.operation.operation_details.is_internal_operation
@@ -1678,7 +1634,6 @@ class OperationGroupInfo(InfoItemGroup):
         return table
 
     def _create_renderable_by_type(self, **config) -> Table:
-
         include_internal_operations = config.get("include_internal_operations", True)
         full_doc = config.get("full_doc", False)
         filter = config.get("filter", [])
@@ -1708,7 +1663,6 @@ class OperationGroupInfo(InfoItemGroup):
             table.add_column("Description", no_wrap=False, style="i")
 
         for operation_name in sorted(by_type.keys()):
-
             # if operation_name == "custom_module":
             #     continue
 
@@ -1745,7 +1699,6 @@ class OperationGroupInfo(InfoItemGroup):
 
 
 class RendererInfo(ItemInfo):
-
     renderer_config: Mapping[str, Any] = Field(description="The renderer config.")
     renderer_cls: PythonClass = Field(
         description="The Python class that implements the renderer."
@@ -1769,7 +1722,6 @@ class RendererInfo(ItemInfo):
 
     @classmethod
     def create_from_instance(cls, kiara: "Kiara", instance: KiaraRenderer, **kwargs):
-
         doc = instance.doc
         authors = AuthorsMetadataModel.from_class(instance.__class__)
         properties_md = ContextMetadataModel.from_class(instance.__class__)
@@ -1804,7 +1756,6 @@ class RendererInfo(ItemInfo):
         )
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         show_metadata = config.get("show_metadata", False)
 
         table = Table(box=box.SIMPLE, show_header=False)
@@ -1845,7 +1796,6 @@ class RendererInfos(InfoItemGroup[RendererInfo]):
         return RendererInfo
 
     def get_render_source_types(self) -> List[str]:
-
         all_source_types = set()
         item: RendererInfo
         for item in self.item_infos.values():  # type: ignore
@@ -1854,7 +1804,6 @@ class RendererInfos(InfoItemGroup[RendererInfo]):
         return sorted(all_source_types)
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         table = Table(
             show_header=True, box=HORIZONTALS_NO_TO_AND_BOTTOM, show_lines=True
         )
@@ -1891,7 +1840,6 @@ class KiaraPluginInfo(ItemInfo):
     def create_from_instance(
         cls, kiara: "Kiara", instance: str, **kwargs
     ) -> "KiaraPluginInfo":
-
         registry = kiara.environment_registry
         python_env: PythonRuntimeEnvironment = registry.environments["python"]  # type: ignore
 
@@ -2008,7 +1956,6 @@ class KiaraPluginInfo(ItemInfo):
     operations: OperationGroupInfo = Field(description="The included operations.")
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         include_doc = config.get("include_doc", True)
         include_full_doc = config.get("include_full_doc", False)
         include_data_types = config.get("include_data_types", True)
@@ -2106,7 +2053,6 @@ class KiaraPluginInfos(InfoItemGroup[KiaraPluginInfo]):
         group_title: Union[str, None] = None,
         plugin_name_regex: str = "^kiara[-_]plugin\\..*",
     ) -> "KiaraPluginInfos":
-
         names = cls.get_available_plugin_names(kiara=kiara, regex=plugin_name_regex)
         result = cls.create_from_plugin_names(kiara, group_title, *names)
         return result
@@ -2126,7 +2072,6 @@ class KiaraPluginInfos(InfoItemGroup[KiaraPluginInfo]):
         return op_group_info
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         full_doc = config.get("full_doc", False)
 
         table = Table(show_header=True, box=box.SIMPLE, show_lines=full_doc)
@@ -2147,7 +2092,6 @@ class KiaraPluginInfos(InfoItemGroup[KiaraPluginInfo]):
 
 
 class JobInfo(ItemInfo):
-
     job_record: JobRecord = Field(description="The job record instance.")
     operation: OperationInfo = Field(description="The operation info instance.")
     inputs: Mapping[str, ValueInfo] = Field(description="The inputs.")
@@ -2158,8 +2102,9 @@ class JobInfo(ItemInfo):
         return JobRecord
 
     @classmethod
-    def create_from_instance(cls, kiara: "Kiara", instance: JobRecord, **kwargs) -> "JobInfo":
-
+    def create_from_instance(
+        cls, kiara: "Kiara", instance: JobRecord, **kwargs
+    ) -> "JobInfo":
         type_name = str(instance.job_id)
 
         module = kiara.module_registry.create_module(instance)
@@ -2193,7 +2138,6 @@ class JobInfo(ItemInfo):
         )
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")
         table.add_column("Value")
@@ -2231,7 +2175,6 @@ class JobsInfo(InfoItemGroup[JobInfo]):
         return JobInfo
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         table = Table(
             show_header=True, box=HORIZONTALS_NO_TO_AND_BOTTOM, show_lines=True
         )
@@ -2242,7 +2185,6 @@ class JobsInfo(InfoItemGroup[JobInfo]):
 
         info: JobInfo
         for info in self.item_infos.values():  # type: ignore
-
             runtime_details = info.job_record.runtime_details
             assert runtime_details is not None
             row: List[RenderableType] = []

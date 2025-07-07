@@ -28,7 +28,6 @@ class PythonClass(KiaraModel):
 
     @classmethod
     def from_class(cls, item_cls: Type, attach_context_metadata: bool = False):
-
         cls_name = item_cls.__name__
         module_name = item_cls.__module__
 
@@ -73,14 +72,12 @@ class PythonClass(KiaraModel):
         return self.full_name
 
     def get_class(self) -> Type:
-
         if self._cls_cache is None:
             m = self.get_python_module()
             self._cls_cache = getattr(m, self.python_class_name)
         return self._cls_cache
 
     def get_source_code(self) -> str:
-
         if self._src_cache is None:
             self._src_cache = inspect.getsource(self.get_class())
         return self._src_cache
@@ -92,12 +89,10 @@ class PythonClass(KiaraModel):
 
 
 class KiaraModuleInstance(PythonClass):
-
     _kiara_model_id: ClassVar[str] = "metadata.kiara_module_class"
 
     @classmethod
     def from_module(cls, module: "KiaraModule"):
-
         item_cls = module.__class__
 
         cls_name = item_cls.__name__
@@ -133,7 +128,6 @@ class KiaraModuleInstance(PythonClass):
     _module_instance_cache: Union["KiaraModule", None] = PrivateAttr(default=None)
 
     def get_kiara_module_instance(self) -> "KiaraModule":
-
         if self._module_instance_cache is not None:
             return self._module_instance_cache
 

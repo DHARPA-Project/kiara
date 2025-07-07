@@ -146,7 +146,6 @@ CHUNK_CACHE_DIR_WIDTH = 1
 
 
 class SpecialValue(Enum):
-
     NOT_SET = "__not_set__"
     NO_VALUE = "__no_value__"
 

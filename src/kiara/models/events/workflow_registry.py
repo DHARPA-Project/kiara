@@ -13,7 +13,6 @@ from kiara.models.events import RegistryEvent
 
 
 class WorkflowArchiveAddedEvent(RegistryEvent):
-
     event_type: Literal["workflow_archive_added"] = "workflow_archive_added"
     workflow_archive_id: uuid.UUID = Field(
         description="The unique id of this data archive."

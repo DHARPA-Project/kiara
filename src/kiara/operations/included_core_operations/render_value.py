@@ -54,7 +54,6 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
     _operation_type_name: ClassVar[str] = "render_value"
 
     def _calculate_op_id(cls, source_type: str, target_type: str):
-
         if source_type == "any":
             operation_id = f"render.as.{target_type}"
         else:
@@ -65,10 +64,8 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:
-
         result = {}
         for name, module_cls in self._kiara.module_type_classes.items():
-
             if not issubclass(module_cls, RenderValueModule):
                 continue
 
@@ -77,7 +74,14 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
                 target_type,
             ) in module_cls.retrieve_supported_render_combinations():
                 if source_type not in self._kiara.data_type_names:
-                    log_message("ignore.operation_config", operation_type="render_value", module_type=module_cls._module_type_name, source_type=source_type, target_type=target_type, reason=f"Source type '{source_type}' not registered.")  # type: ignore
+                    log_message(
+                        "ignore.operation_config",
+                        operation_type="render_value",
+                        module_type=module_cls._module_type_name,
+                        source_type=source_type,
+                        target_type=target_type,
+                        reason=f"Source type '{source_type}' not registered.",
+                    )  # type: ignore
                     continue
                 if target_type not in self._kiara.data_type_names:
                     log_message(
@@ -135,7 +139,6 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
     def check_matching_operation(
         self, module: "KiaraModule"
     ) -> Union[RenderValueDetails, None]:
-
         if len(module.inputs_schema) != 2:
             return None
 
@@ -199,7 +202,6 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
         result: Dict[str, Operation] = {}
 
         for data_type in lineage:
-
             for op_id, op in self.operations.items():
                 op_details = self.retrieve_operation_details(op)
                 match = op_details.source_data_type == data_type
@@ -249,6 +251,5 @@ class RenderValueOperationType(OperationType[RenderValueDetails]):
     def get_render_operation(
         self, source_type: str, target_type: str
     ) -> Union[Operation, None]:
-
         all_ops = self.get_render_operations_for_source_type(source_type=source_type)
         return all_ops.get(target_type, None)

@@ -12,13 +12,11 @@ from kiara.modules import KiaraModule, ValueMapSchema
 
 
 class DataExportResult(BaseModel):
-
     files: List[str] = Field(description="A list of exported files.")
 
     @field_validator("files", mode="before")
     @classmethod
     def validate_files(cls, value):
-
         if isinstance(value, str):
             value = [value]
 
@@ -29,7 +27,6 @@ class DataExportResult(BaseModel):
 
 
 class DataExportModuleConfig(KiaraModuleConfig):
-
     target_profile: str = Field(
         description="The name of the target profile. Used to distinguish different target formats for the same data type."
     )
@@ -39,13 +36,11 @@ class DataExportModuleConfig(KiaraModuleConfig):
 
 
 class DataExportModule(KiaraModule):
-
     _config_cls = DataExportModuleConfig
     _module_type_name: Union[str, None] = None
 
     @classmethod
     def retrieve_supported_export_combinations(cls) -> Iterable[Mapping[str, str]]:
-
         result = []
         for attr in dir(cls):
             if (
@@ -78,7 +73,6 @@ class DataExportModule(KiaraModule):
     def create_inputs_schema(
         self,
     ) -> ValueMapSchema:
-
         source_type = self.get_config_value("source_type")
         target_profile = self.get_config_value("target_profile")
 
@@ -132,7 +126,6 @@ class DataExportModule(KiaraModule):
     def create_outputs_schema(
         self,
     ) -> ValueMapSchema:
-
         outputs = {
             "export_details": {
                 "type": "dict",
@@ -142,7 +135,6 @@ class DataExportModule(KiaraModule):
         return outputs
 
     def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
-
         target_profile: str = self.get_config_value("target_profile")
         source_type: str = self.get_config_value("source_type")
 

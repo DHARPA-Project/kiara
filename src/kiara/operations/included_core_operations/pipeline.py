@@ -34,7 +34,6 @@ yaml = YAML(typ="safe")
 
 
 class PipelineOperationDetails(OperationDetails):
-
     pipeline_inputs_schema: Mapping[str, ValueSchema] = Field(
         description="The input schema for the pipeline."
     )
@@ -45,7 +44,6 @@ class PipelineOperationDetails(OperationDetails):
     _op_schema: Union[OperationSchema, None] = PrivateAttr(default=None)
 
     def get_operation_schema(self) -> OperationSchema:
-
         if self._op_schema is not None:
             return self._op_schema
 
@@ -64,17 +62,14 @@ class PipelineOperationDetails(OperationDetails):
 
 
 class PipelineOperationType(OperationType[PipelineOperationDetails]):
-
     _operation_type_name: ClassVar[str] = "pipeline"
 
     def __init__(self, kiara: "Kiara", op_type_name: str) -> None:
-
         super().__init__(kiara=kiara, op_type_name=op_type_name)
         self._pipelines: Union[None, Mapping[str, Mapping[str, Any]]] = None
 
     @property
     def pipeline_data(self) -> Mapping[str, Mapping[str, Any]]:
-
         if self._pipelines is not None:
             return self._pipelines
 
@@ -93,7 +88,6 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:
-
         op_configs = []
         for pipeline_name, pipeline_data in self.pipeline_data.items():
             pipeline_config: Dict[str, Any] = dict(pipeline_data["data"])
@@ -113,9 +107,7 @@ class PipelineOperationType(OperationType[PipelineOperationDetails]):
     def check_matching_operation(
         self, module: "KiaraModule"
     ) -> Union[PipelineOperationDetails, None]:
-
         if isinstance(module, PipelineModule):
-
             op_details: PipelineOperationDetails = (
                 PipelineOperationDetails.create_operation_details(
                     operation_id=module.config.pipeline_name,

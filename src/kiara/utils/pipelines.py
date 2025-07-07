@@ -34,7 +34,6 @@ def create_step_value_address(
     value_address_config: Union[str, Mapping[str, Any]],
     default_field_name: str,
 ) -> "StepValueAddress":
-
     from kiara.models.module.pipeline.value_refs import StepValueAddress
 
     if isinstance(value_address_config, StepValueAddress):
@@ -43,7 +42,6 @@ def create_step_value_address(
     sub_value: Union[Mapping[str, Any], None] = None
 
     if isinstance(value_address_config, str):
-
         tokens = value_address_config.split(".")
         if len(tokens) == 1:
             step_id = value_address_config
@@ -59,7 +57,6 @@ def create_step_value_address(
             raise NotImplementedError()
 
     elif isinstance(value_address_config, Mapping):
-
         step_id = value_address_config["step_id"]
         output_name = value_address_config["value_name"]
         sub_value = value_address_config.get("sub_value", None)
@@ -82,7 +79,6 @@ def create_step_value_address(
 def ensure_step_value_addresses(
     link: Union[str, Mapping, Iterable], default_field_name: str
 ) -> List["StepValueAddress"]:
-
     if isinstance(link, (str, Mapping)):
         input_links: List[StepValueAddress] = [
             create_step_value_address(
@@ -146,7 +142,6 @@ def get_pipeline_details_from_path(
 
 
 def check_doc_sidecar(path: Union[Path, str], data: Dict[str, Any]) -> Dict[str, Any]:
-
     if isinstance(path, str):
         path = Path(os.path.expanduser(path))
 
@@ -228,7 +223,7 @@ def get_pipeline_config(
 
 
 def find_pipeline_data_in_paths(
-    pipeline_paths: Dict[str, Union[Dict[str, Any], None]]
+    pipeline_paths: Dict[str, Union[Dict[str, Any], None]],
 ) -> Mapping[str, Mapping[str, Any]]:
     """
     Find pipeline data in the provided paths.
@@ -250,9 +245,7 @@ def find_pipeline_data_in_paths(
             continue
 
         elif path.is_dir():
-
             for root, dirnames, filenames in os.walk(path, topdown=True):
-
                 dirnames[:] = [
                     d
                     for d in dirnames
@@ -265,10 +258,8 @@ def find_pipeline_data_in_paths(
                     if os.path.isfile(os.path.join(root, f))
                     and any(f.endswith(ext) for ext in VALID_PIPELINE_FILE_EXTENSIONS)
                 ]:
-
                     full_path = os.path.join(root, filename)
                     try:
-
                         data = get_pipeline_details_from_path(path=full_path)
                         data = check_doc_sidecar(full_path, data)
                         existing_metadata = data.pop("metadata", {})
@@ -314,9 +305,8 @@ def find_pipeline_data_in_paths(
 
 
 def extract_data_to_hash_from_pipeline_config(
-    pipeline_config: Mapping[str, Any]
+    pipeline_config: Mapping[str, Any],
 ) -> Mapping[str, Any]:
-
     if "steps" not in pipeline_config:
         return pipeline_config
 

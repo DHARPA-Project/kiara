@@ -20,7 +20,6 @@ if TYPE_CHECKING:
 
 
 class JinjaEnv(BaseModel):
-
     template_base: Union[str, None] = Field(
         description="The alias of the base loader to use. Defaults to a special loader that combines all template sources.",
         default=None,
@@ -35,7 +34,6 @@ class JinjaEnv(BaseModel):
 
 
 class JinjaRndererConfig(KiaraRendererConfig):
-
     env: JinjaEnv = Field(description="The loader to use for the jinja environment.")
 
 
@@ -43,7 +41,6 @@ class BaseJinjaRenderer(
     KiaraRenderer[SOURCE_TYPE, INPUTS_SCHEMA, str, JinjaRndererConfig],
     Generic[SOURCE_TYPE, INPUTS_SCHEMA],
 ):
-
     _renderer_config_cls = JinjaRndererConfig
 
     def __init__(
@@ -51,12 +48,10 @@ class BaseJinjaRenderer(
         kiara: "Kiara",
         renderer_config: Union[None, Mapping[str, Any], KiaraRendererConfig] = None,
     ):
-
         self._jinja_env: Union[Environment, None] = None
         super().__init__(kiara=kiara, renderer_config=renderer_config)
 
     def get_jinja_env(self) -> Environment:
-
         if self._jinja_env is None:
             je = self.retrieve_jinja_env()
             je._render_registry = self._kiara.render_registry
@@ -77,13 +72,15 @@ class BaseJinjaRenderer(
         pass
 
     def _render(self, instance: SOURCE_TYPE, render_config: INPUTS_SCHEMA) -> str:
-
         template = self.get_template(render_config=render_config)
         if template is None:
             msg = "Available templates:\n"
             for template_name in self.get_jinja_env().list_templates():
                 msg += f" - {template_name}\n"
-            raise KiaraException(msg=f"Could not find requested template for renderer '{self.__class__._renderer_name}'", details=msg)  # type: ignore
+            raise KiaraException(
+                msg=f"Could not find requested template for renderer '{self.__class__._renderer_name}'",
+                details=msg,
+            )  # type: ignore
 
         inputs = self.assemble_render_inputs(instance, render_config=render_config)
         rendered: str = template.render(**inputs)
@@ -95,12 +92,10 @@ class JinjaRenderInputsSchema(RenderInputsSchema):
 
 
 class JinjaRenderer(BaseJinjaRenderer[Any, JinjaRenderInputsSchema]):
-
     _renderer_name = "jinja"
     _inputs_schema_cls = JinjaRenderInputsSchema
 
     def get_template(self, render_config: JinjaRenderInputsSchema) -> Template:
-
         try:
             template = self.get_jinja_env().get_template(render_config.template)
             return template

@@ -13,7 +13,6 @@ from kiara.utils.windows import fix_windows_longpath
 
 
 class SqliteWorkflowArchive(WorkflowArchive[SqliteArchiveConfig]):
-
     _archive_type_name = "sqlite_workflow_archive"
     _config_cls = SqliteArchiveConfig
 
@@ -23,7 +22,6 @@ class SqliteWorkflowArchive(WorkflowArchive[SqliteArchiveConfig]):
         archive_config: SqliteArchiveConfig,
         force_read_only: bool = False,
     ):
-
         super().__init__(
             archive_name=archive_name,
             archive_config=archive_config,
@@ -45,7 +43,6 @@ class SqliteWorkflowArchive(WorkflowArchive[SqliteArchiveConfig]):
 
     @property
     def sqlite_path(self):
-
         if self._db_path is not None:
             return self._db_path
 
@@ -64,7 +61,6 @@ class SqliteWorkflowArchive(WorkflowArchive[SqliteArchiveConfig]):
 
     @property
     def sqlite_engine(self) -> "Engine":
-
         if self._cached_engine is not None:
             return self._cached_engine
 
@@ -91,44 +87,34 @@ CREATE TABLE IF NOT EXISTS job_records (
         return self._cached_engine
 
     def retrieve_all_workflow_aliases(self) -> Mapping[str, uuid.UUID]:
-
         raise NotImplementedError()
 
     def retrieve_all_workflow_ids(self) -> Iterable[uuid.UUID]:
-
         raise NotImplementedError()
 
     def retrieve_workflow_metadata(self, workflow_id: uuid.UUID) -> WorkflowMetadata:
-
         raise NotImplementedError()
 
     def retrieve_workflow_state(self, workflow_state_id: str) -> WorkflowState:
-
         raise NotImplementedError()
 
     def retrieve_all_states_for_workflow(
         self, workflow_id: uuid.UUID
     ) -> Mapping[str, WorkflowState]:
-
         raise NotImplementedError()
 
 
 class SqliteWorkflowStore(SqliteWorkflowArchive, WorkflowStore):
-
     _archive_type_name = "sqlite_workflow_store"
 
     def _register_workflow_metadata(self, workflow_metadata: WorkflowMetadata) -> None:
-
         raise NotImplementedError()
 
     def _update_workflow_metadata(self, workflow_metadata: WorkflowMetadata):
-
         raise NotImplementedError()
 
     def add_workflow_state(self, workflow_state: WorkflowState):
-
         raise NotImplementedError()
 
     def register_alias(self, workflow_id: uuid.UUID, alias: str):
-
         raise NotImplementedError()

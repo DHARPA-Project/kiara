@@ -86,7 +86,6 @@ def explain_context(
         terminal_print(table, in_panel="Kiara config")
 
     if len(contexts) == 1:
-
         kcc = kiara_config.get_context_config(contexts[0])
         cs = ContextInfo.create_from_context_config(
             kcc, context_name=contexts[0], runtime_config=kiara_config.runtime_config
@@ -174,9 +173,7 @@ def delete_context(
         terminal_print("Done.")
 
     else:
-
         if not force:
-
             context_summary = kiara_config.delete(
                 context_name=_context_name, dry_run=True
             )
@@ -307,7 +304,6 @@ def list_envs(ctx):
 @output_format_option()
 @click.pass_context
 def explain_env(ctx, env_type: str, format: str) -> None:
-
     from kiara.registries.environment import EnvironmentRegistry
 
     env_reg = EnvironmentRegistry.instance()
@@ -553,7 +549,6 @@ def list_services(ctx, details: bool):
             terminal_print(f" - {c}")
 
     else:
-
         from kiara.context import KiaraContextConfig, KiaraRuntimeConfig
         from kiara.utils.output import create_table_from_model_object
 

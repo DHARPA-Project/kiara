@@ -30,7 +30,6 @@ class IdRegistry(object):
         self._process_context_locks: Dict[uuid.UUID, InterProcessLock] = {}
 
     def lock_context(self, context_id: uuid.UUID) -> bool:
-
         if context_id not in self._process_context_locks.keys():
             lock = InterProcessLock(
                 os.path.join(
@@ -45,7 +44,6 @@ class IdRegistry(object):
         return aquired
 
     def unlock_context(self, context_id: uuid.UUID):
-
         if context_id not in self._process_context_locks.keys():
             return
 
@@ -60,12 +58,10 @@ class IdRegistry(object):
         obj: Union[Any, None] = None,
         **metadata: Any,
     ) -> uuid.UUID:
-
         if id is None:
             id = uuid.uuid4()
 
         if is_debug() or is_develop():
-
             # logger.debug("generate.id", id=id, metadata=metadata)
             if obj_type is None:
                 if obj:
@@ -85,7 +81,6 @@ class IdRegistry(object):
         obj: Union[Any, None] = None,
         **metadata,
     ):
-
         if not is_debug() and not is_develop():
             return
 

@@ -63,11 +63,9 @@ class ValueSchema(KiaraModel):
         return doc
 
     def _retrieve_data_to_hash(self) -> Any:
-
         return {"type": self.type, "type_config": self.type_config}
 
     def is_required(self):
-
         if self.optional:
             return False
         else:
@@ -84,20 +82,16 @@ class ValueSchema(KiaraModel):
     #         )
 
     def __eq__(self, other):
-
         if not isinstance(other, ValueSchema):
             return False
 
         return (self.type, self.default) == (other.type, other.default)
 
     def __hash__(self):
-
         return hash((self.type, self.default))
 
     def __repr__(self):
-
         return f"ValueSchema(type={self.type}, default={self.default}, optional={self.optional})"
 
     def __str__(self):
-
         return self.__repr__()

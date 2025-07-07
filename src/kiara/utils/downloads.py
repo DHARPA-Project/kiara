@@ -10,7 +10,6 @@ yaml = YAML(typ="safe")
 def get_data_from_url(
     url: str, content_type: Union[str, None] = None
 ) -> Mapping[str, Any]:
-
     if content_type:
         assert content_type in ["json", "yaml"]
 

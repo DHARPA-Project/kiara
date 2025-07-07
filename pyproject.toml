@@ -239,7 +239,8 @@ jupyter = [
 ]
 
 marimo = [
-    "marimo"
+    "marimo",
+    "altair>=5.5.0,<6.0.0",
 ]
 
 [project.urls]

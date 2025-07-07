@@ -53,7 +53,6 @@ MANIFEST_SUB_PATH = "manifests"
 
 class ExistingJobMatcher(abc.ABC):
     def __init__(self, kiara: "Kiara"):
-
         self._kiara: Kiara = kiara
 
     @abc.abstractmethod
@@ -74,11 +73,9 @@ class ValueIdExistingJobMatcher(ExistingJobMatcher):
     def find_existing_job(
         self, inputs_manifest: InputsManifest
     ) -> Union[JobRecord, None]:
-
         matches = []
 
         for store_id, archive in self._kiara.job_registry.job_archives.items():
-
             match = archive.retrieve_record_for_job_hash(
                 job_hash=inputs_manifest.job_hash
             )
@@ -102,18 +99,15 @@ class DataHashExistingJobMatcher(ExistingJobMatcher):
     def find_existing_job(
         self, inputs_manifest: InputsManifest
     ) -> Union[JobRecord, None]:
-
         matches = []
 
         ignore_internal = True
         if ignore_internal:
-
             module = self._kiara.module_registry.create_module(inputs_manifest)
             if module.characteristics.is_internal:
                 return None
 
         for store_id, archive in self._kiara.job_registry.job_archives.items():
-
             match = archive.retrieve_record_for_job_hash(
                 job_hash=inputs_manifest.job_hash
             )
@@ -126,7 +120,6 @@ class DataHashExistingJobMatcher(ExistingJobMatcher):
             )
 
         elif len(matches) == 1:
-
             job_record = matches[0]
             job_record._is_stored = True
 
@@ -161,7 +154,6 @@ class DataHashExistingJobMatcher(ExistingJobMatcher):
 
 class JobRegistry(object):
     def __init__(self, kiara: "Kiara"):
-
         self._kiara: Kiara = kiara
 
         self._job_matcher_cache: Dict[JobCacheStrategy, ExistingJobMatcher] = {}
@@ -188,7 +180,6 @@ class JobRegistry(object):
 
     @property
     def job_matcher(self) -> ExistingJobMatcher:
-
         from kiara.context.runtime_config import JobCacheStrategy
 
         strategy = self._kiara.runtime_config.job_cache
@@ -216,11 +207,9 @@ class JobRegistry(object):
         return job_matcher
 
     def suppoerted_event_types(self) -> Iterable[Type[KiaraEvent]]:
-
         return [JobArchiveAddedEvent, JobRecordPreStoreEvent, JobRecordStoredEvent]
 
     def register_job_archive(self, archive: JobArchive) -> str:
-
         alias = archive.archive_name
 
         if not alias:
@@ -254,13 +243,11 @@ class JobRegistry(object):
 
     @property
     def default_job_store(self) -> str:
-
         if self._default_job_store is None:
             raise Exception("No default job store set (yet).")
         return self._default_job_store  # type: ignore
 
     def get_archive(self, store_id: Union[str, None, uuid.UUID] = None) -> JobArchive:
-
         if store_id in [
             None,
             "",
@@ -291,7 +278,6 @@ class JobRegistry(object):
         old_status: Union[JobStatus, None],
         new_status: JobStatus,
     ):
-
         # print(f"JOB STATUS CHANGED: {job_id} - {old_status} - {new_status.value}")
         if job_id in self._active_jobs.values() and new_status is JobStatus.FAILED:
             job_hash = self._active_jobs.inverse.pop(job_id)
@@ -305,7 +291,6 @@ class JobRegistry(object):
             self._archived_records[job_id] = job_record
 
     def _persist_environment(self, env_type: str, env_hash: str):
-
         cached = self._env_cache.get(env_type, {}).get(env_hash, None)
         if cached is not None:
             return
@@ -323,7 +308,6 @@ class JobRegistry(object):
         self._env_cache.setdefault(env_type, {})[env_hash] = environment
 
     def store_job_record(self, job_id: uuid.UUID, store: Union[str, None] = None):
-
         # TODO: allow to store job record to external store
 
         job_record = self.get_job_record(job_id=job_id)
@@ -360,11 +344,9 @@ class JobRegistry(object):
         self._event_callback(stored_event)
 
     def get_job_record_in_session(self, job_id: uuid.UUID) -> JobRecord:
-
         return self._processor.get_job_record(job_id)
 
     def get_job_record(self, job_id: uuid.UUID) -> JobRecord:
-
         if job_id in self._archived_records.keys():
             return self._archived_records[job_id]
 
@@ -394,10 +376,8 @@ class JobRegistry(object):
         raise KiaraException("Can't find job record with id: {job_id}")
 
     def find_job_records(self, matcher: JobMatcher) -> Mapping[uuid.UUID, JobRecord]:
-
         all_records: List[JobRecord] = []
         for archive in self.job_archives.values():
-
             _job_records = archive.retrieve_matching_job_records(matcher=matcher)
             all_records.extend(_job_records)
 
@@ -579,7 +559,9 @@ class JobRegistry(object):
         is_pipeline_step = False if job_config.pipeline_metadata is None else True
         if is_pipeline_step:
             pipeline_step_id: Union[None, str] = job_config.pipeline_metadata.step_id  # type: ignore
-            pipeline_id: Union[None, uuid.UUID] = job_config.pipeline_metadata.pipeline_id  # type: ignore
+            pipeline_id: Union[None, uuid.UUID] = (
+                job_config.pipeline_metadata.pipeline_id
+            )  # type: ignore
         else:
             pipeline_step_id = None
             pipeline_id = None
@@ -591,7 +573,6 @@ class JobRegistry(object):
                 module_type=job_config.module_type,
             )
             if is_develop():
-
                 module = self._kiara.module_registry.create_module(manifest=job_config)
                 if is_pipeline_step:
                     title = f"Using cached pipeline step: {pipeline_step_id}"
@@ -649,7 +630,6 @@ class JobRegistry(object):
         return job_id
 
     def get_active_job(self, job_id: uuid.UUID) -> ActiveJob:
-
         if job_id in self._active_jobs.keys() or job_id in self._failed_jobs.keys():
             return self._processor.get_job(job_id)
         else:
@@ -672,7 +652,6 @@ class JobRegistry(object):
         return self._processor.get_job(job_id=job_id)
 
     def get_job_status(self, job_id: uuid.UUID) -> JobStatus:
-
         if job_id in self._archived_records.keys():
             return JobStatus.SUCCESS
         elif job_id in self._failed_jobs.values():
@@ -686,7 +665,6 @@ class JobRegistry(object):
             self._processor.wait_for(*not_finished)
 
     def retrieve_result(self, job_id: uuid.UUID) -> ValueMapReadOnly:
-
         if job_id not in self._archived_records.keys():
             self._processor.wait_for(job_id)
 
@@ -704,7 +682,6 @@ class JobRegistry(object):
     def execute_and_retrieve(
         self, manifest: Manifest, inputs: Mapping[str, Any]
     ) -> ValueMap:
-
         job_id = self.execute(manifest=manifest, inputs=inputs, wait=True)
         results = self.retrieve_result(job_id=job_id)
         return results

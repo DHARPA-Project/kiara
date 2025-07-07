@@ -79,12 +79,10 @@ class Manifest(KiaraModel):
 
     @property
     def manifest_cid(self) -> CID:
-
         if self._manifest_cid is not None:
             return self._manifest_cid
 
         if not self.is_resolved:
-
             msg = "Cannot calculate manifest CID for unresolved manifest."
             item = Syntax(
                 self.model_dump_json(indent=2),
@@ -113,11 +111,9 @@ class Manifest(KiaraModel):
         return str(self.manifest_cid)
 
     def manifest_data_as_json(self):
-
         return self.model_dump_json(include={"module_type", "module_config"})
 
     def _retrieve_data_to_hash(self) -> Any:
-
         return self.manifest_data
 
     def create_renderable(self, **config: Any) -> RenderableType:
@@ -131,16 +127,13 @@ class Manifest(KiaraModel):
         return conf
 
     def __repr__(self):
-
         return f"{self.__class__.__name__}(module_type={self.module_type}, module_config={self.module_config})"
 
     def __str__(self):
-
         return self.__repr__()
 
 
 class InputsManifest(Manifest):
-
     _kiara_model_id: ClassVar = "instance.manifest_with_inputs"
 
     inputs: Mapping[str, uuid.UUID] = Field(
@@ -164,12 +157,10 @@ class InputsManifest(Manifest):
 
     @property
     def job_hash(self) -> str:
-
         return str(self.job_cid)
 
     @property
     def job_cid(self) -> CID:
-
         if self._jobs_cid is not None:
             return self._jobs_cid
 
@@ -188,7 +179,6 @@ class InputsManifest(Manifest):
 
     @property
     def input_ids_hash(self) -> str:
-
         return str(self.inputs_cid)
 
     def calculate_inputs_data_cid(

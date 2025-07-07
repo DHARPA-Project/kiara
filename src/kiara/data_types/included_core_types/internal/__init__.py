@@ -42,18 +42,20 @@ class InternalType(
     def pretty_print_as__string(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
-
         if hasattr(self, "_pretty_print_as__string"):
-            return self._pretty_print_as_string(value=value, render_config=render_config)  # type: ignore
+            return self._pretty_print_as_string(
+                value=value, render_config=render_config
+            )  # type: ignore
 
         return str(value.data)
 
     def pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> RenderableType:
-
         if hasattr(self, "_pretty_print_as__terminal_renderable"):
-            return self._pretty_print_as__terminal_renderable(value=value, render_config=render_config)  # type: ignore
+            return self._pretty_print_as__terminal_renderable(
+                value=value, render_config=render_config
+            )  # type: ignore
 
         data: Any = value.data
 
@@ -76,18 +78,20 @@ class InternalType(
     def render_as__string(
         self, value: "Value", render_config: "RenderScene", manifest: "Manifest"
     ):
-
         if hasattr(self, "_render_as__string"):
-            return self._render_as__string(value=value, render_config=render_config, manifest=manifest)  # type: ignore
+            return self._render_as__string(
+                value=value, render_config=render_config, manifest=manifest
+            )  # type: ignore
         else:
             return self.pretty_print_as__string(value=value, render_config={})
 
     def render_as__terminal_renderable(
         self, value: "Value", render_config: "RenderScene", manifest: "Manifest"
     ):
-
         if hasattr(self, "_render_as__terminal_renderable"):
-            return self._render_as__terminal(value=value, render_config=render_config, manifest=manifest)  # type: ignore
+            return self._render_as__terminal(
+                value=value, render_config=render_config, manifest=manifest
+            )  # type: ignore
         return self.render_as__string(
             value=value, render_config=render_config, manifest=manifest
         )
@@ -109,7 +113,6 @@ class TerminalRenderable(InternalType[object, DataTypeConfig]):
     def _pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
-
         renderable = value.data
 
         table = Table(show_header=False, show_lines=False, box=box.SIMPLE)
@@ -123,7 +126,6 @@ class TerminalRenderable(InternalType[object, DataTypeConfig]):
 
 
 class InternalModelTypeConfig(DataTypeConfig):
-
     kiara_model_id: Union[str, None] = Field(
         description="The Python class backing this model (must sub-class 'KiaraModel')."
     )
@@ -144,7 +146,6 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
         return InternalModelTypeConfig  # type: ignore
 
     def serialize(self, data: KiaraModel) -> Union[str, SerializedData]:
-
         if self.type_config.kiara_model_id is None:
             logger.debug(
                 "ignore.serialize_request",
@@ -188,7 +189,6 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
 
     @classmethod
     def python_class(cls) -> Type:
-
         return KiaraModel
 
     # @property
@@ -210,7 +210,6 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
     #     return self._cls_cache
 
     def parse_python_obj(self, data: Any) -> KiaraModel:
-
         if isinstance(data, KiaraModel):
             return data
         # elif isinstance(data, Mapping):
@@ -221,14 +220,12 @@ class InternalModelValueType(InternalType[KiaraModel, InternalModelTypeConfig]):
             )
 
     def _validate(self, value: KiaraModel) -> None:
-
         if not isinstance(value, KiaraModel):
             raise Exception(f"Invalid type: {type(value)}.")
 
     def _pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ):
-
         data: KiaraModel = value.data
         json_str = data.model_dump_json(indent=2)
         return Syntax(json_str, "json", background_color="default")
@@ -240,7 +237,6 @@ class DocumentationModelValueType(InternalModelValueType):
     _data_type_name: ClassVar[str] = "doc"
 
     def parse_python_obj(self, data: Any) -> DocumentationMetadataModel:
-
         return DocumentationMetadataModel.create(data)
 
     @classmethod
@@ -250,7 +246,6 @@ class DocumentationModelValueType(InternalModelValueType):
     def _pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ):
-
         data: DocumentationMetadataModel = value.data
         json_str = data.model_dump_json(indent=2)
         return Syntax(json_str, "json", background_color="default")

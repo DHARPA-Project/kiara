@@ -41,7 +41,6 @@ class Destiny(Manifest):
         manifest: Manifest,
         result_field_name: Union[str, None] = None,
     ) -> "Destiny":
-
         module = kiara.module_registry.create_module(manifest=manifest)
 
         if result_field_name is None:
@@ -129,7 +128,6 @@ class Destiny(Manifest):
 
     @property
     def merged_inputs(self) -> Mapping[str, uuid.UUID]:
-
         if self._merged_inputs is not None:
             return self._merged_inputs
 
@@ -165,7 +163,6 @@ class Destiny(Manifest):
         return self._module
 
     def execute(self, kiara: "Kiara") -> "Value":
-
         if self.result_value_id is not None:
             raise Exception("Destiny already resolved.")
 

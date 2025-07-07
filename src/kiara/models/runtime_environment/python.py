@@ -6,7 +6,6 @@
 
 import sys
 from functools import lru_cache
-from pathlib import Path
 from typing import Any, ClassVar, Dict, List, Literal, Mapping, Union
 
 from pydantic import BaseModel, Field
@@ -18,13 +17,16 @@ from kiara.models.runtime_environment import RuntimeEnvironment
 from kiara.utils.output import extract_renderable
 
 try:
-    from importlib.metadata import distribution, packages_distributions, distributions  # type: ignore
+    from importlib.metadata import (  # type: ignore
+        distribution,
+        distributions,
+        packages_distributions,
+    )
 except Exception:
     from importlib_metadata import distribution, packages_distributions  # type:ignore
 
 
 class PythonPackage(BaseModel):
-
     name: str = Field(description="The name of the Python package.")
     version: str = Field(description="The version of the package.")
 
@@ -36,7 +38,6 @@ def find_all_distributions():
 
 
 class PythonRuntimeEnvironment(RuntimeEnvironment):
-
     _kiara_model_id: ClassVar = "info.runtime.python"
 
     environment_type: Literal["python"]
@@ -51,7 +52,6 @@ class PythonRuntimeEnvironment(RuntimeEnvironment):
     def _create_renderable_for_field(
         self, field_name: str, for_summary: bool = False
     ) -> Union[RenderableType, None]:
-
         if field_name != "packages":
             return extract_renderable(getattr(self, field_name))
 
@@ -68,7 +68,6 @@ class PythonRuntimeEnvironment(RuntimeEnvironment):
         return table
 
     def _retrieve_sub_profile_env_data(self) -> Mapping[str, Any]:
-
         only_packages = [p.name for p in self.packages]
         full = {k.name: k.version for k in self.packages}
 
@@ -87,7 +86,6 @@ class PythonRuntimeEnvironment(RuntimeEnvironment):
 
     @classmethod
     def retrieve_environment_data(cls) -> Dict[str, Any]:
-
         packages: Dict[str, str] = {}
         # Method 1: Use packages_distributions (your current approach)
         all_packages = packages_distributions()
@@ -101,7 +99,7 @@ class PythonRuntimeEnvironment(RuntimeEnvironment):
 
         # Method 2: Use distributions() to catch packages that might be missed
         for dist in distributions():
-            name = dist.metadata['Name']
+            name = dist.metadata["Name"]
             version = dist.version
             packages[name] = version
 
@@ -158,12 +156,11 @@ class PythonRuntimeEnvironment(RuntimeEnvironment):
             "packages": [
                 {"name": p, "version": packages[p]}
                 for p in sorted(packages.keys(), key=lambda x: x.lower())
-            ]
+            ],
         }
 
 
 class KiaraPluginsRuntimeEnvironment(RuntimeEnvironment):
-
     _kiara_model_id: ClassVar = "info.runtime.kiara_plugins"
 
     environment_type: Literal["kiara_plugins"]
@@ -174,7 +171,6 @@ class KiaraPluginsRuntimeEnvironment(RuntimeEnvironment):
     def _create_renderable_for_field(
         self, field_name: str, for_summary: bool = False
     ) -> Union[RenderableType, None]:
-
         if field_name != "packages":
             return extract_renderable(getattr(self, field_name))
 
@@ -191,7 +187,6 @@ class KiaraPluginsRuntimeEnvironment(RuntimeEnvironment):
         return table
 
     def _retrieve_sub_profile_env_data(self) -> Mapping[str, Any]:
-
         only_packages = [p.name for p in self.kiara_plugins]
         full = {k.name: k.version for k in self.kiara_plugins}
 
@@ -199,12 +194,10 @@ class KiaraPluginsRuntimeEnvironment(RuntimeEnvironment):
 
     @classmethod
     def retrieve_environment_data(cls) -> Dict[str, Any]:
-
         packages = []
         all_packages = find_all_distributions()
         all_pkg_names = set()
         for name, pkgs in all_packages.items():
-
             for pkg in pkgs:
                 if not pkg.startswith("kiara_plugin.") and not pkg.startswith(
                     "kiara-plugin."

@@ -24,7 +24,6 @@ if TYPE_CHECKING:
 
 
 class DeSerializeDetails(BaseOperationDetails):
-
     value_type: str = Field(
         "The name of the input field for the serialized version of the value."
     )
@@ -84,7 +83,6 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
     ) -> Iterable[Union[Mapping, OperationConfig]]:
         result = []
         for name, module_cls in self._kiara.module_type_classes.items():
-
             if not hasattr(module_cls, "retrieve_serialized_value_type"):
                 continue
             if not hasattr(module_cls, "retrieve_supported_target_profiles"):
@@ -99,7 +97,9 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
                     f"Can't retrieve source value type for deserialization module '{module_cls.__name__}'. This is most likely a bug, maybe you are missing a '@classmethod' annotation on the 'retrieve_source_value_type' method?"
                 )
             try:
-                serialization_profile = module_cls.retrieve_supported_serialization_profile()  # type: ignore
+                serialization_profile = (
+                    module_cls.retrieve_supported_serialization_profile()
+                )  # type: ignore
             except TypeError:
                 raise Exception(
                     f"Can't retrieve supported serialization profiles for deserialization module '{module_cls.__name__}'. This is most likely a bug, maybe you are missing a '@classmethod' annotation on the 'retrieve_supported_serialization_profile' method?"
@@ -132,7 +132,6 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
     def check_matching_operation(
         self, module: "KiaraModule"
     ) -> Union[DeSerializeDetails, None]:
-
         details = self.extract_details(module)
 
         if details is None:
@@ -141,7 +140,6 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
             return details
 
     def extract_details(self, module: "KiaraModule") -> Union[DeSerializeDetails, None]:
-
         result_field_name = None
         for field_name, schema in module.outputs_schema.items():
             if schema.type != "python_object":
@@ -224,7 +222,6 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
     def find_deserialization_operations_for_type(
         self, type_name: str
     ) -> List[Operation]:
-
         lineage = self._kiara.type_registry.get_type_lineage(type_name)
         result = []
         for data_type in lineage:
@@ -241,7 +238,6 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
     def find_deserialzation_operation_for_type_and_profile(
         self, type_name: str, serialization_profile: str
     ) -> List[Operation]:
-
         lineage = self._kiara.type_registry.get_type_lineage(type_name)
         serialize_ops: List[Operation] = []
         for data_type in lineage:

@@ -37,14 +37,12 @@ yaml = YAML(typ="safe")
 def filter_operations(
     kiara: "Kiara", pkg_name: Union[str, None] = None, **operations: "Operation"
 ) -> OperationGroupInfo:
-
     result: Dict[str, OperationInfo] = {}
 
     # op_infos = kiara.operation_registry.get_context_metadata(only_for_package=pkg_name)
     modules = kiara.module_registry.get_context_metadata(only_for_package=pkg_name)
 
     for op_id, op in operations.items():
-
         if op.module.module_type_name != "pipeline":
             if op.module.module_type_name in modules.item_infos.keys():
                 result[op_id] = OperationInfo.create_from_operation(
@@ -80,7 +78,6 @@ def create_operation(
     operation_config: Union[None, Mapping[str, Any]] = None,
     kiara: Union[None, "Kiara"] = None,
 ) -> Operation:
-
     operation: Union[Operation, None]
 
     if kiara is None:
@@ -91,7 +88,6 @@ def create_operation(
     operation = None
 
     if module_or_operation in kiara.operation_registry.operation_ids:
-
         operation = kiara.operation_registry.get_operation(module_or_operation)
         if operation_config:
             if module_or_operation in kiara.module_type_names:
@@ -109,7 +105,6 @@ def create_operation(
         module_or_operation != "pipeline"
         and module_or_operation in kiara.module_type_names
     ):
-
         if operation_config is None:
             operation_config = {}
         manifest = Manifest(
@@ -166,7 +161,6 @@ def create_operation(
             d = dict(data)
             pipeline_name = d.pop("pipeline_name", None)
             if pipeline_name is not None:
-
                 execution_context = ExecutionContext(
                     pipeline_dir=os.path.abspath(os.path.dirname(module_or_operation))
                 )
@@ -189,7 +183,6 @@ def create_operation(
                 raise Exception("Invalid pipeline config, missing 'pipeline_name' key.")
 
         if operation is None:
-
             if module_or_operation == "pipeline":
                 msg = "Can't assemble pipeline."
             else:
@@ -201,7 +194,6 @@ def create_operation(
             )
 
     if operation is None:
-
         merged = set(kiara.module_type_names)
         merged.update(kiara.operation_registry.operation_ids)
         raise NoSuchExecutionTargetException(
@@ -215,7 +207,6 @@ def create_operation(
 def create_operation_status_renderable(
     operation: Operation, inputs: Union["ValueMap", None], render_config: Any
 ) -> RenderableType:
-
     show_operation_name = render_config.get("show_operation_name", True)
     show_operation_doc = render_config.get("show_operation_doc", True)
     show_only_description = render_config.get("show_only_description", True)

@@ -15,7 +15,6 @@ if typing.TYPE_CHECKING:
 
 
 class KiaraZmqServiceDetails(BaseModel):
-
     context_name: str = Field(description="The name of the kiara context.")
     process_id: Union[None, int] = Field(
         None, description="The process id of the kiara service."
@@ -43,7 +42,6 @@ def get_default_stderr_zmq_service_log_path(context_name: str):
 
 
 def zmq_context_registered(context_name: str) -> bool:
-
     zmq_base = os.path.join(
         KIARA_MAIN_CONTEXT_LOCKS_PATH, "zmq", f"{context_name}.json"
     )
@@ -53,7 +51,6 @@ def zmq_context_registered(context_name: str) -> bool:
 
 
 def list_registered_contexts() -> List[str]:
-
     zmq_base = os.path.join(KIARA_MAIN_CONTEXT_LOCKS_PATH, "zmq")
     if not os.path.exists(zmq_base):
         return []
@@ -62,7 +59,6 @@ def list_registered_contexts() -> List[str]:
 
 
 def get_context_details(context_name: str) -> Union[Dict, None]:
-
     zmq_base = os.path.join(KIARA_MAIN_CONTEXT_LOCKS_PATH, "zmq")
     service_info_file = os.path.join(zmq_base, f"{context_name}.zmq")
 
@@ -83,7 +79,6 @@ def start_zmq_service(
     timeout: Union[None, int] = None,
     monitor: bool = False,
 ) -> Union[None, KiaraZmqServiceDetails]:
-
     from kiara.exceptions import KiaraException
 
     if monitor:
@@ -110,7 +105,6 @@ def start_zmq_service(
         return None
 
     else:
-
         import subprocess
 
         from kiara.zmq.client import KiaraZmqClient
@@ -204,7 +198,6 @@ def ensure_zmq_service(
     timeout: int = 0,
     monitor: bool = False,
 ) -> Union[None, KiaraZmqServiceDetails]:
-
     return start_zmq_service(
         api_wrap=api_wrap,
         host=host,

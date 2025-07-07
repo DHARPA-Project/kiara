@@ -37,5 +37,4 @@ class PythonObjectType(InternalType[object, DataTypeConfig]):
     def _pretty_print_as__terminal_renderable(
         self, value: Value, render_config: Mapping[str, Any]
     ):
-
         return str(value.data)

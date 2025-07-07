@@ -34,7 +34,6 @@ class KiaraZmqAPI(object):
         port: Union[int, None] = None,
         listen_timout_in_ms: Union[int, None] = None,
     ):
-
         if listen_timout_in_ms is None:
             listen_timout_in_ms = 0
 
@@ -115,9 +114,7 @@ class KiaraZmqAPI(object):
         atexit.register(delete_info_file)
 
     def service_loop(self):
-
         try:
-
             api = self._api_wrap.base_api
 
             timeout = self._initial_timeout
@@ -131,7 +128,6 @@ class KiaraZmqAPI(object):
 
             stop = False
             while not stop:
-
                 if timeout:
                     socks = dict(poller.poll(timeout))
                 else:
@@ -147,7 +143,6 @@ class KiaraZmqAPI(object):
                     context_rep_socket in socks
                     and socks[context_rep_socket] == zmq.POLLIN
                 ):
-
                     #  Wait for next request from client
                     msg = context_rep_socket.recv_multipart()
                     print("Received request: ", msg, file=self._stdout)
@@ -193,7 +188,6 @@ class KiaraZmqAPI(object):
             print("Stopping...", file=self._stderr)
 
     def call_cli(self, api: BaseAPI, **kwargs) -> Mapping[str, str]:
-
         console = get_console()
         old_width = console.width
 
@@ -212,7 +206,6 @@ class KiaraZmqAPI(object):
                 restore_default_console=False,
             ) as proxy_console:
                 with proxy_console.capture() as capture:
-
                     try:
                         proxy_cli.main(
                             args=sub_command,
@@ -231,7 +224,6 @@ class KiaraZmqAPI(object):
         return {"stdout": stdout, "stderr": stderr}
 
     def call_endpoint(self, api: BaseAPI, endpoint: str, **kwargs) -> Any:
-
         try:
             endpoint_proxy = self._api_endpoints.get_api_endpoint(
                 endpoint_name=endpoint
@@ -244,7 +236,6 @@ class KiaraZmqAPI(object):
         return result
 
     def start(self):
-
         if self._service_thread is not None:
             raise Exception("Service already running")
 
@@ -254,7 +245,6 @@ class KiaraZmqAPI(object):
         return self._service_thread
 
     def stop(self):
-
         if self._service_thread is None:
             raise Exception("Service not running")
 

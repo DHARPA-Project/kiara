@@ -17,7 +17,6 @@ if TYPE_CHECKING:
 
 
 class RenderSceneTypeConfig(DataTypeConfig):
-
     kiara_model_id: Union[str, None] = Field(
         description="The id of the model backing this render (Python class must sub-class 'RenderScene').",
         default=None,
@@ -30,7 +29,6 @@ class RenderSceneDataType(InternalType[RenderScene, RenderSceneTypeConfig]):
     _data_type_name: ClassVar[str] = "render_scene"
 
     def __init__(self, **type_config: Any):
-
         self._cls_cache: Union[Type[RenderScene], None] = None
         super().__init__(**type_config)
 
@@ -44,7 +42,6 @@ class RenderSceneDataType(InternalType[RenderScene, RenderSceneTypeConfig]):
 
     @property
     def model_cls(self) -> Type[RenderScene]:
-
         if self._cls_cache is not None:
             return self._cls_cache
 
@@ -66,7 +63,6 @@ class RenderSceneDataType(InternalType[RenderScene, RenderSceneTypeConfig]):
         return self._cls_cache
 
     def parse_python_obj(self, data: Any) -> RenderScene:
-
         if isinstance(data, RenderScene):
             return data
         elif isinstance(data, Mapping):
@@ -77,14 +73,12 @@ class RenderSceneDataType(InternalType[RenderScene, RenderSceneTypeConfig]):
             )
 
     def _validate(self, value: RenderScene) -> None:
-
         if not isinstance(value, RenderScene):
             raise Exception(f"Invalid type: {type(value)}.")
 
     def _pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
-
         data: RenderScene = value.data
 
         ri_json = data.model_dump_json(indent=2)
@@ -97,7 +91,6 @@ class RenderValueResultDataType(InternalType[RenderValueResult, DataTypeConfig])
     _data_type_name: ClassVar[str] = "render_value_result"
 
     def __init__(self, **type_config: Any):
-
         self._cls_cache: Union[Type[RenderValueResult], None] = None
         super().__init__(**type_config)
 
@@ -106,7 +99,6 @@ class RenderValueResultDataType(InternalType[RenderValueResult, DataTypeConfig])
         return RenderValueResult
 
     def parse_python_obj(self, data: Any) -> RenderValueResult:
-
         if data is None:
             raise ValueError(
                 "Can't parse render_scene_result data: no source data provided (None)."
@@ -121,14 +113,12 @@ class RenderValueResultDataType(InternalType[RenderValueResult, DataTypeConfig])
             )
 
     def _validate(self, value: Any) -> None:
-
         if not isinstance(value, RenderValueResult):
             raise Exception(f"Invalid type: {type(value)}.")
 
     def _pretty_print_as__terminal_renderable(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
-
         data: RenderValueResult = value.data
 
         ri_json = data.model_dump_json(indent=2, exclude={"rendered"})

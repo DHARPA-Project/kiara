@@ -15,7 +15,6 @@ class WorkflowMatcher(KiaraModel):
 
     @classmethod
     def create_matcher(self, **match_options: Any):
-
         m = WorkflowMatcher(**match_options)
         return m
 
@@ -24,7 +23,6 @@ class WorkflowMatcher(KiaraModel):
     )
 
     def is_match(self, workflow_id: uuid.UUID, kiara: "Kiara") -> bool:
-
         if self.has_alias:
             aliases = kiara.workflow_registry.get_aliases(workflow_id=workflow_id)
             if not aliases:

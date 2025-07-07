@@ -30,7 +30,6 @@ from kiara.utils.db import create_archive_engine, delete_archive_db
 
 
 class SqliteMetadataArchive(MetadataArchive):
-
     _archive_type_name = "sqlite_metadata_archive"
     _config_cls = SqliteArchiveConfig
 
@@ -38,7 +37,6 @@ class SqliteMetadataArchive(MetadataArchive):
     def _load_archive_config(
         cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Dict[str, Any], None]:
-
         if allow_write_access:
             return None
 
@@ -66,7 +64,6 @@ class SqliteMetadataArchive(MetadataArchive):
         archive_config: SqliteArchiveConfig,
         force_read_only: bool = False,
     ):
-
         super().__init__(
             archive_name=archive_name,
             archive_config=archive_config,
@@ -89,7 +86,6 @@ class SqliteMetadataArchive(MetadataArchive):
     #         return uuid.UUID(row[0])
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
-
         sql = text(f"SELECT key, value FROM {TABLE_NAME_ARCHIVE_METADATA}")
 
         with self.sqlite_engine.connect() as connection:
@@ -98,7 +94,6 @@ class SqliteMetadataArchive(MetadataArchive):
 
     @property
     def sqlite_path(self):
-
         if self._db_path is not None:
             return self._db_path
 
@@ -118,7 +113,6 @@ class SqliteMetadataArchive(MetadataArchive):
 
     @property
     def sqlite_engine(self) -> "Engine":
-
         if self._cached_engine is not None:
             return self._cached_engine
 
@@ -168,7 +162,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_METADATA_REFERENCES} (
     def _retrieve_metadata_item_with_hash(
         self, item_hash: str, key: Union[str, None] = None
     ) -> Union[Tuple[str, Mapping[str, Any]], None]:
-
         if not key:
             sql = text(
                 f"""
@@ -215,7 +208,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_METADATA_REFERENCES} (
         metadata_item_result_fields: Union[Iterable[str], None] = None,
         reference_item_result_fields: Union[Iterable[str], None] = None,
     ) -> Generator[Tuple[Any, ...], None, None]:
-
         # find all metadata items first
 
         if not metadata_item_result_fields:
@@ -346,7 +338,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_METADATA_REFERENCES} (
     def _retrieve_referenced_metadata_item_data(
         self, key: str, reference_type: str, reference_key: str, reference_id: str
     ) -> Union[Tuple[str, Mapping[str, Any]], None]:
-
         sql = text(
             f"""
             SELECT m.model_type_id, m.metadata_value
@@ -383,11 +374,9 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_METADATA_REFERENCES} (
             return (row[0][0], data)
 
     def _delete_archive(self):
-
         delete_archive_db(db_path=self.sqlite_path)
 
     def get_archive_details(self) -> ArchiveDetails:
-
         all_metadata_items_sql = text(f"SELECT COUNT(*) FROM {TABLE_NAME_METADATA}")
         all_references_sql = text(
             f"SELECT COUNT(*) FROM {TABLE_NAME_METADATA_REFERENCES}"
@@ -409,14 +398,12 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_METADATA_REFERENCES} (
 
 
 class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
-
     _archive_type_name = "sqlite_metadata_store"
 
     @classmethod
     def _load_archive_config(
         cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Dict[str, Any], None]:
-
         if not allow_write_access:
             return None
 
@@ -452,7 +439,6 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
     def _store_metadata_schema(
         self, model_schema_hash: str, model_type_id: str, model_schema: str
     ):
-
         sql = text(
             f"INSERT OR IGNORE INTO {TABLE_NAME_METADATA_SCHEMAS} (model_schema_hash, model_type_id, model_schema) VALUES (:model_schema_hash, :model_type_id, :model_schema)"
         )
@@ -473,7 +459,6 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
         model_type_id: str,
         model_schema_hash: str,
     ) -> uuid.UUID:
-
         from kiara.registries.ids import ID_REGISTRY
 
         metadata_item_created = get_current_time_incl_timezone().isoformat()
@@ -521,14 +506,12 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
         replace_existing_references: bool = False,
         allow_multiple_references: bool = False,
     ) -> None:
-
         if not replace_existing_references:
             raise NotImplementedError(
                 "not replacing existing metadata references is not yet supported"
             )
 
         else:
-
             sql_replace = text(
                 f"DELETE FROM {TABLE_NAME_METADATA_REFERENCES} WHERE reference_item_type = :reference_item_type AND reference_item_key = :reference_item_key AND reference_item_id = :reference_item_id"
             )
@@ -557,7 +540,6 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
     def _store_metadata_and_ref_items(
         self, items: Generator[Tuple[Any, ...], None, None]
     ):
-
         insert_metadata_sql = text(
             f"INSERT OR IGNORE INTO {TABLE_NAME_METADATA} (metadata_item_id, metadata_item_created, metadata_item_key, metadata_item_hash, model_type_id, model_schema_hash, metadata_value) VALUES (:metadata_item_id, :metadata_item_created, :metadata_item_key, :metadata_item_hash, :model_type_id, :model_schema_hash, :metadata_value)"
         )
@@ -569,7 +551,6 @@ class SqliteMetadataStore(SqliteMetadataArchive, MetadataStore):
         batch_size = 100
 
         with self.sqlite_engine.connect() as conn:
-
             metadata_items = []
             ref_items = []
 

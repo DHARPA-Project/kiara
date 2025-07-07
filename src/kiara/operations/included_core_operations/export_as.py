@@ -22,7 +22,6 @@ logger = structlog.getLogger()
 
 
 class ExportAsOperationDetails(BaseOperationDetails):
-
     source_type: str = Field(description="The type of the value to be created.")
     target_profile: str = Field(description="The result profile type.")
     optional_args: Mapping[str, ValueSchema] = Field(description="Optional arguments.")
@@ -51,11 +50,9 @@ class ExportAsOperationDetails(BaseOperationDetails):
 
 
 class ExportAsOperationType(OperationType[ExportAsOperationDetails]):
-
     _operation_type_name: ClassVar[str] = "export_as"
 
     def _calculate_op_id(self, source_type: str, target_profile: str):
-
         if source_type == "any":
             operation_id = f"export.as.{target_profile}"
         else:
@@ -66,14 +63,15 @@ class ExportAsOperationType(OperationType[ExportAsOperationDetails]):
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:
-
         result = []
         for name, module_cls in self._kiara.module_type_classes.items():
             if not hasattr(module_cls, "retrieve_supported_export_combinations"):
                 continue
 
             try:
-                supported_combinations = module_cls.retrieve_supported_export_combinations()  # type: ignore
+                supported_combinations = (
+                    module_cls.retrieve_supported_export_combinations()
+                )  # type: ignore
                 for sup_comb in supported_combinations:
                     source_type = sup_comb["source_type"]
                     target_profile = sup_comb["target_profile"]
@@ -116,7 +114,6 @@ class ExportAsOperationType(OperationType[ExportAsOperationDetails]):
     def check_matching_operation(
         self, module: "KiaraModule"
     ) -> Union[ExportAsOperationDetails, None]:
-
         if not isinstance(module, DataExportModule):
             return None
 

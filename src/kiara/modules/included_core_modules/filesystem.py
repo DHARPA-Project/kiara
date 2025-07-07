@@ -33,7 +33,6 @@ class ImportLocalFileModule(KiaraModule):
     def create_inputs_schema(
         self,
     ) -> ValueMapSchema:
-
         return {
             "path": {
                 "type": "string",
@@ -44,18 +43,17 @@ class ImportLocalFileModule(KiaraModule):
     def create_outputs_schema(
         self,
     ) -> ValueMapSchema:
-
         return {"file": {"type": "file", "doc": "The loaded files."}}
 
     def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
         return ModuleCharacteristics(is_idempotent=False)
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
-
         path = inputs.get_value_data("path")
 
         file = KiaraFile.load_file(source=path)
         outputs.set_value("file", file)
+
 
 class CreateFileFromBytesModule(KiaraModule):
     """Import a file from a byte array."""
@@ -65,34 +63,26 @@ class CreateFileFromBytesModule(KiaraModule):
     def create_inputs_schema(
         self,
     ) -> ValueMapSchema:
-
         return {
-            "bytes": {
-                "type": "bytes",
-                "doc": "The bytes array to import."
-            },
-            "file_name": {
-                "type": "string",
-                "doc": "The name of the file."
-            }
+            "bytes": {"type": "bytes", "doc": "The bytes array to import."},
+            "file_name": {"type": "string", "doc": "The name of the file."},
         }
 
     def create_outputs_schema(
         self,
     ) -> ValueMapSchema:
-
         return {"file": {"type": "file", "doc": "The loaded files."}}
 
     def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
         return ModuleCharacteristics(is_idempotent=False)
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
-
         bytes_value = inputs.get_value_data("bytes")
         file_name = inputs.get_value_data("file_name")
 
         file = KiaraFile.from_bytes(bytes_value, file_name=file_name)
         outputs.set_value("file", file)
+
 
 class DeserializeFileModule(DeserializeValueModule):
     """Deserialize data to a 'file' value instance."""
@@ -112,7 +102,6 @@ class DeserializeFileModule(DeserializeValueModule):
         return "copy"
 
     def to__python_object(self, data: SerializedData, **config: Any):
-
         keys = list(data.get_keys())
         keys.remove("__file_metadata__")
         assert len(keys) == 1
@@ -145,7 +134,6 @@ class DeserializeFileModule(DeserializeValueModule):
 
 
 class ImportFileBundleConfig(KiaraModuleConfig):
-
     include_file_types: Union[None, List[str]] = Field(
         description="File types to include. Type is list of strings, which will be matched using 'endswith' test.",
         default=None,
@@ -165,7 +153,6 @@ class ImportLocalFileBundleModule(KiaraModule):
     def create_inputs_schema(
         self,
     ) -> ValueMapSchema:
-
         return {
             "path": {"type": "string", "doc": "The local path of the folder to import."}
         }
@@ -173,7 +160,6 @@ class ImportLocalFileBundleModule(KiaraModule):
     def create_outputs_schema(
         self,
     ) -> ValueMapSchema:
-
         return {
             "file_bundle": {"type": "file_bundle", "doc": "The imported file bundle."}
         }
@@ -182,7 +168,6 @@ class ImportLocalFileBundleModule(KiaraModule):
         return DEFAULT_NO_IDEMPOTENT_MODULE_CHARACTERISTICS
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
-
         path = inputs.get_value_data("path")
 
         include = self.get_config_value("include_file_types")
@@ -212,7 +197,6 @@ class DeserializeFileBundleModule(DeserializeValueModule):
         return "copy"
 
     def to__python_object(self, data: SerializedData, **config: Any):
-
         keys = list(data.get_keys())
         keys.remove("__file_metadata__")
 
@@ -229,7 +213,6 @@ class DeserializeFileBundleModule(DeserializeValueModule):
 
         included_files = {}
         for rel_path in keys:
-
             if "size" not in file_metadata[rel_path].keys():
                 # old style, can be removed at some point
                 # file metadata was added feb 2024
@@ -278,7 +261,6 @@ class ExportFileModule(DataExportModule):
     _module_type_name = "export.file"
 
     def export__file__as__file(self, value: KiaraFile, base_path: str, name: str):
-
         target_path = os.path.join(base_path, value.file_name)
 
         shutil.copy2(value.path, target_path)
@@ -294,7 +276,6 @@ class PickFileFromFileBundleModule(KiaraModule):
     def create_inputs_schema(
         self,
     ) -> ValueMapSchema:
-
         return {
             "file_bundle": {"type": "file_bundle", "doc": "The file bundle."},
             "path": {"type": "string", "doc": "The relative path of the file to pick."},
@@ -303,11 +284,9 @@ class PickFileFromFileBundleModule(KiaraModule):
     def create_outputs_schema(
         self,
     ) -> ValueMapSchema:
-
         return {"file": {"type": "file", "doc": "The file."}}
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
-
         file_bundle: KiaraFileBundle = inputs.get_value_data("file_bundle")
         path: str = inputs.get_value_data("path")
 
@@ -329,7 +308,6 @@ class PickSubBundle(KiaraModule):
     def create_inputs_schema(
         self,
     ) -> ValueMapSchema:
-
         return {
             "file_bundle": {"type": "file_bundle", "doc": "The file bundle."},
             "sub_path": {
@@ -347,7 +325,6 @@ class PickSubBundle(KiaraModule):
         }
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
-
         file_bundle: KiaraFileBundle = inputs.get_value_data("file_bundle")
         sub_path: str = inputs.get_value_data("sub_path")
 

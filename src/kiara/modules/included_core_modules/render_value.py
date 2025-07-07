@@ -24,7 +24,6 @@ from kiara.utils import log_message
 
 
 class RenderValueModuleConfig(KiaraModuleConfig):
-
     # render_scene_type: str = Field(
     #     description="The id of the model that describes (and handles) the actual rendering."
     # )
@@ -49,7 +48,6 @@ class RenderValueModuleConfig(KiaraModuleConfig):
 class RenderValueModule(KiaraModule):
     @classmethod
     def retrieve_supported_render_combinations(cls) -> Iterable[Tuple[str, str]]:
-
         result = []
         for attr in dir(cls):
             if (
@@ -75,7 +73,6 @@ class RenderValueModule(KiaraModule):
     def create_inputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
-
         # instruction = self.get_config_value("render_scene_type")
         # model_registry = ModelRegistry.instance()
         # instr_model_cls: Type[RenderScene] = model_registry.get_model_cls(instruction, required_subclass=RenderScene)  # type: ignore
@@ -102,7 +99,6 @@ class RenderValueModule(KiaraModule):
     def create_outputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
-
         outputs = {
             "render_value_result": {
                 "type": "render_value_result",
@@ -113,7 +109,6 @@ class RenderValueModule(KiaraModule):
         return outputs
 
     def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
-
         source_type = self.get_config_value("source_type")
         target_type = self.get_config_value("target_type")
 
@@ -156,7 +151,6 @@ class ValueTypeRenderModule(KiaraModule):
     def create_inputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
-
         source_type = self.get_config_value("source_type")
         assert source_type not in ["target", "base_name"]
 
@@ -178,7 +172,6 @@ class ValueTypeRenderModule(KiaraModule):
     def create_outputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
-
         outputs = {
             "render_value_result": {
                 "type": "render_value_result",
@@ -189,7 +182,6 @@ class ValueTypeRenderModule(KiaraModule):
         return outputs
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
-
         source_value = inputs.get_value_obj("value")
         if not source_value.is_set:
             raise KiaraProcessingException(

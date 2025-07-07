@@ -114,7 +114,6 @@ def find_subclasses_under(
 
     result = []
     for sc in subclasses:
-
         if not sc.__module__.startswith(python_module.__name__):
             continue
 
@@ -153,7 +152,6 @@ def _process_subclass(
     """
     is_abstract = inspect.isabstract(sub_class)
     if ignore_abstract_classes and is_abstract:
-
         if sub_class.__dict__.get("_is_abstract", False):
             return None
 
@@ -198,7 +196,6 @@ def _process_subclass(
         type_id_func = _default_id_func
 
     if type_id_key:
-
         if hasattr(sub_class, type_id_key):
             type_id: Union[str, None] = getattr(sub_class, type_id_key)
             if type_id is None and ignore_modules_with_null_module_name:
@@ -206,7 +203,7 @@ def _process_subclass(
                     "ignore.subclass",
                     sub_class=f"{sub_class.__module__}.{sub_class.__name__}",
                     base_class=f"{base_class.__module__}.{base_class.__name__}",
-                    reason=f"'{ type_id_key }' subclass is set to 'None'",
+                    reason=f"'{type_id_key}' subclass is set to 'None'",
                 )
                 return None
             if not type_id and not is_abstract:
@@ -388,7 +385,6 @@ def find_all_kiara_modules() -> Dict[str, Type["KiaraModule"]]:
     result = {}
     # need to test this, since I couldn't add an abstract method to the KiaraModule class itself (mypy complained because it is potentially overloaded)
     for k, cls in modules.items():
-
         if not hasattr(cls, "process"):
             if is_develop():
                 from rich.markdown import Markdown
@@ -486,7 +482,6 @@ def find_all_data_types() -> Dict[str, Type["DataType"]]:
 
 
 def find_all_operation_types() -> Dict[str, Type["OperationType"]]:
-
     from kiara.operations import OperationType
 
     result = load_all_subclasses_for_entry_point(
@@ -500,7 +495,6 @@ def find_all_operation_types() -> Dict[str, Type["OperationType"]]:
 def find_kiara_modules_under(
     module: Union[str, ModuleType],
 ) -> List[Type["KiaraModule"]]:
-
     from kiara.modules import KiaraModule
 
     return find_subclasses_under(
@@ -510,9 +504,8 @@ def find_kiara_modules_under(
 
 
 def find_kiara_model_classes_under(
-    module: Union[str, ModuleType]
+    module: Union[str, ModuleType],
 ) -> List[Type["KiaraModel"]]:
-
     from kiara.models import KiaraModel
 
     result = find_subclasses_under(
@@ -538,7 +531,6 @@ def find_kiara_model_classes_under(
 
 
 def find_data_types_under(module: Union[str, ModuleType]) -> List[Type["DataType"]]:
-
     from kiara.data_types import DataType
 
     return find_subclasses_under(
@@ -548,9 +540,8 @@ def find_data_types_under(module: Union[str, ModuleType]) -> List[Type["DataType
 
 
 def find_operations_under(
-    module: Union[str, ModuleType]
+    module: Union[str, ModuleType],
 ) -> List[Type["OperationType"]]:
-
     from kiara.operations import OperationType
 
     return find_subclasses_under(
@@ -560,9 +551,8 @@ def find_operations_under(
 
 
 def find_pipeline_base_path_for_module(
-    module: Union[str, ModuleType]
+    module: Union[str, ModuleType],
 ) -> Union[str, None]:
-
     # if hasattr(sys, "frozen"):
     #     raise NotImplementedError("Pyinstaller bundling not supported yet.")
 
@@ -583,7 +573,6 @@ def find_pipeline_base_path_for_module(
 def find_all_kiara_pipeline_paths(
     skip_errors: bool = False,
 ) -> Dict[str, Union[Dict[str, Any], None]]:
-
     import logging
 
     log2 = logging.getLogger("stevedore")
@@ -606,7 +595,6 @@ def find_all_kiara_pipeline_paths(
     paths: Dict[str, Union[Dict[str, Any], None]] = {}
     # TODO: make sure we load 'core' first?
     for plugin in mgr:
-
         name = plugin.name
         if (
             isinstance(plugin.plugin, tuple)
@@ -669,7 +657,6 @@ def find_all_kiara_pipeline_paths(
 
 
 def find_all_cli_subcommands() -> Iterable["Command"]:
-
     entry_point_name = "kiara.cli_subcommands"
     log2 = logging.getLogger("stevedore")
     out_hdlr = logging.StreamHandler(sys.stdout)
@@ -721,7 +708,6 @@ def find_all_kiara_renderers() -> Dict[str, Type["KiaraRenderer"]]:
 def find_kiara_renderers_under(
     module: Union[str, ModuleType],
 ) -> List[Type["KiaraRenderer"]]:
-
     from kiara.renderers import KiaraRenderer
 
     return find_subclasses_under(
@@ -753,12 +739,10 @@ def find_kiara_renderers_under(
 #     # TODO: typecheck?
 #     return _callable_wrapper(func=func)  # type: ignore
 def _import_modules_recursively(module: "ModuleType"):
-
     if not hasattr(module, "__path__"):
         return
 
     for submodule in iter_modules(module.__path__):  # type: ignore
-
         try:
             submodule_mod = importlib.import_module(
                 f"{module.__name__}.{submodule.name}"

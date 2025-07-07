@@ -40,7 +40,6 @@ CLICK_CONTEXT_SETTINGS = {"help_option_names": ["-h", "--help"]}
 def proxy_cli(
     ctx,
 ):
-
     assert ctx.obj is not None
 
 

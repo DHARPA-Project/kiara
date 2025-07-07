@@ -19,7 +19,6 @@ if TYPE_CHECKING:
 
 
 def get_kiara_db_url(base_path: str):
-
     abs_path = os.path.abspath(os.path.expanduser(base_path))
     db_url = f"sqlite+pysqlite:///{abs_path}/kiara.db"
     return db_url
@@ -45,7 +44,6 @@ def orm_json_deserialize(obj: str) -> Any:
 def create_archive_engine(
     db_path: Path, force_read_only: bool, use_wal_mode: bool
 ) -> "Engine":
-
     from sqlalchemy import create_engine, text
 
     # if use_wal_mode:
@@ -87,7 +85,6 @@ def create_archive_engine(
 
 
 def delete_archive_db(db_path: Path):
-
     db_path.unlink(missing_ok=True)
     shm_file = db_path.parent / f"{db_path.name}-shm"
     shm_file.unlink(missing_ok=True)

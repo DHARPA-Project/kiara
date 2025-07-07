@@ -91,7 +91,6 @@ class WorkflowStore(WorkflowArchive):
         workflow_metadata: WorkflowMetadata,
         workflow_aliases: Union[Iterable[str], None] = None,
     ):
-
         self._register_workflow_metadata(workflow_metadata=workflow_metadata)
         if workflow_aliases:
             if isinstance(workflow_aliases, str):
@@ -113,7 +112,6 @@ class WorkflowStore(WorkflowArchive):
         raise NotImplementedError()
 
     def update_workflow_metadata(self, workflow_metadata: WorkflowMetadata):
-
         self._update_workflow_metadata(workflow_metadata=workflow_metadata)
 
     @abc.abstractmethod
@@ -135,7 +133,6 @@ class WorkflowStore(WorkflowArchive):
 
 class WorkflowRegistry(object):
     def __init__(self, kiara: "Kiara"):
-
         self._kiara: Kiara = kiara
         self._event_callback: Callable = self._kiara.event_registry.add_producer(self)
 
@@ -199,7 +196,6 @@ class WorkflowRegistry(object):
 
     @property
     def default_alias_store(self) -> str:
-
         if self._default_alias_store is None:
             raise Exception("No default alias store set (yet).")
         return self._default_alias_store
@@ -252,7 +248,6 @@ class WorkflowRegistry(object):
 
     @property
     def all_workflow_ids(self) -> Iterable[uuid.UUID]:
-
         if self._all_workflow_ids is not None:
             return self._all_workflow_ids.keys()
 
@@ -268,7 +263,6 @@ class WorkflowRegistry(object):
         return self._all_workflow_ids.keys()
 
     def get_workflow_id(self, workflow_alias: str) -> uuid.UUID:
-
         workflow_id = self.workflow_aliases.get(workflow_alias, None)
 
         if workflow_id is None:
@@ -282,7 +276,6 @@ class WorkflowRegistry(object):
     def get_workflow_metadata(
         self, workflow: Union[str, uuid.UUID]
     ) -> WorkflowMetadata:
-
         if isinstance(workflow, str):
             try:
                 workflow_id = uuid.UUID(workflow)
@@ -393,7 +386,6 @@ class WorkflowRegistry(object):
         workflow_state_id: Union[str, None] = None,
         workflow: Union[None, uuid.UUID, str] = None,
     ) -> WorkflowState:
-
         if workflow is None and workflow_state_id is None:
             raise Exception(
                 "Can't retrieve workflow state, neither workflow nor workflow state id specified."
@@ -435,7 +427,6 @@ class WorkflowRegistry(object):
     def get_all_states_for_workflow(
         self, workflow: Union[uuid.UUID, str]
     ) -> Mapping[str, WorkflowState]:
-
         workflow_details = self.get_workflow_metadata(workflow=workflow)
 
         if self._all_workflow_ids is None:
@@ -460,7 +451,6 @@ class WorkflowRegistry(object):
         timestamp: Union[None, datetime.datetime] = None,
         set_current: bool = True,
     ) -> WorkflowMetadata:
-
         workflow_details = self.get_workflow_metadata(workflow=workflow)
 
         if timestamp is None:
@@ -492,7 +482,6 @@ class WorkflowRegistry(object):
         return workflow_details
 
     def update_workflow_metadata(self, workflow_metadata: WorkflowMetadata):
-
         store_name = self.default_alias_store
         store: WorkflowStore = self.get_archive(archive_id=store_name)  # type: ignore
 

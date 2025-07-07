@@ -25,7 +25,6 @@ class ContextInfo(KiaraModel):
         context_name: Union[str, None] = None,
         runtime_config: Union["KiaraRuntimeConfig", None] = None,
     ) -> "ContextInfo":
-
         from kiara.context import Kiara
 
         kiara = Kiara(config=config, runtime_config=runtime_config)
@@ -35,7 +34,6 @@ class ContextInfo(KiaraModel):
     def create_from_context(
         cls, kiara: "Kiara", context_name: Union[str, None] = None
     ) -> "ContextInfo":
-
         errors = {}
         try:
             value_ids = list(kiara.data_registry.retrieve_all_available_value_ids())
@@ -106,7 +104,6 @@ class ContextInfo(KiaraModel):
         return self._kiara
 
     def value_summary(self) -> Dict[str, Any]:
-
         sum_size = 0
         types: Dict[str, int] = {}
         internal_types: Dict[str, int] = {}
@@ -136,7 +133,6 @@ class ContextInfo(KiaraModel):
         }
 
     def alias_summary(self) -> Dict[str, Any]:
-
         sum_size = 0
         types: Dict[str, int] = {}
         internal_types: Dict[str, int] = {}
@@ -166,7 +162,6 @@ class ContextInfo(KiaraModel):
         }
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         full_details = config.get("full_details", False)
         show_value_ids = config.get("show_value_ids", False)
         show_archive_info = config.get("show_archive_info", True)
@@ -239,7 +234,6 @@ class ContextInfos(RootModel):
     def create_context_infos(
         cls, contexts: Union[Mapping[str, "KiaraContextConfig"], None] = None
     ) -> "ContextInfos":
-
         if not contexts:
             kc = KiaraConfig()
             contexts = kc.context_configs
@@ -252,7 +246,6 @@ class ContextInfos(RootModel):
         )
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         full_details = config.get("full_details", False)
 
         if not full_details:
@@ -278,13 +271,11 @@ class ContextInfos(RootModel):
                     no_aliases,
                 )
         else:
-
             table = Table(box=box.MINIMAL, show_header=True, show_lines=True)
             table.add_column("context_name", style="i")
             table.add_column("details")
 
             for context_name, context_summary in self.root.items():
-
                 table.add_row(context_name, context_summary.create_renderable(**config))
 
         return table

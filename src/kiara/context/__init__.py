@@ -113,7 +113,6 @@ class Kiara(object):
         config: Union[KiaraContextConfig, None] = None,
         runtime_config: Union[KiaraRuntimeConfig, None] = None,
     ) -> None:
-
         kc: Union[KiaraConfig, None] = None
         if not config:
             kc = KiaraConfig()
@@ -162,7 +161,6 @@ class Kiara(object):
         self._archives: Dict[str, KiaraArchive] = {}
 
         for archive_alias, archive in self._config.archives.items():
-
             # TODO: this is just to make old context that still had that not error out
             if "_destiny_" in archive.archive_type:
                 continue
@@ -171,7 +169,6 @@ class Kiara(object):
                 archive_alias == "default_job_store"
                 and archive.archive_type == "filesystem_job_store"
             ):
-
                 # this is a temporary solution for contexts that still have the old filesystem job store
                 # TODO: remove this at some stage
 
@@ -196,7 +193,9 @@ class Kiara(object):
 
             config_cls = archive_cls._config_cls
             archive_config = config_cls(**archive.config)
-            archive_obj = archive_cls(archive_name=archive_alias, archive_config=archive_config)  # type: ignore
+            archive_obj = archive_cls(
+                archive_name=archive_alias, archive_config=archive_config
+            )  # type: ignore
             for supported_type in archive_obj.supported_item_types():
                 if supported_type == "metadata":
                     self.metadata_registry.register_metadata_archive(archive_obj)  # type: ignore
@@ -232,7 +231,6 @@ class Kiara(object):
         atexit.register(self.unlock_context)
 
     def unlock_context(self):
-
         ID_REGISTRY.unlock_context(self.id)
 
     @property
@@ -248,7 +246,6 @@ class Kiara(object):
         return self._runtime_config
 
     def update_runtime_config(self, **settings) -> KiaraRuntimeConfig:
-
         for k, v in settings.items():
             setattr(self.runtime_config, k, v)
 
@@ -256,7 +253,6 @@ class Kiara(object):
 
     @property
     def context_info(self) -> "KiaraContextInfo":
-
         if self._context_info is None:
             self._context_info = KiaraContextInfo.create_from_kiara_instance(kiara=self)
         return self._context_info
@@ -266,7 +262,6 @@ class Kiara(object):
 
     @property
     def environment_registry(self) -> EnvironmentRegistry:
-
         return self._env_mgmt
 
     @property
@@ -376,7 +371,9 @@ class Kiara(object):
                     archive_type="data",
                 )
             elif archive_type == "metadata":
-                result["metadata"] = self.metadata_registry.register_metadata_archive(_archive_inst)  # type: ignore
+                result["metadata"] = self.metadata_registry.register_metadata_archive(
+                    _archive_inst
+                )  # type: ignore
                 log_message(
                     "archive.registered",
                     archive=_archive_inst.archive_name,
@@ -390,7 +387,9 @@ class Kiara(object):
                     archive_type="alias",
                 )
             elif archive_type == "job_record":
-                result["job_record"] = self.job_registry.register_job_archive(_archive_inst)  # type: ignore
+                result["job_record"] = self.job_registry.register_job_archive(
+                    _archive_inst
+                )  # type: ignore
                 log_message(
                     "archive.registered",
                     archive=_archive_inst.archive_name,
@@ -404,18 +403,15 @@ class Kiara(object):
     def create_manifest(
         self, module_or_operation: str, config: Union[Mapping[str, Any], None] = None
     ) -> Manifest:
-
         if config is None:
             config = {}
 
         if module_or_operation in self.module_type_names:
-
             manifest: Manifest = Manifest(
                 module_type=module_or_operation, module_config=config
             )
 
         elif module_or_operation in self.operation_registry.operation_ids:
-
             if config:
                 raise Exception(
                     f"Specified run target '{module_or_operation}' is an operation, additional module configuration is not allowed (yet)."
@@ -477,7 +473,6 @@ class Kiara(object):
     def save_values(
         self, values: ValueMap, alias_map: Mapping[str, Iterable[str]]
     ) -> StoreValuesResult:
-
         _values = {}
         for field_name in values.field_names:
             value = values.get_value_obj(field_name)
@@ -485,7 +480,6 @@ class Kiara(object):
             self.data_registry.store_value(value=value)
         stored = {}
         for field_name, field_aliases in alias_map.items():
-
             value = _values[field_name]
             try:
                 if field_aliases:
@@ -515,7 +509,6 @@ class Kiara(object):
         return ContextInfo.create_from_context(kiara=self)
 
     def get_all_archives(self) -> Dict[KiaraArchive, Set[str]]:
-
         result: Dict[KiaraArchive, Set[str]] = {}
 
         archive: KiaraArchive
@@ -540,7 +533,6 @@ class KiaraContextInfo(KiaraModel):
     def create_from_kiara_instance(
         cls, kiara: "Kiara", package_filter: Union[str, None] = None
     ):
-
         data_types = kiara.type_registry.get_context_metadata(
             only_for_package=package_filter
         )
@@ -604,7 +596,6 @@ class KiaraContextInfo(KiaraModel):
         return {"kiara_id": self.kiara_id, "package": self.package_filter}
 
     def get_info(self, item_type: str, item_id: str) -> ItemInfo:
-
         if item_type in ("data_type", "data_types"):
             group_info: InfoItemGroup = self.data_types
         elif "module" in item_type:
@@ -632,7 +623,6 @@ class KiaraContextInfo(KiaraModel):
         return result
 
     def get_all_info(self, skip_empty_types: bool = True) -> Dict[str, InfoItemGroup]:
-
         result: Dict[str, InfoItemGroup] = {}
         if self.data_types or not skip_empty_types:
             result["data_types"] = self.data_types

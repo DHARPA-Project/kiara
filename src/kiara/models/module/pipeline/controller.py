@@ -20,7 +20,6 @@ logger = structlog.getLogger()
 
 
 class PipelineController(PipelineListener):
-
     pass
 
 
@@ -28,7 +27,6 @@ class SinglePipelineController(PipelineController):
     def __init__(
         self, job_registry: JobRegistry, pipeline: Union[Pipeline, None] = None
     ):
-
         self._pipeline: Union[Pipeline, None] = None
         self._job_registry: JobRegistry = job_registry
         self._pipeline_details: Union[PipelineState, None] = None
@@ -38,14 +36,12 @@ class SinglePipelineController(PipelineController):
 
     @property
     def pipeline(self) -> Pipeline:
-
         if self._pipeline is None:
             raise Exception("Pipeline not set (yet).")
         return self._pipeline
 
     @pipeline.setter
     def pipeline(self, pipeline: Pipeline):
-
         if self._pipeline is not None:
             # TODO: destroy object?
             self._pipeline._listeners.clear()
@@ -55,7 +51,6 @@ class SinglePipelineController(PipelineController):
             self._pipeline.add_listener(self)
 
     def current_pipeline_state(self) -> PipelineState:
-
         if self._pipeline_details is None:
             self._pipeline_details = self.pipeline.get_pipeline_details()
         return self._pipeline_details
@@ -75,7 +70,6 @@ class SinglePipelineController(PipelineController):
         return required
 
     def _pipeline_event_occurred(self, event: PipelineEvent):
-
         if event.pipeline_id != self.pipeline.pipeline_id:
             return
 
@@ -177,7 +171,6 @@ class SinglePipelineBatchController(SinglePipelineController):
         job_registry: JobRegistry,
         auto_process: bool = True,
     ):
-
         self._auto_process: bool = auto_process
         self._is_running: bool = False
         super().__init__(pipeline=pipeline, job_registry=job_registry)
@@ -193,7 +186,6 @@ class SinglePipelineBatchController(SinglePipelineController):
     def process_pipeline(
         self, event_callback: Union[Callable, None] = None
     ) -> Mapping[str, Union[uuid.UUID, Exception]]:
-
         log = logger.bind(pipeline_id=self.pipeline.pipeline_id)
         if self._is_running:
             log.debug(
@@ -210,7 +202,6 @@ class SinglePipelineBatchController(SinglePipelineController):
                 self.pipeline.structure, stages_extraction_type="early"
             )
             for idx, stage in enumerate(stages, start=1):
-
                 if event_callback:
                     event_callback(f"start processing pipeline stage: {idx}")
 

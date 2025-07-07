@@ -21,7 +21,6 @@ EXCLUDED_KEYS = ["self", "v__duplicate_kwargs", "args", "kwargs"]
 
 class ApiEndpoint(object):
     def __init__(self, func: Callable):
-
         self._func = func
         self._wrapped: Union[None, ValidatedFunction] = None
         self._arg_names: Union[None, List[str]] = None
@@ -35,7 +34,6 @@ class ApiEndpoint(object):
 
     @property
     def doc_string(self):
-
         if self._doc_string is not None:
             return self._doc_string
 
@@ -49,7 +47,6 @@ class ApiEndpoint(object):
 
     @property
     def raw_doc(self) -> str:
-
         if self._raw_doc is not None:
             return self._raw_doc
 
@@ -61,7 +58,6 @@ class ApiEndpoint(object):
 
     @property
     def doc(self) -> DocumentationMetadataModel:
-
         if self._doc is not None:
             return self._doc
 
@@ -76,7 +72,6 @@ class ApiEndpoint(object):
 
     @property
     def parsed_doc(self) -> Docstring:
-
         if self._parsed_doc is not None:
             return self._parsed_doc
 
@@ -85,7 +80,6 @@ class ApiEndpoint(object):
         return self._parsed_doc
 
     def get_arg_doc(self, arg_name: str) -> str:
-
         for p in self.parsed_doc.params:
             if p.arg_name == arg_name:
                 desc: Union[str, None] = p.description
@@ -95,7 +89,6 @@ class ApiEndpoint(object):
 
     @property
     def validated_func(self) -> ValidatedFunction:
-
         if self._wrapped is not None:
             return self._wrapped
 
@@ -104,14 +97,12 @@ class ApiEndpoint(object):
 
     @property
     def arg_model(self) -> Type[BaseModel1]:
-
         # TODO: pydantic refactoring, find a different way to do this in version 2
         result: Type[BaseModel1] = self.validated_func.model
         return result
 
     @property
     def argument_names(self) -> List[str]:
-
         if self._arg_names is not None:
             return self._arg_names
 
@@ -122,7 +113,6 @@ class ApiEndpoint(object):
 
     @property
     def arg_schema(self) -> Dict[str, Mapping[str, Any]]:
-
         if self._param_details is not None:
             return self._param_details
 
@@ -138,7 +128,6 @@ class ApiEndpoint(object):
 
     @property
     def signature_metadata(self) -> Mapping[str, Any]:
-
         if self._signature_metadata is not None:
             return self._signature_metadata
 
@@ -147,7 +136,6 @@ class ApiEndpoint(object):
 
     @property
     def result_type(self) -> Type:
-
         result: Type = self.signature_metadata["return_type"]
         return result
 
@@ -160,17 +148,14 @@ class ApiEndpoint(object):
             return DEFAULT_NO_DESC_VALUE
 
     def execute(self, instance: Any, **kwargs: Any) -> Any:
-
         result = self.validated_func.call(instance, **kwargs)
         return result
 
     def validate_and_assemble_args(self, **kwargs) -> BaseModel1:
-
         kwargs.pop("self", None)
         return self.validated_func.init_model_instance(None, **kwargs)
 
     def create_arg_schema_renderable(self, **config: Any) -> RenderableType:
-
         table = Table(box=box.SIMPLE, show_lines=False)
         table.add_column("Field name", style="i")
         table.add_column("Type", max_width=40)
@@ -204,7 +189,6 @@ class ApiEndpoint(object):
         return table
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         full_doc = config.get("full_doc", False)
 
         items: List[RenderableType] = []
@@ -240,7 +224,6 @@ class ApiEndpoints(object):
         exclude: Union[None, Iterable[str], str] = None,
         include_tags: Union[None, Iterable[str], str] = None,
     ):
-
         if filters is None:
             filters = []
         elif isinstance(filters, str):
@@ -266,7 +249,6 @@ class ApiEndpoints(object):
 
     @property
     def api_endpint_names(self) -> List[str]:
-
         if self._api_endpoint_names is not None:
             return self._api_endpoint_names
 
@@ -318,7 +300,6 @@ class ApiEndpoints(object):
         return self._api_endpoint_names
 
     def get_api_endpoint(self, endpoint_name: str) -> ApiEndpoint:
-
         if endpoint_name in self._endpoint_details:
             return self._endpoint_details[endpoint_name]
 
@@ -336,7 +317,6 @@ class ApiEndpoints(object):
         return result
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         from rich.table import Table
 
         if len(self.api_endpint_names) == 1:

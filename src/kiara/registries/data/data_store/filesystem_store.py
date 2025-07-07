@@ -47,7 +47,6 @@ VALUE_DETAILS_FILE_NAME = "value.json"
 
 
 class EntityType(Enum):
-
     VALUE = "values"
     VALUE_DATA = "value_data"
     ENVIRONMENT = "environments"
@@ -74,7 +73,6 @@ class FileSystemDataArchive(
         archive_config: FileSystemArchiveConfig,
         force_read_only: bool = False,
     ):
-
         super().__init__(
             archive_name=archive_name,
             archive_config=archive_config,
@@ -86,7 +84,6 @@ class FileSystemDataArchive(
         # self._archive_metadata: Union[Mapping[str, Any], None] = None
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
-
         if not self.archive_metadata_path.is_file():
             _archive_metadata = {}
         else:
@@ -111,7 +108,6 @@ class FileSystemDataArchive(
         return self.data_store_path / "store_metadata.json"
 
     def get_archive_details(self) -> ArchiveDetails:
-
         size = sum(
             f.stat().st_size for f in self.data_store_path.glob("**/*") if f.is_file()
         )
@@ -132,7 +128,6 @@ class FileSystemDataArchive(
 
     @property
     def data_store_path(self) -> Path:
-
         if self._base_path is not None:
             return self._base_path
 
@@ -146,14 +141,12 @@ class FileSystemDataArchive(
 
     @property
     def hash_fs_path(self) -> Path:
-
         if self._hashfs_path is None:
             self._hashfs_path = self.data_store_path / "hash_fs"
         return self._hashfs_path
 
     @property
     def hashfs(self) -> HashFS:
-
         if self._hashfs is None:
             self._hashfs = HashFS(
                 self.hash_fs_path.as_posix(),
@@ -202,11 +195,9 @@ class FileSystemDataArchive(
         manifest_hash: Union[str, None] = None,
         inputs_hash: Union[str, None] = None,
     ) -> Iterable[str]:
-
         raise NotImplementedError()
 
     def _retrieve_record_for_job_hash(self, job_hash: str) -> JobRecord:
-
         raise NotImplementedError()
 
     # def find_matching_job_record(
@@ -273,7 +264,6 @@ class FileSystemDataArchive(
         value_size: Union[int, None] = None,
         data_type_name: Union[str, None] = None,
     ) -> Set[uuid.UUID]:
-
         value_data_folder = self.get_path(entity_type=EntityType.VALUE_DATA)
 
         glob = f"*/{value_hash}/value_id__*.json"
@@ -297,7 +287,6 @@ class FileSystemDataArchive(
     def _find_destinies_for_value(
         self, value_id: uuid.UUID, alias_filter: Union[str, None] = None
     ) -> Union[Mapping[str, uuid.UUID], None]:
-
         destiny_dir = self.get_path(entity_type=EntityType.DESTINY_LINK)
         destiny_value_dir = destiny_dir / str(value_id)
 
@@ -320,7 +309,6 @@ class FileSystemDataArchive(
     def _retrieve_all_value_ids(
         self, data_type_name: Union[str, None] = None
     ) -> Iterable[uuid.UUID]:
-
         if data_type_name is not None:
             raise NotImplementedError()
 
@@ -350,7 +338,6 @@ class FileSystemDataArchive(
         return base_path.is_file()
 
     def _retrieve_value_details(self, value_id: uuid.UUID) -> Mapping[str, Any]:
-
         base_path = (
             self.get_path(entity_type=EntityType.VALUE)
             / str(value_id)
@@ -365,7 +352,6 @@ class FileSystemDataArchive(
         return value_data
 
     def _retrieve_serialized_value(self, value: Value) -> PersistedData:
-
         base_path = self.get_path(entity_type=EntityType.VALUE_DATA)
         data_dir = base_path / value.data_type_name / str(value.value_hash)
 
@@ -380,7 +366,6 @@ class FileSystemDataArchive(
         as_file: bool = True,
         symlink_ok: bool = True,
     ) -> Union[bytes, str]:
-
         addr = self.hashfs.get(chunk_id)
         if addr is None:
             raise KiaraException(f"Can't find chunk with id '{chunk_id}'")
@@ -399,7 +384,6 @@ class FileSystemDataArchive(
         as_files: bool = True,
         symlink_ok: bool = True,
     ) -> Generator[Union["BytesLike", str], None, None]:
-
         for chunk_id in chunk_ids:
             yield self._retrieve_chunk(
                 chunk_id, as_file=as_files, symlink_ok=symlink_ok
@@ -422,7 +406,6 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
     #         env_details_file.write_text(orjson_dumps(env_data))
 
     def _persist_stored_value_info(self, value: Value, persisted_value: PersistedData):
-
         working_dir = self.get_path(entity_type=EntityType.VALUE_DATA)
         data_dir = working_dir / value.data_type_name / str(value.value_hash)
         sv_file = data_dir / ".serialized_value.json"
@@ -430,7 +413,6 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
         sv_file.write_text(persisted_value.model_dump_json())
 
     def _persist_value_details(self, value: Value):
-
         value_dir = self.get_path(entity_type=EntityType.VALUE) / str(value.value_id)
 
         if value_dir.exists():
@@ -445,11 +427,9 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
         value_file.write_text(orjson_dumps(value_data, option=orjson.OPT_NON_STR_KEYS))
 
     def _persist_destiny_backlinks(self, value: Value):
-
         destiny_dir = self.get_path(entity_type=EntityType.DESTINY_LINK)
 
         for value_id, backlink in value.destiny_backlinks.items():
-
             destiny_value_dir = destiny_dir / str(value_id)
             destiny_value_dir.mkdir(parents=True, exist_ok=True)
             destiny_file = destiny_value_dir / f"{backlink}.json"
@@ -464,12 +444,10 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
             fix_windows_symlink(value_file, destiny_file)
 
     def _persist_chunks(self, chunks: Mapping["CID", Union[str, BytesIO]]):
-
         for cid, chunk in chunks.items():
             self._persist_chunk(str(cid), chunk)
 
     def _persist_chunk(self, chunk_id: str, chunk: Union[str, BytesIO]):
-
         addr: HashAddress = self.hashfs.put_with_precomputed_hash(chunk, chunk_id)
 
         assert addr.id == chunk_id
@@ -529,7 +507,6 @@ class FilesystemDataStore(FileSystemDataArchive, BaseDataStore):
     #     return pers_value
 
     def _persist_value_pedigree(self, value: Value):
-
         manifest_hash = value.pedigree.instance_cid
         jobs_hash = value.pedigree.job_hash
 

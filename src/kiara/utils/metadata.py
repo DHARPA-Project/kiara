@@ -21,7 +21,6 @@ if TYPE_CHECKING:
 def find_metadata_models(
     alias: Union[str, None] = None, only_for_package: Union[str, None] = None
 ) -> "MetadataTypeClassesInfo":
-
     from kiara.interfaces.python_api.models.info import MetadataTypeClassesInfo
 
     model_registry = ModelRegistry.instance()
@@ -32,7 +31,9 @@ def find_metadata_models(
         model_cls = info.python_class.get_class()  # type: ignore
         classes[model_id] = model_cls
 
-    group: MetadataTypeClassesInfo = MetadataTypeClassesInfo.create_from_type_items(group_title=alias, kiara=None, **classes)  # type: ignore
+    group: MetadataTypeClassesInfo = MetadataTypeClassesInfo.create_from_type_items(
+        group_title=alias, kiara=None, **classes
+    )  # type: ignore
 
     if only_for_package:
         temp = {}
@@ -41,7 +42,9 @@ def find_metadata_models(
                 temp[key] = _info
 
         group = MetadataTypeClassesInfo(
-            group_id=group.instance_id, group_title=group.group_alias, item_infos=temp  # type: ignore
+            group_id=group.instance_id,
+            group_title=group.group_alias,
+            item_infos=temp,  # type: ignore
         )
 
     return group
@@ -73,7 +76,6 @@ def get_metadata_model_for_data_type(
     matching_types = {}
 
     for name, model_info in all_metadata_models.item_infos.items():
-
         metadata_cls: Type[ValueMetadata] = model_info.python_class.get_class()
         supported = metadata_cls.retrieve_supported_data_types()
         if data_type in supported:

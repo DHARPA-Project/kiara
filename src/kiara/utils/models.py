@@ -24,7 +24,6 @@ def create_pydantic_model(
     _use_pydantic_construct: bool = PYDANTIC_USE_CONSTRUCT,
     **field_values: Any,
 ):
-
     if _use_pydantic_construct:
         raise NotImplementedError()
         return model_cls(**field_values)
@@ -33,7 +32,6 @@ def create_pydantic_model(
 
 
 def retrieve_data_subcomponent_keys(data: Any) -> Iterable[str]:
-
     if isinstance(data, RootModel):
         if isinstance(data.root, Mapping):
             result = set()
@@ -93,7 +91,6 @@ def get_subcomponent_from_model(data: "KiaraModel", path: str) -> "KiaraModel":
 
 
 def assemble_subcomponent_graph(data: "KiaraModel") -> Union[nx.DiGraph, None]:
-
     from kiara.models import KiaraModel
 
     graph: nx.DiGraph = nx.DiGraph()
@@ -117,12 +114,10 @@ def assemble_subcomponent_graph(data: "KiaraModel") -> Union[nx.DiGraph, None]:
 def create_subcomponent_tree_renderable(
     data: "KiaraModel", show_data: bool = False
 ) -> Tree:
-
     from kiara.models import KiaraModel
     from kiara.utils.output import extract_renderable
 
     def extract_type_string(obj: Any) -> str:
-
         if isinstance(obj, KiaraModel):
             return f"model: {obj.model_type_id}"
         elif isinstance(obj, Mapping):
@@ -131,7 +126,6 @@ def create_subcomponent_tree_renderable(
             return type(obj).__name__
 
     def assemble_tree(node: Tree, model: Any, level: int):
-
         if isinstance(model, Mapping) and model:
             for k, v in model.items():
                 child_tree = node.add(f"[b i]{k}[/b i] ({extract_type_string(v)})")

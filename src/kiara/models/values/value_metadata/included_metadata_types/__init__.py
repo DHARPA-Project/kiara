@@ -29,7 +29,6 @@ class PythonClassMetadata(ValueMetadata):
 
     @classmethod
     def create_value_metadata(cls, value: "Value") -> "PythonClassMetadata":
-
         return PythonClassMetadata(
             python_class=PythonClass.from_class(value.data.__class__)
         )
@@ -52,7 +51,6 @@ class FileMetadata(ValueMetadata):
 
     @classmethod
     def create_value_metadata(cls, value: "Value") -> "FileMetadata":
-
         return FileMetadata(file=value.data)
 
     file: KiaraFile = Field(description="The file-specific metadata.")
@@ -70,7 +68,6 @@ class FileBundleMetadata(ValueMetadata):
 
     @classmethod
     def create_value_metadata(cls, value: "Value") -> "FileBundleMetadata":
-
         return FileBundleMetadata(file_bundle=value.data)
 
     file_bundle: KiaraFileBundle = Field(description="The file-specific metadata.")

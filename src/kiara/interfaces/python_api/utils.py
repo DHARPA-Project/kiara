@@ -10,7 +10,6 @@ def create_save_config(
     field_names: Union[str, Iterable[str]],
     aliases: Union[None, str, Iterable[str], Mapping[str, Any]],
 ) -> Dict[str, List[str]]:
-
     if isinstance(field_names, str):
         field_names = [field_names]
 

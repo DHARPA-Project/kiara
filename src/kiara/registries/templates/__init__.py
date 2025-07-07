@@ -27,19 +27,16 @@ logger = structlog.getLogger()
 
 
 def render_model_filter(template_registry: "TemplateRegistry", instance: "KiaraModel"):
-
     template = template_registry.get_template("kiara/render/models/model_data.html")
     rendered = template.render(instance=instance)
     return rendered
 
 
 def boolean_filter(data: bool):
-
     return "yes" if data else "no"
 
 
 def default_filter(data: Any):
-
     if data in [None, SpecialValue.NO_VALUE, SpecialValue.NOT_SET]:
         return ""
     elif callable(data):
@@ -74,14 +71,12 @@ class TemplateRegistry(object):
         return cls._instance
 
     def __init__(self) -> None:
-
         self._template_dirs: Union[None, Mapping[str, Path]] = None
         self._template_loader: Union[None, PrefixLoader] = None
         self._environment: Union[None, Environment] = None
 
     @property
     def environment(self) -> Environment:
-
         if self._environment is not None:
             return self._environment
 
@@ -100,7 +95,6 @@ class TemplateRegistry(object):
 
     @property
     def template_dirs(self) -> Mapping[str, Path]:
-
         if self._template_dirs is not None:
             return self._template_dirs
 
@@ -118,7 +112,8 @@ class TemplateRegistry(object):
             plugin_modules = [
                 name
                 for finder, name, ispkg in pkgutil.iter_modules(
-                    kiara_plugin.__path__, kiara_plugin.__name__ + "."  # type: ignore
+                    kiara_plugin.__path__,
+                    kiara_plugin.__name__ + ".",  # type: ignore
                 )
             ] + [
                 name
@@ -127,7 +122,6 @@ class TemplateRegistry(object):
             ]
 
         for module_name in plugin_modules:  # type: ignore
-
             try:
                 module = importlib.import_module(module_name)
                 discovered_plugins[module_name] = module
@@ -156,7 +150,6 @@ class TemplateRegistry(object):
 
     @property
     def template_loader(self) -> PrefixLoader:
-
         if self._template_loader is not None:
             return self._template_loader
 
@@ -168,7 +161,6 @@ class TemplateRegistry(object):
         return self._template_loader
 
     def get_template(self, name: str) -> Template:
-
         return self.environment.get_template(name=name)
 
     @property
@@ -184,7 +176,6 @@ class TemplateRegistry(object):
         template_format: str = "html",
         use_generic_if_none: bool = False,
     ) -> Union[Template, None]:
-
         matches = [
             template_name
             for template_name in self.template_names

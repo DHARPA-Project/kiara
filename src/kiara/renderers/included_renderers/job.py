@@ -98,18 +98,15 @@ class JobDescPythonScriptRenderer(BaseJinjaRenderer["JobDesc", RenderInputsSchem
         return [JobDescTransformer(kiara=self._kiara)]
 
     def retrieve_jinja_env(self) -> JinjaEnv:
-
         jinja_env = JinjaEnv(template_base="kiara")
         return jinja_env
 
     def get_template(self, render_config: RenderInputsSchema) -> Template:
-
         return self.get_jinja_env().get_template("pipeline/python_script.py.j2")
 
     def assemble_render_inputs(
         self, instance: Any, render_config: RenderInputsSchema
     ) -> Mapping[str, Any]:
-
         from kiara.utils.rendering import create_pipeline_render_inputs
 
         job_desc: JobDesc = instance

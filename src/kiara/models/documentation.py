@@ -58,7 +58,6 @@ class AuthorsMetadataModel(KiaraModel):
 
     @classmethod
     def from_class(cls, item_cls: Type) -> "AuthorsMetadataModel":
-
         data = get_metadata_for_python_module_or_class(item_cls)  # type: ignore
         merged = merge_dicts(*data)
         return cls(**merged)
@@ -68,7 +67,6 @@ class AuthorsMetadataModel(KiaraModel):
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Name")
         table.add_column("Email", style="i")
@@ -91,7 +89,6 @@ class ContextMetadataModel(KiaraModel):
 
     @classmethod
     def from_class(cls, item_cls: Type):
-
         data = get_metadata_for_python_module_or_class(item_cls)  # type: ignore
         merged = merge_dicts(*data)
         return cls(**merged)
@@ -109,7 +106,6 @@ class ContextMetadataModel(KiaraModel):
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("Key", style="i")
         table.add_column("Value")
@@ -138,14 +134,12 @@ class ContextMetadataModel(KiaraModel):
         desc: Union[str, None] = None,
         force: bool = False,
     ):
-
         if ref_type in self.references.keys() and not force:
             raise Exception(f"Reference of type '{ref_type}' already present.")
         link = LinkModel(url=url, desc=desc)
         self.references[ref_type] = link
 
     def get_url_for_reference(self, ref: str) -> Union[str, None]:
-
         link = self.references.get(ref, None)
         if not link:
             return None
@@ -164,7 +158,6 @@ class DocumentationMetadataModel(KiaraModel):
 
     @classmethod
     def from_class_doc(cls, item_cls: Type) -> "DocumentationMetadataModel":
-
         doc: Union[str, None] = None
 
         if hasattr(item_cls, "type_doc"):
@@ -188,7 +181,6 @@ class DocumentationMetadataModel(KiaraModel):
 
     @classmethod
     def from_function(cls, func: Callable) -> "DocumentationMetadataModel":
-
         doc = func.__doc__
 
         if not doc:
@@ -199,7 +191,6 @@ class DocumentationMetadataModel(KiaraModel):
 
     @classmethod
     def from_string(cls, doc: Union[str, None]) -> "DocumentationMetadataModel":
-
         if not doc:
             doc = DEFAULT_NO_DESC_VALUE
 
@@ -216,7 +207,6 @@ class DocumentationMetadataModel(KiaraModel):
 
     @classmethod
     def from_dict(cls, data: Mapping) -> "DocumentationMetadataModel":
-
         doc = data.get("doc", None)
         desc = data.get("description", None)
         if desc is None:
@@ -233,7 +223,6 @@ class DocumentationMetadataModel(KiaraModel):
 
     @classmethod
     def create(cls, item: Union[Any, None] = None) -> "DocumentationMetadataModel":
-
         if not item:
             return cls.from_string(DEFAULT_NO_DESC_VALUE)
         elif isinstance(item, DocumentationMetadataModel):
@@ -266,12 +255,10 @@ class DocumentationMetadataModel(KiaraModel):
 
     @property
     def full_doc(self):
-
         if self.doc:
             return f"{self.description}\n\n{self.doc}"
         else:
             return self.description
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         return Markdown(self.full_doc)

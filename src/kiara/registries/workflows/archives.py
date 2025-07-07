@@ -14,7 +14,6 @@ from kiara.utils.windows import fix_windows_longpath
 
 
 class FileSystemWorkflowArchive(WorkflowArchive):
-
     _archive_type_name = "filesystem_workflow_archive"
     _config_cls = FileSystemArchiveConfig  # type: ignore
 
@@ -24,7 +23,6 @@ class FileSystemWorkflowArchive(WorkflowArchive):
         archive_config: ARCHIVE_CONFIG_CLS,
         force_read_only: bool = False,
     ):
-
         super().__init__(
             archive_name=archive_name,
             archive_config=archive_config,
@@ -35,7 +33,6 @@ class FileSystemWorkflowArchive(WorkflowArchive):
         self.alias_store_path.mkdir(parents=True, exist_ok=True)
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
-
         if not self.archive_metadata_path.is_file():
             _archive_metadata = {}
         else:
@@ -59,7 +56,6 @@ class FileSystemWorkflowArchive(WorkflowArchive):
 
     @property
     def workflow_store_path(self) -> Path:
-
         if self._base_path is not None:
             return self._base_path
 
@@ -70,7 +66,6 @@ class FileSystemWorkflowArchive(WorkflowArchive):
 
     @property
     def alias_store_path(self) -> Path:
-
         return self.workflow_store_path / "aliases"
 
     def _delete_archive(self):
@@ -85,15 +80,12 @@ class FileSystemWorkflowArchive(WorkflowArchive):
         return self.workflow_store_path / "states"
 
     def get_workflow_details_path(self, workflow_id: uuid.UUID) -> Path:
-
         return self.workflow_path / str(workflow_id) / "workflow.json"
 
     def get_alias_path(self, alias: str):
-
         return self.alias_store_path / f"{alias}.alias"
 
     def retrieve_all_workflow_aliases(self) -> Mapping[str, uuid.UUID]:
-
         all_aliases = self.alias_store_path.glob("*.alias")
         result: Dict[str, uuid.UUID] = {}
         for path in all_aliases:
@@ -109,7 +101,6 @@ class FileSystemWorkflowArchive(WorkflowArchive):
         return result
 
     def retrieve_all_workflow_ids(self) -> Iterable[uuid.UUID]:
-
         all_ids = self.workflow_path.glob("*")
         result = []
         for path in all_ids:
@@ -118,7 +109,6 @@ class FileSystemWorkflowArchive(WorkflowArchive):
         return result
 
     def retrieve_workflow_metadata(self, workflow_id: uuid.UUID) -> WorkflowMetadata:
-
         workflow_path = self.get_workflow_details_path(workflow_id=workflow_id)
         if not workflow_path.exists():
             raise NoSuchWorkflowException(
@@ -135,7 +125,6 @@ class FileSystemWorkflowArchive(WorkflowArchive):
         return workflow
 
     def retrieve_workflow_state(self, workflow_state_id: str) -> WorkflowState:
-
         workflow_state_path = self.workflow_states_path / f"{workflow_state_id}.state"
 
         if not workflow_state_path.exists():
@@ -156,7 +145,6 @@ class FileSystemWorkflowArchive(WorkflowArchive):
     def retrieve_all_states_for_workflow(
         self, workflow_id: uuid.UUID
     ) -> Mapping[str, WorkflowState]:
-
         details = self.retrieve_workflow_metadata(workflow_id=workflow_id)
 
         result = {}
@@ -168,11 +156,9 @@ class FileSystemWorkflowArchive(WorkflowArchive):
 
 
 class FileSystemWorkflowStore(FileSystemWorkflowArchive, WorkflowStore):
-
     _archive_type_name = "filesystem_workflow_store"
 
     def _register_workflow_metadata(self, workflow_metadata: WorkflowMetadata):
-
         workflow_path = self.get_workflow_details_path(
             workflow_id=workflow_metadata.workflow_id
         )
@@ -188,7 +174,6 @@ class FileSystemWorkflowStore(FileSystemWorkflowArchive, WorkflowStore):
         workflow_path.write_text(workflow_json)
 
     def _update_workflow_metadata(self, workflow_metadata: WorkflowMetadata):
-
         workflow_path = self.get_workflow_details_path(
             workflow_id=workflow_metadata.workflow_id
         )
@@ -202,7 +187,6 @@ class FileSystemWorkflowStore(FileSystemWorkflowArchive, WorkflowStore):
         workflow_path.write_text(workflow_json)
 
     def register_alias(self, workflow_id: uuid.UUID, alias: str, force: bool = False):
-
         alias_path = self.get_alias_path(alias=alias)
         if not force and alias_path.exists():
             raise Exception(
@@ -220,7 +204,6 @@ class FileSystemWorkflowStore(FileSystemWorkflowArchive, WorkflowStore):
         alias_path.symlink_to(workflow_path)
 
     def unregister_alias(self, alias: str) -> bool:
-
         alias_path = self.get_alias_path(alias=alias)
 
         if not alias_path.exists():
@@ -230,7 +213,6 @@ class FileSystemWorkflowStore(FileSystemWorkflowArchive, WorkflowStore):
         return True
 
     def add_workflow_state(self, workflow_state: WorkflowState):
-
         self.workflow_states_path.mkdir(exist_ok=True, parents=True)
         workflow_state_path = (
             self.workflow_states_path / f"{workflow_state.instance_id}.state"

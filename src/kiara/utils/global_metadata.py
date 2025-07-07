@@ -14,9 +14,8 @@ from kiara.defaults import KIARA_MODULE_METADATA_ATTRIBUTE
 
 @lru_cache()
 def get_metadata_for_python_module_or_class(
-    module_or_class: typing.Union[ModuleType, typing.Type]
+    module_or_class: typing.Union[ModuleType, typing.Type],
 ) -> typing.List[typing.Dict[str, typing.Any]]:
-
     metadata: typing.List[typing.Dict[str, typing.Any]] = []
 
     if isinstance(module_or_class, type):
@@ -32,7 +31,6 @@ def get_metadata_for_python_module_or_class(
 
     current_module = _module_or_class
     while current_module:
-
         if isinstance(current_module, str):
             current_module = importlib.import_module(current_module)
 

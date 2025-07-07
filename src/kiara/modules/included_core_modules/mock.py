@@ -17,7 +17,6 @@ class MockOutput(BaseModel):
 
 
 def default_mock_output() -> Dict[str, MockOutput]:
-
     schema = {
         "type": "any",
         "doc": "A result",
@@ -27,14 +26,12 @@ def default_mock_output() -> Dict[str, MockOutput]:
 
 
 class MockModuleConfig(KiaraModuleConfig):
-
     _kiara_model_id: ClassVar = "instance.module_config.mock"
 
     @classmethod
     def create_pipeline_config(
         cls, title: str, description: str, author: str, *steps: "MockModuleConfig"
     ) -> PipelineConfig:
-
         data: Dict[str, Any] = {
             "pipeline_name": slugify(title),
             "doc": description,
@@ -76,14 +73,12 @@ class MockModuleConfig(KiaraModuleConfig):
 
 
 class MockKiaraModule(KiaraModule):
-
     _module_type_name = "mock"
     _config_cls = MockModuleConfig
 
     def create_inputs_schema(
         self,
     ) -> ValueMapSchema:
-
         result = {}
         v: Mapping[str, Any]
         for k, v in self.get_config_value("inputs_schema").items():
@@ -99,7 +94,6 @@ class MockKiaraModule(KiaraModule):
     def create_outputs_schema(
         self,
     ) -> ValueMapSchema:
-
         result = {}
         field_name: str
         field_output: MockOutput
@@ -122,18 +116,15 @@ class MockKiaraModule(KiaraModule):
         return result
 
     def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
-
         return ModuleCharacteristics(
             is_idempotent=True, is_internal=True, unique_result_values=True
         )
 
     def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
-
         # config = self.get_config_value("desc")
 
         mock_outputs = self.get_config_value("outputs")
         field_name: str
         field_output: MockOutput
         for field_name, field_output in mock_outputs.items():
-
             outputs.set_value(field_name, field_output.data)

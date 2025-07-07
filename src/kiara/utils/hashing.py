@@ -23,7 +23,6 @@ def compute_cid(
     hash_codec: str = "sha2-256",
     encode: str = "base58btc",
 ) -> Tuple[bytes, CID]:
-
     encoded = dag_cbor.encode(data)
 
     hash_func = multihash.get(hash_codec)
@@ -39,7 +38,6 @@ _, NONE_CID = compute_cid(data=None)
 def compute_cid_from_file(
     file: str, codec: Union[str, int, Multicodec] = "raw", hash_codec: str = "sha2-256"
 ):
-
     assert hash_codec == "sha2-256"
 
     hash_func = hashlib.sha256
@@ -62,6 +60,5 @@ def create_cid_digest(
     ],
     codec: Union[str, int, Multicodec] = "raw",
 ) -> CID:
-
     cid = CID("base58btc", 1, codec, digest)
     return cid

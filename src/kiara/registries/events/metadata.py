@@ -20,7 +20,6 @@ if TYPE_CHECKING:
 
 class CreateMetadataDestinies(object):
     def __init__(self, kiara: "Kiara"):
-
         self._kiara: Kiara = kiara
         self._skip_internal_types: bool = True
 
@@ -28,7 +27,6 @@ class CreateMetadataDestinies(object):
         return ["value_created", "value_registered"]
 
     def handle_events(self, *events: KiaraEvent) -> Any:
-
         for event in events:
             if event.get_event_type() == "value_created":  # type: ignore
                 if event.value.is_set:  # type: ignore
@@ -39,11 +37,9 @@ class CreateMetadataDestinies(object):
                 self.resolve_all_metadata(event.value)  # type: ignore
 
     def attach_metadata(self, value: Value):
-
         assert not value.is_stored
 
         if self._skip_internal_types:
-
             if value.value_schema.type == "any":
                 return
             lineage = self._kiara.type_registry.get_type_lineage(
@@ -52,7 +48,9 @@ class CreateMetadataDestinies(object):
             if "any" not in lineage:
                 return
 
-        op_type: ExtractMetadataOperationType = self._kiara.operation_registry.get_operation_type("extract_metadata")  # type: ignore
+        op_type: ExtractMetadataOperationType = (
+            self._kiara.operation_registry.get_operation_type("extract_metadata")
+        )  # type: ignore
         operations = op_type.get_operations_for_data_type(value.value_schema.type)
         for metadata_key, op in operations.items():
             op_details: ExtractMetadataDetails = op.operation_details  # type: ignore
@@ -73,9 +71,7 @@ class CreateMetadataDestinies(object):
             )
 
     def resolve_all_metadata(self, value: Value):
-
         if self._skip_internal_types:
-
             lineage = self._kiara.type_registry.get_type_lineage(
                 value.value_schema.type
             )

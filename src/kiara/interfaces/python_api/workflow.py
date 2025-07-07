@@ -53,12 +53,10 @@ class WorkflowPipelineController(SinglePipelineController):
         self,
         kiara: "Kiara",
     ):
-
         self._is_running: bool = False
         super().__init__(job_registry=kiara.job_registry)
 
     def _pipeline_event_occurred(self, event: PipelineEvent):
-
         if event.pipeline_id != self.pipeline.pipeline_id:
             return
 
@@ -67,7 +65,6 @@ class WorkflowPipelineController(SinglePipelineController):
     def process_pipeline(
         self,
     ) -> Tuple[Mapping[uuid.UUID, uuid.UUID], Mapping[str, ActiveJob]]:
-
         log = logger.bind(pipeline_id=self.pipeline.pipeline_id)
         if self._is_running:
             log.debug(
@@ -87,7 +84,6 @@ class WorkflowPipelineController(SinglePipelineController):
                 stages_extraction_type=KIARA_DEFAULT_STAGES_EXTRACTION_TYPE
             )
             for idx, stage in enumerate(stages, start=1):
-
                 log.debug(
                     "execute.pipeline.stage",
                     stage=idx,
@@ -96,7 +92,6 @@ class WorkflowPipelineController(SinglePipelineController):
                 job_ids = {}
                 stage_failed = False
                 for step_id in stage:
-
                     log.debug(
                         "execute.pipeline.step",
                         step_id=step_id,
@@ -181,7 +176,6 @@ class Workflow(object):
             workflow_obj = Workflow(workflow=workflow, kiara=kiara, load_existing=True)
         except NoSuchWorkflowException as nswe:
             if create:
-
                 if isinstance(workflow, uuid.UUID):
                     raise nswe
                 temp = None
@@ -232,7 +226,6 @@ class Workflow(object):
         kiara: Union["Kiara", None] = None,
         load_existing: Union[bool, None] = None,
     ):
-
         if kiara is None:
             from kiara.context import Kiara
 
@@ -411,7 +404,6 @@ class Workflow(object):
 
     @documentation.setter
     def documentation(self, documentation: Any):
-
         doc = DocumentationMetadataModel.create(documentation)
         self.workflow_metadata.documentation = doc
 
@@ -426,7 +418,6 @@ class Workflow(object):
 
     @property
     def current_pipeline_inputs(self) -> Mapping[str, uuid.UUID]:
-
         if self._current_pipeline_inputs is None:
             self._apply_inputs()
         assert self._current_pipeline_inputs is not None
@@ -444,7 +435,6 @@ class Workflow(object):
 
     @property
     def current_pipeline_outputs(self) -> Mapping[str, uuid.UUID]:
-
         if self._current_pipeline_outputs is None:
             try:
                 self.process_steps()
@@ -471,7 +461,6 @@ class Workflow(object):
         return self._workflow_output_aliases
 
     def clear_current_inputs_for_step(self, step_id):
-
         fields = self.get_current_inputs_schema_for_step(step_id)
         vals = dict.fromkeys(fields, None)
         self.set_inputs(**vals)
@@ -479,7 +468,6 @@ class Workflow(object):
 
     @property
     def current_inputs_schema(self) -> Mapping[str, ValueSchema]:
-
         if self._current_workflow_inputs_schema is not None:
             return self._current_workflow_inputs_schema
 
@@ -513,7 +501,6 @@ class Workflow(object):
 
     @property
     def current_inputs(self) -> Mapping[str, uuid.UUID]:
-
         if self._current_workflow_inputs is not None:
             return self._current_workflow_inputs
 
@@ -532,7 +519,6 @@ class Workflow(object):
 
     @property
     def current_outputs_schema(self) -> Mapping[str, ValueSchema]:
-
         if self._current_workflow_outputs_schema is not None:
             return self._current_workflow_outputs_schema
 
@@ -554,7 +540,6 @@ class Workflow(object):
 
     @property
     def current_outputs(self) -> Mapping[str, uuid.UUID]:
-
         if self._current_workflow_outputs is not None:
             return self._current_workflow_outputs
 
@@ -574,7 +559,6 @@ class Workflow(object):
 
     @property
     def current_state(self) -> WorkflowState:
-
         if self._current_state is not None:
             return self._current_state
 
@@ -584,7 +568,6 @@ class Workflow(object):
 
     @property
     def pipeline(self) -> Pipeline:
-
         if self._pipeline is not None:
             return self._pipeline
 
@@ -619,7 +602,6 @@ class Workflow(object):
         return self._pipeline
 
     def _apply_inputs(self) -> Mapping[str, Mapping[str, Mapping[str, ChangedValue]]]:
-
         pipeline = self.pipeline
 
         inputs_to_set = {}
@@ -678,7 +660,6 @@ class Workflow(object):
     def process_steps(
         self, *step_ids: str
     ) -> Tuple[Mapping[uuid.UUID, uuid.UUID], Mapping[str, ActiveJob]]:
-
         self.pipeline
 
         if not step_ids:
@@ -711,7 +692,6 @@ class Workflow(object):
         return output_job_map, errors
 
     def _invalidate_pipeline(self):
-
         self._pipeline_controller.pipeline = None
         self._pipeline = None
         self._pipeline_info = None
@@ -776,7 +756,6 @@ class Workflow(object):
 
         diff: Dict[str, Union[None, uuid.UUID]] = {}
         for k, val_new in inputs.items():
-
             val_old = self._all_inputs.get(k, None)
             if val_old is None and val_new is None:
                 continue
@@ -865,7 +844,6 @@ class Workflow(object):
         replace_existing: bool = False,
         clear_existing: bool = False,
     ):
-
         if clear_existing:
             self.clear_steps()
 
@@ -906,7 +884,6 @@ class Workflow(object):
         self._invalidate_pipeline()
 
     def clear_steps(self, *step_ids: str):
-
         if not step_ids:
             self._steps.clear()
         else:
@@ -916,7 +893,6 @@ class Workflow(object):
         self._invalidate_pipeline()
 
     def set_input_alias(self, input_field: str, alias: str):
-
         if "." in input_field:
             tokens = input_field.split(".")
             if len(tokens) != 2:
@@ -932,7 +908,6 @@ class Workflow(object):
         self._metadata_is_synced = False
 
     def set_output_alias(self, output_field: str, alias: str):
-
         if "." in output_field:
             tokens = output_field.split(".")
             if len(tokens) != 2:
@@ -1025,7 +1000,6 @@ class Workflow(object):
         return step
 
     def connect_fields(self, *fields: Union[Tuple[str, str], str]):
-
         pairs = []
         current_pair = None
         for field in fields:
@@ -1074,7 +1048,6 @@ class Workflow(object):
         target_step: Union[PipelineStep, str],
         target_field: str,
     ):
-
         if isinstance(source_step, str):
             source_step_obj = self.get_step(source_step)
         else:
@@ -1128,7 +1101,6 @@ class Workflow(object):
         self._invalidate_pipeline()
 
     def connect_to_inputs(self, source_field: str, *input_fields: str):
-
         source_tokens = source_field.split(".")
         if len(source_tokens) != 2:
             raise Exception(
@@ -1180,7 +1152,6 @@ class Workflow(object):
         self._invalidate_pipeline()
 
     def get_step(self, step_id: str) -> PipelineStep:
-
         step = self._steps.get(step_id, None)
         if step is None:
             if self._steps:
@@ -1234,7 +1205,15 @@ class Workflow(object):
         # self._workflow_output_aliases = dict(state.output_aliases)
 
         self.set_inputs(**state.inputs)
-        assert {k: v for k, v in self._current_pipeline_inputs.items() if v not in [NONE_VALUE_ID, NOT_SET_VALUE_ID]} == {k: v for k, v in state.inputs.items() if v not in [NONE_VALUE_ID, NOT_SET_VALUE_ID]}  # type: ignore
+        assert {
+            k: v
+            for k, v in self._current_pipeline_inputs.items()
+            if v not in [NONE_VALUE_ID, NOT_SET_VALUE_ID]
+        } == {
+            k: v
+            for k, v in state.inputs.items()
+            if v not in [NONE_VALUE_ID, NOT_SET_VALUE_ID]
+        }  # type: ignore
         self._current_pipeline_outputs = (
             state.pipeline_info.pipeline_state.pipeline_outputs
         )
@@ -1246,7 +1225,6 @@ class Workflow(object):
 
     @property
     def all_state_ids(self) -> List[str]:
-
         hashes = set(self._workflow_metadata.workflow_history.values())
         return sorted(hashes)
 
@@ -1269,7 +1247,6 @@ class Workflow(object):
 
     @property
     def info(self) -> WorkflowInfo:
-
         if self._current_info is not None:
             return self._current_info
 
@@ -1278,7 +1255,6 @@ class Workflow(object):
 
     @property
     def pipeline_info(self) -> PipelineInfo:
-
         if self._pipeline_info is not None:
             return self._pipeline_info
 
@@ -1288,7 +1264,6 @@ class Workflow(object):
         return self._pipeline_info
 
     def save(self, *aliases: str):
-
         self._pending_aliases.update(aliases)
 
         self._workflow_metadata = self._kiara.workflow_registry.register_workflow(
@@ -1300,7 +1275,6 @@ class Workflow(object):
         self._metadata_is_synced = True
 
     def snapshot(self, save: bool = False) -> WorkflowState:
-
         state = self.current_state
 
         if state.instance_id not in self._state_cache.keys():
@@ -1325,7 +1299,6 @@ class Workflow(object):
         return state
 
     def register_snapshot(self, snapshot: Union[datetime, str]):
-
         timestamps: List[datetime]
         if isinstance(snapshot, str):
             if snapshot not in self._state_cache.keys():
@@ -1383,7 +1356,6 @@ class Workflow(object):
         return state
 
     def create_renderable(self, **config: Any):
-
         if not self._steps:
             return "Invalid workflow: no steps set yet."
 

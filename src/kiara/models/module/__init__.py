@@ -44,7 +44,6 @@ class KiaraModuleConfig(KiaraModel):
         """Return whether this class can be used as-is, or requires configuration before an instance can be created."""
 
         for field_name, field in cls.model_fields.items():
-
             if not field.is_required():
                 continue
 
@@ -78,7 +77,6 @@ class KiaraModuleConfig(KiaraModel):
         return getattr(self, key)
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         my_table = Table(box=box.MINIMAL, show_header=False)
         my_table.add_column("Field name", style="i")
         my_table.add_column("Value")

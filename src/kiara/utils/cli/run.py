@@ -30,7 +30,6 @@ from kiara.utils.output import create_table_from_base_model_cls
 
 
 def _validate_save_option(save: Iterable[str]) -> bool:
-
     if save:
         for a in save:
             if "=" in a:
@@ -51,7 +50,6 @@ def validate_operation_in_terminal(
     module_or_operation: Union[str, Path, Mapping[str, Any]],
     allow_external=False,
 ) -> Operation:
-
     # kiara_op = KiaraOperation(
     #     kiara=kiara,
     #     operation_name=module_or_operation,
@@ -62,7 +60,6 @@ def validate_operation_in_terminal(
         # validate that operation config is valid, ignoring inputs for now
         # kiara_op.operation
     except NoSuchExecutionTargetException as nset:
-
         terminal_print()
         terminal_print(nset)
         terminal_print()
@@ -72,7 +69,6 @@ def validate_operation_in_terminal(
             terminal_print(f"  - [i]{n}[/i]")
         raise InvalidCommandLineInvocation("No such target.", parent=nset, error_code=1)
     except ValidationError as ve:
-
         renderables: List[RenderableType] = [""]
         renderables.append("Invalid module configuration:")
         renderables.append("")
@@ -85,7 +81,9 @@ def validate_operation_in_terminal(
                 m = api.context.module_registry.get_module_class(module_or_operation)
                 schema = create_table_from_base_model_cls(m._config_cls)
                 renderables.append("")
-                renderables.append(f"Module configuration schema for '[b i]{m._module_type_name}[/b i]':")  # type: ignore
+                renderables.append(
+                    f"Module configuration schema for '[b i]{m._module_type_name}[/b i]':"
+                )  # type: ignore
                 renderables.append("")
                 renderables.append(schema)
         except Exception:
@@ -121,7 +119,6 @@ def calculate_aliases(
     alias_tokens: Iterable[str],
     extra_aliases: Union[Mapping[str, str], None] = None,
 ) -> Mapping[str, List[str]]:
-
     if not alias_tokens:
         aliases: Dict[str, List[str]] = {}
         full_aliases: List[str] = []
@@ -196,7 +193,6 @@ def set_and_validate_inputs(
     cmd_help: str,
     base_inputs: Union[None, Mapping[str, Any]] = None,
 ) -> Union[ValueMap, None]:
-
     # =========================================================================
     # prepare inputs
     list_keys = []
@@ -415,7 +411,6 @@ def execute_job(
 
     if save_results:
         try:
-
             alias_map = create_save_config(
                 field_names=outputs.field_names, aliases=aliases
             )

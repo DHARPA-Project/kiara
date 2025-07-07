@@ -5,6 +5,7 @@
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 
 """Implementation of interfaces for *Kiara*."""
+
 import contextlib
 import os
 import sys
@@ -183,7 +184,6 @@ def get_proxy_console(
 
 
 def set_console_width(width: Union[int, None] = None, prefer_env: bool = True):
-
     global _console
     if prefer_env or not width:
         _width: Union[None, int] = None
@@ -233,7 +233,6 @@ class BaseAPIWrap(object):
         ensure_plugins: Union[str, Iterable[str], None] = None,
         exit_process: bool = True,
     ):
-
         if not context:
             context = os.environ.get("KIARA_CONTEXT", None)
 
@@ -256,7 +255,6 @@ class BaseAPIWrap(object):
 
     @property
     def kiara_context_name(self) -> str:
-
         if not self._context:
             self._context = self.kiara_config.default_context
 
@@ -271,7 +269,6 @@ class BaseAPIWrap(object):
         self._exit_process = exit_process
 
     def exit(self, msg: Union[None, Any] = None, exit_code: int = 1):
-
         if self._exit_process:
             if msg:
                 terminal_print(msg)
@@ -283,7 +280,6 @@ class BaseAPIWrap(object):
 
     @property
     def current_kiara_context_id(self) -> uuid.UUID:
-
         return self.base_api.context.id
 
     @property
@@ -292,7 +288,6 @@ class BaseAPIWrap(object):
 
     @property
     def kiara_config(self) -> "KiaraConfig":
-
         if self._kiara_config is not None:
             return self._kiara_config
 
@@ -316,7 +311,6 @@ class BaseAPIWrap(object):
 
     @property
     def base_api(self) -> "BaseAPI":
-
         if self._api is not None:
             return self._api
 
@@ -354,11 +348,9 @@ class BaseAPIWrap(object):
         return self._api
 
     def add_item(self, key: str, item: Any):
-
         self._items[key] = item
 
     def get_item(self, key: str) -> Any:
-
         if key not in self._items.keys():
             raise ValueError(f"No item with key '{key}'")
 

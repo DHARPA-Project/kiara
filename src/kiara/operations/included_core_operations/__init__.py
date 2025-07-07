@@ -33,7 +33,6 @@ logger = structlog.getLogger()
 class CustomModuleOperationDetails(OperationDetails):
     @classmethod
     def create_from_module(cls, module: KiaraModule):
-
         return CustomModuleOperationDetails(
             operation_id=module.module_type_name,
             module_inputs_schema=module.inputs_schema,
@@ -49,7 +48,6 @@ class CustomModuleOperationDetails(OperationDetails):
     _op_schema: Union[OperationSchema, None] = PrivateAttr(default=None)
 
     def get_operation_schema(self) -> OperationSchema:
-
         if self._op_schema is not None:
             return self._op_schema
 
@@ -62,13 +60,12 @@ class CustomModuleOperationDetails(OperationDetails):
 
 
 class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
-
     _operation_type_name: ClassVar[str] = "custom_module"
 
     def __init__(self, kiara: "Kiara", op_type_name: str):
-        self._included_operations_cache: Dict[type, List["ManifestOperationConfig"]] = (
-            {}
-        )
+        self._included_operations_cache: Dict[
+            type, List["ManifestOperationConfig"]
+        ] = {}
         self._included_operations_lookup_cache: Dict[type, Dict["CID", str]] = {}
 
         super().__init__(kiara=kiara, op_type_name=op_type_name)
@@ -76,7 +73,6 @@ class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
     def _retrieve_included_operations(
         self, module_cls: Type[KiaraModule]
     ) -> List["ManifestOperationConfig"]:
-
         if self._included_operations_cache.get(module_cls, None) is not None:
             return self._included_operations_cache.get(module_cls)  # type: ignore
 
@@ -93,7 +89,6 @@ class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
         if hasattr(module_cls, "retrieve_included_operations"):
             manifests = module_cls.retrieve_included_operations()  # type: ignore
             for op_id, op in manifests.items():
-
                 if op_id in op_ids:
                     raise KiaraException(
                         msg=f"Included operation '{op_id}' invalid.",
@@ -152,7 +147,6 @@ class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:
-
         result = []
         for name, module_cls in self._kiara.module_type_classes.items():
             configs = self._retrieve_included_operations(module_cls=module_cls)
@@ -163,7 +157,6 @@ class CustomModuleOperationType(OperationType[CustomModuleOperationDetails]):
     def check_matching_operation(
         self, module: "KiaraModule"
     ) -> Union[CustomModuleOperationDetails, None]:
-
         op_id: Union[str, None] = None
         if not module.is_pipeline():
             manifest_cid = module.manifest.manifest_cid

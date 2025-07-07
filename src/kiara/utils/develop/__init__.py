@@ -15,7 +15,6 @@ from kiara.utils import is_develop
 
 
 def log_dev_message(msg: RenderableType, title: Union[str, None] = None):
-
     if not is_develop():
         return
 
@@ -81,7 +80,6 @@ def log_dev_message(msg: RenderableType, title: Union[str, None] = None):
 
 
 class DetailLevel(Enum):
-
     NONE = "none"
     MINIMAL = "minimal"
     FULL = "full"
@@ -138,7 +136,6 @@ class PostRunMsgDetails(BaseModel):
 
 
 class KiaraDevLogSettings(BaseModel):
-
     PROFILES: ClassVar[Dict[str, Any]] = {
         "full": {
             "log_pre_run": True,

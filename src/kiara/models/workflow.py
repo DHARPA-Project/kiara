@@ -33,7 +33,6 @@ if TYPE_CHECKING:
 class WorkflowState(KiaraModel):
     @classmethod
     def create_from_workflow(self, workflow: "Workflow"):
-
         steps = list(workflow._steps.values())
         inputs = dict(workflow.current_pipeline_inputs)
         info = PipelineInfo.create_from_pipeline(
@@ -66,14 +65,12 @@ class WorkflowState(KiaraModel):
         }
 
     def set_inputs(self, **inputs: uuid.UUID):
-
         for k, v in inputs.items():
             if k in self.pipeline_config.structure.pipeline_inputs_schema.keys():
                 self.inputs[k] = v
 
     @property
     def pipeline_config(self) -> PipelineConfig:
-
         return self.pipeline_info.pipeline_config
 
     @property
@@ -81,7 +78,6 @@ class WorkflowState(KiaraModel):
         return self.pipeline_info.pipeline_config.structure
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         in_panel = config.get("in_panel", None)
         if in_panel is None:
             if is_jupyter():
@@ -153,7 +149,6 @@ class WorkflowMetadata(KiaraModel):
 
     @property
     def last_state_id(self) -> Union[None, str]:
-
         if not self.workflow_history:
             return None
         last_date = max(self.workflow_history.keys())
@@ -162,12 +157,10 @@ class WorkflowMetadata(KiaraModel):
 
 
 class WorkflowInfo(ItemInfo):
-
     _kiara_model_id: ClassVar = "info.workflow"
 
     @classmethod
     def create_from_workflow(cls, workflow: "Workflow") -> "WorkflowInfo":
-
         wf_info = WorkflowInfo(
             type_name=str(workflow.workflow_id),
             workflow_metadata=workflow.workflow_metadata,
@@ -195,7 +188,6 @@ class WorkflowInfo(ItemInfo):
 
     @classmethod
     def create_from_instance(cls, kiara: "Kiara", instance: "Workflow", **kwargs):
-
         return cls.create_from_workflow(workflow=instance)
 
     workflow_metadata: WorkflowMetadata = Field(description="The workflow details.")
@@ -217,7 +209,6 @@ class WorkflowInfo(ItemInfo):
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         in_panel = config.get("in_panel", None)
         if in_panel is None:
             if is_jupyter():
@@ -289,7 +280,6 @@ class WorkflowInfo(ItemInfo):
 
 
 class WorkflowGroupInfo(InfoItemGroup):
-
     _kiara_model_id: ClassVar = "info.workflows"
 
     @classmethod
@@ -303,7 +293,6 @@ class WorkflowGroupInfo(InfoItemGroup):
         group_title: Union[str, None] = None,
         alias_map: Union[None, Mapping[str, uuid.UUID]] = None,
     ) -> "WorkflowGroupInfo":
-
         workflow_infos = {
             str(w.workflow_id): WorkflowInfo.create_from_workflow(workflow=w)
             for w in items
@@ -323,7 +312,6 @@ class WorkflowGroupInfo(InfoItemGroup):
     )
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         table = Table(box=box.SIMPLE, show_header=True)
         table.add_column("alias(es)", style="i")
         table.add_column("workflow_id")
@@ -333,7 +321,6 @@ class WorkflowGroupInfo(InfoItemGroup):
         table.add_column("description")
 
         for workflow_id, wf in self.item_infos.items():
-
             aliases = [k for k, v in self.aliases.items() if str(v) == workflow_id]
             steps = len(wf.pipeline_info.pipeline_config.structure.steps)
             stages = len(wf.pipeline_info.pipeline_config.structure.processing_stages)

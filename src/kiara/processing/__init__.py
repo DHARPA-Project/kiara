@@ -48,13 +48,11 @@ class JobStatusListener(Protocol):
 
 
 class ProcessorConfig(BaseModel):
-
     module_processor_type: Literal["synchronous", "multi-threaded"] = "synchronous"
 
 
 class ModuleProcessor(abc.ABC):
     def __init__(self, kiara: "Kiara"):
-
         self._kiara: Kiara = kiara
         self._created_jobs: Dict[uuid.UUID, Dict[str, Any]] = {}
         self._running_job_details: Dict[uuid.UUID, Dict[str, Any]] = {}
@@ -73,18 +71,15 @@ class ModuleProcessor(abc.ABC):
         old_status: Union[JobStatus, None],
         new_status: JobStatus,
     ):
-
         for listener in self._listeners:
             listener.job_status_changed(
                 job_id=job_id, old_status=old_status, new_status=new_status
             )
 
     def register_job_status_listener(self, listener: JobStatusListener):
-
         self._listeners.append(listener)
 
     def get_job(self, job_id: uuid.UUID) -> ActiveJob:
-
         if job_id in self._active_jobs.keys():
             return self._active_jobs[job_id]
         elif job_id in self._finished_jobs.keys():
@@ -95,12 +90,10 @@ class ModuleProcessor(abc.ABC):
             raise Exception(f"No job with id '{job_id}' registered.")
 
     def get_job_status(self, job_id: uuid.UUID) -> JobStatus:
-
         job = self.get_job(job_id=job_id)
         return job.status
 
     def get_job_record(self, job_id: uuid.UUID) -> JobRecord:
-
         if job_id in self._job_records.keys():
             return self._job_records[job_id]
         else:
@@ -109,7 +102,6 @@ class ModuleProcessor(abc.ABC):
     def create_job(
         self, job_config: JobConfig, auto_save_result: bool = False
     ) -> uuid.UUID:
-
         environments = {
             env.model_type_id: str(env.instance_cid)
             for env in self._kiara.current_environments.values()
@@ -156,14 +148,12 @@ class ModuleProcessor(abc.ABC):
         )
 
         if is_develop():
-
             dev_settings = get_dev_config()
 
             if dev_settings.log.log_pre_run and (
                 not module.characteristics.is_internal
                 or dev_settings.log.pre_run.internal_modules
             ):
-
                 is_pipeline_step = job_config.pipeline_metadata is not None
                 if is_pipeline_step:
                     if dev_settings.log.pre_run.pipeline_steps:
@@ -195,7 +185,6 @@ class ModuleProcessor(abc.ABC):
         return job_id
 
     def queue_job(self, job_id: uuid.UUID) -> ActiveJob:
-
         job_details = self._created_jobs.pop(job_id)
         self._running_job_details[job_id] = job_details
         job_config: JobConfig = job_details.get("job_config")  # type: ignore
@@ -251,7 +240,6 @@ class ModuleProcessor(abc.ABC):
     def job_status_updated(
         self, job_id: uuid.UUID, status: Union[JobStatus, str, Exception]
     ):
-
         job = self._active_jobs.get(job_id, None)
         if job is None:
             raise Exception(

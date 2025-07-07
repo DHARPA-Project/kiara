@@ -30,12 +30,10 @@ from kiara.models.values.value_schema import ValueSchema
 
 
 def generate_pipeline_endpoint_name(step_id: str, value_name: str):
-
     return f"{step_id}__{value_name}"
 
 
 class StepInfo(KiaraModel):
-
     _kiara_model_id: ClassVar = "info.pipeline_step"
 
     step: PipelineStep = Field(description="The pipeline step object.", exclude=True)
@@ -64,7 +62,6 @@ class StepInfo(KiaraModel):
 
     @property
     def processing_stage(self) -> int:
-
         if self._processing_stage is not None:
             return self._processing_stage
 
@@ -102,7 +99,6 @@ class PipelineStructure(KiaraModel):
     @model_validator(mode="before")
     @classmethod
     def validate_pipeline_config(cls, values: Dict[str, Any]) -> Dict[str, Any]:
-
         pipeline_config = values.get("pipeline_config", None)
         if not pipeline_config:
             raise ValueError("No 'pipeline_config' provided.")
@@ -167,7 +163,6 @@ class PipelineStructure(KiaraModel):
             a for a in _output_aliases.keys() if a not in valid_output_names
         ]
         if invalid_output_names:
-
             msg = "Invalid output reference(s)."
             details = "Invalid reference(s):\n"
             for iia in sorted(invalid_output_names):
@@ -203,7 +198,6 @@ class PipelineStructure(KiaraModel):
     # _info: "PipelineStructureInfo" = PrivateAttr(None)  # type: ignore
 
     def _retrieve_data_to_hash(self) -> Any:
-
         return {
             "steps": [step.instance_cid for step in self.steps],
             "input_aliases": self.input_aliases,
@@ -215,7 +209,6 @@ class PipelineStructure(KiaraModel):
 
     @property
     def steps_details(self) -> Mapping[str, StepInfo]:
-
         if self._steps_details is None:
             self._process_steps()
         return self._steps_details  # type: ignore
@@ -228,20 +221,17 @@ class PipelineStructure(KiaraModel):
 
     @property
     def constants(self) -> Mapping[str, Any]:
-
         if self._constants is None:
             self._process_steps()
         return self._constants  # type: ignore
 
     @property
     def defaults(self) -> Mapping[str, Any]:
-
         if self._defaults is None:
             self._process_steps()
         return self._defaults  # type: ignore
 
     def get_step(self, step_id: str) -> PipelineStep:
-
         d = self.steps_details.get(step_id, None)
         if d is None:
             raise Exception(f"No step with id: {step_id}")
@@ -249,7 +239,6 @@ class PipelineStructure(KiaraModel):
         return d.step
 
     def get_step_input_refs(self, step_id: str) -> Mapping[str, StepInputRef]:
-
         d = self.steps_details.get(step_id, None)
         if d is None:
             raise Exception(f"No step with id: {step_id}")
@@ -257,7 +246,6 @@ class PipelineStructure(KiaraModel):
         return d.inputs
 
     def get_step_output_refs(self, step_id: str) -> Mapping[str, StepOutputRef]:
-
         d = self.steps_details.get(step_id, None)
         if d is None:
             raise Exception(f"No step with id: {step_id}")
@@ -265,7 +253,6 @@ class PipelineStructure(KiaraModel):
         return d.outputs
 
     def get_step_details(self, step_id: str) -> StepInfo:
-
         d = self.steps_details.get(step_id, None)
         if d is None:
             raise Exception(f"No step with id: {step_id}")
@@ -324,7 +311,6 @@ class PipelineStructure(KiaraModel):
     def extract_processing_stages_info(
         self, stages_extraction_type: str = KIARA_DEFAULT_STAGES_EXTRACTION_TYPE
     ) -> List[PipelineStage]:
-
         stages = self.extract_processing_stages(
             stages_extraction_type=stages_extraction_type
         )
@@ -363,7 +349,6 @@ class PipelineStructure(KiaraModel):
                     to_flatten.append(node_id)
 
             for f in to_flatten:
-
                 in_edges = tuple(graph.in_edges(f))[0]  # noqa
                 out_edges = tuple(graph.out_edges(f))[0]  # noqa
                 assert in_edges[1] == out_edges[0]
@@ -420,7 +405,6 @@ class PipelineStructure(KiaraModel):
 
     @property
     def pipeline_inputs_schema(self) -> Mapping[str, ValueSchema]:
-
         schemas = {
             input_name: w_in.value_schema
             for input_name, w_in in self.pipeline_input_refs.items()
@@ -437,7 +421,6 @@ class PipelineStructure(KiaraModel):
     def get_pipeline_inputs_schema_for_step(
         self, step_id: str
     ) -> Mapping[str, ValueSchema]:
-
         result = {}
         for field, ref in self.pipeline_input_refs.items():
             for con in ref.connected_inputs:
@@ -449,7 +432,6 @@ class PipelineStructure(KiaraModel):
     def get_pipeline_outputs_schema_for_step(
         self, step_id: str
     ) -> Mapping[str, ValueSchema]:
-
         result = {}
         for field, ref in self.pipeline_output_refs.items():
             if ref.connected_output.step_id == step_id:
@@ -490,7 +472,6 @@ class PipelineStructure(KiaraModel):
         _temp_steps_map: Dict[str, PipelineStep] = {}
         pipeline_outputs: Dict[str, PipelineOutputRef] = {}
         for step in self.steps:
-
             _temp_steps_map[step.step_id] = step
 
             if step.step_id in steps_details.keys():
@@ -510,7 +491,6 @@ class PipelineStructure(KiaraModel):
 
             # go through all the module outputs, create points for them and connect them to pipeline outputs
             for output_name, schema in step.module.outputs_schema.items():
-
                 step_output = StepOutputRef(
                     value_name=output_name,
                     value_schema=schema,
@@ -563,7 +543,6 @@ class PipelineStructure(KiaraModel):
         # now process inputs, and connect them to the appropriate output/pipeline-input points
         existing_pipeline_input_points: Dict[str, PipelineInputRef] = {}
         for step in self.steps:
-
             other_step_dependency: Set = set()
             # go through all the inputs of a module, create input points and connect them to either
             # other module outputs, or pipeline inputs (which need to be created)
@@ -573,7 +552,6 @@ class PipelineStructure(KiaraModel):
             )
 
             for input_name, schema in step.module.inputs_schema.items():
-
                 matching_input_links: List[StepValueAddress] = []
                 is_constant = input_name in module_constants.keys()
 
@@ -728,12 +706,10 @@ class PipelineStructure(KiaraModel):
         self._get_node_of_type.cache_clear()
 
     def export_stages(self):
-
         # TODO: implement different processing stages possibilities
         processing_stages = self.processing_stages
 
         for stage in processing_stages:
-
             input_links = []
 
             for step_id in stage:
@@ -742,7 +718,6 @@ class PipelineStructure(KiaraModel):
                     input_links.append(input_link)
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         show_pipeline_inputs_for_steps = config.get(
             "show_pipeline_inputs_for_steps", False
         )

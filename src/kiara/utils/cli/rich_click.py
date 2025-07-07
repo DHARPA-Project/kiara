@@ -54,7 +54,11 @@ from rich_click.rich_click import (
     USE_CLICK_SHORT_HELP,
     highlighter,
 )
-from rich_click.rich_help_rendering import _make_rich_rext, _make_command_help, _get_option_help
+from rich_click.rich_help_rendering import (
+    _get_option_help,
+    _make_command_help,
+    _make_rich_rext,
+)
 
 from kiara.api import ValueMap
 from kiara.interfaces.python_api.base_api import BaseAPI
@@ -199,7 +203,6 @@ def rich_format_operation_help(
     argument_group_options = []
 
     for param in obj.get_params(ctx):
-
         # Skip positional arguments - they don't have opts or helptext and are covered in usage
         # See https://click.palletsprojects.com/en/8.0.x/documentation/#documenting-arguments
         if type(param) is click.core.Argument and not SHOW_ARGUMENTS:
@@ -232,10 +235,8 @@ def rich_format_operation_help(
 
     # Print each option group panel
     for option_group in option_groups:
-
         options_rows = []
         for opt in option_group.get("options", []):
-
             # Get the param
             for param in obj.get_params(ctx):
                 if any([opt in param.opts]):

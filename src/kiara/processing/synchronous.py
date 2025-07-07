@@ -18,7 +18,6 @@ except Exception:
 
 
 class SynchronousProcessorConfig(ProcessorConfig):
-
     pass
 
 
@@ -31,7 +30,6 @@ class SynchronousProcessor(ModuleProcessor):
         outputs: ValueMapWritable,
         job_log: JobLog,
     ):
-
         self.job_status_updated(job_id=job_id, status=JobStatus.STARTED)
         try:
             module.process_step(inputs=inputs, outputs=outputs, job_log=job_log)
@@ -41,6 +39,5 @@ class SynchronousProcessor(ModuleProcessor):
             self.job_status_updated(job_id=job_id, status=e)
 
     def _wait_for(self, *job_ids: uuid.UUID):
-
         # jobs will always be finished, since we were waiting for them in the 'process' method
         return

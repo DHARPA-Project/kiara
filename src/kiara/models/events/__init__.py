@@ -13,7 +13,6 @@ from kiara.utils import camel_case_to_snake_case
 
 class KiaraEvent(BaseModel):
     def get_event_type(self) -> str:
-
         if hasattr(self, "event_type"):
             return self.event_type  # type: ignore
 
@@ -22,7 +21,6 @@ class KiaraEvent(BaseModel):
 
 
 class RegistryEvent(KiaraEvent):
-
     kiara_id: uuid.UUID = Field(
         description="The id of the kiara context the value was created in."
     )

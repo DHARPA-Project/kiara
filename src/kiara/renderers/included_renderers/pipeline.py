@@ -48,7 +48,6 @@ class PipelineTransformer(SourceTransformer):
         ]
 
     def validate_and_transform(self, source: Any) -> Union[Pipeline, None]:
-
         if isinstance(source, Pipeline):
             return source
         elif isinstance(source, (PipelineConfig, PipelineStructure, Mapping, str)):
@@ -75,18 +74,15 @@ class PipelineRendererHtml(BaseJinjaRenderer[Type[Pipeline], RenderInputsSchema]
         return [PipelineTransformer(kiara=self._kiara)]
 
     def retrieve_jinja_env(self) -> JinjaEnv:
-
         jinja_env = JinjaEnv(template_base="kiara")
         return jinja_env
 
     def get_template(self, render_config: RenderInputsSchema) -> Template:
-
         return self.get_jinja_env().get_template("pipeline/static_page/page.html.j2")
 
     def assemble_render_inputs(
         self, instance: Any, render_config: RenderInputsSchema
     ) -> Mapping[str, Any]:
-
         inputs = render_config.model_dump()
         inputs["pipeline"] = instance
         return inputs
@@ -109,32 +105,27 @@ class PipelineRendererMarkdown(BaseJinjaRenderer[Type[Pipeline], RenderInputsSch
         return [PipelineTransformer(kiara=self._kiara)]
 
     def retrieve_jinja_env(self) -> JinjaEnv:
-
         jinja_env = JinjaEnv(template_base="kiara")
         return jinja_env
 
     def get_template(self, render_config: RenderInputsSchema) -> Template:
-
         return self.get_jinja_env().get_template("pipeline/markdown/pipeline.md.j2")
 
     def assemble_render_inputs(
         self, instance: Any, render_config: RenderInputsSchema
     ) -> Mapping[str, Any]:
-
         inputs = render_config.model_dump()
         inputs["pipeline"] = instance
         return inputs
 
 
 class PipelineRendererPngConfig(KiaraRendererConfig):
-
     graph_type: Literal["execution", "data-flow", "data-flow-simple", "stages"] = Field(
         description="The type of graph to render."
     )
 
 
 class PipelineInputsSchema(RenderInputsSchema):
-
     stages_extraction_type: str = Field(
         description="The type of stages extraction to use.",
         default=KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
@@ -144,7 +135,6 @@ class PipelineInputsSchema(RenderInputsSchema):
 class PipelineRendererPng(
     KiaraRenderer[Pipeline, PipelineInputsSchema, bytes, PipelineRendererPngConfig]
 ):
-
     _renderer_name = "pipeline_png"
     _renderer_config_cls = PipelineRendererPngConfig  # type: ignore
     _inputs_schema = PipelineInputsSchema
@@ -157,7 +147,6 @@ class PipelineRendererPng(
     }
 
     def retrieve_doc(self) -> Union[str, None]:
-
         graph_type = self.renderer_config.graph_type
 
         if graph_type == "execution":
@@ -186,7 +175,6 @@ class PipelineRendererPng(
         return f"{self.renderer_config.graph_type}_png"
 
     def _render(self, instance: Pipeline, render_config: PipelineInputsSchema) -> bytes:
-
         graph_type = self.renderer_config.graph_type
 
         if graph_type == "execution":
@@ -224,18 +212,15 @@ class PipelineInfoRenderer(BaseJinjaRenderer[Pipeline, RenderInputsSchema]):
         return [PipelineTransformer(kiara=self._kiara)]
 
     def retrieve_jinja_env(self) -> JinjaEnv:
-
         jinja_env = JinjaEnv(template_base="kiara")
         return jinja_env
 
     def get_template(self, render_config: RenderInputsSchema) -> Template:
-
         return self.get_jinja_env().get_template("pipeline/pipeline_info.md.j2")
 
     def assemble_render_inputs(
         self, instance: Any, render_config: RenderInputsSchema
     ) -> Mapping[str, Any]:
-
         inputs: MutableMapping[str, Any] = render_config.model_dump()
         inputs["pipeline"] = instance
         return inputs
@@ -300,18 +285,15 @@ class PipelinePythonScriptRenderer(
         return [PipelineTransformer(kiara=self._kiara)]
 
     def retrieve_jinja_env(self) -> JinjaEnv:
-
         jinja_env = JinjaEnv(template_base="kiara")
         return jinja_env
 
     def get_template(self, render_config: PythonScriptRenderInputSchema) -> Template:
-
         return self.get_jinja_env().get_template("pipeline/python_script.py.j2")
 
     def assemble_render_inputs(
         self, instance: Any, render_config: PythonScriptRenderInputSchema
     ) -> Mapping[str, Any]:
-
         from kiara.utils.rendering import create_pipeline_render_inputs
 
         pipeline: Pipeline = instance

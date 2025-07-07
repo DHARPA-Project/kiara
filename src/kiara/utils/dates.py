@@ -9,7 +9,6 @@ from kiara.utils import log_message
 
 
 def get_current_time_incl_timezone() -> datetime:
-
     current_tz_name = time.tzname[0]
     try:
         current_tz = pytz.timezone(current_tz_name)
@@ -29,7 +28,6 @@ def get_earliest_time_incl_timezone() -> datetime:
 
 
 def to_human_readable_date_string(datetime: datetime) -> str:
-
     now = get_current_time_incl_timezone()
     time_gone = (now - datetime).total_seconds()
 

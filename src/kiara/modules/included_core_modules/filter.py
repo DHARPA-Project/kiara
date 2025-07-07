@@ -12,17 +12,14 @@ from kiara.utils.develop import log_dev_message
 
 
 class FilterModuleConfig(KiaraModuleConfig):
-
     filter_name: str = Field(description="The name of the filter.")
 
 
 class FilterModule(KiaraModule):
-
     _module_type_name: Union[str, None] = None
 
     @classmethod
     def get_supported_filters(cls) -> List[str]:
-
         result = []
         for attr in dir(cls):
             if len(attr) <= 8 or not attr.startswith("filter__"):
@@ -56,7 +53,6 @@ class FilterModule(KiaraModule):
 
     @classmethod
     def get_supported_type(cls) -> Dict[str, Any]:
-
         data = cls.retrieve_supported_type()
         if isinstance(data, str):
             data = {"type": data, "type_config": {}}
@@ -76,7 +72,6 @@ class FilterModule(KiaraModule):
     def create_inputs_schema(
         self,
     ) -> ValueMapSchema:
-
         filter_name = self.get_config_value("filter_name")
 
         data_type_data = self.get_supported_type()
@@ -115,7 +110,6 @@ class FilterModule(KiaraModule):
     def create_outputs_schema(
         self,
     ) -> ValueMapSchema:
-
         data_type_data = self.get_supported_type()
         data_type = data_type_data["type"]
         data_type_config = data_type_data["type_config"]
@@ -130,7 +124,6 @@ class FilterModule(KiaraModule):
         return outputs
 
     def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
-
         filter_name: str = self.get_config_value("filter_name")
         data_type_data = self.__class__.get_supported_type()
         data_type = data_type_data["type"]

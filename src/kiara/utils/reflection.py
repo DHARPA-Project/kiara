@@ -4,7 +4,6 @@ from typing import Any, Callable, Dict
 
 
 def extract_signature_metadata(func: Callable) -> Dict[str, Any]:
-
     signature = inspect.signature(func)
     result: Dict[str, Any] = {}
     for param_name, param in signature.parameters.items():

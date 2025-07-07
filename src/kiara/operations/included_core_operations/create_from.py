@@ -22,7 +22,6 @@ logger = structlog.getLogger()
 
 
 class CreateValueFromDetails(BaseOperationDetails):
-
     source_type: str = Field(description="The type of the value to be created.")
     target_type: str = Field(description="The result type.")
     optional_args: Mapping[str, ValueSchema] = Field(description="Optional arguments.")
@@ -57,7 +56,6 @@ class CreateFromOperationType(OperationType[CreateValueFromDetails]):
     _operation_type_name: ClassVar[str] = "create_from"
 
     def _calculate_op_id(self, source_type: str, target_type: str):
-
         if source_type == "any":
             operation_id = f"create.{target_type}"
         else:
@@ -68,14 +66,15 @@ class CreateFromOperationType(OperationType[CreateValueFromDetails]):
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:
-
         result = {}
         for name, module_cls in self._kiara.module_type_classes.items():
             if not hasattr(module_cls, "retrieve_supported_create_combinations"):
                 continue
 
             try:
-                supported_combinations = module_cls.retrieve_supported_create_combinations()  # type: ignore
+                supported_combinations = (
+                    module_cls.retrieve_supported_create_combinations()
+                )  # type: ignore
                 for sup_comb in supported_combinations:
                     source_type = sup_comb["source_type"]
                     target_type = sup_comb["target_type"]
@@ -127,7 +126,6 @@ class CreateFromOperationType(OperationType[CreateValueFromDetails]):
     def check_matching_operation(
         self, module: "KiaraModule"
     ) -> Union[CreateValueFromDetails, None]:
-
         if not isinstance(module, CreateFromModule):
             return None
 

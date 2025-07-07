@@ -29,7 +29,6 @@ class KiaraException(Exception):
     def get_root_details(
         cls, e: Exception, default: Union[None, str] = None
     ) -> Union[str, None]:
-
         if isinstance(e, KiaraException):
             return e.root_details()
         else:
@@ -39,7 +38,6 @@ class KiaraException(Exception):
                 return default
 
     def __init__(self, msg: str, parent: Union[Exception, None] = None, **kwargs):
-
         self._msg = msg
         self._parent: Union[Exception, None] = parent
         self._properties = kwargs
@@ -51,7 +49,6 @@ class KiaraException(Exception):
 
     @property
     def details(self) -> Union[str, None]:
-
         result: Union[None, str] = self._properties.get("details", None)
         return result
 
@@ -61,7 +58,6 @@ class KiaraException(Exception):
 
     @property
     def root_cause(self) -> Exception:
-
         current: Exception = self
         while hasattr(current, "parent") and current.parent is not None:  # type: ignore
             current = current.parent  # type: ignore
@@ -69,7 +65,6 @@ class KiaraException(Exception):
         return current
 
     def root_details(self) -> Union[str, None]:
-
         current: Exception = self
         if hasattr(self, "details"):
             current_details = self.details  # type: ignore
@@ -86,7 +81,6 @@ class KiaraException(Exception):
         return current_details
 
     def create_renderable(self, **config) -> "RenderableType":
-
         from rich.console import Group
 
         rows: List[RenderableType] = [f"[red]Error[/red]: {self._msg}"]
@@ -115,7 +109,6 @@ class InvalidCommandLineInvocation(KiaraException):
         error_code: int = 0,
         **kwargs,
     ):
-
         self.error_code: int = error_code
 
         super().__init__(msg, parent=parent, **kwargs)
@@ -123,7 +116,6 @@ class InvalidCommandLineInvocation(KiaraException):
 
 class KiaraContextException(KiaraException):
     def __init__(self, msg: str, context_id: uuid.UUID):
-
         self._context_id: uuid.UUID = context_id
         super().__init__(msg)
 
@@ -136,7 +128,6 @@ class KiaraModuleConfigException(KiaraException):
         config: Mapping[str, Any],
         parent: Union[Exception, None] = None,
     ):
-
         self._module_cls = module_cls
         self._config = config
 
@@ -157,7 +148,6 @@ class InvalidManifestException(KiaraException):
         available_module_types: Union[None, Iterable[str]] = None,
         parent: Union[Exception, None] = None,
     ):
-
         self._module_type = module_type
         self._module_config = module_config
         self._available_module_types = available_module_types
@@ -165,7 +155,6 @@ class InvalidManifestException(KiaraException):
 
     @property
     def details(self) -> Union[str, None]:
-
         if not self._available_module_types:
             return None
 
@@ -184,7 +173,6 @@ class ValueTypeConfigException(KiaraException):
         config: Mapping[str, Any],
         parent: Union[Exception, None] = None,
     ):
-
         self._type_cls = type_cls
         self._config = config
 
@@ -203,7 +191,6 @@ class DataTypeUnknownException(KiaraException):
         msg: Union[str, None] = None,
         value: Union[None, "Value"] = None,
     ):
-
         self._data_type = data_type
         if msg is None:
             msg = f"Data type '{data_type}' not registered in current context."
@@ -221,7 +208,6 @@ class DataTypeUnknownException(KiaraException):
         return self._value
 
     def create_renderable(self, **config: Any) -> "Table":
-
         from rich import box
         from rich.table import Table
 
@@ -256,7 +242,10 @@ class KiaraValueException(KiaraException):
         if not exc_msg:
             exc_msg = "no details available"
 
-        super().__init__(f"Invalid value of type '{data_type._data_type_name}': {exc_msg}", parent=parent)  # type: ignore
+        super().__init__(
+            f"Invalid value of type '{data_type._data_type_name}': {exc_msg}",
+            parent=parent,
+        )  # type: ignore
 
 
 class NoSuchExecutionTargetException(KiaraException):
@@ -266,7 +255,6 @@ class NoSuchExecutionTargetException(KiaraException):
         available_targets: Iterable[str],
         msg: Union[str, None] = None,
     ):
-
         if msg is None:
             msg = f"Specified run target '{selected_target}' is an operation, additional module configuration is not allowed."
 
@@ -319,7 +307,6 @@ class InvalidValuesException(KiaraException):
         msg: Union[None, str, Exception] = None,
         invalid_values: Union[Mapping[str, str], None] = None,
     ):
-
         if invalid_values is None:
             invalid_values = {}
 
@@ -351,7 +338,6 @@ class InvalidValuesException(KiaraException):
         return result
 
     def create_renderable(self, **config: Any) -> "Table":
-
         from rich import box
         from rich.console import RenderableType
         from rich.table import Table
@@ -362,7 +348,6 @@ class InvalidValuesException(KiaraException):
         table.add_column("[red]error[/red]")
 
         for field_name, error in self.invalid_inputs.items():
-
             row: List[RenderableType] = [field_name]
             row.append(error)
             table.add_row(*row)
@@ -377,7 +362,6 @@ class JobConfigException(KiaraException):
         manifest: "Manifest",
         inputs: Mapping[str, Any],
     ):
-
         self._manifest: Manifest = manifest
         self._inputs: Mapping[str, Any] = inputs
 
@@ -420,7 +404,6 @@ class FailedJobException(KiaraException):
     #     return None
 
     def create_renderable(self, **config: Any):
-
         from rich import box
         from rich.console import Group
         from rich.panel import Panel
@@ -440,7 +423,6 @@ class FailedJobException(KiaraException):
 
 
 class NoSuchValueException(KiaraException):
-
     pass
 
 
@@ -469,7 +451,6 @@ class NoSuchWorkflowException(KiaraException):
 
     @property
     def alias_requested(self) -> bool:
-
         if isinstance(self._workflow, str):
             try:
                 uuid.UUID(self._workflow)
@@ -487,7 +468,6 @@ class NoSuchOperationException(KiaraException):
         available_operations: Iterable[str],
         msg: Union[None, str] = None,
     ):
-
         self._operation_id: str = operation_id
         self._available_operations: Iterable[str] = available_operations
 
@@ -507,7 +487,6 @@ class NoSuchOperationException(KiaraException):
 
 class InvalidOperationException(KiaraException):
     def __init__(self, operation_details: Mapping[str, Any]):
-
         self._all_details: Mapping[str, Any] = operation_details
         msg = operation_details.get("operation_id", None)
         if msg is None:
@@ -536,7 +515,6 @@ class InvalidOperationException(KiaraException):
 
 class InvalidPipelineStepConfig(KiaraException):
     def __init__(self, msg: str, step_config: Mapping[str, Any]):
-
         self._step_config: Mapping[str, Any] = step_config
         super().__init__(msg)
 
@@ -550,7 +528,6 @@ class InvalidPipelineStepConfig(KiaraException):
 
 class InvalidPipelineConfig(KiaraException):
     def __init__(self, msg: str, config: "PipelineConfig", details: str):
-
         self._config = config
         self._details = details
         super().__init__(msg)
@@ -561,5 +538,4 @@ class InvalidPipelineConfig(KiaraException):
 
     @property
     def details(self) -> Union[str, None]:
-
         return self._details

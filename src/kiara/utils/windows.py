@@ -20,7 +20,6 @@ def fix_windows_longpath(path: Path) -> Path:
 
 
 def fix_windows_symlink(source: Path, target: Path) -> None:
-
     if not is_windows:
         target.symlink_to(source)
         return
@@ -40,7 +39,6 @@ def fix_windows_symlink(source: Path, target: Path) -> None:
 
 @lru_cache
 def check_symlink_works() -> bool:
-
     dirname = tempfile.mkdtemp()
 
     source = Path(dirname) / "source"

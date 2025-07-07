@@ -44,7 +44,6 @@ class PipelineModule(KiaraModule):
 
     @property
     def operation(self) -> "Operation":
-
         if self._operation is not None:
             return self._operation
 
@@ -56,7 +55,6 @@ class PipelineModule(KiaraModule):
     def create_inputs_schema(
         self,
     ) -> ValueMapSchema:
-
         pipeline_structure: PipelineStructure = self.config.structure
         inputs_schema = pipeline_structure.pipeline_inputs_schema
         return inputs_schema
@@ -68,7 +66,6 @@ class PipelineModule(KiaraModule):
         return pipeline_structure.pipeline_outputs_schema
 
     def process(self, inputs: ValueMap, outputs: ValueMapWritable, job_log: JobLog):
-
         pipeline_structure: PipelineStructure = self.config.structure
 
         assert outputs._kiara is not None

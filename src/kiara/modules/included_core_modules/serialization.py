@@ -25,7 +25,6 @@ from kiara.registries.models import ModelRegistry
 
 
 class SerializeConfig(KiaraModuleConfig):
-
     value_type: str = Field(
         description="The value type of the actual (unserialized) value."
     )
@@ -45,7 +44,6 @@ class SerializeConfig(KiaraModuleConfig):
 
 
 class DeserializeValueModule(KiaraModule):
-
     _config_cls = SerializeConfig
 
     @classmethod
@@ -66,7 +64,6 @@ class DeserializeValueModule(KiaraModule):
     def create_inputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
-
         value_type = self.get_config_value("value_type")
         return {
             value_type: {
@@ -83,7 +80,6 @@ class DeserializeValueModule(KiaraModule):
     def create_outputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
-
         return {
             "python_object": {
                 "type": "python_object",
@@ -95,7 +91,6 @@ class DeserializeValueModule(KiaraModule):
         return DEFAULT_IDEMPOTENT_INTERNAL_MODULE_CHARACTERISTICS
 
     def process(self, inputs: ValueMap, outputs: ValueMap) -> None:
-
         value_type = self.get_config_value("value_type")
         serialized_value = inputs.get_value_obj(value_type)
         config = inputs.get_value_obj("deserialization_config")
@@ -114,12 +109,10 @@ class DeserializeValueModule(KiaraModule):
 
 
 class UnpickleModule(DeserializeValueModule):
-
     _module_type_name = "unpickle.value"
 
     @classmethod
     def retrieve_supported_target_profiles(cls) -> Mapping[str, Type]:
-
         return {"python_object": object}
 
     @classmethod
@@ -128,11 +121,9 @@ class UnpickleModule(DeserializeValueModule):
 
     @classmethod
     def retrieve_serialized_value_type(cls) -> str:
-
         return "any"
 
     def to__python_object(self, data: SerializedData, **config: Any):
-
         try:
             import pickle5 as pickle
         except Exception:
@@ -149,7 +140,6 @@ class UnpickleModule(DeserializeValueModule):
 
 
 class LoadBytesModule(DeserializeValueModule):
-
     _module_type_name = "load.bytes"
 
     @classmethod
@@ -165,7 +155,6 @@ class LoadBytesModule(DeserializeValueModule):
         return "bytes"
 
     def to__python_object(self, data: SerializedData, **config: Any) -> bytes:
-
         chunks = data.get_serialized_data("bytes")
         assert chunks.get_number_of_chunks() == 1
         _chunks = list(chunks.get_chunks(as_files=False))
@@ -175,7 +164,6 @@ class LoadBytesModule(DeserializeValueModule):
 
 
 class LoadStringModule(DeserializeValueModule):
-
     _module_type_name = "load.string"
 
     @classmethod
@@ -191,7 +179,6 @@ class LoadStringModule(DeserializeValueModule):
         return "string"
 
     def to__python_object(self, data: SerializedData, **config: Any) -> str:
-
         chunks = data.get_serialized_data("string")
         assert chunks.get_number_of_chunks() == 1
         _chunks = list(chunks.get_chunks(as_files=False))
@@ -202,7 +189,6 @@ class LoadStringModule(DeserializeValueModule):
 
 
 class LoadInternalModel(DeserializeValueModule):
-
     _module_type_name = "load.internal_model"
 
     @classmethod
@@ -218,7 +204,6 @@ class LoadInternalModel(DeserializeValueModule):
         return "internal_model"
 
     def to__python_object(self, data: SerializedData, **config: Any) -> KiaraModel:
-
         chunks = data.get_serialized_data("data")
         assert chunks.get_number_of_chunks() == 1
         _chunks = list(chunks.get_chunks(as_files=False))
@@ -236,14 +221,12 @@ class LoadInternalModel(DeserializeValueModule):
 
 
 class DeserializeJsonConfig(KiaraModuleConfig):
-
     result_path: Union[str, None] = Field(
         description="The path of the result dictionary to return.", default="data"
     )
 
 
 class DeserializeFromJsonModule(KiaraModule):
-
     _module_type_name: str = "deserialize.from_json"
     _config_cls = DeserializeJsonConfig
 
@@ -253,7 +236,6 @@ class DeserializeFromJsonModule(KiaraModule):
     def create_inputs_schema(
         self,
     ) -> ValueMapSchema:
-
         return {
             "value": {
                 "type": "any",
@@ -264,7 +246,6 @@ class DeserializeFromJsonModule(KiaraModule):
     def create_outputs_schema(
         self,
     ) -> ValueMapSchema:
-
         return {
             "python_object": {
                 "type": "python_object",
@@ -273,7 +254,6 @@ class DeserializeFromJsonModule(KiaraModule):
         }
 
     def process(self, inputs: ValueMap, outputs: ValueMap):
-
         value: Value = inputs.get_value_obj("value")
         serialized: SerializedData = value.serialized_data
 

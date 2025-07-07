@@ -112,14 +112,12 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
 
     @property
     def instance_dag(self) -> bytes:
-
         if self._dag_cache is None:
             self._compute_cid()
         return self._dag_cache  # type: ignore
 
     @property
     def instance_size(self) -> int:
-
         if self._size_cache is None:
             self._compute_cid()
         return self._size_cache  # type: ignore
@@ -219,12 +217,10 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     # ==========================================================================================
     # model rendering related methods
     def create_panel(self, title: Union[str, None] = None, **config: Any) -> Panel:
-
         rend = self.create_renderable(**config)
         return Panel(rend, box=box.ROUNDED, title=title, title_align="left")
 
     def create_html(self, **config) -> str:
-
         template_registry = TemplateRegistry.instance()
         template = template_registry.get_template_for_model_type(
             model_type=self.model_type_id, template_format="html"
@@ -256,7 +252,6 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         return mime_bundle["text/html"]
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         from kiara.utils.output import extract_renderable
 
         include = config.get("include", None)
@@ -273,13 +268,11 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         return table
 
     def create_renderable_tree(self, **config: Any) -> Tree:
-
         show_data = config.get("show_data", False)
         tree = create_subcomponent_tree_renderable(data=self, show_data=show_data)
         return tree
 
     def create_info_data(self, **config) -> Mapping[str, Any]:
-
         include = config.get("include", None)
 
         result = {}
@@ -295,7 +288,6 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         return {"data": self.model_dump(), "schema": self.model_json_schema()}
 
     def as_json_with_schema(self, incl_model_id: bool = False) -> str:
-
         data_json = self.model_dump_json()
         schema_json = self.model_json_schema()
         schema_json_str = orjson_dumps(schema_json)
@@ -332,7 +324,6 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
         return int.from_bytes(self.instance_cid.digest, "big")
 
     def __eq__(self, other):
-
         if self.__class__ != other.__class__:
             return False
         else:
@@ -342,7 +333,6 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
             )
 
     def __repr__(self):
-
         try:
             model_id = self.instance_id
         except Exception:
@@ -359,5 +349,4 @@ class KiaraModel(ABC, BaseModel, JupyterMixin):
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
-
         yield self.create_renderable()

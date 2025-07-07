@@ -25,7 +25,6 @@ class KiArchive(KiaraModel):
         allow_write_access: bool = False,
         archive_name: Union[str, None] = None,
     ) -> "KiArchive":
-
         if isinstance(path, Path):
             path = path.as_posix()
 
@@ -44,28 +43,36 @@ class KiArchive(KiaraModel):
 
         if "metadata" in archives.keys():
             metadata_archive: Union[MetadataArchive, None] = archives["metadata"]  # type: ignore
-            metadata_archive_config: Union[Mapping[str, Any], None] = metadata_archive.config.model_dump()  # type: ignore
+            metadata_archive_config: Union[Mapping[str, Any], None] = (
+                metadata_archive.config.model_dump()
+            )  # type: ignore
         else:
             metadata_archive_config = None
             metadata_archive = None
 
         if "data" in archives.keys():
             data_archive: Union[DataArchive, None] = archives["data"]  # type: ignore
-            data_archive_config: Union[Mapping[str, Any], None] = data_archive.config.model_dump()  # type: ignore
+            data_archive_config: Union[Mapping[str, Any], None] = (
+                data_archive.config.model_dump()
+            )  # type: ignore
         else:
             data_archive_config = None
             data_archive = None
 
         if "alias" in archives.keys():
             alias_archive: Union[AliasArchive, None] = archives["alias"]  # type: ignore
-            alias_archive_config: Union[Mapping[str, Any], None] = alias_archive.config.model_dump()  # type: ignore
+            alias_archive_config: Union[Mapping[str, Any], None] = (
+                alias_archive.config.model_dump()
+            )  # type: ignore
         else:
             alias_archive_config = None
             alias_archive = None
 
         if "job_record" in archives.keys():
             jobs_archive: Union[JobArchive, None] = archives["job_record"]  # type: ignore
-            jobs_archive_config: Union[Mapping[str, Any], None] = jobs_archive.config.model_dump()  # type: ignore
+            jobs_archive_config: Union[Mapping[str, Any], None] = (
+                jobs_archive.config.model_dump()
+            )  # type: ignore
         else:
             jobs_archive_config = None
             jobs_archive = None
@@ -120,7 +127,6 @@ class KiArchive(KiaraModel):
         allow_write_access: bool = True,
         allow_existing: bool = False,
     ) -> "KiArchive":
-
         if compression is None:
             compression = DEFAULT_CHUNK_COMPRESSION
 
@@ -242,7 +248,6 @@ class KiArchive(KiaraModel):
 
     @property
     def metadata_archive(self) -> Union["MetadataArchive", None]:
-
         if self._metadata_archive:
             return self._metadata_archive
 
@@ -264,7 +269,6 @@ class KiArchive(KiaraModel):
 
     @property
     def data_archive(self) -> Union["DataArchive", None]:
-
         if self._data_archive:
             return self._data_archive
 
@@ -286,7 +290,6 @@ class KiArchive(KiaraModel):
 
     @property
     def alias_archive(self) -> Union["AliasArchive", None]:
-
         if self._alias_archive is not None:
             return self._alias_archive
 
@@ -307,7 +310,6 @@ class KiArchive(KiaraModel):
 
     @property
     def job_archive(self) -> Union["JobArchive", None]:
-
         if self._jobs_archive is not None:
             return self._jobs_archive
 

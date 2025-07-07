@@ -37,7 +37,6 @@ def create_module_preparation_table(
     module: "KiaraModule",
     **render_config: Any,
 ) -> Table:
-
     dev_config = get_dev_config()
     table = Table(show_header=False, box=box.SIMPLE)
     table.add_column("key", style="i")
@@ -100,7 +99,6 @@ def create_post_run_table(
     job_config: JobConfig,
     **render_config: Any,
 ) -> Table:
-
     dev_config = get_dev_config()
     table = Table(show_header=False, box=box.SIMPLE)
     table.add_column("key", style="i")
@@ -196,12 +194,10 @@ def create_post_run_table(
 
 
 def terminal_print_manifest(manifest: Manifest):
-
     terminal_print(manifest.create_renderable())
 
 
 def create_value_map_renderable(value_map: Mapping[str, Any], **render_config: Any):
-
     show_type = render_config.get("show_type", True)
 
     rc = dict(DEFAULT_VALUE_MAP_RENDER_CONFIG)

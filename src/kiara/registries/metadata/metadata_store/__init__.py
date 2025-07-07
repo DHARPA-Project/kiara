@@ -37,7 +37,6 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
         archive_config: ARCHIVE_CONFIG_CLS,
         force_read_only: bool = False,
     ):
-
         super().__init__(
             archive_name=archive_name,
             archive_config=archive_config,
@@ -65,7 +64,6 @@ class MetadataArchive(BaseArchive[ARCHIVE_CONFIG_CLS], Generic[ARCHIVE_CONFIG_CL
         metadata_item_result_fields: Union[Iterable[str], None] = None,
         reference_item_result_fields: Union[Iterable[str], None] = None,
     ) -> Generator[Tuple[Any, ...], None, None]:
-
         return self._find_matching_metadata_and_ref_items(
             matcher=matcher,
             metadata_item_result_fields=metadata_item_result_fields,
@@ -137,7 +135,6 @@ class MetadataStore(MetadataArchive):
         archive_config: ARCHIVE_CONFIG_CLS,
         force_read_only: bool = False,
     ):
-
         super().__init__(
             archive_name=archive_name,
             archive_config=archive_config,
@@ -181,7 +178,6 @@ class MetadataStore(MetadataArchive):
         model_schema_hash = str(item.get_schema_cid())
 
         if model_schema_hash not in self._schema_stored_cache.keys():
-
             model_item_schema = item.model_json_schema()
             model_item_schema_str = json.dumps(model_item_schema)
 
@@ -198,7 +194,6 @@ class MetadataStore(MetadataArchive):
 
         metadata_item_id = self._schema_stored_item.get(data_hash, None)
         if not metadata_item_id:
-
             metadata_item_id = self._store_metadata_item(
                 key=key,
                 value_json=data_json,
@@ -255,12 +250,10 @@ class MetadataStore(MetadataArchive):
     def store_metadata_and_ref_items(
         self, items: Generator[Tuple[Any, ...], None, None]
     ):
-
         return self._store_metadata_and_ref_items(items)
 
     @abc.abstractmethod
     def _store_metadata_and_ref_items(
         self, items: Generator[Tuple[Any, ...], None, None]
     ):
-
         pass

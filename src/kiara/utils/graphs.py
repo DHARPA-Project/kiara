@@ -26,7 +26,6 @@ if typing.TYPE_CHECKING:
 def print_ascii_graph(
     graph: nx.Graph, restart_interpreter_if_asciinet_installed: bool = False
 ):
-
     try:
         from asciinet import graph_to_ascii  # type: ignore
     except:  # noqa
@@ -66,7 +65,6 @@ def print_ascii_graph(
 
 
 def create_image(graph: nx.Graph) -> bytes:
-
     try:
         import pygraphviz as pgv  # noqa  # type: ignore
     except:  # noqa
@@ -86,7 +84,6 @@ def create_image(graph: nx.Graph) -> bytes:
 
 
 def save_image(graph: nx.Graph, path: str):
-
     with open(path, "wb") as f:
         try:
             graph_b = create_image(graph=graph)
@@ -98,7 +95,6 @@ def save_image(graph: nx.Graph, path: str):
 def graph_to_image(
     graph: nx.Graph, return_bytes: bool = False
 ) -> Union[bytes, "Image"]:
-
     b = create_image(graph=graph)
 
     if return_bytes:
@@ -122,7 +118,6 @@ def pipeline_graph_to_image(
     stages_extraction_type: str = KIARA_DEFAULT_STAGES_EXTRACTION_TYPE,
     return_bytes: bool = False,
 ):
-
     if hasattr(pipeline, "structure"):
         pipeline = pipeline.structure  # type: ignore
 

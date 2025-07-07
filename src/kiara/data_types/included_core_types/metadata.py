@@ -10,12 +10,10 @@ if TYPE_CHECKING:
 
 
 class Metadata(KiaraModel):
-
     _kiara_model_id: ClassVar = "instance.metadata"
 
 
 class MetadataTypeConfig(DataTypeConfig):
-
     pass
 
 
@@ -37,7 +35,6 @@ class MetadataValueType(KiaraModelValueBaseType[Metadata, MetadataTypeConfig]):
         return MetadataTypeConfig
 
     def serialize(self, data: Metadata) -> "SerializedData":
-
         # _data = {
         #     data.file_name: {
         #         "type": "file",
@@ -81,7 +78,6 @@ class MetadataValueType(KiaraModelValueBaseType[Metadata, MetadataTypeConfig]):
         return serialized
 
     def create_model_from_python_obj(self, data: Any) -> Metadata:
-
         # if isinstance(data, Mapping):
         #     return Metadata(**data)
         # if isinstance(data, str):

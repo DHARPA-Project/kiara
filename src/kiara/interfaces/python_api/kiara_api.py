@@ -98,8 +98,8 @@ class KiaraAPI(object):
         return api
 
     def __init__(self, kiara_config: Union["KiaraConfig", None] = None):
-
         from kiara.interfaces.python_api.base_api import BaseAPI
+
         self._api: BaseAPI = BaseAPI(kiara_config=kiara_config)
 
     def run_job(
@@ -270,13 +270,11 @@ class KiaraAPI(object):
             # all this is terribly inefficient
 
             if node[1]["node_type"] == "operation":
-
                 result = self.retrieve_module_type_info(
                     node[1]["module_type"]
                 ).model_dump()
 
             elif node[1]["node_type"] == "value":
-
                 value_id = node[0][6:]
 
                 v = self.get_value(value_id)
@@ -305,7 +303,13 @@ class KiaraAPI(object):
 
         return augmented_nodes
 
-    def print_all_jobs_info_data(self, aliases: bool = True, max_char: int = 0, show_inputs: bool=True, show_outputs: bool=True) -> None:
+    def print_all_jobs_info_data(
+        self,
+        aliases: bool = True,
+        max_char: int = 0,
+        show_inputs: bool = True,
+        show_outputs: bool = True,
+    ) -> None:
         """Prints a table with all jobs info data.
 
         If max_char > 0, the value previews will be truncated to max_char characters, unless aliases is True, in which case the aliases of a value will be shown (if available).
@@ -321,7 +325,12 @@ class KiaraAPI(object):
 
         from kiara.utils.cli import terminal_print
 
-        data = self.get_all_jobs_info_data(aliases=aliases, max_char=max_char, add_inputs_preview=show_inputs, add_outputs_preview=show_outputs)
+        data = self.get_all_jobs_info_data(
+            aliases=aliases,
+            max_char=max_char,
+            add_inputs_preview=show_inputs,
+            add_outputs_preview=show_outputs,
+        )
 
         table = Table(show_lines=True, box=box.SIMPLE)
         table.add_column("Module name")
@@ -334,7 +343,6 @@ class KiaraAPI(object):
             table.add_column("Outputs")
 
         for row_data in data:
-
             row = [
                 row_data["module_name"],
                 row_data["comment"],
@@ -368,7 +376,13 @@ class KiaraAPI(object):
 
         terminal_print(table)
 
-    def get_all_jobs_info_data(self, aliases: bool = True, max_char: int = 0, add_inputs_preview: bool=True, add_outputs_preview: bool=True) -> List[Dict[str, Any]]:
+    def get_all_jobs_info_data(
+        self,
+        aliases: bool = True,
+        max_char: int = 0,
+        add_inputs_preview: bool = True,
+        add_outputs_preview: bool = True,
+    ) -> List[Dict[str, Any]]:
         """Retrieve all job info as a list of dicts.
 
         If max_char > 0, the value previews will be truncated to max_char characters, unless aliases is True, in which case the aliases of a value will be shown (if available).
@@ -394,7 +408,6 @@ class KiaraAPI(object):
         job_infos = self.retrieve_jobs_info(allow_internal=False)
 
         def get_value_str(value_info: "ValueInfo") -> str:
-
             if not value_info._value:
                 value_obj = self.get_value(value_info.value_id)
             else:
@@ -425,7 +438,6 @@ class KiaraAPI(object):
 
         result = []
         for job_id, job_info in job_infos.item_infos.items():
-
             module_name = job_info.job_record.module_type
             module_config = job_info.job_record.module_config
             comment = self.get_job_comment(job_info.job_record.job_id)
@@ -459,7 +471,6 @@ class KiaraAPI(object):
                 result_item["inputs"] = inputs
             if add_outputs_preview:
                 result_item["outputs"] = outputs
-
 
             if module_config:
                 result_item["module_config"] = module_config

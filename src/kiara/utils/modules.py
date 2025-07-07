@@ -3,7 +3,6 @@ from typing import Any, Mapping
 
 
 def module_config_is_empty(config: Mapping[str, Any]):
-
     c = dict(config)
     d = c.pop("defaults", None)
     if d:

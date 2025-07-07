@@ -37,12 +37,10 @@ if TYPE_CHECKING:
 
 
 class BaseApiRenderInputsSchema(RenderInputsSchema):
-
     pass
 
 
 class BaseApiRendererConfig(KiaraRendererConfig):
-
     tags: Union[None, str, Iterable[str]] = Field(
         description="The tag to filter the api endpoints by (if any tag matches, the endpoint will be included.",
         default="kiara_api",
@@ -66,7 +64,6 @@ class BaseApiRenderer(
         kiara: "Kiara",
         renderer_config: Union[None, Mapping[str, Any], KiaraRendererConfig] = None,
     ):
-
         super().__init__(kiara=kiara, renderer_config=renderer_config)
 
         filters = self.renderer_config.filter
@@ -87,7 +84,6 @@ class BaseApiRenderer(
         return "base_api"
 
     def retrieve_doc(self) -> Union[str, None]:
-
         return f"Render the kiara base API to: '{self.get_target_type()}'."
 
     @abc.abstractmethod
@@ -96,7 +92,6 @@ class BaseApiRenderer(
 
 
 class BaseApiDocRenderer(BaseApiRenderer):
-
     _renderer_name = "base_api_doc_renderer"
 
     def get_target_type(self) -> str:
@@ -108,7 +103,6 @@ class BaseApiDocRenderer(BaseApiRenderer):
     def _render(
         self, instance: BaseAPI, render_config: BaseApiRenderInputsSchema
     ) -> Any:
-
         # details = self.api_endpoints.get_api_endpoint("get_value")
         details = self.api_endpoints.get_api_endpoint("retrieve_aliases_info")
 
@@ -122,7 +116,6 @@ class BaseApiDocRenderer(BaseApiRenderer):
 
 
 class BaseApiDocTextRenderer(BaseApiRenderer):
-
     _renderer_name = "base_api_doc_markdown_renderer"
 
     def get_target_type(self) -> str:
@@ -134,7 +127,6 @@ class BaseApiDocTextRenderer(BaseApiRenderer):
     def _render(
         self, instance: BaseAPI, render_config: BaseApiRenderInputsSchema
     ) -> Any:
-
         template = self._kiara.render_registry.get_template(
             "kiara_api/api_doc.md.j2", "kiara"
         )
@@ -162,7 +154,6 @@ class BaseApiDocTextRenderer(BaseApiRenderer):
 
 
 class BaseApiRenderKiaraApiInputsSchema(BaseApiRenderInputsSchema):
-
     template_file: str = Field(
         description="The file that should contain the rendered code."
     )
@@ -172,7 +163,6 @@ class BaseApiRenderKiaraApiInputsSchema(BaseApiRenderInputsSchema):
 
 
 class BaseToKiaraApiRenderer(BaseApiRenderer):
-
     _renderer_name = "base_api_kiara_api_renderer"
     _inputs_schema = BaseApiRenderKiaraApiInputsSchema  # type: ignore
     _renderer_config_cls = BaseApiRendererConfig
@@ -182,7 +172,6 @@ class BaseToKiaraApiRenderer(BaseApiRenderer):
         kiara: "Kiara",
         renderer_config: Union[None, Mapping[str, Any], KiaraRendererConfig] = None,
     ):
-
         self._api_endpoints: ApiEndpoints = ApiEndpoints(api_cls=BaseAPI)
         super().__init__(kiara=kiara, renderer_config=renderer_config)
 
@@ -195,7 +184,6 @@ class BaseToKiaraApiRenderer(BaseApiRenderer):
     def _render(
         self, instance: BaseAPI, render_config: BaseApiRenderInputsSchema
     ) -> Any:
-
         assert isinstance(render_config, BaseApiRenderKiaraApiInputsSchema)
 
         template_file = Path(render_config.template_file)
@@ -271,7 +259,6 @@ class BaseToKiaraApiRenderer(BaseApiRenderer):
 
         result = ""
         for endpoint_item in endpoint_data:
-
             rendered = endpoint_code_template.render(**endpoint_item)
             result += f"{rendered}\n"
 

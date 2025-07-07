@@ -92,7 +92,6 @@ class InputOutputObject(abc.ABC):
         allow_empty_inputs_schema: bool = False,
         allow_empty_outputs_schema: bool = False,
     ):
-
         self._alias: str = alias
         self._inputs_schema: Mapping[str, ValueSchema] = None  # type: ignore
         self._full_inputs_schema: Mapping[str, ValueSchema] = None  # type: ignore
@@ -111,7 +110,6 @@ class InputOutputObject(abc.ABC):
         return self._alias
 
     def input_required(self, input_name: str):
-
         if input_name not in self._inputs_schema.keys():
             raise Exception(
                 f"No input '{input_name}', available inputs: {', '.join(self._inputs_schema)}"
@@ -147,7 +145,6 @@ class InputOutputObject(abc.ABC):
 
     @property
     def full_inputs_schema(self) -> Mapping[str, ValueSchema]:
-
         if self._full_inputs_schema is not None:
             return self._full_inputs_schema
 
@@ -157,7 +154,6 @@ class InputOutputObject(abc.ABC):
 
     @property
     def constants(self) -> Mapping[str, ValueSchema]:
-
         if self._constants is None:
             self._create_inputs_schema()
         return self._constants  # type: ignore
@@ -178,7 +174,6 @@ class InputOutputObject(abc.ABC):
                 )
 
             if not _input_schemas_data and not self._allow_empty_inputs:
-
                 raise Exception(
                     f"Invalid inputs implementation for '{self.alias}': empty inputs schema"
                 )
@@ -208,7 +203,9 @@ class InputOutputObject(abc.ABC):
             )
 
         except Exception as e:
-            raise KiaraException(f"Can't create input schemas for instance of '{self.alias}'.", parent=e)  # type: ignore
+            raise KiaraException(
+                f"Can't create input schemas for instance of '{self.alias}'.", parent=e
+            )  # type: ignore
 
     @property
     def outputs_schema(self) -> Mapping[str, ValueSchema]:
@@ -258,7 +255,6 @@ class InputOutputObject(abc.ABC):
         return self.outputs_schema.keys()
 
     def augment_module_inputs(self, inputs: Mapping[str, Any]) -> Dict[str, Any]:
-
         augmented = augment_values(
             values=inputs, schemas=self.inputs_schema, constants=self.constants
         )
@@ -338,7 +334,6 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
     def _calculate_module_cid(
         cls, module_type_config: Union[Mapping[str, Any], KIARA_CONFIG]
     ) -> CID:
-
         if isinstance(module_type_config, Mapping):
             module_type_config = cls._resolve_module_config(**module_type_config)
 
@@ -352,7 +347,6 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
 
     @classmethod
     def _resolve_module_config(cls, **config: Any) -> KIARA_CONFIG:
-
         _config: KIARA_CONFIG = cls._config_cls(**config)
 
         return _config
@@ -404,7 +398,6 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
 
     @property
     def doc(self) -> "DocumentationMetadataModel":
-
         if self._cached_doc is None:
             if hasattr(self, "get_operation_doc"):
                 doc = self.get_operation_doc()
@@ -441,7 +434,6 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
 
     @property
     def module_instance_cid(self) -> CID:
-
         if self._module_cid is None:
             self._module_cid = self.__class__._calculate_module_cid(self._config)
         return self._module_cid
@@ -455,7 +447,6 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         return self._characteristics
 
     def _retrieve_module_characteristics(self) -> ModuleCharacteristics:
-
         return DEFAULT_IDEMPOTENT_MODULE_CHARACTERISTICS
 
     def get_config_value(self, key: str) -> Any:
@@ -580,7 +571,6 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
 
     @property
     def operation(self) -> "Operation":
-
         if self._operation is not None:
             return self._operation
 
@@ -590,5 +580,4 @@ class KiaraModule(InputOutputObject, Generic[KIARA_CONFIG]):
         return self._operation
 
     def create_renderable(self, **config) -> RenderableType:
-
         return self.operation.create_renderable(**config)

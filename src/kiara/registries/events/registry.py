@@ -24,14 +24,12 @@ class AllEvents(KiaraEvent):
 
 class EventRegistry(object):
     def __init__(self, kiara: "Kiara"):
-
         self._kiara: Kiara = kiara
         self._producers: Dict[uuid.UUID, EventProducer] = {}
         self._listeners: Dict[uuid.UUID, EventListener] = {}
         self._subscriptions: Dict[uuid.UUID, List[str]] = {}
 
     def add_producer(self, producer: EventProducer) -> Callable:
-
         producer_id = ID_REGISTRY.generate(
             obj=producer, comment="adding event producer"
         )
@@ -39,7 +37,6 @@ class EventRegistry(object):
         return func
 
     def add_listener(self, listener, *subscriptions: str):
-
         if not subscriptions:
             _subscriptions = ["*"]
         else:
@@ -54,7 +51,6 @@ class EventRegistry(object):
     def _matches_subscription(
         self, events: Iterable[KiaraEvent], subscriptions: Iterable[str]
     ) -> Iterable[KiaraEvent]:
-
         result = []
         for subscription in subscriptions:
             for event in events:
@@ -65,7 +61,6 @@ class EventRegistry(object):
         return result
 
     def handle_events(self, producer_id: uuid.UUID, *events: KiaraEvent):
-
         event_targets: Dict[uuid.UUID, List[KiaraEvent]] = {}
 
         for l_id, listener in self._listeners.items():

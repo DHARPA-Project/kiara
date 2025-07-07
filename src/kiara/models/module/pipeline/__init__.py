@@ -92,7 +92,6 @@ class PipelineStep(Manifest):
             taken_step_ids = []
 
         if not isinstance(step, PipelineStep):
-
             module_type = step.get("module_type", None)
 
             if not module_type:
@@ -107,9 +106,7 @@ class PipelineStep(Manifest):
             )
 
             if module_type not in kiara.module_type_names:
-
                 if module_type in module_map.keys():
-
                     resolved_module_type = module_map[module_type]["module_type"]
                     resolved_module_config = module_map[module_type]["module_config"]
 
@@ -133,7 +130,6 @@ class PipelineStep(Manifest):
                     kiara.operation_registry.is_initialized
                     and module_type in kiara.operation_registry.operation_ids
                 ):
-
                     op = kiara.operation_registry.operations[module_type]
                     resolved_module_type = op.module_type
                     resolved_module_config = op.module_config
@@ -223,7 +219,6 @@ class PipelineStep(Manifest):
         module_map: Union[Mapping[str, Any], None] = None,
         auto_step_ids: bool = False,
     ) -> List["PipelineStep"]:
-
         if module_map is None:
             module_map = {}
         else:
@@ -233,7 +228,6 @@ class PipelineStep(Manifest):
 
         step_ids: List[str] = []
         for step in steps:
-
             _s = cls.create_step(
                 step=step,
                 kiara=kiara,
@@ -248,7 +242,6 @@ class PipelineStep(Manifest):
     @field_validator("step_id")
     @classmethod
     def _validate_step_id(cls, v):
-
         assert isinstance(v, str)
         if "." in v:
             raise ValueError("Step ids can't contain '.' characters.")
@@ -290,7 +283,6 @@ class PipelineStep(Manifest):
     @model_validator(mode="before")
     @classmethod
     def create_step_id(cls, values):
-
         if "module_type" not in values:
             raise ValueError("No 'module_type' specified.")
         if "step_id" not in values or not values["step_id"]:
@@ -299,7 +291,6 @@ class PipelineStep(Manifest):
         return values
 
     def _retrieve_data_to_hash(self) -> Any:
-
         data = extract_data_to_hash_from_pipeline_config(self.module_config)
         return {
             "module_type": self.module_type,
@@ -315,7 +306,6 @@ class PipelineStep(Manifest):
     @field_validator("step_id")
     @classmethod
     def ensure_valid_id(cls, v):
-
         # TODO: check with regex
         if "." in v or " " in v:
             raise ValueError(
@@ -327,7 +317,6 @@ class PipelineStep(Manifest):
     @field_validator("module_config", mode="before")
     @classmethod
     def ensure_dict(cls, v):
-
         if v is None:
             v = {}
         return v
@@ -335,13 +324,11 @@ class PipelineStep(Manifest):
     @field_validator("input_links", mode="before")
     @classmethod
     def ensure_input_links_valid(cls, v):
-
         if v is None:
             v = {}
 
         result = {}
         for input_name, output in v.items():
-
             input_links = ensure_step_value_addresses(
                 default_field_name=input_name, link=output
             )
@@ -375,7 +362,6 @@ class PipelineStep(Manifest):
     def find_pipeline_outputs(
         self, pipeline: Union["Pipeline", "PipelineStructure"]
     ) -> Dict[str, PipelineOutputRef]:
-
         result = {}
         for field, field_ref in pipeline.pipeline_output_refs.items():
             if field_ref.connected_output.step_id == self.step_id:
@@ -383,14 +369,12 @@ class PipelineStep(Manifest):
         return result
 
     def __repr__(self):
-
         return f"{self.__class__.__name__}(step_id={self.step_id} module_type={self.module_type})"
 
     def __str__(self):
         return f"step: {self.step_id} (module: {self.module_type})"
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         in_panel = config.get("in_panel", None)
         display_step_id = config.get("display_step_id", True)
         if in_panel is None:
@@ -460,7 +444,6 @@ class PipelineStep(Manifest):
 
 
 def create_input_alias_map(steps: Iterable[PipelineStep]) -> Dict[str, str]:
-
     aliases: Dict[str, str] = {}
     for step in steps:
         field_names = step.module.input_names
@@ -475,7 +458,6 @@ def create_input_alias_map(steps: Iterable[PipelineStep]) -> Dict[str, str]:
 
 
 def create_output_alias_map(steps: Iterable[PipelineStep]) -> Dict[str, str]:
-
     aliases: Dict[str, str] = {}
     for step in steps:
         field_names = step.module.output_names
@@ -566,7 +548,6 @@ class PipelineConfig(KiaraModuleConfig):
         pipeline_name: Union[None, str] = None,
         # module_map: Optional[Mapping[str, Any]] = None,
     ) -> "PipelineConfig":
-
         data = get_data_from_file(path)
         _pipeline_name = data.pop("pipeline_name", None)
 
@@ -594,7 +575,6 @@ class PipelineConfig(KiaraModuleConfig):
         pipeline_name: Union[None, str] = None,
         # module_map: Optional[Mapping[str, Any]] = None,
     ) -> "PipelineConfig":
-
         data = get_data_from_string(string_data)
         _pipeline_name = data.pop("pipeline_name", None)
 
@@ -617,7 +597,6 @@ class PipelineConfig(KiaraModuleConfig):
         execution_context: Union[ExecutionContext, None] = None,
         auto_step_ids: bool = False,
     ) -> "PipelineConfig":
-
         if kiara is None:
             from kiara.context import Kiara
 
@@ -649,7 +628,6 @@ class PipelineConfig(KiaraModuleConfig):
         execution_context: Union[ExecutionContext, None] = None,
         auto_step_ids: bool = False,
     ) -> "PipelineConfig":
-
         if execution_context is None:
             execution_context = ExecutionContext()
 
@@ -708,7 +686,8 @@ class PipelineConfig(KiaraModuleConfig):
         description="A map of output aliases, with the location of the output (in the format '[step_id].[output_field]') as key, and the pipeline output field name as value.",
     )
     doc: DocumentationMetadataModel = Field(
-        default="-- n/a --", description="Documentation about what the pipeline does."  # type: ignore
+        default="-- n/a --",
+        description="Documentation about what the pipeline does.",  # type: ignore
     )
     context: Dict[str, Any] = Field(
         default_factory=dict, description="Metadata for this workflow."
@@ -723,7 +702,6 @@ class PipelineConfig(KiaraModuleConfig):
     @field_validator("steps", mode="before")
     @classmethod
     def _validate_steps(cls, v):
-
         steps = []
         for step in v:
             if not step:
@@ -738,7 +716,6 @@ class PipelineConfig(KiaraModuleConfig):
 
     @property
     def structure(self) -> "PipelineStructure":
-
         if self._structure is not None:
             return self._structure
 
@@ -748,7 +725,6 @@ class PipelineConfig(KiaraModuleConfig):
         return self._structure
 
     def get_raw_config(self) -> Dict[str, Any]:
-
         steps = []
         for step in self.steps:
             src: Dict[str, Any] = {
@@ -759,9 +735,9 @@ class PipelineConfig(KiaraModuleConfig):
             src["step_id"] = step.step_id
             for field, links in step.input_links.items():
                 for link in links:
-                    src.setdefault("input_links", {})[
-                        field
-                    ] = f"{link.step_id}.{link.value_name}"
+                    src.setdefault("input_links", {})[field] = (
+                        f"{link.step_id}.{link.value_name}"
+                    )
             steps.append(src)
 
         return {
@@ -773,7 +749,6 @@ class PipelineConfig(KiaraModuleConfig):
         }
 
     def _retrieve_data_to_hash(self) -> Any:
-
         data = {
             "defaults": self.defaults,
             "constants": self.constants,
@@ -785,7 +760,6 @@ class PipelineConfig(KiaraModuleConfig):
         return hash_data
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         table = Table(show_header=False, box=box.SIMPLE)
         table.add_column("key", style="i")
         table.add_column("value")
@@ -832,5 +806,4 @@ class PipelineConfig(KiaraModuleConfig):
 
 
 def generate_pipeline_endpoint_name(step_id: str, value_name: str):
-
     return f"{step_id}__{value_name}"

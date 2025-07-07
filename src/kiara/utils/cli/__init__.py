@@ -58,7 +58,6 @@ def terminal_print(
     empty_line_before: bool = False,
     **config: Any,
 ) -> None:
-
     from kiara.interfaces import get_console
     from kiara.utils.output import extract_renderable
 
@@ -135,7 +134,6 @@ def output_format_option(*param_decls: str) -> Callable[[FC], FC]:
 
 
 def render_json_str(model: "BaseModel"):
-
     # import orjson
 
     # TODO: pydantic refactor
@@ -150,7 +148,6 @@ def render_json_str(model: "BaseModel"):
 
 
 def render_json_schema_str(model: "BaseModel"):
-
     #
     # try:
     #     json_str = model.schema_json(option=orjson.OPT_INDENT_2)
@@ -174,7 +171,6 @@ def terminal_print_model(
     in_panel: Union[str, None] = None,
     **render_config: Any,
 ):
-
     import orjson
 
     from kiara.utils.json import orjson_dumps
@@ -288,7 +284,6 @@ def terminal_print_model(
             )
 
     elif format == OutputFormat.HTML:
-
         all_html = ""
         for model in models:
             if hasattr(model, "create_html"):
@@ -306,7 +301,6 @@ def terminal_print_model(
 def dict_from_cli_args(
     *args: str, list_keys: Union[Iterable[str], None] = None
 ) -> Dict[str, Any]:
-
     if not args:
         return {}
 
@@ -360,7 +354,6 @@ def kiara_version_option(
     """
 
     def callback(ctx: Context, param: Parameter, value: bool) -> None:
-
         from rich.table import Table
 
         if not value or ctx.resilient_parsing:
@@ -417,7 +410,6 @@ def kiara_runtime_info_option(
     """Add a ``--runtime-info`` option which immediately prints information about the current application environment."""
 
     def callback(ctx: Context, param: Parameter, value: bool) -> None:
-
         from rich.table import Table
 
         if not value or ctx.resilient_parsing:

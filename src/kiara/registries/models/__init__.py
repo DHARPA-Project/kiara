@@ -13,7 +13,6 @@ if TYPE_CHECKING:
 
 
 class ModelRegistry(object):
-
     _instance = None
 
     @classmethod
@@ -28,14 +27,12 @@ class ModelRegistry(object):
         return cls._instance
 
     def __init__(self) -> None:
-
         self._all_models: Union[KiaraModelClassesInfo, None] = None
         self._models_per_package: Dict[str, KiaraModelClassesInfo] = {}
         self._sub_models: Dict[Type[KiaraModel], KiaraModelClassesInfo] = {}
 
     @property
     def all_models(self) -> KiaraModelClassesInfo:
-
         if self._all_models is not None:
             return self._all_models
 
@@ -47,7 +44,6 @@ class ModelRegistry(object):
         kiara_model_id: str,
         required_subclass: Union[Type[KiaraModel], None] = None,
     ) -> Type[KiaraModel]:
-
         model_info = self.all_models.item_infos.get(kiara_model_id, None)
         if model_info is None:
             if required_subclass:
@@ -76,7 +72,6 @@ class ModelRegistry(object):
         return cls  # type: ignore
 
     def get_models_for_package(self, package_name: str) -> KiaraModelClassesInfo:
-
         if package_name in self._models_per_package.keys():
             return self._models_per_package[package_name]
 
@@ -86,14 +81,14 @@ class ModelRegistry(object):
                 temp[key] = info
 
         group = KiaraModelClassesInfo(
-            group_title=f"kiara_models.{package_name}", item_infos=temp  # type: ignore
+            group_title=f"kiara_models.{package_name}",
+            item_infos=temp,  # type: ignore
         )
 
         self._models_per_package[package_name] = group
         return group
 
     def get_models_of_type(self, model_type: Type[KiaraModel]) -> KiaraModelClassesInfo:
-
         if model_type in self._sub_models.keys():
             return self._sub_models[model_type]
 
@@ -111,7 +106,6 @@ class ModelRegistry(object):
         return classes
 
     def create_instance_from_json(self, json_data: str) -> KiaraModel:
-
         data = orjson.loads(json_data)
 
         model_id = data.get(KIARA_MODEL_ID_KEY, None)

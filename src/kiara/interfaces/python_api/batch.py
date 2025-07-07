@@ -38,7 +38,6 @@ class BatchOperation(BaseModel):
         path: str,
         kiara: Union["Kiara", None] = None,
     ):
-
         data = get_data_from_file(path)
         pipeline_id = data.get("pipeline_name", None)
         if pipeline_id is None:
@@ -60,7 +59,6 @@ class BatchOperation(BaseModel):
         data: Mapping[str, Any],
         kiara: Union["Kiara", None],
     ):
-
         data = dict(data)
         inputs = data.pop("inputs", {})
         save = data.pop("save", False)
@@ -103,7 +101,6 @@ class BatchOperation(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def add_alias(cls, values):
-
         if not values.get("alias", None):
             pc = values.get("pipeline_config", None)
             if not pc:
@@ -119,7 +116,6 @@ class BatchOperation(BaseModel):
     @field_validator("save_defaults", mode="before")
     @classmethod
     def validate_save(cls, save_defaults: Dict[str, List[str]], info: ValidationInfo):
-
         alias = info.data["alias"]
         pipeline_config = info.data["pipeline_config"]
         return cls.create_save_aliases(
@@ -133,7 +129,6 @@ class BatchOperation(BaseModel):
         alias: str,
         pipeline_config: PipelineConfig,
     ) -> Mapping[str, Any]:
-
         assert isinstance(pipeline_config, PipelineConfig)
 
         if save in [False, None]:
@@ -158,7 +153,6 @@ class BatchOperation(BaseModel):
         inputs: Union[Mapping[str, Any], None] = None,
         save: Union[None, bool, str, Mapping[str, Any]] = None,
     ) -> ValueMap:
-
         assert self._kiara is not None
         pipeline = Pipeline(
             structure=self.pipeline_config.structure,

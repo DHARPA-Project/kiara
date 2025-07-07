@@ -35,7 +35,6 @@ def operation(ctx):
 @output_format_option()
 @click.pass_context
 def list_types(ctx, full_doc: bool, format: str, filter: Iterable[str]):
-
     kiara_obj: Kiara = ctx.obj.kiara
 
     op_mgmt = kiara_obj.operation_registry
@@ -71,7 +70,6 @@ def list_types(ctx, full_doc: bool, format: str, filter: Iterable[str]):
 @click.pass_context
 @handle_exception()
 def explain_type(ctx, operation_type: str, format: str):
-
     kiara_api: BaseAPI = ctx.obj.base_api
 
     op_type = kiara_api.retrieve_operation_type_info(operation_type)
@@ -118,7 +116,6 @@ def list_operations(
     python_package: Union[str, None],
     format: str,
 ):
-
     kiara_obj: Kiara = ctx.obj.kiara
     api: BaseAPI = ctx.obj.base_api
 
@@ -180,7 +177,6 @@ def list_operations(
 @click.pass_context
 @handle_exception()
 def explain(ctx, operation_id: str, source: bool, format: str, module_info: bool):
-
     kiara_obj: Kiara = ctx.obj.kiara
     api: BaseAPI = ctx.obj.base_api
 

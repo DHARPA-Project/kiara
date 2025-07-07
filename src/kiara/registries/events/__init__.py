@@ -21,7 +21,6 @@ class AsyncEventListener(Protocol):
 
 
 class EventProducer(Protocol):
-
     pass
 
     # def suppoerted_event_types(self) -> Iterable[Type[KiaraEvent]]:

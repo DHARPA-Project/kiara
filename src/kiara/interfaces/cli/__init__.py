@@ -109,7 +109,6 @@ def cli(
         )
 
     if use_background_service and not context_subcommand:
-
         from kiara.zmq import (
             KiaraZmqServiceDetails,
             get_context_details,
@@ -122,7 +121,6 @@ def cli(
 
         context_details_data = get_context_details(context_name=context)
         if context_details_data is None:
-
             timeout = 120 * 1000  # 2 minutes default timeout
             api_wrap = BaseAPIWrap(config, context, pipelines, plugin)
             context_details = start_zmq_service(

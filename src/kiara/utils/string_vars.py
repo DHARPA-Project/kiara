@@ -18,7 +18,6 @@ log = structlog.getLogger()
 def create_var_regex(
     delimiter_start: Union[str, None] = None, delimiter_end: Union[str, None] = None
 ) -> Pattern:
-
     if delimiter_start is None:
         delimiter_start = "\\$\\{"
 
@@ -35,7 +34,6 @@ def find_var_names_in_obj(
     delimiter: Union[Pattern, str, None] = None,
     delimiter_end: Union[str, None] = None,
 ) -> Set[str]:
-
     if isinstance(delimiter, Pattern):
         regex = delimiter
     else:
@@ -53,7 +51,6 @@ def replace_var_names_in_obj(
     delimiter_end: Union[str, None] = None,
     ignore_missing_keys: bool = False,
 ) -> Any:
-
     if isinstance(delimiter, Pattern):
         regex = delimiter
     else:
@@ -108,7 +105,6 @@ def replace_var_names_in_string(
     ignore_missing_keys: bool = False,
 ) -> str:
     def sub(match):
-
         key = match.groups()[0]
 
         if key not in repl_dict.keys():
@@ -129,7 +125,6 @@ def replace_var_names_in_string(
 def find_regex_matches_in_obj(
     source_obj: Any, regex: Pattern, current: Union[Set[str], None] = None
 ) -> Set[str]:
-
     if current is None:
         current = set()
 
@@ -141,12 +136,10 @@ def find_regex_matches_in_obj(
             find_regex_matches_in_obj(k, regex=regex, current=current)
             find_regex_matches_in_obj(v, regex=regex, current=current)
     elif isinstance(source_obj, str):
-
         matches = regex.findall(source_obj)
         current.update(matches)
 
     elif isinstance(source_obj, Sequence):
-
         for item in source_obj:
             find_regex_matches_in_obj(item, regex=regex, current=current)
 

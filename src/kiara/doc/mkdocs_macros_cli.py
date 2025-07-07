@@ -123,7 +123,6 @@ def define_env(env):
 
             end = timer()
             if p.returncode == 0:
-
                 # result = subprocess.check_output(command, env=_run_env)
 
                 # stdout = result.decode()
@@ -137,7 +136,6 @@ def define_env(env):
                 if failed_cache_file.exists():
                     failed_cache_file.unlink()
             else:
-
                 cache_info["duration"] = end - start
 
                 if fail_ok:

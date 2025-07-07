@@ -34,7 +34,6 @@ class RenderDataOperationType(OperationType[RenderDataDetails]):
     _operation_type_name: ClassVar[str] = "render_data"
 
     def _calculate_op_id(cls, source_type: str, target_type: str):
-
         if source_type == "any":
             operation_id = f"render.as.{target_type}"
         else:
@@ -45,7 +44,6 @@ class RenderDataOperationType(OperationType[RenderDataDetails]):
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:
-
         # result = {}
         return []
         # for name, module_cls in self._kiara.module_type_classes.items():
@@ -116,7 +114,6 @@ class RenderDataOperationType(OperationType[RenderDataDetails]):
     def check_matching_operation(
         self, module: "KiaraModule"
     ) -> Union[RenderDataDetails, None]:
-
         if len(module.inputs_schema) != 2:
             return None
 
@@ -180,7 +177,6 @@ class RenderDataOperationType(OperationType[RenderDataDetails]):
         result: Dict[str, Operation] = {}
 
         for data_type in lineage:
-
             for op_id, op in self.operations.items():
                 op_details = self.retrieve_operation_details(op)
                 match = op_details.source_data_type == data_type
@@ -230,6 +226,5 @@ class RenderDataOperationType(OperationType[RenderDataDetails]):
     def get_render_operation(
         self, source_type: str, target_type: str
     ) -> Union[Operation, None]:
-
         all_ops = self.get_render_operations_for_source_type(source_type=source_type)
         return all_ops.get(target_type, None)

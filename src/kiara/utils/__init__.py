@@ -25,7 +25,6 @@ WORD_REGEX_PATTERN = re.compile("[^A-Za-z]+")
 
 
 def is_debug() -> bool:
-
     debug = os.environ.get("DEBUG", "")
     if debug.lower() == "true":
         return True
@@ -34,7 +33,6 @@ def is_debug() -> bool:
 
 
 def is_develop() -> bool:
-
     develop = os.environ.get("DEVELOP", "")
     if not develop:
         develop = os.environ.get("DEV", "")
@@ -46,14 +44,12 @@ def is_develop() -> bool:
 
 
 def get_dev_config() -> "KiaraDevSettings":
-
     from kiara.utils.develop import KIARA_DEV_SETTINGS
 
     return KIARA_DEV_SETTINGS
 
 
 def is_jupyter() -> bool:
-
     try:
         get_ipython  # type: ignore
     except NameError:
@@ -69,7 +65,6 @@ def is_jupyter() -> bool:
 
 
 def log_exception(exc: Exception):
-
     if is_debug():
         logger.error(exc)
 
@@ -98,14 +93,17 @@ def log_exception(exc: Exception):
 
         log_dev_message(
             Traceback.from_exception(
-                exc_info[0], exc_info[1], traceback=exc_info[2], show_locals=show_locals, width=console.width - 4  # type: ignore
+                exc_info[0],
+                exc_info[1],
+                traceback=exc_info[2],
+                show_locals=show_locals,
+                width=console.width - 4,  # type: ignore
             ),
             title="Exception details",
         )
 
 
 def log_message(msg: str, **data):
-
     if is_debug():
         logger.debug(msg, **data)
     # else:
@@ -144,7 +142,6 @@ def camel_case_to_snake_case(camel_text: str, repl: str = "_") -> str:
 
 
 def to_camel_case(text: str) -> str:
-
     words = WORD_REGEX_PATTERN.split(text)
     return "".join(w.title() for i, w in enumerate(words))
 
@@ -155,7 +152,6 @@ SUBCLASS_TYPE = TypeVar("SUBCLASS_TYPE")
 def _get_all_subclasses(
     cls: Type[SUBCLASS_TYPE], ignore_abstract: bool = False
 ) -> Iterable[Type[SUBCLASS_TYPE]]:
-
     result = []
     for subclass in cls.__subclasses__():
         if ignore_abstract and inspect.isabstract(subclass):
@@ -213,7 +209,6 @@ def find_free_id(
 
 
 def first_line(text: str):
-
     if "\n" in text:
         return text.split("\n")[0].strip()
     else:

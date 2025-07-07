@@ -50,7 +50,6 @@ class FrklDocumentationPlugin(BasePlugin):
         super().__init__()
 
     def on_files(self, files: Files, config: Config) -> Files:
-
         self._doc_paths = gen_pages_for_module(self.config["main_module"])
         self._doc_files = {}
 
@@ -74,7 +73,6 @@ class FrklDocumentationPlugin(BasePlugin):
         return files
 
     def on_page_content(self, html, page: Page, config: Config, files: Files):
-
         repo_url = config.get("repo_url", None)
         python_src = config.get("edit_uri", None)
 
@@ -86,7 +84,6 @@ class FrklDocumentationPlugin(BasePlugin):
         return html
 
     def on_nav(self, nav: Navigation, config: Config, files: Files):
-
         for item in nav.items:
             if item.title and "Api reference" in item.title:
                 return nav
@@ -105,5 +102,4 @@ class FrklDocumentationPlugin(BasePlugin):
         return nav
 
     def on_post_build(self, config: Config):
-
         self._dir.cleanup()

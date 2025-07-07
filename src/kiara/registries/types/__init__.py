@@ -26,7 +26,6 @@ if TYPE_CHECKING:
 
 class TypeRegistry(object):
     def __init__(self, kiara: "Kiara"):
-
         self._kiara: Kiara = kiara
         self._data_types: Union[bidict[str, Type[DataType]], None] = None
         self._data_type_metadata: Dict[str, DataTypeClassInfo] = {}
@@ -38,7 +37,6 @@ class TypeRegistry(object):
         self._type_profiles: Union[Dict[str, Mapping[str, Any]], None] = None
 
     def invalidate_types(self):
-
         self._data_types = None
         # self._registered_python_classes = None
 
@@ -47,7 +45,6 @@ class TypeRegistry(object):
         data_type_name: str,
         data_type_config: Union[Mapping[str, Any], None] = None,
     ) -> DataType:
-
         if data_type_config is None:
             data_type_config = {}
         else:
@@ -76,7 +73,6 @@ class TypeRegistry(object):
 
     @property
     def data_type_classes(self) -> bidict[str, Type[DataType]]:
-
         if self._data_types is not None:
             return self._data_types
 
@@ -97,7 +93,6 @@ class TypeRegistry(object):
 
     @property
     def data_type_profiles(self) -> Mapping[str, Mapping[str, Any]]:
-
         if self._type_profiles is None:
             self.data_type_classes
         assert self._type_profiles is not None
@@ -105,17 +100,14 @@ class TypeRegistry(object):
 
     @property
     def data_type_hierarchy(self) -> "nx.DiGraph":
-
         if self._type_hierarchy is not None:
             return self._type_hierarchy
 
         def recursive_base_find(cls: Type, current: Union[List[str], None] = None):
-
             if current is None:
                 current = []
 
             for base in cls.__bases__:
-
                 if base in self.data_type_classes.values():
                     current.append(self.data_type_classes.inverse[base])
 
@@ -128,7 +120,6 @@ class TypeRegistry(object):
             bases[name] = recursive_base_find(cls)
 
         for profile_name, details in self.data_type_profiles.items():
-
             if not details["type_config"]:
                 continue
             if profile_name in bases.keys():
@@ -156,7 +147,6 @@ class TypeRegistry(object):
         return self._type_hierarchy
 
     def get_sub_hierarchy(self, data_type: str):
-
         import networkx as nx
 
         graph: nx.DiGraph = self.data_type_hierarchy
@@ -184,7 +174,6 @@ class TypeRegistry(object):
         return self._lineages_cache[data_type_name]
 
     def get_sub_types(self, data_type_name: str) -> Set[str]:
-
         if data_type_name not in self.data_type_classes.keys():
             raise Exception(f"No data type '{data_type_name}' registered.")
 
@@ -194,7 +183,6 @@ class TypeRegistry(object):
         return desc
 
     def is_profile(self, data_type_name: str) -> bool:
-
         type_config = self.data_type_profiles.get(data_type_name, {}).get(
             "type_config", None
         )
@@ -211,7 +199,6 @@ class TypeRegistry(object):
     def get_associated_profiles(
         self, data_type_name: str
     ) -> Mapping[str, Mapping[str, Any]]:
-
         if data_type_name not in self.data_type_classes.keys():
             raise Exception(f"No data type '{data_type_name}' registered.")
 
@@ -232,7 +219,6 @@ class TypeRegistry(object):
             return list(self.data_type_classes.keys())
 
     def get_data_type_cls(self, type_name: str) -> Type[DataType]:
-
         _type_details = self.data_type_profiles.get(type_name, None)
         if _type_details is None:
             raise Exception(
@@ -251,7 +237,6 @@ class TypeRegistry(object):
     def get_data_type_instance(
         self, type_name: str, type_config: Union[None, Mapping[str, Any]] = None
     ) -> DataType:
-
         cls = self.get_data_type_cls(type_name=type_name)
         if not type_config:
             obj = cls()
@@ -260,7 +245,6 @@ class TypeRegistry(object):
         return obj
 
     def get_type_metadata(self, type_name: str) -> DataTypeClassInfo:
-
         md = self._data_type_metadata.get(type_name, None)
         if md is None:
             md = DataTypeClassInfo.create_from_type_class(
@@ -272,7 +256,6 @@ class TypeRegistry(object):
     def get_context_metadata(
         self, alias: Union[str, None] = None, only_for_package: Union[str, None] = None
     ) -> DataTypeClassesInfo:
-
         result = {}
         for type_name in self.data_type_classes.keys():
             md = self.get_type_metadata(type_name=type_name)
@@ -287,7 +270,6 @@ class TypeRegistry(object):
         return _result
 
     def is_internal_type(self, data_type_name: str) -> bool:
-
         if data_type_name not in self.data_type_profiles.keys():
             return False
 

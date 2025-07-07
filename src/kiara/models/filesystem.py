@@ -49,7 +49,6 @@ class KiaraFile(KiaraModel):
 
     @classmethod
     def from_bytes(cls, content_bytes: bytes, file_name: str):
-
         temp_f = tempfile.mkstemp()
         os.close(temp_f[0])
         with open(temp_f[1], "wb") as f:
@@ -157,7 +156,6 @@ class KiaraFile(KiaraModel):
         return "instance.file_model"
 
     def copy_file(self, target: str, new_name: Union[str, None] = None) -> "KiaraFile":
-
         target_path: str = os.path.abspath(target)
         os.makedirs(os.path.dirname(target_path), exist_ok=True)
 
@@ -171,7 +169,6 @@ class KiaraFile(KiaraModel):
 
     @property
     def file_hash(self) -> str:
-
         if self._file_hash is not None:
             return self._file_hash
 
@@ -180,7 +177,6 @@ class KiaraFile(KiaraModel):
 
     @property
     def file_cid(self) -> CID:
-
         if self._file_cid is not None:
             return self._file_cid
 
@@ -190,7 +186,6 @@ class KiaraFile(KiaraModel):
 
     @property
     def file_name_without_extension(self) -> str:
-
         return self.file_name.split(".")[0]
 
     @property
@@ -223,7 +218,6 @@ class KiaraFile(KiaraModel):
 
 
 class FolderImportConfig(BaseModel):
-
     sub_path: Union[str, None] = Field(
         description="The sub-path to import from the folder.", default=None
     )
@@ -313,7 +307,6 @@ class KiaraFileBundle(KiaraModel):
         import_config: Union[None, Mapping[str, Any], FolderImportConfig] = None,
         # import_time: Optional[datetime.datetime] = None,
     ) -> "KiaraFileBundle":
-
         if not source:
             raise ValueError("No source path provided.")
 
@@ -350,7 +343,6 @@ class KiaraFileBundle(KiaraModel):
         sum_size = 0
 
         def include_file(filename: str) -> bool:
-
             if invalid_extensions and any(
                 filename.endswith(ext) for ext in invalid_extensions
             ):
@@ -366,7 +358,6 @@ class KiaraFileBundle(KiaraModel):
             included_files[file_model.file_name] = file_model
         else:
             for root, dirnames, filenames in os.walk(abs_path, topdown=True):
-
                 if exclude_dirs:
                     dirnames[:] = [d for d in dirnames if d not in exclude_dirs]
 
@@ -375,7 +366,6 @@ class KiaraFileBundle(KiaraModel):
                     for f in filenames
                     if os.path.isfile(os.path.join(root, f)) and include_file(f)
                 ]:
-
                     full_path = os.path.join(root, filename)
                     rel_path = os.path.relpath(full_path, abs_path)
 
@@ -403,7 +393,6 @@ class KiaraFileBundle(KiaraModel):
         sum_size: Union[int, None] = None,
         # import_time: Optional[datetime.datetime] = None,
     ) -> "KiaraFileBundle":
-
         # if import_time:
         #     bundle_import_time = import_time
         # else:
@@ -468,7 +457,6 @@ class KiaraFileBundle(KiaraModel):
     #     return self.file_bundle_hash
 
     def _retrieve_data_to_hash(self) -> Any:
-
         return {
             "bundle_name": self.bundle_name,
             "included_files": {
@@ -480,7 +468,6 @@ class KiaraFileBundle(KiaraModel):
         return os.path.relpath(file.path, self.path)
 
     def read_text_file_contents(self, ignore_errors: bool = False) -> Mapping[str, str]:
-
         content_dict: Dict[str, str] = {}
 
         def read_file(rel_path: str, full_path: str):
@@ -507,7 +494,6 @@ class KiaraFileBundle(KiaraModel):
 
     @property
     def file_bundle_hash(self) -> int:
-
         # TODO: use sha256?
         if self._file_bundle_hash is not None:
             return self._file_bundle_hash
@@ -521,7 +507,6 @@ class KiaraFileBundle(KiaraModel):
     def copy_bundle(
         self, target_path: str, bundle_name: Union[str, None] = None
     ) -> "KiaraFileBundle":
-
         if target_path == self.path:
             raise Exception(f"Target path and current path are the same: {target_path}")
 
@@ -547,7 +532,6 @@ class KiaraFileBundle(KiaraModel):
         return fb
 
     def create_renderable(self, **config: Any) -> RenderableType:
-
         show_bundle_hash = config.get("show_bundle_hash", False)
 
         table = Table(show_header=False, box=box.SIMPLE)
@@ -567,7 +551,6 @@ class KiaraFileBundle(KiaraModel):
         return table
 
     def _create_content_table(self, **render_config: Any) -> Table:
-
         # show_content = render_config.get("show_content_preview", False)
         max_no_included_files = render_config.get("max_no_files", 40)
 

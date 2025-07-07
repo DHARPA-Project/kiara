@@ -65,7 +65,6 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
     def retrieve_included_operation_configs(
         self,
     ) -> Iterable[Union[Mapping, OperationConfig]]:
-
         model_registry = ModelRegistry.instance()
         all_models = model_registry.get_models_of_type(ValueMetadata)
 
@@ -77,7 +76,6 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
             if isinstance(data_types, str):
                 data_types = [data_types]
             for data_type in data_types:
-
                 config = {
                     "module_type": "value.extract_metadata",
                     "module_config": {
@@ -93,7 +91,6 @@ class ExtractMetadataOperationType(OperationType[ExtractMetadataDetails]):
     def check_matching_operation(
         self, module: "KiaraModule"
     ) -> Union[ExtractMetadataDetails, None]:
-
         if len(module.outputs_schema) != 1:
             return None
         if (

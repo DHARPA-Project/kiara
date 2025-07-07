@@ -42,7 +42,11 @@ def create_new_archive(
 
     force_read_only = not allow_write_access
 
-    archive_instance = archive_cls(archive_name=archive_name, archive_config=config, force_read_only=force_read_only)  # type: ignore
+    archive_instance = archive_cls(
+        archive_name=archive_name,
+        archive_config=config,
+        force_read_only=force_read_only,
+    )  # type: ignore
 
     if not force_read_only and set_archive_name_metadata:
         archive_instance.set_archive_metadata_value(ARCHIVE_NAME_MARKER, archive_name)
@@ -55,7 +59,6 @@ def check_external_archive(
     allow_write_access: bool = False,
     archive_name: Union[str, None] = None,
 ) -> Mapping[str, "KiaraArchive"]:
-
     from kiara.context.config import KiaraArchiveReference
     from kiara.registries import KiaraArchive
 
@@ -67,7 +70,6 @@ def check_external_archive(
     archive_instances: Dict[str, KiaraArchive] = {}
 
     for _archive in _archives:
-
         if isinstance(_archive, KiaraArchive):
             for archive_type in _archive.supported_item_types():
                 if archive_type in archive_instances.keys():

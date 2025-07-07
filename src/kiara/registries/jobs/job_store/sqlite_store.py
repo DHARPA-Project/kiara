@@ -20,7 +20,6 @@ from kiara.utils.db import create_archive_engine, delete_archive_db
 
 
 class SqliteJobArchive(JobArchive):
-
     _archive_type_name = "sqlite_job_archive"
     _config_cls = SqliteArchiveConfig
 
@@ -28,7 +27,6 @@ class SqliteJobArchive(JobArchive):
     def _load_archive_config(
         cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Dict[str, Any], None]:
-
         if allow_write_access:
             return None
 
@@ -58,7 +56,6 @@ class SqliteJobArchive(JobArchive):
         archive_config: SqliteArchiveConfig,
         force_read_only: bool = False,
     ):
-
         super().__init__(
             archive_name=archive_name,
             archive_config=archive_config,
@@ -80,7 +77,6 @@ class SqliteJobArchive(JobArchive):
     #         return uuid.UUID(row[0])
 
     def _retrieve_archive_metadata(self) -> Mapping[str, Any]:
-
         sql = text(f"SELECT key, value FROM {TABLE_NAME_ARCHIVE_METADATA}")
 
         with self.sqlite_engine.connect() as connection:
@@ -89,7 +85,6 @@ class SqliteJobArchive(JobArchive):
 
     @property
     def sqlite_path(self):
-
         if self._db_path is not None:
             return self._db_path
 
@@ -109,7 +104,6 @@ class SqliteJobArchive(JobArchive):
 
     @property
     def sqlite_engine(self) -> "Engine":
-
         if self._cached_engine is not None:
             return self._cached_engine
 
@@ -141,7 +135,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_JOB_RECORDS} (
         return self._cached_engine
 
     def _retrieve_record_for_job_hash(self, job_hash: str) -> Union[JobRecord, None]:
-
         sql = text(
             f"SELECT job_metadata FROM {TABLE_NAME_JOB_RECORDS} WHERE job_hash = :job_hash"
         )
@@ -172,7 +165,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_JOB_RECORDS} (
             return {uuid.UUID(row[0]): datetime.fromisoformat(row[1]) for row in result}
 
     def _retrieve_record_for_job_id(self, job_id: uuid.UUID) -> Union[JobRecord, None]:
-
         sql = text(
             f"SELECT job_metadata FROM {TABLE_NAME_JOB_RECORDS} WHERE job_id = :job_id"
         )
@@ -193,7 +185,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_JOB_RECORDS} (
     def _retrieve_matching_job_records(
         self, matcher: JobMatcher
     ) -> Generator[JobRecord, None, None]:
-
         query_conditions = []
         params: Dict[str, Any] = {}
         if matcher.job_ids:
@@ -251,7 +242,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_JOB_RECORDS} (
         inputs_id_hash: Union[str, None] = None,
         inputs_data_hash: Union[str, None] = None,
     ) -> Iterable[str]:
-
         if not manifest_hash:
             if not inputs_id_hash:
                 sql = text(f"SELECT job_hash FROM {TABLE_NAME_JOB_RECORDS}")
@@ -278,11 +268,9 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_JOB_RECORDS} (
             return {row[0] for row in result}
 
     def _delete_archive(self):
-
         delete_archive_db(db_path=self.sqlite_path)
 
     def get_archive_details(self) -> ArchiveDetails:
-
         all_job_records_sql = text(f"SELECT COUNT(*) FROM {TABLE_NAME_JOB_RECORDS}")
 
         with self.sqlite_engine.connect() as connection:
@@ -294,14 +282,12 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_JOB_RECORDS} (
 
 
 class SqliteJobStore(SqliteJobArchive, JobStore):
-
     _archive_type_name = "sqlite_job_store"
 
     @classmethod
     def _load_archive_config(
         cls, archive_uri: str, allow_write_access: bool, **kwargs
     ) -> Union[Dict[str, Any], None]:
-
         if not allow_write_access:
             return None
 
@@ -326,7 +312,6 @@ class SqliteJobStore(SqliteJobArchive, JobStore):
         return {"sqlite_db_path": archive_uri}
 
     def store_job_record(self, job_record: JobRecord):
-
         job_hash = job_record.job_hash
         manifest_hash = job_record.manifest_hash
         input_ids_hash = job_record.input_ids_hash

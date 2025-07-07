@@ -14,7 +14,6 @@ from kiara.models.values.value import Value
 
 
 class DataArchiveAddedEvent(RegistryEvent):
-
     event_type: Literal["data_archive_added"] = "data_archive_added"
     data_archive_id: uuid.UUID = Field(
         description="The unique id of this data archive."
@@ -31,25 +30,21 @@ class DataArchiveAddedEvent(RegistryEvent):
 
 
 class ValueCreatedEvent(RegistryEvent):
-
     event_type: Literal["value_created"] = "value_created"
     value: Value = Field(description="The value metadata.")
 
 
 class ValueRegisteredEvent(RegistryEvent):
-
     event_type: Literal["value_registered"] = "value_registered"
     value: Value = Field(description="The value metadata.")
 
 
 class ValuePreStoreEvent(RegistryEvent):
-
     event_type: Literal["value_pre_store"] = "value_pre_store"
     value: Value = Field(description="The value metadata.")
 
 
 class ValueStoredEvent(RegistryEvent):
-
     event_type: Literal["value_stored"] = "value_stored"
     value: Value = Field(description="The value metadata.")
     storing_required: bool = Field(

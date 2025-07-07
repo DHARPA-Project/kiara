@@ -30,10 +30,11 @@ def pretty_print_data(
     target_type="terminal_renderable",
     **render_config: Any,
 ) -> Any:
-
     value = kiara.data_registry.get_value(value=value_id)
 
-    op_type: PrettyPrintOperationType = kiara.operation_registry.get_operation_type("pretty_print")  # type: ignore
+    op_type: PrettyPrintOperationType = kiara.operation_registry.get_operation_type(
+        "pretty_print"
+    )  # type: ignore
 
     data_type = value.data_type_name
     if data_type not in kiara.data_type_names:
@@ -44,7 +45,6 @@ def pretty_print_data(
             source_type=data_type, target_type=target_type
         )
     except Exception as e:
-
         logger.debug(
             "error.pretty_print",
             source_type=data_type,
@@ -76,7 +76,6 @@ def pretty_print_data(
 def get_data_from_string(
     string_data: str, content_type: Union[str, None] = None
 ) -> Any:
-
     if content_type:
         assert content_type in ["json", "yaml"]
 

@@ -17,19 +17,16 @@ from kiara.modules import KiaraModule
 
 
 class CreateFromModuleConfig(KiaraModuleConfig):
-
     source_type: str = Field(description="The value type of the source value.")
     target_type: str = Field(description="The value type of the target.")
 
 
 class CreateFromModule(KiaraModule):
-
     _module_type_name: str = None  # type: ignore
     _config_cls = CreateFromModuleConfig
 
     @classmethod
     def retrieve_supported_create_combinations(cls) -> Iterable[Mapping[str, str]]:
-
         result = []
         for attr in dir(cls):
             if (
@@ -69,7 +66,6 @@ class CreateFromModule(KiaraModule):
     def create_inputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
-
         source_type = self.get_config_value("source_type")
         assert source_type not in ["target", "base_name"]
 
@@ -108,7 +104,6 @@ class CreateFromModule(KiaraModule):
     def create_outputs_schema(
         self,
     ) -> Mapping[str, Union[ValueSchema, Mapping[str, Any]]]:
-
         return {
             self.get_config_value("target_type"): {
                 "type": self.get_config_value("target_type"),
@@ -117,7 +112,6 @@ class CreateFromModule(KiaraModule):
         }
 
     def process(self, inputs: ValueMap, outputs: ValueMap, job_log: JobLog) -> None:
-
         source_type = self.get_config_value("source_type")
         target_type = self.get_config_value("target_type")
 

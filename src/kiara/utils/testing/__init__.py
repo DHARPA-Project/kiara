@@ -11,7 +11,6 @@ from kiara.utils.files import get_data_from_file
 
 
 def get_init_job(jobs_folder: Path) -> Union[None, JobDesc]:
-
     init_test_yaml = jobs_folder / f"{INIT_EXAMPLE_NAME}.yaml"
     if init_test_yaml.is_file():
         return JobDesc.create_from_file(init_test_yaml)
@@ -28,7 +27,6 @@ def get_init_job(jobs_folder: Path) -> Union[None, JobDesc]:
 
 
 def list_job_descs(jobs_folder: Union[Path, List[Path]]):
-
     if isinstance(jobs_folder, Path):
         jobs_folders = [jobs_folder]
     else:
@@ -41,7 +39,6 @@ def list_job_descs(jobs_folder: Union[Path, List[Path]]):
 
     job_names = set()
     for _jobs_folder in jobs_folders:
-
         files = (
             list(_jobs_folder.glob("*.yaml"))
             + list(_jobs_folder.glob("*.yml"))

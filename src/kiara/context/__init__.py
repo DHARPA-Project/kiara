@@ -372,7 +372,7 @@ class Kiara(object):
                 )
             elif archive_type == "metadata":
                 result["metadata"] = self.metadata_registry.register_metadata_archive(
-                    _archive_inst
+                    _archive_inst  # type: ignore
                 )  # type: ignore
                 log_message(
                     "archive.registered",
@@ -388,7 +388,7 @@ class Kiara(object):
                 )
             elif archive_type == "job_record":
                 result["job_record"] = self.job_registry.register_job_archive(
-                    _archive_inst
+                    _archive_inst  # type: ignore
                 )  # type: ignore
                 log_message(
                     "archive.registered",

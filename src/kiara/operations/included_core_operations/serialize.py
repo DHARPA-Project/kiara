@@ -98,7 +98,7 @@ class DeSerializeOperationType(OperationType[DeSerializeDetails]):
                 )
             try:
                 serialization_profile = (
-                    module_cls.retrieve_supported_serialization_profile()
+                    module_cls.retrieve_supported_serialization_profile()  # type: ignore
                 )  # type: ignore
             except TypeError:
                 raise Exception(

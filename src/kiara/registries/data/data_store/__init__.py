@@ -450,7 +450,7 @@ class BaseDataStore(DataStore):
                 # means this is already serialized in a different store
                 data_model_instance: SerializedChunkIDs = data_model  # type: ignore
                 chunks = (
-                    BytesIO(x)
+                    BytesIO(x)  # type: ignore
                     for x in data_model_instance.get_chunks(as_files=False)  # type: ignore
                 )
 

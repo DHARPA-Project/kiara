@@ -243,7 +243,7 @@ class KiaraValueException(KiaraException):
             exc_msg = "no details available"
 
         super().__init__(
-            f"Invalid value of type '{data_type._data_type_name}': {exc_msg}",
+            f"Invalid value of type '{data_type._data_type_name}': {exc_msg}",  # type: ignore
             parent=parent,
         )  # type: ignore
 

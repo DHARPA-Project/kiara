@@ -44,7 +44,7 @@ class KiArchive(KiaraModel):
         if "metadata" in archives.keys():
             metadata_archive: Union[MetadataArchive, None] = archives["metadata"]  # type: ignore
             metadata_archive_config: Union[Mapping[str, Any], None] = (
-                metadata_archive.config.model_dump()
+                metadata_archive.config.model_dump()  # type: ignore
             )  # type: ignore
         else:
             metadata_archive_config = None
@@ -53,7 +53,7 @@ class KiArchive(KiaraModel):
         if "data" in archives.keys():
             data_archive: Union[DataArchive, None] = archives["data"]  # type: ignore
             data_archive_config: Union[Mapping[str, Any], None] = (
-                data_archive.config.model_dump()
+                data_archive.config.model_dump()  # type: ignore
             )  # type: ignore
         else:
             data_archive_config = None
@@ -62,7 +62,7 @@ class KiArchive(KiaraModel):
         if "alias" in archives.keys():
             alias_archive: Union[AliasArchive, None] = archives["alias"]  # type: ignore
             alias_archive_config: Union[Mapping[str, Any], None] = (
-                alias_archive.config.model_dump()
+                alias_archive.config.model_dump()  # type: ignore
             )  # type: ignore
         else:
             alias_archive_config = None
@@ -71,7 +71,7 @@ class KiArchive(KiaraModel):
         if "job_record" in archives.keys():
             jobs_archive: Union[JobArchive, None] = archives["job_record"]  # type: ignore
             jobs_archive_config: Union[Mapping[str, Any], None] = (
-                jobs_archive.config.model_dump()
+                jobs_archive.config.model_dump()  # type: ignore
             )  # type: ignore
         else:
             jobs_archive_config = None

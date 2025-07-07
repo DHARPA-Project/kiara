@@ -29,8 +29,8 @@ def find_archive_types(
                 temp[key] = info  # type: ignore
 
         group = ArchiveTypeClassesInfo(
-            group_id=group.group_id,
-            group_title=group.group_alias,
+            group_id=group.group_id,  # type: ignore
+            group_title=group.group_title,
             item_infos=temp,  # type: ignore
         )
 

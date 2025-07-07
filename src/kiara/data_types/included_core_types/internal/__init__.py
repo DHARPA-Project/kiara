@@ -43,7 +43,7 @@ class InternalType(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> Any:
         if hasattr(self, "_pretty_print_as__string"):
-            return self._pretty_print_as_string(
+            return self._pretty_print_as_string(  # type: ignore
                 value=value, render_config=render_config
             )  # type: ignore
 
@@ -53,7 +53,7 @@ class InternalType(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> RenderableType:
         if hasattr(self, "_pretty_print_as__terminal_renderable"):
-            return self._pretty_print_as__terminal_renderable(
+            return self._pretty_print_as__terminal_renderable(  # type: ignore
                 value=value, render_config=render_config
             )  # type: ignore
 
@@ -89,7 +89,7 @@ class InternalType(
         self, value: "Value", render_config: "RenderScene", manifest: "Manifest"
     ):
         if hasattr(self, "_render_as__terminal_renderable"):
-            return self._render_as__terminal(
+            return self._render_as__terminal(  # type: ignore
                 value=value, render_config=render_config, manifest=manifest
             )  # type: ignore
         return self.render_as__string(

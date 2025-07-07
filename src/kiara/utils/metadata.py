@@ -32,7 +32,7 @@ def find_metadata_models(
         classes[model_id] = model_cls
 
     group: MetadataTypeClassesInfo = MetadataTypeClassesInfo.create_from_type_items(
-        group_title=alias, kiara=None, **classes
+        group_title=alias, kiara=None, **classes  # type: ignore
     )  # type: ignore
 
     if only_for_package:
@@ -43,7 +43,7 @@ def find_metadata_models(
 
         group = MetadataTypeClassesInfo(
             group_id=group.instance_id,
-            group_title=group.group_alias,
+            group_title=group.group_title,
             item_infos=temp,  # type: ignore
         )
 

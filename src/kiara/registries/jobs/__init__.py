@@ -560,7 +560,7 @@ class JobRegistry(object):
         if is_pipeline_step:
             pipeline_step_id: Union[None, str] = job_config.pipeline_metadata.step_id  # type: ignore
             pipeline_id: Union[None, uuid.UUID] = (
-                job_config.pipeline_metadata.pipeline_id
+                job_config.pipeline_metadata.pipeline_id  # type: ignore
             )  # type: ignore
         else:
             pipeline_step_id = None

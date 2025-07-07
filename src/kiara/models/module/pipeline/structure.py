@@ -461,7 +461,7 @@ class PipelineStructure(KiaraModel):
         execution_graph: nx.DiGraph = nx.DiGraph()
         execution_graph.add_node("__root__")
         data_flow_graph: nx.DiGraph = nx.DiGraph()
-        data_flow_graph_simple = nx.DiGraph()
+        data_flow_graph_simple: nx.DiGraph = nx.DiGraph()
         constants = {}
         structure_defaults = {}
 

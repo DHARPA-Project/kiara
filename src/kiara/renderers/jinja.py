@@ -78,7 +78,7 @@ class BaseJinjaRenderer(
             for template_name in self.get_jinja_env().list_templates():
                 msg += f" - {template_name}\n"
             raise KiaraException(
-                msg=f"Could not find requested template for renderer '{self.__class__._renderer_name}'",
+                msg=f"Could not find requested template for renderer '{self.__class__._renderer_name}'",  # type: ignore
                 details=msg,
             )  # type: ignore
 

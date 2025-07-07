@@ -1827,7 +1827,7 @@ class BaseAPI(object):
                 )
 
                 target_store: MetadataStore = (
-                    self.context.metadata_registry.get_archive(store)
+                    self.context.metadata_registry.get_archive(store)  # type: ignore
                 )  # type: ignore
                 matching_metadata = self.context.metadata_registry.find_metadata_items(
                     matcher=matcher
@@ -2753,7 +2753,7 @@ class BaseAPI(object):
             raise KiaraException(msg="Cannot retrieve renderers for target type only.")
         else:
             renderers = self.context.render_registry.retrieve_renderers_for_source_target_combination(
-                source_type=source_type,
+                source_type=source_type,  # type: ignore
                 target_type=target_type,  # type: ignore
             )
 

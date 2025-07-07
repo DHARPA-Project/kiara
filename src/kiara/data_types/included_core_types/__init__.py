@@ -103,7 +103,7 @@ class AnyType(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> str:
         if hasattr(self, "_pretty_print_as__string"):
-            return self._pretty_print_as__string(
+            return self._pretty_print_as__string(  # type: ignore
                 value=value, render_config=render_config
             )  # type: ignore
 
@@ -116,7 +116,7 @@ class AnyType(
         self, value: "Value", render_config: Mapping[str, Any]
     ) -> RenderableType:
         if hasattr(self, "_pretty_print_as__terminal_renderable"):
-            return self._pretty_print_as__terminal_renderable(
+            return self._pretty_print_as__terminal_renderable(  # type: ignore
                 value=value, render_config=render_config
             )  # type: ignore
 
@@ -156,7 +156,7 @@ class AnyType(
         self, value: "Value", render_config: Mapping[str, Any], manifest: "Manifest"
     ) -> str:
         if hasattr(self, "_render_as__string"):
-            return self._render_as__string(
+            return self._render_as__string(  # type: ignore
                 value=value, render_scene=render_config, manifest=manifest
             )  # type: ignore
         else:
@@ -177,7 +177,7 @@ class AnyType(
                 )
 
         else:
-            return self._render_as__terminal_renderable(
+            return self._render_as__terminal_renderable(  # type: ignore
                 value=value, render_config=render_config, manifest=manifest
             )  # type: ignore
 

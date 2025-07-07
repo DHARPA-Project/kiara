@@ -82,7 +82,7 @@ def validate_operation_in_terminal(
                 schema = create_table_from_base_model_cls(m._config_cls)
                 renderables.append("")
                 renderables.append(
-                    f"Module configuration schema for '[b i]{m._module_type_name}[/b i]':"
+                    f"Module configuration schema for '[b i]{m._module_type_name}[/b i]':"  # type: ignore
                 )  # type: ignore
                 renderables.append("")
                 renderables.append(schema)

@@ -1207,7 +1207,7 @@ class Workflow(object):
         self.set_inputs(**state.inputs)
         assert {
             k: v
-            for k, v in self._current_pipeline_inputs.items()
+            for k, v in self._current_pipeline_inputs.items()  # type: ignore
             if v not in [NONE_VALUE_ID, NOT_SET_VALUE_ID]
         } == {
             k: v

@@ -526,7 +526,7 @@ class AliasRegistry(object):
                         )
 
                 self.aliases[actual_alias] = alias_item  # type: ignore
-                self._cached_aliases_by_id.setdefault(value.value_id, set()).add(
+                self._cached_aliases_by_id.setdefault(value.value_id, set()).add(  # type: ignore
                     alias_item
                 )  # type: ignore
 

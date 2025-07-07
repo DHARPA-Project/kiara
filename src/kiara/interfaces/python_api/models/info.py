@@ -289,7 +289,7 @@ class InfoItemGroup(KiaraModel, Generic[INFO_ITEM_TYPE]):
 
     def _retrieve_data_to_hash(self) -> Any:
         return {
-            "type_name": self.__class__._kiara_model_name,
+            "type_name": self.__class__._kiara_model_name,  # type: ignore
             "included_types": list(self.item_infos.keys()),
         }  # type: ignore
 
@@ -417,8 +417,8 @@ class KiaraModelClassesInfo(TypeInfoItemGroup):
                     temp[key] = info
 
             group = KiaraModelClassesInfo(
-                group_id=group.instance_id,
-                group_title=group.group_alias,
+                group_id=group.instance_id,  # type: ignore
+                group_title=group.group_title,
                 item_infos=temp,  # type: ignore
             )
 
@@ -894,7 +894,7 @@ class DataTypeClassInfo(TypeInfo[Type["DataType"]]):
 
         if kiara is not None:
             qual_profiles = kiara.type_registry.get_associated_profiles(
-                type_cls._data_type_name
+                type_cls._data_type_name  # type: ignore
             )  # type: ignore
             lineage = kiara.type_registry.get_type_lineage(type_cls._data_type_name)  # type: ignore
         else:

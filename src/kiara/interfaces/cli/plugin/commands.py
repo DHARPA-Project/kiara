@@ -67,6 +67,6 @@ def create_plugin(ctx, name: str, path: Union[None, str], template: Union[None, 
 
     if not template:
         template = "gh:DHARPA-Project/kiara_plugin_template.git"
-    run_copy(template, full_path, data=data)
+    run_copy(template, full_path, data=data, unsafe=True)
 
     terminal_print(f"Created new plugin '{name}' in: {full_path}")

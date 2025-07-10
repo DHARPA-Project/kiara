@@ -36,6 +36,7 @@ dependencies = [
     "bidict>=0.21.0",
     "boltons>=21.0.0",
     "click>=8.1.0",
+    "copier>=9.7.0,<10.0.0",
     "dag-cbor>=0.3.3,<0.4.0",
     "deepdiff>=8.5.0,<9.0.0",
     "distro>=1.6.0",
@@ -125,6 +126,7 @@ pipeline = "kiara.interfaces.cli.pipeline.commands:pipeline"
 data-type = "kiara.interfaces.cli.type.commands:type_group"
 #workflow = "kiara.interfaces.cli.workflow.commands:workflow"
 render = "kiara.interfaces.cli.render.commands:render"
+plugin = "kiara.interfaces.cli.plugin.commands:plugin_group"
 
 [project.entry-points."kiara.data_types"]
 
@@ -402,6 +404,7 @@ module = [
     "black",
     "boltons.*",
     "click",
+    "copier.*",
     "deepdiff",
     "devtools",
     "distro",

@@ -204,8 +204,7 @@ default = "kiara:find_renderer_classes"
 
 [project.optional-dependencies]
 dev_utils = [
-    "kiara_plugin.core_types",
-    "kiara_plugin.develop",
+    "kiara_plugin.dev",
     "build",
     "ipython",
     "just-bin; sys_platform != 'win32'",

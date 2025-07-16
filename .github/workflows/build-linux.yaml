@@ -107,8 +107,10 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
+      - name: extract tag name
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: build docs
-        run: uv run mike deploy
+        run: uv run mike deploy --update-aliases "v${RELEASE_VERSION}" latest
 
   publish_docs:
     name: build docs

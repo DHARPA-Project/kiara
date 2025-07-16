@@ -47,10 +47,10 @@ init: clean ## initialize a development environment (to be run in virtualenv)
 	git add "*" ".*"
 
 mypy: ## run mypy
-	mypy src/kiara
+	uv run mypy src/kiara
 
 test: ## run tests quickly with the default Python
-	py.test
+	uv run py.test
 
 coverage: ## check code coverage quickly with the default Python
 	coverage run -m pytest tests
@@ -62,7 +62,7 @@ render-api:
 	kiara render --source-type base_api --target-type kiara_api item kiara_api template_file=src/kiara/interfaces/python_api/kiara_api.py target_file=src/kiara/interfaces/python_api/kiara_api.py
 
 pre-commit: ## run pre-commit on all files
-	pre-commit run --all-files
+	uv run pre-commit run --all-files
 
 doc: ## build documentation
-	mkdocs build
+	uv run mkdocs build

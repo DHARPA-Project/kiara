@@ -2,14 +2,15 @@
 
 import builtins
 
-from kiara.context import Kiara, KiaraContextInfo
+from kiara.context import KiaraContextInfo
 from kiara.doc.gen_info_pages import generate_detail_pages
+from kiara.interfaces.python_api.kiara_api import KiaraAPI
 
 pkg_name = "kiara"
 
-kiara: Kiara = Kiara.instance()
+kiara: KiaraAPI = KiaraAPI.instance()
 context_info = KiaraContextInfo.create_from_kiara_instance(
-    kiara=kiara, package_filter=pkg_name
+    kiara=kiara._api.context, package_filter=pkg_name
 )
 
 generate_detail_pages(

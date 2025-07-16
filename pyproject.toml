@@ -9,7 +9,7 @@ build-backend = "hatchling.build"
 name = "kiara"
 description = "Data-centric workflow orchestration."
 authors = [
-    { name = "Markus Binsteiner", email = "markus@frkl.io" }
+    { name = "Markus Binsteiner", email = "markus@frkl.dev" }
 ]
 readme = "README.md"
 requires-python = ">=3.9"
@@ -232,7 +232,14 @@ dev_utils = [
     "types-networkx",
     "sqlalchemy-stubs",
     "watchdog",
-    "wheel"
+    "wheel",
+    "mkdocs-material",
+    "mkdocstrings[python]",
+    "mkdocs-gen-files",
+    "mkdocs-literate-nav",
+    "mkdocs-macros-plugin",
+    "mkdocs-section-index",
+    "mike"
 ]
 
 jupyter = [

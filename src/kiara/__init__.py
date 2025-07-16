@@ -76,7 +76,7 @@ try:
         flush: bool = False,
     ):
         objs = (
-            ["[green]----------------------------------------------[/green]"]  # noqa
+            ["[green]----------------------------------------------[/green]"]
             + list(objects)
             + ["[green]----------------------------------------------[/green]"]
         )
@@ -100,7 +100,7 @@ if is_develop() or is_debug():
 
 __author__ = """Markus Binsteiner"""
 """The author of this package."""
-__email__ = "markus@frkl.io"
+__email__ = "markus@frkl.dev"
 """Email address of the author."""
 
 

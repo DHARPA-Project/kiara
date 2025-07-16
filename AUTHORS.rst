@@ -2,4 +2,4 @@
 Contributors
 ============
 
-* Markus Binsteiner <markus@frkl.io>
+* Markus Binsteiner <markus@frkl.dev>

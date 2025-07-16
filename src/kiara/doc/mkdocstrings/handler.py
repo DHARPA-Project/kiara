@@ -6,7 +6,7 @@
 
 import typing
 
-from mkdocstrings.handlers.base import BaseHandler, CollectionError, CollectorItem
+from mkdocstrings import BaseHandler, CollectionError, CollectorItem
 
 __all__ = ["get_handler"]
 
@@ -54,6 +54,8 @@ class KiaraHandler(BaseHandler):
         -------
             The collected object-tree.
         """
+        import builtins
+
         tokens = identifier.split(".")
 
         if tokens[0] != "kiara_info":
@@ -64,14 +66,15 @@ class KiaraHandler(BaseHandler):
         if not item_id:
             raise CollectionError(f"Invalid id: {identifier}")
 
-        ctx: KiaraContextInfo = builtins.plugin_package_context_info  # type: ignore  # noqa
+        ctx: KiaraContextInfo = builtins.plugin_package_context_info  # type: ignore
         try:
             item: ItemInfo = ctx.get_info(item_type=item_type, item_id=item_id)
         except Exception as e:
             log_exception(e)
             raise CollectionError(f"Invalid id: {identifier}")
 
-        return {"obj": item, "identifier": identifier}
+        result = {"obj": item, "identifier": identifier}
+        return result
 
     def get_anchors(self, data: CollectorItem) -> typing.Tuple[str, ...]:
         if data is None:
@@ -91,8 +94,11 @@ class KiaraHandler(BaseHandler):
 
 def get_handler(
     theme: str,
-    custom_templates: typing.Union[str, None] = None,
-    config_file_path: typing.Union[None, str] = None,
+    custom_templates: typing.Union[str, None],
+    mdx: typing.List[str],
+    mdx_config: typing.Dict,
+    handler_config: typing.Dict,
+    tool_config: typing.Dict,
 ) -> KiaraHandler:
     """
     Simply return an instance of `PythonHandler`.

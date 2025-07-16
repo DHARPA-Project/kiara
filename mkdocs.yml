@@ -64,7 +64,7 @@ plugins:
      - kiara.doc.mkdocs_macros_kiara
 - gen-files:
     scripts:
-#      - scripts/documentation/gen_info_pages.py
+      - scripts/documentation/gen_info_pages.py
       - scripts/documentation/gen_api_doc_pages.py
 - literate-nav:
     nav_file: SUMMARY.md

@@ -20,29 +20,25 @@ jobs:
       matrix:
         python_version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
-      - name: "Set up Python ${{ matrix.python_version }}"
-        uses: actions/setup-python@v5
-        with:
-          python-version: "${{ matrix.python_version }}"
-      - name: pip cache
-        id: pip-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python_version }}
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: install core_types plugin
-        run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.core_types@develop
-      - name: install tabular plugin
-        run: pip install -U git+https://github.com/DHARPA-project/kiara_plugin.tabular@develop
-      - name: install kiara
-        run: pip install -U  .[dev_utils]
+      - name: install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: create lockfile
+        run: uv lock --python ${{ matrix.python_version }}
+      - name: add core_types plugin
+        run: uv add git+https://github.com/DHARPA-project/kiara_plugin.core_types@develop
+      - name: add tabular plugin
+        run: uv add git+https://github.com/DHARPA-project/kiara_plugin.tabular@develop
+      - name: install the project
+        run: uv sync --locked --dev --python ${{ matrix.python_version }}
       - name: display installed kiara and module package versions
-        run: pip list | grep kiara
+        run: uv pip list | grep kiara
       - name: test with pytest
-        run: pytest --cov-report=xml --cov=kiara tests
+        run: uv run pytest --cov-report=xml --cov=kiara tests
       - name: Coveralls
         uses: coverallsapp/github-action@v2
         with:
@@ -69,21 +65,19 @@ jobs:
       matrix:
         python_version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
-      - name: "Set up Python ${{ matrix.python_version }}"
-        uses: actions/setup-python@v5
-        with:
-          python-version: "${{ matrix.python_version }}"
-      - name: pip cache
-        id: pip-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ matrix.python_version }}
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: install kiara
-        run: pip install -U  .[dev_utils]
+      - name: install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: install Python
+        run: uv python install ${{ matrix.python_version }}
+      - name: create lockfile
+        run: uv lock --python ${{ matrix.python_version }}
+      - name: install the project
+        run: uv sync --locked --dev --python ${{ matrix.python_version }}
       - name: Test with mypy
         run: make mypy
 
@@ -91,8 +85,55 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: lint sourcecode
-        uses: chartboost/ruff-action@v1
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/ruff-action@v3
+        with:
+          version: "latest"
+          args: "--version"
+      - name: Run ruff check
+        run: ruff check src/
+      - name: Run ruff check
+        run: ruff format --check --diff src/
+
+  build_docs:
+    name: build docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: build docs
+        run: uv run mike deploy
+
+  publish_docs:
+    name: build docs
+    runs-on: ubuntu-latest
+    needs:
+      - build_docs
+      - test-linux
+      - mypy-linux
+      - linting-linux
+      - build_conda_package
+      - build_python_package
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: extract tag name
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: build & publish docs
+        run: uv run mike deploy --push --update-aliases "v${RELEASE_VERSION}" latest
+      - name: update latest alias in docs
+        run: uv run mike set-default --push latest
 
   build_python_package:
     name: build python package
@@ -126,6 +167,7 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
     runs-on: ubuntu-latest
     needs:
+      - build_docs
       - test-linux
       - mypy-linux
       - linting-linux
@@ -174,6 +216,7 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
     runs-on: ubuntu-latest
     needs:
+      - build_docs
       - test-linux
       - mypy-linux
       - linting-linux
@@ -206,6 +249,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ startsWith(github.ref, 'refs/tags') }}
     needs:
+      - build_docs
       - test-linux
       - mypy-linux
       - linting-linux

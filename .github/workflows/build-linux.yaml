@@ -97,7 +97,7 @@ jobs:
         run: ruff format --check --diff src/
 
   build_docs:
-    name: build docs
+    name: build latest docs
     runs-on: ubuntu-latest
     steps:
       - run: git config --global user.email "markus@frkl.dev"

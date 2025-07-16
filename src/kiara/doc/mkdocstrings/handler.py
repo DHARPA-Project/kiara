@@ -30,8 +30,8 @@ class KiaraHandler(BaseHandler):
             of the `objects.inv` Sphinx inventory file.
     """
 
-    domain: str = "kiara"
-    enable_inventory: bool = True
+    domain: str = "kiara"  # type: ignore
+    enable_inventory: bool = True  # type: ignore
 
     def collect(
         self, identifier: str, config: typing.MutableMapping[str, typing.Any]

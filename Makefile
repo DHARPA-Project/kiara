@@ -50,7 +50,7 @@ mypy: ## run mypy
 	uv run mypy src/kiara
 
 test: ## run tests quickly with the default Python
-	uv run py.test
+	uv run pytest tests
 
 coverage: ## check code coverage quickly with the default Python
 	coverage run -m pytest tests

@@ -112,7 +112,7 @@ jobs:
       - name: extract tag name
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: build docs
-        run: uv run mike deploy --update-aliases "v${RELEASE_VERSION}" latest
+        run: uv run mike deploy --push latest
 
   publish_docs:
     name: build & publish docs
@@ -138,9 +138,9 @@ jobs:
       - name: extract tag name
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: build & publish docs
-        run: uv run mike deploy --push --update-aliases "v${RELEASE_VERSION}" latest
+        run: uv run mike deploy --push --update-aliases "v${RELEASE_VERSION}" stable
       - name: update latest alias in docs
-        run: uv run mike set-default --push latest
+        run: uv run mike set-default --push stable
 
   build_python_package:
     name: build python package

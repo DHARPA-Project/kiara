@@ -100,6 +100,8 @@ jobs:
     name: build docs
     runs-on: ubuntu-latest
     steps:
+      - run: git config --global user.email "markus@frkl.dev"
+      - run: git config --global user.name "Markus Binsteiner"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -123,6 +125,8 @@ jobs:
       - build_conda_package
       - build_python_package
     steps:
+      - run: git config --global user.email "markus@frkl.dev"
+      - run: git config --global user.name "Markus Binsteiner"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0

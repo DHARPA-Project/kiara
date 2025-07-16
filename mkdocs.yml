@@ -1,5 +1,5 @@
-site_name: Kiara
-site_description: Documentation for the Kiara project
+site_name: kiara
+site_description: Documentation for the 'kiara' project
 site_url: https://dharpa.org/kiara
 repo_url: https://github.com/DHARPA-Project/kiara
 site_author: Markus Binsteiner
@@ -9,12 +9,13 @@ site_dir: build/site
 
 theme:
   name: material
+  custom_dir: docs/.overrides
   features:
     - navigation.instant
     - navigation.tracking
 
 extra_css:
-  - stylesheets/extra.css
+  - docs/.stylesheets/extra.css
 
 markdown_extensions:
 - attr_list
@@ -33,6 +34,8 @@ markdown_extensions:
 extra:
   version:
     provider: mike
+    default: stable
+    alias: true
 
 plugins:
 - search
@@ -54,9 +57,6 @@ plugins:
           filters:
             - "!^_"  # exlude all members starting with _
             - "^_config_cls"
-
-    watch:
-      - "src"
     enable_inventory: true
 - macros:
    modules:
@@ -69,3 +69,11 @@ plugins:
 - literate-nav:
     nav_file: SUMMARY.md
 - section-index
+- mike:
+    alias_type: symlink
+    redirect_template: null
+    deploy_prefix: ''
+    canonical_version: null
+    version_selector: true
+    css_dir: css
+    javascript_dir: js

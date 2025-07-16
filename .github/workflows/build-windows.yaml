@@ -18,12 +18,15 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-      - name: install Python
-        run: uv python install ${{ matrix.python_version }}
       - name: create lockfile
-        if: hashFiles('uv.lock') == ''
         run: uv lock --python ${{ matrix.python_version }}
+      - name: add core_types plugin
+        run: uv add git+https://github.com/DHARPA-project/kiara_plugin.core_types@develop
+      - name: add tabular plugin
+        run: uv add git+https://github.com/DHARPA-project/kiara_plugin.tabular@develop
       - name: install the project
         run: uv sync --locked --dev --python ${{ matrix.python_version }}
+      - name: display installed kiara and module package versions
+        run: uv pip list | grep kiara
       - name: Test with pytest
         run: make test

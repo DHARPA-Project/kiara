@@ -70,10 +70,10 @@ plugins:
     nav_file: SUMMARY.md
 - section-index
 - mike:
-    alias_type: symlink
+    alias_type: copy
     redirect_template: null
     deploy_prefix: ''
-    canonical_version: null
+    canonical_version: 'stable'
     version_selector: true
     css_dir: css
     javascript_dir: js

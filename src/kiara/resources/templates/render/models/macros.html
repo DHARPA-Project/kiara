@@ -48,3 +48,82 @@
     </tbody>
 </table>
 {% endmacro %}
+
+{% macro render_authors(authors) %}
+{% for author in authors.authors %}
+<li>
+    {{ author.name }}{% if author.email %} &lt;{{ author.email }}&gt;{% endif %}
+</li>
+{% endfor %}
+{% endmacro %}
+
+{% macro render_documentation(documentation) %}
+{{ documentation.full_doc | markdown | safe }}
+{% endmacro %}
+
+{% macro render_context(context) %}
+<table style="width: 100%; border-collapse: collapse;">
+    <tr style="background-color: #f2f2f2;">
+        <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">Tags</td>
+        <td style="padding: 8px; border: 1px solid #ddd;"><i>{{ context.tags | join(", ") }}</i></td>
+    </tr>
+    <tr>
+        <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">Labels</td>
+        <td style="padding: 8px; border: 1px solid #ddd;"><i>{{ context.labels | join(", ") }}</i></td>
+    </tr>
+    <tr>
+        <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">References</td>
+        <td style="padding: 8px; border: 1px solid #ddd;">
+            <ul>
+                {% for ref_type, link in context.references.items() %}
+                <li><a href="{{ link.url }}">{{ ref_type }}</a></li>
+                {% endfor %}
+            </ul>
+        </td>
+    </tr>
+</table>
+{% endmacro %}
+
+{% macro render_module_config(module_config) %}
+<table>
+    <tr>
+<table style="width: 100%; border-collapse: collapse;">
+    <thead>
+        <tr style="background-color: #f2f2f2;">
+            <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Field</th>
+            <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Type</th>
+            <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Description</th>
+            <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Required</th>
+            <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Default</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for field_name, field_info in module_config.config_values.items() %}
+        <tr>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ field_name }}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ field_info.type }}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ field_info.description }}</td>
+            <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">{% if field_info.required %}✓{% endif %}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">{{ field_info.default }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endmacro %}
+
+{% macro render_python_class(python_class) %}
+{{ python_class.full_name }}
+{% endmacro %}
+
+{% macro render_python_class_table(python_class) %}
+    <table>
+        <tr>
+            <td>Class name</td>
+            <td>{{ python_class.python_class_name }}</td>
+        </tr>
+        <tr>
+            <td>Module name</td>
+            <td>{{ python_class.python_module_name }}</td>
+        </tr>
+    </table>
+{% endmacro %}

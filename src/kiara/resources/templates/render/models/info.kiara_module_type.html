@@ -1,0 +1,43 @@
+{% import 'kiara/render/models/macros.html' as model_macros %}
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    td {
+        padding: 8px;
+        border: 1px solid #ddd;
+        vertical-align: top;
+    }
+    td:first-child {
+        width: 20%; /* Fixed width for the first column */
+        font-weight: bold;
+    }
+    td:last-child {
+        width: 80%; /* Let the second column take the remaining space */
+    }
+</style>
+
+<table>
+    <tr>
+        <td>Documentation</td>
+        <td>{{ model_macros.render_documentation(instance.documentation) }}</td>
+    </tr>
+    <tr>
+        <td>Author(s)</td>
+        <td>{{ model_macros.render_authors(authors=instance.authors) }}</td>
+    </tr>
+    <tr>
+        <td>Context</td>
+        <td>{{ model_macros.render_context(context=instance.context) }}</td>
+    </tr>
+    <tr>
+        <td>Python class</td>
+        <td>{{ model_macros.render_python_class(python_class=instance.python_class) }}</td>
+    </tr>
+    <tr>
+        <td>Module config</td>
+        <td>{{ model_macros.render_module_config(module_config=instance.module_config) }}</td>
+    </tr>
+</table>

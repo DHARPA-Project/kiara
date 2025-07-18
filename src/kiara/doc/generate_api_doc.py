@@ -73,3 +73,56 @@ def get_source_tree(module: typing.Union[str, ModuleType]):
         }
 
     return src
+
+
+def gen_api_doc_pages(base_path: typing.Union[str, Path]):
+    """Generate the mkdocs code reference pages and navigation."""
+
+    import mkdocs_gen_files
+
+    if isinstance(base_path, str):
+        base_path = Path(base_path)
+
+    nav = mkdocs_gen_files.Nav()
+
+    for path in sorted(base_path.rglob("*.py")):
+        if f"{os.path.sep}resources{os.path.sep}" in path.as_posix():
+            continue
+        module_path = path.relative_to(base_path).with_suffix("")
+        doc_path = path.relative_to(base_path).with_suffix(".md")
+        full_doc_path = Path("reference", doc_path)
+
+        parts = list(module_path.parts)
+
+        if parts[-1] == "__init__":
+            parts = parts[:-1]
+        elif parts[-1] == "__main__":
+            continue
+
+        nav[parts] = doc_path
+
+        with mkdocs_gen_files.open(full_doc_path, "w") as fd:
+            ident = ".".join(parts)
+            print("::: " + ident, file=fd)
+
+        mkdocs_gen_files.set_edit_path(full_doc_path, path)
+
+    with mkdocs_gen_files.open("reference/SUMMARY.md", "w") as nav_file:
+        nav_file.writelines(nav.build_literate_nav())
+
+
+def create_info_pages(pkg_name: str):
+    import builtins
+
+    from kiara.context import KiaraContextInfo
+    from kiara.doc.gen_info_pages import generate_detail_pages
+    from kiara.interfaces.python_api.kiara_api import KiaraAPI
+
+    kiara: KiaraAPI = KiaraAPI.instance()
+    context_info = KiaraContextInfo.create_from_kiara_instance(
+        kiara=kiara._api.context, package_filter=pkg_name
+    )
+
+    generate_detail_pages(context_info=context_info)
+
+    builtins.plugin_package_context_info = context_info  # type: ignore

@@ -1,0 +1,14 @@
+---
+modules:
+
+- type: tokenize_corpus
+
+- type: lowercase_corpus
+  input_map:
+    tokenized_text: tokenize_corpus.tokenized_text
+
+- type: remove_stopwords_from_corpus
+  input_map:
+    tokenized_text: lowercase_corpus.tokenized_text
+  workflow_outputs:
+    tokenized_text: processed_text_corpus

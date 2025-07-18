@@ -99,7 +99,7 @@ def gen_api_doc_pages(base_path: typing.Union[str, Path]):
         elif parts[-1] == "__main__":
             continue
 
-        nav[parts] = doc_path
+        nav[parts] = doc_path  # type: ignore
 
         with mkdocs_gen_files.open(full_doc_path, "w") as fd:
             ident = ".".join(parts)

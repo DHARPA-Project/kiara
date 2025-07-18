@@ -265,7 +265,7 @@ fallback-version = "0.0.0"
 version-file = "src/kiara/version.txt"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/kiara"]
+packages = ["src/kiara", "src/mkdocstrings_handlers"]
 
 [tool.pytest.ini_options]
 pythonpath = [

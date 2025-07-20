@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 0.5.16-0.5.23
+## Version 0.5.16-0.5.24
 
 - bugfixes, dependency updates, template, CI improvements
 

@@ -8,6 +8,7 @@
 import inspect
 import os
 import re
+import sys
 from typing import TYPE_CHECKING, Dict, Iterable, List, Type, TypeVar
 
 import structlog
@@ -41,6 +42,12 @@ def is_develop() -> bool:
         return True
 
     return False
+
+
+def is_emscripten() -> bool:
+    """Check if we're running in Emscripten / Pyodide environment."""
+
+    return sys.platform == "emscripten"
 
 
 def get_dev_config() -> "KiaraDevSettings":

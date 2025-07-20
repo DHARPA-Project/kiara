@@ -22,6 +22,7 @@ from typing import (
 )
 
 from kiara.exceptions import KiaraException
+from kiara.utils import is_emscripten
 from kiara.utils.cli import terminal_print
 
 if TYPE_CHECKING:
@@ -332,9 +333,10 @@ class BaseAPIWrap(object):
                 )
                 os.execvp(sys.executable, (sys.executable,) + tuple(sys.argv))  # noqa
 
-        import fasteners
+        if not is_emscripten():
+            import fasteners
 
-        fasteners.InterProcessReaderWriterLock(self.lock_file(context))
+            fasteners.InterProcessReaderWriterLock(self.lock_file(context))
 
         api.set_active_context(context, create=True)
 

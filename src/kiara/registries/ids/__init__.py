@@ -6,14 +6,16 @@ import os
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
 import uuid
-from typing import Any, Dict, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, Type, Union
 from weakref import WeakValueDictionary
 
 import structlog
-from fasteners import InterProcessLock
 
 from kiara.defaults import KIARA_MAIN_CONTEXT_LOCKS_PATH
-from kiara.utils import is_debug, is_develop
+from kiara.utils import is_debug, is_develop, is_emscripten
+
+if TYPE_CHECKING:
+    from fasteners import InterProcessLock
 
 logger = structlog.getLogger()
 
@@ -30,26 +32,32 @@ class IdRegistry(object):
         self._process_context_locks: Dict[uuid.UUID, InterProcessLock] = {}
 
     def lock_context(self, context_id: uuid.UUID) -> bool:
-        if context_id not in self._process_context_locks.keys():
-            lock = InterProcessLock(
-                os.path.join(
-                    KIARA_MAIN_CONTEXT_LOCKS_PATH, f"context_{context_id}.lock"
-                )
-            )
-            self._process_context_locks[context_id] = lock
-        else:
-            lock = self._process_context_locks[context_id]
+        if not is_emscripten():
+            from fasteners import InterProcessLock
 
-        aquired: bool = lock.acquire(blocking=False)
-        return aquired
+            if context_id not in self._process_context_locks.keys():
+                lock = InterProcessLock(
+                    os.path.join(
+                        KIARA_MAIN_CONTEXT_LOCKS_PATH, f"context_{context_id}.lock"
+                    )
+                )
+                self._process_context_locks[context_id] = lock
+            else:
+                lock = self._process_context_locks[context_id]
+
+            aquired: bool = lock.acquire(blocking=False)
+            return aquired
+        else:
+            return True
 
     def unlock_context(self, context_id: uuid.UUID):
-        if context_id not in self._process_context_locks.keys():
-            return
+        if not is_emscripten():
+            if context_id not in self._process_context_locks.keys():
+                return
 
-        lock = self._process_context_locks[context_id]
-        if lock.acquired:
-            lock.release()
+            lock = self._process_context_locks[context_id]
+            if lock.acquired:
+                lock.release()
 
     def generate(
         self,

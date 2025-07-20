@@ -535,7 +535,6 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
     ):
         import lzma
 
-        import lz4.frame
         from zstandard import ZstdCompressor
 
         cctx = ZstdCompressor()
@@ -568,6 +567,13 @@ class SqliteDataStore(SqliteDataArchive[SqliteDataStoreConfig], BaseDataStore):
         elif compression_type == CHUNK_COMPRESSION_TYPE.LZMA:
             final_bytes = lzma.compress(bytes_io.getvalue())
         elif compression_type == CHUNK_COMPRESSION_TYPE.LZ4:
+            try:
+                import lz4.frame
+            except ImportError:
+                raise ImportError(
+                    "Can't compress chunk, lz4.frame is not installed. Please add the 'lz4' package to your environment."
+                )
+
             bytes_io.seek(0)
             data = bytes_io.read()
             final_bytes = lz4.frame.compress(data)

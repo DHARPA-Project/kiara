@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.5.16-0.5.23
+
+- bugfixes, dependency updates, template, CI improvements
+
 ## Version 0.5.16
 
 - new cli subcommand: `kiara plugin create`

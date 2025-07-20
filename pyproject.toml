@@ -49,7 +49,6 @@ dependencies = [
     "humanfriendly>=10.0",
     "importlib-metadata>=3.0.0.0",
     "jinja2>=3.0.1",
-    "lz4>=4.3.0",
     "patool>=1.12",
     "pip>=25.0.0",
     "mistune>=3.0.0",
@@ -250,6 +249,10 @@ jupyter = [
 marimo = [
     "marimo",
     "altair>=5.5.0,<6.0.0",
+]
+
+lz4 = [
+    "lz4>=4.3.0",
 ]
 
 [project.urls]

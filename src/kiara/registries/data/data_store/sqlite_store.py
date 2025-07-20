@@ -320,57 +320,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
             result_destinies = {x[0]: value_id for x in result}
             return result_destinies
 
-    # def retrieve_chunk(
-    #     self,
-    #     chunk_id: str,
-    #     as_file: Union[bool, str, None] = None,
-    #     symlink_ok: bool = True,
-    # ) -> Union[bytes, str]:
-    #
-    #     import lzma
-    #
-    #     import lz4.frame
-    #     from zstandard import ZstdDecompressor
-    #
-    #     dctx = ZstdDecompressor()
-    #
-    #     if as_file:
-    #         chunk_path = self.get_chunk_path(chunk_id)
-    #
-    #         if chunk_path.exists():
-    #             return chunk_path.as_posix()
-    #
-    #     sql = text(
-    #         "SELECT chunk_data, compression_type FROM values_data WHERE chunk_id = :chunk_id"
-    #     )
-    #     params = {"chunk_id": chunk_id}
-    #     with self.sqlite_engine.connect() as conn:
-    #         cursor = conn.execute(sql, params)
-    #         result_bytes = cursor.fetchone()
-    #
-    #     chunk_data: Union[str, bytes] = result_bytes[0]
-    #     compression_type = result_bytes[1]
-    #     if compression_type not in (None, 0):
-    #         if CHUNK_COMPRESSION_TYPE(compression_type) == CHUNK_COMPRESSION_TYPE.ZSTD:
-    #             chunk_data = dctx.decompress(chunk_data)
-    #         elif (
-    #             CHUNK_COMPRESSION_TYPE(compression_type) == CHUNK_COMPRESSION_TYPE.LZMA
-    #         ):
-    #             chunk_data = lzma.decompress(chunk_data)
-    #         elif CHUNK_COMPRESSION_TYPE(compression_type) == CHUNK_COMPRESSION_TYPE.LZ4:
-    #             chunk_data = lz4.frame.decompress(chunk_data)
-    #         else:
-    #             raise ValueError(f"Unsupported compression type: {compression_type}")
-    #
-    #     if not as_file:
-    #         return chunk_data
-    #
-    #     chunk_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
-    #     with open(chunk_path, "wb") as file:
-    #         file.write(chunk_data)
-    #
-    #     return chunk_path.as_posix()
-
     def retrieve_chunks(
         self,
         chunk_ids: Sequence[str],
@@ -379,7 +328,6 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
     ) -> Generator[Union["BytesLike", str], None, None]:
         import lzma
 
-        import lz4.frame
         from zstandard import ZstdDecompressor
 
         dctx = ZstdDecompressor()
@@ -423,6 +371,13 @@ CREATE TABLE IF NOT EXISTS {TABLE_NAME_DATA_DESTINIES} (
                             CHUNK_COMPRESSION_TYPE(compression_type)
                             == CHUNK_COMPRESSION_TYPE.LZ4
                         ):
+                            try:
+                                import lz4.frame
+                            except ImportError:
+                                raise ImportError(
+                                    "Can't decompress chunk, lz4.frame is not installed. Please add the 'lz4' package to your environment."
+                                )
+
                             chunk_data = lz4.frame.decompress(chunk_data)
                         else:
                             raise ValueError(

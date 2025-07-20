@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
+from pathlib import Path
 
 #  Copyright (c) 2021, Markus Binsteiner
 #
 #  Mozilla Public License, version 2.0 (see LICENSE or https://www.mozilla.org/en-US/MPL/2.0/)
-
 from typing import TYPE_CHECKING, Any, ClassVar, Dict, Mapping, Type, Union
 
 import humanfriendly
@@ -106,6 +106,8 @@ class FileValueType(KiaraModelValueBaseType[KiaraFile, FileTypeConfig]):
             return KiaraFile(**data)
         if isinstance(data, str):
             return KiaraFile.load_file(source=data)
+        elif isinstance(data, Path):
+            return KiaraFile.load_file(source=data.as_posix())
         else:
             raise Exception(f"Can't create FileModel from data of type '{type(data)}'.")
 

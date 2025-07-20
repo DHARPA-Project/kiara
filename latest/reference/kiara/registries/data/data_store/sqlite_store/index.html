@@ -9196,7 +9196,13 @@ way to quickly determine whether a value id is valid for this data store.</p>
 <span class="normal">669</span>
 <span class="normal">670</span>
 <span class="normal">671</span>
-<span class="normal">672</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SqliteDataStore</span><span class="p">(</span><span class="n">SqliteDataArchive</span><span class="p">[</span><span class="n">SqliteDataStoreConfig</span><span class="p">],</span> <span class="n">BaseDataStore</span><span class="p">):</span>
+<span class="normal">672</span>
+<span class="normal">673</span>
+<span class="normal">674</span>
+<span class="normal">675</span>
+<span class="normal">676</span>
+<span class="normal">677</span>
+<span class="normal">678</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SqliteDataStore</span><span class="p">(</span><span class="n">SqliteDataArchive</span><span class="p">[</span><span class="n">SqliteDataStoreConfig</span><span class="p">],</span> <span class="n">BaseDataStore</span><span class="p">):</span>
     <span class="n">_archive_type_name</span> <span class="o">=</span> <span class="s2">&quot;sqlite_data_store&quot;</span>
     <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">SqliteDataStoreConfig</span>
 
@@ -9285,7 +9291,6 @@ way to quickly determine whether a value id is valid for this data store.</p>
     <span class="p">):</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">lzma</span>
 
-        <span class="kn">import</span><span class="w"> </span><span class="nn">lz4.frame</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">zstandard</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZstdCompressor</span>
 
         <span class="n">cctx</span> <span class="o">=</span> <span class="n">ZstdCompressor</span><span class="p">()</span>
@@ -9318,6 +9323,13 @@ way to quickly determine whether a value id is valid for this data store.</p>
         <span class="k">elif</span> <span class="n">compression_type</span> <span class="o">==</span> <span class="n">CHUNK_COMPRESSION_TYPE</span><span class="o">.</span><span class="n">LZMA</span><span class="p">:</span>
             <span class="n">final_bytes</span> <span class="o">=</span> <span class="n">lzma</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">bytes_io</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
         <span class="k">elif</span> <span class="n">compression_type</span> <span class="o">==</span> <span class="n">CHUNK_COMPRESSION_TYPE</span><span class="o">.</span><span class="n">LZ4</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">import</span><span class="w"> </span><span class="nn">lz4.frame</span>
+            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                    <span class="s2">&quot;Can&#39;t compress chunk, lz4.frame is not installed. Please add the &#39;lz4&#39; package to your environment.&quot;</span>
+                <span class="p">)</span>
+
             <span class="n">bytes_io</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">bytes_io</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
             <span class="n">final_bytes</span> <span class="o">=</span> <span class="n">lz4</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>

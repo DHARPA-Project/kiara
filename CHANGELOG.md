@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.5.25
+
+- add basic support for emscripten runtime check
+
 ## Version 0.5.16-0.5.24
 
 - bugfixes, dependency updates, template, CI improvements

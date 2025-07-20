@@ -8047,52 +8047,7 @@
 <span class="normal">443</span>
 <span class="normal">444</span>
 <span class="normal">445</span>
-<span class="normal">446</span>
-<span class="normal">447</span>
-<span class="normal">448</span>
-<span class="normal">449</span>
-<span class="normal">450</span>
-<span class="normal">451</span>
-<span class="normal">452</span>
-<span class="normal">453</span>
-<span class="normal">454</span>
-<span class="normal">455</span>
-<span class="normal">456</span>
-<span class="normal">457</span>
-<span class="normal">458</span>
-<span class="normal">459</span>
-<span class="normal">460</span>
-<span class="normal">461</span>
-<span class="normal">462</span>
-<span class="normal">463</span>
-<span class="normal">464</span>
-<span class="normal">465</span>
-<span class="normal">466</span>
-<span class="normal">467</span>
-<span class="normal">468</span>
-<span class="normal">469</span>
-<span class="normal">470</span>
-<span class="normal">471</span>
-<span class="normal">472</span>
-<span class="normal">473</span>
-<span class="normal">474</span>
-<span class="normal">475</span>
-<span class="normal">476</span>
-<span class="normal">477</span>
-<span class="normal">478</span>
-<span class="normal">479</span>
-<span class="normal">480</span>
-<span class="normal">481</span>
-<span class="normal">482</span>
-<span class="normal">483</span>
-<span class="normal">484</span>
-<span class="normal">485</span>
-<span class="normal">486</span>
-<span class="normal">487</span>
-<span class="normal">488</span>
-<span class="normal">489</span>
-<span class="normal">490</span>
-<span class="normal">491</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SqliteDataArchive</span><span class="p">(</span><span class="n">DataArchive</span><span class="p">[</span><span class="n">SqliteArchiveConfig</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">ARCHIVE_CONFIG_CLS</span><span class="p">]):</span>
+<span class="normal">446</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SqliteDataArchive</span><span class="p">(</span><span class="n">DataArchive</span><span class="p">[</span><span class="n">SqliteArchiveConfig</span><span class="p">],</span> <span class="n">Generic</span><span class="p">[</span><span class="n">ARCHIVE_CONFIG_CLS</span><span class="p">]):</span>
     <span class="n">_archive_type_name</span> <span class="o">=</span> <span class="s2">&quot;sqlite_data_archive&quot;</span>
     <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">SqliteArchiveConfig</span>
 
@@ -8361,57 +8316,6 @@
             <span class="n">result_destinies</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="n">value_id</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">result</span><span class="p">}</span>
             <span class="k">return</span> <span class="n">result_destinies</span>
 
-    <span class="c1"># def retrieve_chunk(</span>
-    <span class="c1">#     self,</span>
-    <span class="c1">#     chunk_id: str,</span>
-    <span class="c1">#     as_file: Union[bool, str, None] = None,</span>
-    <span class="c1">#     symlink_ok: bool = True,</span>
-    <span class="c1"># ) -&gt; Union[bytes, str]:</span>
-    <span class="c1">#</span>
-    <span class="c1">#     import lzma</span>
-    <span class="c1">#</span>
-    <span class="c1">#     import lz4.frame</span>
-    <span class="c1">#     from zstandard import ZstdDecompressor</span>
-    <span class="c1">#</span>
-    <span class="c1">#     dctx = ZstdDecompressor()</span>
-    <span class="c1">#</span>
-    <span class="c1">#     if as_file:</span>
-    <span class="c1">#         chunk_path = self.get_chunk_path(chunk_id)</span>
-    <span class="c1">#</span>
-    <span class="c1">#         if chunk_path.exists():</span>
-    <span class="c1">#             return chunk_path.as_posix()</span>
-    <span class="c1">#</span>
-    <span class="c1">#     sql = text(</span>
-    <span class="c1">#         &quot;SELECT chunk_data, compression_type FROM values_data WHERE chunk_id = :chunk_id&quot;</span>
-    <span class="c1">#     )</span>
-    <span class="c1">#     params = {&quot;chunk_id&quot;: chunk_id}</span>
-    <span class="c1">#     with self.sqlite_engine.connect() as conn:</span>
-    <span class="c1">#         cursor = conn.execute(sql, params)</span>
-    <span class="c1">#         result_bytes = cursor.fetchone()</span>
-    <span class="c1">#</span>
-    <span class="c1">#     chunk_data: Union[str, bytes] = result_bytes[0]</span>
-    <span class="c1">#     compression_type = result_bytes[1]</span>
-    <span class="c1">#     if compression_type not in (None, 0):</span>
-    <span class="c1">#         if CHUNK_COMPRESSION_TYPE(compression_type) == CHUNK_COMPRESSION_TYPE.ZSTD:</span>
-    <span class="c1">#             chunk_data = dctx.decompress(chunk_data)</span>
-    <span class="c1">#         elif (</span>
-    <span class="c1">#             CHUNK_COMPRESSION_TYPE(compression_type) == CHUNK_COMPRESSION_TYPE.LZMA</span>
-    <span class="c1">#         ):</span>
-    <span class="c1">#             chunk_data = lzma.decompress(chunk_data)</span>
-    <span class="c1">#         elif CHUNK_COMPRESSION_TYPE(compression_type) == CHUNK_COMPRESSION_TYPE.LZ4:</span>
-    <span class="c1">#             chunk_data = lz4.frame.decompress(chunk_data)</span>
-    <span class="c1">#         else:</span>
-    <span class="c1">#             raise ValueError(f&quot;Unsupported compression type: {compression_type}&quot;)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     if not as_file:</span>
-    <span class="c1">#         return chunk_data</span>
-    <span class="c1">#</span>
-    <span class="c1">#     chunk_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)</span>
-    <span class="c1">#     with open(chunk_path, &quot;wb&quot;) as file:</span>
-    <span class="c1">#         file.write(chunk_data)</span>
-    <span class="c1">#</span>
-    <span class="c1">#     return chunk_path.as_posix()</span>
-
     <span class="k">def</span><span class="w"> </span><span class="nf">retrieve_chunks</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">chunk_ids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
@@ -8420,7 +8324,6 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="s2">&quot;BytesLike&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">lzma</span>
 
-        <span class="kn">import</span><span class="w"> </span><span class="nn">lz4.frame</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">zstandard</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZstdDecompressor</span>
 
         <span class="n">dctx</span> <span class="o">=</span> <span class="n">ZstdDecompressor</span><span class="p">()</span>
@@ -8464,6 +8367,13 @@
                             <span class="n">CHUNK_COMPRESSION_TYPE</span><span class="p">(</span><span class="n">compression_type</span><span class="p">)</span>
                             <span class="o">==</span> <span class="n">CHUNK_COMPRESSION_TYPE</span><span class="o">.</span><span class="n">LZ4</span>
                         <span class="p">):</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="kn">import</span><span class="w"> </span><span class="nn">lz4.frame</span>
+                            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                                <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                                    <span class="s2">&quot;Can&#39;t decompress chunk, lz4.frame is not installed. Please add the &#39;lz4&#39; package to your environment.&quot;</span>
+                                <span class="p">)</span>
+
                             <span class="n">chunk_data</span> <span class="o">=</span> <span class="n">lz4</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">chunk_data</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -8767,7 +8677,58 @@ way to quickly determine whether a value id is valid for this data store.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/kiara/registries/data/data_store/sqlite_store.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">374</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
 <span class="normal">375</span>
 <span class="normal">376</span>
 <span class="normal">377</span>
@@ -8818,52 +8779,7 @@ way to quickly determine whether a value id is valid for this data store.</p>
 <span class="normal">422</span>
 <span class="normal">423</span>
 <span class="normal">424</span>
-<span class="normal">425</span>
-<span class="normal">426</span>
-<span class="normal">427</span>
-<span class="normal">428</span>
-<span class="normal">429</span>
-<span class="normal">430</span>
-<span class="normal">431</span>
-<span class="normal">432</span>
-<span class="normal">433</span>
-<span class="normal">434</span>
-<span class="normal">435</span>
-<span class="normal">436</span>
-<span class="normal">437</span>
-<span class="normal">438</span>
-<span class="normal">439</span>
-<span class="normal">440</span>
-<span class="normal">441</span>
-<span class="normal">442</span>
-<span class="normal">443</span>
-<span class="normal">444</span>
-<span class="normal">445</span>
-<span class="normal">446</span>
-<span class="normal">447</span>
-<span class="normal">448</span>
-<span class="normal">449</span>
-<span class="normal">450</span>
-<span class="normal">451</span>
-<span class="normal">452</span>
-<span class="normal">453</span>
-<span class="normal">454</span>
-<span class="normal">455</span>
-<span class="normal">456</span>
-<span class="normal">457</span>
-<span class="normal">458</span>
-<span class="normal">459</span>
-<span class="normal">460</span>
-<span class="normal">461</span>
-<span class="normal">462</span>
-<span class="normal">463</span>
-<span class="normal">464</span>
-<span class="normal">465</span>
-<span class="normal">466</span>
-<span class="normal">467</span>
-<span class="normal">468</span>
-<span class="normal">469</span>
-<span class="normal">470</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">retrieve_chunks</span><span class="p">(</span>
+<span class="normal">425</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">retrieve_chunks</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">chunk_ids</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">as_files</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -8871,7 +8787,6 @@ way to quickly determine whether a value id is valid for this data store.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="s2">&quot;BytesLike&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">lzma</span>
 
-    <span class="kn">import</span><span class="w"> </span><span class="nn">lz4.frame</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">zstandard</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZstdDecompressor</span>
 
     <span class="n">dctx</span> <span class="o">=</span> <span class="n">ZstdDecompressor</span><span class="p">()</span>
@@ -8915,6 +8830,13 @@ way to quickly determine whether a value id is valid for this data store.</p>
                         <span class="n">CHUNK_COMPRESSION_TYPE</span><span class="p">(</span><span class="n">compression_type</span><span class="p">)</span>
                         <span class="o">==</span> <span class="n">CHUNK_COMPRESSION_TYPE</span><span class="o">.</span><span class="n">LZ4</span>
                     <span class="p">):</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="kn">import</span><span class="w"> </span><span class="nn">lz4.frame</span>
+                        <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                                <span class="s2">&quot;Can&#39;t decompress chunk, lz4.frame is not installed. Please add the &#39;lz4&#39; package to your environment.&quot;</span>
+                            <span class="p">)</span>
+
                         <span class="n">chunk_data</span> <span class="o">=</span> <span class="n">lz4</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">chunk_data</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -8980,23 +8902,23 @@ way to quickly determine whether a value id is valid for this data store.</p>
 
             <details class="quote">
               <summary>Source code in <code>src/kiara/registries/data/data_store/sqlite_store.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">475</span>
-<span class="normal">476</span>
-<span class="normal">477</span>
-<span class="normal">478</span>
-<span class="normal">479</span>
-<span class="normal">480</span>
-<span class="normal">481</span>
-<span class="normal">482</span>
-<span class="normal">483</span>
-<span class="normal">484</span>
-<span class="normal">485</span>
-<span class="normal">486</span>
-<span class="normal">487</span>
-<span class="normal">488</span>
-<span class="normal">489</span>
-<span class="normal">490</span>
-<span class="normal">491</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveDetails</span><span class="p">:</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">430</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span>
+<span class="normal">441</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_archive_details</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArchiveDetails</span><span class="p">:</span>
     <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sqlite_path</span><span class="o">.</span><span class="n">stat</span><span class="p">()</span><span class="o">.</span><span class="n">st_size</span>
     <span class="n">all_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_ids</span>
 
@@ -9051,7 +8973,52 @@ way to quickly determine whether a value id is valid for this data store.</p>
 
               <details class="quote">
                 <summary>Source code in <code>src/kiara/registries/data/data_store/sqlite_store.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">494</span>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span>
+<span class="normal">452</span>
+<span class="normal">453</span>
+<span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span>
+<span class="normal">457</span>
+<span class="normal">458</span>
+<span class="normal">459</span>
+<span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span>
+<span class="normal">465</span>
+<span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span>
+<span class="normal">471</span>
+<span class="normal">472</span>
+<span class="normal">473</span>
+<span class="normal">474</span>
+<span class="normal">475</span>
+<span class="normal">476</span>
+<span class="normal">477</span>
+<span class="normal">478</span>
+<span class="normal">479</span>
+<span class="normal">480</span>
+<span class="normal">481</span>
+<span class="normal">482</span>
+<span class="normal">483</span>
+<span class="normal">484</span>
+<span class="normal">485</span>
+<span class="normal">486</span>
+<span class="normal">487</span>
+<span class="normal">488</span>
+<span class="normal">489</span>
+<span class="normal">490</span>
+<span class="normal">491</span>
+<span class="normal">492</span>
+<span class="normal">493</span>
+<span class="normal">494</span>
 <span class="normal">495</span>
 <span class="normal">496</span>
 <span class="normal">497</span>
@@ -9229,52 +9196,7 @@ way to quickly determine whether a value id is valid for this data store.</p>
 <span class="normal">669</span>
 <span class="normal">670</span>
 <span class="normal">671</span>
-<span class="normal">672</span>
-<span class="normal">673</span>
-<span class="normal">674</span>
-<span class="normal">675</span>
-<span class="normal">676</span>
-<span class="normal">677</span>
-<span class="normal">678</span>
-<span class="normal">679</span>
-<span class="normal">680</span>
-<span class="normal">681</span>
-<span class="normal">682</span>
-<span class="normal">683</span>
-<span class="normal">684</span>
-<span class="normal">685</span>
-<span class="normal">686</span>
-<span class="normal">687</span>
-<span class="normal">688</span>
-<span class="normal">689</span>
-<span class="normal">690</span>
-<span class="normal">691</span>
-<span class="normal">692</span>
-<span class="normal">693</span>
-<span class="normal">694</span>
-<span class="normal">695</span>
-<span class="normal">696</span>
-<span class="normal">697</span>
-<span class="normal">698</span>
-<span class="normal">699</span>
-<span class="normal">700</span>
-<span class="normal">701</span>
-<span class="normal">702</span>
-<span class="normal">703</span>
-<span class="normal">704</span>
-<span class="normal">705</span>
-<span class="normal">706</span>
-<span class="normal">707</span>
-<span class="normal">708</span>
-<span class="normal">709</span>
-<span class="normal">710</span>
-<span class="normal">711</span>
-<span class="normal">712</span>
-<span class="normal">713</span>
-<span class="normal">714</span>
-<span class="normal">715</span>
-<span class="normal">716</span>
-<span class="normal">717</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SqliteDataStore</span><span class="p">(</span><span class="n">SqliteDataArchive</span><span class="p">[</span><span class="n">SqliteDataStoreConfig</span><span class="p">],</span> <span class="n">BaseDataStore</span><span class="p">):</span>
+<span class="normal">672</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SqliteDataStore</span><span class="p">(</span><span class="n">SqliteDataArchive</span><span class="p">[</span><span class="n">SqliteDataStoreConfig</span><span class="p">],</span> <span class="n">BaseDataStore</span><span class="p">):</span>
     <span class="n">_archive_type_name</span> <span class="o">=</span> <span class="s2">&quot;sqlite_data_store&quot;</span>
     <span class="n">_config_cls</span> <span class="o">=</span> <span class="n">SqliteDataStoreConfig</span>
 

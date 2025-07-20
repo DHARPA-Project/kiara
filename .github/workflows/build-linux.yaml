@@ -77,7 +77,7 @@ jobs:
       - name: create lockfile
         run: uv lock --python ${{ matrix.python_version }}
       - name: install the project
-        run: uv sync --locked --dev --python ${{ matrix.python_version }}
+        run: uv sync --locked --dev --extra zmq --python ${{ matrix.python_version }}
       - name: Test with mypy
         run: make mypy
 

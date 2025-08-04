@@ -3,46 +3,54 @@ default_language_version:
 
 repos:
 
+# cleans out all jupyter notebook result cells for git commit
+- repo: https://github.com/srstevenson/nb-clean
+  rev: 4.0.1
+  hooks:
+    - id: nb-clean
+
+# makes sure the commit message adheres to the commitlint standard
 - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
-  rev: 'v9.20.0'
+  rev: 'v9.22.0'
   hooks:
     - id: commitlint
       stages: [commit-msg]
       additional_dependencies: ['@commitlint/config-conventional']
 
+# runs the mypy type checker
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: 'v1.13.0'  # Use the sha / tag you want to point at
+  rev: 'v1.16.0'  # Use the sha / tag you want to point at
   hooks:
   - id: mypy
-    files: "^src/kiara"
+    files: "^src/"
     pass_filenames: true
-    args: ["--config-file", "pyproject.toml"]
-    additional_dependencies: [pydantic>=2.0.0, pydantic_settings, rich>=10.0.0, ruamel.yaml, anyio>=3.0.0, pyzmq>=22.0.3, bidict, sqlalchemy-stubs, types-python-slugify, types-setuptools, types-python-dateutil, dag_cbor>=0.3.0, multiformats>=0.2.0, textual, regex, types-pytz, types-orjson, dag_cbor>=0.3.2]
+    args: ["--config-file", "pyproject.toml", "--ignore-missing-imports"]
+    additional_dependencies: [pydantic>=2.0.0, rich>=10.0.0, ruamel.yaml, anyio>=3.0.0, pyzmq>=22.0.3, bidict, sqlalchemy-stubs, types-python-slugify, types-setuptools, types-python-dateutil, dag_cbor, multiformats, textual, regex, types-pytz, types-orjson]
 
+# runs the ruff linter and formater
 - repo: https://github.com/astral-sh/ruff-pre-commit
   # Ruff version.
-  rev: v0.8.3
+  rev: v0.11.13
   hooks:
-    - id: ruff
+    - id: ruff-check
       args: [ --fix ]
-    # Run the formatter.
     - id: ruff-format
 
+# misc tasks
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.6.0  # Use the ref you want to point at
+  rev: 'v5.0.0'
   hooks:
   - id: trailing-whitespace
-    exclude: '(setup.cfg|src/kiara/utils/cli/__init__.py)'
   - id: check-added-large-files
   - id: check-ast
   - id: check-json
   - id: check-merge-conflict
   - id: check-xml
   - id: check-yaml
-    exclude: '(tests/\*|ci/conda/kiara/meta.yaml)'
+    exclude: 'tests/\*'
   - id: debug-statements
   - id: end-of-file-fixer
-    exclude: '(.*.json|.*.j2)'
+    exclude: '.*.json'
   - id: requirements-txt-fixer
   - id: fix-encoding-pragma
   - id: mixed-line-ending

@@ -54,6 +54,7 @@ from rich_click.rich_click import (
     USE_CLICK_SHORT_HELP,
     highlighter,
 )
+from rich_click.rich_help_formatter import RichHelpFormatter
 from rich_click.rich_help_rendering import (
     _get_option_help,
     _make_command_help,
@@ -303,12 +304,13 @@ def rich_format_operation_help(
                 ]
 
             metavar_highlighter = MetavarHighlighter()
+            formatter = RichHelpFormatter()
             rows = [
                 required,
                 highlighter(highlighter(",".join(opt_long_strs))),
                 highlighter(highlighter(",".join(opt_short_strs))),
                 metavar_highlighter(metavar),
-                _get_option_help(param, ctx),  # type: ignore
+                _get_option_help(param, ctx, formatter),  # type: ignore
             ]
 
             # Remove metavar if specified in config

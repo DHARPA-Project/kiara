@@ -26,6 +26,17 @@ if typing.TYPE_CHECKING:
 def print_ascii_graph(
     graph: nx.Graph, restart_interpreter_if_asciinet_installed: bool = False
 ):
+    from netext import ConsoleGraph, EdgeSegmentDrawingMode
+
+    nx.set_edge_attributes(
+        graph, EdgeSegmentDrawingMode.ASCII, "$edge-segment-drawing-mode"
+    )
+    terminal_print(ConsoleGraph(graph))
+
+
+def print_ascii_graph_old(
+    graph: nx.Graph, restart_interpreter_if_asciinet_installed: bool = False
+):
     try:
         from asciinet import graph_to_ascii  # type: ignore
     except:  # noqa

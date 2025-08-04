@@ -4,22 +4,14 @@
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-docs: ## build documentation
-	mkdocs build
-
-serve-docs: ## serve and watch documentation
-	mkdocs serve --dirtyreload -a 0.0.0.0:8000
 
 clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
-
-clean-doc: ## remove doc artifacts
-	rm -fr build/site
 
 clean-build: ## remove build artifacts
 	rm -fr build/
 	rm -fr dist/
 	rm -fr .eggs/
-	find . -name '*.egg' -exec rm -fr {} +
+	find . -name '*.egg' -exec rm -rf {} +
 
 clean-pyc: ## remove Python file artifacts
 	find . -name '*.pyc' -exec rm -f {} +
@@ -34,23 +26,28 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .pytest_cache
 	rm -fr .mypy_cache
 
-init: clean ## initialize a development environment (to be run in virtualenv)
-	git init
-	git checkout -b develop || true
-	pip install -U pip
-	pip install --extra-index-url https://pypi.fury.io/dharpa/ --extra-index-url https://gitlab.com/api/v4/projects/25344049/packages/pypi/simple -U -e '.[all_dev]'
-	pre-commit install
-	pre-commit install --hook-type commit-msg
-	setup-cfg-fmt setup.cfg || true
-	git add "*" ".*"
-	pre-commit run --all-files || true
-	git add "*" ".*"
-
 mypy: ## run mypy
-	uv run mypy src/kiara
+	uv run mypy --namespace-packages --explicit-package-base src/
+
+lint:
+	uv run ruff check --fix src/
+
+format:
+	uv run ruff format src/
 
 test: ## run tests quickly with the default Python
 	uv run pytest tests
+
+docs:
+	uv run mkdocs build
+
+docs-serve:
+	uv run mkdocs serve
+
+check: lint mypy test ## run dev-related checks
+
+pre-commit: ## run pre-commit on all files
+	uv run pre-commit run --all-files
 
 coverage: ## check code coverage quickly with the default Python
 	coverage run -m pytest tests
@@ -59,7 +56,7 @@ coverage: ## check code coverage quickly with the default Python
 	xdg-open htmlcov/index.html
 
 render-api:
-	kiara render --source-type base_api --target-type kiara_api item kiara_api template_file=src/kiara/interfaces/python_api/kiara_api.py target_file=src/kiara/interfaces/python_api/kiara_api.py
+	uv run kiara render --source-type base_api --target-type kiara_api item kiara_api template_file=src/kiara/interfaces/python_api/kiara_api.py target_file=src/kiara/interfaces/python_api/kiara_api.py
 
 pre-commit: ## run pre-commit on all files
 	uv run pre-commit run --all-files

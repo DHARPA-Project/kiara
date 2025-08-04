@@ -75,6 +75,7 @@ dependencies = [
     "tzlocal>=2.1,<6.0",
     "zstandard>=0.22.0",
     "airium>=0.2.7",
+    "netext>=0.3.1",
 ]
 dynamic = ["version"]
 
@@ -441,6 +442,7 @@ module = [
     "jupytext",
     "lz4.*",
     "mmh3",
+    "netext.*",
     "pickle5",
     "pip.*",
     "pp",

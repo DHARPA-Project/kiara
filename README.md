@@ -24,57 +24,54 @@ created metadata. Most of this is not yet implemented.
 
 ### Requirements
 
-- Python (version >=3.6 -- some make targets only work for Python >=3.7, but *kiara* itself should work on 3.6)
-- pip, virtualenv
+- uv ( https://docs.astral.sh/uv/ )
 - git
-- make
-- [direnv](https://direnv.net/) (optional)
+- make (on Linux / Mac OS X -- optional)
 
 
-### Prepare development environment
+### Check out the source code & enter the project directory
 
 ```console
 git clone https://github.com/DHARPA-Project/kiara.git
 cd kiara
-python3 -m venv .venv
+```
+
+### Prepare development environment
+
+The recommended way to setup a development environment is to use [uv](https://docs.astral.sh/uv/). Check out [their install instructions](https://docs.astral.sh/uv/getting-started/installation/).
+
+Once you have `uv` installed, you can either run `kiara` using the `uv run` command:
+
+```
+uv run kiara module list
+```
+
+or, activate the virtual environment and run `kiara` directly:
+
+```
+uv sync  # to make sure the virtualenv exists (and is up to date)
 source .venv/bin/activate
-make init
+kiara module list
 ```
 
-If you use [direnv](https://direnv.net/), you can alternatively do:
+### Running pre-defined development-related tasks
 
-``` console
-git clone https://github.com/DHARPA-Project/kiara.git
-cd kiara
-cp .envrc.disabled .envrc
-direnv allow
-make init
-```
+The included `Makefile` file includes some useful tasks that help with development. This requires `uv` and the `make` tool to be
+installed, which should be the case for Linux & Mac OS X systems.
 
-*Note*: you might want to adjust the Python version in ``.envrc`` (should not be necessary in most cases though)
+- `make test`: runs the unit tests
+- `make mypy`: run mypy checks
+- `make lint`: run the `ruff` linter on the source code
+- `make format`: run the `ruff` formatter on the source code (similar to `black`)
+- `make docs`: build the documentation  (into `build` folder)
+- `make docs-serve`: serve the documentation (on port 8000)
 
-### ``make`` targets
+Alternatively, if you don't have the `make` command available, you can use `uv` directly to run those tasks:
 
-- ``init``: init development project (install project & dev dependencies into virtualenv, as well as pre-commit git hook)
-- ``update-modules``: update default kiara modules package from git
-- ``flake``: run *flake8* tests
-- ``mypy``: run *mypy* tests
-- ``test``: run unit tests
-- ``docs``: create static documentation pages (under ``build/site``)
-- ``serve-docs``: serve documentation pages (incl. auto-reload) for getting direct feedback when working on documentation
-- ``clean``: clean build directories
-
-For details (and other, minor targets), check the ``Makefile``.
-
-
-### Running tests
-
-``` console
-> make test
-# or
-> make coverage
-```
-
+- `uv run pytest tests`
+- `uv run mypy src/`
+- `uv run ruff check --fix src/`
+- `uv run ruff format src/`
 
 ## Copyright & license
 
